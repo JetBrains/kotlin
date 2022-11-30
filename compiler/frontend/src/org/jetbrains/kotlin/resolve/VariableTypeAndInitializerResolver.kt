@@ -131,7 +131,6 @@ class VariableTypeAndInitializerResolver(
                     NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(
                         variableType,
                         initializer,
-                        languageVersionSettings,
                         trace,
                         constantExpressionEvaluator.module
                     )

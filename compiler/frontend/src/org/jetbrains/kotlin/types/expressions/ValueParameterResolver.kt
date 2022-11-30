@@ -75,7 +75,6 @@ class ValueParameterResolver(
         NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(
             type,
             defaultValue,
-            context.languageVersionSettings,
             context.trace,
             constantExpressionEvaluator.module
         )

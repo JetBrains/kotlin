@@ -1,7 +1,6 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: don't support legacy feature; for reasons this test is ignored, go to KT-46419
+// FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 // SKIP_JDK6
 // FULL_JDK
 

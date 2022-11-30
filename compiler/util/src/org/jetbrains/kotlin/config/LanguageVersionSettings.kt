@@ -287,9 +287,6 @@ enum class LanguageFeature(
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
 
-    // Disabled for indefinite time. See KT-48535 and related discussion
-    ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
-
     // Disabled for indefinite time. Disables restrictions of builder inference without annotation
     // Note: In 1.7.0, builder inference without annotation was introduced.
     // However, later we encountered various situations when it works incorrectly, and decided to forbid them.

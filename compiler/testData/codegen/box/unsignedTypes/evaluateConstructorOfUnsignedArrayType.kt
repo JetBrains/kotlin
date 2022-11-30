@@ -1,4 +1,3 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 

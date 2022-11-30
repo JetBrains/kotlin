@@ -1,6 +1,5 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // IGNORE_BACKEND_K2: JVM_IR
-// For reasons this test is ignored, go to KT-46419
+// FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 
 val a: Short = 1 + 255
 

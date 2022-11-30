@@ -128,12 +128,6 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         }
 
         // ----------------------- constant evaluation tests -----------------------
-        forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/*") {
-            defaultDirectives {
-                LANGUAGE with "-ApproximateIntegerLiteralTypesInReceiverPosition"
-            }
-        }
-
         forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/constant/*") {
             defaultDirectives {
                 CHECK_COMPILE_TIME_VALUES with ConstantValuesHandler.Mode.Constant
