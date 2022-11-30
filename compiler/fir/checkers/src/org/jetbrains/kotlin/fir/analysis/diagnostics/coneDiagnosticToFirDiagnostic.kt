@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -406,29 +407,29 @@ private fun ConstraintSystemError.toDiagnostic(
                         return null
                     }
 
-                    val target = position.returnTargetIfFromReturnType
+                    val origin = position.origin
                     val theSource = qualifiedAccessSource ?: source
                     val resolvedSymbol = candidate.dispatchReceiverValue?.receiverExpression
                         ?.toResolvedCallableSymbol() as? FirPropertySymbol
 
                     when {
-                        target != null -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                        origin is ExpectedTypeOrigin.ReturnType -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
                             theSource,
                             upperConeTypeWithoutTypeVariables,
                             inferredTypeWithoutTypeVariables,
-                            target,
+                            origin.target,
                             typeMismatchDueToNullability
                         )
                         resolvedSymbol != null && upperConeTypeWithoutTypeVariables.isCapturedTypeWithStarOrOutProjection -> {
                             FirErrors.SETTER_PROJECTED_OUT.createOn(theSource, resolvedSymbol)
                         }
-                        position.isFromInitializer -> FirErrors.INITIALIZER_TYPE_MISMATCH.createOn(
+                        origin is ExpectedTypeOrigin.Initializer -> FirErrors.INITIALIZER_TYPE_MISMATCH.createOn(
                             theSource,
                             upperConeTypeWithoutTypeVariables,
                             inferredTypeWithoutTypeVariables,
                             typeMismatchDueToNullability,
                         )
-                        position.isFromAssignment -> when (theSource.kind) {
+                        origin is ExpectedTypeOrigin.Assignment -> when (theSource.kind) {
                             is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
                                 val (lValueType, rValueType) = when {
                                     !upperConeTypeWithoutTypeVariables.isNullable && inferredTypeWithoutTypeVariables.isNullable -> {

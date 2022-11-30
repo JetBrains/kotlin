@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -584,7 +585,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 lhsVariable?.returnTypeRef ?: noExpectedType,
-                isFromAssignment = true,
+                ExpectedTypeOrigin.Assignment,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             val assignment =
@@ -877,7 +878,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 transformer,
                 withExpectedType(
                     variableAssignment.lValueTypeRef,
-                    isFromAssignment = true,
+                    ExpectedTypeOrigin.Assignment,
                 ),
             )
         } else {
@@ -1291,7 +1292,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedSetCall,
                 noExpectedType,
-                isFromAssignment = true,
+                ExpectedTypeOrigin.Assignment,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)
