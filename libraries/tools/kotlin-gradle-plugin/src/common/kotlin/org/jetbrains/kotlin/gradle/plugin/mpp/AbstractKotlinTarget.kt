@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.UsageScope.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
@@ -77,7 +78,6 @@ abstract class AbstractKotlinTarget(
                 compilation = mainCompilation,
                 dependencyConfigurationName = sourcesElementsConfigurationName,
                 includeIntoProjectStructureMetadata = false,
-                includeDependenciesToMavenPublication = false,
             )
         }
 
@@ -200,9 +200,13 @@ internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<
                     }
 
                 adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
-                    val mavenScope = kotlinUsageContext.mavenDependenciesScope
+                    val mavenScope = kotlinUsageContext.mavenScope
                     if (mavenScope != null) {
-                        configurationVariantDetails.mapToMavenScope(mavenScope)
+                        val mavenScopeString = when(mavenScope) {
+                            COMPILE -> "compile"
+                            RUNTIME -> "runtime"
+                        }
+                        configurationVariantDetails.mapToMavenScope(mavenScopeString)
                     }
                 }
             }

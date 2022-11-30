@@ -60,7 +60,7 @@ abstract class KotlinSoftwareComponent(
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                usageScope = KotlinUsageContext.UsageScope.COMPILE,
+                mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
@@ -72,7 +72,7 @@ abstract class KotlinSoftwareComponent(
                 this += run {
                     DefaultKotlinUsageContext(
                         metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        KotlinUsageContext.UsageScope.COMPILE,
+                        KotlinUsageContext.MavenScope.COMPILE,
                         /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
                         COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
                     )
@@ -84,7 +84,6 @@ abstract class KotlinSoftwareComponent(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 dependencyConfigurationName = metadataTarget.sourcesElementsConfigurationName,
                 includeIntoProjectStructureMetadata = false,
-                includeDependenciesToMavenPublication = false
             )
         }
     }
@@ -127,29 +126,20 @@ interface KotlinUsageContext : UsageContext {
     val compilation: KotlinCompilation<*>
     val dependencyConfigurationName: String
     val includeIntoProjectStructureMetadata: Boolean
-    val usageScope: UsageScope?
-    val includeDependenciesToMavenPublication: Boolean
+    val mavenScope: MavenScope?
 
-    enum class UsageScope {
+    enum class MavenScope {
         COMPILE, RUNTIME;
     }
 }
 
-val KotlinUsageContext.mavenDependenciesScope get() =
-    when (usageScope.takeIf { includeDependenciesToMavenPublication }) {
-        KotlinUsageContext.UsageScope.COMPILE -> "compile"
-        KotlinUsageContext.UsageScope.RUNTIME -> "runtime"
-        null -> null
-    }
-
 class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
-    override val usageScope: KotlinUsageContext.UsageScope? = null,
+    override val mavenScope: KotlinUsageContext.MavenScope? = null,
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
-    override val includeDependenciesToMavenPublication: Boolean = true,
 ) : KotlinUsageContext {
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project

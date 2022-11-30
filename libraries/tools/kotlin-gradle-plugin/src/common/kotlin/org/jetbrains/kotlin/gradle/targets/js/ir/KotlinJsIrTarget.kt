@@ -70,7 +70,7 @@ constructor(
         return usageContexts +
                 DefaultKotlinUsageContext(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
-                    usageScope = KotlinUsageContext.UsageScope.COMPILE,
+                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
                     overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )
