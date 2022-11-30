@@ -6,7 +6,7 @@
 fun <T> select(a: T, b: T) = a
 
 fun testFunctionReturnSelectWithBlock(): String {
-    return select("test1", 1)
+    return <!RETURN_TYPE_MISMATCH("kotlin/String; ILT: 1")!>select("test1", 1)<!>
 }
 
 fun testFunctionReturnIntWithBlock(): String {
