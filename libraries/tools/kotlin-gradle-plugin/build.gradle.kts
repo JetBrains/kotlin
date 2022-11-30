@@ -6,10 +6,7 @@ import org.jetbrains.kotlin.pill.PillExtension
 plugins {
     id("gradle-plugin-common-configuration")
     id("jps-compatible")
-}
-
-if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(from = "functionalTest.gradle.kts")
+    `jvm-test-suite`
 }
 
 repositories {
@@ -90,23 +87,6 @@ dependencies {
         exclude(group = "*")
     }
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        val functionalTestImplementation by configurations.getting
-        val functionalTestCompileOnly by configurations.getting
-        functionalTestImplementation("com.android.tools.build:gradle:7.2.1")
-        functionalTestImplementation("com.android.tools.build:gradle-api:7.2.1")
-        functionalTestCompileOnly("com.android.tools:common:30.2.1")
-        functionalTestImplementation(gradleKotlinDsl())
-        functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))
-        functionalTestImplementation(project(":kotlin-gradle-plugin-tcs-android"))
-        functionalTestImplementation(project(":kotlin-tooling-metadata"))
-        functionalTestImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
-        functionalTestImplementation("com.github.gundy:semver4j:0.16.4:nodeps") {
-            exclude(group = "*")
-        }
-        functionalTestImplementation("org.reflections:reflections:0.10.2")
-    }
-
     testCompileOnly(project(":compiler"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
@@ -119,14 +99,6 @@ dependencies {
     testImplementation(commonDependency("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
-}
-
-if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    tasks.withType<Test>().named("functionalTest").configure {
-        javaLauncher.set(javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        })
-    }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -240,6 +212,70 @@ gradlePlugin {
             description = "Kotlin Multiplatform plugin with PM2.0"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper"
+        }
+    }
+}
+
+// Gradle plugins functional tests
+if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+
+    testing {
+        suites {
+            val functionalTest by registering(JvmTestSuite::class) {
+                useJUnit()
+
+                dependencies {
+                    implementation(project)
+                    implementation("com.android.tools.build:gradle:7.2.1")
+                    implementation("com.android.tools.build:gradle-api:7.2.1")
+                    compileOnly("com.android.tools:common:30.2.1")
+                    implementation(gradleKotlinDsl())
+                    implementation(project(":kotlin-gradle-plugin-kpm-android"))
+                    implementation(project(":kotlin-gradle-plugin-tcs-android"))
+                    implementation(project(":kotlin-tooling-metadata"))
+                    implementation(project.dependencies.testFixtures(project(":kotlin-gradle-plugin-idea")))
+                    implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
+                        (this as ExternalModuleDependency).exclude(group = "*")
+                    }
+                    implementation("org.reflections:reflections:0.10.2")
+                }
+
+                configurations.named(sources.implementationConfigurationName) {
+                    extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
+                    extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
+                }
+
+                configurations.named(sources.runtimeOnlyConfigurationName) {
+                    extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
+                    extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
+                }
+
+                targets.all {
+                    testTask.configure {
+                        dependsOnKotlinGradlePluginInstall()
+
+                        testLogging {
+                            events("passed", "skipped", "failed")
+                        }
+
+                        javaLauncher.set(javaToolchains.launcherFor {
+                            languageVersion.set(JavaLanguageVersion.of(11))
+                        })
+                    }
+                }
+
+                // open internal visibility to the test code
+                kotlin.target.compilations {
+                    named(name) {
+                        associateWith(this@compilations.getByName("main"))
+                        associateWith(this@compilations.getByName("common"))
+                    }
+                }
+            }
+
+            tasks.named("check") {
+                dependsOn(functionalTest.name)
+            }
         }
     }
 }
