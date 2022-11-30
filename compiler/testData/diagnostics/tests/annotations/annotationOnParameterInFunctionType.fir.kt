@@ -24,7 +24,7 @@ class A : (<!WRONG_ANNOTATION_TARGET!>@Ann<!> Int)->Unit {
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnn
 
-val onType: (@TypeAnn A).(@Ann a: @TypeAnn A, @TypeAnn A)->@TypeAnn A? = { null }
+val onType: (@TypeAnn A).(@Ann a: @TypeAnn A, @TypeAnn A)->@TypeAnn A? = <!INITIALIZER_TYPE_MISMATCH!>{ null }<!>
 
 fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @TypeAnn A? = null
 

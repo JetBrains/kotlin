@@ -415,10 +415,6 @@ fun checkTypeMismatch(
     val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
-        if (lValueType.isExtensionFunctionType || rValueType.isExtensionFunctionType) {
-            // TODO: remove after fix of KT-45989
-            return
-        }
         val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
         when {
             resolvedSymbol != null && lValueType.isCapturedTypeWithStarOrOutProjection -> {
