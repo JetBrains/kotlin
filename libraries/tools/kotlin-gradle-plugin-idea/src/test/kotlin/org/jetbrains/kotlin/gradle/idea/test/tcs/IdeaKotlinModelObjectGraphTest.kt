@@ -3,20 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.idea.tcs
+package org.jetbrains.kotlin.gradle.idea.test.tcs
 
-import org.jetbrains.kotlin.gradle.idea.tcs.ReflectionTestUtils.displayName
-import org.jetbrains.kotlin.gradle.idea.tcs.ReflectionTestUtils.ideaTcsReflections
-import org.jetbrains.kotlin.gradle.idea.tcs.ReflectionTestUtils.kotlinReflections
+import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.displayName
+import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.getAllKotlinClasses
+import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.ideaTcsReflections
+import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.kotlinReflections
 import org.jetbrains.kotlin.tooling.core.AbstractExtras
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
-import org.reflections.scanners.Scanners
 import java.io.Serializable
-import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
@@ -24,6 +23,13 @@ import kotlin.test.*
 
 @RunWith(Parameterized::class)
 class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val clazzName: String) {
+
+    @Test
+    fun `test - node is sealed`() {
+        if (node.java.isInterface || node.isAbstract) {
+            assertTrue(node.isSealed, "Expected $clazzName to be sealed")
+        }
+    }
 
     @Test
     fun `test - node implements Serializable`() {
@@ -34,45 +40,11 @@ class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val cl
     }
 
     @Test
-    fun `test - node is sealed`() {
-        if (node.java.isInterface || node.isAbstract) {
-            assertTrue(node.isSealed, "Expected $clazzName to be sealed")
-        }
-    }
-
-    @Test
     fun `test - node implementations contain serialVersionUID`() {
         if (!node.java.isInterface && !Modifier.isAbstract(node.java.modifiers)) {
-            val serialVersionUID = assertNotNull(
-                node.java.getDeclaredFieldOrNull("serialVersionUID"),
-                "Expected $node to declare 'serialVersionUID' field"
-            )
-
-            assertTrue(
-                Modifier.isStatic(serialVersionUID.modifiers),
-                "Expected $node to declare 'serialVersionUID' statically"
-            )
-
-            assertTrue(
-                serialVersionUID.type.isPrimitive,
-                "Expected $node to declare primitive 'serialVersionUID'"
-            )
-
-            assertEquals(
-                serialVersionUID.type, Long::class.javaPrimitiveType,
-                "Expected $node to declare 'serialVersionUID' of type Long"
-            )
+            assertNodeContainsSerialVersionUID(node)
         }
     }
-
-    private fun Class<*>.getDeclaredFieldOrNull(name: String): Field? {
-        return try {
-            getDeclaredField(name)
-        } catch (t: NoSuchFieldException) {
-            return null
-        }
-    }
-
 
     companion object {
         private val ignoredNodes = setOf(
@@ -90,9 +62,7 @@ class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val cl
 
             val resolveQueue = ArrayDeque<KClass<*>>()
 
-            resolveQueue += ideaTcsReflections.getAll(Scanners.SubTypes)
-                .map { Class.forName(it) }
-                .map { it.kotlin }
+            resolveQueue += ideaTcsReflections.getAllKotlinClasses()
                 .filter { it.isIdeaKotlinModel }
 
             while (resolveQueue.isNotEmpty()) {

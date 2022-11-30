@@ -13,3 +13,6 @@ annotation class IdeaKotlinModel
 
 @IdeaKotlinEntity
 annotation class IdeaKotlinService
+
+@IdeaKotlinEntity
+annotation class IdeaKotlinExtra

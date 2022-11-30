@@ -3,8 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.idea.serialize
+package org.jetbrains.kotlin.gradle.idea.test.serialize
 
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinJavaIoSerializableExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaKotlinSerializationContext
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.junit.Test

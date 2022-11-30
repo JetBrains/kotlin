@@ -3,8 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.idea.kpm
+package org.jetbrains.kotlin.gradle.idea.test.kpm
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectBinaryContainer
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectContainer
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectInstanceContainer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmInstances
 import kotlin.test.*
 

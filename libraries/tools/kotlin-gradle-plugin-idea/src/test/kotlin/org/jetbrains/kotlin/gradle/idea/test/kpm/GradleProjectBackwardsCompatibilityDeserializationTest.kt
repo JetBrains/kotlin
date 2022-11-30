@@ -3,19 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.idea.kpm
+package org.jetbrains.kotlin.gradle.idea.test.kpm
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragment
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.kpm.name
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmExtra
 import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaExtrasSerializationExtension.anySerializableKey
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.createProxyInstance
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.unwrapProxyInstance
-import org.jetbrains.kotlin.gradle.idea.testUtils.buildIdeaKpmProject
-import org.jetbrains.kotlin.gradle.idea.testUtils.createKpmProject
-import org.jetbrains.kotlin.gradle.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
+import org.jetbrains.kotlin.gradle.idea.test.testUtils.buildIdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.test.testUtils.createKpmProject
+import org.jetbrains.kotlin.gradle.idea.test.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant

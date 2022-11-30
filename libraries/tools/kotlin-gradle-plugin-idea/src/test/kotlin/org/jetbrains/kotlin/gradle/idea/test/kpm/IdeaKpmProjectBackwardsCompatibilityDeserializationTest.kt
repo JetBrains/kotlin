@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.idea.kpm
+package org.jetbrains.kotlin.gradle.idea.test.kpm
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.kpm.name
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmInstances
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertContainsFragment
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertContainsModule
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.createProxyInstance
-import org.jetbrains.kotlin.gradle.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
+import org.jetbrains.kotlin.gradle.idea.test.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.junit.Test
 import kotlin.test.assertEquals
 
