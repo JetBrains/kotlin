@@ -38,6 +38,11 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         val currentPhase = currentTransformerPhase
             ?: error("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")
 
+        // TODO: symbol current phase can already be requestedPhase or more.
+        // This case is not a violation of any contract
+        // However, now we keep more strict invariant here,
+        // because we don't want to hide some cases when transformers violate phase contract directly
+        // but due to usage of already resolved stdlib classes we don't see it
         if (requestedPhase >= currentPhase) {
             exceptions += FirLazyResolveContractViolationException(
                 """`lazyResolveToPhase($requestedPhase)` cannot be called from a transformer with a phase $currentPhase.
