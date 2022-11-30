@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
@@ -52,9 +53,10 @@ public sealed class KtNonErrorClassType : KtClassType() {
     abstract override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
 }
 
-public abstract class KtFunctionalType : KtNonErrorClassType() {
+public abstract class KtFunctionalType : KtNonErrorClassType(), KtContextReceiversOwner {
     public abstract val isSuspend: Boolean
     public abstract val arity: Int
+    public abstract val hasContextReceivers: Boolean
     public abstract val receiverType: KtType?
     public abstract val hasReceiver: Boolean
     public abstract val parameterTypes: List<KtType>

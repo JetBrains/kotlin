@@ -37,7 +37,7 @@ public abstract class KtContextReceiver : KtLifetimeOwner {
 }
 
 /**
- * Something which can have a [KtContextReceiver] declared. This may be a callable symbol or a class symbol
+ * Something which can have a [KtContextReceiver] declared. This may be a callable symbol, a class symbol, or a functional type.
  */
 public interface KtContextReceiversOwner : KtLifetimeOwner {
     /**

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtTypeProjection
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
@@ -15,16 +17,15 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
+import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -54,6 +55,22 @@ internal class KtFe10FunctionalType(
 
     override val arity: Int
         get() = withValidityAssertion { descriptor.arity }
+
+    override val hasContextReceivers: Boolean
+        get() = withValidityAssertion { type.contextFunctionTypeParamsCount() > 0 }
+
+    @OptIn(KtAnalysisApiInternals::class)
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion {
+            type.getContextReceiverTypesFromFunctionType().map { receiverType ->
+                // Context receivers in function types may not have labels, hence the `null` label.
+                KtContextReceiverImpl(
+                    receiverType.toKtType(analysisContext),
+                    _label = null,
+                    analysisContext.token,
+                )
+            }
+        }
 
     override val hasReceiver: Boolean
         get() = withValidityAssertion {
