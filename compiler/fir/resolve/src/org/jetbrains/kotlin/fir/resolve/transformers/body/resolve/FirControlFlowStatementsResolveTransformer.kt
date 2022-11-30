@@ -194,7 +194,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 ResolutionMode.ContextDependent
             }
             else -> {
-                ResolutionMode.WithExpectedType(expectedTypeRef, expectedTypeMismatchIsReportedInChecker = true)
+                ResolutionMode.WithExpectedType(expectedTypeRef, returnTargetIfFromReturnType = returnExpression.target.labeledElement)
             }
         }
 

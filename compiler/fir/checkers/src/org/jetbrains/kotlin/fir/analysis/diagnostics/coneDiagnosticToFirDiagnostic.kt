@@ -399,12 +399,34 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
 
-                    FirErrors.TYPE_MISMATCH.createOn(
-                        qualifiedAccessSource ?: source,
-                        upperConeType.removeTypeVariableTypes(typeContext),
-                        inferredType.removeTypeVariableTypes(typeContext),
-                        typeMismatchDueToNullability
-                    )
+                    val inferredTypeWithoutTypeVariables = inferredType.removeTypeVariableTypes(typeContext)
+                    val upperConeTypeWithoutTypeVariables = upperConeType.removeTypeVariableTypes(typeContext)
+                    val elementSource = qualifiedAccessSource ?: source
+
+                    if (
+                        inferredTypeWithoutTypeVariables.isErrorType ||
+                        upperConeTypeWithoutTypeVariables.isErrorType ||
+                        elementSource.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+                    ) {
+                        errorsToIgnore.add(this)
+                        return null
+                    }
+
+                    when (val target = position.returnTargetIfFromReturnType) {
+                        null -> FirErrors.TYPE_MISMATCH.createOn(
+                            qualifiedAccessSource ?: source,
+                            upperConeTypeWithoutTypeVariables,
+                            inferredTypeWithoutTypeVariables,
+                            typeMismatchDueToNullability
+                        )
+                        else -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                            qualifiedAccessSource ?: source,
+                            upperConeTypeWithoutTypeVariables,
+                            inferredTypeWithoutTypeVariables,
+                            target,
+                            typeMismatchDueToNullability
+                        )
+                    }
                 }
 
                 is ExplicitTypeParameterConstraintPosition<*>,
@@ -465,6 +487,9 @@ private fun ConstraintSystemError.toDiagnostic(
         else -> null
     }
 }
+
+private val ConeKotlinType.isErrorType: Boolean
+    get() = this is ConeErrorType || typeArguments.any { it.type?.isErrorType == true }
 
 private fun reportInferredIntoEmptyIntersectionError(
     source: KtSourceElement,
