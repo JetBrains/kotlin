@@ -979,7 +979,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         ) {
             parameter<FirTypeParameterSymbol>("usedTypeParameter")
         }
-        val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.PROPERTY_INITIALIZER) {
+        val INITIALIZER_TYPE_MISMATCH by error<KtElement>(PositioningStrategy.PROPERTY_INITIALIZER) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")

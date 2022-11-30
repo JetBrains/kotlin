@@ -16,5 +16,5 @@ class Derived : Base<Int>() {
     val x2: Base<Int>.InnerCell = InnerCell(42)
 
     val test1: <!UNRESOLVED_REFERENCE!>CT<!> = Cell(42)
-    val test2: Base<Int>.CT = <!TYPE_MISMATCH, TYPE_MISMATCH!>Cell(42)<!>
+    val test2: Base<Int>.CT = <!INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH!>Cell(42)<!>
 }

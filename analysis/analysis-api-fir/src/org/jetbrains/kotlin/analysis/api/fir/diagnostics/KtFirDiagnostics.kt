@@ -1919,7 +1919,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val usedTypeParameter: KtTypeParameterSymbol
     }
 
-    abstract class InitializerTypeMismatch : KtFirDiagnostic<KtProperty>() {
+    abstract class InitializerTypeMismatch : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = InitializerTypeMismatch::class
         abstract val expectedType: KtType
         abstract val actualType: KtType

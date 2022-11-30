@@ -66,10 +66,11 @@ class FirCallCompleter(
         expectedTypeRef: FirTypeRef?,
         returnTargetIfFromReturnType: FirFunction? = null,
         isFromAssignment: Boolean = false,
+        isFromInitializer: Boolean = false,
     ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
         completeCall(
             call, expectedTypeRef, mayBeCoercionToUnitApplied = false,
-            returnTargetIfFromReturnType, isFromAssignment, isFromCast = false,
+            returnTargetIfFromReturnType, isFromAssignment, isFromInitializer, isFromCast = false,
             shouldEnforceExpectedType = true,
         )
 
@@ -80,6 +81,7 @@ class FirCallCompleter(
             (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
             (data as? ResolutionMode.WithExpectedType)?.returnTargetIfFromReturnType,
             (data as? ResolutionMode.WithExpectedType)?.isFromAssignment == true,
+            (data as? ResolutionMode.WithExpectedType)?.isFromInitializer == true,
             isFromCast = data is ResolutionMode.WithExpectedTypeFromCast,
             shouldEnforceExpectedType = data !is ResolutionMode.WithSuggestedType,
         )
@@ -89,6 +91,7 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean,
         returnTargetIfFromReturnType: FirFunction?,
         isFromAssignment: Boolean,
+        isFromInitializer: Boolean,
         isFromCast: Boolean,
         shouldEnforceExpectedType: Boolean,
     ): CompletionResult<T>
@@ -113,6 +116,7 @@ class FirCallCompleter(
         addConstraintFromExpectedType(
             returnTargetIfFromReturnType,
             isFromAssignment,
+            isFromInitializer,
             expectedTypeRef,
             shouldEnforceExpectedType,
             candidate,
@@ -166,6 +170,7 @@ class FirCallCompleter(
     private fun addConstraintFromExpectedType(
         returnTargetIfFromReturnType: FirFunction?,
         isFromAssignment: Boolean,
+        isFromInitializer: Boolean,
         expectedTypeRef: FirTypeRef?,
         shouldEnforceExpectedType: Boolean,
         candidate: Candidate,
@@ -177,6 +182,7 @@ class FirCallCompleter(
         val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(
             returnTargetIfFromReturnType,
             isFromAssignment,
+            isFromInitializer,
         )
 
         val system = candidate.system

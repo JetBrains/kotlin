@@ -22,6 +22,7 @@ class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintP
 class ConeExpectedTypeConstraintPosition(
     val returnTargetIfFromReturnType: FirFunction? = null,
     val isFromAssignment: Boolean = false,
+    val isFromInitializer: Boolean = false,
 ) : ExpectedTypeConstraintPosition<Nothing?>(null)
 
 class ConeExplicitTypeParameterConstraintPosition(

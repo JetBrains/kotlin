@@ -219,7 +219,7 @@ object SourceElementPositioningStrategies {
     )
 
     val PROPERTY_INITIALIZER = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.LAST_CHILD,
+        LightTreePositioningStrategies.PROPERTY_INITIALIZER,
         PositioningStrategies.PROPERTY_INITIALIZER
     )
 

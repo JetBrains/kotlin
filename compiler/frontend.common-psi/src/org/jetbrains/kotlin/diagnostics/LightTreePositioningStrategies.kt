@@ -835,6 +835,20 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val PROPERTY_INITIALIZER = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return when (node.tokenType) {
+                KtNodeTypes.PROPERTY -> LAST_CHILD.mark(node, startOffset, endOffset, tree)
+                else -> markElement(node, startOffset, endOffset, tree, node)
+            }
+        }
+    }
+
     val WHOLE_ELEMENT = object : LightTreePositioningStrategy() {}
 
     val LONG_LITERAL_SUFFIX = object : LightTreePositioningStrategy() {
