@@ -100,6 +100,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         }
 
         @Test
+        @TestMetadata("mpp.kt")
+        public void testMpp() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/mpp.kt");
+        }
+
+        @Test
         @TestMetadata("multiFieldValueClasses.kt")
         public void testMultiFieldValueClasses() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/multiFieldValueClasses.kt");
