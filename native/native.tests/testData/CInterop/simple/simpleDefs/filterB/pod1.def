@@ -1,0 +1,3 @@
+language = C
+headers = A.h B.h
+headerFilter=B.h

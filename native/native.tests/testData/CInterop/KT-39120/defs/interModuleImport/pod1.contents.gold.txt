@@ -1,0 +1,4 @@
+    const val POD1MACRO: Int = 42
+    var intPOD1: Int
+        @CCall(id = "knifunptr_pod10_intPOD1_getter") get
+        @CCall(id = "knifunptr_pod11_intPOD1_setter") set

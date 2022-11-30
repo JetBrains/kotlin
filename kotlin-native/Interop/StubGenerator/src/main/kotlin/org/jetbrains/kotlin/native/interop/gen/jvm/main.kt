@@ -68,21 +68,36 @@ fun main(args: Array<String>) {
     processCLibSafe(flavorName, arguments, InternalInteropOptions(arguments.generated, arguments.natives), runFromDaemon = false)
 }
 
-fun interop(
-        flavor: String, args: Array<String>,
-        additionalArgs: InternalInteropOptions,
-        runFromDaemon: Boolean
-): Array<String>? = when (flavor) {
-    "jvm", "native" -> {
-        val cinteropArguments = CInteropArguments()
-        cinteropArguments.argParser.parse(args)
-        val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
-        processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
+class Interop {
+    /**
+     * invoked via reflection from new test system: CompilationToolCallKt.invokeCInterop(),
+     * `interop()` has issues to be invoked directly due to NoSuchMethodError, caused by presence of InternalInteropOptions argtype:
+     * java.lang.IllegalArgumentException: argument type mismatch
+     */
+    fun interopViaReflection(
+            flavor: String, args: Array<String>,
+            runFromDaemon: Boolean,
+            generated: String, natives: String, manifest: String? = null, cstubsName: String? = null
+    ): Array<String>? {
+        val internalInteropOptions = InternalInteropOptions(generated, natives, manifest, cstubsName)
+        return interop(flavor, args, internalInteropOptions, runFromDaemon)
     }
-    "wasm" -> processIdlLib(args, additionalArgs)
-    else -> error("Unexpected flavor")
-}
 
+    fun interop(
+            flavor: String, args: Array<String>,
+            additionalArgs: InternalInteropOptions,
+            runFromDaemon: Boolean
+    ): Array<String>? = when (flavor) {
+        "jvm", "native" -> {
+            val cinteropArguments = CInteropArguments()
+            cinteropArguments.argParser.parse(args)
+            val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
+            processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
+        }
+        "wasm" -> processIdlLib(args, additionalArgs)
+        else -> error("Unexpected flavor")
+    }
+}
 // Options, whose values are space-separated and can be escaped.
 val escapedOptions = setOf("-compilerOpts", "-linkerOpts", "-compiler-options", "-linker-options")
 
@@ -390,7 +405,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
             // The source file is passed in via stdin to ensure the output library is deterministic.
             val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath)
+                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
             runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
             outLib.absolutePath
         }
@@ -496,11 +511,19 @@ internal fun buildNativeLibrary(
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
         addAll(additionalCompilerOpts)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
+        add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
+    }
+
+    // Expanding macros such as __FILE__ or __TIME__ exposes arbitrary generated filenames and timestamps from the compiler pipeline
+    // which are not useful for interop though makes the klib generation non-deterministic. See KT-54284
+    // This macro redefinition just maps to their name in the properties available from Kotlin.
+    val predefinedMacrosRedefinitions = predefinedMacros.map {
+        "#define $it \"$it\""
     }
 
     val compilation = CompilationImpl(
             includes = headerFiles,
-            additionalPreambleLines = def.defHeaderLines,
+            additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
             compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
             language = language
     )
@@ -511,6 +534,7 @@ internal fun buildNativeLibrary(
     val modules = def.config.modules
 
     if (modules.isEmpty()) {
+        require(headerFiles.isEmpty() || !compilation.compilerArgs.contains("-fmodules")) { "cinterop doesn't support having headers in -fmodules mode" }
         val excludeDependentModules = def.config.excludeDependentModules
 
         val headerFilterGlobs = def.config.headerFilter
@@ -526,7 +550,7 @@ internal fun buildNativeLibrary(
 
         val modulesInfo = getModulesInfo(compilation, modules)
 
-        headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders)
+        headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders, modulesInfo.modules)
         includes = modulesInfo.topLevelHeaders
     }
 

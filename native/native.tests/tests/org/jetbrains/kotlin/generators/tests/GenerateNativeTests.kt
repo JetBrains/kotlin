@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -57,6 +54,31 @@ fun main() {
                 suiteTestClassName = "KlibBinaryCompatibilityTestGenerated"
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
+            }
+        }
+
+        // CInterop tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeCInteropFModulesTest>(
+                suiteTestClassName = "CInteropFModulesTestGenerated"
+            ) {
+                model("CInterop/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCInteropNoFModulesTest>(
+                suiteTestClassName = "CInteropNoFModulesTestGenerated"
+            ) {
+                model("CInterop/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCInteropKT39120Test>(
+                suiteTestClassName = "CInteropKT39120TestGenerated"
+            ) {
+                model("CInterop/KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
             }
         }
     }

@@ -48,7 +48,7 @@ sealed class NativeLibraryHeaderFilter {
             val excludeDepdendentModules: Boolean
     ) : NativeLibraryHeaderFilter()
 
-    class Predefined(val headers: Set<String>) : NativeLibraryHeaderFilter()
+    class Predefined(val headers: Set<String>, val modules: List<String>) : NativeLibraryHeaderFilter()
 }
 
 interface Compilation {

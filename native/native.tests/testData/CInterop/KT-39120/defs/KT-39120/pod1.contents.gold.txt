@@ -1,0 +1,4 @@
+    @ExternalObjCClass open class Pod1 : NSObject {
+    @ExternalObjCClass open class Pod1Meta : NSObjectMeta {
+    var pod1VersionNumber: Double
+    val pod1VersionString: CArrayPointer<UByteVar /* = UByteVarOf<UByte> */> /* = CPointer<UByteVar /* = UByteVarOf<UByte> */> */

@@ -4,12 +4,12 @@ import clang.*
 import kotlinx.cinterop.*
 import java.nio.file.Files
 
-data class ModulesInfo(val topLevelHeaders: List<String>, val ownHeaders: Set<String>)
+data class ModulesInfo(val topLevelHeaders: List<String>, val ownHeaders: Set<String>, val modules: List<String>)
 
 fun getModulesInfo(compilation: Compilation, modules: List<String>): ModulesInfo {
-    if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet())
+    if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet(), emptyList())
 
-    withIndex { index ->
+    withIndex(excludeDeclarationsFromPCH = false) { index ->
         ModularCompilation(compilation).use {
             val modulesASTFiles = getModulesASTFiles(index, it, modules)
             return buildModulesInfo(index, modules, modulesASTFiles)
@@ -30,7 +30,7 @@ private fun buildModulesInfo(index: CXIndex, modules: List<String>, modulesASTFi
         }
     }
 
-    return ModulesInfo(topLevelHeaders.toList(), ownHeaders)
+    return ModulesInfo(topLevelHeaders.toList(), ownHeaders, modules)
 }
 
 internal open class ModularCompilation(compilation: Compilation): Compilation by compilation, Disposable {

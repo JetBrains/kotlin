@@ -88,17 +88,17 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
                 kotlinNativeClassLoader = classLoader.classLoader
             )
 
-            val loggedCompilerCall =
-                LoggedData.RealCompilerCall(loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
+            val loggedCompilationToolCall =
+                LoggedData.CompilationToolCall("COMPILER", loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
 
             val result = if (exitCode != ExitCode.OK || compilerOutputHasErrors)
-                TestCompilationResult.CompilerFailure(loggedCompilerCall)
+                TestCompilationResult.CompilationToolFailure(loggedCompilationToolCall)
             else
-                TestCompilationResult.Success(expectedArtifact, loggedCompilerCall)
+                TestCompilationResult.Success(expectedArtifact, loggedCompilationToolCall)
 
-            loggedCompilerCall to result
+            loggedCompilationToolCall to result
         } catch (unexpectedThrowable: Throwable) {
-            val loggedFailure = LoggedData.CompilerCallUnexpectedFailure(loggedCompilerParameters, unexpectedThrowable)
+            val loggedFailure = LoggedData.CompilationToolCallUnexpectedFailure(loggedCompilerParameters, unexpectedThrowable)
             val result = TestCompilationResult.UnexpectedFailure(loggedFailure)
 
             loggedFailure to result
@@ -187,6 +187,52 @@ internal class LibraryCompilation(
 
 internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
+}
+
+internal class CInteropCompilation(
+    targets: KotlinNativeTargets,
+    classLoader: KotlinNativeClassLoader,
+    freeCompilerArgs: TestCompilerArgs,
+    defFile: File,
+    expectedArtifact: KLIB
+) : TestCompilation<KLIB>() {
+
+    override val result: TestCompilationResult<out KLIB> by lazy {
+        val extraArgsArray = freeCompilerArgs.compilerArgs.toTypedArray()
+        val loggedCInteropParameters = LoggedData.CInteropParameters(extraArgs = extraArgsArray, defFile = defFile)
+        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>) = try {
+            val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
+                classLoader.classLoader,
+                targets,
+                defFile,
+                expectedArtifact.klibFile,
+                extraArgsArray
+            )
+
+            val loggedInteropCall = LoggedData.CompilationToolCall(
+                toolName = "CINTEROP",
+                parameters = loggedCInteropParameters,
+                exitCode = exitCode,
+                toolOutput = cinteropOutput,
+                toolOutputHasErrors = cinteropOutputHasErrors,
+                duration = duration
+            )
+            val res = if (exitCode != ExitCode.OK || cinteropOutputHasErrors)
+                TestCompilationResult.CompilationToolFailure(loggedInteropCall)
+            else
+                TestCompilationResult.Success(expectedArtifact, loggedInteropCall)
+
+            loggedInteropCall to res
+        } catch (unexpectedThrowable: Throwable) {
+            val loggedFailure = LoggedData.CompilationToolCallUnexpectedFailure(loggedCInteropParameters, unexpectedThrowable)
+            val res = TestCompilationResult.UnexpectedFailure(loggedFailure)
+
+            loggedFailure to res
+        }
+        expectedArtifact.logFile.writeText(loggedCall.toString())
+
+        immediateResult
+    }
 }
 
 internal class ExecutableCompilation(
