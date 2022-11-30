@@ -132,9 +132,11 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |Project dependencies:
             |+--- org.sample:liba (org.sample:liba-native): 2.0
             ||    \--- stdlib: $kotlinNativeCompilerVersion
-            |\--- org.sample:libb (org.sample:libb-native): 1.0
-            |     ^^^ This module requires symbol sample.liba/C|null[0].
-            |     +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |+--- org.sample:libb (org.sample:libb-native): 1.0
+            ||    ^^^ This module requires symbol sample.liba/C|null[0].
+            ||    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |\--- org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
             |     \--- stdlib: $kotlinNativeCompilerVersion
             |
             |(*) - dependencies omitted (listed previously)
@@ -192,9 +194,11 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |+--- org.sample:liba (org.sample:liba-native): 2.0
             ||    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
             ||    \--- stdlib: $kotlinNativeCompilerVersion
-            |\--- org.sample:libb (org.sample:libb-native): 1.0
-            |     +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |     |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            |+--- org.sample:libb (org.sample:libb-native): 1.0
+            ||    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            ||    |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |\--- org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
             |     \--- stdlib: $kotlinNativeCompilerVersion
             |
             |(*) - dependencies omitted (listed previously)
@@ -271,6 +275,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
 
                 val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask("linkDebugExecutableNative"))
                     .map { matchResult -> matchResult.groupValues[1] }
+                    .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }
                     .map { line -> line.replace(kotlinNativeTargetName, MASKED_TARGET_NAME) }
                     .map { line ->
                         line.replace(COMPRESSED_PLATFORM_LIBS_REGEX) { result ->
