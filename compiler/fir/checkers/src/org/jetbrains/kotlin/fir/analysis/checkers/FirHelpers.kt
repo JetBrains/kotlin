@@ -438,10 +438,6 @@ fun checkTypeMismatch(
     val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
-        if (lValueType.isExtensionFunctionType || rValueType.isExtensionFunctionType) {
-            // TODO: remove after fix of KT-45989
-            return
-        }
         when {
             rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL -> {
                 reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
