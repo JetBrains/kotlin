@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
@@ -414,14 +414,11 @@ abstract class AbstractFirStatusResolveTransformer(
     ): FirStatement = whileAnalysing(property) {
         val overridden = statusResolver.getOverriddenProperties(property, containingClass)
 
-        val overriddenProperties = overridden.map {
-            it.lazyResolveToPhase(FirResolvePhase.STATUS)
-            it.status as FirResolvedDeclarationStatus
-        }
+        val overriddenProperties = overridden.map { it.status as FirResolvedDeclarationStatus }
 
         val overriddenSetters = overridden.mapNotNull {
-            it.setter?.lazyResolveToPhase(FirResolvePhase.STATUS)
-            it.setter?.status as? FirResolvedDeclarationStatus
+            val setter = it.setter ?: return@mapNotNull null
+            setter.status as FirResolvedDeclarationStatus
         }
 
         property.transformStatus(
