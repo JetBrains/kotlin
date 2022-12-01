@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
@@ -39,8 +40,20 @@ class FirDataFrameReceiverInjector(
     val tokenIds: ArrayDeque<ClassId>
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
+    private val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
+
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        return generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenIds, tokenState)
+        val classId = runIf(functionCall.calleeReference.name == Name.identifier("injectAccessors")) {
+            ((functionCall.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance)?.typeRef?.coneType as? ConeClassLikeType)?.classId
+        }
+        return buildList {
+            if (classId != null) {
+                associatedScopes[classId]?.let {
+                    addAll(it)
+                }
+            }
+            addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenIds, tokenState, associatedScopes))
+        }
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
@@ -52,6 +65,7 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     scopeIds: ArrayDeque<ClassId>,
     tokenIds: ArrayDeque<ClassId>,
     tokenState: MutableMap<ClassId, SchemaContext>,
+    associatedScopes: MutableMap<ClassId, List<ConeKotlinType>>,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT
 ): List<ConeKotlinType> {
     val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
@@ -120,8 +134,8 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
         types += ConeClassLikeLookupTagImpl(scopeId).constructClassType(emptyArray(), isNullable = false)
         return marker
     }
-
     dataFrameSchema.materialize(rootMarker)
+    associatedScopes[rootMarker.classId!!] = types
     return types
 }
 

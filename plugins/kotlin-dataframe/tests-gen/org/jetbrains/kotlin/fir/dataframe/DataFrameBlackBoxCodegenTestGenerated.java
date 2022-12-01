@@ -40,6 +40,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("injectAccessorsClassScope.kt")
+    public void testInjectAccessorsClassScope() throws Exception {
+        runTest("testData/box/injectAccessorsClassScope.kt");
+    }
+
+    @Test
     @TestMetadata("join.kt")
     public void testJoin() throws Exception {
         runTest("testData/box/join.kt");
