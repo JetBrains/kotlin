@@ -728,11 +728,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             }
             is ResolutionMode.WithExpectedType ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
-            is ResolutionMode.WithSuggestedType ->
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, data.suggestedTypeRef, data)
             is ResolutionMode.ContextIndependent, is ResolutionMode.AssignmentLValue, is ResolutionMode.ReceiverResolution ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, buildImplicitTypeRef(), data)
-            is ResolutionMode.WithStatus, is ResolutionMode.WithExpectedTypeFromCast ->
+            is ResolutionMode.WithStatus ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
         }
     }
@@ -888,7 +886,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val initializerData = if (backingField.returnTypeRef is FirResolvedTypeRef) {
             withExpectedType(backingField.returnTypeRef)
         } else if (propertyType != null) {
-            ResolutionMode.WithSuggestedType(propertyType)
+            ResolutionMode.WithExpectedType(propertyType, shouldBeStrictlyEnforced = false)
         } else {
             ResolutionMode.ContextDependent
         }

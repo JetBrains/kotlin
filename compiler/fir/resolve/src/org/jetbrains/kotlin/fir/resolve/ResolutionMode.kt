@@ -33,9 +33,22 @@ sealed class ResolutionMode {
         val expectedTypeRef: FirTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+        val fromCast: Boolean = false,
+        // It might be ok if the types turn out to be incompatible
+        // Consider the following examples with properties and their backing fields:
+        //
+        // val items: List field = mutableListOf()
+        // val s: String field = 10 get() = ...
+        // In these examples we should try using the property type information while resolving the initializer,
+        // but it's ok if it's not applicable
+        val shouldBeStrictlyEnforced: Boolean = true,
     ) : ResolutionMode() {
         override fun toString(): String {
-            return "WithExpectedType: ${expectedTypeRef.prettyString()}"
+            return "WithExpectedType: ${expectedTypeRef.prettyString()}, " +
+                    "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
+                    "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
+                    "fromCast=${fromCast}, " +
+                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, "
         }
     }
 
@@ -48,41 +61,6 @@ sealed class ResolutionMode {
     class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode() {
         override fun toString(): String {
             return "LambdaResolution: ${expectedReturnTypeRef.prettyString()}"
-        }
-    }
-
-    class WithExpectedTypeFromCast(
-        val expectedTypeRef: FirTypeRef,
-    ) : ResolutionMode() {
-        override fun toString(): String {
-            return "WithExpectedTypeFromCast: ${expectedTypeRef.prettyString()}"
-        }
-    }
-
-    /**
-     * This resolution mode is similar to
-     * WithExpectedType, but it's ok if the
-     * types turn out to be incompatible.
-     * Consider the following examples with
-     * properties and their backing fields:
-     *
-     * val items: List<T>
-     *     field = mutableListOf()
-     *
-     * val s: String
-     *     field = 10
-     *     get() = ...
-     *
-     * In these examples we should try using
-     * the property type information while
-     * resolving the initializer, but it's ok
-     * if it's not applicable.
-     */
-    class WithSuggestedType(
-        val suggestedTypeRef: FirTypeRef,
-    ) : ResolutionMode() {
-        override fun toString(): String {
-            return "WithSuggestedType: ${suggestedTypeRef.prettyString()}"
         }
     }
 
@@ -110,13 +88,11 @@ sealed class ResolutionMode {
     }
 }
 
-fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {
-    is ResolutionMode.WithExpectedType -> expectedTypeRef
+fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? = when (this) {
+    is ResolutionMode.WithExpectedType -> expectedTypeRef.takeIf { !this.fromCast }
     is ResolutionMode.ContextIndependent,
     is ResolutionMode.AssignmentLValue,
     is ResolutionMode.ReceiverResolution -> components.noExpectedType
-    is ResolutionMode.WithExpectedTypeFromCast -> expectedTypeRef.takeIf { allowFromCast }
-    is ResolutionMode.WithSuggestedType -> suggestedTypeRef
     else -> null
 }
 
