@@ -924,6 +924,33 @@ abstract class KotlinCompile @Inject constructor(
     }
 }
 
+/**
+ * KotlinCompile is skipped when there is no Kotlin souces.
+ * KotlinCompileWithJava runs when any of Kotlin or Java sources exist.
+ */
+@CacheableTask
+abstract class KotlinCompileWithJava @Inject constructor(
+    compilerOptions: KotlinJvmCompilerOptions,
+    workerExecutor: WorkerExecutor,
+    objectFactory: ObjectFactory
+) : KotlinCompile(compilerOptions, workerExecutor, objectFactory) {
+
+    override fun skipCondition(): Boolean = super.skipCondition() && javaSources.isEmpty
+
+    @get:SkipWhenEmpty
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    override val javaSources: FileCollection
+        get() = super.javaSources
+
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+        args.allowNoSourceFiles = true
+    }
+}
+
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
     override val compilerOptions: KotlinJsCompilerOptions,

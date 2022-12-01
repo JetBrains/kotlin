@@ -57,6 +57,48 @@ class KotlinJvmApiTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Kotlin compilation can be set up using APIs")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun kotlinCompilationShouldRunIfSetUpWithApiJavaOnly(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject",
+            gradleVersion = gradleVersion
+        ) {
+            projectPath.resolve("src").let {
+                it.deleteRecursively()
+                it.resolve("main").createDirectories()
+                it.resolve("main/foo.java").writeText(
+                    """
+                    class Foo {}
+                    """.trimIndent()
+                )
+            }
+
+            buildGradle.modify {
+                it.replace("id 'org.jetbrains.kotlin.jvm'", "id 'org.jetbrains.kotlin.jvm' apply false") +
+                        """
+                        import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
+                        KotlinBaseApiPlugin apiPlugin = plugins.apply(KotlinBaseApiPlugin.class)
+
+                        apiPlugin.registerKotlinJvmCompileWithJavaTask("foo").configure {
+                            it.source("src/main")
+                            it.multiPlatformEnabled.set(false)
+                            it.moduleName.set("main")
+                            it.ownModuleName.set("main")
+                            it.sourceSetName.set("main")
+                            it.useModuleDetection.set(false)
+                            it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))
+                        }
+                        """.trimIndent()
+            }
+
+            build("foo") {
+                assertTasksExecuted(":foo")
+            }
+        }
+    }
+
     @DisplayName("KAPT can be set up using APIs")
     @OtherGradlePluginTests
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
