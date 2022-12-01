@@ -525,7 +525,7 @@ internal object CheckVisibility : CheckerStage() {
         val visibilityChecker = callInfo.session.visibilityChecker
         val symbol = candidate.symbol
         val declaration = symbol.fir
-        if (declaration is FirMemberDeclaration) {
+        if (declaration is FirMemberDeclaration && declaration !is FirConstructor) {
             if (!visibilityChecker.isVisible(declaration, candidate)) {
                 sink.yieldDiagnostic(VisibilityError)
                 return
@@ -538,13 +538,16 @@ internal object CheckVisibility : CheckerStage() {
 
             if (classSymbol is FirRegularClassSymbol) {
                 if (classSymbol.fir.classKind.isSingleton) {
-                    sink.yieldDiagnostic(VisibilityError)
+                    sink.yieldDiagnostic(HiddenCandidate)
                 }
 
-                if (!visibilityChecker.isVisible(
-                        declaration, candidate.callInfo, dispatchReceiverValue = null, importedQualifierForStatic = null
-                    )
-                ) {
+                val visible = visibilityChecker.isVisible(
+                    declaration,
+                    candidate.callInfo,
+                    dispatchReceiverValue = null,
+                    importedQualifierForStatic = null
+                )
+                if (!visible) {
                     sink.yieldDiagnostic(VisibilityError)
                 }
             }

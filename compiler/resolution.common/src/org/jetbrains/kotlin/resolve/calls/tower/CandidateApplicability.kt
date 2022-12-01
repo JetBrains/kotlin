@@ -19,11 +19,6 @@ enum class CandidateApplicability {
     HIDDEN,
 
     /**
-     * Candidate isn't visible. Provokes INVISIBLE_REFERENCE.
-     */
-    K2_VISIBILITY_ERROR,
-
-    /**
      * Candidate could be successful but requires an unsupported feature.
      * Reported for references to local variables in K2.
      * Provokes UNSUPPORTED.
@@ -61,6 +56,11 @@ enum class CandidateApplicability {
      * This applicability is used in K1 as a catch-all for all other errors.
      */
     K1_RUNTIME_ERROR,
+
+    /**
+     * Candidate isn't visible. Provokes INVISIBLE_REFERENCE.
+     */
+    K2_VISIBILITY_ERROR,
 
     /**
      * Candidate could be successful but receiver (or argument?) nullability doesn't match

@@ -12,7 +12,7 @@ FILE: singletonConstructors.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            <HIDDEN: /A.Comp.Comp is invisible>#()
+            <HIDDEN: /A.Comp.Comp is deprecated with DeprecationLevel.HIDDEN>#()
         }
 
     }
@@ -21,7 +21,7 @@ FILE: singletonConstructors.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val x: R|B| = <HIDDEN: /B.B is invisible>#()
+        private final val x: R|B| = <HIDDEN: /B.B is deprecated with DeprecationLevel.HIDDEN>#()
             private get(): R|B|
 
     }
