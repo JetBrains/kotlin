@@ -10,20 +10,20 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
-sealed class ResolutionMode {
-    object ContextDependent : ResolutionMode() {
+sealed class ResolutionMode(val forceFullCompletion: Boolean) {
+    object ContextDependent : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String = "ContextDependent"
     }
 
-    object ContextDependentDelegate : ResolutionMode() {
+    object ContextDependentDelegate : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String = "ContextDependentDelegate"
     }
 
-    object ContextIndependent : ResolutionMode() {
+    object ContextIndependent : ResolutionMode(forceFullCompletion = true) {
         override fun toString(): String = "ContextIndependent"
     }
 
-    object ReceiverResolution : ResolutionMode() {
+    object ReceiverResolution : ResolutionMode(forceFullCompletion = true) {
         override fun toString(): String = "ReceiverResolution"
     }
 
@@ -41,7 +41,7 @@ sealed class ResolutionMode {
         // In these examples we should try using the property type information while resolving the initializer,
         // but it's ok if it's not applicable
         val shouldBeStrictlyEnforced: Boolean = true,
-    ) : ResolutionMode() {
+    ) : ResolutionMode(forceFullCompletion = true) {
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}, " +
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
@@ -51,13 +51,13 @@ sealed class ResolutionMode {
         }
     }
 
-    class WithStatus(val status: FirDeclarationStatus) : ResolutionMode() {
+    class WithStatus(val status: FirDeclarationStatus) : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String {
             return "WithStatus: ${status.render()}"
         }
     }
 
-    class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode() {
+    class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String {
             return "LambdaResolution: ${expectedReturnTypeRef.prettyString()}"
         }
