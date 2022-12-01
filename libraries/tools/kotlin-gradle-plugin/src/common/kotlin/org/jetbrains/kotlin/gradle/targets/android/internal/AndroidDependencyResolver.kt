@@ -32,6 +32,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
+import org.gradle.internal.component.local.model.DefaultLocalComponentGraphResolveState
 import org.gradle.internal.component.model.AttributeConfigurationSelector
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
@@ -286,18 +287,18 @@ object AndroidDependencyResolver {
         attributes: AttributeContainer,
         attributesSchema: AttributesSchema
     ): List<Configuration> {
-        return projectDependencies.mapNotNull { projectDependency ->
+        return projectDependencies.flatMap { projectDependency ->
             val rootComponentMetaData = (projectDependency.findProjectConfiguration() as? ConfigurationInternal)?.toRootComponentMetaData()
-                ?: return@mapNotNull null
+                ?: return@flatMap emptyList()
 
-            val matching = AttributeConfigurationSelector.selectConfigurationUsingAttributeMatching(
-                (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@mapNotNull null,
+            val matching = AttributeConfigurationSelector.selectVariantsUsingAttributeMatching(
+                (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@flatMap emptyList(),
                 emptyList<Capability>(),
-                rootComponentMetaData,
-                (attributesSchema as? AttributesSchemaInternal) ?: return@mapNotNull null,
+                DefaultLocalComponentGraphResolveState(rootComponentMetaData),
+                (attributesSchema as? AttributesSchemaInternal) ?: return@flatMap emptyList(),
                 emptyList()
             )
-            projectDependency.dependencyProject.configurations.findByName(matching.name)
+            matching.variants.mapNotNull { projectDependency.dependencyProject.configurations.findByName(it.name) }
         }
     }
 
