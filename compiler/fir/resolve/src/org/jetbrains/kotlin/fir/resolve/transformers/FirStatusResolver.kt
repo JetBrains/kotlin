@@ -136,8 +136,8 @@ class FirStatusResolver(
                 }
                 ProcessorAction.NEXT
             }
-        }.mapNotNull {
-            it.status as? FirResolvedDeclarationStatus
+        }.map {
+            it.status as FirResolvedDeclarationStatus
         }
     }
 
