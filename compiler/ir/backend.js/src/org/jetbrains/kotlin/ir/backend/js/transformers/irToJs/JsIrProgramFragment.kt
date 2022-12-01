@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.File
@@ -16,7 +17,7 @@ class JsIrProgramFragment(val packageFqn: String) {
     val exports = JsCompositeBlock()
     val importedModules = mutableListOf<JsImportedModule>()
     val imports = mutableMapOf<String, JsExpression>()
-    var dts: String? = null
+    var dts: TypeScriptFragment? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
     val initializers = JsCompositeBlock()
     var mainFunction: JsStatement? = null

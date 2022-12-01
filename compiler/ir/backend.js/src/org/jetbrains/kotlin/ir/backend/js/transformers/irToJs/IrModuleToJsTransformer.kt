@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 import java.util.*
 
@@ -107,19 +107,15 @@ class IrModuleToJsTransformer(
     private val isEsModules = moduleKind == ModuleKind.ES
     private val sourceMapInfo = SourceMapsInfo.from(backendContext.configuration)
 
-    private class IrAndExportedDeclarations(val fragment: IrModuleFragment, val files: List<Pair<IrFile, List<ExportedDeclaration>>>)
+    private class IrFileExports(val file: IrFile, val exports: List<ExportedDeclaration>, val tsDeclarations: TypeScriptFragment?)
 
-    private fun List<IrAndExportedDeclarations>.flatExportedDeclarations(): List<ExportedDeclaration> {
-        return this.flatMap { data -> data.files.flatMap { it.second } }
-    }
+    private class IrAndExportedDeclarations(val fragment: IrModuleFragment, val files: List<IrFileExports>)
 
     private fun associateIrAndExport(modules: Iterable<IrModuleFragment>): List<IrAndExportedDeclarations> {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
 
         return modules.map { module ->
-            val files = module.files.map { file ->
-                file to exportModelGenerator.generateExportWithExternals(file)
-            }
+            val files = exportModelGenerator.generateExportWithExternals(module.files)
             IrAndExportedDeclarations(module, files)
         }
     }
@@ -144,9 +140,6 @@ class IrModuleToJsTransformer(
 
     fun generateModule(modules: Iterable<IrModuleFragment>, modes: Set<TranslationMode>, relativeRequirePath: Boolean): CompilerResult {
         val exportData = associateIrAndExport(modules)
-        val dts = runIf(shouldGenerateTypeScriptDefinitions) {
-            ExportedModule(mainModuleName, moduleKind, exportData.flatExportedDeclarations()).toTypeScript()
-        }
         doStaticMembersLowering(modules)
 
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
@@ -163,39 +156,41 @@ class IrModuleToJsTransformer(
             result[it] = makeJsCodeGeneratorFromIr(exportData, it).generateJsCode(relativeRequirePath, true)
         }
 
-        return CompilerResult(result, dts)
+        return CompilerResult(result)
     }
 
-    fun makeJsCodeGeneratorAndDts(modules: Iterable<IrModuleFragment>, mode: TranslationMode): Pair<JsCodeGenerator, String?> {
+    fun makeJsCodeGenerator(modules: Iterable<IrModuleFragment>, mode: TranslationMode): JsCodeGenerator {
         val exportData = associateIrAndExport(modules)
-        val dts = runIf(shouldGenerateTypeScriptDefinitions) {
-            ExportedModule(mainModuleName, moduleKind, exportData.flatExportedDeclarations()).toTypeScript()
-        }
         doStaticMembersLowering(modules)
 
         if (mode.dce) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
         }
 
-        return makeJsCodeGeneratorFromIr(exportData, mode) to dts
+        return makeJsCodeGeneratorFromIr(exportData, mode)
     }
 
     fun makeIrFragmentsGenerators(files: Collection<IrFile>, allModules: Collection<IrModuleFragment>): List<() -> JsIrProgramFragment> {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
-
-        val exportData = files.map { it to exportModelGenerator.generateExportWithExternals(it) }
+        val exportData = exportModelGenerator.generateExportWithExternals(files)
 
         doStaticMembersLowering(allModules)
 
-        return exportData.map { (file, exports) ->
-            { generateProgramFragment(file, exports, minimizedMemberNames = false) }
+        return exportData.map {
+            { generateProgramFragment(it, minimizedMemberNames = false) }
         }
     }
 
-    private fun ExportModelGenerator.generateExportWithExternals(irFile: IrFile): List<ExportedDeclaration> {
-        val exports = generateExport(irFile)
-        val additionalExports = backendContext.externalPackageFragment[irFile.symbol]?.let { generateExport(it) } ?: emptyList()
-        return additionalExports + exports
+    private fun ExportModelGenerator.generateExportWithExternals(irFiles: Collection<IrFile>): List<IrFileExports> {
+        return irFiles.map { irFile ->
+            val exports = generateExport(irFile)
+            val additionalExports = backendContext.externalPackageFragment[irFile.symbol]?.let { generateExport(it) } ?: emptyList()
+            val allExports = additionalExports + exports
+            val tsDeclarations = runIf(shouldGenerateTypeScriptDefinitions) {
+                allExports.ifNotEmpty { toTypeScriptFragment(moduleKind) }
+            }
+            IrFileExports(irFile, allExports, tsDeclarations)
+        }
     }
 
     private fun IrModuleFragment.externalModuleName(): String {
@@ -213,8 +208,8 @@ class IrModuleToJsTransformer(
                 JsIrModule(
                     data.fragment.safeName,
                     data.fragment.externalModuleName(),
-                    data.files.map { (file, exports) ->
-                        generateProgramFragment(file, exports, mode.minimizedMemberNames)
+                    data.files.map {
+                        generateProgramFragment(it, mode.minimizedMemberNames)
                     }
                 )
             }
@@ -226,11 +221,7 @@ class IrModuleToJsTransformer(
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
-    private fun generateProgramFragment(
-        file: IrFile,
-        exports: List<ExportedDeclaration>,
-        minimizedMemberNames: Boolean
-    ): JsIrProgramFragment {
+    private fun generateProgramFragment(fileExports: IrFileExports, minimizedMemberNames: Boolean): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
 
         val globalNameScope = NameTable<IrDeclaration>()
@@ -241,9 +232,9 @@ class IrModuleToJsTransformer(
             globalNameScope = globalNameScope
         )
 
-        val result = JsIrProgramFragment(file.fqName.asString()).apply {
+        val result = JsIrProgramFragment(fileExports.file.fqName.asString()).apply {
             if (shouldGeneratePolyfills) {
-                polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(file)
+                polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(fileExports.file)
             }
         }
 
@@ -251,20 +242,17 @@ class IrModuleToJsTransformer(
         val globalNames = NameTable<String>(globalNameScope)
         val exportStatements =
             ExportModelToJsStatements(staticContext, { globalNames.declareFreshName(it, it) }).generateModuleExport(
-                ExportedModule(mainModuleName, moduleKind, exports),
+                ExportedModule(mainModuleName, moduleKind, fileExports.exports),
                 internalModuleName,
                 isEsModules
             )
 
         result.exports.statements += exportStatements
-
-        if (shouldGenerateTypeScriptDefinitions && exports.isNotEmpty()) {
-            result.dts = exports.toTypeScript(moduleKind)
-        }
+        result.dts = fileExports.tsDeclarations
 
         val statements = result.declarations.statements
 
-        val fileStatements = file.accept(IrFileToJsTransformer(useBareParameterNames = true), staticContext).statements
+        val fileStatements = fileExports.file.accept(IrFileToJsTransformer(useBareParameterNames = true), staticContext).statements
         if (fileStatements.isNotEmpty()) {
             var startComment = ""
 
@@ -273,7 +261,7 @@ class IrModuleToJsTransformer(
             }
 
             if (generateRegionComments || generateFilePaths) {
-                val originalPath = file.path
+                val originalPath = fileExports.file.path
                 val path = pathPrefixMap.entries
                     .find { (k, _) -> originalPath.startsWith(k) }
                     ?.let { (k, v) -> v + originalPath.substring(k.length) }
@@ -303,7 +291,7 @@ class IrModuleToJsTransformer(
         result.initializers.statements += staticContext.initializerBlock.statements
 
         if (mainArguments != null) {
-            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(file)?.let {
+            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(fileExports.file)?.let {
                 val jsName = staticContext.getNameForStaticFunction(it)
                 val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
                 val generateContinuation = it.isLoweredSuspendFunction(backendContext)
@@ -311,14 +299,14 @@ class IrModuleToJsTransformer(
             }
         }
 
-        backendContext.testFunsPerFile[file]?.let {
+        backendContext.testFunsPerFile[fileExports.file]?.let {
             result.testFunInvocation = JsInvocation(staticContext.getNameForStaticFunction(it).makeRef()).makeStmt()
             result.suiteFn = staticContext.getNameForStaticFunction(backendContext.suiteFun!!.owner)
         }
 
         result.importedModules += nameGenerator.importedModules
 
-        val definitionSet = file.declarations.toSet()
+        val definitionSet = fileExports.file.declarations.toSet()
 
         fun computeTag(declaration: IrDeclaration): String? {
             val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.toString()
@@ -341,7 +329,7 @@ class IrModuleToJsTransformer(
             result.imports[tag] = importExpression
         }
 
-        file.declarations.forEach {
+        fileExports.file.declarations.forEach {
             computeTag(it)?.let { tag ->
                 result.definitions += tag
             }
@@ -422,7 +410,7 @@ private fun generateWrappedModuleBody(
             }
         }
 
-        return CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
+        return mainModule.addDependencies(dependencies)
     } else {
         return generateSingleWrappedModuleBody(
             mainModuleName,
@@ -484,6 +472,7 @@ fun generateSingleWrappedModuleBody(
 
     return CompilationOutputs(
         jsCode.toString(),
+        fragments.mapNotNull { it.dts }.ifNotEmpty { joinTypeScriptFragments() },
         program.takeIf { outJsProgram },
         sourceMapBuilder?.build()
     )

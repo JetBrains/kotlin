@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
+import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -81,7 +82,9 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
             fragment.suiteFn = deserializeName(proto.suiteFunction)
         }
 
-        fragment.dts = proto.dts
+        if (proto.hasDts()) {
+            fragment.dts = TypeScriptFragment(proto.dts)
+        }
         fragment.definitions += proto.definitionsList.map { deserializeString(it) }
 
         return fragment

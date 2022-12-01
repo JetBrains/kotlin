@@ -119,8 +119,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         return K2JSCompilerArguments()
     }
 
-    private data class TransformResult(val out: CompilationOutputs, val dts: String?)
-
     private class Ir2JsTransformer(
         val arguments: K2JSCompilerArguments,
         val module: ModulesStructure,
@@ -150,18 +148,16 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
         }
 
-        private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String?> {
+        private fun makeJsCodeGenerator(): JsCodeGenerator {
             val ir = lowerIr()
             val transformer = IrModuleToJsTransformer(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames)
-            return transformer.makeJsCodeGeneratorAndDts(ir.allModules, mode)
+            return transformer.makeJsCodeGenerator(ir.allModules, mode)
         }
 
-        fun compileAndTransformIrNew(): TransformResult {
-            val (generator, dts) = makeJsCodeGeneratorAndDts()
-            val out = generator.generateJsCode(relativeRequirePath = true, outJsProgram = false)
-            return TransformResult(out, dts)
+        fun compileAndTransformIrNew(): CompilationOutputs {
+            return makeJsCodeGenerator().generateJsCode(relativeRequirePath = true, outJsProgram = false)
         }
     }
 
@@ -308,6 +304,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (arguments.irProduceJs) {
+            val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND] ?: error("cannot get 'module kind' from configuration")
+
             messageCollector.report(INFO, "Produce executable: $outputDirPath")
             messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
 
@@ -316,14 +314,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 val jsExecutableProducer = JsExecutableProducer(
                     mainModuleName = moduleName,
-                    moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!,
+                    moduleKind = moduleKind,
                     sourceMapsInfo = SourceMapsInfo.from(configurationJs),
                     caches = icCaches,
                     relativeRequirePath = true
                 )
 
                 val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.irPerModule, outJsProgram = false)
-                outputs.write(outputDir, outputName)
+                outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
 
                 messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
                 for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
@@ -390,16 +388,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             try {
                 val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
-                val (outputs, tsDefinitions) = ir2JsTransformer.compileAndTransformIrNew()
+                val outputs = ir2JsTransformer.compileAndTransformIrNew()
 
                 messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
-                outputs.write(outputDir, outputName)
-
-                if (tsDefinitions != null) {
-                    val dtsFile = outputDir.resolve("$outputName.d.ts")
-                    dtsFile.writeText(tsDefinitions)
-                }
+                outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
             } catch (e: CompilationException) {
                 messageCollector.report(
                     ERROR,
@@ -707,7 +700,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         return icCaches
     }
 
-    private fun CompilationOutputs.write(outputDir: File, outputName: String) {
+    private fun CompilationOutputs.write(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind) {
         val outputFile = outputDir.resolve("$outputName.js")
         outputFile.parentFile.mkdirs()
         outputFile.write(this)
@@ -716,6 +709,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 it.parentFile.mkdirs()
                 it.write(content)
             }
+        }
+
+        if (genDTS) {
+            val dtsFile = outputDir.resolve("$outputName.d.ts")
+            dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
         }
     }
 

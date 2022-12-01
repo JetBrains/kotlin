@@ -81,7 +81,7 @@ class JsIrAstSerializer: JsAstSerializerBase() {
         }
 
         fragment.dts?.let {
-            fragmentBuilder.dts = it
+            fragmentBuilder.dts = it.raw
         }
 
         fragment.suiteFn?.let {

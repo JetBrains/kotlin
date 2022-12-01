@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnb
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
@@ -24,19 +26,30 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
 class CompilerResult(
     val outputs: Map<TranslationMode, CompilationOutputs>,
-    val tsDefinitions: String? = null
 )
 
 class CompilationOutputs(
     val jsCode: String,
+    val tsDefinitions: TypeScriptFragment? = null,
     val jsProgram: JsProgram? = null,
     val sourceMap: String? = null,
     val dependencies: Iterable<Pair<String, CompilationOutputs>> = emptyList()
-)
+) {
+    fun addDependencies(depends: Iterable<Pair<String, CompilationOutputs>>): CompilationOutputs {
+        return CompilationOutputs(jsCode, tsDefinitions, jsProgram, sourceMap, depends)
+    }
+
+    fun getFullTsDefinition(name: String, moduleKind: ModuleKind): String {
+        val allTsDefinitions = dependencies.mapNotNull { it.second.tsDefinitions } + listOfNotNull(tsDefinitions)
+        return allTsDefinitions.toTypeScript(name, moduleKind)
+    }
+}
 
 class LoweredIr(
     val context: JsIrBackendContext,

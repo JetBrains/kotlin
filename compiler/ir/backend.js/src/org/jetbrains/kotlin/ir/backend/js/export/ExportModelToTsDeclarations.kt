@@ -25,12 +25,19 @@ private const val declareExorted = "export $declare"
 private const val NonExistent = "__NonExistent"
 private const val syntheticObjectNameSeparator = '$'
 
-fun ExportedModule.toTypeScript(): String {
-    return ExportModelToTsDeclarations().generateTypeScript(name, this)
+@JvmInline
+value class TypeScriptFragment(val raw: String)
+
+fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind): TypeScriptFragment {
+    return ExportModelToTsDeclarations().generateTypeScriptFragment(moduleKind, this)
 }
 
-fun List<ExportedDeclaration>.toTypeScript(moduleKind: ModuleKind): String {
-    return ExportModelToTsDeclarations().generateTypeScript(moduleKind, this)
+fun List<TypeScriptFragment>.joinTypeScriptFragments(): TypeScriptFragment {
+    return TypeScriptFragment(joinToString("\n") { it.raw })
+}
+
+fun List<TypeScriptFragment>.toTypeScript(name: String, moduleKind: ModuleKind): String {
+    return ExportModelToTsDeclarations().generateTypeScript(name, moduleKind, this)
 }
 
 // TODO: Support module kinds other than plain
@@ -40,24 +47,24 @@ class ExportModelToTsDeclarations {
     private val ModuleKind.indent: String
         get() = if (this == ModuleKind.PLAIN) "    " else ""
 
-    fun generateTypeScript(name: String, module: ExportedModule): String {
+    fun generateTypeScript(name: String, moduleKind: ModuleKind, declarations: List<TypeScriptFragment>): String {
         val types = """
            type $Nullable<T> = T | null | undefined
-        """.trimIndent().prependIndent(module.moduleKind.indent) + "\n"
+        """.trimIndent().prependIndent(moduleKind.indent) + "\n"
 
-        val declarationsDts = types + module.declarations.toTypeScript(module.moduleKind)
+        val declarationsDts = types + declarations.joinTypeScriptFragments().raw
 
         val namespaceName = sanitizeName(name, withHash = false)
 
-        return when (module.moduleKind) {
+        return when (moduleKind) {
             ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
             ModuleKind.AMD, ModuleKind.COMMON_JS, ModuleKind.ES -> declarationsDts
             ModuleKind.UMD -> "$declarationsDts\nexport as namespace $namespaceName;"
         }
     }
 
-    fun generateTypeScript(moduleKind: ModuleKind, declarations: List<ExportedDeclaration>): String {
-        return declarations.toTypeScript(moduleKind)
+    fun generateTypeScriptFragment(moduleKind: ModuleKind, declarations: List<ExportedDeclaration>): TypeScriptFragment {
+        return TypeScriptFragment(declarations.toTypeScript(moduleKind))
     }
 
     private fun List<ExportedDeclaration>.toTypeScript(moduleKind: ModuleKind): String {

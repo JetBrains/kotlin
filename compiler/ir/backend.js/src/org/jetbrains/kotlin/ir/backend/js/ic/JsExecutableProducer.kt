@@ -100,7 +100,7 @@ class JsExecutableProducer(
             it.jsIrHeader.externalModuleName to it.compileModule(it.jsIrHeader.externalModuleName, false)
         }
         stopwatch.stop()
-        val compilationOut = CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
+        val compilationOut = mainModule.addDependencies(dependencies)
         return BuildResult(compilationOut, rebuildModules)
     }
 }

@@ -105,8 +105,7 @@ class JsIrBackendFacade(
                         relativeRequirePath = false
                     )
                     jsExecutableProducer.buildExecutable(it.perModule, true).compilationOut
-                },
-                tsDefinitions = null
+                }
             )
             return BinaryArtifacts.Js.JsIrArtifact(
                 outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
@@ -164,7 +163,8 @@ class JsIrBackendFacade(
         val isEsModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives ||
                 module.directives[JsEnvironmentConfigurationDirectives.MODULE_KIND].contains(ModuleKind.ES)
 
-        val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL) + module.kind.extension)
+        val outputFile =
+            File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL) + module.kind.extension)
 
         val transformer = IrModuleToJsTransformer(
             loweredIr.context,
@@ -174,15 +174,15 @@ class JsIrBackendFacade(
                 isEsModules && granularity != JsGenerationGranularity.WHOLE_PROGRAM
             )
         )
-            // If runIrDce then include DCE results
-            // If perModuleOnly then skip whole program
-            // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
-            val translationModes = TranslationMode.values()
-                .filter { (it.dce || !onlyIrDce) && (!it.dce || runIrDce) && (!perModuleOnly || it.perModule) }
-                .filter { it.dce == it.minimizedMemberNames }
-                .toSet()
-            val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, false)
-            return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
+        // If runIrDce then include DCE results
+        // If perModuleOnly then skip whole program
+        // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
+        val translationModes = TranslationMode.values()
+            .filter { (it.dce || !onlyIrDce) && (!it.dce || runIrDce) && (!perModuleOnly || it.perModule) }
+            .filter { it.dce == it.minimizedMemberNames }
+            .toSet()
+        val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, false)
+        return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
     }
 
     private fun IrModuleFragment.resolveTestPathes() {
@@ -195,7 +195,7 @@ class JsIrBackendFacade(
         val filesToLoad = module.files.takeIf { !firstTimeCompilation }?.map { "/${it.relativePath}" }?.toSet()
 
         val messageLogger = configuration.irMessageLogger
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()),)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()))
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val mainModuleLib = testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
@@ -244,9 +244,13 @@ class JsIrBackendFacade(
         }
 
         if (generateDts) {
+            val tsFiles = compilerResult.outputs.entries.associate { it.value.getFullTsDefinition(moduleId, moduleKind) to it.key }
+            val tsDefinitions = tsFiles.entries.singleOrNull()?.key
+                ?: error("[${tsFiles.values.joinToString { it.name }}] make different TypeScript")
+
             outputFile
                 .withReplacedExtensionOrNull("_v5${moduleKind.extension}", ".d.ts")!!
-                .write(compilerResult.tsDefinitions ?: error("No ts definitions"))
+                .write(tsDefinitions)
         }
 
         return this

@@ -74,7 +74,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     fun fetchCompiledJsCode(artifact: ModuleArtifact) = artifact.artifactsDir?.let { cacheDir ->
         val jsCode = File(cacheDir, CACHED_MODULE_JS).ifExists { readText() }
         val sourceMap = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { readText() }
-        jsCode?.let { CompilationOutputs(it, null, sourceMap) }
+        jsCode?.let { CompilationOutputs(it, null, null, sourceMap) }
     }
 
     fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputs) = artifact.artifactsDir?.let { cacheDir ->
