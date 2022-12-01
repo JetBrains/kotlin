@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
@@ -29,6 +31,19 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
 object IR_DECLARATION_ORIGIN_VOLATILE : IrDeclarationOriginImpl("VOLATILE")
 
 internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
+    private val symbols = context.ir.symbols
+    private val irBuiltins = context.irBuiltIns
+    private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
+        putValueArgument(0, expression)
+        putValueArgument(1, irByte(1))
+    }
+    private fun IrBuilderWithScope.irBoolToByte(expression: IrExpression) = irWhen(irBuiltins.byteType, listOf(
+        irBranch(expression, irByte(1)),
+        irElseBranch(irByte(0))
+    ))
+    private val convertedBooleanFields = mutableSetOf<IrFieldSymbol>()
+    private fun IrField.requiresBooleanConversion() = (type == irBuiltins.booleanType && hasAnnotation(KonanFqNames.volatile)) || symbol in convertedBooleanFields
+
     private fun buildIntrinsicFunction(irField: IrField, intrinsicType: IntrinsicType, builder: IrSimpleFunction.() -> Unit) = context.irFactory.buildFun {
         isExternal = true
         origin = IR_DECLARATION_ORIGIN_VOLATILE
@@ -108,6 +123,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
             override fun visitClass(declaration: IrClass): IrStatement {
+                declaration.transformChildrenVoid()
                 declaration.declarations.transformFlat {
                     when {
                         it !is IrProperty -> null
@@ -128,12 +144,38 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         }
                     }
                 }
-                declaration.transformChildrenVoid()
                 return declaration
             }
 
+            override fun visitField(declaration: IrField): IrStatement {
+                if (declaration.type == irBuiltins.booleanType && declaration.hasAnnotation(KonanFqNames.volatile)) {
+                    convertedBooleanFields.add(declaration.symbol)
+                    declaration.type = irBuiltins.byteType
+                }
+                return super.visitField(declaration)
+            }
+
+
             private fun unsupported(message: String) = builder.irCall(context.ir.symbols.throwIllegalArgumentExceptionWithMessage).apply {
                 putValueArgument(0, builder.irString(message))
+            }
+
+            override fun visitGetField(expression: IrGetField): IrExpression {
+                super.visitGetField(expression)
+                return if (expression.symbol.owner.requiresBooleanConversion()) {
+                    builder.at(expression).irByteToBool(expression.apply { type = irBuiltins.byteType })
+                } else {
+                    expression
+                }
+            }
+
+            override fun visitSetField(expression: IrSetField): IrExpression {
+                super.visitSetField(expression)
+                return if (expression.symbol.owner.requiresBooleanConversion()) {
+                    expression.apply { value = builder.at(value).irBoolToByte(value) }
+                } else {
+                    expression
+                }
             }
 
             private val intrinsicMap = mapOf(
@@ -163,6 +205,19 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     putValueArgument(0, expression.getValueArgument(1))
                     if (intrinsicType == IntrinsicType.COMPARE_AND_SET_FIELD || intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD) {
                         putValueArgument(1, expression.getValueArgument(2))
+                    }
+                }.let {
+                    if (backingField.requiresBooleanConversion()) {
+                        for (arg in 0 until it.valueArgumentsCount) {
+                            it.putValueArgument(arg, builder.irBoolToByte(it.getValueArgument(arg)!!))
+                        }
+                        if (intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
+                            builder.irByteToBool(it)
+                        } else {
+                            it
+                        }
+                    } else {
+                        it
                     }
                 }
             }
