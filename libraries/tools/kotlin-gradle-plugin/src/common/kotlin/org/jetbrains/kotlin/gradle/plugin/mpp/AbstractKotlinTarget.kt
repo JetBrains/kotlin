@@ -133,11 +133,13 @@ abstract class AbstractKotlinTarget(
         classifierPrefix: String? = null,
         sourcesElementsConfigurationName: String = this.sourcesElementsConfigurationName,
     ): PublishArtifact? {
+        val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
+
         // If sourcesElements configuration not found, don't create artifact.
-        // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin
+        // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin.
+        // But we still want to have sourcesJarTask be registered
         project.configurations.findByName(sourcesElementsConfigurationName) ?: return null
 
-        val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
         artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
         return artifact
