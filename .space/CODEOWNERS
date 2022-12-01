@@ -334,8 +334,8 @@
 /libraries/tools/kotlin-stdlib-docs/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/tools/kotlin-stdlib-gen/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/tools/kotlin-test-js-runner/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
-/libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools"
-/libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools"
+/libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools" "Kotlin Multiplatform"
+/libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools" "Kotlin Multiplatform"
 /libraries/tools/kotlinp/ "Kotlin JVM"
 /libraries/tools/maven-archetypes/ "Kotlin Build Tools"
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
