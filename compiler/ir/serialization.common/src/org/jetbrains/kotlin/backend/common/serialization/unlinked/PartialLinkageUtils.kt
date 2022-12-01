@@ -5,8 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.DescriptorBased.Companion.moduleDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.IrBased.Companion.irModule
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal object PartialLinkageUtils {
     val UNKNOWN_NAME = Name.identifier("<unknown name>")
@@ -21,5 +30,37 @@ internal object PartialLinkageUtils {
         is IdSignature.AccessorSignature -> accessorSignature.guessName(nameSegmentsToPickUp)
 
         else -> null
+    }
+
+    /** For fast check if a declaration is in the module */
+    internal sealed interface Module {
+        operator fun contains(fragment: IrModuleFragment): Boolean
+        operator fun contains(declaration: IrDeclaration): Boolean
+
+        class IrBased(private val module: IrModuleFragment) : Module {
+            override fun contains(fragment: IrModuleFragment) = fragment == module
+            override fun contains(declaration: IrDeclaration) = declaration.irModule == module
+
+            companion object {
+                inline val IrDeclaration.irModule: IrModuleFragment? get() = fileOrNull?.module
+            }
+        }
+
+        class DescriptorBased(private val module: ModuleDescriptor) : Module {
+            override fun contains(fragment: IrModuleFragment) = fragment.descriptor == module
+            override fun contains(declaration: IrDeclaration) = declaration.moduleDescriptor == module
+
+            companion object {
+                inline val IrDeclaration.moduleDescriptor: ModuleDescriptor? get() = if (this is IrLazyDeclarationBase) descriptor.module else null
+            }
+        }
+
+        companion object {
+            fun determineFor(declaration: IrDeclaration): Module {
+                return declaration.irModule?.let(::IrBased)
+                    ?: declaration.moduleDescriptor?.let(::DescriptorBased)
+                    ?: error("Can't compute module for $declaration, ${declaration.nameForIrSerialization}")
+            }
+        }
     }
 }

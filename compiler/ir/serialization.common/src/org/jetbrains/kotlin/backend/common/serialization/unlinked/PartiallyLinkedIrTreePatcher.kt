@@ -22,9 +22,12 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
@@ -32,9 +35,21 @@ internal class PartiallyLinkedIrTreePatcher(
     private val stubGenerator: MissingDeclarationStubGenerator,
     private val messageLogger: IrMessageLogger
 ) {
+    private val stdlibModule by lazy { PLModule.determineFor(builtIns.anyClass.owner) }
+
     fun patch(roots: Collection<IrElement>) {
-        roots.forEach { it.transformVoid(DeclarationTransformer()) }
-        roots.forEach { it.transformVoid(ExpressionTransformer()) }
+        if (roots.isEmpty()) return
+
+        val filteredRoots = roots.filter { element ->
+            when (element) {
+                is IrModuleFragment -> element.files.isNotEmpty() && element !in stdlibModule
+                is IrDeclaration -> element !in stdlibModule
+                else -> true
+            }
+        }
+
+        filteredRoots.forEach { it.transformVoid(DeclarationTransformer()) }
+        filteredRoots.forEach { it.transformVoid(ExpressionTransformer()) }
     }
 
     private fun IrElement.transformVoid(transformer: IrElementTransformerVoid) {
