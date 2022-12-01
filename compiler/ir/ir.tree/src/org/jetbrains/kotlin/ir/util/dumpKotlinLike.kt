@@ -1051,7 +1051,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             getValueArgument(i)?.let {
                 p(i > 0, ",")
                 // TODO flag to print param name
-                p.printWithNoIndent(valueParameters[i].name.asString() + " = ")
+                // If the symbol is unbound then valueArgumentsCount disagrees with
+                // valueParameters.
+                if (i < valueParameters.size) {
+                    p.printWithNoIndent(valueParameters[i].name.asString() + " = ")
+                }
                 it.accept(this@KotlinLikeDumper, data)
             }
         }
