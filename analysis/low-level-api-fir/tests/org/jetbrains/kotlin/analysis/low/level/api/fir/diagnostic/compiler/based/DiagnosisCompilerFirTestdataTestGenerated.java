@@ -3146,6 +3146,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("anonObject.kt")
+            public void testAnonObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/anonObject.kt");
+            }
+
+            @Test
             @TestMetadata("anonymousInAnonymous.kt")
             public void testAnonymousInAnonymous() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/anonymousInAnonymous.kt");
