@@ -345,7 +345,13 @@ abstract class AbstractFirStatusResolveTransformer(
              *   so we need to resolve supertypes of this class because they could
              *   come from kotlin sources
              */
+            val statusComputationStatus = statusComputationSession[regularClass]
+            if (!statusComputationStatus.requiresComputation) return
+
+            statusComputationSession.startComputing(regularClass)
             forceResolveStatusesOfSupertypes(regularClass)
+            statusComputationSession.endComputing(regularClass)
+
             return
         }
         if (regularClass.origin != FirDeclarationOrigin.Source) return
