@@ -214,6 +214,14 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmVari
 public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmWasmPlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
 }
 
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinBooleanExtrasSerializer : org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinBooleanExtrasSerializer;
+	public fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Boolean;
+	public synthetic fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Object;
+	public synthetic fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/lang/Object;)[B
+	public fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Z)[B
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension {
 	public abstract fun serializer (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer;
 }
@@ -239,6 +247,14 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaK
 
 public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer$Companion {
 	public final fun javaIoSerializable (Lkotlin/reflect/KClass;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinIntExtrasSerializer : org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinIntExtrasSerializer;
+	public fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Integer;
+	public synthetic fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Object;
+	public fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;I)[B
+	public synthetic fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/lang/Object;)[B
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext {
@@ -272,6 +288,14 @@ public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializ
 	public static final field WARNING Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinStringExtrasSerializer : org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinStringExtrasSerializer;
+	public synthetic fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Object;
+	public fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/String;
+	public synthetic fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/lang/Object;)[B
+	public fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/lang/String;)[B
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
@@ -315,6 +339,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinD
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinEntity : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinExtra : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinModel : java/lang/annotation/Annotation {
@@ -456,5 +483,52 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinUnresolvedBina
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/Boolean;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;)Lorg/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBuiltInsPlatform ()Ljava/lang/String;
+	public final fun getCommonizerNativeTargets ()Ljava/util/List;
+	public final fun getCommonizerTarget ()Ljava/lang/String;
+	public final fun getNativeTargets ()Ljava/util/List;
+	public final fun getPackageFqName ()Ljava/lang/String;
+	public final fun getShortName ()Ljava/lang/String;
+	public final fun getUniqueName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isInterop ()Ljava/lang/Boolean;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra$Companion {
+	public final fun getKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtraKt {
+	public static final fun getKlibExtra (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Lorg/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra;
+	public static final fun setKlibExtra (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Lorg/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtra;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/PrimitiveExtrasKt {
+	public static final fun isIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Ljava/lang/Boolean;
+	public static final fun isIdeaProjectLevelKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+	public static final fun isNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Ljava/lang/Boolean;
+	public static final fun isNativeDistributionKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+	public static final fun isNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Ljava/lang/Boolean;
+	public static final fun isNativeStdlibKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+	public static final fun setIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Ljava/lang/Boolean;)V
+	public static final fun setNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Ljava/lang/Boolean;)V
+	public static final fun setNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Ljava/lang/Boolean;)V
 }
 
