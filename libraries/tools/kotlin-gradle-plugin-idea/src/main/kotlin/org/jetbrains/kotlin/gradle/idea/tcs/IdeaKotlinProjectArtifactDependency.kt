@@ -34,7 +34,8 @@ data class IdeaKotlinProjectArtifactDependency(
     internal companion object {
         const val serialVersionUID = 0L
 
-        var IdeaKotlinSourceDependency.projectArtifactDependencyOrigin by extrasKeyOf<IdeaKotlinProjectArtifactDependency>("origin")
+        var IdeaKotlinSourceDependency.projectArtifactDependencyOrigin
+                by extrasReadWriteProperty<IdeaKotlinProjectArtifactDependency>("origin")
             private set
     }
 }

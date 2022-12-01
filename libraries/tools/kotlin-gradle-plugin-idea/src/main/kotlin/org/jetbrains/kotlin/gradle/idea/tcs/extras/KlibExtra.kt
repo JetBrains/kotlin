@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.gradle.idea.tcs.extras
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinExtra
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import org.jetbrains.kotlin.tooling.core.getValue
-import org.jetbrains.kotlin.tooling.core.setValue
+import org.jetbrains.kotlin.tooling.core.readWriteProperty
 import java.io.Serializable
 
-var IdeaKotlinBinaryDependency.klibExtra by KlibExtra.key
+var IdeaKotlinBinaryDependency.klibExtra by KlibExtra.key.readWriteProperty
 
 @IdeaKotlinExtra
 data class KlibExtra(

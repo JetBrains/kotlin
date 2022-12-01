@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettin
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.tooling.core.extrasFactoryProperty
-import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.util.concurrent.Callable
 
 internal class KotlinCompilationSourceSetInclusion(
@@ -75,7 +74,7 @@ internal class KotlinCompilationSourceSetInclusion(
          * to avoid re-processing of unnecessary source sets!
          */
         val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
-                by extrasFactoryProperty(extrasKeyOf(KotlinCompilationSourceSetInclusion::class.java.name), { hashSetOf() })
+                by extrasFactoryProperty(KotlinCompilationSourceSetInclusion::class.java.name, { hashSetOf() })
     }
 
 

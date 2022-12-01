@@ -32,6 +32,15 @@ fun <T : Any> extrasFactoryProperty(key: Extras.Key<T>, factory: () -> T) = obje
     override val factory: () -> T = factory
 }
 
+inline fun <reified T : Any> extrasReadWriteProperty(name: String? = null) =
+    extrasReadWriteProperty(extrasKeyOf<T>(name))
+
+inline fun <reified T : Any> extrasReadProperty(name: String? = null) =
+    extrasReadProperty(extrasKeyOf<T>(name))
+
+inline fun <reified T : Any> extrasFactoryProperty(name: String? = null, noinline factory: () -> T) =
+    extrasFactoryProperty(extrasKeyOf<T>(name), factory)
+
 interface ExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T?> {
     override fun getValue(thisRef: HasExtras, property: KProperty<*>): T? {
         return thisRef.extras[key]

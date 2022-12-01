@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import org.jetbrains.kotlin.tooling.core.getValue
-import org.jetbrains.kotlin.tooling.core.setValue
+import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 
 fun interface IdeDependencyResolver {
     fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency>
@@ -20,8 +18,8 @@ fun interface IdeDependencyResolver {
     }
 
     companion object {
-        var IdeaKotlinDependency.resolvedBy: IdeDependencyResolver? by extrasKeyOf("resolvedBy")
-        var IdeaKotlinDependency.gradleArtifact: ResolvedArtifactResult? by extrasKeyOf("gradleArtifact")
+        var IdeaKotlinDependency.resolvedBy: IdeDependencyResolver? by extrasReadWriteProperty("resolvedBy")
+        var IdeaKotlinDependency.gradleArtifact: ResolvedArtifactResult? by extrasReadWriteProperty("gradleArtifact")
     }
 }
 

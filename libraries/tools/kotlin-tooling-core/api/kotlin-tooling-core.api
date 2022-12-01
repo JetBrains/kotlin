@@ -128,11 +128,6 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/HasExtras {
 	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 }
 
-public final class org/jetbrains/kotlin/tooling/core/HasExtrasKt {
-	public static final fun getValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lorg/jetbrains/kotlin/tooling/core/HasExtras;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
-	public static final fun setValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lorg/jetbrains/kotlin/tooling/core/HasMutableExtras;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtras : org/jetbrains/kotlin/tooling/core/HasExtras {
 	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 }

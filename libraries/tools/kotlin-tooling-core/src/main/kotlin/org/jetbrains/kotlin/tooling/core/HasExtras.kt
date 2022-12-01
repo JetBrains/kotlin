@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import kotlin.reflect.KProperty
-
 
 interface HasExtras {
     val extras: Extras
@@ -15,17 +13,3 @@ interface HasExtras {
 interface HasMutableExtras : HasExtras {
     override val extras: MutableExtras
 }
-
-operator fun <T : Any> Extras.Key<T>.getValue(receiver: HasExtras, property: KProperty<*>): T? {
-    return receiver.extras[this]
-}
-
-operator fun <T : Any> Extras.Key<T>.setValue(receiver: HasMutableExtras, property: KProperty<*>, value: T?) {
-    if (value == null) {
-        receiver.extras.remove(this)
-    } else {
-        receiver.extras[this] = value
-    }
-}
-
-
