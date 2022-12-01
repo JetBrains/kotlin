@@ -3164,6 +3164,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("overrideInLocal.kt")
+            public void testOverrideInLocal() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/overrideInLocal.kt");
+            }
+
+            @Test
             @TestMetadata("typesFromSuperClasses.kt")
             public void testTypesFromSuperClasses() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/typesFromSuperClasses.kt");
