@@ -521,14 +521,14 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/KlibExtraKt {
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/PrimitiveExtrasKt {
-	public static final fun isIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Ljava/lang/Boolean;
+	public static final fun isIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Z
 	public static final fun isIdeaProjectLevelKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
-	public static final fun isNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Ljava/lang/Boolean;
+	public static final fun isNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Z
 	public static final fun isNativeDistributionKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
-	public static final fun isNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Ljava/lang/Boolean;
+	public static final fun isNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Z
 	public static final fun isNativeStdlibKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
-	public static final fun setIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Ljava/lang/Boolean;)V
-	public static final fun setNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Ljava/lang/Boolean;)V
-	public static final fun setNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Ljava/lang/Boolean;)V
+	public static final fun setIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
+	public static final fun setNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
+	public static final fun setNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
 }
 
