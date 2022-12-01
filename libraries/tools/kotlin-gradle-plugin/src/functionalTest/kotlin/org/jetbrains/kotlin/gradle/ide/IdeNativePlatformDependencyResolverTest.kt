@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativePlatformDependencyResolver
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
+import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import org.junit.Assume
 import kotlin.test.Test
 
@@ -31,8 +33,8 @@ class IdeNativePlatformDependencyResolverTest {
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
         val dependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlin.native:platform.posix:${project.konanVersion}"),
-            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}"""))
+            binaryCoordinates("org.jetbrains.kotlin.native:platform.posix:${project.konanVersion}:$LINUX_X64"),
+            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}:$LINUX_X64"""))
         )
 
         IdeNativePlatformDependencyResolver.resolve(commonMain).assertMatches(dependencies)
@@ -54,8 +56,8 @@ class IdeNativePlatformDependencyResolverTest {
         val macosArm64Test = kotlin.sourceSets.getByName("macosArm64Test")
 
         val dependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlin.native:platform.CoreFoundation:${project.konanVersion}"),
-            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}"""))
+            binaryCoordinates("org.jetbrains.kotlin.native:platform.CoreFoundation:${project.konanVersion}:$MACOS_ARM64"),
+            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}:$MACOS_ARM64"""))
         )
 
         IdeNativePlatformDependencyResolver.resolve(commonMain).assertMatches(dependencies)

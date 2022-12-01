@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.getOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 
 internal object IdeDependencyLogger : IdeDependencyEffect {
@@ -14,7 +16,7 @@ internal object IdeDependencyLogger : IdeDependencyEffect {
     private const val propertyKey = "IdeDependencyLogger.log"
 
     override fun invoke(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
-        val log = sourceSet.project.properties[propertyKey]?.toString() ?: return
+        val log = sourceSet.project.extraProperties.getOrNull(propertyKey)?.toString() ?: return
         val coordinates = IdeaKotlinSourceCoordinates(sourceSet)
         if (log.isEmpty() || Regex(log).matches(coordinates.toString())) {
             IdeMultiplatformImport.logger.quiet(

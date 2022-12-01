@@ -49,3 +49,12 @@ internal inline fun <reified T : Any> Any.findExtension(name: String): T? =
 
 inline val Any.extraProperties: ExtraPropertiesExtension
     get() = (this as ExtensionAware).extensions.extraProperties
+
+@JvmName("getOrNullTyped")
+internal inline fun <reified T : Any> ExtraPropertiesExtension.getOrNull(name: String): T? {
+    return if (has(name)) get(name) as T else null
+}
+
+internal fun ExtraPropertiesExtension.getOrNull(name: String): Any? {
+    return if (has(name)) get(name) else null
+}
