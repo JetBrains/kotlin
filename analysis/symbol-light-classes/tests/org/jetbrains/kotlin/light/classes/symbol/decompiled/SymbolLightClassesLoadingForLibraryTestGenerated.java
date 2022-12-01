@@ -187,6 +187,12 @@ public class SymbolLightClassesLoadingForLibraryTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("LateinitProperties.kt")
+    public void testLateinitProperties() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/LateinitProperties.kt");
+    }
+
+    @Test
     @TestMetadata("lateinitProperty.kt")
     public void testLateinitProperty() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/lateinitProperty.kt");

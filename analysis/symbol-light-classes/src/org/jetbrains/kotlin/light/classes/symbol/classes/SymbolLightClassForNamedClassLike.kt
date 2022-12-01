@@ -76,6 +76,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     private val KtPropertySymbol.isConstOrJvmField: Boolean get() = isConst || hasJvmFieldAnnotation()
 
     private val KtPropertySymbol.isConst: Boolean get() = (this as? KtKotlinPropertySymbol)?.isConst == true
+    private val KtPropertySymbol.isLateInit: Boolean get() = (this as? KtKotlinPropertySymbol)?.isLateInit == true
 
     context(KtAnalysisSession)
     protected fun addFieldsFromCompanionIfNeeded(
@@ -98,7 +99,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
                     lightMemberOrigin = null,
                     isTopLevel = false,
                     forceStatic = true,
-                    takePropertyVisibility = it.isConstOrJvmField,
+                    takePropertyVisibility = it.isConstOrJvmField || it.isLateInit,
                 )
             }
     }
