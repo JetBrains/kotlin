@@ -37,7 +37,7 @@ class FirStatusResolveProcessor(
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession) {
     override val transformer = run {
-        val statusComputationSession = StatusComputationSession.Regular()
+        val statusComputationSession = StatusComputationSession()
         FirStatusResolveTransformer(
             session,
             scopeSession,
@@ -52,7 +52,7 @@ fun <F : FirClassLikeDeclaration> F.runStatusResolveForLocalClass(
     scopesForLocalClass: List<FirScope>,
     localClassesNavigationInfo: LocalClassesNavigationInfo
 ): F {
-    val statusComputationSession = StatusComputationSession.ForLocalClassResolution(localClassesNavigationInfo.parentForClass.keys)
+    val statusComputationSession = StatusComputationSession()
     val transformer = FirStatusResolveTransformer(
         session,
         scopeSession,
@@ -174,61 +174,32 @@ open class FirDesignatedStatusResolveTransformer(
     }
 }
 
-sealed class StatusComputationSession {
-    abstract operator fun get(klass: FirClass): StatusComputationStatus
+class StatusComputationSession {
+    private val statusMap = mutableMapOf<FirClass, StatusComputationStatus>()
+        .withDefault { StatusComputationStatus.NotComputed }
 
-    abstract fun startComputing(klass: FirClass): StatusComputationStatus
-    abstract fun endComputing(klass: FirClass)
-    abstract fun computeOnlyClassStatus(klass: FirClass)
+    operator fun get(klass: FirClass): StatusComputationStatus = statusMap.getValue(klass)
+
+    fun startComputing(klass: FirClass): StatusComputationStatus {
+        return statusMap.getOrPut(klass) { StatusComputationStatus.Computing }
+    }
+
+    fun endComputing(klass: FirClass) {
+        statusMap[klass] = StatusComputationStatus.Computed
+    }
+
+    fun computeOnlyClassStatus(klass: FirClass) {
+        val existedStatus = statusMap.getValue(klass)
+        if (existedStatus < StatusComputationStatus.ComputedOnlyClassStatus) {
+            statusMap[klass] = StatusComputationStatus.ComputedOnlyClassStatus
+        }
+    }
 
     enum class StatusComputationStatus(val requiresComputation: Boolean) {
         NotComputed(true),
         Computing(false),
         ComputedOnlyClassStatus(true),
         Computed(false)
-    }
-
-    class Regular : StatusComputationSession() {
-        private val statusMap = mutableMapOf<FirClass, StatusComputationStatus>()
-            .withDefault { StatusComputationStatus.NotComputed }
-
-        override fun get(klass: FirClass): StatusComputationStatus = statusMap.getValue(klass)
-
-        override fun startComputing(klass: FirClass): StatusComputationStatus {
-            return statusMap.getOrPut(klass) { StatusComputationStatus.Computing }
-        }
-
-        override fun endComputing(klass: FirClass) {
-            statusMap[klass] = StatusComputationStatus.Computed
-        }
-
-        override fun computeOnlyClassStatus(klass: FirClass) {
-            val existedStatus = statusMap.getValue(klass)
-            if (existedStatus < StatusComputationStatus.ComputedOnlyClassStatus) {
-                statusMap[klass] = StatusComputationStatus.ComputedOnlyClassStatus
-            }
-        }
-    }
-
-    class ForLocalClassResolution(private val localClasses: Set<FirClassLikeDeclaration>) : StatusComputationSession() {
-        private val delegate = Regular()
-
-        override fun get(klass: FirClass): StatusComputationStatus {
-            if (klass !in localClasses) return StatusComputationStatus.Computed
-            return delegate[klass]
-        }
-
-        override fun startComputing(klass: FirClass): StatusComputationStatus {
-            return delegate.startComputing(klass)
-        }
-
-        override fun endComputing(klass: FirClass) {
-            delegate.endComputing(klass)
-        }
-
-        override fun computeOnlyClassStatus(klass: FirClass) {
-            delegate.computeOnlyClassStatus(klass)
-        }
     }
 }
 

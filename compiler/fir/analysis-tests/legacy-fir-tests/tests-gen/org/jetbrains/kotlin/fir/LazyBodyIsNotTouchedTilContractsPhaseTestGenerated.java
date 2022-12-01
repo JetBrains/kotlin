@@ -2783,6 +2783,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInLocalClasses.kt");
         }
 
+        @TestMetadata("overrideInLocal.kt")
+        public void testOverrideInLocal() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/overrideInLocal.kt");
+        }
+
         @TestMetadata("typesFromSuperClasses.kt")
         public void testTypesFromSuperClasses() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/typesFromSuperClasses.kt");

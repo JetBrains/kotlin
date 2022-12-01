@@ -26,7 +26,7 @@ internal class LLFirDesignatedStatusResolveTransformer(
     private val scopeSession: ScopeSession,
 ) : LLFirLazyTransformer {
     private inner class FirDesignatedStatusResolveTransformerForIDE :
-        FirStatusResolveTransformer(session, scopeSession, StatusComputationSession.Regular()) {
+        FirStatusResolveTransformer(session, scopeSession, StatusComputationSession()) {
 
         val designationTransformer = LLFirDeclarationTransformer(designation)
 
