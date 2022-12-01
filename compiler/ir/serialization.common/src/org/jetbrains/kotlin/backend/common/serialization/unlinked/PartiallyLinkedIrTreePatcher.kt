@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -306,6 +305,13 @@ internal class PartiallyLinkedIrTreePatcher(
             } finally {
                 currentFile = null
             }
+        }
+
+        override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+            return if (declaration.origin is PartiallyLinkedDeclarationOrigin)
+                declaration // There are no expressions to patch.
+            else
+                super.visitDeclaration(declaration)
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
