@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.junit.Test
 import kotlin.test.fail
 
@@ -32,8 +33,9 @@ class KotlinTargetHierarchyBuilderTest {
             // jvmWithJava is covered by the jvm() call
             .filter { it !is KotlinJvmWithJavaTargetPreset }
             .forEach { preset ->
-                if (kotlinTargetHierarchyBuilderInterface.declaredMethods.none { it.name == preset.name })
-                    fail("${kotlinTargetHierarchyBuilderInterface.name}: Missing ${preset.name}() function")
+                val expectedFunctionName = "any${preset.name.capitalizeAsciiOnly()}"
+                if (kotlinTargetHierarchyBuilderInterface.declaredMethods.none { it.name == expectedFunctionName })
+                    fail("${kotlinTargetHierarchyBuilderInterface.name}: Missing ${expectedFunctionName}() function")
             }
     }
 }

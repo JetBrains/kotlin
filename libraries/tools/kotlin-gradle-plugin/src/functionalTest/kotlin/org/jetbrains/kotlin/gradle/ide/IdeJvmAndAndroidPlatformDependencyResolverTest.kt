@@ -39,8 +39,8 @@ class IdeJvmAndAndroidPlatformDependencyResolverTest {
         kotlin.targetHierarchy.custom {
             common {
                 group("jvmAndAndroid") {
-                    jvm()
-                    android()
+                    anyJvm()
+                    anyAndroid()
                 }
             }
         }

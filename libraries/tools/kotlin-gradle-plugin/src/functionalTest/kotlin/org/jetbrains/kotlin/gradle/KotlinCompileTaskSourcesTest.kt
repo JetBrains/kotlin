@@ -66,7 +66,7 @@ class KotlinCompileTaskSourcesTest {
             common {
                 group("jvmAndLinux") {
                     anyLinux()
-                    jvm()
+                    anyJvm()
                 }
             }
         }

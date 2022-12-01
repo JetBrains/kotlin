@@ -204,7 +204,7 @@ class KotlinTargetHierarchyDslTest {
             targetHierarchy.apply(descriptor) {
                 group("base") {
                     group("extension") {
-                        linuxX64()
+                        anyLinuxX64()
                     }
                 }
             }
@@ -276,7 +276,7 @@ class KotlinTargetHierarchyDslTest {
                 group("newRoot") {
                     group("base") {
                         group("extension") {
-                            linuxX64()
+                            anyLinuxX64()
                         }
                     }
                 }

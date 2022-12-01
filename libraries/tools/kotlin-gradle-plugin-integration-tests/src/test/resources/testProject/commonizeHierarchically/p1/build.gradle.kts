@@ -11,7 +11,7 @@ kotlin {
     targetHierarchy.default {
         common {
             group("concurrent") {
-                jvm()
+                anyJvm()
 
                 group("native") {
                     group("appleAndLinux") {
