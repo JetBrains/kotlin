@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val Nullable = "Nullable"
@@ -318,7 +317,7 @@ class ExportModelToTsDeclarations {
             " /* extends $implicitlyExportedClassesString */"
         } else {
             val originallyDefinedSuperClass = implicitlyExportedClassesString.takeIf { it.isNotEmpty() }?.let { "/* $it */ " }.orEmpty()
-            val transitivelyDefinedSuperClass = firstIsInstance<ExportedType.ClassType>().toTypeScript(indent, false)
+            val transitivelyDefinedSuperClass = single { it !is ExportedType.ImplicitlyExportedType }.toTypeScript(indent, false)
             " extends $originallyDefinedSuperClass$transitivelyDefinedSuperClass"
         }
     }
