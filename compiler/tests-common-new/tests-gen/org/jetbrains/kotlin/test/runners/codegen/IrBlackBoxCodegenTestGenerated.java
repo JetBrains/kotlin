@@ -21438,6 +21438,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("infixCompareToOptimization.kt")
+        public void testInfixCompareToOptimization() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/infixCompareToOptimization.kt");
+        }
+
+        @Test
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/initBlock.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
