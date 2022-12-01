@@ -103,6 +103,8 @@ internal class Context(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
+    // TODO: Drop it to reduce code coupling and make it possible to have multiple
+    //  generationStates at the same time.
     lateinit var generationState: NativeGenerationState
 
     fun disposeGenerationState() {

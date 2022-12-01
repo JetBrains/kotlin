@@ -91,11 +91,10 @@ internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, co
 }
 
 internal fun produceCStubs(generationState: NativeGenerationState) {
-    val context = generationState.context
     generationState.cStubsManager.compile(
-            context.config.clang,
-            context.messageCollector,
-            context.inVerbosePhase
+            generationState.config.clang,
+            generationState.messageCollector,
+            generationState.inVerbosePhase
     ).forEach {
         parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePath)
     }
@@ -116,7 +115,7 @@ private data class LlvmModules(
  * - Everything else.
  */
 private fun collectLlvmModules(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>): LlvmModules {
-    val config = generationState.context.config
+    val config = generationState.config
 
     val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.llvm.bitcodeToLink
             .partition { it.isStdlib && generationState.producedLlvmModuleContainsStdlib }
@@ -141,7 +140,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
         val parsedModule = parseBitcodeFile(generationState.llvmContext, bitcodeFile)
-        if (!generationState.context.shouldUseDebugInfoFromNativeLibs()) {
+        if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
             LLVMStripModuleDebugInfo(parsedModule)
         }
         parsedModule
@@ -172,7 +171,7 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
 }
 
 private fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
-    val config = generationState.context.config
+    val config = generationState.config
     val nomain = config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
@@ -184,7 +183,7 @@ private fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
 }
 
 internal fun linkBitcodeDependencies(generationState: NativeGenerationState) {
-    val config = generationState.context.config
+    val config = generationState.config
     val tempFiles = generationState.tempFiles
     val produce = config.produce
 
@@ -285,7 +284,7 @@ internal fun produceOutput(generationState: NativeGenerationState) {
 
 private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(generationState.llvmContext, path)
-    if (!generationState.context.shouldUseDebugInfoFromNativeLibs()) {
+    if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
     val failed = llvmLinkModules2(generationState, llvmModule, parsedModule)

@@ -2078,7 +2078,7 @@ private val TypeBridge.objCEncoding: String get() = when (this) {
 }
 
 private fun NativeGenerationState.is64BitNSInteger(): Boolean {
-    val configurables = context.config.platform.configurables
+    val configurables = config.platform.configurables
     require(configurables is AppleConfigurables) {
         "Target ${configurables.target} has no support for NSInteger type."
     }

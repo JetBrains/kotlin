@@ -246,7 +246,12 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
         op = { context, irModule ->
-            context.generationState.objCExport = ObjCExport(context.generationState, context.objCExportedInterface, context.objCExportCodeSpec)
+            context.generationState.objCExport = ObjCExport(
+                    context.generationState,
+                    context.moduleDescriptor,
+                    context.objCExportedInterface,
+                    context.objCExportCodeSpec
+            )
 
             irModule.acceptVoid(CodeGeneratorVisitor(context.generationState, context.lifetimes))
 
@@ -285,8 +290,9 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
         op = { context, _ ->
+            val generationState = context.generationState
             val config = createLTOFinalPipelineConfig(context.generationState)
-            LlvmOptimizationPipeline(config, context.generationState.llvm.module, context).use {
+            LlvmOptimizationPipeline(config, context.generationState.llvm.module, generationState).use {
                 it.run()
             }
         }

@@ -92,7 +92,7 @@ internal val objCExportPhase = konanUnitPhase(
             objCExportedInterface = when {
                 !config.target.family.isAppleFamily -> null
                 config.produce != CompilerOutputKind.FRAMEWORK -> null
-                else -> produceObjCExportInterface(this)
+                else -> produceObjCExportInterface(this, this.moduleDescriptor, this.frontendServices)
             }
             objCExportCodeSpec = objCExportedInterface?.createCodeSpec(symbolTable!!)
         },

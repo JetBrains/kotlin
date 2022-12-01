@@ -178,7 +178,7 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = generationState.context.config.target.getBoxCacheRange(cacheType)
+    val (start, end) = generationState.config.target.getBoxCacheRange(cacheType)
     return if (value in start..end) {
         generationState.llvm.let { llvm ->
             llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, value.toInt() - start)?.getElementPtr(llvm, 0)

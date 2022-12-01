@@ -2918,8 +2918,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
         global.setLinkage(LLVMLinkage.LLVMExternalLinkage)
     }
 
-    val config = context.config
-    setRuntimeConstGlobal("Kotlin_needDebugInfo", llvm.constInt32(if (context.shouldContainDebugInfo()) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_needDebugInfo", llvm.constInt32(if (shouldContainDebugInfo()) 1 else 0))
     setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", llvm.constInt32(config.runtimeAssertsMode.value))
     val runtimeLogs = config.runtimeLogs?.let {
         static.cStringLiteral(it)
