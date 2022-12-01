@@ -51,7 +51,6 @@ publishing {
     publications {
         create("default", MavenPublication::class.java) {
             from(components.getByName("kotlin"))
-            artifact(tasks.getByName("kotlinSourcesJar"))
         }
     }
     repositories {
