@@ -137,7 +137,8 @@ class ExportModelToJsStatements(
                             declaration.name,
                             ExportedType.Primitive.Any,
                             isStatic = parentClass?.isObject != true,
-                            irGetter = declaration.irGetter
+                            irGetter = declaration.irGetter,
+                            isMember = parentClass != null
                         ),
                         namespace,
                         esModules,

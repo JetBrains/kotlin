@@ -18,15 +18,17 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 internal class JsUsefulDeclarationProcessor(
     override val context: JsIrBackendContext,
     printReachabilityInfo: Boolean,
     removeUnusedAssociatedObjects: Boolean
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects) {
-
     private val equalsMethod = getMethodOfAny("equals")
     private val hashCodeMethod = getMethodOfAny("hashCode")
+    private val isEsModules = context.configuration[JSConfigurationKeys.MODULE_KIND] == ModuleKind.ES
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
@@ -158,7 +160,7 @@ internal class JsUsefulDeclarationProcessor(
             context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
         }
 
-        if (irClass.isInner || irClass.isObject) {
+        if ((!context.es6mode || !isEsModules) && (irClass.isInner || irClass.isObject)) {
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "object lazy initialization")
         }
 
@@ -183,6 +185,8 @@ internal class JsUsefulDeclarationProcessor(
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
         }
+
+        if (context.es6mode && isEsModules) return
 
         val property = irFunction.correspondingPropertySymbol?.owner ?: return
 
