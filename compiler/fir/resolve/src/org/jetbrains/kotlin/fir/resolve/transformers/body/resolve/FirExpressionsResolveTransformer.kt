@@ -53,7 +53,8 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
-open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) : FirPartialBodyResolveTransformer(transformer) {
+open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
+    FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     var enableArrayOfCallTransformation = false
@@ -472,7 +473,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ConeNullability.NOT_NULL
         )
 
-        val approximationIsNeeded = resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
+        val approximationIsNeeded =
+            resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
 
         val integerOperatorCall = buildIntegerLiteralOperatorCall {
             source = originalCall.source
@@ -1061,7 +1063,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     expectedTypeRef != null -> {
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)
                         val coneType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
-                        val approximatedType= expressionType.getApproximatedType(coneType)
+                        val approximatedType = expressionType.getApproximatedType(coneType)
                         constExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind<T>)
                         approximatedType
                     }
@@ -1207,7 +1209,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ): FirFunctionCall = buildFunctionCall {
                 this.source = source
                 explicitReceiver = receiver
-                argumentList = when(arguments.size) {
+                argumentList = when (arguments.size) {
                     0 -> FirEmptyArgumentList
                     1 -> buildUnaryArgumentList(arguments.first())
                     else -> buildArgumentList {
