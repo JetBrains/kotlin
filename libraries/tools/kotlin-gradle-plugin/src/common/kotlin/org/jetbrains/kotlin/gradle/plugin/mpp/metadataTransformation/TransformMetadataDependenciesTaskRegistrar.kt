@@ -38,7 +38,7 @@ private constructor(
 
     fun metadataDependenciesConfigurationName(sourceSet: KotlinSourceSet) = lowerCamelCaseName(sourceSet.name, "MetadataDependencies")
 
-    fun registerForMetadataCompilation(compilation: AbstractKotlinCompilation<*>) {
+    fun registerForMetadataCompilation(compilation: KotlinCompilation<*>) {
         val sourceSet = compilation.defaultSourceSet
         val metadataDependenciesConfiguration = registerMetadataDependenciesConfiguration(sourceSet)
         val task = registerTask(sourceSet, metadataDependenciesConfiguration)
