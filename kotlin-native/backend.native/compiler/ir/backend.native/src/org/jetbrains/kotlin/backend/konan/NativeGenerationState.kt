@@ -50,6 +50,16 @@ internal class NativeGenerationState(
         val context: Context,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?
 ) : BasicPhaseContext(config) {
+
+    // A little hack to make logging work
+    // when executing phase in parent context.
+    // See `runPhaseInParentContext`.
+    override var inVerbosePhase: Boolean
+        get() = context.inVerbosePhase
+        set(value) {
+            context.inVerbosePhase = value
+        }
+
     private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
     val outputFiles = OutputFiles(outputPath, config.target, config.produce)
     val tempFiles = run {
