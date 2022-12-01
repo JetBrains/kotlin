@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.tcs.extras
 
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import org.jetbrains.kotlin.tooling.core.getValue
-import org.jetbrains.kotlin.tooling.core.setValue
+import org.jetbrains.kotlin.tooling.core.readWriteProperty
 
 val isIdeaProjectLevelKey = extrasKeyOf<Boolean>("isIdeaProjectLevel")
 
@@ -16,7 +15,7 @@ val isIdeaProjectLevelKey = extrasKeyOf<Boolean>("isIdeaProjectLevel")
  * Marks any binary dependency as Global in the sense of "this library is considered
  * the same, no matter in which Gradle project / IntelliJ module it will be used
  */
-var IdeaKotlinBinaryDependency.isIdeaProjectLevel by isIdeaProjectLevelKey
+var IdeaKotlinBinaryDependency.isIdeaProjectLevel by isIdeaProjectLevelKey.readWriteProperty.notNull(false)
 
 
 val isNativeDistributionKey = extrasKeyOf<Boolean>("isNativeDistribution")
@@ -25,7 +24,7 @@ val isNativeDistributionKey = extrasKeyOf<Boolean>("isNativeDistribution")
 /**
  * Marks this dependency as 'coming from the native distribution'
  */
-var IdeaKotlinBinaryDependency.isNativeDistribution by isNativeDistributionKey
+var IdeaKotlinBinaryDependency.isNativeDistribution by isNativeDistributionKey.readWriteProperty.notNull(false)
 
 
 val isNativeStdlibKey = extrasKeyOf<Boolean>("isNativeStdlib")
@@ -33,4 +32,4 @@ val isNativeStdlibKey = extrasKeyOf<Boolean>("isNativeStdlib")
 /**
  * Marks the dependency as the native stdlib (which is special in the native distribution)
  */
-var IdeaKotlinBinaryDependency.isNativeStdlib by isNativeStdlibKey
+var IdeaKotlinBinaryDependency.isNativeStdlib by isNativeStdlibKey.readWriteProperty.notNull(false)

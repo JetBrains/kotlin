@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.tooling.core.extrasFactoryProperty
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import org.jetbrains.kotlin.tooling.core.getOrPut
 import java.util.concurrent.Callable
 
 internal class KotlinCompilationSourceSetInclusion(
@@ -69,16 +69,13 @@ internal class KotlinCompilationSourceSetInclusion(
     }
 
     private companion object {
+
         /**
-         * Key used to store already processed source sets on the compilation instance itself
+         *  Used to store already processed source sets on the compilation instance itself
          * to avoid re-processing of unnecessary source sets!
          */
-        private val includedSourceSetsKey = extrasKeyOf<MutableSet<KotlinSourceSet>>(
-            KotlinCompilationSourceSetInclusion::class.java.name
-        )
-
         val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
-            get() = extras.getOrPut(includedSourceSetsKey, { hashSetOf() })
+                by extrasFactoryProperty(extrasKeyOf(KotlinCompilationSourceSetInclusion::class.java.name), { hashSetOf() })
     }
 
 
