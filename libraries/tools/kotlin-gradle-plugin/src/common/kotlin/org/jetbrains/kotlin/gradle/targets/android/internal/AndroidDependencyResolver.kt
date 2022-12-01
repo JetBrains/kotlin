@@ -33,10 +33,14 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.internal.component.model.AttributeConfigurationSelector
+import org.gradle.internal.component.model.ConfigurationMetadata
+import org.gradle.internal.component.model.IvyArtifactName
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.nio.file.Path
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.staticFunctions
 
 data class AndroidDependency(
     val name: String? = null,
@@ -287,12 +291,15 @@ object AndroidDependencyResolver {
             val rootComponentMetaData = (projectDependency.findProjectConfiguration() as? ConfigurationInternal)?.toRootComponentMetaData()
                 ?: return@mapNotNull null
 
-            val matching = AttributeConfigurationSelector.selectConfigurationUsingAttributeMatching(
+            @Suppress("UNCHECKED_CAST") val selectConfiguration =
+                AttributeConfigurationSelector::class.staticFunctions.find { it.name == "selectConfigurationUsingAttributeMatching" } as? KFunction<ConfigurationMetadata>
+                    ?: error("Static method AttributeConfigurationSelector.selectConfigurationUsingAttributeMatching does not exist")
+            val matching = selectConfiguration.call(
                 (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@mapNotNull null,
                 emptyList<Capability>(),
                 rootComponentMetaData,
                 (attributesSchema as? AttributesSchemaInternal) ?: return@mapNotNull null,
-                emptyList()
+                emptyList<IvyArtifactName>()
             )
             projectDependency.dependencyProject.configurations.findByName(matching.name)
         }
