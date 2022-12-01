@@ -80,8 +80,8 @@ internal open class BasicPhaseContext(
  * This way, PhaseEngine forces user to create more specialized contexts that have a limited lifetime.
  */
 internal class PhaseEngine<C : PhaseContext>(
-        private val phaseConfig: PhaseConfigurationService,
-        private val phaserState: PhaserState<Any>,
+        val phaseConfig: PhaseConfigurationService,
+        val phaserState: PhaserState<Any>,
         val context: C
 ) {
     companion object {
