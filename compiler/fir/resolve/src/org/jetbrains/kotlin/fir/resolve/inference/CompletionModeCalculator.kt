@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -21,12 +20,12 @@ import java.util.*
 
 fun Candidate.computeCompletionMode(
     components: InferenceComponents,
-    expectedType: FirTypeRef?,
+    resolutionMode: ResolutionMode,
     currentReturnType: ConeKotlinType?
 ): ConstraintSystemCompletionMode {
     return when {
-        // Presence of expected type means that we are trying to complete outermost call => completion mode should be full
-        expectedType != null -> ConstraintSystemCompletionMode.FULL
+        // Expected type is present or call is being resolved in independent context
+        resolutionMode.forceFullCompletion -> ConstraintSystemCompletionMode.FULL
 
         // This is questionable as null return type can be only for error call
         currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL
