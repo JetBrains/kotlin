@@ -27,7 +27,10 @@ internal class SymbolLightParameter(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(containingDeclaration = this) { modifierList ->
+        SymbolLightClassModifierList(
+            containingDeclaration = this,
+            staticModifiers = emptySet(),
+        ) { modifierList ->
             val annotationSite = isConstructorParameterSymbol.ifTrue {
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
             }

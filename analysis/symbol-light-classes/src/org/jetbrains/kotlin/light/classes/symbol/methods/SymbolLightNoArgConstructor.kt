@@ -36,7 +36,7 @@ internal class SymbolLightNoArgConstructor(
     override fun isDeprecated(): Boolean = false
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightMemberModifierList(containingDeclaration = this, staticModifiers = setOf(visibility)) { emptyList() }
+        SymbolLightMemberModifierList(containingDeclaration = this, staticModifiers = setOf(visibility), annotationsComputer = null)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

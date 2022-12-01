@@ -14,13 +14,22 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
 
-internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
-    containingDeclaration: T,
-    staticModifiers: Set<String> = emptySet(),
-    lazyModifiers: Lazy<Set<String>>? = null,
-    annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
-) : SymbolLightModifierList<T>(containingDeclaration, staticModifiers, lazyModifiers, annotationsComputer) {
+internal class SymbolLightMemberModifierList<T : KtLightMember<*>> : SymbolLightModifierList<T> {
+    constructor(
+        containingDeclaration: T,
+        initialValue: ImmutableHashMap<String, Boolean> = ImmutableHashMap.empty(),
+        lazyModifiersComputer: LazyModifiersComputer,
+        annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
+    ) : super(containingDeclaration, initialValue, lazyModifiersComputer, annotationsComputer)
+
+    constructor(
+        containingDeclaration: T,
+        staticModifiers: Set<String>,
+        annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
+    ) : super(containingDeclaration, staticModifiers, annotationsComputer)
+
     override fun hasModifierProperty(name: String): Boolean = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         // Pretend this method behaves like a `default` method

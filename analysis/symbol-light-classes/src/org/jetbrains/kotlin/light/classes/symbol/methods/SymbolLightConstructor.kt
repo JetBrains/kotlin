@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import java.util.*
 
 internal class SymbolLightConstructor(
@@ -42,24 +45,16 @@ internal class SymbolLightConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val (staticModifiers, lazyModifiers) = if (containingClass is SymbolLightClassForEnumEntry) {
-            setOf(PsiModifier.PACKAGE_LOCAL) to null
+        val initialValue = if (containingClass is SymbolLightClassForEnumEntry) {
+            LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
         } else {
-            emptySet<String>() to lazyPub {
-                // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
-                // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
-                // Technically, an enum entry should not be instantiated anywhere else, and thus FIR's modeling makes sense.
-                // But, to be backward compatible, we manually force the visibility of enum entry ctor to be package private.
-                withFunctionSymbol { constructorSymbol ->
-                    setOf(constructorSymbol.toPsiVisibilityForMember())
-                }
-            }
+            ImmutableHashMap.empty()
         }
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            staticModifiers = staticModifiers,
-            lazyModifiers = lazyModifiers,
+            initialValue = initialValue,
+            lazyModifiersComputer = ::computeModifiers,
         ) { modifierList ->
             withFunctionSymbol { constructorSymbol ->
                 constructorSymbol.computeAnnotations(
@@ -69,6 +64,11 @@ internal class SymbolLightConstructor(
                 )
             }
         }
+    }
+
+    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? {
+        if (modifier !in LazyModifiersBox.VISIBILITY_MODIFIERS) return null
+        return LazyModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

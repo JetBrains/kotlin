@@ -48,7 +48,8 @@ internal class SymbolLightClassForEnumEntry(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL),
-        ) { emptyList() }
+            annotationsComputer = null,
+        )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

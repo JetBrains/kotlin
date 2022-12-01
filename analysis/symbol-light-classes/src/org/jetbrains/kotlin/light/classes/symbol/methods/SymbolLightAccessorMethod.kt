@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnot
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -37,6 +39,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightAccessorMethod private constructor(
@@ -153,37 +157,41 @@ internal class SymbolLightAccessorMethod private constructor(
         annotationsFromProperty + annotationsFromAccessor
     }
 
-    private fun computeModifiers(): Set<String> = analyzeForLightClasses(ktModule) {
-        val propertySymbol = propertySymbol()
-        val propertyAccessorSymbol = propertyAccessorSymbol()
-        val modifiers = mutableSetOf<String>()
+    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? {
+        return when (modifier) {
+            in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertyAccessorSymbolPointer)
 
-        propertySymbol.computeModalityForMethod(
-            isTopLevel = isTopLevel,
-            suppressFinal = containingClass.isInterface,
-            result = modifiers,
-        )
+            in LazyModifiersBox.MODALITY_MODIFIERS -> {
+                if (containingClass.isInterface) {
+                    return LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT)
+                }
 
-        modifiers.add(propertyAccessorSymbol.toPsiVisibilityForMember())
+                LazyModifiersBox.computeSimpleModality(ktModule, containingPropertySymbolPointer)
+            }
 
-        if (!suppressStatic &&
-            (propertySymbol.hasJvmStaticAnnotation() || propertyAccessorSymbol.hasJvmStaticAnnotation(accessorSite))
-        ) {
-            modifiers.add(PsiModifier.STATIC)
+            PsiModifier.STATIC -> {
+                val isStatic = if (suppressStatic) {
+                    false
+                } else {
+                    isTopLevel || hasJvmStaticAnnotation()
+                }
+
+                ImmutableHashMap.of(modifier, isStatic)
+            }
+
+            else -> null
         }
+    }
 
-        modifiers
+    private fun hasJvmStaticAnnotation(): Boolean = analyzeForLightClasses(ktModule) {
+        propertySymbol().hasJvmStaticAnnotation(accessorSite, strictUseSite = false) ||
+                propertyAccessorSymbol().hasJvmStaticAnnotation(accessorSite, strictUseSite = false)
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val staticModifiers = setOfNotNull(
-            PsiModifier.ABSTRACT.takeIf { containingClass.isInterface },
-        )
-
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            staticModifiers = staticModifiers,
-            lazyModifiers = lazyPub { computeModifiers() },
+            lazyModifiersComputer = ::computeModifiers,
             annotationsComputer = ::computeAnnotations,
         )
     }
@@ -194,7 +202,8 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         analyzeForLightClasses(ktModule) {
-            propertySymbol().hasDeprecatedAnnotation(accessorSite)
+            propertySymbol().hasDeprecatedAnnotation(accessorSite, strictUseSite = false) ||
+                    propertyAccessorSymbol().hasDeprecatedAnnotation(accessorSite, strictUseSite = false)
         }
     }
 

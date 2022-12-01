@@ -16,12 +16,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
+import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.isValid
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 
 internal class SymbolLightFieldForObject private constructor(
     containingClass: SymbolLightClassForClassLike<*>,
@@ -50,20 +56,18 @@ internal class SymbolLightFieldForObject private constructor(
     override fun getName(): String = name
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL)
-        val lazyModifiers = lazyPub {
-            withObjectDeclarationSymbol { objectSymbol ->
-                setOf(objectSymbol.toPsiVisibilityForMember())
-            }
-        }
-
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            staticModifiers = staticModifiers,
-            lazyModifiers = lazyModifiers,
+            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.FINAL).with(PsiModifier.STATIC),
+            lazyModifiersComputer = ::computeModifiers,
         ) { modifierList ->
             listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
         }
+    }
+
+    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? {
+        if (modifier !in LazyModifiersBox.VISIBILITY_MODIFIERS) return null
+        return LazyModifiersBox.computeVisibilityForMember(ktModule, objectSymbolPointer)
     }
 
     private val _isDeprecated: Boolean by lazyPub {

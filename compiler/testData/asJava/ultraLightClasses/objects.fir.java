@@ -16,7 +16,17 @@ public final class C /* C*/ {
   public static final C.Factory Factory;
 
   @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String getC(@org.jetbrains.annotations.NotNull() I);//  getC(I)
+
+  @kotlin.jvm.JvmStatic()
   public static final void foo();//  foo()
+
+  @kotlin.jvm.JvmStatic()
+  public static final void setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
+
+  @kotlin.jvm.JvmStatic()
+  public static final void setC1(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getX();//  getX()

@@ -68,7 +68,10 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(containingDeclaration = this) { modifierList ->
+        SymbolLightClassModifierList(
+            containingDeclaration = this,
+            staticModifiers = emptySet(),
+        ) { modifierList ->
             withReceiverSymbol { receiver ->
                 buildList {
                     receiver.type.nullabilityType.computeNullabilityAnnotation(modifierList)?.let(::add)

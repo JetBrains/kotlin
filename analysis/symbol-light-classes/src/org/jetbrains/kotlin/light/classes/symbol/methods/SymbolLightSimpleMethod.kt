@@ -12,16 +12,21 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
@@ -85,48 +90,67 @@ internal class SymbolLightSimpleMethod(
         )
     }
 
-    context(KtAnalysisSession)
-    private fun computeModifiers(functionSymbol: KtFunctionSymbol): Set<String> {
-        if (functionSymbol.hasInlineOnlyAnnotation()) return setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
-
-        val modifiers = mutableSetOf<String>()
-        functionSymbol.computeModalityForMethod(
-            isTopLevel = isTopLevel,
-            suppressFinal = containingClass.isInterface,
-            result = modifiers
-        )
-
-        if (functionSymbol.isExternal) {
-            modifiers.add(PsiModifier.NATIVE)
+    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? = when (modifier) {
+        in LazyModifiersBox.MODALITY_MODIFIERS -> {
+            ifInlineOnly { return modifiersForInlineOnlyCase() }
+            val modality = if (isTopLevel) PsiModifier.FINAL else withFunctionSymbol { it.computeSimpleModality() }
+            LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
 
-        modifiers.add(functionSymbol.toPsiVisibilityForMember())
-
-        if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
-            modifiers.add(PsiModifier.STATIC)
+        in LazyModifiersBox.VISIBILITY_MODIFIERS -> {
+            ifInlineOnly { return modifiersForInlineOnlyCase() }
+            LazyModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
         }
 
-        if (functionSymbol.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID, null)) {
-            modifiers.add(PsiModifier.STRICTFP)
+        PsiModifier.STATIC -> {
+            ifInlineOnly { return null }
+            val isStatic = if (suppressStatic) {
+                false
+            } else {
+                isTopLevel || withFunctionSymbol { it.hasJvmStaticAnnotation() }
+            }
+
+            ImmutableHashMap.of(modifier, isStatic)
         }
 
-        if (functionSymbol.hasAnnotation(SYNCHRONIZED_ANNOTATION_CLASS_ID, null)) {
-            modifiers.add(PsiModifier.SYNCHRONIZED)
+        PsiModifier.NATIVE -> {
+            ifInlineOnly { return null }
+            val isExternal = functionDeclaration?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: withFunctionSymbol { it.isExternal }
+            ImmutableHashMap.of(modifier, isExternal)
         }
 
-        return modifiers
+        PsiModifier.STRICTFP -> {
+            ifInlineOnly { return null }
+            val hasAnnotation = withFunctionSymbol { it.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID, null) }
+            ImmutableHashMap.of(modifier, hasAnnotation)
+        }
+
+        PsiModifier.SYNCHRONIZED -> {
+            ifInlineOnly { return null }
+            val hasAnnotation = withFunctionSymbol { it.hasAnnotation(SYNCHRONIZED_ANNOTATION_CLASS_ID, null) }
+            ImmutableHashMap.of(modifier, hasAnnotation)
+        }
+
+        else -> null
     }
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        val lazyModifiers = lazyPub {
-            withFunctionSymbol { functionSymbol ->
-                computeModifiers(functionSymbol)
-            }
+    private inline fun ifInlineOnly(action: () -> Unit) {
+        if (hasInlineOnlyAnnotation) {
+            action()
         }
+    }
 
+    private fun modifiersForInlineOnlyCase(): ImmutableMap<String, Boolean> =
+        LazyModifiersBox.MODALITY_MODIFIERS_MAP.merge(LazyModifiersBox.VISIBILITY_MODIFIERS_MAP)
+            .with(PsiModifier.FINAL)
+            .with(PsiModifier.PRIVATE)
+
+    private val hasInlineOnlyAnnotation: Boolean by lazyPub { withFunctionSymbol { it.hasInlineOnlyAnnotation() } }
+
+    private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            lazyModifiers = lazyModifiers,
+            lazyModifiersComputer = ::computeModifiers,
             annotationsComputer = ::computeAnnotations,
         )
     }

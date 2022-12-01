@@ -5,26 +5,58 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
+import org.jetbrains.kotlin.util.javaslang.getOrNull
+import org.jetbrains.kotlin.utils.keysToMap
+import java.util.concurrent.atomic.AtomicReference
 
-internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
-    protected val owner: T,
-    private val staticModifiers: Set<String>,
-    private val lazyModifiers: Lazy<Set<String>>?,
-    annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
-) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
+internal open class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>> :
+    KtLightElementBase, PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
+    protected val owner: T
+    private val staticModifiers: Set<String>?
+    private val lazyModifiersBox: LazyModifiersBox?
+    private val lazyAnnotations: Lazy<List<PsiAnnotation>>?
+
+    constructor(
+        owner: T,
+        initialValue: ImmutableHashMap<String, Boolean>,
+        lazyModifiersComputer: LazyModifiersComputer,
+        annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
+    ) : super(owner) {
+        this.owner = owner
+        this.lazyAnnotations = annotationsComputer?.let { lazyPub { annotationsComputer(this) } }
+
+        this.lazyModifiersBox = LazyModifiersBox(initialValue, lazyModifiersComputer)
+        this.staticModifiers = null
+    }
+
+    constructor(
+        owner: T,
+        staticModifiers: Set<String>,
+        annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
+    ) : super(owner) {
+        this.owner = owner
+        this.lazyAnnotations = annotationsComputer?.let { lazyPub { annotationsComputer(this) } }
+
+        this.lazyModifiersBox = null
+        this.staticModifiers = staticModifiers
+    }
+
     override val kotlinOrigin: KtModifierList? get() = owner.kotlinOrigin?.modifierList
     override fun getParent() = owner
     override fun setModifierProperty(name: String, value: Boolean) = cannotModify()
@@ -37,17 +69,69 @@ internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifie
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
 
-    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
-        annotationsComputer(this)
-    }
-
-    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations.value.toTypedArray()
+    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations?.value?.toTypedArray().orEmpty()
     override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
-        lazyAnnotations.value.firstOrNull { it.qualifiedName == qualifiedName }
+        lazyAnnotations?.value?.firstOrNull { it.qualifiedName == qualifiedName }
 
     override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
-    override fun hasModifierProperty(name: String): Boolean = name in staticModifiers || lazyModifiers?.value?.contains(name) == true
+    override fun hasModifierProperty(name: String): Boolean =
+        staticModifiers?.contains(name) == true || lazyModifiersBox?.hasModifier(name) == true
+}
+
+internal typealias LazyModifiersComputer = (modifier: String) -> ImmutableMap<String, Boolean>?
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun ImmutableHashMap<String, Boolean>.with(modifier: String?): ImmutableHashMap<String, Boolean> {
+    return modifier?.let { put(modifier, true) } ?: this
+}
+
+internal class LazyModifiersBox(
+    initialValue: ImmutableHashMap<String, Boolean>,
+    private val computer: LazyModifiersComputer,
+) {
+    private val modifiersMapReference: AtomicReference<ImmutableHashMap<String, Boolean>> = AtomicReference(initialValue)
+
+    fun hasModifier(modifier: String): Boolean {
+        modifiersMapReference.get().getOrNull(modifier)?.let { return it }
+        val newValues = computer(modifier) ?: ImmutableHashMap.of(modifier, false)
+        do {
+            val currentMap = modifiersMapReference.get()
+            val newMap = currentMap.merge(newValues)
+        } while (!modifiersMapReference.compareAndSet(currentMap, newMap))
+
+        return newValues.getOrNull(modifier) ?: error("Inconsistent state: $modifier")
+    }
+
+    companion object {
+        internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
+        internal val VISIBILITY_MODIFIERS_MAP = ImmutableHashMap.ofAll(VISIBILITY_MODIFIERS.keysToMap { false })
+
+        internal val MODALITY_MODIFIERS = setOf(PsiModifier.FINAL, PsiModifier.ABSTRACT)
+        internal val MODALITY_MODIFIERS_MAP = ImmutableHashMap.ofAll(MODALITY_MODIFIERS.keysToMap { false })
+
+        internal fun computeVisibilityForMember(
+            ktModule: KtModule,
+            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
+        ): ImmutableMap<String, Boolean> {
+            val visibility = analyzeForLightClasses(ktModule) {
+                declarationPointer.restoreSymbolOrThrowIfDisposed().toPsiVisibilityForMember()
+            }
+
+            return VISIBILITY_MODIFIERS_MAP.with(visibility)
+        }
+
+        internal fun computeSimpleModality(
+            ktModule: KtModule,
+            declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
+        ): ImmutableMap<String, Boolean> {
+            val visibility = analyzeForLightClasses(ktModule) {
+                declarationPointer.restoreSymbolOrThrowIfDisposed().computeSimpleModality()
+            }
+
+            return MODALITY_MODIFIERS_MAP.with(visibility)
+        }
+    }
 }

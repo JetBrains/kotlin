@@ -25,11 +25,15 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 
 internal class SymbolLightFieldForProperty private constructor(
     private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
@@ -81,7 +85,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD)
+            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD, strictUseSite = false)
         }
     }
 
@@ -91,46 +95,51 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun getName(): String = fieldName
 
-    private fun computeLazyModifiers(): Set<String> = withPropertySymbol { propertySymbol ->
-        buildSet {
-            val suppressFinal = !propertySymbol.isVal
-
-            propertySymbol.computeModalityForMethod(
-                isTopLevel = isTopLevel,
-                suppressFinal = suppressFinal,
-                result = this
-            )
-
-            if (takePropertyVisibility) {
-                add(propertySymbol.toPsiVisibilityForMember())
+    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? = when (modifier) {
+        in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
+        in LazyModifiersBox.MODALITY_MODIFIERS -> {
+            val modality = withPropertySymbol { propertySymbol ->
+                if (propertySymbol.isVal) {
+                    PsiModifier.FINAL
+                } else {
+                    propertySymbol.computeSimpleModality()?.takeIf {
+                        it != PsiModifier.FINAL || isTopLevel && propertySymbol.isDelegatedProperty
+                    }
+                }
             }
 
-            if (!suppressFinal) {
-                add(PsiModifier.FINAL)
-            }
-
-            if (propertySymbol.hasAnnotation(TRANSIENT_ANNOTATION_CLASS_ID, null)) {
-                add(PsiModifier.TRANSIENT)
-            }
-
-            if (propertySymbol.hasAnnotation(VOLATILE_ANNOTATION_CLASS_ID, null)) {
-                add(PsiModifier.VOLATILE)
-            }
+            LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
+
+        PsiModifier.STATIC -> {
+            val isStatic = forceStatic || isTopLevel
+            ImmutableHashMap.of(modifier, isStatic)
+        }
+
+        PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
+            val hasAnnotation = propertySymbol.hasAnnotation(VOLATILE_ANNOTATION_CLASS_ID, null)
+            ImmutableHashMap.of(modifier, hasAnnotation)
+        }
+
+        PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
+            val hasAnnotation = propertySymbol.hasAnnotation(TRANSIENT_ANNOTATION_CLASS_ID, null)
+            ImmutableHashMap.of(modifier, hasAnnotation)
+        }
+
+        else -> null
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val staticModifiers = setOfNotNull(
-            PsiModifier.PRIVATE.takeUnless { takePropertyVisibility },
-            PsiModifier.STATIC.takeIf { forceStatic },
-        )
-
-        val lazyModifiers = lazyPub { computeLazyModifiers() }
+        val initializerValue = if (takePropertyVisibility) {
+            ImmutableHashMap.empty()
+        } else {
+            LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
+        }
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            staticModifiers = staticModifiers,
-            lazyModifiers = lazyModifiers,
+            initialValue = initializerValue,
+            lazyModifiersComputer = ::computeModifiers,
         ) { modifierList ->
             withPropertySymbol { propertySymbol ->
                 val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {

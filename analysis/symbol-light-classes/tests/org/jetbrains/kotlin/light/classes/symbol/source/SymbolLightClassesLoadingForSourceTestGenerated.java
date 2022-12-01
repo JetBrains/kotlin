@@ -169,6 +169,12 @@ public class SymbolLightClassesLoadingForSourceTestGenerated extends AbstractSym
     }
 
     @Test
+    @TestMetadata("jvmStaticOnPropertySetter.kt")
+    public void testJvmStaticOnPropertySetter() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/jvmStaticOnPropertySetter.kt");
+    }
+
+    @Test
     @TestMetadata("jvmSynthetic.kt")
     public void testJvmSynthetic() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/jvmSynthetic.kt");

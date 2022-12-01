@@ -37,7 +37,8 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
         SymbolLightClassModifierList(
             containingDeclaration = this,
             staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
-        ) { emptyList() }
+            annotationsComputer = null,
+        )
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList

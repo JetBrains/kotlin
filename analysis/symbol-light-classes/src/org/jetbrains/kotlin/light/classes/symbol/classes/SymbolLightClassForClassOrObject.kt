@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
@@ -25,13 +28,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
@@ -86,30 +86,19 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     )
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        val lazyModifiers = lazyPub {
-            withClassOrObjectSymbol { classOrObjectSymbol ->
-                buildSet {
-                    add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
-                    addIfNotNull(classOrObjectSymbol.computeSimpleModality())
-                    if (!isTopLevel && !classOrObjectSymbol.isInner) {
-                        add(PsiModifier.STATIC)
-                    }
-                }
-            }
-        }
-
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            lazyModifiers = lazyModifiers,
-        ) { modifierList ->
-            withClassOrObjectSymbol { classOrObjectSymbol ->
-                classOrObjectSymbol.computeAnnotations(
-                    modifierList = modifierList,
-                    nullability = NullabilityType.Unknown,
-                    annotationUseSiteTarget = null,
-                )
-            }
-        }
+            lazyModifiersComputer = ::computeModifiers,
+            annotationsComputer = { modifierList ->
+                withClassOrObjectSymbol { classOrObjectSymbol ->
+                    classOrObjectSymbol.computeAnnotations(
+                        modifierList = modifierList,
+                        nullability = NullabilityType.Unknown,
+                        annotationUseSiteTarget = null,
+                    )
+                }
+            },
+        )
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList

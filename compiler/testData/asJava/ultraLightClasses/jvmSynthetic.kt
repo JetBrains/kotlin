@@ -12,5 +12,8 @@ class A {
     var z = 1
         @JvmSynthetic get
         @JvmSynthetic set
+
+    @get:JvmSynthetic
+    lateinit var f: A
 }
 

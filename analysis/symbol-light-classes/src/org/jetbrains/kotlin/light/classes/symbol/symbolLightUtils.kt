@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
@@ -76,37 +73,11 @@ internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modal
     Modality.OPEN -> null
 }
 
-internal fun KtSymbolWithModality.computeModalityForMethod(
-    isTopLevel: Boolean,
-    suppressFinal: Boolean,
-    result: MutableSet<String>
-) {
-    require(this !is KtClassLikeSymbol)
-
-    computeSimpleModality()?.run {
-        if (this != PsiModifier.FINAL || !suppressFinal) {
-            result.add(this)
-        }
-    }
-
-    if (isTopLevel) {
-        result.add(PsiModifier.STATIC)
-        val needFinalModifier = when (this) {
-            is KtPropertySymbol -> isDelegatedProperty || isVal
-            else -> true
-        }
-
-        if (needFinalModifier) {
-            result.add(PsiModifier.FINAL)
-        }
-    }
-}
-
 internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
 
 internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
 
-internal fun Visibility.toPsiVisibilityForMember(): String = when (this) {
+private fun Visibility.toPsiVisibilityForMember(): String = when (this) {
     Visibilities.Private, Visibilities.PrivateToThis -> PsiModifier.PRIVATE
     Visibilities.Protected -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC

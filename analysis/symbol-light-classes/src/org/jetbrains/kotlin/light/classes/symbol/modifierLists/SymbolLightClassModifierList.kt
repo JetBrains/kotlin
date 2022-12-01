@@ -10,10 +10,19 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
 
-internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
-    containingDeclaration: T,
-    staticModifiers: Set<String> = emptySet(),
-    lazyModifiers: Lazy<Set<String>>? = null,
-    annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
-) : SymbolLightModifierList<T>(containingDeclaration, staticModifiers, lazyModifiers, annotationsComputer)
+internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>> : SymbolLightModifierList<T> {
+    constructor(
+        containingDeclaration: T,
+        initialValue: ImmutableHashMap<String, Boolean> = ImmutableHashMap.empty(),
+        lazyModifiersComputer: LazyModifiersComputer,
+        annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
+    ) : super(containingDeclaration, initialValue, lazyModifiersComputer, annotationsComputer)
+
+    constructor(
+        containingDeclaration: T,
+        staticModifiers: Set<String>,
+        annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
+    ) : super(containingDeclaration, staticModifiers, annotationsComputer)
+}

@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -65,22 +66,10 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     )
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        val staticModifiers = setOf(PsiModifier.ABSTRACT)
-        val lazyModifiers = lazyPub {
-            withClassOrObjectSymbol { classOrObjectSymbol ->
-                buildSet {
-                    add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
-                    if (!isTopLevel && !classOrObjectSymbol.isInner) {
-                        add(PsiModifier.STATIC)
-                    }
-                }
-            }
-        }
-
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = staticModifiers,
-            lazyModifiers = lazyModifiers,
+            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
+            lazyModifiersComputer = ::computeModifiers
         ) { modifierList ->
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(

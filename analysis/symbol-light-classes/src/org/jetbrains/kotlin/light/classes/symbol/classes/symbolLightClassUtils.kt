@@ -286,11 +286,15 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (declaration.hasJvmFieldAnnotation()) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
-        if (onlyJvmStatic && !hasJvmStaticAnnotation(siteTarget) && !declaration.hasJvmStaticAnnotation()) return false
+        if (onlyJvmStatic &&
+            !hasJvmStaticAnnotation(siteTarget, strictUseSite = false) &&
+            !declaration.hasJvmStaticAnnotation(siteTarget, strictUseSite = false)
+        ) return false
+
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(siteTarget)) return false
-        return !isHiddenOrSynthetic()
+        return !isHiddenOrSynthetic(siteTarget, strictUseSite = false)
     }
 
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
