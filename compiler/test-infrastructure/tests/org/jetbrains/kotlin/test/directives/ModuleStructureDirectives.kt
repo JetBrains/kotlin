@@ -39,6 +39,12 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val ALLOW_FILES_WITH_SAME_NAMES by directive(
+        """
+        Allows specifying test files with the same names using the // FILE directive.
+        """.trimIndent()
+    )
+
     val TARGET_FRONTEND by stringDirective(
         """
             Usage: // TARGET_FRONTEND: {Frontend}
