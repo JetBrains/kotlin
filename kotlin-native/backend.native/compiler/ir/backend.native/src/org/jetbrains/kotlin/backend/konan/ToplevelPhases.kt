@@ -423,7 +423,7 @@ internal val bitcodePhase = SameTypeNamedCompilerPhase(
                 cStubsPhase
 )
 
-private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
+internal val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then

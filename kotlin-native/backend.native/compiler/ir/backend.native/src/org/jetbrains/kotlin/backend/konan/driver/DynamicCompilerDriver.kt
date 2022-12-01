@@ -6,9 +6,18 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.backend.konan.KonanConfig
+import llvm.LLVMWriteBitcodeToFile
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
+import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
+import org.jetbrains.kotlin.backend.konan.shouldDefineFunctionClasses
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
@@ -27,14 +36,14 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
                     when (config.produce) {
-                        CompilerOutputKind.PROGRAM -> error("Dynamic compiler driver does not support `program` output yet.")
+                        CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
                         CompilerOutputKind.DYNAMIC -> error("Dynamic compiler driver does not support `dynamic` output yet.")
                         CompilerOutputKind.STATIC -> error("Dynamic compiler driver does not support `static` output yet.")
                         CompilerOutputKind.FRAMEWORK -> error("Dynamic compiler driver does not support `framework` output yet.")
                         CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
                         CompilerOutputKind.BITCODE -> error("Dynamic compiler driver does not support `bitcode` output yet.")
-                        CompilerOutputKind.DYNAMIC_CACHE -> error("Dynamic compiler driver does not support `dynamic_cache` output yet.")
-                        CompilerOutputKind.STATIC_CACHE -> error("Dynamic compiler driver does not support `static_cache` output yet.")
+                        CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
                     }
                 }
@@ -42,23 +51,30 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         }
     }
 
-    private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = engine.useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
-        if (frontendOutput == FrontendPhaseOutput.ShouldNotGenerateCode) {
-            return
+    /**
+     * A common default pipeline to produce a binary output.
+     */
+    private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        engine.useContext(createBackendContext(config, frontendOutput, psiToIrOutput)) { backendEngine ->
+            backendEngine.runPhase(functionsWithoutBoundCheck)
+            backendEngine.processModuleFragments(backendEngine.context.irModule!!).forEach { (generationState, fragment) ->
+                backendEngine.context.generationState = generationState
+                backendEngine.useContext(generationState) { generationStateEngine ->
+                    // TODO: We can run compile part in parallel if we get rid of context.generationState.
+                    generationStateEngine.runLowerAndCompile(fragment)
+                }
+            }
         }
-        require(frontendOutput is FrontendPhaseOutput.Full)
+    }
+
+    private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = if (config.metadataKlib) {
             null
         } else {
-            val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-            val psiToIrOutput = engine.useContext(psiToIrContext) { psiToIrEngine ->
-                val output = psiToIrEngine.runPsiToIr(frontendOutput, isProducingLibrary = true)
-                psiToIrEngine.runSpecialBackendChecks(output)
-                output
-            }
-            engine.runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
-            psiToIrOutput
+            engine.runPsiToIr(frontendOutput, isProducingLibrary = true)
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         engine.writeKlib(serializerOutput)

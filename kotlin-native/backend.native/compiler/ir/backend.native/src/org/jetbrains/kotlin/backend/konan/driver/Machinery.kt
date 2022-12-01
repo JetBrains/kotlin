@@ -127,4 +127,8 @@ internal class PhaseEngine<C : PhaseContext>(
         // We lose sticky postconditions here, but it should be ok, since type is changed.
         return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
     }
+
+    fun <Output> runPhase(
+            phase: AbstractNamedCompilerPhase<C, Unit, Output>,
+    ): Output = runPhase(phase, Unit)
 }

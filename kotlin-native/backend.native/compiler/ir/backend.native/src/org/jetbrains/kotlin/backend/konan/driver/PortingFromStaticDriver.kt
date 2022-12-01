@@ -31,3 +31,7 @@ internal fun <Input, Output> PhaseEngine<NativeGenerationState>.runPhaseInParent
 ): Output {
     return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context.context, input)
 }
+
+internal fun <Output> PhaseEngine<NativeGenerationState>.runPhaseInParentContext(
+        phase: AbstractNamedCompilerPhase<Context, Unit, Output>,
+): Output = runPhaseInParentContext(phase, Unit)

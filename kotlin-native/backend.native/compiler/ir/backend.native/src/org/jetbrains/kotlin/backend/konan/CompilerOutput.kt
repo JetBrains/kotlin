@@ -167,7 +167,7 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
     }
 }
 
-private fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
+internal fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
     val config = generationState.config
     val nomain = config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)
