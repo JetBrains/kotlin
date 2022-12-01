@@ -14,7 +14,6 @@ typealias ExecutableFile = String
 
 internal class BitcodeCompiler(val generationState: NativeGenerationState) {
 
-    private val context = generationState.config
     private val config = generationState.config
     private val platform = config.platform
     private val optimize = generationState.shouldOptimize()
@@ -70,7 +69,7 @@ internal class BitcodeCompiler(val generationState: NativeGenerationState) {
                 else -> configurables.clangNooptFlags
             })
             addNonEmpty(BitcodeEmbedding.getClangOptions(config))
-            addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+            addNonEmpty(configurables.currentRelocationMode(generationState).translateToClangCc1Flag())
         }
         if (configurables is AppleConfigurables) {
             targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)

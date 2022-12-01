@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
@@ -79,7 +80,6 @@ internal class CacheStorage(val generationState: NativeGenerationState) {
 internal class Linker(val generationState: NativeGenerationState) {
     private val config = generationState.config
     private val platform = config.platform
-    private val config = config.configuration
     private val linkerOutput = determineLinkerOutput(generationState)
     private val linker = platform.linker
     private val target = config.target
@@ -156,7 +156,7 @@ internal class Linker(val generationState: NativeGenerationState) {
         val linkerInput = determineLinkerInput(objectFiles, linkerOutput)
         try {
             File(executable).delete()
-            val linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+            val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                     BitcodeEmbedding.getLinkerOptions(config) +
                     linkerInput.caches.dynamic +
                     libraryProvidedLinkerFlags + additionalLinkerArgs
