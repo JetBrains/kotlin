@@ -1536,7 +1536,7 @@ class DeclarationsConverter(
     /**
      * this is just a VALUE_PARAMETER_LIST
      *
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyComponent
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
      */
     private fun convertSetterParameter(
@@ -1853,7 +1853,7 @@ class DeclarationsConverter(
                 source = calculatedFirExpression.source?.fakeElement(KtFakeSourceElementKind.ClassDelegationField)
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic
-                name = SpecialNames.delegateFieldName(delegateFieldsMap.size)
+                name = NameUtils.delegateFieldName(delegateFieldsMap.size)
                 returnTypeRef = firTypeRef
                 symbol = FirFieldSymbol(CallableId(name))
                 isVar = false

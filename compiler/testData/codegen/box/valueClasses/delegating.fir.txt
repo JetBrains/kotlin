@@ -72,8 +72,8 @@ public final class B {
 @kotlin.Metadata
 public final class C {
     // source: 'delegating.kt'
-    private synthetic final field <$$delegate_0-x>: int
-    private synthetic final field <$$delegate_0-y>: int
+    private synthetic final field $$delegate_0-x: int
+    private synthetic final field $$delegate_0-y: int
     public method <init>(p0: int, p1: int): void
     public method getX(): int
 }

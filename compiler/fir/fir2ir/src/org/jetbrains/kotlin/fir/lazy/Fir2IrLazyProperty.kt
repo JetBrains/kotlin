@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.isComposite
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.NameUtils
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -147,7 +147,7 @@ class Fir2IrLazyProperty(
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_DELEGATE,
                         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        SpecialNames.propertyDelegateName(fir.name), true, fir.delegate
+                        NameUtils.propertyDelegateName(fir.name), true, fir.delegate
                     )
                 }
             }

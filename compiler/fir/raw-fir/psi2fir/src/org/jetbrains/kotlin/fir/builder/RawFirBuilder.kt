@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -854,7 +855,7 @@ open class RawFirBuilder(
                             source = delegateSource
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Synthetic
-                            name = SpecialNames.delegateFieldName(delegateFieldsMap.size)
+                            name = NameUtils.delegateFieldName(delegateFieldsMap.size)
                             returnTypeRef = type
                             symbol = FirFieldSymbol(CallableId(name))
                             isVar = false

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -98,7 +98,7 @@ class IrPropertyDelegateDescriptorImpl(
 ) :
     IrDelegateDescriptorBase(
         correspondingProperty.containingDeclaration,
-        SpecialNames.propertyDelegateName(correspondingProperty.name),
+        NameUtils.propertyDelegateName(correspondingProperty.name),
         delegateType,
         correspondingProperty.delegateField?.annotations ?: Annotations.EMPTY
     ),
@@ -112,7 +112,7 @@ class IrImplementingDelegateDescriptorImpl(
 ) :
     IrDelegateDescriptorBase(
         containingDeclaration,
-        SpecialNames.delegateFieldName(number),
+        NameUtils.delegateFieldName(number),
         delegateType
     ),
     IrImplementingDelegateDescriptor
@@ -125,7 +125,7 @@ class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     VariableDescriptorImpl(
         correspondingLocalProperty.containingDeclaration,
         Annotations.EMPTY,
-        SpecialNames.propertyDelegateName(correspondingLocalProperty.name),
+        NameUtils.propertyDelegateName(correspondingLocalProperty.name),
         delegateType,
         SourceElement.NO_SOURCE
     ) {
