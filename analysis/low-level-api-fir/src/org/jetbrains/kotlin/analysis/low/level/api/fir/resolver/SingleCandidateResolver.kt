@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
@@ -74,8 +75,10 @@ class SingleCandidateResolver(
             return null
         }
 
-        val expectedType = resolutionParameters.expectedType ?: bodyResolveComponents.noExpectedType
-        val completionResult = firCallCompleter.completeCall(fakeCall, expectedType)
+        val completionResult = firCallCompleter.completeCall(
+            fakeCall,
+            resolutionParameters.expectedType?.let(ResolutionMode::WithExpectedType) ?: ResolutionMode.ContextIndependent
+        )
 
         return completionResult.takeIf { it.callCompleted }?.result
     }
