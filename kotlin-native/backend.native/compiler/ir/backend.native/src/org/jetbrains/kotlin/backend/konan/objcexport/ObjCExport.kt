@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
@@ -27,10 +29,14 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
-// TODO: Replace Context with a more lightweight class.
-internal fun produceObjCExportInterface(context: Context): ObjCExportedInterface {
-    require(context.config.target.family.isAppleFamily)
-    require(context.config.produce == CompilerOutputKind.FRAMEWORK)
+internal fun produceObjCExportInterface(
+        context: PhaseContext,
+        moduleDescriptor: ModuleDescriptor,
+        frontendServices: FrontendServices,
+): ObjCExportedInterface {
+    val config = context.config
+    require(config.target.family.isAppleFamily)
+    require(config.produce == CompilerOutputKind.FRAMEWORK)
 
     val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
 
@@ -38,13 +44,13 @@ internal fun produceObjCExportInterface(context: Context): ObjCExportedInterface
     //   Not possible yet, since ObjCExport translates the entire "world" API at once
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
-    val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-    val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-    val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-    val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+    val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
+    val mapper = ObjCExportMapper(frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
+    val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
     val namer = ObjCExportNamerImpl(
             moduleDescriptors.toSet(),
-            context.moduleDescriptor.builtIns,
+            moduleDescriptor.builtIns,
             mapper,
             topLevelNamePrefix,
             local = false,
@@ -56,13 +62,14 @@ internal fun produceObjCExportInterface(context: Context): ObjCExportedInterface
 }
 
 internal class ObjCExport(
-        val generationState: NativeGenerationState,
+        private val generationState: NativeGenerationState,
+        private val moduleDescriptor: ModuleDescriptor,
         private val exportedInterface: ObjCExportedInterface?,
         private val codeSpec: ObjCExportCodeSpec?
 ) {
-    private val context = generationState.context
-    private val target get() = context.config.target
-    private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
+    private val config = generationState.config
+    private val target get() = config.target
+    private val topLevelNamePrefix get() = generationState.objCExportTopLevelNamePrefix
 
     lateinit var namer: ObjCExportNamer
 
@@ -73,12 +80,12 @@ internal class ObjCExport(
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
-        if (!context.config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
+        if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport)
+        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-                setOf(codegen.context.moduleDescriptor),
-                context.moduleDescriptor.builtIns,
+                setOf(moduleDescriptor),
+                moduleDescriptor.builtIns,
                 mapper,
                 topLevelNamePrefix,
                 local = false
@@ -105,14 +112,14 @@ internal class ObjCExport(
         val frameworkDirectory = File(generationState.outputFile)
         val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
         val frameworkBuilder = FrameworkBuilder(
-                context.config,
-                infoPListBuilder = InfoPListBuilder(context.config),
+                config,
+                infoPListBuilder = InfoPListBuilder(config),
                 moduleMapBuilder = ModuleMapBuilder(),
                 objCHeaderWriter = ObjCHeaderWriter(),
                 mainPackageGuesser = MainPackageGuesser(),
         )
         frameworkBuilder.build(
-                context.moduleDescriptor,
+                moduleDescriptor,
                 frameworkDirectory,
                 frameworkName,
                 headerLines,
@@ -145,7 +152,7 @@ internal class ObjCExport(
 
         val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
 
-        val clangCommand = context.config.clang.clangC(
+        val clangCommand = config.clang.clangC(
                 source.absolutePath,
                 "-O2",
                 "-emit-llvm",

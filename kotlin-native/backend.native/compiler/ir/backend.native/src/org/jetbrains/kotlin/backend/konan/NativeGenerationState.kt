@@ -45,6 +45,8 @@ internal class FileLowerState {
 
 internal class NativeGenerationState(
         config: KonanConfig,
+        // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
+        //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?
 ) : BasicPhaseContext(config) {
@@ -114,10 +116,15 @@ internal class NativeGenerationState(
         verifyModule(llvm.module)
     }
 
+    // TODO: Do we need this function?
     fun printBitCode() {
         if (!llvmDelegate.isInitialized()) return
-        context.separator("BitCode:")
+        separator("BitCode:")
         LLVMDumpModule(llvm.module)
+    }
+
+    private fun separator(title: String) {
+        println("\n\n--- ${title} ----------------------\n")
     }
 
     private var isDisposed = false

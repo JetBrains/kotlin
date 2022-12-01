@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
  */
 internal class CoverageManager(val generationState: NativeGenerationState) {
     private val context = generationState.context
-    private val config = context.config
+    private val config = generationState.config
 
     private val shouldCoverSources: Boolean =
             config.shouldCoverSources
@@ -45,7 +45,7 @@ internal class CoverageManager(val generationState: NativeGenerationState) {
 
     init {
         if (enabled && !checkRestrictions()) {
-            context.reportCompilationError("Coverage is not supported for ${config.target}.")
+            generationState.reportCompilationError("Coverage is not supported for ${config.target}.")
         }
     }
 

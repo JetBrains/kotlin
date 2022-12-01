@@ -267,7 +267,7 @@ internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
 internal fun alignTo(value: Long, align: Long): Long = (value + align - 1) / align * align
 
 internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LLVMValueRef): LocationInfo? {
-    if (!generationState.context.shouldContainLocationDebugInfo()) {
+    if (!generationState.shouldContainLocationDebugInfo()) {
         return null
     }
 

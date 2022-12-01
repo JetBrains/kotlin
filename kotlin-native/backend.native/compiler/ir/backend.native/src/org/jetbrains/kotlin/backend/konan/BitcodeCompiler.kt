@@ -14,13 +14,14 @@ typealias ExecutableFile = String
 
 internal class BitcodeCompiler(val generationState: NativeGenerationState) {
 
-    private val context = generationState.context
-    private val platform = context.config.platform
-    private val optimize = context.shouldOptimize()
-    private val debug = context.config.debug
+    private val context = generationState.config
+    private val config = generationState.config
+    private val platform = config.platform
+    private val optimize = generationState.shouldOptimize()
+    private val debug = config.debug
 
     private val overrideClangOptions =
-            context.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
+            config.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { it.isNotEmpty() })
@@ -28,7 +29,7 @@ internal class BitcodeCompiler(val generationState: NativeGenerationState) {
 
     private fun runTool(vararg command: String) =
             Command(*command)
-                    .logWith(context::log)
+                    .logWith(generationState::log)
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
@@ -68,7 +69,7 @@ internal class BitcodeCompiler(val generationState: NativeGenerationState) {
                 debug -> configurables.clangDebugFlags
                 else -> configurables.clangNooptFlags
             })
-            addNonEmpty(BitcodeEmbedding.getClangOptions(context.config))
+            addNonEmpty(BitcodeEmbedding.getClangOptions(config))
             addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
         }
         if (configurables is AppleConfigurables) {

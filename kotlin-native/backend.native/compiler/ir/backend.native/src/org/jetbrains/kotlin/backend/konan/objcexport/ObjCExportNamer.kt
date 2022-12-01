@@ -1040,7 +1040,7 @@ internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String get() {
     return abbreviate(fullPrefix)
 }
 
-internal val Context.objCExportTopLevelNamePrefix: String
+internal val PhaseContext.objCExportTopLevelNamePrefix: String
     get() = abbreviate(config.fullExportedNamePrefix)
 
 fun abbreviate(name: String): String {
