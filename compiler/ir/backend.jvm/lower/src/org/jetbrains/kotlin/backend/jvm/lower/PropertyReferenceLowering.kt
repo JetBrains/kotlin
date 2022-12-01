@@ -202,7 +202,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()
         val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
-        val isSynthetic = irClass.metadata !is MetadataSource.File && irClass.metadata !is MetadataSource.Class
+        val isSynthetic = irClass.metadata !is MetadataSource.File && irClass.metadata !is MetadataSource.Class &&
+                irClass.metadata !is MetadataSource.Script
 
         fun localPropertyIndex(getter: IrSymbol): Int? =
             localPropertyIndices[getter] ?: parent?.localPropertyIndex(getter)
