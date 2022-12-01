@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
@@ -42,9 +43,11 @@ internal class FileLowerState {
             "$prefix${cStubCount++}"
 }
 
-internal class NativeGenerationState(val context: Context, val cacheDeserializationStrategy: CacheDeserializationStrategy?) {
-    private val config = context.config
-
+internal class NativeGenerationState(
+        config: KonanConfig,
+        val context: Context,
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?
+) : BasicPhaseContext(config) {
     private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
     val outputFiles = OutputFiles(outputPath, config.target, config.produce)
     val tempFiles = run {
@@ -118,7 +121,7 @@ internal class NativeGenerationState(val context: Context, val cacheDeserializat
     }
 
     private var isDisposed = false
-    fun dispose() {
+    override fun dispose() {
         if (isDisposed) return
 
         if (hasDebugInfo()) {
