@@ -1038,49 +1038,49 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
 	public abstract fun addCompilations (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun android ()V
-	public abstract fun androidNativeArm32 ()V
-	public abstract fun androidNativeArm64 ()V
-	public abstract fun androidNativeX64 ()V
-	public abstract fun androidNativeX86 ()V
+	public abstract fun anyAndroid ()V
 	public abstract fun anyAndroidNative ()V
+	public abstract fun anyAndroidNativeArm32 ()V
+	public abstract fun anyAndroidNativeArm64 ()V
+	public abstract fun anyAndroidNativeX64 ()V
+	public abstract fun anyAndroidNativeX86 ()V
 	public abstract fun anyApple ()V
 	public abstract fun anyIos ()V
+	public abstract fun anyIosArm32 ()V
+	public abstract fun anyIosArm64 ()V
+	public abstract fun anyIosSimulatorArm64 ()V
+	public abstract fun anyIosX64 ()V
 	public abstract fun anyJs ()V
+	public abstract fun anyJvm ()V
 	public abstract fun anyLinux ()V
+	public abstract fun anyLinuxArm32Hfp ()V
+	public abstract fun anyLinuxArm64 ()V
+	public abstract fun anyLinuxMips32 ()V
+	public abstract fun anyLinuxMipsel32 ()V
+	public abstract fun anyLinuxX64 ()V
 	public abstract fun anyMacos ()V
+	public abstract fun anyMacosArm64 ()V
+	public abstract fun anyMacosX64 ()V
 	public abstract fun anyMingw ()V
+	public abstract fun anyMingwX64 ()V
+	public abstract fun anyMingwX86 ()V
 	public abstract fun anyNative ()V
 	public abstract fun anyTvos ()V
+	public abstract fun anyTvosArm64 ()V
+	public abstract fun anyTvosSimulatorArm64 ()V
+	public abstract fun anyTvosX64 ()V
+	public abstract fun anyWasm32 ()V
 	public abstract fun anyWatchos ()V
+	public abstract fun anyWatchosArm32 ()V
+	public abstract fun anyWatchosArm64 ()V
+	public abstract fun anyWatchosDeviceArm64 ()V
+	public abstract fun anyWatchosSimulatorArm64 ()V
+	public abstract fun anyWatchosX64 ()V
+	public abstract fun anyWatchosX86 ()V
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun iosArm32 ()V
-	public abstract fun iosArm64 ()V
-	public abstract fun iosSimulatorArm64 ()V
-	public abstract fun iosX64 ()V
-	public abstract fun jvm ()V
-	public abstract fun linuxArm32Hfp ()V
-	public abstract fun linuxArm64 ()V
-	public abstract fun linuxMips32 ()V
-	public abstract fun linuxMipsel32 ()V
-	public abstract fun linuxX64 ()V
-	public abstract fun macosArm64 ()V
-	public abstract fun macosX64 ()V
-	public abstract fun mingwX64 ()V
-	public abstract fun mingwX86 ()V
 	public abstract fun removeCompilations (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun tvosArm64 ()V
-	public abstract fun tvosSimulatorArm64 ()V
-	public abstract fun tvosX64 ()V
-	public abstract fun wasm32 ()V
-	public abstract fun watchosArm32 ()V
-	public abstract fun watchosArm64 ()V
-	public abstract fun watchosDeviceArm64 ()V
-	public abstract fun watchosSimulatorArm64 ()V
-	public abstract fun watchosX64 ()V
-	public abstract fun watchosX86 ()V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {
