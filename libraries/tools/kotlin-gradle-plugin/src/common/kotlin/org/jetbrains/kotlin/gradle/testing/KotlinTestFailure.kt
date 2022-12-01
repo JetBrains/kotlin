@@ -9,13 +9,16 @@ import org.gradle.internal.serialize.PlaceholderException
 import java.io.PrintWriter
 
 /**
- * Class to be shown in default Gradle tests console reporter.
+ * Class to be shown in the default Gradle tests console reporter.
  *
  * Example console output:
  * ```
  *  sample.SampleTests.testMe FAILED
  *      AssertionError at mpplib2/src/commonTest/kotlin/sample/SampleTests.kt:9
  * ```
+ *
+ * Inherits [PlaceholderException] in order to override a displayed exception-class name,
+ * e.g. [kotlin.AssertionError] instead of [KotlinTestFailure]
  */
 class KotlinTestFailure(
     className: String,

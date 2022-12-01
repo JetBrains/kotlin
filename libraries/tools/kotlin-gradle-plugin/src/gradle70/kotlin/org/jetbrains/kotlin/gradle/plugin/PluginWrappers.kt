@@ -145,4 +145,6 @@ private fun Project.registerVariantImplementations() {
         IdeaSyncDetectorG70.IdeaSyncDetectorVariantFactoryG70()
     factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
         ConfigurationTimePropertiesAccessorG70.ConfigurationTimePropertiesAccessorVariantFactoryG70()
+    factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
+        MppTestReportHelperG70.MppTestReportHelperVariantFactoryG70()
 }

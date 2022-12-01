@@ -146,6 +146,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class,
             DefaultConfigurationTimePropertiesAccessorVariantFactory()
         )
+
+        factories.putIfAbsent(
+            MppTestReportHelper.MppTestReportHelperVariantFactory::class,
+            DefaultMppTestReportHelperVariantFactory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(

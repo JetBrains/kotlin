@@ -151,4 +151,6 @@ private fun Project.registerVariantImplementations() {
         IdeaSyncDetectorG6.IdeaSyncDetectorVariantFactoryG6()
     factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
         ConfigurationTimePropertiesAccessorG6.ConfigurationTimePropertiesAccessorVariantFactoryG6()
+    factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
+        MppTestReportHelperG6.MppTestReportHelperVariantFactoryG6()
 }
