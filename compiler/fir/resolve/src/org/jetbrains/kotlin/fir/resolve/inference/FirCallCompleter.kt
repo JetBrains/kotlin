@@ -76,8 +76,8 @@ class FirCallCompleter(
             data.expectedType(components, allowFromCast = true),
             (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
             (data as? ResolutionMode.WithExpectedType)?.expectedTypeMismatchIsReportedInChecker == true,
-            isFromCast = data is ResolutionMode.WithExpectedTypeFromCast,
-            shouldEnforceExpectedType = data !is ResolutionMode.WithSuggestedType,
+            isFromCast = (data as? ResolutionMode.WithExpectedType)?.fromCast == true,
+            shouldEnforceExpectedType = (data as? ResolutionMode.WithExpectedType)?.shouldBeStrictlyEnforced == true,
         )
 
     private fun <T> completeCall(
