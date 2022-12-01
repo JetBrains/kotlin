@@ -56,39 +56,7 @@ class FirCallCompleter(
 
     data class CompletionResult<T>(val result: T, val callCompleted: Boolean)
 
-    fun <T> completeCall(
-        call: T,
-        expectedTypeRef: FirTypeRef?,
-        expectedTypeMismatchIsReportedInChecker: Boolean = false,
-    ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
-        completeCall(
-            call,
-            expectedTypeRef,
-            mayBeCoercionToUnitApplied = false,
-            expectedTypeMismatchIsReportedInChecker,
-            isFromCast = false,
-            shouldEnforceExpectedType = true,
-        )
-
-    fun <T> completeCall(call: T, data: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement =
-        completeCall(
-            call,
-            data.expectedType(components, allowFromCast = true),
-            (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
-            (data as? ResolutionMode.WithExpectedType)?.expectedTypeMismatchIsReportedInChecker == true,
-            isFromCast = (data as? ResolutionMode.WithExpectedType)?.fromCast == true,
-            shouldEnforceExpectedType = (data as? ResolutionMode.WithExpectedType)?.shouldBeStrictlyEnforced == true,
-        )
-
-    private fun <T> completeCall(
-        call: T,
-        expectedTypeRef: FirTypeRef?,
-        mayBeCoercionToUnitApplied: Boolean,
-        expectedTypeMismatchIsReportedInChecker: Boolean,
-        isFromCast: Boolean,
-        shouldEnforceExpectedType: Boolean,
-    ): CompletionResult<T>
-            where T : FirResolvable, T : FirStatement {
+    fun <T> completeCall(call: T, resolutionMode: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
@@ -103,16 +71,14 @@ class FirCallCompleter(
         }
 
         addConstraintFromExpectedType(
-            expectedTypeMismatchIsReportedInChecker,
-            expectedTypeRef,
-            shouldEnforceExpectedType,
             candidate,
             initialType,
-            isFromCast,
-            mayBeCoercionToUnitApplied
+            resolutionMode,
         )
 
-        val completionMode = candidate.computeCompletionMode(session.inferenceComponents, expectedTypeRef, initialType)
+        val completionMode = candidate.computeCompletionMode(
+            session.inferenceComponents, resolutionMode.expectedType(components, allowFromCast = true), initialType
+        )
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         if (call is FirFunctionCall) {
@@ -157,15 +123,12 @@ class FirCallCompleter(
     }
 
     private fun addConstraintFromExpectedType(
-        expectedTypeMismatchIsReportedInChecker: Boolean,
-        expectedTypeRef: FirTypeRef?,
-        shouldEnforceExpectedType: Boolean,
         candidate: Candidate,
         initialType: ConeKotlinType,
-        isFromCast: Boolean,
-        mayBeCoercionToUnitApplied: Boolean
+        resolutionMode: ResolutionMode,
     ) {
-        val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
+        if (resolutionMode !is ResolutionMode.WithExpectedType) return
+        val expectedType = resolutionMode.expectedTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
 
         val system = candidate.system
         when {
@@ -175,10 +138,10 @@ class FirCallCompleter(
             // It's assumed to be safe & sound, because if constraint system has contradictions when expected type is added,
             // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
             // thus the diagnostic should be reported.
-            !shouldEnforceExpectedType || expectedTypeMismatchIsReportedInChecker -> {
+            !resolutionMode.shouldBeStrictlyEnforced || resolutionMode.expectedTypeMismatchIsReportedInChecker -> {
                 system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
-            isFromCast -> {
+            resolutionMode.fromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
                     system.addSubtypeConstraint(
                         initialType, expectedType,
@@ -186,7 +149,7 @@ class FirCallCompleter(
                     )
                 }
             }
-            !expectedType.isUnitOrFlexibleUnit || (!mayBeCoercionToUnitApplied && !expectedTypeMismatchIsReportedInChecker) -> {
+            !expectedType.isUnitOrFlexibleUnit || !resolutionMode.mayBeCoercionToUnitApplied -> {
                 system.addSubtypeConstraint(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
             system.notFixedTypeVariables.isEmpty() -> return
@@ -411,4 +374,3 @@ internal fun FirFunction.isFunctionForExpectTypeFromCastFeature(): Boolean {
 private fun ConeKotlinType.unwrap(): ConeSimpleKotlinType = lowerBoundIfFlexible().let {
     if (it is ConeDefinitelyNotNullType) it.original.unwrap() else it
 }
-
