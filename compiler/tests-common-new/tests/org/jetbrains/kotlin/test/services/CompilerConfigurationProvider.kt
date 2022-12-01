@@ -131,6 +131,10 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, true)
     }
 
+    if (JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives) {
+        configuration.put(JSConfigurationKeys.GENERATE_DTS, true)
+    }
+
     if (module.frontendKind == FrontendKinds.FIR) {
         configuration[CommonConfigurationKeys.USE_FIR] = true
     }
