@@ -13,18 +13,24 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.getOrPutNullable
 
 internal abstract class JvmValueClassAbstractLowering(
     val context: JvmBackendContext,
     override val scopeStack: MutableList<ScopeWithIr>,
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     abstract val replacements: MemoizedValueClassAbstractReplacements
+
+    protected val getReplacementFunction: (IrFunction) -> IrSimpleFunction? = LocalCachingStorage { replacements.getReplacementFunction(it) }
+    protected val getReplacementForRegularClassConstructor: (IrConstructor) -> IrConstructor? = LocalCachingStorage { replacements.getReplacementForRegularClassConstructor(it) }
+    protected val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> = LocalCachingStorage { replacements.replaceOverriddenSymbols(it) }
 
     final override fun lower(irFile: IrFile) = withinScope(irFile) {
         irFile.transformChildrenVoid()
@@ -39,11 +45,11 @@ internal abstract class JvmValueClassAbstractLowering(
             return null
         }
 
-        val replacement = replacements.getReplacementFunction(function)
+        val replacement = getReplacementFunction(function)
 
         if (replacement == null) {
             if (function is IrConstructor) {
-                val constructorReplacement = replacements.getReplacementForRegularClassConstructor(function)
+                val constructorReplacement = getReplacementForRegularClassConstructor(function)
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
@@ -58,7 +64,7 @@ internal abstract class JvmValueClassAbstractLowering(
             // symbols are always up to date. Right now they might not be since we lower each file independently
             // and since deserialized declarations are not mangled at all.
             if (function is IrSimpleFunction) {
-                function.overriddenSymbols = replacements.replaceOverriddenSymbols(function)
+                function.overriddenSymbols = replaceOverriddenSymbols(function)
             }
             return null
         }
@@ -133,9 +139,7 @@ internal abstract class JvmValueClassAbstractLowering(
             if (suffix != null && target.name.asString().endsWith(suffix))
                 return super.visitReturn(expression)
 
-            replacements.run {
-                getReplacementFunction(target) ?: if (target is IrConstructor) getReplacementForRegularClassConstructor(target) else null
-            }?.let {
+            (getReplacementFunction(target) ?: if (target is IrConstructor) getReplacementForRegularClassConstructor(target) else null)?.let {
                 return context.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).irReturn(
                     expression.value.transform(this, null)
                 )
@@ -382,4 +386,10 @@ internal abstract class JvmValueClassAbstractLowering(
 
 
     abstract val IrType.needsHandling: Boolean
+}
+
+class LocalCachingStorage<K, V>(private val f: (K) -> V) : (K) -> V {
+    private val map = mutableMapOf<K, V>()
+
+    override fun invoke(p1: K): V = map.getOrPutNullable(p1) { f(p1) }
 }

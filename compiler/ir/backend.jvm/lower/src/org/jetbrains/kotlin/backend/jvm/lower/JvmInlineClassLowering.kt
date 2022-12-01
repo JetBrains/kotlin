@@ -80,7 +80,7 @@ internal class JvmInlineClassLowering(
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
 
         declaration.primaryConstructor?.let {
-            replacements.getReplacementFunction(it)?.let { replacement -> addBindingsFor(it, replacement) }
+            getReplacementFunction(it)?.let { replacement -> addBindingsFor(it, replacement) }
         }
 
         declaration.transformDeclarationsFlat { memberDeclaration ->
@@ -214,8 +214,7 @@ internal class JvmInlineClassLowering(
             return super.visitFunctionReference(expression)
 
         val function = expression.symbol.owner
-        val replacement = context.inlineClassReplacements.getReplacementFunction(function)
-            ?: return super.visitFunctionReference(expression)
+        val replacement = getReplacementFunction(function) ?: return super.visitFunctionReference(expression)
 
         // In case of callable reference to inline class constructor,
         // type parameters of the replacement include class's type parameters,
@@ -231,8 +230,7 @@ internal class JvmInlineClassLowering(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
-        val replacement = context.inlineClassReplacements.getReplacementFunction(function)
-            ?: return super.visitFunctionAccess(expression)
+        val replacement = getReplacementFunction(function) ?: return super.visitFunctionAccess(expression)
 
         return IrCallImpl(
             expression.startOffset, expression.endOffset, function.returnType.substitute(expression.typeSubstitutionMap),
@@ -288,7 +286,7 @@ internal class JvmInlineClassLowering(
                 this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(klass, context.irBuiltIns)
             } else {
                 val equals = klass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
-                this@JvmInlineClassLowering.context.inlineClassReplacements.getReplacementFunction(equals)!!
+                getReplacementFunction(equals)!!
             }
 
             return irCall(equalsMethod).apply {
@@ -440,7 +438,7 @@ internal class JvmInlineClassLowering(
 
         // Add a static bridge method to the primary constructor. This contains
         // null-checks, default arguments, and anonymous initializers.
-        val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
+        val function = getReplacementFunction(irConstructor)!!
 
         val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
 

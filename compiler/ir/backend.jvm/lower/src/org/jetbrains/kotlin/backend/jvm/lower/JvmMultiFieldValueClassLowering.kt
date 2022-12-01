@@ -43,6 +43,11 @@ internal class JvmMultiFieldValueClassLowering(
 ) : JvmValueClassAbstractLowering(context, scopeStack) {
     override val IrType.needsHandling: Boolean
         get() = needsMfvcFlattening()
+    val getMfvcFieldNode: (IrField) -> NameableMfvcNode? = LocalCachingStorage { replacements.getMfvcFieldNode(it) }
+    val getMfvcPropertyNode: (IrProperty) -> NameableMfvcNode? = LocalCachingStorage { replacements.getMfvcPropertyNode(it) }
+    val getRootMfvcNode: (IrClass) -> RootMfvcNode = LocalCachingStorage { replacements.getRootMfvcNode(it) }
+    val getRootMfvcNodeOrNull: (IrClass) -> RootMfvcNode? = LocalCachingStorage { replacements.getRootMfvcNodeOrNull(it) }
+
 
     private sealed class MfvcNodeInstanceAccessor {
         abstract val instance: MfvcNodeInstance
@@ -138,7 +143,7 @@ internal class JvmMultiFieldValueClassLowering(
         fun IrBlockBuilder.addReplacement(expression: IrGetField): IrExpression? {
             val field = expression.field
             expression.receiver?.get(this, field.name)?.let { +it; return it }
-            val node = replacements.getMfvcFieldNode(field) ?: return null
+            val node = getMfvcFieldNode(field) ?: return null
             val typeArguments = makeTypeArgumentsFromField(expression)
             val instance: ReceiverBasedMfvcNodeInstance =
                 node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
@@ -151,7 +156,7 @@ internal class JvmMultiFieldValueClassLowering(
         fun IrBlockBuilder.addReplacement(expression: IrSetField, safe: Boolean): IrExpression? {
             val field = expression.field
             expression.receiver?.get(this, field.name)?.let { +it; return it }
-            val node = replacements.getMfvcFieldNode(field) ?: return null
+            val node = getMfvcFieldNode(field) ?: return null
             val typeArguments = makeTypeArgumentsFromField(expression)
             val instance: ReceiverBasedMfvcNodeInstance =
                 node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
@@ -167,7 +172,7 @@ internal class JvmMultiFieldValueClassLowering(
             val property = function.property?.takeIf { function.isGetter } ?: return null
             val dispatchReceiver = expression.dispatchReceiver
             dispatchReceiver?.get(this, property.name)?.let { +it; return it }
-            val node = replacements.getMfvcPropertyNode(property) ?: return null
+            val node = getMfvcPropertyNode(property) ?: return null
             val typeArguments = makeTypeArgumentsFromFunction(expression)
             // Optimization: pure function access to leaf can be replaced with field access if the field itself is accessible
             val accessType = when {
@@ -313,7 +318,7 @@ internal class JvmMultiFieldValueClassLowering(
 
     private fun handleNonSpecificNewClass(irClass: IrClass) {
         irClass.primaryConstructor?.let {
-            replacements.getReplacementForRegularClassConstructor(it)?.let { replacement -> addBindingsFor(it, replacement) }
+            getReplacementForRegularClassConstructor(it)?.let { replacement -> addBindingsFor(it, replacement) }
         }
         val propertiesOrFields = collectPropertiesOrFieldsAfterLowering(irClass)
         val oldBackingFields = propertiesOrFields.mapNotNull { propertyOrField ->
@@ -340,8 +345,8 @@ internal class JvmMultiFieldValueClassLowering(
         LinkedHashMap<IrPropertyOrIrField, IntermediateMfvcNode>().apply {
             for (propertyOrField in propertiesOrFields) {
                 val node = when (propertyOrField) {
-                    is IrPropertyOrIrField.Field -> replacements.getMfvcFieldNode(propertyOrField.field)
-                    is IrPropertyOrIrField.Property -> replacements.getMfvcPropertyNode(propertyOrField.property)
+                    is IrPropertyOrIrField.Field -> getMfvcFieldNode(propertyOrField.field)
+                    is IrPropertyOrIrField.Property -> getMfvcPropertyNode(propertyOrField.property)
                 } ?: continue
                 put(propertyOrField, node as IntermediateMfvcNode)
             }
@@ -392,7 +397,7 @@ internal class JvmMultiFieldValueClassLowering(
         }
 
     override fun handleSpecificNewClass(declaration: IrClass) {
-        val rootNode = replacements.getRootMfvcNode(declaration)
+        val rootNode = getRootMfvcNode(declaration)
         rootNode.replaceFields()
         declaration.declarations += rootNode.allUnboxMethods + listOfNotNull(
             // `takeIf` is a workaround for double addition problem: user-defined typed equals is already defined in the class
@@ -414,7 +419,7 @@ internal class JvmMultiFieldValueClassLowering(
                     override fun visitClass(declaration: IrClass): IrStatement = declaration
 
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                        val oldPrimaryConstructor = replacements.getRootMfvcNode(constructor.constructedClass).oldPrimaryConstructor
+                        val oldPrimaryConstructor = getRootMfvcNode(constructor.constructedClass).oldPrimaryConstructor
                         thisVar.initializer = irCall(oldPrimaryConstructor).apply {
                             copyTypeAndValueArgumentsFrom(expression)
                         }
@@ -767,7 +772,7 @@ internal class JvmMultiFieldValueClassLowering(
     }
 
     private fun IrFunction.getReplacement(): IrFunction? =
-        replacements.getReplacementFunction(this) ?: (this as? IrConstructor)?.let { replacements.getReplacementForRegularClassConstructor(it) }
+        getReplacementFunction(this) ?: (this as? IrConstructor)?.let { getReplacementForRegularClassConstructor(it) }
 
     private fun makeNewLambda(originalFunction: IrFunction, expression: IrFunctionReference): IrContainerExpression {
         val currentDeclarationParent = currentDeclarationParent!!
@@ -831,13 +836,13 @@ internal class JvmMultiFieldValueClassLowering(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
-        val replacement = replacements.getReplacementFunction(function)
+        val replacement = getReplacementFunction(function)
         val currentScope = currentScope!!.irElement as IrDeclaration
         return when {
             function is IrConstructor && function.isPrimary && function.constructedClass.isMultiFieldValueClass &&
                     currentScope.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_MULTI_FIELD_VALUE_CLASS_MEMBER -> {
                 context.createIrBuilder(currentScope.symbol).irBlock {
-                    val rootNode = replacements.getRootMfvcNode(function.constructedClass)
+                    val rootNode = getRootMfvcNode(function.constructedClass)
                     val instance = rootNode.createInstanceFromValueDeclarationsAndBoxType(
                         this, function.constructedClassType as IrSimpleType, Name.identifier("constructor_tmp"), ::variablesSaver
                     )
@@ -854,7 +859,7 @@ internal class JvmMultiFieldValueClassLowering(
 
             else -> {
                 val newConstructor = (function as? IrConstructor)
-                    ?.let { replacements.getReplacementForRegularClassConstructor(it) }
+                    ?.let { getReplacementForRegularClassConstructor(it) }
                     ?: return super.visitFunctionAccess(expression)
                 context.createIrBuilder(currentScope.symbol).irBlock {
                     buildReplacement(function, expression, newConstructor)
@@ -886,9 +891,9 @@ internal class JvmMultiFieldValueClassLowering(
                 val leftArgument = expression.getValueArgument(0)!!
                 val rightArgument = expression.getValueArgument(1)!!
                 val leftClass = leftArgument.type.erasedUpperBound
-                val leftNode = if (leftArgument.type.needsMfvcFlattening()) replacements.getRootMfvcNodeOrNull(leftClass) else null
+                val leftNode = if (leftArgument.type.needsMfvcFlattening()) getRootMfvcNodeOrNull(leftClass) else null
                 val rightClass = rightArgument.type.erasedUpperBound
-                val rightNode = if (rightArgument.type.needsMfvcFlattening()) replacements.getRootMfvcNodeOrNull(rightClass) else null
+                val rightNode = if (rightArgument.type.needsMfvcFlattening()) getRootMfvcNodeOrNull(rightClass) else null
                 if (leftNode != null) {
                     val newEquals = if (rightNode != null) {
                         require(leftNode == rightNode) { "Different nodes: $leftNode, $rightNode" }
@@ -1119,7 +1124,7 @@ internal class JvmMultiFieldValueClassLowering(
         val initializer = declaration.initializer
         if (declaration.type.needsMfvcFlattening()) {
             val irClass = declaration.type.erasedUpperBound
-            val rootNode = replacements.getRootMfvcNode(irClass)
+            val rootNode = getRootMfvcNode(irClass)
             return context.createIrBuilder(getCurrentScopeSymbol()).irBlock {
                 val instance = rootNode.createInstanceFromValueDeclarationsAndBoxType(
                     this, declaration.type as IrSimpleType, declaration.name, ::variablesSaver
@@ -1142,7 +1147,7 @@ internal class JvmMultiFieldValueClassLowering(
         if (!expression.type.needsMfvcFlattening()) {
             return listOf(expression.transform(this@JvmMultiFieldValueClassLowering, null))
         }
-        val rootMfvcNode = replacements.getRootMfvcNode(expression.type.erasedUpperBound)
+        val rootMfvcNode = getRootMfvcNode(expression.type.erasedUpperBound)
         val typeArguments = makeTypeArgumentsFromType(expression.type as IrSimpleType)
         val variables = rootMfvcNode.leaves.map {
             savableStandaloneVariable(
@@ -1166,7 +1171,7 @@ internal class JvmMultiFieldValueClassLowering(
      * Takes not transformed expression and initialized given MfvcNodeInstance with transformed version of it
      */
     private fun IrBlockBuilder.flattenExpressionTo(expression: IrExpression, instance: MfvcNodeInstance) {
-        val rootNode = replacements.getRootMfvcNodeOrNull(
+        val rootNode = getRootMfvcNodeOrNull(
             if (expression is IrConstructorCall) expression.symbol.owner.constructedClass else expression.type.erasedUpperBound
         )
         val type = if (expression is IrConstructorCall) expression.symbol.owner.constructedClass.defaultType else expression.type
@@ -1306,7 +1311,7 @@ internal class JvmMultiFieldValueClassLowering(
                 val statementsToRemove = mutableSetOf<IrStatement>()
                 for (statement in expression.statements.subListWithoutLast(if (resultIsUsed) 1 else 0)) {
                     val call = getFunctionCallOrNull(statement) ?: continue
-                    val node = replacements.getRootMfvcNodeOrNull(call.type.erasedUpperBound) ?: continue
+                    val node = getRootMfvcNodeOrNull(call.type.erasedUpperBound) ?: continue
                     if (node.boxMethod == call.symbol.owner &&
                         List(call.valueArgumentsCount) { call.getValueArgument(it) }.all { it.isRepeatableGetter() }
                     ) {
