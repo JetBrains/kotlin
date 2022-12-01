@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.backend.konan.driver.runPhaseInParentContext
 import org.jetbrains.kotlin.backend.konan.entryPointPhase
 import org.jetbrains.kotlin.backend.konan.linkerPhase
 import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
+import org.jetbrains.kotlin.backend.konan.llvm.printBitcodePhase
 import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
 import org.jetbrains.kotlin.backend.konan.objectFilesPhase
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
 import org.jetbrains.kotlin.backend.konan.shouldDefineFunctionClasses
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -53,29 +53,40 @@ internal fun PhaseEngine<PhaseContext>.runPsiToIr(frontendOutput: FrontendPhaseO
     return psiToIrOutput
 }
 
-/**
- * Splits the given [module] according to [Context] configuration
- * and processes each part in [action].
- */
 internal fun PhaseEngine<Context>.processModuleFragments(
-        module: IrModuleFragment,
-): Sequence<Pair<NativeGenerationState, IrModuleFragment>> = if (context.config.producePerFileCache) {
+        input: IrModuleFragment,
+        action: (NativeGenerationState, IrModuleFragment) -> Unit
+): Unit = if (context.config.producePerFileCache) {
+    val module = context.irModules[context.config.libraryToCache!!.klib.libraryName]
+            ?: error("No module for the library being cached: ${context.config.libraryToCache!!.klib.libraryName}")
+
     val files = module.files.toList()
-    files.asSequence().filterNot { it.isFunctionInterfaceFile }.map { file ->
-        val moduleFragment = KonanIrModuleFragmentImpl(module.descriptor, module.irBuiltins, listOf(file))
-        val generationState = NativeGenerationState(context.config, context,
+    module.files.clear()
+    val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
+
+    for (file in files) {
+        if (file.isFunctionInterfaceFile) continue
+
+        context.generationState = NativeGenerationState(
+                context.config,
+                context,
                 CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
         )
-        if (generationState.shouldDefineFunctionClasses) {
-            moduleFragment.files += files.filter { it.isFunctionInterfaceFile }
-        }
-        Pair(generationState, moduleFragment)
+
+        module.files += file
+        if (context.generationState.shouldDefineFunctionClasses)
+            module.files += functionInterfaceFiles
+
+        action(context.generationState, input)
+
+        module.files.clear()
+        context.irModule!!.files.clear() // [dependenciesLowerPhase] puts all files to [context.irModule] for codegen.
     }
+
+    module.files += files
 } else {
-    val generationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
-    generateSequence {
-        Pair(generationState, module)
-    }
+    context.generationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
+    action(context.generationState, input)
 }
 
 /**
@@ -98,7 +109,7 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrMod
     if (context.config.produce == CompilerOutputKind.PROGRAM) {
         runPhaseInParentContext(entryPointPhase, module)
     }
-    backendCodegen(module)
+    runBackendCodegen(module)
     if (context.config.produce.isCache) {
         runPhaseInParentContext(saveAdditionalCacheInfoPhase)
     }
@@ -117,11 +128,12 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrMod
     }
 }
 
-internal fun PhaseEngine<NativeGenerationState>.backendCodegen(module: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
     runPhaseInParentContext(allLoweringsPhase, module)
     runPhaseInParentContext(dependenciesLowerPhase, module)
     runPhaseInParentContext(bitcodePhase, module)
     runPhaseInParentContext(verifyBitcodePhase, module)
+    runPhaseInParentContext(printBitcodePhase, module)
     runPhaseInParentContext(linkBitcodeDependenciesPhase, module)
     runPhaseInParentContext(bitcodePostprocessingPhase, module)
 }

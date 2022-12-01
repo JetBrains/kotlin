@@ -59,8 +59,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         engine.useContext(createBackendContext(config, frontendOutput, psiToIrOutput)) { backendEngine ->
             backendEngine.runPhase(functionsWithoutBoundCheck)
-            backendEngine.processModuleFragments(backendEngine.context.irModule!!).forEach { (generationState, fragment) ->
-                backendEngine.context.generationState = generationState
+            backendEngine.processModuleFragments(backendEngine.context.irModule!!) { generationState, fragment ->
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     // TODO: We can run compile part in parallel if we get rid of context.generationState.
                     generationStateEngine.runLowerAndCompile(fragment)

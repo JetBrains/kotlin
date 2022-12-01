@@ -140,7 +140,8 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         },
         name = "BuildAdditionalCacheInfo",
         description = "Build additional cache info (inline functions bodies and fields of classes)",
-        prerequisite = setOf(psiToIrPhase)
+// There is no predefined psiToIrPhase in dynamic driver.
+//        prerequisite = setOf(psiToIrPhase)
 )
 
 internal val destroySymbolTablePhase = konanUnitPhase(
