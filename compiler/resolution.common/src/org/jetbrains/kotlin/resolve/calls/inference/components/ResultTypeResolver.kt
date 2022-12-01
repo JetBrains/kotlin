@@ -147,7 +147,7 @@ class ResultTypeResolver(
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
         if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) {
-            if (resultType.isNullableType() && checkSingleLowerNullabilityConstraint(filteredConstraints)) return false
+            if (resultType.isNullableType()/* && checkSingleLowerNullabilityConstraint(filteredConstraints)*/) return false
             if (isReified(variableWithConstraints.typeVariable)) return false
         }
 
