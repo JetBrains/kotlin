@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
@@ -179,7 +180,7 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
         }
 
-        val argument = components.callCompleter.completeCall(fakeCallElement, expectedTypeRef = null).result.argument
+        val argument = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result.argument
         return argument as FirCallableReferenceAccess?
     }
 
