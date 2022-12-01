@@ -90,6 +90,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
         runTest("compiler/testData/codegen/script/localDelegatedProperty.kts");
     }
 
+    @TestMetadata("localDelegatedPropertyInLambda.kts")
+    public void testLocalDelegatedPropertyInLambda() throws Exception {
+        runTest("compiler/testData/codegen/script/localDelegatedPropertyInLambda.kts");
+    }
+
     @TestMetadata("localDelegatedPropertyNoExplicitType.kts")
     public void testLocalDelegatedPropertyNoExplicitType() throws Exception {
         runTest("compiler/testData/codegen/script/localDelegatedPropertyNoExplicitType.kts");
