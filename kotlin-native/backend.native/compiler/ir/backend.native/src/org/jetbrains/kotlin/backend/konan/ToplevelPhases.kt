@@ -103,12 +103,12 @@ internal val objCExportPhase = konanUnitPhase(
 
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
-            this.cAdapterGenerator = CAdapterGenerator(this).also {
+            this.cAdapterGenerator = CAdapterGenerator(this, this.moduleDescriptor).also {
                 it.buildExports(this.symbolTable!!)
             }
         },
         name = "BuildCExports",
-        description = "Build C exports",
+            description = "Build C exports",
         prerequisite = setOf(createSymbolTablePhase)
 )
 

@@ -62,18 +62,18 @@ internal fun produceObjCExportInterface(
 }
 
 internal class ObjCExport(
-        private val generationState: NativeGenerationState,
+        private val context: PhaseContext,
         private val moduleDescriptor: ModuleDescriptor,
-        private val exportedInterface: ObjCExportedInterface?,
+        val exportedInterface: ObjCExportedInterface?,
         private val codeSpec: ObjCExportCodeSpec?
 ) {
-    private val config = generationState.config
+    private val config = context.config
     private val target get() = config.target
-    private val topLevelNamePrefix get() = generationState.objCExportTopLevelNamePrefix
+    private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
     lateinit var namer: ObjCExportNamer
 
-    internal fun generate(codegen: CodeGenerator) {
+    internal fun generate(codegen: CodeGenerator, generationState: NativeGenerationState) {
         if (!target.family.isAppleFamily) return
 
         if (generationState.shouldDefineFunctionClasses) {
@@ -93,7 +93,9 @@ internal class ObjCExport(
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
-        exportedInterface?.generateWorkaroundForSwiftSR10177()
+        exportedInterface?.generateWorkaroundForSwiftSR10177()?.let {
+            generationState.llvm.additionalProducedBitcodeFiles += it
+        }
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
@@ -102,14 +104,16 @@ internal class ObjCExport(
     /**
      * Populate framework directory with headers, module and info.plist.
      */
-    fun produceFrameworkInterface() {
-        if (exportedInterface != null) {
-            produceFrameworkSpecific(exportedInterface.headerLines)
+    fun produceFrameworkInterface(frameworkDirectory: File) {
+        exportedInterface?.let {
+            produceFrameworkSpecific(it.headerLines, frameworkDirectory)
         }
     }
 
-    private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val frameworkDirectory = File(generationState.outputFile)
+    private fun produceFrameworkSpecific(
+            headerLines: List<String>,
+            frameworkDirectory: File
+    ) {
         val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
         val frameworkBuilder = FrameworkBuilder(
                 config,
@@ -128,7 +132,7 @@ internal class ObjCExport(
     }
 
     // See https://bugs.swift.org/browse/SR-10177
-    private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177() {
+    private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(): String? {
         // Code for all protocols from the header should get into the binary.
         // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
         // so the easiest way to achieve this (quickly) is to compile a stub by clang.
@@ -161,11 +165,12 @@ internal class ObjCExport(
 
         val result = Command(clangCommand).getResult(withErrors = true)
 
-        if (result.exitCode == 0) {
-            generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+        return if (result.exitCode == 0) {
+            bitcode.absolutePath
         } else {
             // Note: ignoring compile errors intentionally.
             // In this case resulting framework will likely be unusable due to compile errors when importing it.
+            null
         }
     }
 }

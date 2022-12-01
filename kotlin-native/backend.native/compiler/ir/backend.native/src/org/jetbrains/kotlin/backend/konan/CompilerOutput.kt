@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
@@ -205,7 +207,7 @@ internal fun produceOutput(generationState: NativeGenerationState) {
     val tempFiles = generationState.tempFiles
     val produce = config.produce
     if (produce == CompilerOutputKind.FRAMEWORK) {
-        generationState.objCExport.produceFrameworkInterface()
+        generationState.objCExport.produceFrameworkInterface(File(generationState.outputFile))
         if (config.omitFrameworkBinary) {
             // Compiler does not compile anything in this mode, so return early.
             return

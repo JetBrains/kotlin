@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.konan.linkerPhase
 import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
 import org.jetbrains.kotlin.backend.konan.llvm.printBitcodePhase
 import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.objectFilesPhase
 import org.jetbrains.kotlin.backend.konan.shouldDefineFunctionClasses
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -25,7 +27,13 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
-internal fun createBackendContext(config: KonanConfig, frontendOutput: FrontendPhaseOutput.Full, psiToIrOutput: PsiToIrOutput): Context =
+internal fun createBackendContext(
+        config: KonanConfig,
+        frontendOutput: FrontendPhaseOutput.Full,
+        psiToIrOutput: PsiToIrOutput,
+        objCInterface: ObjCExportedInterface? = null,
+        objCCodeSpec: ObjCExportCodeSpec? = null
+): Context =
         Context(
                 config,
                 frontendOutput.environment,
@@ -34,6 +42,8 @@ internal fun createBackendContext(config: KonanConfig, frontendOutput: FrontendP
                 frontendOutput.moduleDescriptor
         ).also {
             it.populateAfterPsiToIr(psiToIrOutput)
+            it.objCExportedInterface = objCInterface
+            it.objCExportCodeSpec = objCCodeSpec
         }
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
@@ -41,16 +51,23 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 
-internal fun PhaseEngine<PhaseContext>.runPsiToIr(frontendOutput: FrontendPhaseOutput.Full, isProducingLibrary: Boolean): PsiToIrOutput {
+internal fun PhaseEngine<PhaseContext>.runPsiToIr(
+        frontendOutput: FrontendPhaseOutput.Full,
+        objCInterface: ObjCExportedInterface?,
+        isProducingLibrary: Boolean,
+        additionalSteps: (PhaseEngine<out PsiToIrContext>) -> Unit = {}
+): Pair<PsiToIrOutput, ObjCExportCodeSpec?> {
     val config = this.context.config
     val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val psiToIrOutput = useContext(psiToIrContext) { psiToIrEngine ->
+    val (psiToIrOutput, objCCodeSpec) = useContext(psiToIrContext) { psiToIrEngine ->
+        additionalSteps(psiToIrEngine)
+        val objCCodeSpec = objCInterface?.let { psiToIrEngine.runPhase(CreateObjCExportCodeSpecPhase, it) }
         val output = psiToIrEngine.runPsiToIr(frontendOutput, isProducingLibrary)
         psiToIrEngine.runSpecialBackendChecks(output)
-        output
+        output to objCCodeSpec
     }
     runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
-    return psiToIrOutput
+    return psiToIrOutput to objCCodeSpec
 }
 
 internal fun PhaseEngine<Context>.processModuleFragments(

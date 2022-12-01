@@ -111,7 +111,7 @@ internal class PhaseEngine<C : PhaseContext>(
     /**
      * Switch to a more specific phase engine.
      */
-    inline fun <T : PhaseContext, R> useContext(newContext: T, action: (PhaseEngine<T>) -> R): R {
+    inline fun <T : PhaseContext, R> useContext(newContext: T, action: (PhaseEngine<out T>) -> R): R {
         val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
         try {
             return action(newEngine)

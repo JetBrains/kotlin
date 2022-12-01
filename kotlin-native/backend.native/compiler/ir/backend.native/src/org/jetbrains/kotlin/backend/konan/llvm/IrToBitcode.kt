@@ -417,7 +417,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
-            generationState.objCExport.generate(codegen)
+            generationState.objCExport.generate(codegen, generationState)
 
             codegen.objCDataGenerator?.finishModule()
 
