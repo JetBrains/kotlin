@@ -58,7 +58,6 @@ object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
                     sourceSetName = konanTarget.toString()
                 ),
             ).apply {
-                isIdeaProjectLevel = true
                 isNativeDistribution = true
                 klibExtra = KlibExtra(kotlinLibrary)
             }

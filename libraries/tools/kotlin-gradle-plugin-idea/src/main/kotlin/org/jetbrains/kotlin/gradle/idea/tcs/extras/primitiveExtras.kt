@@ -15,7 +15,7 @@ val isIdeaProjectLevelKey = extrasKeyOf<Boolean>("isIdeaProjectLevel")
  * Marks any binary dependency as Global in the sense of "this library is considered
  * the same, no matter in which Gradle project / IntelliJ module it will be used
  */
-var IdeaKotlinBinaryDependency.isIdeaProjectLevel by isIdeaProjectLevelKey.readWriteProperty.notNull(false)
+var IdeaKotlinBinaryDependency.isIdeaProjectLevel by isIdeaProjectLevelKey.readWriteProperty.notNull(true)
 
 
 val isNativeDistributionKey = extrasKeyOf<Boolean>("isNativeDistribution")
