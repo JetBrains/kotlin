@@ -361,7 +361,11 @@ internal val umbrellaCompilation = SameTypeNamedCompilerPhase(
                 for (file in files) {
                     if (file.isFunctionInterfaceFile) continue
 
-                    context.generationState = NativeGenerationState(context, CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString()))
+                    context.generationState = NativeGenerationState(
+                            context.config,
+                            context,
+                            CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+                    )
 
                     module.files += file
                     if (context.generationState.shouldDefineFunctionClasses)
@@ -449,7 +453,7 @@ internal val createGenerationStatePhase = namedUnitPhase(
         description = "Create generation state",
         lower = object : CompilerPhase<Context, Unit, Unit> {
             override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                context.generationState = NativeGenerationState(context, context.config.libraryToCache?.strategy)
+                context.generationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
             }
         }
 )
