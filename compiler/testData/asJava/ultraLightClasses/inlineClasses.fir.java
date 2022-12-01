@@ -30,8 +30,8 @@ public final class InlineInheritance /* InlineInheritance*/ {
 
   public final int getV();//  getV()
 
-  public int getX();//  getX()
+  public final int getX();//  getX()
 
-  public int y();//  y()
+  public final int y();//  y()
 
 }

@@ -9,7 +9,7 @@ public static final class Equals /* p.Wrapper.Equals*/ {
   private final p.G code;
 
   @java.lang.Override()
-  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
+  public final boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   @org.jetbrains.annotations.NotNull()
   public final p.G component1();//  component1()
@@ -32,7 +32,7 @@ public static final class Equals /* p.Wrapper.Equals*/ {
   private final p.G code;
 
   @java.lang.Override()
-  public int hashCode();//  hashCode()
+  public final int hashCode();//  hashCode()
 
   @org.jetbrains.annotations.NotNull()
   public final p.G component1();//  component1()
@@ -56,7 +56,7 @@ public static final class Equals /* p.Wrapper.Equals*/ {
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.String toString();//  toString()
+  public final java.lang.String toString();//  toString()
 
   @org.jetbrains.annotations.NotNull()
   public final p.G component1();//  component1()

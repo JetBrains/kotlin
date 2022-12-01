@@ -11,13 +11,13 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.util.Iterator<T> iterator();//  iterator()
+  public final java.util.Iterator<T> iterator();//  iterator()
 
   @java.lang.Override()
-  public boolean add(T);//  add(T)
+  public final boolean add(T);//  add(T)
 
   @java.lang.Override()
-  public void clear();//  clear()
+  public final void clear();//  clear()
 
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
@@ -29,9 +29,9 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 
   private  SmartSet();//  .ctor()
 
-  public int getSize();//  getSize()
+  public final int getSize();//  getSize()
 
-  public void setSize(int);//  setSize(int)
+  public final void setSize(int);//  setSize(int)
 
 
 public static final class Companion /* SmartSet.Companion*/ {

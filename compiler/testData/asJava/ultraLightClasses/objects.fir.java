@@ -105,7 +105,7 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   public static final Obj INSTANCE;
 
   @java.lang.Override()
-  public void run();//  run()
+  public final void run();//  run()
 
   @kotlin.jvm.JvmStatic()
   public static final int zoo();//  zoo()

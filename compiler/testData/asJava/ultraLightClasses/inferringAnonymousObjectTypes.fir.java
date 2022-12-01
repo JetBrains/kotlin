@@ -29,7 +29,7 @@ final class C /* C*/ {
 final class null /* null*/ {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.String toString();//  toString()
+  public final java.lang.String toString();//  toString()
 
   private  ();//  .ctor()
 
@@ -51,7 +51,7 @@ public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
 
 final class null /* null*/ implements java.lang.Runnable {
   @java.lang.Override()
-  public void run();//  run()
+  public final void run();//  run()
 
   private  ();//  .ctor()
 
@@ -59,7 +59,7 @@ final class null /* null*/ implements java.lang.Runnable {
 
 final class null /* null*/ implements java.lang.Runnable {
   @java.lang.Override()
-  public void run();//  run()
+  public final void run();//  run()
 
   private  ();//  .ctor()
 
@@ -84,7 +84,7 @@ public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
 
 final class null /* null*/ implements I, java.lang.Runnable {
   @java.lang.Override()
-  public void run();//  run()
+  public final void run();//  run()
 
   private  ();//  .ctor()
 
@@ -92,7 +92,7 @@ final class null /* null*/ implements I, java.lang.Runnable {
 
 final class null /* null*/ implements I, java.lang.Runnable {
   @java.lang.Override()
-  public void run();//  run()
+  public final void run();//  run()
 
   private  ();//  .ctor()
 

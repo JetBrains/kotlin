@@ -1,8 +1,8 @@
 public final class C /* p.C*/ {
   public  C();//  .ctor()
 
-  public int af();//  af()
+  public final int af();//  af()
 
-  public int getAp();//  getAp()
+  public final int getAp();//  getAp()
 
 }

@@ -1,7 +1,7 @@
 public final class MyList /* MyList*/ implements java.util.List<java.lang.String>, kotlin.collections.List<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.String get(int);//  get(int)
+  public final java.lang.String get(int);//  get(int)
 
   public  MyList();//  .ctor()
 

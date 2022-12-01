@@ -17,10 +17,10 @@ public final class BaseImpl /* BaseImpl*/ implements Base {
   private final int x;
 
   @java.lang.Override()
-  public void printMessage();//  printMessage()
+  public final void printMessage();//  printMessage()
 
   @java.lang.Override()
-  public void printMessageLine();//  printMessageLine()
+  public final void printMessageLine();//  printMessageLine()
 
   public  BaseImpl(int);//  .ctor(int)
 
@@ -30,10 +30,10 @@ public final class BaseImpl /* BaseImpl*/ implements Base {
 
 public final class Derived /* Derived*/ implements Base {
   @java.lang.Override()
-  public int foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(java.lang.String, java.lang.Object)
+  public final void printMessage();//  printMessage()
 
   @java.lang.Override()
-  public void printMessage();//  printMessage()
+  public int foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(java.lang.String, java.lang.Object)
 
   @java.lang.Override()
   public void printMessageLine();//  printMessageLine()

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasAnnotation
@@ -90,13 +89,10 @@ internal class SymbolLightSimpleMethod(
     private fun computeModifiers(functionSymbol: KtFunctionSymbol): Set<String> {
         if (functionSymbol.hasInlineOnlyAnnotation()) return setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
 
-        val finalModifier = kotlinOrigin?.hasModifier(KtTokens.FINAL_KEYWORD) == true
-
         val modifiers = mutableSetOf<String>()
-
         functionSymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = containingClass.isInterface || (!finalModifier && functionSymbol.isOverride),
+            suppressFinal = containingClass.isInterface,
             result = modifiers
         )
 
@@ -109,9 +105,11 @@ internal class SymbolLightSimpleMethod(
         if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
             modifiers.add(PsiModifier.STATIC)
         }
+
         if (functionSymbol.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID, null)) {
             modifiers.add(PsiModifier.STRICTFP)
         }
+
         if (functionSymbol.hasAnnotation(SYNCHRONIZED_ANNOTATION_CLASS_ID, null)) {
             modifiers.add(PsiModifier.SYNCHRONIZED)
         }

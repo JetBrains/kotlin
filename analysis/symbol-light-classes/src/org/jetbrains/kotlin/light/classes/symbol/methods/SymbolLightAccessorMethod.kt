@@ -160,7 +160,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
         propertySymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = containingClass.isInterface || propertySymbol.isOverride,
+            suppressFinal = containingClass.isInterface,
             result = modifiers,
         )
 

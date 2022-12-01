@@ -3,13 +3,13 @@ public final class A /* p.A*/ {
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.String toString();//  toString()
+  public final java.lang.String toString();//  toString()
 
   @java.lang.Override()
-  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
+  public final boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   @java.lang.Override()
-  public int hashCode();//  hashCode()
+  public final int hashCode();//  hashCode()
 
   public  A(int);//  .ctor(int)
 

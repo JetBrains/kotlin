@@ -29,7 +29,7 @@ public abstract interface Base /* Base*/ {
 public final class Derived /* Derived*/ implements Base {
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public java.lang.Object foo(@org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super kotlin.Unit>);//  foo(kotlin.coroutines.Continuation<? super kotlin.Unit>)
+  public final java.lang.Object foo(@org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super kotlin.Unit>);//  foo(kotlin.coroutines.Continuation<? super kotlin.Unit>)
 
   public  Derived();//  .ctor()
 
