@@ -12,9 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessorG71
-import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetector
 import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetectorG71
 import javax.inject.Inject
 
@@ -147,4 +146,6 @@ private fun Project.registerVariantImplementations() {
         IdeaSyncDetectorG71.IdeaSyncDetectorVariantFactoryG71()
     factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
         ConfigurationTimePropertiesAccessorG71.ConfigurationTimePropertiesAccessorVariantFactoryG71()
+    factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
+        MppTestReportHelperG71.MppTestReportHelperVariantFactoryG71()
 }

@@ -12,6 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelperG75
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle75"
@@ -137,7 +139,8 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
-@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-
+    val factories = VariantImplementationFactories.get(gradle)
+    factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
+        MppTestReportHelperG75.MppTestReportHelperVariantFactoryG75()
 }

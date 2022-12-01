@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
@@ -467,11 +468,12 @@ class KotlinKarma(
                 }
             }
 
-            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
+            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger, testReporter: MppTestReportHelper) =
                 object : JSServiceMessagesClient(
                     testResultProcessor,
                     clientSettings,
-                    log
+                    log,
+                    testReporter,
                 ) {
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix

@@ -15,6 +15,8 @@ import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
@@ -62,11 +64,16 @@ abstract class KotlinTest : AbstractTestTask() {
         PropertiesProvider(project).ignoreTcsmOverflow
     }
 
+    private val testReporter = project.gradle
+        .variantImplementationFactoryProvider<MppTestReportHelper.MppTestReportHelperVariantFactory>()
+        .map { it.getInstance() }
+
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
         buildOperationExecutor,
         runListeners,
         ignoreTcsmOverflow,
-        ignoreRunFailures
+        ignoreRunFailures,
+        testReporter.get(),
     )
 }
