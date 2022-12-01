@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : DefaultMapping() {
+    val esClassWhichNeedBoxParameters = mutableSetOf<IrClass>()
+    val esClassWhichCouldBeOptimized = mutableSetOf<IrClass>()
+
     val outerThisFieldSymbols = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
     val innerClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
     val originalInnerClassPrimaryConstructorByClass = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
