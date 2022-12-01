@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
@@ -81,7 +80,7 @@ class FirCallCompleter(
         )
 
         val completionMode = candidate.computeCompletionMode(
-            session.inferenceComponents, resolutionMode.expectedType(components, allowFromCast = true), initialType
+            session.inferenceComponents, resolutionMode, initialType
         )
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
