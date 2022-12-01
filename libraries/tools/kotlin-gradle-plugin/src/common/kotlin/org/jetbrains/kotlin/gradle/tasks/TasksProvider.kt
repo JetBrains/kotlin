@@ -108,6 +108,17 @@ internal open class KotlinTasksProvider {
         }
     }
 
+    open fun registerKotlinJVMWithJavaTask(
+        project: Project,
+        taskName: String,
+        compilerOptions: KotlinJvmCompilerOptions,
+        configuration: BaseKotlinCompileConfig<KotlinCompileWithJava>
+    ): TaskProvider<out KotlinCompile> {
+        return project.registerTask(taskName, KotlinCompileWithJava::class.java, constructorArgs = listOf(compilerOptions)).also {
+            configuration.execute(it)
+        }
+    }
+
     fun registerKotlinJSTask(
         project: Project,
         taskName: String,

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
@@ -67,6 +68,15 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             taskName,
             createCompilerJvmOptions(),
             KotlinCompileConfig(myProject, kotlinExtension)
+        )
+    }
+
+    override fun registerKotlinJvmCompileWithJavaTask(taskName: String): TaskProvider<out KotlinJvmCompile> {
+        return taskCreator.registerKotlinJVMWithJavaTask(
+            myProject,
+            taskName,
+            createCompilerJvmOptions(),
+            BaseKotlinCompileConfig<KotlinCompileWithJava>(myProject, kotlinExtension)
         )
     }
 
