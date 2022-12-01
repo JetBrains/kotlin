@@ -354,6 +354,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("suppressInvisibleMember.kt")
+        public void testSuppressInvisibleMember() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/suppressInvisibleMember.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticMethodForJvmStaticProperty.kt")
         public void testSyntheticMethodForJvmStaticProperty() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/syntheticMethodForJvmStaticProperty.kt");
