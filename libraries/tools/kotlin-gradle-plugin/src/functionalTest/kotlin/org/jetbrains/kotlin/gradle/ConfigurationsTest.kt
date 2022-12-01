@@ -27,7 +27,7 @@ import kotlin.test.assertNotNull
 class ConfigurationsTest : MultiplatformExtensionTest() {
 
     @Test
-    fun `consumable configurations with platform target are marked with Category LIBRARY`() {
+    fun `consumable configurations except sourcesElements with platform target are marked with Category LIBRARY`() {
         kotlin.linuxX64()
         kotlin.iosX64()
         kotlin.iosArm64()
@@ -46,6 +46,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 configuration.attributes.contains(KotlinPlatformType.attribute) ||
                         configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name in KotlinUsages.values
             }
+            .filterNot { configuration -> configuration.name.contains("SourcesElements") }
             .forEach { configuration ->
                 val category = configuration.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE)
                 assertNotNull(category, "Expected configuration ${configuration.name} to provide 'Category' attribute")
@@ -263,6 +264,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             val outgoingConfigurations = listOf(
                 "jvmWithJavaApiElements",
                 "jvmWithJavaRuntimeElements",
+                "jvmWithJavaSourcesElements",
             )
 
             val testJavaConfigurations = listOf(
