@@ -413,7 +413,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
                 if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
                     // name.invoke() case
-                    callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
+                    callCompleter.completeCall(resultExplicitReceiver, ResolutionMode.ContextIndependent)
                 }
                 callCompleter.completeCall(resultExpression, data)
             }
@@ -598,7 +598,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val lhsIsVar = lhsVariable?.isVar == true
 
         fun chooseAssign(): FirStatement {
-            callCompleter.completeCall(resolvedAssignCall, noExpectedType)
+            callCompleter.completeCall(resolvedAssignCall, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
             return resolvedAssignCall
         }
@@ -606,8 +606,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         fun chooseOperator(): FirStatement {
             callCompleter.completeCall(
                 resolvedOperatorCall,
-                lhsVariable?.returnTypeRef ?: noExpectedType,
-                expectedTypeMismatchIsReportedInChecker = true
+                lhsVariable?.returnTypeRef?.let {
+                    ResolutionMode.WithExpectedType(it, expectedTypeMismatchIsReportedInChecker = true)
+                } ?: ResolutionMode.ContextIndependent,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             val assignment =
@@ -869,7 +870,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
         val result = if (resolvedAssignment is FirVariableAssignment) {
-            val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
+            val completeAssignment = callCompleter.completeCall(resolvedAssignment, ResolutionMode.ContextIndependent).result // TODO: check
             val resolvedReference = completeAssignment.calleeReference
             if (assignAltererExtensions != null && resolvedReference is FirResolvedNamedReference) {
                 val alteredAssignments = assignAltererExtensions.mapNotNull { alterer ->
@@ -1104,7 +1105,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val result = callResolver.resolveAnnotationCall(annotationCall)
                 dataFlowAnalyzer.exitAnnotation(result ?: annotationCall)
                 if (result == null) return annotationCall
-                callCompleter.completeCall(result, noExpectedType)
+                callCompleter.completeCall(result, ResolutionMode.ContextIndependent)
                 (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
                 annotationCall
             }
@@ -1176,7 +1177,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         // it seems that we may leave this code as is
         // without adding `context.withTowerDataContext(context.getTowerDataContextForConstructorResolution())`
-        val (result, callCompleted) = callCompleter.completeCall(resolvedCall, noExpectedType)
+        val (result, callCompleted) = callCompleter.completeCall(resolvedCall, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted)
         return result
     }
@@ -1268,7 +1269,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val assignIsSuccessful = assignCallReference?.isError == false
 
         fun chooseAssign(): FirFunctionCall {
-            callCompleter.completeCall(resolvedAssignCall, noExpectedType)
+            callCompleter.completeCall(resolvedAssignCall, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
             return resolvedAssignCall
         }
@@ -1296,11 +1297,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val setIsSuccessful = setCallReference?.isError == false
 
         fun chooseSetOperator(): FirStatement {
-            callCompleter.completeCall(
-                resolvedSetCall,
-                noExpectedType,
-                expectedTypeMismatchIsReportedInChecker = true
-            )
+            callCompleter.completeCall(resolvedSetCall, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)
             return info.toBlock()
         }
@@ -1475,7 +1472,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticCallForArrayOfCall(arrayOfCall, resolutionContext)
         arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-        callCompleter.completeCall(syntheticIdCall, data.expectedType ?: components.noExpectedType)
+        callCompleter.completeCall(syntheticIdCall, data)
         return arrayOfCall
     }
 
