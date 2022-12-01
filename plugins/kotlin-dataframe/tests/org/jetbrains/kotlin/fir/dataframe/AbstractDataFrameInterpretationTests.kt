@@ -96,7 +96,8 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                 }
             }
             val file = getTestFilePath()
-            return generateAccessorsScopesForRefinedCall(functionCall, state, queue, tokenIds, tokenState)
+            val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
+            return generateAccessorsScopesForRefinedCall(functionCall, state, queue, tokenIds, tokenState, associatedScopes)
         }
 
 //        fun expectedResult(id: String): Any? {
