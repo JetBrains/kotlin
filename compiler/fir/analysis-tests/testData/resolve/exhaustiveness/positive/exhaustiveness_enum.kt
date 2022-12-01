@@ -33,14 +33,14 @@ fun test_2(e: Enum?) {
         Enum.C -> 3
     }
 
-    val a = when (e) {
+    val b = when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3
         null -> 4
     }
 
-    val a = when (e) {
+    val c = when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3

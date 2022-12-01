@@ -18,7 +18,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirModifierChecker,
-            FirConflictsChecker,
+            FirConflictsDeclarationChecker,
             FirProjectionRelationChecker,
             FirTypeConstraintsChecker,
             FirReservedUnderscoreDeclarationChecker,

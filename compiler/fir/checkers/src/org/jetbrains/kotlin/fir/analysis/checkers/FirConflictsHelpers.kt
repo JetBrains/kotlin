@@ -6,10 +6,17 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -277,5 +284,43 @@ open class FirDeclarationInspector(
         is FirTypeAlias -> presenter.represent(declaration) in otherDeclarations
         is FirProperty -> presenter.represent(declaration) in otherDeclarations
         else -> false
+    }
+}
+
+fun checkConflictingElements(elements: List<FirElement>, context: CheckerContext, reporter: DiagnosticReporter) {
+    if (elements.size <= 1) return
+
+    val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
+    for (element in elements) {
+        val name: Name?
+        val symbol: FirBasedSymbol<*>?
+        when (element) {
+            is FirVariable -> {
+                symbol = element.symbol
+                name = element.name
+            }
+            is FirOuterClassTypeParameterRef -> {
+                continue
+            }
+            is FirTypeParameterRef -> {
+                symbol = element.symbol
+                name = symbol.name
+            }
+            else -> {
+                symbol = null
+                name = null
+            }
+        }
+        if (name?.isSpecial == false) {
+            multimap.put(name, symbol!!)
+        }
+    }
+    for (key in multimap.keys) {
+        val conflictingElements = multimap[key]
+        if (conflictingElements.size > 1) {
+            for (conflictingElement in conflictingElements) {
+                reporter.reportOn(conflictingElement.source, FirErrors.REDECLARATION, conflictingElements, context)
+            }
+        }
     }
 }

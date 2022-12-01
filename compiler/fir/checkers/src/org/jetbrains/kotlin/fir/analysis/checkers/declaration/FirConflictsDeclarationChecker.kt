@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
+import org.jetbrains.kotlin.fir.analysis.checkers.checkConflictingElements
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -25,13 +25,12 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartSet
 
-object FirConflictsChecker : FirBasicDeclarationChecker() {
+object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
 
     private class DeclarationInspector : FirDeclarationInspector() {
 
@@ -267,46 +266,6 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     checkConflictingParameters(declaration.typeParameters, context, reporter)
                 }
                 else -> {
-                }
-            }
-        }
-    }
-
-    private fun checkConflictingParameters(parameters: List<FirElement>, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (parameters.size <= 1) return
-
-        val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
-        for (parameter in parameters) {
-            val name: Name
-            val symbol: FirBasedSymbol<*>
-            when (parameter) {
-                is FirValueParameter -> {
-                    symbol = parameter.symbol
-                    name = parameter.name
-                }
-                is FirOuterClassTypeParameterRef -> {
-                    continue
-                }
-                is FirTypeParameterRef -> {
-                    symbol = parameter.symbol
-                    name = symbol.name
-                }
-                else -> throw AssertionError("Invalid parameter type")
-            }
-            if (!name.isSpecial) {
-                multimap.put(name, symbol)
-            }
-        }
-        for (key in multimap.keys) {
-            val conflictingParameters = multimap[key]
-            if (conflictingParameters.size > 1) {
-                for (parameter in conflictingParameters) {
-                    reporter.reportOn(
-                        parameter.source,
-                        FirErrors.REDECLARATION,
-                        conflictingParameters,
-                        context
-                    )
                 }
             }
         }

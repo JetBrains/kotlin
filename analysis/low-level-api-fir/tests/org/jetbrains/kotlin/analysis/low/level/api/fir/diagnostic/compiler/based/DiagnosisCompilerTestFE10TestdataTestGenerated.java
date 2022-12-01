@@ -25771,6 +25771,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("RedeclaredValsAndVars.kt")
+            public void testRedeclaredValsAndVars() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredValsAndVars.kt");
+            }
+
+            @Test
             @TestMetadata("RedeclaredValueParameters.kt")
             public void testRedeclaredValueParameters() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredValueParameters.kt");

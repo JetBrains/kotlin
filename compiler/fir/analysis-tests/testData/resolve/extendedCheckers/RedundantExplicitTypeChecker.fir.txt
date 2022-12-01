@@ -64,7 +64,7 @@ FILE: RedundantExplicitTypeChecker.kt
         lval a: R|kotlin/Boolean| = Boolean(true)
         lval i: R|kotlin/Int| = Int(2).R|kotlin/Int.times|(Int(2))
         lval l: R|kotlin/Long| = Long(1234567890123)
-        lval s: R|kotlin/String?| = Null(null)
+        lval s1: R|kotlin/String?| = Null(null)
         lval sh: R|kotlin/Short| = Short(42)
         lval integer: R|kotlin/Int| = Int(42)
         lval piFloat: R|kotlin/Float| = Float(3.14)

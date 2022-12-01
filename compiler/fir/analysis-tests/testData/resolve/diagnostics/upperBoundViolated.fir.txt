@@ -59,10 +59,10 @@ FILE: upperBoundViolated.kt
         lval o3: R|S<L, L>| = R|/S.S|<R|L|, R|L|>()
         lval o4: R|S<S<K, L>, T<K, L>>| = R|/S.S|<R|S<K, L>|, R|T<K, L>|>()
         lval o5: R|S<S<K, L>, T<K, K>>| = R|/S.S<Inapplicable(INAPPLICABLE): /S.S>#|<R|S<K, L>|, R|T<K, K>|>()
-        lval o5: R|S<S<L, L>, T<K, L>>| = R|/S.S<Inapplicable(INAPPLICABLE): /S.S>#|<R|S<L, L>|, R|T<K, L>|>()
-        lval o6: R|S<kotlin/Any, T<S<K, L>, kotlin/String>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/String>|>()
-        lval o7: R|S<kotlin/Any, T<S<K, L>, kotlin/Nothing>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/Nothing>|>()
-        lval o8: R|P<kotlin/String, P1<kotlin/String, kotlin/String>>| = R|/P.P<Inapplicable(INAPPLICABLE): /P.P>#|<R|kotlin/String|, R|P1<kotlin/String, kotlin/String>|>()
+        lval o6: R|S<S<L, L>, T<K, L>>| = R|/S.S<Inapplicable(INAPPLICABLE): /S.S>#|<R|S<L, L>|, R|T<K, L>|>()
+        lval o7: R|S<kotlin/Any, T<S<K, L>, kotlin/String>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/String>|>()
+        lval o8: R|S<kotlin/Any, T<S<K, L>, kotlin/Nothing>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/Nothing>|>()
+        lval o9: R|P<kotlin/String, P1<kotlin/String, kotlin/String>>| = R|/P.P<Inapplicable(INAPPLICABLE): /P.P>#|<R|kotlin/String|, R|P1<kotlin/String, kotlin/String>|>()
     }
     public final class NumColl<T : R|kotlin/collections/Collection<kotlin/Number>|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/collections/Collection<kotlin/Number>|>(): R|NumColl<T>| {

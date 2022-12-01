@@ -35,11 +35,11 @@ fun <K, L : K> rest() {
 
     val o4 = S<S<K, L>, T<K, L>>()
     val o5 = S<S<K, L>, <!UPPER_BOUND_VIOLATED!>T<K, K><!>>()
-    val o5 = S<S<L, L>, <!UPPER_BOUND_VIOLATED!>T<K, L><!>>()
+    val o6 = S<S<L, L>, <!UPPER_BOUND_VIOLATED!>T<K, L><!>>()
 
-    val o6 = S<Any, T<S<K, L>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
-    val o7 = S<Any, T<S<K, L>, Nothing>>()
-    val o8 = P<<!UPPER_BOUND_VIOLATED!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
+    val o7 = S<Any, T<S<K, L>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
+    val o8 = S<Any, T<S<K, L>, Nothing>>()
+    val o9 = P<<!UPPER_BOUND_VIOLATED!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
 }
 
 class NumColl<T : Collection<Number>>

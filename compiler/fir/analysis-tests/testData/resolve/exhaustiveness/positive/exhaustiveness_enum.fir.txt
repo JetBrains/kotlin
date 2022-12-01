@@ -74,7 +74,7 @@ FILE: exhaustiveness_enum.kt
             }
         }
 
-        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+        lval b: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|Enum|.R|/Enum.A|) ->  {
                 Int(1)
             }
@@ -89,7 +89,7 @@ FILE: exhaustiveness_enum.kt
             }
         }
 
-        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|Enum|.R|/Enum.A|) ->  {
                 Int(1)
             }
