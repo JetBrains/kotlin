@@ -152,12 +152,15 @@ class FirStatusResolver(
     }
 
     fun resolveStatus(
-        regularClass: FirRegularClass,
+        firClass: FirClass,
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        val status = regularClass.applyExtensionTransformers { transformStatus(it, regularClass, containingClass, isLocal) }
-        return resolveStatus(regularClass, status, containingClass, null, isLocal, emptyList())
+        val status = when (firClass) {
+            is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass, isLocal) }
+            else -> firClass.status
+        }
+        return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(
