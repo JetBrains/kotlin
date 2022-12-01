@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import java.io.File
 
@@ -32,14 +34,14 @@ object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
         return sourceSet.project.konanDistribution.platformLibsDir.resolve(konanTarget.name)
             .listFiles().orEmpty()
             .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
-            .mapNotNull { libraryFile -> sourceSet.project.resolveKlib(libraryFile) }
+            .mapNotNull { libraryFile -> sourceSet.project.resolveKlib(libraryFile, konanTarget) }
             .toSet()
     }
 
     private val Project.konanDistribution: KonanDistribution
         get() = KonanDistribution(project.file(konanHome))
 
-    private fun Project.resolveKlib(file: File): IdeaKotlinResolvedBinaryDependency? {
+    private fun Project.resolveKlib(file: File, konanTarget: KonanTarget): IdeaKotlinResolvedBinaryDependency? {
         try {
             val kotlinLibrary = resolveSingleFileKlib(
                 org.jetbrains.kotlin.konan.file.File(file.absolutePath),
@@ -52,10 +54,12 @@ object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
                 coordinates = IdeaKotlinBinaryCoordinates(
                     group = "org.jetbrains.kotlin.native",
                     module = kotlinLibrary.packageFqName ?: kotlinLibrary.shortName ?: kotlinLibrary.uniqueName,
-                    version = project.konanVersion.toString()
+                    version = project.konanVersion.toString(),
+                    sourceSetName = konanTarget.toString()
                 ),
             ).apply {
                 isIdeaProjectLevel = true
+                isNativeDistribution = true
                 klibExtra = KlibExtra(kotlinLibrary)
             }
         } catch (t: Throwable) {

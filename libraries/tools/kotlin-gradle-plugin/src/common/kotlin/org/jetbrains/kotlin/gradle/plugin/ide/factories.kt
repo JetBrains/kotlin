@@ -56,6 +56,7 @@ internal fun KlibExtra(library: KotlinLibrary): KlibExtra {
         shortName = library.shortName,
         packageFqName = library.packageFqName,
         nativeTargets = library.nativeTargets,
+        commonizerNativeTargets = library.commonizerNativeTargets,
         commonizerTarget = library.commonizerTarget,
         isInterop = library.isInterop
     )

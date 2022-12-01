@@ -20,7 +20,6 @@ operator fun <T : Any> Extras.Key<T>.getValue(receiver: HasExtras, property: KPr
     return receiver.extras[this]
 }
 
-
 operator fun <T : Any> Extras.Key<T>.setValue(receiver: HasMutableExtras, property: KProperty<*>, value: T?) {
     if (value == null) {
         receiver.extras.remove(this)

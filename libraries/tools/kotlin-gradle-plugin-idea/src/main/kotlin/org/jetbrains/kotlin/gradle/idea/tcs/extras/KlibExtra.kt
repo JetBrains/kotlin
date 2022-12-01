@@ -21,6 +21,7 @@ data class KlibExtra(
     val shortName: String?,
     val packageFqName: String?,
     val nativeTargets: List<String>?,
+    val commonizerNativeTargets: List<String>?,
     val commonizerTarget: String?,
     val isInterop: Boolean?
 ) : Serializable {

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
@@ -50,6 +52,8 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
                     "org.jetbrains.kotlin.native", "stdlib", sourceSet.project.konanVersion.toString(),
                 )
             ).apply {
+                this.isNativeDistribution = true
+                this.isNativeStdlib = true
                 this.isIdeaProjectLevel = true
                 this.klibExtra = klibExtra
             }
