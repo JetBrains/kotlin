@@ -458,8 +458,6 @@ internal class PartiallyLinkedIrTreePatcher(
             return when (symbol) {
                 is IrClassifierSymbol -> ExpressionUsesPartiallyLinkedClassifier(this, symbol.partialLinkageReason() ?: return null)
 
-                is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol) // ???
-
                 is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol, checkVisibility = false)
                     ?: checkReferencedDeclaration(symbol.owner.setter?.symbol, checkVisibility = false)
                     ?: checkReferencedDeclaration(symbol.owner.backingField?.symbol, checkVisibility = false)
