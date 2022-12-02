@@ -116,7 +116,7 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
 
 }
 
-private class TaskRecord(
+internal class TaskRecord(
     override val path: String,
     override val classFqName: String,
     override val startTimeMs: Long,

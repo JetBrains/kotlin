@@ -123,7 +123,6 @@ private fun collectBuildMetrics(
         performanceMetrics[BuildPerformanceMetric.START_WORKER_EXECUTION]?.let { startWorkerExecutionTime ->
             taskBuildMetrics.put(BuildTime.RUN_WORKER_DELAY, TimeUnit.NANOSECONDS.toMillis(startWorkerExecutionTime - callWorkerTime))
         }
-
     }
     return (metrics?.let { metricsToShow -> taskBuildMetrics.filterKeys { metricsToShow.contains(it.name) } } ?: taskBuildMetrics)
         .filterValues { value -> value != 0L }
