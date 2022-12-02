@@ -159,6 +159,10 @@ internal class FirConstructorImpl(
         valueParameters.addAll(newValueParameters)
     }
 
+    override fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?) {
+        delegatedConstructor = newDelegatedConstructor
+    }
+
     override fun replaceBody(newBody: FirBlock?) {
         body = newBody
     }

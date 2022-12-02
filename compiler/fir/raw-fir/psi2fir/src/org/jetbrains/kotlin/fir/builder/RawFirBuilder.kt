@@ -188,6 +188,29 @@ open class RawFirBuilder(
             return buildOrLazy(buildBlock, ::buildLazyBlock)
         }
 
+        private inline fun buildOrLazyDelegatedConstructorCall(
+            isThis: Boolean,
+            constructedTypeRef: FirTypeRef,
+            buildCall: () -> FirDelegatedConstructorCall
+        ): FirDelegatedConstructorCall {
+            return buildOrLazy(buildCall, {
+                buildLazyDelegatedConstructorCall {
+                    this.isThis = isThis
+                    this.constructedTypeRef = constructedTypeRef
+                    calleeReference = if (isThis) {
+                        buildExplicitThisReference {
+                            source = null
+                        }
+                    } else {
+                        buildExplicitSuperReference {
+                            source = null
+                            superTypeRef = constructedTypeRef
+                        }
+                    }
+                }
+            })
+        }
+
         open fun convertElement(element: KtElement): FirElement? =
             element.accept(this@Visitor, Unit)
 
@@ -206,7 +229,8 @@ open class RawFirBuilder(
             defaultTypeRef: FirTypeRef? = null,
             valueParameterDeclaration: ValueParameterDeclaration,
             additionalAnnotations: List<FirAnnotation> = emptyList()
-        ): FirValueParameter = valueParameter.toFirValueParameter(defaultTypeRef, functionSymbol, valueParameterDeclaration, additionalAnnotations)
+        ): FirValueParameter =
+            valueParameter.toFirValueParameter(defaultTypeRef, functionSymbol, valueParameterDeclaration, additionalAnnotations)
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
             convertSafe() ?: buildImplicitTypeRef {
@@ -291,14 +315,12 @@ open class RawFirBuilder(
         ): FirDeclaration {
             return when (this) {
                 is KtSecondaryConstructor -> {
-                    disabledLazyMode {
-                        toFirConstructor(
-                            delegatedSuperType,
-                            delegatedSelfType,
-                            owner,
-                            ownerTypeParameters
-                        )
-                    }
+                    toFirConstructor(
+                        if (isDelegatedCallToThis()) delegatedSelfType else delegatedSuperType,
+                        delegatedSelfType,
+                        owner,
+                        ownerTypeParameters,
+                    )
                 }
                 is KtEnumEntry -> {
                     val primaryConstructor = owner.primaryConstructor
@@ -890,11 +912,12 @@ open class RawFirBuilder(
             if (primaryConstructor != null || (this !is KtClass || !this.isInterface()) && shouldGenerateImplicitPrimaryConstructor) {
                 val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                     superTypeCallEntry,
-                    delegatedSuperTypeRef!!,
+                    delegatedSuperTypeRef,
                     delegatedSelfTypeRef ?: delegatedSuperTypeRef!!,
                     owner = this,
                     containerTypeParameters,
                     containingClassIsExpectClass,
+                    copyConstructedTypeRefWithImplicitSource = true,
                 )
                 container.declarations += firPrimaryConstructor
             }
@@ -902,27 +925,49 @@ open class RawFirBuilder(
             return delegatedSuperTypeRef!! to delegateFieldsMap.takeIf { it.isNotEmpty() }
         }
 
-        private fun KtPrimaryConstructor?.toFirConstructor(
+        /**
+         * @param delegatedSuperTypeRef can be null if containingClassIsExpectClass is true
+         */
+        protected fun KtPrimaryConstructor?.toFirConstructor(
             superTypeCallEntry: KtSuperTypeCallEntry?,
-            delegatedSuperTypeRef: FirTypeRef,
+            delegatedSuperTypeRef: FirTypeRef?,
             delegatedSelfTypeRef: FirTypeRef,
             owner: KtClassOrObject,
             ownerTypeParameters: List<FirTypeParameterRef>,
             containingClassIsExpectClass: Boolean,
+            copyConstructedTypeRefWithImplicitSource: Boolean,
         ): FirConstructor {
             val constructorCall = superTypeCallEntry?.toFirSourceElement()
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
-            val firDelegatedCall = if (containingClassIsExpectClass) null else buildDelegatedConstructorCall {
-                source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-                isThis = false
-                calleeReference = buildExplicitSuperReference {
-                    source = superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+            val firDelegatedCall = if (containingClassIsExpectClass) null else {
+                val constructedTypeRef = if (copyConstructedTypeRefWithImplicitSource) {
+                    delegatedSuperTypeRef!!.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                } else {
+                    delegatedSuperTypeRef!!
                 }
-                superTypeCallEntry?.extractArgumentsTo(this)
+                val delegatedConstructorCall = {
+                    buildDelegatedConstructorCall {
+                        source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                        this.constructedTypeRef = constructedTypeRef
+                        isThis = false
+                        calleeReference = buildExplicitSuperReference {
+                            source =
+                                superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                    ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                            superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                        }
+                        superTypeCallEntry?.extractArgumentsTo(this)
+                    }
+                }
+                if (this == null && owner !is KtEnumEntry) {
+                    // primary constructor without body
+                    delegatedConstructorCall()
+                } else buildOrLazyDelegatedConstructorCall(
+                    isThis = false,
+                    constructedTypeRef,
+                    delegatedConstructorCall,
+                )
             }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
@@ -1003,7 +1048,7 @@ open class RawFirBuilder(
             }
         }
 
-        private fun convertScript(script: KtScript, containingFile: FirFileBuilder,): FirScript {
+        private fun convertScript(script: KtScript, containingFile: FirFileBuilder): FirScript {
             return buildScript {
                 source = script.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1086,7 +1131,8 @@ open class RawFirBuilder(
                                     delegatedEntrySelfType,
                                     owner = ktEnumEntry,
                                     typeParameters,
-                                    containingClassIsExpectClass
+                                    containingClassIsExpectClass,
+                                    copyConstructedTypeRefWithImplicitSource = true,
                                 )
                                 // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
                                 withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
@@ -1541,9 +1587,9 @@ open class RawFirBuilder(
             }
         }
 
-        private fun KtSecondaryConstructor.toFirConstructor(
-            delegatedSuperTypeRef: FirTypeRef,
-            delegatedSelfTypeRef: FirTypeRef,
+        protected fun KtSecondaryConstructor.toFirConstructor(
+            delegatedTypeRef: FirTypeRef,
+            selfTypeRef: FirTypeRef,
             owner: KtClassOrObject,
             ownerTypeParameters: List<FirTypeParameterRef>
         ): FirConstructor {
@@ -1552,7 +1598,7 @@ open class RawFirBuilder(
                 source = this@toFirConstructor.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                returnTypeRef = delegatedSelfTypeRef
+                returnTypeRef = selfTypeRef
                 val explicitVisibility = visibility
                 status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
                     isExpect = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
@@ -1563,10 +1609,12 @@ open class RawFirBuilder(
                 }
                 dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
-                delegatedConstructor = getDelegationCall().convert(
-                    delegatedSuperTypeRef,
-                    delegatedSelfTypeRef,
-                )
+                delegatedConstructor = buildOrLazyDelegatedConstructorCall(
+                    isThis = isDelegatedCallToThis(),
+                    constructedTypeRef = delegatedTypeRef,
+                ) {
+                    getDelegationCall().convert(delegatedTypeRef)
+                }
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
@@ -1583,18 +1631,13 @@ open class RawFirBuilder(
         }
 
         private fun KtConstructorDelegationCall.convert(
-            delegatedSuperTypeRef: FirTypeRef,
-            delegatedSelfTypeRef: FirTypeRef,
+            delegatedType: FirTypeRef,
         ): FirDelegatedConstructorCall {
             val isThis = isCallToThis //|| (isImplicit && hasPrimaryConstructor)
             val source = if (isImplicit) {
                 this.toFirSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             } else {
                 this.toFirSourceElement()
-            }
-            val delegatedType = when {
-                isThis -> delegatedSelfTypeRef
-                else -> delegatedSuperTypeRef
             }
             return buildDelegatedConstructorCall {
                 this.source = source
@@ -1619,7 +1662,7 @@ open class RawFirBuilder(
         }
 
         private fun KtDeclarationWithInitializer.toInitializerExpression() =
-            runIf (hasInitializer()) {
+            runIf(hasInitializer()) {
                 buildOrLazyExpression(initializer?.toFirSourceElement()) {
                     initializer.toFirExpression("Should have initializer")
                 }

@@ -19,7 +19,7 @@ FILE: annotationParameters.kt
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -57,7 +57,7 @@ FILE: annotationParameters.kt
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -95,7 +95,7 @@ FILE: annotationParameters.kt
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -133,7 +133,7 @@ FILE: annotationParameters.kt
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -171,7 +171,7 @@ FILE: annotationParameters.kt
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -209,7 +209,7 @@ FILE: annotationParameters.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([COMPILER_REQUIRED_ANNOTATIONS] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -247,7 +247,7 @@ FILE: annotationParameters.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([COMPILER_REQUIRED_ANNOTATIONS] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -285,7 +285,7 @@ FILE: annotationParameters.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([COMPILER_REQUIRED_ANNOTATIONS] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -323,7 +323,7 @@ FILE: annotationParameters.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([COMPILER_REQUIRED_ANNOTATIONS] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -362,7 +362,7 @@ FILE: annotationParameters.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([COMPILER_REQUIRED_ANNOTATIONS] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -401,7 +401,7 @@ FILE: annotationParameters.kt
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor([STATUS] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -440,7 +440,7 @@ FILE: annotationParameters.kt
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor([STATUS] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -479,7 +479,7 @@ FILE: annotationParameters.kt
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor([STATUS] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|

@@ -133,6 +133,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         valueParameters += newValueParameters
     }
 
+    override fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?) {
+        error("Delegated constructor cannot be replaced for FirJavaConstructor")
+    }
+
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {

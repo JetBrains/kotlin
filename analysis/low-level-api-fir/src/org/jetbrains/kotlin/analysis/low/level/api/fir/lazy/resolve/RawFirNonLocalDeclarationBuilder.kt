@@ -16,19 +16,20 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
-    private val originalDeclarationIfParamertized: FirTypeParameterRefsOwner?,
+    private val originalDeclaration: FirDeclaration,
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
@@ -45,7 +46,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclarationIfParamertized = designation.declaration as? FirTypeParameterRefsOwner,
+                originalDeclaration = designation.declaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 replacementApplier = replacementApplier
             )
@@ -62,7 +63,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             rootNonLocalDeclaration: KtDeclaration,
         ): FirDeclaration {
             val functionsToRebind = when (val originalDeclaration = designation.declaration) {
-                is FirSimpleFunction -> setOf(originalDeclaration)
+                is FirFunction -> setOf(originalDeclaration)
                 is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
                 else -> null
             }
@@ -70,7 +71,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclarationIfParamertized = designation.declaration as? FirTypeParameterRefsOwner,
+                originalDeclaration = designation.declaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 functionsToRebind = functionsToRebind,
             )
@@ -89,8 +90,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         declarationSource: KtSourceElement?,
         currentFirTypeParameters: List<FirTypeParameterRef>
     ) {
-        if (originalDeclarationIfParamertized != null && declarationSource?.psi == originalDeclarationIfParamertized.psi) {
-            super.addCapturedTypeParameters(status, declarationSource, originalDeclarationIfParamertized.typeParameters)
+        if (originalDeclaration is FirTypeParameterRefsOwner && declarationSource?.psi == originalDeclaration.psi) {
+            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
         } else {
             super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
         }
@@ -132,6 +133,55 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
         }
 
+        private fun extractContructorConversionParams(
+            classOrObject: KtClassOrObject,
+            constructor: KtConstructor<*>
+        ): ConstructorConversionParams {
+            val typeParameters = mutableListOf<FirTypeParameterRef>()
+            context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
+            val containingClass = this.containingClass ?: buildErrorWithAttachment("Constructor outside of class") {
+                withPsiEntry("constructor", constructor)
+            }
+            val selfType = classOrObject.toDelegatedSelfType(typeParameters, containingClass.symbol)
+            val superTypeCallEntry = classOrObject.superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+            return ConstructorConversionParams(superTypeCallEntry, selfType, typeParameters)
+        }
+
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): FirElement {
+            val classOrObject = constructor.getContainingClassOrObject()
+            val params = extractContructorConversionParams(classOrObject, constructor)
+            val delegatedTypeRef = (originalDeclaration as FirConstructor).delegatedConstructor?.constructedTypeRef
+                ?: buildErrorWithAttachment("Secondary constructor without delegated call") {
+                    withPsiEntry("constructor", constructor)
+                }
+            return constructor.toFirConstructor(
+                delegatedTypeRef,
+                params.selfType,
+                classOrObject,
+                params.typeParameters,
+            )
+        }
+
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): FirElement {
+            val classOrObject = constructor.getContainingClassOrObject()
+            val params = extractContructorConversionParams(classOrObject, constructor)
+            val firConstructor = originalDeclaration as FirConstructor
+            val calleeReference = firConstructor.delegatedConstructor?.calleeReference as FirSuperReference?
+            val newConstructor = constructor.toFirConstructor(
+                params.superTypeCallEntry,
+                firConstructor.delegatedConstructor?.constructedTypeRef,
+                params.selfType,
+                classOrObject,
+                params.typeParameters,
+                firConstructor.delegatedConstructor == null,
+                copyConstructedTypeRefWithImplicitSource = false,
+            )
+            if (calleeReference != null) {
+                (newConstructor.delegatedConstructor?.calleeReference as? FirSuperReference)?.replaceSuperTypeRef(calleeReference.superTypeRef)
+            }
+            return newConstructor
+        }
+
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): FirElement {
             val owner = containingClass ?: buildErrorWithAttachment("Enum entry outside of class") {
                 withPsiEntry("enumEntry", enumEntry)
@@ -158,6 +208,14 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     val ownerTypeArgumentsCount = containingClass?.typeParameters?.size
                     visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
                 }
+                is KtConstructor<*> -> {
+                    if (containingClass == null) {
+                        // Constructor outside of class, syntax error, we should not do anything
+                        originalDeclaration
+                    } else {
+                        visitor.convertElement(declarationToBuild)
+                    }
+                }
                 else -> visitor.convertElement(declarationToBuild)
             } as FirDeclaration
         }
@@ -182,5 +240,11 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
     private fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
+
+    private data class ConstructorConversionParams(
+        val superTypeCallEntry: KtSuperTypeCallEntry?,
+        val selfType: FirTypeRef,
+        val typeParameters: List<FirTypeParameterRef>,
+    )
 }
 

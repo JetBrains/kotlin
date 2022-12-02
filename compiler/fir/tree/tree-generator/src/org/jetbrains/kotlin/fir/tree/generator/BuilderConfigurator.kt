@@ -190,7 +190,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             defaultNull("label")
         }
 
-        builder(delegatedConstructorCall) {
+        builder(delegatedConstructorCall, type = "FirDelegatedConstructorCallImpl") {
             parents += callBuilder
             default("argumentList") {
                 value = "FirEmptyArgumentList"

@@ -8,7 +8,7 @@ FILE: annotated.kt
     public? final? fun foo(arg: Int): Int { LAZY_BLOCK }
     public? final? data class Two : R|kotlin/Any| {
         public? constructor(x: Int, y: Int): R|Two| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? val x: Int = R|<local>/x|

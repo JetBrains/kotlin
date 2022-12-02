@@ -15,7 +15,7 @@ FILE: enums2.kt
     }
     public? final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
         private constructor(x: Some): R|SomeEnum| {
-            super<R|kotlin/Enum<SomeEnum>|>()
+            LAZY_super<R|kotlin/Enum<SomeEnum>|>
         }
 
         public? final? val x: Some = R|<local>/x|

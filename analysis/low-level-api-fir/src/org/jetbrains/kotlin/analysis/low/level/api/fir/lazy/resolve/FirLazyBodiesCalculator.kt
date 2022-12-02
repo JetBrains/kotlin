@@ -11,11 +11,13 @@ import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -50,20 +52,21 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyBodyForSecondaryConstructor(designation: FirDeclarationDesignation) {
-        val secondaryConstructor = designation.declaration as FirConstructor
-        require(!secondaryConstructor.isPrimary)
-        if (secondaryConstructor.body !is FirLazyBlock) return
+    fun calculateLazyBodyForConstructor(designation: FirDeclarationDesignation) {
+        val constructor = designation.declaration as FirConstructor
+        require(constructor.psi is KtConstructor<*>)
+        require(constructor.body is FirLazyBlock || constructor.delegatedConstructor is FirLazyDelegatedConstructorCall)
 
-        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-            session = secondaryConstructor.moduleData.session,
-            scopeProvider = secondaryConstructor.moduleData.session.kotlinScopeProvider,
+        val newConstructor = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+            session = constructor.moduleData.session,
+            scopeProvider = constructor.moduleData.session.kotlinScopeProvider,
             designation = designation,
-            rootNonLocalDeclaration = secondaryConstructor.psi as KtSecondaryConstructor,
-        ) as FirSimpleFunction
+            rootNonLocalDeclaration = constructor.psi as KtConstructor<*>,
+        ) as FirConstructor
 
-        secondaryConstructor.apply {
-            replaceBody(newFunction.body)
+        constructor.apply {
+            replaceBody(newConstructor.body)
+            replaceDelegatedConstructor(newConstructor.delegatedConstructor)
         }
     }
 
@@ -187,9 +190,9 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         constructor: FirConstructor,
         data: PersistentList<FirDeclaration>
     ): FirConstructor {
-        if (constructor.body is FirLazyBlock) {
+        if (constructor.body is FirLazyBlock || constructor.delegatedConstructor is FirLazyDelegatedConstructorCall) {
             val designation = FirDeclarationDesignation(data, constructor)
-            FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(designation)
+            FirLazyBodiesCalculator.calculateLazyBodyForConstructor(designation)
         }
         return constructor
     }

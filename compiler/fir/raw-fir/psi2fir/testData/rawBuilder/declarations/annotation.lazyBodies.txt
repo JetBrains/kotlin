@@ -13,14 +13,14 @@ FILE: annotation.kt
     }
     @base() public? final? class correct : R|kotlin/Any| {
         public? constructor(@base() x: Int): R|correct| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         @base() public? final? val x: Int = R|<local>/x|
             public? get(): Int
 
         @base() public? constructor(): R|correct| {
-            this<R|correct|>(IntegerLiteral(0))
+            LAZY_this<R|correct|>
         }
 
     }
