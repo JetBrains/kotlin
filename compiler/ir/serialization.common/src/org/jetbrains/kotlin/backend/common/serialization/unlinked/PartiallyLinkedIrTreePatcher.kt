@@ -399,7 +399,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.maybeThrowLinkageError {
-            checkReferencedDeclaration(classSymbol) // ???
+            checkReferencedDeclaration(classSymbol, checkVisibility = false)
         }
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
