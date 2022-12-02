@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -269,9 +268,6 @@ class FirStubTypeTransformer(
         substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
             resolvedTypeRef.withReplacedConeType(it)
         } ?: resolvedTypeRef
-
-    override fun transformArgumentList(argumentList: FirArgumentList, data: Nothing?): FirArgumentList =
-        argumentList.transformArguments(this, data)
 }
 
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
