@@ -54,6 +54,11 @@ dependencies {
             requireCapability("org.jetbrains.kotlin:atomicfu-common")
         }
     }
+
+    testImplementation(project(":kotlin-gradle-plugin-idea"))
+    testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
+    testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+
     testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-gradle-build-metrics"))
     testImplementation(project(":kotlin-project-model"))

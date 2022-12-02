@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependencyMatcher> {
     return when (notation) {
         null -> return emptyList()
+        is IdeaKotlinDependency -> listOf(IdeaKotlinDependencyInstanceMatcher(notation))
         is IdeaKotlinDependencyMatcher -> listOf(notation)
         is Iterable<*> -> notation.flatMap { buildIdeaKotlinDependencyMatchers(it) }
         else -> error("Can't build ${IdeaKotlinSourceDependencyMatcher::class.java.simpleName} from $notation")
