@@ -41,10 +41,10 @@ internal class IdSignatureHashCalculator {
                 }
 
                 flatHashes[declaration] = if (declaration.isFakeOverride) {
-                    declaration.resolveFakeOverride()?.irElementHashForIC()
+                    declaration.resolveFakeOverride()?.irSimpleFunctionHashForIC()
                         ?: icError("can not resolve fake override for ${declaration.render()}")
                 } else {
-                    declaration.irElementHashForIC()
+                    declaration.irSimpleFunctionHashForIC()
                 }
             }
             // go deeper since local inline special declarations (like a reference adaptor) may appear

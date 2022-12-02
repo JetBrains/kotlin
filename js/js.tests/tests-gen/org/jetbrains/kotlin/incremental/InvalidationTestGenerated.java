@@ -190,6 +190,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/inlineBecomeNonInline/");
     }
 
+    @TestMetadata("inlineFunctionAnnotations")
+    public void testInlineFunctionAnnotations() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAnnotations/");
+    }
+
     @TestMetadata("inlineFunctionAsFunctionReference")
     public void testInlineFunctionAsFunctionReference() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReference/");

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -43,6 +45,18 @@ private class HashCalculatorForIC {
     fun update(data: String) {
         update(data.length)
         update(data.toByteArray())
+    }
+
+    fun update(irElement: IrElement) {
+        irElement.accept(
+            visitor = DumpIrTreeVisitor(
+                out = object : Appendable {
+                    override fun append(csq: CharSequence) = this.apply { update(csq.toString().toByteArray()) }
+                    override fun append(csq: CharSequence, start: Int, end: Int) = append(csq.subSequence(start, end))
+                    override fun append(c: Char) = append(c.toString())
+                }
+            ), data = ""
+        )
     }
 
     inline fun <T> updateForEach(collection: Collection<T>, f: (T) -> Unit) {
@@ -90,16 +104,8 @@ internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().app
     update(languageVersionSettings.toString())
 }.finalize()
 
-internal fun IrElement.irElementHashForIC() = HashCalculatorForIC().also {
-    accept(
-        visitor = DumpIrTreeVisitor(
-            out = object : Appendable {
-                override fun append(csq: CharSequence) = this.apply { it.update(csq.toString().toByteArray()) }
-                override fun append(csq: CharSequence, start: Int, end: Int) = append(csq.subSequence(start, end))
-                override fun append(c: Char) = append(c.toString())
-            }
-        ), data = ""
-    )
+internal fun IrSimpleFunction.irSimpleFunctionHashForIC() = HashCalculatorForIC().also {
+    it.update(this)
 }.finalize()
 
 internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
@@ -116,6 +122,11 @@ internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
             // symbol rendering doesn't print default params information
             // it is important to understand if default params were added or removed
             it.update(functionParam.defaultValue?.let { 1 } ?: 0)
+        }
+    }
+    (owner as? IrAnnotationContainer)?.let { annotationContainer ->
+        it.updateForEach(annotationContainer.annotations) { annotation ->
+            it.update(annotation)
         }
     }
 }.finalize()
