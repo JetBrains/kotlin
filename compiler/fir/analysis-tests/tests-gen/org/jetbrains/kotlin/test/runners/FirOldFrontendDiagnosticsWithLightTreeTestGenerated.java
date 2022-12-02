@@ -14257,6 +14257,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("nothingVsParameterBound.kt")
+            public void testNothingVsParameterBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingVsParameterBound.kt");
+            }
+
+            @Test
             @TestMetadata("nullableTypeArgumentWithNotNullUpperBound.kt")
             public void testNullableTypeArgumentWithNotNullUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nullableTypeArgumentWithNotNullUpperBound.kt");
