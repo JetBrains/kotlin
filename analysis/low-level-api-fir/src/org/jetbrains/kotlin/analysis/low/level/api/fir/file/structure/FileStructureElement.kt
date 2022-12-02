@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -125,12 +126,7 @@ internal class ReanalyzableFunctionStructureElement(
                 it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
             }
 
-            moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
-                firDeclarationToResolve = originalFunction,
-                scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-                toPhase = FirResolvePhase.BODY_RESOLVE,
-                checkPCE = true,
-            )
+            originalFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             ReanalyzableFunctionStructureElement(
                 firFile,
@@ -179,13 +175,7 @@ internal class ReanalyzablePropertyStructureElement(
                 replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
             }
 
-            moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
-                firDeclarationToResolve = originalProperty,
-                scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-                toPhase = FirResolvePhase.BODY_RESOLVE,
-                checkPCE = true,
-            )
-
+            originalProperty.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             ReanalyzablePropertyStructureElement(
                 firFile,
