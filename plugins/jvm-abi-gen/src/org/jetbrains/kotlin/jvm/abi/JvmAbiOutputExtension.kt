@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.commons.ClassRemapper
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.commons.Remapper
 import java.io.File
 
 class JvmAbiOutputExtension(
@@ -43,6 +45,8 @@ class JvmAbiOutputExtension(
         }
     }
 
+    private class InnerClassInfo(val name: String, val outerName: String?, val innerName: String?, val access: Int)
+
     private class AbiOutputFiles(val abiClassInfos: Map<String, AbiClassInfo>, val outputFiles: OutputFileCollection) :
         OutputFileCollection {
         override fun get(relativePath: String): OutputFile? {
@@ -68,8 +72,14 @@ class JvmAbiOutputExtension(
 
                     else -> /* abiInfo is AbiClassInfo.Stripped */ {
                         val methodInfo = (abiInfo as AbiClassInfo.Stripped).methodInfo
+                        val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
+                        val innerClassesToKeep = abiClassInfos.keys.toMutableSet()
                         val writer = ClassWriter(0)
-                        ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
+                        val remapper = ClassRemapper(writer, object : Remapper() {
+                            override fun map(internalName: String): String =
+                                internalName.also { innerClassesToKeep.add(it) }
+                        })
+                        ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, remapper) {
                             // Strip private fields.
                             override fun visitField(
                                 access: Int,
@@ -123,10 +133,10 @@ class JvmAbiOutputExtension(
                             }
 
                             // Remove inner classes which are not present in the abi jar.
-                            override fun visitInnerClass(name: String?, outerName: String?, innerName: String?, access: Int) {
-                                if (name in abiClassInfos.keys) {
-                                    super.visitInnerClass(name, outerName, innerName, access)
-                                }
+                            override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
+                                // `visitInnerClass` is called before `visitField`/`visitMethod`, so we don't know
+                                // which types are referenced by kept methods yet.
+                                innerClassInfos[name] = InnerClassInfo(name, outerName, innerName, access)
                             }
 
                             // Strip private declarations from the Kotlin Metadata annotation.
@@ -136,7 +146,18 @@ class JvmAbiOutputExtension(
                                     return delegate
                                 return abiMetadataProcessor(delegate)
                             }
+
+                            override fun visitEnd() {}
                         }, 0)
+
+                        for (name in innerClassesToKeep.toList()) {
+                            val info = innerClassInfos[name] ?: continue
+                            generateSequence(info) { it.outerName?.takeIf(innerClassesToKeep::add)?.let(innerClassInfos::get) }
+                                .forEach { writer.visitInnerClass(it.name, it.outerName, it.innerName, it.access) }
+                        }
+
+                        writer.visitEnd()
+
                         SimpleOutputBinaryFile(outputFile.sourceFiles, outputFile.relativePath, writer.toByteArray())
                     }
                 }

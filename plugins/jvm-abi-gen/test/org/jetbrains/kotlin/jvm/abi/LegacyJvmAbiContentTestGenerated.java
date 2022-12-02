@@ -55,6 +55,11 @@ public class LegacyJvmAbiContentTestGenerated extends AbstractLegacyJvmAbiConten
         runTest("plugins/jvm-abi-gen/testData/content/class/");
     }
 
+    @TestMetadata("innerClasses")
+    public void testInnerClasses() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
+    }
+
     @TestMetadata("kt50005")
     public void testKt50005() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
