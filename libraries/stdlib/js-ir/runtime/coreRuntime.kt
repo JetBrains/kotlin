@@ -151,8 +151,13 @@ internal fun <T> objectCreate(proto: T?) =
 @Suppress("UNUSED_PARAMETER")
 internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
     val self = js("Object.create(ctor.prototype)")
-    if (box !== VOID) js("Object.assign(self, box)")
+    boxApply(self, box)
     return self;
+}
+
+@Suppress("UNUSED_PARAMETER")
+internal fun boxApply(self: dynamic, box: dynamic) {
+    if (box !== VOID) js("Object.assign(self, box)")
 }
 
 @OptIn(JsIntrinsic::class)

@@ -829,8 +829,11 @@ fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<Ir
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
     assert(typeParameters.isEmpty())
     copyTypeParametersFrom(from)
-    val substitutionMap = makeTypeParameterSubstitutionMap(from, this)
-    copyValueParametersFrom(from, substitutionMap)
+    copyValueParametersFrom(from)
+}
+
+fun IrFunction.copyValueParametersFrom(from: IrFunction) {
+    copyValueParametersFrom(from, makeTypeParameterSubstitutionMap(from, this))
 }
 
 fun IrTypeParametersContainer.copyTypeParameters(

@@ -771,18 +771,39 @@ private val invokeStaticInitializersPhase = makeBodyLoweringPhase(
     prerequisite = setOf(objectDeclarationLoweringPhase)
 )
 
-private val es6ConstructorLowering = makeDeclarationTransformerPhase(
-    ::ES6ConstructorLowering,
-    name = "ES6ConstructorLowering",
-    description = "Lower constructors declarations to support ES classes",
+private val es6BoxParameterOptimization = makeDeclarationTransformerPhase(
+    ::ES6CollectConstructorsWhichNeedBoxParameters,
+    name = "ES6CollectConstructorsWhichNeedBoxParameters",
+    description = "[Optimization] Collect all of the constructors which requires box parameter",
     prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
+private val es6ConstructorOptimizationLowering = makeDeclarationTransformerPhase(
+    ::ES6ConstructorOptimizationLowering,
+    name = "ES6ConstructorOptimizationLowering",
+    description = "[Optimization] Collect all of the constructors which could be translated into a regular constructor",
+    prerequisite = setOf(es6BoxParameterOptimization)
+)
+
+private val es6AddBoxParameterToConstructorsLowering = makeDeclarationTransformerPhase(
+    ::ES6AddBoxParameterToConstructorsLowering,
+    name = "ES6AddBoxParameterToConstructorsLowering",
+    description = "Add box parameter to a constructor if needed",
+    prerequisite = setOf(es6ConstructorOptimizationLowering)
+)
+
+private val es6SecondaryConstructorLowering = makeDeclarationTransformerPhase(
+    ::ES6SecondaryConstructorLowering,
+    name = "ES6SecondaryConstructorLowering",
+    description = "Lower constructors declarations to support ES classes",
+    prerequisite = setOf(es6AddBoxParameterToConstructorsLowering)
 )
 
 private val es6ConstructorUsageLowering = makeBodyLoweringPhase(
     ::ES6ConstructorCallLowering,
     name = "ES6ConstructorCallLowering",
     description = "Lower constructor usages to support ES classes",
-    prerequisite = setOf(es6ConstructorLowering)
+    prerequisite = setOf(es6SecondaryConstructorLowering)
 )
 
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
@@ -923,7 +944,10 @@ val loweringList = listOf<Lowering>(
     blockDecomposerLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
-    es6ConstructorLowering,
+    es6BoxParameterOptimization,
+    es6ConstructorOptimizationLowering,
+    es6AddBoxParameterToConstructorsLowering,
+    es6SecondaryConstructorLowering,
     es6ConstructorUsageLowering,
     callsLoweringPhase,
     escapedIdentifiersLowering,

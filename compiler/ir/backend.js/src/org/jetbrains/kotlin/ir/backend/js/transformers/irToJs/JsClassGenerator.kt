@@ -60,9 +60,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             when (declaration) {
                 is IrConstructor -> {
                     if (es6mode) {
-                        declaration.accept(IrFunctionToJsTransformer(), context).let {
-                            if (it.body.statements.any { it !is JsEmpty }) {
-                                jsClass.constructor = it
+                        declaration.accept(IrFunctionToJsTransformer(), context).let { fn ->
+                            if (fn.body.statements.any { it !is JsEmpty && !it.isSimpleSuperCall(fn) }) {
+                                jsClass.constructor = fn
                             }
                         }
                     } else {
@@ -416,6 +416,23 @@ fun JsFunction.escapedIfNeed(): JsFunction {
     }
     return this
 
+}
+
+fun JsStatement.isSimpleSuperCall(container: JsFunction): Boolean {
+    if (this !is JsExpressionStatement) return false
+    val invocation = expression as? JsInvocation ?: return false
+    if (invocation.qualifier !is JsSuperRef || container.parameters.size != invocation.arguments.size) return false
+
+    for (i in 0..container.parameters.lastIndex) {
+        val declaredParameter = container.parameters[i]
+        val providedParameter = (invocation.arguments[i] as? JsNameRef)?.takeIf { it.qualifier == null } ?: return false
+
+        if (declaredParameter.name != providedParameter.name) {
+            return false
+        }
+    }
+
+    return true
 }
 
 fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {

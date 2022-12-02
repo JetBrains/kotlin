@@ -371,6 +371,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsDefinePropertySymbol = getInternalFunction("defineProp")
     val jsObjectCreateSymbol = getInternalFunction("objectCreate")                 // Object.create(x)
     val jsCreateThisSymbol = getInternalFunction("createThis")                     // Object.create(x.prototype)
+    val jsBoxApplySymbol = getInternalFunction("boxApply")
     val jsCreateExternalThisSymbol = getInternalFunction("createExternalThis")
 
     // Helpers:

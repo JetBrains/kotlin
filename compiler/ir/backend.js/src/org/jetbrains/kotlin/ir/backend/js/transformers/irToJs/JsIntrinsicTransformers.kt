@@ -272,6 +272,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val baseClass = translateCallArguments(call, context).single() as JsNameRef
                 JsClass(baseClass = baseClass)
             }
+
+            add(intrinsics.void.owner.getter!!.symbol) { _, context ->
+                val backingField = context.getNameForField(intrinsics.void.owner.backingField!!)
+                JsNameRef(backingField)
+            }
         }
     }
 
