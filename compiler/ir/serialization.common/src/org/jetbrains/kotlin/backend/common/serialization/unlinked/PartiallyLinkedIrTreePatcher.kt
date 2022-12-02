@@ -384,7 +384,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitFunctionReference(expression: IrFunctionReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
-                ?: checkReferencedDeclaration(reflectionTarget) // ???
+                ?: checkReferencedDeclaration(reflectionTarget)
                 ?: checkExpressionTypeArguments()
         }
 
