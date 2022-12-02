@@ -33,3 +33,11 @@ val isNativeStdlibKey = extrasKeyOf<Boolean>("isNativeStdlib")
  * Marks the dependency as the native stdlib (which is special in the native distribution)
  */
 var IdeaKotlinBinaryDependency.isNativeStdlib by isNativeStdlibKey.readWriteProperty.notNull(false)
+
+
+val isCommonizedKey = extrasKeyOf<Boolean>("isCommonized")
+
+/**
+ * Marks dependencies produced by the commonizer
+ */
+var IdeaKotlinBinaryDependency.isCommonized by isCommonizedKey.readWriteProperty.notNull(false)

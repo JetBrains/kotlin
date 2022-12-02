@@ -5,31 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
-import org.gradle.api.Project
-import org.jetbrains.kotlin.commonizer.KonanDistribution
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.commonizer.platformLibsDir
-import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isCommonized
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.sources.project
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
-object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
+internal object IdeCommonizedNativePlatformDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
-        val commonizerTarget = getCommonizerTarget(sourceSet) as? LeafCommonizerTarget ?: return emptySet()
-        val konanTarget = commonizerTarget.konanTargetOrNull ?: return emptySet()
+        val commonizerTarget = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return emptySet()
+        val commonizerTask = project.commonizeNativeDistributionTask?.get() ?: return emptySet()
+        val outputDirectory = resolveCommonizedDirectory(commonizerTask.rootOutputDirectory, commonizerTarget)
 
-        return sourceSet.project.konanDistribution.platformLibsDir.resolve(konanTarget.name)
-            .listFiles().orEmpty()
+        return outputDirectory.listFiles().orEmpty()
             .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
             .mapNotNull { libraryFile -> project.resolveNativeDistributionLibraryForIde(libraryFile, commonizerTarget, project.logger) }
+            .onEach { dependency -> dependency.isCommonized = true }
             .toSet()
     }
-
-    private val Project.konanDistribution: KonanDistribution
-        get() = KonanDistribution(project.file(konanHome))
 }

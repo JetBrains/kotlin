@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinBooleanExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevelKey
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistributionKey
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlibKey
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
@@ -58,6 +55,13 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeNativePlatformDependencyResolver,
+            constraint = SourceSetConstraint.isNative,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
+            resolver = IdeCommonizedNativePlatformDependencyResolver,
             constraint = SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
@@ -120,6 +124,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             register(isIdeaProjectLevelKey, IdeaKotlinBooleanExtrasSerializer)
             register(isNativeDistributionKey, IdeaKotlinBooleanExtrasSerializer)
             register(isNativeStdlibKey, IdeaKotlinBooleanExtrasSerializer)
+            register(isCommonizedKey, IdeaKotlinBooleanExtrasSerializer)
         }
     }
 }
