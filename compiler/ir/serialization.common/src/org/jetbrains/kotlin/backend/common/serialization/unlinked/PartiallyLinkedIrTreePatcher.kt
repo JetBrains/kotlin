@@ -37,20 +37,20 @@ internal class PartiallyLinkedIrTreePatcher(
 ) {
     private val stdlibModule by lazy { PLModule.determineFor(builtIns.anyClass.owner) }
 
-    fun patch(roots: Collection<IrElement>) {
+    fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
         roots.forEach { root ->
-            val startingFile: PLFile? = when (root) {
-                is IrModuleFragment -> {
-                    if (root.files.isEmpty() || root in stdlibModule) return@forEach
-                    null
-                }
-                is IrDeclaration -> {
-                    if (root in stdlibModule) return@forEach
-                    PLFile.determineFor(root)
-                }
-                else -> error("Unexpected type of root: $root")
-            }
+            if (root.files.isEmpty() || root in stdlibModule) return@forEach
 
+            root.transformVoid(DeclarationTransformer(startingFile = null))
+            root.transformVoid(ExpressionTransformer(startingFile = null))
+        }
+    }
+
+    fun patchDeclarations(roots: Collection<IrDeclaration>) {
+        roots.forEach { root ->
+            if (root in stdlibModule) return@forEach
+
+            val startingFile = PLFile.determineFor(root)
             root.transformVoid(DeclarationTransformer(startingFile))
             root.transformVoid(ExpressionTransformer(startingFile))
         }

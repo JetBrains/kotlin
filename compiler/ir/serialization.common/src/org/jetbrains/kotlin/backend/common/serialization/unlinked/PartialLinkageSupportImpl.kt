@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.allUnbound
@@ -39,16 +40,23 @@ internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: Ir
         classifierExplorer.exploreIrElement(function)
     }
 
-    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrElement>) {
+    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) {
+        generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchModuleFragments(roots()) }
+    }
+
+    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrDeclaration>) {
+        generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchDeclarations(roots()) }
+    }
+
+    private fun generateStubsAndPatchUsagesInternal(symbolTable: SymbolTable, patchIrTree: () -> Unit) {
         // Generate stubs.
         for (symbol in symbolTable.allUnbound) {
             stubGenerator.getDeclaration(symbol)
         }
 
-        // Patch the IR tree.
-        patcher.patch(roots())
+        patchIrTree()
 
         // Patch the stubs which were not patched yet.
-        patcher.patch(stubGenerator.grabDeclarationsToPatch())
+        patcher.patchDeclarations(stubGenerator.grabDeclarationsToPatch())
     }
 }
