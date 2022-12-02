@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -117,17 +114,19 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return firImplClassPropertiesWithNoAcceptAndTransform[className] == propertyName
     }
 
-    private fun FirFile.visitChildren(): Set<FirElement> =
-        ConsistencyVisitor().let {
-            this@visitChildren.accept(it)
-            it.result
-        }
+    private fun FirFile.visitChildren(): Set<FirElement> {
+        val result = HashSet<FirElement>()
+        val processor = ConsistencyProcessor(result)
+        accept(ConsistencyVisitor(processor))
+        return result
+    }
 
-    private fun FirFile.transformChildren(): Set<FirElement> =
-        ConsistencyTransformer().let {
-            this@transformChildren.transform<FirFile, Unit>(it, Unit)
-            it.result
-        }
+    private fun FirFile.transformChildren(): Set<FirElement> {
+        val result = HashSet<FirElement>()
+        val processor = ConsistencyProcessor(result)
+        transform<FirFile, Unit>(ConsistencyTransformer(processor), Unit)
+        return result
+    }
 
     protected fun FirFile.checkChildren() {
         val children = traverseChildren()
@@ -151,34 +150,39 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
     }
 
-    private class ConsistencyVisitor : FirVisitorVoid() {
-        var result = hashSetOf<FirElement>()
-
+    private class ConsistencyVisitor(private val processor: ConsistencyProcessor) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
-            // NB: types are reused sometimes (e.g. in accessors)
-            if (!result.add(element)) {
-                throwTwiceVisitingError(element)
-            } else {
-                element.acceptChildren(this)
-            }
+            processor.process(element) { it.acceptChildren(this@ConsistencyVisitor) }
         }
     }
 
-    private class ConsistencyTransformer : FirTransformer<Unit>() {
-        var result = hashSetOf<FirElement>()
-
+    private class ConsistencyTransformer(private val processor: ConsistencyProcessor) : FirTransformer<Unit>() {
         override fun <E : FirElement> transformElement(element: E, data: Unit): E {
-            if (!result.add(element)) {
-                throwTwiceVisitingError(element)
-            } else {
-                element.transformChildren(this, Unit)
-            }
+            processor.process(element) { it.transformChildren(this@ConsistencyTransformer, Unit) }
             return element
+        }
+    }
+
+    private class ConsistencyProcessor(private val result: MutableSet<FirElement>) {
+        private var parent: FirElement? = null
+
+        fun process(element: FirElement, processChildren: (FirElement) -> Unit) {
+            if (!result.add(element)) {
+                throwTwiceVisitingError(element, parent)
+            } else {
+                val oldParent = parent
+                try {
+                    parent = element
+                    processChildren(element)
+                } finally {
+                    parent = oldParent
+                }
+            }
         }
     }
 }
 
-private fun throwTwiceVisitingError(element: FirElement) {
+private fun throwTwiceVisitingError(element: FirElement, @Suppress("UNUSED_PARAMETER") parent: FirElement?) {
     if (element is FirTypeRef || element is FirNoReceiverExpression || element is FirTypeParameter ||
         element is FirTypeProjection || element is FirValueParameter || element is FirAnnotation || element is FirFunctionTypeParameter ||
         element is FirEmptyContractDescription ||
