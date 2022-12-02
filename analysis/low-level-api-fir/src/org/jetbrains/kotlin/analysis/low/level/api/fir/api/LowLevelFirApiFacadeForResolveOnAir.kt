@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
@@ -126,11 +127,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(file)
 
         val scopeSession = firResolveSession.getScopeSessionFor(session)
-        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveFileDeclaration(
-            firFile = firFile,
-            scopeSession = scopeSession,
-            toPhase = FirResolvePhase.IMPORTS
-        )
+        firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
 
         val importingScopes = createImportingScopes(firFile, firFile.moduleData.session, scopeSession, useCaching = false)
         val fileScopeElements = importingScopes.map { it.asTowerDataElement(isLocal = false) }
