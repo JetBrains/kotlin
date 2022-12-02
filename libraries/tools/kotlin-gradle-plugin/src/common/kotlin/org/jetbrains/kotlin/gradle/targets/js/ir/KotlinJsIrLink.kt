@@ -45,6 +45,9 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     override val sources: FileCollection = super.sources
 
+    override val incrementalProps: List<FileCollection>
+        get() = super.incrementalProps.filterNot { it == sources }
+
     override fun skipCondition(): Boolean {
         return !entryModule.get().asFile.exists()
     }

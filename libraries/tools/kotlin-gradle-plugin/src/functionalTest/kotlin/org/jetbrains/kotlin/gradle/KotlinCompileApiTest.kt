@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.updateByChangedFiles
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -139,5 +144,32 @@ class KotlinCompileApiTest {
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
         assertTrue(ExplicitApiMode.Strict.toCompilerArg() in taskImpl.compilerOptions.freeCompilerArgs.get())
+    }
+
+    @Test
+    fun testPluginOptionsByChanges() {
+        taskApi.changesToPluginOptionsTransformers.add {
+            when (it) {
+                is org.jetbrains.kotlin.gradle.tasks.ChangedFiles.Known -> {
+                    val modified = it.modified.map { SubpluginOption("modified", it.name) }
+                    val removed = it.removed.map { SubpluginOption("removed", it.name) }
+                    mapOf("known.plugin.id" to (modified + removed))
+                }
+                else -> mapOf("unknown.plugin.id" to listOf(SubpluginOption("changes", "unknown")))
+            }
+        }
+
+        val known = ChangedFiles.Known(listOf(File("A.kt")), listOf(File("B.kt")))
+        var args = K2JVMCompilerArguments().updateByChangedFiles(taskApi.changesToPluginOptionsTransformers.get(), known)
+        var expectedPluginOptions = setOf(
+            "plugin:known.plugin.id:modified=A.kt",
+            "plugin:known.plugin.id:removed=B.kt",
+        )
+        assertEquals(expectedPluginOptions, args.pluginOptions?.toSet())
+
+        val unknown = ChangedFiles.Unknown()
+        args.updateByChangedFiles(taskApi.changesToPluginOptionsTransformers.get(), unknown)
+        expectedPluginOptions += setOf("plugin:unknown.plugin.id:changes=unknown")
+        assertEquals(expectedPluginOptions, args.pluginOptions?.toSet())
     }
 }
