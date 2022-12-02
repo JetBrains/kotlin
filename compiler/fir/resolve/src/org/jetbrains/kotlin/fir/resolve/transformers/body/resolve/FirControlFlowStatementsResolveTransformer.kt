@@ -208,14 +208,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         val labeledElement = returnExpression.target.labeledElement
         val expectedTypeRef = labeledElement.returnTypeRef
 
-        @Suppress("IntroduceWhenSubject")
         val mode = when {
-            labeledElement.symbol in context.anonymousFunctionsAnalyzedInDependentContext -> {
-                ResolutionMode.ContextDependent
-            }
-            else -> {
+            labeledElement.symbol in context.anonymousFunctionsAnalyzedInDependentContext -> ResolutionMode.ContextDependent
+
+            expectedTypeRef is FirResolvedTypeRef ->
                 ResolutionMode.WithExpectedType(expectedTypeRef, expectedTypeMismatchIsReportedInChecker = true)
-            }
+
+            else -> ResolutionMode.ContextIndependent
         }
 
         return transformJump(returnExpression, mode)
