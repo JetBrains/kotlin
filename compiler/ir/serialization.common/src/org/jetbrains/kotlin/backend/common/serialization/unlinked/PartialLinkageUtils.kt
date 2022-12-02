@@ -40,7 +40,11 @@ internal object PartialLinkageUtils {
         else -> null
     }
 
-    /** For fast check if a declaration is in the module. Also for visibility check. */
+    /**
+     * Auxiliary entity used for several purposes:
+     * - Fast check if a declaration belongs to the module
+     * - Visibility check
+     */
     internal sealed interface Module {
         val name: String
 
@@ -85,7 +89,11 @@ internal object PartialLinkageUtils {
         }
     }
 
-    /** For visibility check. */
+    /**
+     * Auxiliary entity used for several purposes:
+     * - Visibility check
+     * - Computing the exact source code location by the offset of [IrDeclaration] (see [computeLocationForOffset])
+     */
     sealed interface File {
         val module: Module
         fun computeLocationForOffset(offset: Int): Location
@@ -136,7 +144,7 @@ internal object PartialLinkageUtils {
     }
 }
 
-/** An optimization to avoid computing file for every visited declaration */
+/** An optimization to avoid re-computing file for every visited declaration */
 internal abstract class FileAwareIrElementTransformerVoid(startingFile: PartialLinkageUtils.File?) : IrElementTransformerVoid() {
     private var _currentFile: PartialLinkageUtils.File? = startingFile
     protected val currentFile: PartialLinkageUtils.File get() = _currentFile ?: error("No information about current file")
