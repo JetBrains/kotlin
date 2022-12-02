@@ -606,7 +606,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         fun chooseOperator(): FirStatement {
             callCompleter.completeCall(
                 resolvedOperatorCall,
-                lhsVariable?.returnTypeRef?.let {
+                (lhsVariable?.returnTypeRef as? FirResolvedTypeRef)?.let {
                     ResolutionMode.WithExpectedType(it, expectedTypeMismatchIsReportedInChecker = true)
                 } ?: ResolutionMode.ContextIndependent,
             )

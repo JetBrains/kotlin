@@ -290,7 +290,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
             val stubTypeCompletionResultsWriter = FirStubTypeTransformer(finalSubstitutor)
             property.transformSingle(stubTypeCompletionResultsWriter, null)
-            property.replaceReturnTypeRef(property.returnTypeRef.approximateDeclarationType(session, property.visibilityForApproximation(), property.isLocal))
+            property.replaceReturnTypeRef(
+                property.returnTypeRef.approximateDeclarationType(
+                    session,
+                    property.visibilityForApproximation(),
+                    property.isLocal
+                )
+            )
 
             val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
                 finalSubstitutor,
@@ -595,7 +601,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     ): FirAnonymousFunction {
         val expectedReturnType =
             lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-        val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)) as FirAnonymousFunction
+        val result = transformFunction(
+            anonymousFunction,
+            expectedReturnType?.let(::withExpectedType) ?: ResolutionMode.ContextDependent
+        ) as FirAnonymousFunction
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
             // TODO: This part seems unnecessary because for lambdas in dependent context will be completed and their type
@@ -1017,12 +1026,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         data: ResolutionMode,
     ): FirStatement = whileAnalysing(session, backingField) {
         val propertyType = data.expectedType
-        val initializerData = if (backingField.returnTypeRef is FirResolvedTypeRef) {
-            withExpectedType(backingField.returnTypeRef)
-        } else if (propertyType != null) {
-            ResolutionMode.WithExpectedType(propertyType, shouldBeStrictlyEnforced = false)
-        } else {
-            ResolutionMode.ContextDependent
+        val initializerData = when {
+            backingField.returnTypeRef is FirResolvedTypeRef -> withExpectedType(backingField.returnTypeRef)
+
+            propertyType is FirResolvedTypeRef ->
+                ResolutionMode.WithExpectedType(propertyType, shouldBeStrictlyEnforced = false)
+
+            propertyType != null -> ResolutionMode.ContextIndependent
+
+            else -> ResolutionMode.ContextDependent
         }
         backingField.transformInitializer(transformer, initializerData)
         if (
