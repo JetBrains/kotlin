@@ -3120,7 +3120,7 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
 
                 @Test
                 public void testAllFilesPresentInAdapted() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
                 }
 
                 @Test
@@ -14487,6 +14487,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("nothingVsParameterBound.kt")
+            public void testNothingVsParameterBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingVsParameterBound.kt");
+            }
+
+            @Test
             @TestMetadata("nullableTypeArgumentWithNotNullUpperBound.kt")
             public void testNullableTypeArgumentWithNotNullUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nullableTypeArgumentWithNotNullUpperBound.kt");
@@ -16534,6 +16540,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("kt56448.kt")
+                public void testKt56448() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt56448.kt");
+                }
+
+                @Test
                 @TestMetadata("lambdaNothingAndExpectedType.kt")
                 public void testLambdaNothingAndExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/lambdaNothingAndExpectedType.kt");
@@ -16585,6 +16597,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("reportImplicitNothingOnlyForOwnTypeParameters.kt")
                 public void testReportImplicitNothingOnlyForOwnTypeParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/reportImplicitNothingOnlyForOwnTypeParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("selectWithNull.kt")
+                public void testSelectWithNull() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/selectWithNull.kt");
                 }
 
                 @Test
