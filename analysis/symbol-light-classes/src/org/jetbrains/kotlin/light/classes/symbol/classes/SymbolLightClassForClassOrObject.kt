@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotati
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
+import org.jetbrains.kotlin.light.classes.symbol.isConst
+import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -278,8 +280,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
         fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
             val isJvmField = propertySymbol.hasJvmFieldAnnotation()
-            val isLateInit = (propertySymbol as? KtKotlinPropertySymbol)?.isLateInit == true
-            val isConst = (propertySymbol as? KtKotlinPropertySymbol)?.isConst == true
+            val isLateInit = propertySymbol.isLateInit
+            val isConst = propertySymbol.isConst
 
             val forceStatic = isObject
             val takePropertyVisibility = isLateInit || isJvmField || isConst
