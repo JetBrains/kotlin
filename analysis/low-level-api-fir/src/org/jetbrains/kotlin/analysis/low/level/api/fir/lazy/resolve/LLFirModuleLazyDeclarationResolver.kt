@@ -119,7 +119,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    fun lazyResolveFileDeclaration(
+    private fun lazyResolveFileDeclaration(
         firFile: FirFile,
         toPhase: FirResolvePhase,
         scopeSession: ScopeSession,

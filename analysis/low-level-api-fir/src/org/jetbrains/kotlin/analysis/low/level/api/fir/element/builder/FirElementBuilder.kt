@@ -9,14 +9,15 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isNonAnonymousClassOrObject
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -67,12 +68,7 @@ internal class FirElementBuilder(
 
     private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveFileDeclaration(
-            firFile = firFile,
-            toPhase = FirResolvePhase.BODY_RESOLVE,
-            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-            checkPCE = true
-        )
+        firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return firFile
     }
 
