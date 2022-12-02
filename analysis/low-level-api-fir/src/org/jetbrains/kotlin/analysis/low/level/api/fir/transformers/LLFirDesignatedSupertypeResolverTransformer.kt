@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
@@ -120,7 +118,11 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         for (designationsPerFile in filesToDesignations) {
             if (checkPCE) checkCanceled()
             lockProvider.runCustomResolveUnderLock(designationsPerFile.key, checkPCE) {
-                applyToFileSymbols(designationsPerFile.value)
+                val session = designationsPerFile.key.llFirResolvableSession
+                    ?: error("When FirFile exists for the declaration, the session should be resolvevablable")
+                session.moduleComponents.sessionInvalidator.withInvalidationOnException(session) {
+                    applyToFileSymbols(designationsPerFile.value)
+                }
             }
         }
     }

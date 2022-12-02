@@ -117,24 +117,27 @@ internal class ReanalyzableFunctionStructureElement(
 
         return moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
             val upgradedPhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
-            with(originalFunction) {
-                replaceBody(temporaryFunction.body)
-                replaceContractDescription(temporaryFunction.contractDescription)
-                replaceResolvePhase(upgradedPhase)
-            }
-            designation.toSequence(includeTarget = true).forEach {
-                it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
-            }
 
-            originalFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
+                with(originalFunction) {
+                    replaceBody(temporaryFunction.body)
+                    replaceContractDescription(temporaryFunction.contractDescription)
+                    replaceResolvePhase(upgradedPhase)
+                }
+                designation.toSequence(includeTarget = true).forEach {
+                    it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
+                }
 
-            ReanalyzableFunctionStructureElement(
-                firFile,
-                newKtDeclaration,
-                originalFunction.symbol,
-                newKtDeclaration.modificationStamp,
-                moduleComponents,
-            )
+                originalFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+                ReanalyzableFunctionStructureElement(
+                    firFile,
+                    newKtDeclaration,
+                    originalFunction.symbol,
+                    newKtDeclaration.modificationStamp,
+                    moduleComponents,
+                )
+            }
         }
     }
 }
@@ -160,30 +163,31 @@ internal class ReanalyzablePropertyStructureElement(
         ) as FirProperty
 
         return moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
-
             val getterPhase = originalProperty.getter?.resolvePhase ?: originalProperty.resolvePhase
             val setterPhase = originalProperty.setter?.resolvePhase ?: originalProperty.resolvePhase
             val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
 
-            with(originalProperty) {
-                getter?.replaceBody(temporaryProperty.getter?.body)
-                setter?.replaceBody(temporaryProperty.setter?.body)
-                replaceInitializer(temporaryProperty.initializer)
-                getter?.replaceResolvePhase(upgradedPhase)
-                setter?.replaceResolvePhase(upgradedPhase)
-                replaceResolvePhase(upgradedPhase)
-                replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
+            moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
+                with(originalProperty) {
+                    getter?.replaceBody(temporaryProperty.getter?.body)
+                    setter?.replaceBody(temporaryProperty.setter?.body)
+                    replaceInitializer(temporaryProperty.initializer)
+                    getter?.replaceResolvePhase(upgradedPhase)
+                    setter?.replaceResolvePhase(upgradedPhase)
+                    replaceResolvePhase(upgradedPhase)
+                    replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
+                }
+
+                originalProperty.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+                ReanalyzablePropertyStructureElement(
+                    firFile,
+                    newKtDeclaration,
+                    originalProperty.symbol,
+                    newKtDeclaration.modificationStamp,
+                    moduleComponents,
+                )
             }
-
-            originalProperty.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
-            ReanalyzablePropertyStructureElement(
-                firFile,
-                newKtDeclaration,
-                originalProperty.symbol,
-                newKtDeclaration.modificationStamp,
-                moduleComponents,
-            )
         }
     }
 }
