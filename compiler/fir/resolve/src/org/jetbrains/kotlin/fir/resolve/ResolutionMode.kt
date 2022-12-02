@@ -40,7 +40,17 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
         // In these examples we should try using the property type information while resolving the initializer,
         // but it's ok if it's not applicable
         val shouldBeStrictlyEnforced: Boolean = true,
-    ) : ResolutionMode(forceFullCompletion = true) {
+        forceFullCompletion: Boolean = true,
+    ) : ResolutionMode(forceFullCompletion) {
+
+        fun copy(
+            mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
+            forceFullCompletion: Boolean = this.forceFullCompletion
+        ): WithExpectedType = WithExpectedType(
+            expectedTypeRef, mayBeCoercionToUnitApplied, expectedTypeMismatchIsReportedInChecker, fromCast, shouldBeStrictlyEnforced,
+            forceFullCompletion
+        )
+
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}, " +
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
