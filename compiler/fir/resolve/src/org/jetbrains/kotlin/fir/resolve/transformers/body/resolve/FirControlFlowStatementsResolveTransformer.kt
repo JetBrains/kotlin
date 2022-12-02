@@ -76,10 +76,11 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     else -> {
                         whenExpression = whenExpression.transformBranches(
                             transformer,
-                            data.takeIf {
-                                val expectedType = it.expectedType
-                                expectedType != null && expectedType !is FirImplicitTypeRef
-                            } ?: ResolutionMode.ContextDependent,
+                            (data as? ResolutionMode.WithExpectedType)
+                                // Currently we don't use information from cast, but probably we could have
+                                ?.takeIf { !it.fromCast }
+                                ?.copy(forceFullCompletion = false)
+                                ?: ResolutionMode.ContextDependent,
                         )
 
                         whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
