@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.File as PLFile
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
@@ -38,18 +38,22 @@ internal class PartiallyLinkedIrTreePatcher(
     private val stdlibModule by lazy { PLModule.determineFor(builtIns.anyClass.owner) }
 
     fun patch(roots: Collection<IrElement>) {
-        if (roots.isEmpty()) return
-
-        val filteredRoots = roots.filter { element ->
-            when (element) {
-                is IrModuleFragment -> element.files.isNotEmpty() && element !in stdlibModule
-                is IrDeclaration -> element !in stdlibModule
-                else -> true
+        roots.forEach { root ->
+            val startingFile: PLFile? = when (root) {
+                is IrModuleFragment -> {
+                    if (root.files.isEmpty() || root in stdlibModule) return@forEach
+                    null
+                }
+                is IrDeclaration -> {
+                    if (root in stdlibModule) return@forEach
+                    PLFile.determineFor(root)
+                }
+                else -> error("Unexpected type of root: $root")
             }
-        }
 
-        filteredRoots.forEach { it.transformVoid(DeclarationTransformer()) }
-        filteredRoots.forEach { it.transformVoid(ExpressionTransformer()) }
+            root.transformVoid(DeclarationTransformer(startingFile))
+            root.transformVoid(ExpressionTransformer(startingFile))
+        }
     }
 
     private fun IrElement.transformVoid(transformer: IrElementTransformerVoid) {
@@ -88,7 +92,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     // Declarations are transformed top-down.
-    private inner class DeclarationTransformer : IrElementTransformerVoid() {
+    private inner class DeclarationTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<DeclarationTransformerContext>()
 
         private fun <T : IrElement> T.transformChildren(): T {
@@ -308,20 +312,12 @@ internal class PartiallyLinkedIrTreePatcher(
                         && (owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
             }
         }
+
+        private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration): IrCall =
+            throwLinkageError(declaration, currentFile)
     }
 
-    private inner class ExpressionTransformer : IrElementTransformerVoid() {
-        private var currentFile: IrFile? = null
-
-        override fun visitFile(declaration: IrFile): IrFile {
-            currentFile = declaration
-            return try {
-                super.visitFile(declaration)
-            } finally {
-                currentFile = null
-            }
-        }
-
+    private inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
         override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
             return if (declaration.origin is PartiallyLinkedDeclarationOrigin)
                 declaration // There are no expressions to patch.
@@ -423,7 +419,7 @@ internal class PartiallyLinkedIrTreePatcher(
             val directChildren = if (!hasBranches())
                 DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else DirectChildren.EMPTY
 
-            val linkageError = partialLinkageCase.throwLinkageError(element = this, file = currentFile)
+            val linkageError = partialLinkageCase.throwLinkageError(element = this, currentFile)
 
             return if (directChildren.statements.isNotEmpty())
                 IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
@@ -530,12 +526,9 @@ internal class PartiallyLinkedIrTreePatcher(
     private fun List<IrType>.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         firstNotNullOfOrNull { it.toPartiallyLinkedMarkerTypeOrNull() }
 
-    private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration): IrCall =
-        throwLinkageError(declaration, declaration.fileOrNull)
-
-    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: IrFile?): IrCall {
+    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: PLFile): IrCall {
         val errorMessage = renderErrorMessage()
-        val locationInSourceCode = element.computeLocationInSourceCode(file)
+        val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
         messageLogger.report(Severity.WARNING, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
 
@@ -588,31 +581,6 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
-        }
-
-        private fun IrElement.computeLocationInSourceCode(currentFile: IrFile?): Location? {
-            if (currentFile == null) return null
-
-            val moduleName: String = currentFile.module.name.asString()
-            val filePath: String = currentFile.fileEntry.name
-
-            val lineNumber: Int
-            val columnNumber: Int
-
-            when (val effectiveStartOffset = startOffsetOfFirstDenotableIrElement()) {
-                UNDEFINED_OFFSET -> {
-                    lineNumber = UNDEFINED_LINE_NUMBER
-                    columnNumber = UNDEFINED_COLUMN_NUMBER
-                }
-
-                else -> {
-                    lineNumber = currentFile.fileEntry.getLineNumber(effectiveStartOffset) + 1 // since humans count from 1, not 0
-                    columnNumber = currentFile.fileEntry.getColumnNumber(effectiveStartOffset) + 1
-                }
-            }
-
-            // TODO: should module name still be added here?
-            return Location("$moduleName @ $filePath", lineNumber, columnNumber)
         }
 
         private tailrec fun IrElement.startOffsetOfFirstDenotableIrElement(): Int = when (this) {
