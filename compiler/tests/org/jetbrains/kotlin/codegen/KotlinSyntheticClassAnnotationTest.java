@@ -143,7 +143,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, METADATA_VERSION_FIELD_NAME);
         assertNotNull(version);
         assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
-                   new JvmMetadataVersion(version).isCompatible());
+                   new JvmMetadataVersion(version).isCompatibleWithCurrentCompilerVersion());
     }
 
     @NotNull

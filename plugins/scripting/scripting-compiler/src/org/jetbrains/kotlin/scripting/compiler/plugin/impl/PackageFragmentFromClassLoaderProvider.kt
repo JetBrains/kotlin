@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.toMetadataVersion
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.ClassLoaderByConfiguration
 
@@ -45,10 +46,11 @@ class PackageFragmentFromClassLoaderProviderExtension(
         val deserializedDescriptorResolver = DeserializedDescriptorResolver()
         val singleModuleClassResolver = SingleModuleClassResolver()
         val notFoundClasses = NotFoundClasses(storageManager, module)
+        val languageVersionSettings = compilerConfiguration.languageVersionSettings
         val packagePartProvider =
             PackagePartFromClassLoaderProvider(
                 classLoader,
-                compilerConfiguration.languageVersionSettings,
+                languageVersionSettings,
                 compilerConfiguration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
             )
 
@@ -63,7 +65,8 @@ class PackageFragmentFromClassLoaderProviderExtension(
         val deserializationComponentsForJava =
             makeDeserializationComponentsForJava(
                 module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                reflectKotlinClassFinder, deserializedDescriptorResolver, RuntimeErrorReporter
+                reflectKotlinClassFinder, deserializedDescriptorResolver, RuntimeErrorReporter,
+                languageVersionSettings.languageVersion.toMetadataVersion()
             )
 
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)

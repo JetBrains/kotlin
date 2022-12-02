@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
 
 open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
@@ -60,11 +60,11 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         val classId = kotlinClass.classId
         val packageFqName = header.packageName?.let { FqName(it) } ?: classId.packageFqName
 
-        if (!header.metadataVersion.isCompatible()) {
+        if (!header.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
             return createIncompatibleAbiVersionFileStub()
         }
 
-        val components = createStubBuilderComponents(file, packageFqName, fileContent)
+        val components = createStubBuilderComponents(file, packageFqName, fileContent, header.metadataVersion)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             val partFiles = ClsClassFinder.findMultifileClassParts(file, classId, header.multifilePartNames)
             return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
@@ -105,10 +105,15 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         }
     }
 
-    private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, fileContent: ByteArray): ClsStubBuilderComponents {
+    private fun createStubBuilderComponents(
+        file: VirtualFile,
+        packageFqName: FqName,
+        fileContent: ByteArray,
+        jvmMetadataVersion: JvmMetadataVersion
+    ): ClsStubBuilderComponents {
         val classFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
-        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
-        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, file, fileContent)
+        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, jvmMetadataVersion)
+        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, file, fileContent, jvmMetadataVersion)
         return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 
@@ -127,7 +132,8 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 private class AnnotationLoaderForClassFileStubBuilder(
     kotlinClassFinder: KotlinClassFinder,
     private val cachedFile: VirtualFile,
-    private val cachedFileContent: ByteArray
+    private val cachedFileContent: ByteArray,
+    override val jvmMetadataVersion: JvmMetadataVersion
 ) : AbstractBinaryClassAnnotationLoader<ClassId, AnnotationLoaderForClassFileStubBuilder.AnnotationsClassIdContainer>(kotlinClassFinder) {
 
     private val storage =

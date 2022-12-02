@@ -25,9 +25,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  *
  * @property bytes the byte array representing the contents of a `.kotlin_module` file
  */
-class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
-    @get:IgnoreInApiDump internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
-        bytes, javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
+class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: ByteArray, jvmMetadataVersion: JvmMetadataVersion) {
+    @get:IgnoreInApiDump
+    internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
+        bytes, javaClass.name,
+        skipMetadataVersionCheck = false,
+        isJvmPackageNameSupported = true,
+        metadataVersionFromLanguageVersion = jvmMetadataVersion
     ) {
         // TODO: report incorrect versions of modules
     }
@@ -86,7 +90,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
          */
         @Deprecated("Writer API is deprecated as excessive and cumbersome. Please use KotlinModuleMetadata.write(kmModule, metadataVersion)")
         fun write(metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
-            KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0))
+            KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0), jvmMetadataVersion)
     }
 
     /**
@@ -125,7 +129,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
         @JvmStatic
         fun read(bytes: ByteArray): KotlinModuleMetadata? {
             try {
-                val result = KotlinModuleMetadata(bytes)
+                val result = KotlinModuleMetadata(bytes, JvmMetadataVersion.INSTANCE)
                 if (result.data == ModuleMapping.EMPTY) return null
 
                 if (result.data == ModuleMapping.CORRUPTED) {

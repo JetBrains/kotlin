@@ -21,9 +21,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.sure
 
@@ -32,12 +32,12 @@ abstract class VirtualFileFinder : KotlinClassFinder {
 
     abstract fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile?
 
-    override fun findKotlinClassOrContent(classId: ClassId): KotlinClassFinder.Result? {
+    override fun findKotlinClassOrContent(classId: ClassId, jvmMetadataVersion: JvmMetadataVersion): KotlinClassFinder.Result? {
         val file = findVirtualFileWithHeader(classId) ?: return null
-        return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file)
+        return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, jvmMetadataVersion)
     }
 
-    override fun findKotlinClassOrContent(javaClass: JavaClass): KotlinClassFinder.Result? {
+    override fun findKotlinClassOrContent(javaClass: JavaClass, jvmMetadataVersion: JvmMetadataVersion): KotlinClassFinder.Result? {
         var file = (javaClass as? VirtualFileBoundJavaClass)?.virtualFile ?: return null
 
         if (javaClass.outerClass != null) {
@@ -46,7 +46,7 @@ abstract class VirtualFileFinder : KotlinClassFinder {
             file = file.parent!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
         }
 
-        return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file)
+        return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, jvmMetadataVersion)
     }
 
     private fun classFileName(jClass: JavaClass): String {

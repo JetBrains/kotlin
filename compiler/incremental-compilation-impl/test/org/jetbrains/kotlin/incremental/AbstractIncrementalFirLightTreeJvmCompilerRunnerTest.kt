@@ -13,6 +13,7 @@ abstract class AbstractIncrementalFirLightTreeJvmCompilerRunnerTest : AbstractIn
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             useK2 = true
+            languageVersion = "2.0"
             useIR = true
             useFirIC = false
             useFirLT = true

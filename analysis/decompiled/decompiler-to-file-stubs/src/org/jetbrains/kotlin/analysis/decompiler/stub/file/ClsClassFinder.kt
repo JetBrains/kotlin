@@ -11,6 +11,7 @@ import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -20,7 +21,10 @@ object ClsClassFinder {
         val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
 
         return partNames.mapNotNull {
-            partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it.substringAfterLast('/'))))
+            partsFinder.findKotlinClass(
+                ClassId(packageFqName, Name.identifier(it.substringAfterLast('/'))),
+                JvmMetadataVersion.INSTANCE
+            )
         }
     }
 

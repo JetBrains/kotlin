@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.jvm.JvmCompilerDeserializationConfiguration
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.PrintStream
@@ -38,7 +39,7 @@ class JvmPackagePartProvider(
     languageVersionSettings: LanguageVersionSettings,
     private val scope: GlobalSearchScope
 ) : JvmPackagePartProviderBase<VirtualFile>() {
-    override val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration = JvmCompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
 

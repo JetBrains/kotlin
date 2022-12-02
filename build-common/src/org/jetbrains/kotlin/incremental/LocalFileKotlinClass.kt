@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
@@ -32,10 +33,12 @@ class LocalFileKotlinClass private constructor(
 ) : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
 
     companion object {
-        fun create(file: File): LocalFileKotlinClass? {
+        fun create(file: File, jvmMetadataVersionFromLanguageVersion: JvmMetadataVersion): LocalFileKotlinClass? {
             val fileContents = file.readBytes()
-            return FileBasedKotlinClass.create(fileContents) {
-                className, classVersion, classHeader, innerClasses ->
+            return FileBasedKotlinClass.create(
+                fileContents,
+                jvmMetadataVersionFromLanguageVersion
+            ) { className, classVersion, classHeader, innerClasses ->
                 LocalFileKotlinClass(file, fileContents, className, classVersion, classHeader, innerClasses)
             }
         }

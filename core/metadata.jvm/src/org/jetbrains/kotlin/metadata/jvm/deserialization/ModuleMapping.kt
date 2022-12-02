@@ -53,6 +53,7 @@ class ModuleMapping private constructor(
             debugName: String,
             skipMetadataVersionCheck: Boolean,
             isJvmPackageNameSupported: Boolean,
+            metadataVersionFromLanguageVersion: JvmMetadataVersion,
             reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit,
         ): ModuleMapping {
             if (bytes == null) {
@@ -63,7 +64,7 @@ class ModuleMapping private constructor(
 
             val versionNumber = readVersionNumber(stream) ?: return CORRUPTED
             val preVersion = JvmMetadataVersion(*versionNumber)
-            if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
+            if (!skipMetadataVersionCheck && !preVersion.isCompatible(metadataVersionFromLanguageVersion)) {
                 reportIncompatibleVersionError(preVersion)
                 return EMPTY
             }
@@ -72,7 +73,7 @@ class ModuleMapping private constructor(
             val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
 
             val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
-            if (!skipMetadataVersionCheck && !version.isCompatible()) {
+            if (!skipMetadataVersionCheck && !version.isCompatible(metadataVersionFromLanguageVersion)) {
                 reportIncompatibleVersionError(version)
                 return EMPTY
             }

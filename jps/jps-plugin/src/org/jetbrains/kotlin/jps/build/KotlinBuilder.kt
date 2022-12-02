@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -690,7 +691,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         return outputItemCollector.outputs
             .sortedBy { it.outputFile }
-            .groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
+            .groupBy(SimpleOutputItem::target) { it.toGeneratedFile(JvmMetadataVersion.INSTANCE) }
     }
 
     private fun updateLookupStorage(

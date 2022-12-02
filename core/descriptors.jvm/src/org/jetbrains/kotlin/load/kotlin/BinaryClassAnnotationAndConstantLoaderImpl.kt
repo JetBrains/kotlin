@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -32,6 +33,8 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     storageManager, kotlinClassFinder
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
+
+    override var jvmMetadataVersion: JvmMetadataVersion = JvmMetadataVersion.INSTANCE
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
         annotationDeserializer.deserializeAnnotation(proto, nameResolver)
@@ -223,4 +226,19 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)
     }
+}
+
+// Note: this function is needed because we cannot pass JvmMetadataVersion
+// directly to the BinaryClassAnnotationAndConstantLoaderImpl constructor.
+// This constructor is used by dependency injection.
+fun createBinaryClassAnnotationAndConstantLoader(
+    module: ModuleDescriptor,
+    notFoundClasses: NotFoundClasses,
+    storageManager: StorageManager,
+    kotlinClassFinder: KotlinClassFinder,
+    jvmMetadataVersion: JvmMetadataVersion
+): BinaryClassAnnotationAndConstantLoaderImpl = BinaryClassAnnotationAndConstantLoaderImpl(
+    module, notFoundClasses, storageManager, kotlinClassFinder
+).apply {
+    this.jvmMetadataVersion = jvmMetadataVersion
 }

@@ -445,7 +445,7 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
             if (!JvmMetadataVersion(
                     annotationData.metadataVersion,
                     (annotationData.extraInt and (1 shl 3)/* see JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG */) != 0
-                ).isCompatible()
+                ).isCompatibleWithCurrentCompilerVersion()
             ) return null
 
             return try {

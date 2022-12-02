@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.incremental.toProtoData
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
@@ -31,12 +32,12 @@ abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<Loca
         MockLibraryUtil.compileKotlin(sourceDir.path, outputDir, extraOptions = listOf("-Xdisable-default-scripting-plugin"))
 
         val classFiles = outputDir.walkMatching { it.name.endsWith(".class") }
-        val localClassFiles = classFiles.map { LocalFileKotlinClass.create(it)!! }
+        val localClassFiles = classFiles.map { LocalFileKotlinClass.create(it, JvmMetadataVersion.INSTANCE)!! }
         return localClassFiles.associateBy { it.classId }
     }
 
     override fun LocalFileKotlinClass.toProtoData(): ProtoData? {
-        assert(classHeader.metadataVersion.isCompatible()) { "Incompatible class ($classHeader): $location" }
+        assert(classHeader.metadataVersion.isCompatibleWithCurrentCompilerVersion()) { "Incompatible class ($classHeader): $location" }
 
         val bytes by lazy { BitEncoding.decodeBytes(classHeader.data!!) }
         val strings by lazy { classHeader.strings!! }

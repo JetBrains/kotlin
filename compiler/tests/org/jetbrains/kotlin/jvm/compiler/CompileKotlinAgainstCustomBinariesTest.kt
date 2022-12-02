@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.ByteArrayInputStream
@@ -388,7 +389,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testStrictMetadataVersionSemanticsOldVersion() {
-        val nextMetadataVersion = JvmMetadataVersion(JvmMetadataVersion.INSTANCE.major, JvmMetadataVersion.INSTANCE.minor + 1, 0)
+        val nextMetadataVersion = JvmMetadataVersion.INSTANCE.next()
         val library = compileLibrary(
             "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
         )
@@ -409,7 +410,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             val expectedMajor = if (languageVersion.usesK2) 2 else 1
             val expectedMinor = if (languageVersion < LanguageVersion.KOTLIN_1_4) 1 else languageVersion.minor
 
-            val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"))!!
+            val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"), languageVersion.toMetadataVersion())!!
             val classVersion = topLevelClass.classHeader.metadataVersion
             assertEquals("Actual version: $classVersion", expectedMajor, classVersion.major)
             assertEquals("Actual version: $classVersion", expectedMinor, classVersion.minor)
@@ -641,6 +642,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         }
     }
 
+    fun testFirAgainstFirUsingFlag() {
+        val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-k2"))
+    }
+
     fun testFirAgainstFir() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "2.0"))
@@ -691,6 +697,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testOldJvmAgainstFirWithStableAbi() {
+        // TODO: looks like now it's not possible to compile library with version 2.0 to be able to compile against it without additional flags
+        // Should we delete this test?
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=stable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>>(
     protected val kotlinClassFinder: KotlinClassFinder
 ) : AnnotationLoader<A> {
+    abstract val jvmMetadataVersion: JvmMetadataVersion
+
     protected abstract fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): S
 
     protected abstract fun loadAnnotation(
@@ -220,7 +223,8 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             checkNotNull(isConst) { "isConst should not be null for property (container=$container)" }
             if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
                 return kotlinClassFinder.findKotlinClass(
-                    container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+                    container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)),
+                    jvmMetadataVersion
                 )
             }
             if (isConst && container is ProtoContainer.Package) {
@@ -228,7 +232,10 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                 val facadeClassName = (container.source as? JvmPackagePartSource)?.facadeClassName
                 if (facadeClassName != null) {
                     // Converting '/' to '.' is fine here because the facade class has a top level ClassId
-                    return kotlinClassFinder.findKotlinClass(ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.'))))
+                    return kotlinClassFinder.findKotlinClass(
+                        ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.'))),
+                        jvmMetadataVersion
+                    )
                 }
             }
         }
@@ -248,7 +255,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             val jvmPackagePartSource = container.source as JvmPackagePartSource
 
             return jvmPackagePartSource.knownJvmBinaryClass
-                ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId)
+                ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId, jvmMetadataVersion)
         }
         return null
     }
@@ -290,7 +297,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
         ) return false
 
-        val klass = kotlinClassFinder.findKotlinClass(classId)
+        val klass = kotlinClassFinder.findKotlinClass(classId, jvmMetadataVersion)
         return klass != null && SpecialJvmAnnotations.isAnnotatedWithContainerMetaAnnotation(klass)
     }
 

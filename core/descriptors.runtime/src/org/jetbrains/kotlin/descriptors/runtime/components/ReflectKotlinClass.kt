@@ -54,7 +54,7 @@ class ReflectKotlinClass private constructor(
         fun create(klass: Class<*>): ReflectKotlinClass? {
             val headerReader = ReadKotlinClassHeaderAnnotationVisitor()
             ReflectClassStructure.loadClassAnnotations(klass, headerReader)
-            return ReflectKotlinClass(klass, headerReader.createHeader() ?: return null)
+            return ReflectKotlinClass(klass, headerReader.createHeaderWithDefaultMetadataVersion() ?: return null)
         }
     }
 

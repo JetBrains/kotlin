@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.incremental.isClassFile
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
@@ -124,7 +126,7 @@ class JvmAbiAnalysisHandlerExtension(
         for (output in outputs) {
             if (!output.file.isClassFile()) continue
 
-            val classData = output.classData() ?: continue
+            val classData = output.classData(compilerConfiguration) ?: continue
             val header = classData.classHeader
             val isNeededForAbi = when (header.kind) {
                 KotlinClassHeader.Kind.CLASS -> {
@@ -198,11 +200,13 @@ class JvmAbiAnalysisHandlerExtension(
         // null bytes means that file should not be written
         private var bytes: ByteArray?
     ) {
-        fun classData(): ClassData? =
+        fun classData(compilerConfiguration: CompilerConfiguration): ClassData? =
             when {
                 bytes == null -> null
                 !file.isClassFile() -> null
-                else -> FileBasedKotlinClass.create(bytes!!) { classId, classVersion, classHeader, _ ->
+                else -> FileBasedKotlinClass.create(
+                    bytes!!, compilerConfiguration.languageVersionSettings.languageVersion.toMetadataVersion()
+                ) { classId, classVersion, classHeader, _ ->
                     ClassData(classId, classVersion, classHeader)
                 }
             }

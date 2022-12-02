@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
 interface KotlinClassFinder : KotlinMetadataFinder {
-    fun findKotlinClassOrContent(classId: ClassId): Result?
+    fun findKotlinClassOrContent(classId: ClassId, jvmMetadataVersion: JvmMetadataVersion): Result?
 
-    fun findKotlinClassOrContent(javaClass: JavaClass): Result?
+    fun findKotlinClassOrContent(javaClass: JavaClass, jvmMetadataVersion: JvmMetadataVersion): Result?
 
     sealed class Result {
         fun toKotlinJvmBinaryClass(): KotlinJvmBinaryClass? = (this as? KotlinClass)?.kotlinJvmBinaryClass
@@ -33,15 +34,12 @@ interface KotlinClassFinder : KotlinMetadataFinder {
             operator fun component2(): ByteArray? = byteContent
         }
 
-        class ClassFileContent(
-            @Suppress("ArrayInDataClass")
-            val content: ByteArray
-        ) : Result()
+        class ClassFileContent(val content: ByteArray) : Result()
     }
 }
 
-fun KotlinClassFinder.findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? =
-    findKotlinClassOrContent(classId)?.toKotlinJvmBinaryClass()
+fun KotlinClassFinder.findKotlinClass(classId: ClassId, jvmMetadataVersion: JvmMetadataVersion): KotlinJvmBinaryClass? =
+    findKotlinClassOrContent(classId, jvmMetadataVersion)?.toKotlinJvmBinaryClass()
 
-fun KotlinClassFinder.findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? =
-    findKotlinClassOrContent(javaClass)?.toKotlinJvmBinaryClass()
+fun KotlinClassFinder.findKotlinClass(javaClass: JavaClass, jvmMetadataVersion: JvmMetadataVersion): KotlinJvmBinaryClass? =
+    findKotlinClassOrContent(javaClass, jvmMetadataVersion)?.toKotlinJvmBinaryClass()

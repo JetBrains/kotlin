@@ -107,5 +107,5 @@ private class KotlinClassHeaderClassVisitor : ClassVisitor(Opcodes.API_VERSION) 
         )
     }
 
-    fun getKotlinClassHeader(): KotlinClassHeader? = kotlinClassHeaderAnnotationVisitor.createHeader()
+    fun getKotlinClassHeader(): KotlinClassHeader? = kotlinClassHeaderAnnotationVisitor.createHeaderWithDefaultMetadataVersion()
 }

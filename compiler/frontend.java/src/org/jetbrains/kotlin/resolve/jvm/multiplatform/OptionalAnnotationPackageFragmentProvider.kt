@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.jvm.JvmCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -49,7 +49,7 @@ class OptionalAnnotationPackageFragmentProvider(
             val classDataFinder = OptionalAnnotationClassDataFinder(optionalAnnotationClasses)
             val components = storageManager.createLazyValue {
                 DeserializationComponents(
-                    storageManager, module, CompilerDeserializationConfiguration(languageVersionSettings),
+                    storageManager, module, JvmCompilerDeserializationConfiguration(languageVersionSettings),
                     classDataFinder,
                     AnnotationAndConstantLoaderImpl(module, notFoundClasses, serializerProtocol),
                     this,

@@ -18,15 +18,16 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import java.io.File
 
 data class SimpleOutputItem(val sourceFiles: Collection<File>, val outputFile: File) {
     override fun toString(): String =
-            "$sourceFiles->$outputFile"
+        "$sourceFiles->$outputFile"
 }
 
-fun SimpleOutputItem.toGeneratedFile(): GeneratedFile =
-        when {
-            outputFile.name.endsWith(".class") -> GeneratedJvmClass(sourceFiles, outputFile)
-            else -> GeneratedFile(sourceFiles, outputFile)
-        }
+fun SimpleOutputItem.toGeneratedFile(jvmMetadataVersionFromLanguageVersion: JvmMetadataVersion): GeneratedFile =
+    when {
+        outputFile.name.endsWith(".class") -> GeneratedJvmClass(sourceFiles, outputFile, jvmMetadataVersionFromLanguageVersion)
+        else -> GeneratedFile(sourceFiles, outputFile)
+    }

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -122,7 +123,7 @@ class DeserializationComponentsForJava(
             val deserializationComponentsForJava =
                 makeDeserializationComponentsForJava(
                     module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter
+                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter, JvmMetadataVersion.INSTANCE
                 )
 
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
@@ -183,11 +184,12 @@ fun makeDeserializationComponentsForJava(
     lazyJavaPackageFragmentProvider: LazyJavaPackageFragmentProvider,
     reflectKotlinClassFinder: KotlinClassFinder,
     deserializedDescriptorResolver: DeserializedDescriptorResolver,
-    errorReporter: ErrorReporter
+    errorReporter: ErrorReporter,
+    jvmMetadataVersion: JvmMetadataVersion
 ): DeserializationComponentsForJava {
     val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
-    val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(
-        module, notFoundClasses, storageManager, reflectKotlinClassFinder
+    val binaryClassAnnotationAndConstantLoader = createBinaryClassAnnotationAndConstantLoader(
+        module, notFoundClasses, storageManager, reflectKotlinClassFinder, jvmMetadataVersion
     )
     return DeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,

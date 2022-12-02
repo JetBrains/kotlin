@@ -14,23 +14,42 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean) : BinaryVersion(*versionArray) {
     constructor(vararg numbers: Int) : this(numbers, isStrictSemantics = false)
 
-    override fun isCompatibleWithCurrentCompilerVersion(): Boolean =
+    override fun isCompatibleWithCurrentCompilerVersion(): Boolean {
+        return isCompatibleInternal(INSTANCE_NEXT)
+    }
+
+    fun isCompatible(metadataVersionFromLanguageVersion: JvmMetadataVersion): Boolean {
+        // * Compiler of deployVersion X (INSTANCE) with LV Y (metadataVersionFromLanguageVersion)
+        //   * can read metadata with version <= max(X+1, Y)
+        val forwardCompatibility = if (isStrictSemantics) INSTANCE else INSTANCE_NEXT
+        val limitVersion = maxOf(forwardCompatibility, metadataVersionFromLanguageVersion)
+        return isCompatibleInternal(limitVersion)
+    }
+
+    private fun isCompatibleInternal(limitVersion: JvmMetadataVersion): Boolean {
         // NOTE: 1.0 is a pre-Kotlin-1.0 metadata version, with which the current compiler is incompatible
-        (major != 1 || minor != 0) &&
-                if (isStrictSemantics) {
-                    isCompatibleTo(INSTANCE)
-                } else {
-                    // Kotlin 1.N is able to read metadata of versions up to Kotlin 1.{N+1} (unless the version has strict semantics).
-                    // Kotlin 1.9 is able to read Kotlin 2.0
-                    // Kotlin K.* is able to read Kotlin M.* if K > M
-                    major == INSTANCE.major && minor <= INSTANCE.minor + 1 ||
-                            major == 2 && INSTANCE.major == 1 && minor == 9 ||
-                            major < INSTANCE.major
-                }
+        if (major == 1 && minor == 0) return false
+        // The same for 0.*
+        if (major == 0) return false
+        // Otherwise we just compare with the given limitVersion
+        return this <= limitVersion
+    }
+
+    fun next(): JvmMetadataVersion {
+        if (minor < 9 || major > 1) return JvmMetadataVersion(major, minor + 1, 0)
+        return JvmMetadataVersion(2, 0, 0)
+    }
+
+    fun prev(): JvmMetadataVersion {
+        if (minor > 0) return JvmMetadataVersion(major, minor - 1, 0)
+        return JvmMetadataVersion(major - 1, 9, 0)
+    }
 
     companion object {
         @JvmField
         val INSTANCE = JvmMetadataVersion(1, 8, 0)
+
+        private val INSTANCE_NEXT = INSTANCE.next()
 
         @JvmField
         val INVALID_VERSION = JvmMetadataVersion()

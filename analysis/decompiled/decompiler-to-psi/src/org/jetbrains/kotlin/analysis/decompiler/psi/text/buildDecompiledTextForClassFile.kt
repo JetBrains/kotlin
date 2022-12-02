@@ -27,7 +27,7 @@ fun buildDecompiledTextForClassFile(
 
     val classId = classHeader.classId
 
-    if (!classHeader.metadataVersion.isCompatible()) {
+    if (!classHeader.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
         return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
     }
 
