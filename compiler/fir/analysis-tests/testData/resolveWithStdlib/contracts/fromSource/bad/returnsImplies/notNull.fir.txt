@@ -5,7 +5,13 @@ FILE: notNull.kt
             Returns(NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Null(null)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         when () {
             Boolean(true) ->  {
                 throw Q|java/lang|.R|java/lang/IllegalArgumentException.IllegalArgumentException|()
@@ -20,7 +26,13 @@ FILE: notNull.kt
             Returns(WILDCARD) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         when () {
             ==(R|<local>/x|, Null(null)) ->  {
                 ^bar R|<local>/x|
@@ -35,6 +47,12 @@ FILE: notNull.kt
             Returns(NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Null(null)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^baz R|<local>/x|
     }

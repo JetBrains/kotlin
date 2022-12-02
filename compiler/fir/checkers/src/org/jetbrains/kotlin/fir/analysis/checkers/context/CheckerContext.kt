@@ -34,6 +34,7 @@ abstract class CheckerContext : MutableDiagnosticContext() {
     abstract val qualifiedAccessOrAnnotationCalls: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
     abstract val annotationContainers: List<FirAnnotationContainer>
+    abstract val isContractBody: Boolean
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>
@@ -70,6 +71,10 @@ abstract class CheckerContext : MutableDiagnosticContext() {
     abstract fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): CheckerContext
 
     abstract fun dropAnnotationContainer()
+
+    abstract fun enterContractBody(): CheckerContext
+
+    abstract fun exitContractBody(): CheckerContext
 
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
         val factory = diagnostic.factory

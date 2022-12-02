@@ -80,6 +80,7 @@ val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDec
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
 val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic")
 val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
+val coneUnresolvedEffect = type("fir.contracts.description", "ConeUnresolvedEffect")
 
 val dslBuilderAnnotationType = generatedType("builder", "FirBuilderDsl")
 val firImplementationDetailType = generatedType("FirImplementationDetail")

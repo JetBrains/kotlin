@@ -23,6 +23,7 @@ class MutableCheckerContext private constructor(
     override val qualifiedAccessOrAnnotationCalls: MutableList<FirStatement>,
     override val getClassCalls: MutableList<FirGetClassCall>,
     override val annotationContainers: MutableList<FirAnnotationContainer>,
+    override var isContractBody: Boolean,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -36,6 +37,7 @@ class MutableCheckerContext private constructor(
         mutableListOf(),
         mutableListOf(),
         mutableListOf(),
+        isContractBody = false,
         sessionHolder,
         returnTypeCalculator,
         persistentSetOf(),
@@ -51,6 +53,7 @@ class MutableCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -109,6 +112,7 @@ class MutableCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),
@@ -116,5 +120,17 @@ class MutableCheckerContext private constructor(
             this.allWarningsSuppressed || allWarningsSuppressed,
             this.allErrorsSuppressed || allErrorsSuppressed
         )
+    }
+
+    override fun enterContractBody(): CheckerContext {
+        check(!isContractBody)
+        isContractBody = true
+        return this
+    }
+
+    override fun exitContractBody(): CheckerContext {
+        check(isContractBody)
+        isContractBody = false
+        return this
     }
 }

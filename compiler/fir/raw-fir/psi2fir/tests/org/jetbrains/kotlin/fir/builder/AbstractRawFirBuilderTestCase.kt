@@ -13,12 +13,14 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -182,12 +184,13 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 }
 
-private fun throwTwiceVisitingError(element: FirElement, @Suppress("UNUSED_PARAMETER") parent: FirElement?) {
+private fun throwTwiceVisitingError(element: FirElement, parent: FirElement?) {
     if (element is FirTypeRef || element is FirNoReceiverExpression || element is FirTypeParameter ||
         element is FirTypeProjection || element is FirValueParameter || element is FirAnnotation || element is FirFunctionTypeParameter ||
         element is FirEmptyContractDescription ||
         element is FirStubReference || element.isExtensionFunctionAnnotation || element is FirEmptyArgumentList ||
-        element is FirStubStatement || element === FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+        element is FirStubStatement || element === FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS ||
+        ((parent is FirContractCallBlock || parent is FirContractDescription) && element is FirFunctionCall)
     ) {
         return
     }

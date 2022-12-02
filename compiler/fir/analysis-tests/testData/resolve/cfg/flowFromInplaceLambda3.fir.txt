@@ -5,7 +5,13 @@ FILE: flowFromInplaceLambda3.kt
             CallsInPlace(x, UNKNOWN)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.UNKNOWN|)
+            }
+            )
+        }
+
         R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun atLeastOnce(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -14,7 +20,13 @@ FILE: flowFromInplaceLambda3.kt
             CallsInPlace(x, AT_LEAST_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_LEAST_ONCE|)
+            }
+            )
+        }
+
         R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun exactlyOnce(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -23,7 +35,13 @@ FILE: flowFromInplaceLambda3.kt
             CallsInPlace(x, EXACTLY_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
         R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun atMostOnce(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -32,7 +50,13 @@ FILE: flowFromInplaceLambda3.kt
             CallsInPlace(x, AT_MOST_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
     }
     public final fun test1(): R|kotlin/Unit| {
         lvar x: R|kotlin/Any?|

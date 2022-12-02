@@ -7,7 +7,13 @@ FILE: contractDescription.kt
             )
         >
      {
-        [StubStatement]
+         {
+            contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                callsInPlace#()
+            }
+            )
+        }
+
         test_1#()
     }
     public? final? fun test_2(): R|kotlin/Unit|
@@ -19,7 +25,14 @@ FILE: contractDescription.kt
             )
         >
      {
-        [StubStatement]
+         {
+            kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                callsInPlace#()
+                callsInPlace#()
+            }
+            )
+        }
+
         test_2#()
     }
     public? final? var test_3: Int = IntegerLiteral(1)
@@ -31,7 +44,13 @@ FILE: contractDescription.kt
                 )
             >
          {
-            [StubStatement]
+             {
+                contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    callsInPlace#()
+                }
+                )
+            }
+
             ^ IntegerLiteral(1)
         }
         public? set(value: Int): R|kotlin/Unit|
@@ -43,14 +62,24 @@ FILE: contractDescription.kt
                 )
             >
          {
-            [StubStatement]
+             {
+                kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    callsInPlace#()
+                    callsInPlace#()
+                }
+                )
+            }
+
         }
     public? final? fun test_4(): R|kotlin/Unit|
         [Contract description] <
             contract#()
         >
      {
-        [StubStatement]
+         {
+            contract#()
+        }
+
         test_4#()
     }
     public? final? fun test_5(): R|kotlin/Unit| {

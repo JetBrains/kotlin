@@ -104,13 +104,14 @@ fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, data
     return this
 }
 
-fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {
+fun <T : FirStatement> FirBlock.replaceFirstStatement(factory: (T) -> FirStatement): T {
     require(this is FirBlockImpl) {
         "replaceFirstStatement should not be called for ${this::class.simpleName}"
     }
-    val existed = statements[0]
-    statements[0] = statement
-    return existed
+    @Suppress("UNCHECKED_CAST")
+    val existing = statements[0] as T
+    statements[0] = factory(existing)
+    return existing
 }
 
 fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this

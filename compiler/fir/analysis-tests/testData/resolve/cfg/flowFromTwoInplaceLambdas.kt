@@ -3,6 +3,7 @@ import kotlin.contracts.*
 
 fun <T> n(): T? = null
 
+@OptIn(ExperimentalContracts::class)
 fun <T> run2(x: () -> T, y: () -> T) {
     contract {
         callsInPlace(x, InvocationKind.EXACTLY_ONCE)

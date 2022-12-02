@@ -9,62 +9,64 @@ digraph simple_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            2 [label="Access variable R|<local>/x|"];
-            3 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            4 [label="Exit block"];
+            subgraph cluster_2 {
+                color=blue
+                2 [label="Enter block"];
+                3 [label="Exit block"];
+            }
+            4 [label="Access variable R|<local>/x|"];
+            5 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            6 [label="Exit block"];
         }
-        5 [label="Exit function bar" style="filled" fillcolor=red];
+        7 [label="Exit function bar" style="filled" fillcolor=red];
     }
     0 -> {1};
     1 -> {2};
     2 -> {3};
     3 -> {4};
     4 -> {5};
-
-    subgraph cluster_2 {
-        color=red
-        6 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_3 {
-            color=blue
-            7 [label="Enter block"];
-            8 [label="Access variable R|<local>/x|"];
-            9 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            subgraph cluster_4 {
-                color=blue
-                10 [label="Enter when"];
-                subgraph cluster_5 {
-                    color=blue
-                    11 [label="Enter when branch condition "];
-                    12 [label="Const: Boolean(true)"];
-                    13 [label="Exit when branch condition"];
-                }
-                14 [label="Synthetic else branch"];
-                15 [label="Enter when branch result"];
-                subgraph cluster_6 {
-                    color=blue
-                    16 [label="Enter block"];
-                    17 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    18 [label="Exit block"];
-                }
-                19 [label="Exit when branch result"];
-                20 [label="Exit when"];
-            }
-            21 [label="Access variable R|<local>/z|"];
-            22 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-            23 [label="Exit block"];
-        }
-        24 [label="Exit function foo" style="filled" fillcolor=red];
-    }
+    5 -> {6};
     6 -> {7};
-    7 -> {8};
-    8 -> {9};
-    9 -> {10};
-    10 -> {11};
-    11 -> {12};
-    12 -> {13};
-    13 -> {15 14};
-    14 -> {20};
-    15 -> {16};
+
+    subgraph cluster_3 {
+        color=red
+        16 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            17 [label="Enter block"];
+            subgraph cluster_5 {
+                color=blue
+                18 [label="Enter block"];
+                19 [label="Exit block"];
+            }
+            20 [label="Access variable R|<local>/x|"];
+            21 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            subgraph cluster_6 {
+                color=blue
+                22 [label="Enter when"];
+                subgraph cluster_7 {
+                    color=blue
+                    23 [label="Enter when branch condition "];
+                    24 [label="Const: Boolean(true)"];
+                    25 [label="Exit when branch condition"];
+                }
+                26 [label="Synthetic else branch"];
+                27 [label="Enter when branch result"];
+                subgraph cluster_8 {
+                    color=blue
+                    28 [label="Enter block"];
+                    29 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    30 [label="Exit block"];
+                }
+                31 [label="Exit when branch result"];
+                32 [label="Exit when"];
+            }
+            33 [label="Access variable R|<local>/z|"];
+            34 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
+            35 [label="Exit block"];
+        }
+        36 [label="Exit function foo" style="filled" fillcolor=red];
+    }
     16 -> {17};
     17 -> {18};
     18 -> {19};
@@ -73,5 +75,17 @@ digraph simple_kt {
     21 -> {22};
     22 -> {23};
     23 -> {24};
+    24 -> {25};
+    25 -> {27 26};
+    26 -> {32};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+    35 -> {36};
 
 }

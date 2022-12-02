@@ -42,7 +42,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
                 reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
             }
         } else if (expression.operation == FirOperation.IS) {
-            if (isCastErased(actualType, targetType, context)) {
+            if (!context.isContractBody && isCastErased(actualType, targetType, context)) {
                 reporter.reportOn(conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, targetType, context)
             }
         }

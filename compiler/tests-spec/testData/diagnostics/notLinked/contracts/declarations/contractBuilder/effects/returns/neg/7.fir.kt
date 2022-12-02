@@ -5,7 +5,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun <T : Number?> T.case_1() {
-    contract { returns() implies (this@case_1 is T) }
+    contract { returns() implies (<!USELESS_IS_CHECK!>this@case_1 is T<!>) }
     if (!(<!USELESS_IS_CHECK!>this@case_1 is T<!>)) throw Exception()
 }
 

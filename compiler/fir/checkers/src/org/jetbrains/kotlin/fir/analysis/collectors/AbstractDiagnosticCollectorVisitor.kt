@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -166,7 +167,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitBlock(block: FirBlock, data: Nothing?) {
         withAnnotationContainer(block) {
-            visitExpression(block, data)
+            if (block is FirContractCallBlock) {
+                insideContractBody {
+                    visitExpression(block, data)
+                }
+            } else {
+                visitExpression(block, data)
+            }
         }
     }
 
@@ -349,6 +356,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
                 existingContext.dropAnnotationContainer()
             }
             context = existingContext
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private inline fun <R> insideContractBody(block: () -> R): R {
+        context = context.enterContractBody()
+        return try {
+            block()
+        } finally {
+            context = context.exitContractBody()
         }
     }
 

@@ -4,6 +4,7 @@ interface A {
     fun foo()
 }
 
+@OptIn(ExperimentalContracts::class)
 var Any?.isNotNull: Boolean
     get() {
         contract {

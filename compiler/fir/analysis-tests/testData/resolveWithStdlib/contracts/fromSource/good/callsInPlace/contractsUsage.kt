@@ -1,7 +1,7 @@
 // !DUMP_CFG
 import kotlin.contracts.*
 
-@ExperimentalContracts
+@OptIn(ExperimentalContracts::class)
 fun bar(x: () -> Unit) {
     contract {
         callsInPlace(x, InvocationKind.EXACTLY_ONCE)
@@ -10,7 +10,7 @@ fun bar(x: () -> Unit) {
     x.invoke()
 }
 
-@ExperimentalContracts
+@OptIn(ExperimentalContracts::class)
 fun (() -> Unit).baz() {
     contract {
         callsInPlace(this@baz, InvocationKind.AT_MOST_ONCE)
@@ -21,7 +21,7 @@ fun (() -> Unit).baz() {
     }
 }
 
-@ExperimentalContracts
+@OptIn(ExperimentalContracts::class)
 fun foo(x: () -> Unit, y: () -> Unit) {
     contract {
         callsInPlace(x, InvocationKind.AT_LEAST_ONCE)

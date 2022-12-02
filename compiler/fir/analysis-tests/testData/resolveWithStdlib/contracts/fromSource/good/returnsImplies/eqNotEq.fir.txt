@@ -1,21 +1,34 @@
 FILE: eqNotEq.kt
-    public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> x != null
             Returns(FALSE) -> x == null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|(==(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^checkNotNull !=(R|<local>/x|, Null(null))
     }
-    public final fun trickyRequireNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun trickyRequireNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> !x == null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(==(R|<local>/x|, Null(null)).R|kotlin/Boolean.not|())
+            }
+            )
+        }
+
         when () {
             ==(R|<local>/x|, Null(null)) ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()

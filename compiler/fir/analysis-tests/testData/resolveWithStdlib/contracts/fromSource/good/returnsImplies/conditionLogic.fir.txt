@@ -5,25 +5,43 @@ FILE: conditionLogic.kt
             Returns(NOT_NULL) -> !x == null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|(==(R|<local>/x|, Null(null)).R|kotlin/Boolean.not|())
+            }
+            )
+        }
+
         ^test1 R|<local>/x|
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test2(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
-            Returns(NOT_NULL) -> x is kotlin/String && x != null
+            Returns(NOT_NULL) -> x is kotlin/String
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String|))
+            }
+            )
+        }
+
         ^test2 R|<local>/x|
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test3(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
-            Returns(NOT_NULL) -> x is kotlin/String? || x is kotlin/Any?
+            Returns(NOT_NULL) -> x !is kotlin/String
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|kotlin/String|))
+            }
+            )
+        }
+
         ^test3 R|<local>/x|
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test4(x: R|kotlin/String?|, y: R|kotlin/String?|): R|kotlin/Any?|
@@ -32,7 +50,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x != null && y != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)) && !=(R|<local>/y|, Null(null)))
+            }
+            )
+        }
+
         ^test4 !=(R|<local>/x|, Null(null)) && !=(R|<local>/y|, Null(null))
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test5(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -41,7 +65,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x != null || x is kotlin/Any
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)) || (R|<local>/x| is R|kotlin/Any|))
+            }
+            )
+        }
+
         ^test5 !=(R|<local>/x|, Null(null))
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test6(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -50,7 +80,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/String? && x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String?|) && !=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test6 (R|<local>/x| is R|kotlin/String|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test7(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -59,7 +95,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/String? && x != null || x is kotlin/Int
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String?|) && !=(R|<local>/x|, Null(null)) || (R|<local>/x| is R|kotlin/Int|))
+            }
+            )
+        }
+
         ^test7 (R|<local>/x| is R|kotlin/String|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test8(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -68,7 +110,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/String || x is kotlin/Int
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|))
+            }
+            )
+        }
+
         ^test8 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test9(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -77,7 +125,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/String || x is kotlin/Int
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|))
+            }
+            )
+        }
+
         when () {
             (R|<local>/x| is R|kotlin/String|) ->  {
                 ^test9 Boolean(true)
@@ -92,7 +146,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/Comparable<*> || x is kotlin/CharSequence
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/Comparable<*>|) || (R|<local>/x| is R|kotlin/CharSequence|))
+            }
+            )
+        }
+
         ^test10 (R|<local>/x| is R|kotlin/String|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test11(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -101,7 +161,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/Comparable<*> && x is kotlin/CharSequence
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/Comparable<*>|) && (R|<local>/x| is R|kotlin/CharSequence|))
+            }
+            )
+        }
+
         ^test11 (R|<local>/x| is R|kotlin/String|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test12(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -110,7 +176,13 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> x is kotlin/Comparable<*> && x is kotlin/CharSequence || x is kotlin/Number
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/Comparable<*>|) && (R|<local>/x| is R|kotlin/CharSequence|) || (R|<local>/x| is R|kotlin/Number|))
+            }
+            )
+        }
+
         ^test12 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test13(x: R|kotlin/Any?|): R|kotlin/Any?|
@@ -119,6 +191,12 @@ FILE: conditionLogic.kt
             Returns(TRUE) -> (!)x !is kotlin/Comparable<*> || x !is kotlin/CharSequence && (!x is kotlin/Number)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|kotlin/Comparable<*>|) || (R|<local>/x| !is R|kotlin/CharSequence|) && (R|<local>/x| is R|kotlin/Number|).R|kotlin/Boolean.not|().R|kotlin/Boolean.not|())
+            }
+            )
+        }
+
         ^test13 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
     }

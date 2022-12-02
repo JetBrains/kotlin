@@ -25,6 +25,7 @@ class PersistentCheckerContext private constructor(
     override val qualifiedAccessOrAnnotationCalls: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val annotationContainers: PersistentList<FirAnnotationContainer>,
+    override val isContractBody: Boolean,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -38,6 +39,7 @@ class PersistentCheckerContext private constructor(
         persistentListOf(),
         persistentListOf(),
         persistentListOf(),
+        isContractBody = false,
         sessionHolder,
         returnTypeCalculator,
         persistentSetOf(),
@@ -53,6 +55,7 @@ class PersistentCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -69,6 +72,7 @@ class PersistentCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -88,6 +92,7 @@ class PersistentCheckerContext private constructor(
             this.qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
             getClassCalls,
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -107,6 +112,7 @@ class PersistentCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls.add(getClassCall),
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -126,6 +132,7 @@ class PersistentCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             annotationContainers.add(annotationContainer),
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -151,6 +158,7 @@ class PersistentCheckerContext private constructor(
             qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            isContractBody,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),
@@ -158,5 +166,32 @@ class PersistentCheckerContext private constructor(
             this.allWarningsSuppressed || allWarningsSuppressed,
             this.allErrorsSuppressed || allErrorsSuppressed
         )
+    }
+
+    private fun toggleContractBody(newValue: Boolean): CheckerContext {
+        check(isContractBody != newValue)
+
+        return PersistentCheckerContext(
+            implicitReceiverStack,
+            containingDeclarations,
+            qualifiedAccessOrAnnotationCalls,
+            getClassCalls,
+            annotationContainers,
+            isContractBody = newValue,
+            sessionHolder,
+            returnTypeCalculator,
+            suppressedDiagnostics,
+            allInfosSuppressed,
+            allWarningsSuppressed,
+            allErrorsSuppressed
+        )
+    }
+
+    override fun enterContractBody(): CheckerContext {
+        return toggleContractBody(newValue = true)
+    }
+
+    override fun exitContractBody(): CheckerContext {
+        return toggleContractBody(newValue = false)
     }
 }
