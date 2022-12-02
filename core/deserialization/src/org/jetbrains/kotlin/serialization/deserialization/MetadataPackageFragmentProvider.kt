@@ -155,7 +155,7 @@ class MetadataPackageFragment(
     private fun readProto(stream: InputStream): Triple<ProtoBuf.PackageFragment, NameResolverImpl, BuiltInsBinaryVersion> {
         val version = BuiltInsBinaryVersion.readFrom(stream)
 
-        if (!version.isCompatible()) {
+        if (!version.isCompatibleWithCurrentCompilerVersion()) {
             // TODO: report a proper diagnostic
             throw UnsupportedOperationException(
                 "Kotlin metadata definition format version is not supported: " +

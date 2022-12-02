@@ -194,7 +194,7 @@ public class JsConfig {
             Set<String> moduleNames = new LinkedHashSet<>();
 
             for (KotlinJavascriptMetadata metadata : metadataList) {
-                if (!metadata.getVersion().isCompatible() && !skipMetadataVersionCheck) {
+                if (!metadata.getVersion().isCompatibleWithCurrentCompilerVersion() && !skipMetadataVersionCheck) {
                     report.error("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
                                  "The binary version of its metadata is " + metadata.getVersion() +
                                  ", expected version is " + JsMetadataVersion.INSTANCE);
@@ -296,7 +296,7 @@ public class JsConfig {
     private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
         return factoryMap.computeIfAbsent(metadata, m -> {
             LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
-            assert m.getVersion().isCompatible() ||
+            assert m.getVersion().isCompatibleWithCurrentCompilerVersion() ||
                    languageVersionSettings.getFlag(AnalysisFlags.getSkipMetadataVersionCheck()) :
                     "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + m.getVersion();
 

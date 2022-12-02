@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 class KlibIrVersion(major: Int, minor: Int, patch: Int) : BinaryVersion(major, minor, patch) {
 
-    override fun isCompatible(): Boolean = isCompatibleTo(INSTANCE)
+    override fun isCompatibleWithCurrentCompilerVersion(): Boolean = isCompatibleTo(INSTANCE)
 
 
     companion object {

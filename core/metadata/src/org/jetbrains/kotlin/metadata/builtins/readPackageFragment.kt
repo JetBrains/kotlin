@@ -13,7 +13,7 @@ fun InputStream.readBuiltinsPackageFragment(): Pair<ProtoBuf.PackageFragment?, B
     use { stream ->
         val version = BuiltInsBinaryVersion.readFrom(stream)
         val proto =
-            if (version.isCompatible()) ProtoBuf.PackageFragment.parseFrom(
+            if (version.isCompatibleWithCurrentCompilerVersion()) ProtoBuf.PackageFragment.parseFrom(
                 stream,
                 ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
             )

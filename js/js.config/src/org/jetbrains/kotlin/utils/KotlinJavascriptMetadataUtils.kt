@@ -14,7 +14,7 @@ import java.util.*
 class KotlinJavascriptMetadata(val version: JsMetadataVersion, val moduleName: String, val body: ByteArray)
 
 class JsMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    override fun isCompatible(): Boolean =
+    override fun isCompatibleWithCurrentCompilerVersion(): Boolean =
         this.isCompatibleTo(INSTANCE)
 
     fun toInteger() = (patch shl 16) + (minOf(minor, 255) shl 8) + minOf(major, 255)

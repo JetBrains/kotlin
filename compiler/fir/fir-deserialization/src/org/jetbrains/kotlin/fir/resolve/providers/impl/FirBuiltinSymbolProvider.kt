@@ -170,7 +170,7 @@ private data class BinaryVersionAndPackageFragment(
         fun createFromStream(stream: InputStream): BinaryVersionAndPackageFragment {
             val version = BuiltInsBinaryVersion.readFrom(stream)
 
-            if (!version.isCompatible()) {
+            if (!version.isCompatibleWithCurrentCompilerVersion()) {
                 // TODO: report a proper diagnostic
                 throw UnsupportedOperationException(
                     "Kotlin built-in definition format version is not supported: " +

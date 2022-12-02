@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean) : BinaryVersion(*versionArray) {
     constructor(vararg numbers: Int) : this(numbers, isStrictSemantics = false)
 
-    override fun isCompatible(): Boolean =
+    override fun isCompatibleWithCurrentCompilerVersion(): Boolean =
         // NOTE: 1.0 is a pre-Kotlin-1.0 metadata version, with which the current compiler is incompatible
         (major != 1 || minor != 0) &&
                 if (isStrictSemantics) {

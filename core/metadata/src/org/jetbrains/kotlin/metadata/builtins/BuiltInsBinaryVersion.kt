@@ -14,7 +14,7 @@ import java.io.InputStream
  * of the core protobuf messages (metadata.proto).
  */
 class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    override fun isCompatible(): Boolean =
+    override fun isCompatibleWithCurrentCompilerVersion(): Boolean =
         this.isCompatibleTo(INSTANCE)
 
     companion object {

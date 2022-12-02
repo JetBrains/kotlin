@@ -53,7 +53,7 @@ class BuiltInDefinitionFile(
             val stream = ByteArrayInputStream(contents)
 
             val version = BuiltInsBinaryVersion.readFrom(stream)
-            if (!version.isCompatible()) {
+            if (!version.isCompatibleWithCurrentCompilerVersion()) {
                 return Incompatible(version)
             }
 

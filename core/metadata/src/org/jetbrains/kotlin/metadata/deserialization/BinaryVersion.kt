@@ -25,7 +25,10 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
             numbers.asList().subList(3, numbers.size).toList()
     } else emptyList()
 
-    abstract fun isCompatible(): Boolean
+    @Deprecated("Please use isCompatibleWithCurrentCompilerVersion()", ReplaceWith("isCompatibleWithCurrentCompilerVersion()"))
+    fun isCompatible(): Boolean = isCompatibleWithCurrentCompilerVersion()
+
+    abstract fun isCompatibleWithCurrentCompilerVersion(): Boolean
 
     fun toArray(): IntArray = numbers
 

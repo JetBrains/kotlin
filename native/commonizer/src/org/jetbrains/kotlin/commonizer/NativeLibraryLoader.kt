@@ -32,7 +32,7 @@ internal class DefaultNativeLibraryLoader(
                 logger.fatal("Library does not have metadata version specified in manifest: $file")
 
             val metadataVersion = library.metadataVersion
-            if (metadataVersion?.isCompatible() != true)
+            if (metadataVersion?.isCompatibleWithCurrentCompilerVersion() != true)
                 logger.fatal(
                     """
                 Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $file
