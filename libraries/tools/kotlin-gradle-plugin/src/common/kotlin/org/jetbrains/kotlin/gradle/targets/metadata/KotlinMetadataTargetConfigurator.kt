@@ -32,7 +32,6 @@ import java.util.concurrent.Callable
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
-internal const val ALL_RUNTIME_METADATA_CONFIGURATION_NAME = "allSourceSetsRuntimeDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
     get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(rootProject)) {
@@ -80,7 +79,7 @@ class KotlinMetadataTargetConfigurator :
                 compileKotlinTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
             }
 
-            createMergedAllSourceSetsConfigurations(target)
+            createAllCompileMetadataConfiguration(target)
 
             val allMetadataJar = target.project.tasks.withType<Jar>().named(ALL_METADATA_JAR_NAME)
             createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
@@ -271,16 +270,15 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun createMergedAllSourceSetsConfigurations(target: KotlinMetadataTarget): Unit = with(target.project) {
-        listOf(ALL_COMPILE_METADATA_CONFIGURATION_NAME, ALL_RUNTIME_METADATA_CONFIGURATION_NAME).forEach { configurationName ->
-            project.configurations.create(configurationName).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = true
+    private fun createAllCompileMetadataConfiguration(target: KotlinMetadataTarget): Unit {
+        val project = target.project
+        project.configurations.create(ALL_COMPILE_METADATA_CONFIGURATION_NAME).apply {
+            isCanBeConsumed = false
+            isCanBeResolved = true
 
-                usesPlatformOf(target)
-                attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            }
+            usesPlatformOf(target)
+            attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         }
     }
 
@@ -361,7 +359,7 @@ class KotlinMetadataTargetConfigurator :
         sourceSet: KotlinSourceSet,
         isSourceSetPublished: Boolean
     ) {
-        KotlinDependencyScope.values().forEach { scope ->
+        KotlinDependencyScope.compileScopes.forEach { scope ->
             val granularMetadataTransformation = GranularMetadataTransformation(
                 project,
                 sourceSet,
@@ -378,29 +376,15 @@ class KotlinMetadataTargetConfigurator :
             val sourceSetDependencyConfigurationByScope = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)
 
             if (isSourceSetPublished) {
-                if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                    project.addExtendsFromRelation(
-                        ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
-                        sourceSetDependencyConfigurationByScope.name
-                    )
-                }
-                if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
-                    project.addExtendsFromRelation(
-                        ALL_COMPILE_METADATA_CONFIGURATION_NAME,
-                        sourceSetDependencyConfigurationByScope.name
-                    )
-                }
+                project.addExtendsFromRelation(
+                    ALL_COMPILE_METADATA_CONFIGURATION_NAME,
+                    sourceSetDependencyConfigurationByScope.name
+                )
             }
 
             val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
-            granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
-            if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                )
-            }
-            if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
+            if (sourceSetMetadataConfigurationByScope != null) {
+                granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
                 project.addExtendsFromRelation(
                     sourceSetMetadataConfigurationByScope.name,
                     ALL_COMPILE_METADATA_CONFIGURATION_NAME

@@ -12,6 +12,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
@@ -87,7 +88,7 @@ open class MetadataDependencyTransformationTask
         GranularMetadataTransformation(
             project,
             kotlinSourceSet,
-            listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE),
+            KotlinDependencyScope.compileScopes,
             lazy {
                 dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).map {
                     project.tasks.withType(MetadataDependencyTransformationTask::class.java)

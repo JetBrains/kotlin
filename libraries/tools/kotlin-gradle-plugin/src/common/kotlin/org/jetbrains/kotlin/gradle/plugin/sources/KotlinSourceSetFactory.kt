@@ -79,7 +79,6 @@ internal class DefaultKotlinSourceSetFactory(
                 apiConfigurationName to apiMetadataConfigurationName,
                 implementationConfigurationName to implementationMetadataConfigurationName,
                 compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
-                runtimeOnlyConfigurationName to runtimeOnlyMetadataConfigurationName,
                 null to intransitiveMetadataConfigurationName
             )
         }

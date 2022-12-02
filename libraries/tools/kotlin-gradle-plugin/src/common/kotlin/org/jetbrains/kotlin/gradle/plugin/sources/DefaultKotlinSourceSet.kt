@@ -54,6 +54,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val compileOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
+    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
     override val runtimeOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
@@ -143,8 +144,8 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     @Suppress("unused") // Used in IDE import
     fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
-        val scope = KotlinDependencyScope.values().find {
-            project.sourceSetMetadataConfigurationByScope(this, it).name == configurationName
+        val scope = KotlinDependencyScope.compileScopes.find {
+            project.sourceSetMetadataConfigurationByScope(this, it)?.name == configurationName
         } ?: return emptyList()
 
         return getDependenciesTransformation(scope)

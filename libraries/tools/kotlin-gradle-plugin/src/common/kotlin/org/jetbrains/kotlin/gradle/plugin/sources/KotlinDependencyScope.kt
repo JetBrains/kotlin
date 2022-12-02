@@ -53,12 +53,12 @@ internal fun Project.compilationDependencyConfigurationByScope(
         }
     )
 
-internal fun Project.sourceSetMetadataConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration =
-    project.configurations.getByName(
-        when (scope) {
-            API_SCOPE -> sourceSet.apiMetadataConfigurationName
-            IMPLEMENTATION_SCOPE -> sourceSet.implementationMetadataConfigurationName
-            COMPILE_ONLY_SCOPE -> sourceSet.compileOnlyMetadataConfigurationName
-            RUNTIME_ONLY_SCOPE -> sourceSet.runtimeOnlyMetadataConfigurationName
-        }
-    )
+internal fun Project.sourceSetMetadataConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration? {
+    val configurationName = when (scope) {
+        API_SCOPE -> sourceSet.apiMetadataConfigurationName
+        IMPLEMENTATION_SCOPE -> sourceSet.implementationMetadataConfigurationName
+        COMPILE_ONLY_SCOPE -> sourceSet.compileOnlyMetadataConfigurationName
+        RUNTIME_ONLY_SCOPE -> return null  // KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation
+    }
+    return project.configurations.getByName(configurationName)
+}

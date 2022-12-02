@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfigurationForSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 
 object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        val metadataDependenciesConfiguration = resolvableMetadataConfiguration(sourceSet.project, listOf(sourceSet),)
+        val metadataDependenciesConfiguration = resolvableMetadataConfigurationForSourceSets(sourceSet.project, listOf(sourceSet))
 
         val keptOriginalDependencyResolutionIds = sourceSet.resolveMetadata<MetadataDependencyResolution.KeepOriginalDependency>()
             .map { it.dependency.id }.toSet()

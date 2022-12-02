@@ -28,6 +28,7 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     val apiMetadataConfigurationName: String
     val implementationMetadataConfigurationName: String
     val compileOnlyMetadataConfigurationName: String
+    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
     val runtimeOnlyMetadataConfigurationName: String
 
     override val relatedConfigurationNames: List<String>
@@ -36,7 +37,6 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
                     apiMetadataConfigurationName,
                     implementationMetadataConfigurationName,
                     compileOnlyMetadataConfigurationName,
-                    runtimeOnlyMetadataConfigurationName
                 )
 
     companion object {

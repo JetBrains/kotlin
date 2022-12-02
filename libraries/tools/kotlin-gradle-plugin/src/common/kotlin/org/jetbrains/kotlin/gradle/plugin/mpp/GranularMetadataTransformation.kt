@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.ALL_RUNTIME_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import java.util.*
 
@@ -106,6 +105,12 @@ internal class GranularMetadataTransformation(
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
     private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
+    init {
+        require(KotlinDependencyScope.RUNTIME_ONLY_SCOPE !in sourceSetRequestedScopes) {
+            "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation"
+        }
+    }
+
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
     // Keep parents of each dependency, too. We need a dependency's parent when it's an MPP's metadata module dependency:
@@ -119,11 +124,8 @@ internal class GranularMetadataTransformation(
         requestedDependencies(project, kotlinSourceSet, sourceSetRequestedScopes)
     }
 
-    private val allSourceSetsConfiguration: Configuration =
-        commonMetadataDependenciesConfigurationForScopes(project, sourceSetRequestedScopes)
-
     internal val configurationToResolve: Configuration by lazy {
-        resolvableMetadataConfiguration(project, allSourceSetsConfiguration, requestedDependencies)
+        resolvableMetadataConfigurationForDependencies(project, requestedDependencies)
     }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
@@ -305,18 +307,12 @@ internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): P
     }
 }
 
-internal fun resolvableMetadataConfiguration(
+internal fun resolvableMetadataConfigurationForSourceSets(
     project: Project,
     sourceSets: Iterable<KotlinSourceSet>,
-    scopes: Iterable<KotlinDependencyScope> = setOf(
-        KotlinDependencyScope.API_SCOPE,
-        KotlinDependencyScope.IMPLEMENTATION_SCOPE,
-        KotlinDependencyScope.COMPILE_ONLY_SCOPE
-    )
-): Configuration = resolvableMetadataConfiguration(
+): Configuration = resolvableMetadataConfigurationForDependencies(
     project,
-    commonMetadataDependenciesConfigurationForScopes(project, scopes),
-    sourceSets.flatMapTo(mutableListOf()) { requestedDependencies(project, it, scopes) }
+    sourceSets.flatMapTo(mutableListOf()) { requestedDependencies(project, it, KotlinDependencyScope.compileScopes) }
 )
 
 /** If a source set is not a published source set, its dependencies are not included in [allSourceSetsConfiguration].
@@ -324,11 +320,12 @@ internal fun resolvableMetadataConfiguration(
  * we need to create a new configuration with the dependencies from both [allSourceSetsConfiguration] and the
  * other [requestedDependencies] */
 // TODO: optimize by caching the resulting configurations?
-internal fun resolvableMetadataConfiguration(
+internal fun resolvableMetadataConfigurationForDependencies(
     project: Project,
-    allSourceSetsConfiguration: Configuration,
     requestedDependencies: Iterable<Dependency>
 ): Configuration {
+    val allSourceSetsConfiguration = project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
+
     var modifiedConfiguration: Configuration? = null
 
     val originalDependencies = allSourceSetsConfiguration.allDependencies
@@ -346,20 +343,6 @@ internal fun resolvableMetadataConfiguration(
         }
     }
     return modifiedConfiguration ?: allSourceSetsConfiguration
-}
-
-/** The configuration that contains the dependencies of the corresponding scopes (and maybe others)
- * from all published source sets. */
-internal fun commonMetadataDependenciesConfigurationForScopes(
-    project: Project,
-    scopes: Iterable<KotlinDependencyScope>
-): Configuration {
-    // TODO: what if 'runtimeOnly' is combined with 'compileOnly'? prohibit this or merge the two? we never do that now, though
-    val configurationName = if (KotlinDependencyScope.RUNTIME_ONLY_SCOPE in scopes)
-        ALL_RUNTIME_METADATA_CONFIGURATION_NAME
-    else
-        ALL_COMPILE_METADATA_CONFIGURATION_NAME
-    return project.configurations.getByName(configurationName)
 }
 
 internal fun requestedDependencies(
