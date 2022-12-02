@@ -76,9 +76,7 @@ class Fir2IrJsResultsConverter(
 
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val metadataVersion =
-            configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-                ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(module.languageVersionSettings.languageVersion)
+        val metadataVersion = GenerationState.metadataVersion(configuration, module.languageVersionSettings)
 
         // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
         val diagnosticsMap = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade.runCheckers()

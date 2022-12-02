@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -346,9 +347,7 @@ class GenerationState private constructor(
 
     val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
 
-    val metadataVersion =
-        configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-            ?: LANGUAGE_TO_METADATA_VERSION.getValue(languageVersionSettings.languageVersion)
+    val metadataVersion = metadataVersion(configuration)
 
     val abiStability = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
@@ -459,6 +458,14 @@ class GenerationState private constructor(
                 "Please add mappings from the missing LanguageVersion instances to the corresponding JvmMetadataVersion " +
                         "in `GenerationState.LANGUAGE_TO_METADATA_VERSION`"
             }
+        }
+
+        fun metadataVersion(
+            configuration: CompilerConfiguration,
+            languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings
+        ): BinaryVersion {
+            return configuration.get(CommonConfigurationKeys.METADATA_VERSION)
+                ?: LANGUAGE_TO_METADATA_VERSION.getValue(languageVersionSettings.languageVersion)
         }
     }
 }

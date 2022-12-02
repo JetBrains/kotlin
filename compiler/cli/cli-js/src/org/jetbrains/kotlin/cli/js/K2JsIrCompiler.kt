@@ -609,9 +609,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             // TODO: expect -> actual mapping
             val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
-            val metadataVersion =
-                configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-                    ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
+            val metadataVersion = GenerationState.metadataVersion(configuration)
 
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
