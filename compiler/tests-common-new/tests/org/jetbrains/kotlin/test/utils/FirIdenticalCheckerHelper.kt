@@ -25,16 +25,16 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
     }
 
     fun contentsAreEquals(classicFile: File, firFile: File, trimLines: Boolean = false): Boolean {
-        val classicFileContent = classicFile.readContent(trimLines)
-        val firFileContent = firFile.readContent(trimLines)
+        val classicFileContent = readContent(classicFile, trimLines)
+        val firFileContent = readContent(firFile, trimLines)
         return classicFileContent == firFileContent
     }
 
-    private fun File.readContent(trimLines: Boolean): String {
+    fun readContent(file: File, trimLines: Boolean): String {
         return if (trimLines) {
-            this.readLines().joinToString("\n") { it.trimEnd() }.trimEnd()
+            file.readLines().joinToString("\n") { it.trimEnd() }.trimEnd()
         } else {
-            this.readText()
+            file.readText()
         }
     }
 

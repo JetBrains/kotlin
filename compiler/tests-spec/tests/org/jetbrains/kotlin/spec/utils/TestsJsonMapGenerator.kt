@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest
 import org.jetbrains.kotlin.spec.utils.models.SpecPlace
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns
+import org.jetbrains.kotlin.test.utils.isCustomTestData
 import java.io.File
 
 object TestsJsonMapGenerator {
@@ -68,7 +69,7 @@ object TestsJsonMapGenerator {
         TestArea.values().forEach { testArea ->
             File(testOrigin.getFilePath(testArea)).walkTopDown()
                 .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
+                    if (!file.isFile || file.extension != "kt" || file.isCustomTestData) return@testFiles
                     if (isImplementationTest && !LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
                         return@testFiles
 

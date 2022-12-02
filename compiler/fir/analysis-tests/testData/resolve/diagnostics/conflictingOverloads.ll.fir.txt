@@ -1,0 +1,128 @@
+FILE: conflictingOverloads.ll.kt
+    public final fun test(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(y: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+    }
+    public final fun test(z: R|kotlin/Int|, c: R|kotlin/Char|): R|kotlin/Unit| {
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public open val u: R|kotlin/Int| = Int(20)
+            public get(): R|kotlin/Int|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public open override fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public final fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public final fun rest(l: R|kotlin/Long|): R|kotlin/Unit| {
+        }
+
+        public open override val u: R|kotlin/Int| = Int(310)
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final enum class B : R|kotlin/Enum<B>| {
+        private constructor(): R|B| {
+            super<R|kotlin/Enum<B>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<B>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|B| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<B>|
+            public get(): R|kotlin/enums/EnumEntries<B>|
+
+    }
+    public final val u: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/Int|
+    public final val u: R|kotlin/Int| = Int(20)
+        public get(): R|kotlin/Int|
+    public final typealias TA = R|A|
+    public final typealias TA = R|B|
+    public final typealias BA = R|A|
+    public final fun <T : R|(kotlin/String) -> kotlin/Any?|, R|kotlin/Char|> kek(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|() -> kotlin/Boolean|, R|kotlin/String|> kek(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/Int|> kek(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun lol(a: R|kotlin/Array<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun lol(a: R|kotlin/Array<kotlin/Boolean>|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|() -> kotlin/Boolean|, R|kotlin/String|> mem(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/String|, R|() -> kotlin/Boolean|> mem(t: R|T|): R|kotlin/Unit| {
+    }
+    public final class M : R|kotlin/Any| {
+        public constructor(): R|M| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|M.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final val Companion: R|kotlin/Any| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+            public get(): R|kotlin/Any|
+
+    }
+    public final fun R|B|.foo(): R|kotlin/Unit| {
+    }
+    public final class L : R|kotlin/Any| {
+        public constructor(): R|L| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|B|.foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun mest(): R|kotlin/Unit| {
+    }
+    public final class mest : R|kotlin/Any| {
+        public constructor(): R|mest| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <no name provided>(): R|kotlin/Unit| {
+    }
+    private final fun <no name provided>(): R|kotlin/Unit| {
+    }

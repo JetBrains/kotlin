@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirOldFrontendNativeDiagnosticsTestGenerated extends AbstractFirNativeDiagnosticsTest {
     @Test
     public void testAllFilesPresentInNativeTests() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
     }
 
     @Test

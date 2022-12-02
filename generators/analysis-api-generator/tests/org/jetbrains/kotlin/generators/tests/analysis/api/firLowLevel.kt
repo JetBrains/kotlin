@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
-import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
-
-private const val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     testGroup("analysis/low-level-api-fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
@@ -78,11 +76,11 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerTestFE10TestdataTestGenerated") {
             model(
                 "diagnostics/tests",
-                excludedPattern = excludedFirTestdataPattern,
+                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
             )
             model(
                 "diagnostics/testsWithStdLib",
-                excludedPattern = excludedFirTestdataPattern,
+                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 excludeDirs = listOf("native")
             )
         }
@@ -94,7 +92,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model(
                 "diagnostics",
                 excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                excludedPattern = excludedFirTestdataPattern,
+                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
             )
         }
     }

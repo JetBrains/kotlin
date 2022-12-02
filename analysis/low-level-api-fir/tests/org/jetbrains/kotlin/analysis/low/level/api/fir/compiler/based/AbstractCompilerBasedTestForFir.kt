@@ -50,6 +50,10 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         firHandlersStep {
             useHandlers(::LLDiagnosticParameterChecker)
         }
+
+        useMetaTestConfigurators(::LLFirMetaTestConfigurator)
+        useAfterAnalysisCheckers(::LLFirIdenticalChecker)
+        useAfterAnalysisCheckers(::LLFirDivergenceCommentChecker)
     }
 
     open fun TestConfigurationBuilder.configureTest() {}

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.runner.RunWith
 import java.io.File
@@ -40,7 +41,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 errorCounter++
                 differentFiles += file
             }
-            if (!file.name.endsWith(".fir.kt")) {
+            if (!file.isCustomTestData) {
                 counter++
             }
         }
@@ -97,7 +98,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             diagnosticsReporter = null
         )
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
-            if (file.name.endsWith(".fir.kt")) {
+            if (file.isCustomTestData) {
                 return@compareBase true
             }
             if (file.path.replace("\\", "/") == "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt") {

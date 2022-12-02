@@ -1,3 +1,7 @@
+// LL_FIR_DIVERGENCE
+// The compiler doesn't specify which declaration of `A` is chosen in supertype resolution given that `A` has multiple redeclarations.
+// LL_FIR_DIVERGENCE
+
 <!CONFLICTING_OVERLOADS!>fun test(x: Int)<!> {}
 
 <!CONFLICTING_OVERLOADS!>fun test(y: Int)<!> {}
@@ -16,14 +20,14 @@ class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
 
 }
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
-    <!CONFLICTING_OVERLOADS!><!NOTHING_TO_OVERRIDE!>override<!> fun rest(s: String)<!> {}
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
+    <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}
+    <!CONFLICTING_OVERLOADS!>fun <!VIRTUAL_MEMBER_HIDDEN!>rest<!>(s: String)<!> {}
 
     fun rest(l: Long) {}
 
-    <!NOTHING_TO_OVERRIDE!>override<!> val u = 310
+    override val u = 310
 }
 
 interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>

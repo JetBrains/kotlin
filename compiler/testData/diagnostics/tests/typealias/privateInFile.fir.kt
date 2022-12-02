@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // FILE: file1.kt
 private class C {
     companion object
