@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
-import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 /**
  * Lazily calculated value which runs postCompute in the same thread,
