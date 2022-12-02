@@ -53,7 +53,9 @@ open class RawFirBuilder(
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
-    val isSafeExternalEnumOn = session.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)
+    val isSafeExternalEnumOn by lazy {
+        session.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)
+    }
 
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
