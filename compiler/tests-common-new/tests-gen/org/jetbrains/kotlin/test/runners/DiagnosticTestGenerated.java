@@ -14027,6 +14027,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("ifWithDependentBranches.kt")
+            public void testIfWithDependentBranches() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/ifWithDependentBranches.kt");
+            }
+
+            @Test
             @TestMetadata("illegalUnderscoredTypeArgument.kt")
             public void testIllegalUnderscoredTypeArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/illegalUnderscoredTypeArgument.kt");

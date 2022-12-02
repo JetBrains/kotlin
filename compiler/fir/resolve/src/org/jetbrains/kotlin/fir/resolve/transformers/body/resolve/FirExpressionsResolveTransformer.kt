@@ -510,7 +510,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val value =
                 if (index == numberOfStatements - 1)
                     if (data is ResolutionMode.WithExpectedType)
-                        ResolutionMode.WithExpectedType(data.expectedTypeRef, mayBeCoercionToUnitApplied = true)
+                        data.copy(mayBeCoercionToUnitApplied = true)
                     else
                         data
                 else
