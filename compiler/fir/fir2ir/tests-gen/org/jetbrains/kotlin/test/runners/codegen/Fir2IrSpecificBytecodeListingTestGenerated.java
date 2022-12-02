@@ -26,6 +26,22 @@ public class Fir2IrSpecificBytecodeListingTestGenerated extends AbstractFirBytec
     }
 
     @Nested
+    @TestMetadata("compiler/fir/fir2ir/testData/codegen/bytecodeListing/nullabilityAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NullabilityAnnotations {
+        @Test
+        public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/bytecodeListing/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() throws Exception {
+            runTest("compiler/fir/fir2ir/testData/codegen/bytecodeListing/nullabilityAnnotations/suspendFunction.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties")
     @TestDataPath("$PROJECT_ROOT")
     public class Properties {
