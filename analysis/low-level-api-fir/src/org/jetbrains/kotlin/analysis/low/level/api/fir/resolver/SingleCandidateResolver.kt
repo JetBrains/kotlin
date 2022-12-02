@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -77,7 +78,8 @@ class SingleCandidateResolver(
 
         val completionResult = firCallCompleter.completeCall(
             fakeCall,
-            resolutionParameters.expectedType?.let(ResolutionMode::WithExpectedType) ?: ResolutionMode.ContextIndependent
+            (resolutionParameters.expectedType as? FirResolvedTypeRef)?.let { ResolutionMode.WithExpectedType(it) }
+                ?: ResolutionMode.ContextIndependent
         )
 
         return completionResult.takeIf { it.callCompleted }?.result
