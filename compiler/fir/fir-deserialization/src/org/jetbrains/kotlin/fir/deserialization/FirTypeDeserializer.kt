@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 class FirTypeDeserializer(
     val moduleData: FirModuleData,
@@ -101,6 +102,7 @@ class FirTypeDeserializer(
             val id = nameResolver.getClassId(fqNameIndex).takeIf { !it.isLocal } ?: StandardClassIds.Any
             return ConeClassLikeLookupTagImpl(id)
         } catch (e: Throwable) {
+            if (shouldIjPlatformExceptionBeRethrown(e)) throw e
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
         }
     }
