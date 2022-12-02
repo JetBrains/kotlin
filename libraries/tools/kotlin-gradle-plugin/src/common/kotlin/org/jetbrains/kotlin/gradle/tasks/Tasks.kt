@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.*
@@ -456,6 +457,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         val args = prepareCompilerArguments()
         taskBuildCacheableOutputDirectory.get().asFile.mkdirs()
         taskBuildLocalStateDirectory.get().asFile.mkdirs()
+
+        args.updateByChangedFiles(
+            changesToPluginOptionsTransformers.get(),
+            getChangedFiles(inputChanges, incrementalProps)
+        )
+
         callCompilerAsync(
             args,
             allKotlinSources,

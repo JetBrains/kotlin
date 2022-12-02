@@ -17,6 +17,7 @@ import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 interface KotlinCompileTool : PatternFilterable, Task {
     @get:InputFiles
@@ -74,6 +75,9 @@ interface BaseKotlinCompile : KotlinCompileTool {
 
     @get:Nested
     val pluginOptions: ListProperty<CompilerPluginConfig>
+
+    @get:Internal
+    val changesToPluginOptionsTransformers: ListProperty<(ChangedFiles) -> Map<String, List<SubpluginOption>>>
 }
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
