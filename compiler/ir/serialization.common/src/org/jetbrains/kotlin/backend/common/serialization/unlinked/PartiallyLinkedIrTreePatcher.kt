@@ -336,9 +336,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlock(expression: IrBlock) = expression.maybeThrowLinkageError {
-            if (this is IrReturnableBlock)
-                checkReferencedDeclaration(symbol) ?: checkReferencedDeclaration(inlineFunctionSymbol) // ???
-            else null
+            if (this is IrReturnableBlock) checkReferencedDeclaration(symbol) else null
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) = expression.maybeThrowLinkageError {
