@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.ICData
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 
 fun generateIrForKlibSerialization(
     project: Project,
@@ -69,6 +71,12 @@ fun generateIrForKlibSerialization(
     val feContext = psi2IrContext.run {
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
+    val stubGenerator = DeclarationStubGeneratorImpl(
+        psi2IrContext.moduleDescriptor,
+        symbolTable,
+        irBuiltIns,
+        DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, JsManglerDesc),
+    )
     val irLinker = JsIrLinker(
         psi2IrContext.moduleDescriptor,
         messageLogger,
@@ -76,12 +84,20 @@ fun generateIrForKlibSerialization(
         psi2IrContext.symbolTable,
         partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false,
         feContext,
-        ICData(icData.map { it.irData }, errorPolicy.allowErrors)
+        ICData(icData.map { it.irData }, errorPolicy.allowErrors),
+        stubGenerator = stubGenerator
     )
 
     sortedDependencies.map { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }
 
-    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger, expectDescriptorToSymbol)
+    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(
+        project,
+        files,
+        irLinker,
+        messageLogger,
+        expectDescriptorToSymbol,
+        stubGenerator
+    )
 
     if (verifySignatures) {
         moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
