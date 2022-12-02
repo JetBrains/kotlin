@@ -332,12 +332,12 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitReturn(expression: IrReturn) = expression.maybeThrowLinkageError {
-            checkReferencedDeclaration(returnTargetSymbol)
+            checkReferencedDeclaration(returnTargetSymbol, checkVisibility = false)
         }
 
         override fun visitBlock(expression: IrBlock) = expression.maybeThrowLinkageError {
             if (this is IrReturnableBlock)
-                checkReferencedDeclaration(symbol) ?: checkReferencedDeclaration(inlineFunctionSymbol)
+                checkReferencedDeclaration(symbol) ?: checkReferencedDeclaration(inlineFunctionSymbol) // ???
             else null
         }
 
@@ -364,7 +364,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitCall(expression: IrCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
-                ?: checkReferencedDeclaration(superQualifierSymbol)
+                ?: checkReferencedDeclaration(superQualifierSymbol) // ???
                 ?: checkExpressionTypeArguments()
         }
 
@@ -386,20 +386,20 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitFunctionReference(expression: IrFunctionReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
-                ?: checkReferencedDeclaration(reflectionTarget)
+                ?: checkReferencedDeclaration(reflectionTarget) // ???
                 ?: checkExpressionTypeArguments()
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
-                ?: checkReferencedDeclaration(getter)
-                ?: checkReferencedDeclaration(setter)
-                ?: checkReferencedDeclaration(field)
+                ?: checkReferencedDeclaration(getter, checkVisibility = false) // ???
+                ?: checkReferencedDeclaration(setter, checkVisibility = false) // ???
+                ?: checkReferencedDeclaration(field, checkVisibility = false) // ???
                 ?: checkExpressionTypeArguments()
         }
 
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.maybeThrowLinkageError {
-            checkReferencedDeclaration(classSymbol)
+            checkReferencedDeclaration(classSymbol) // ???
         }
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
@@ -442,7 +442,7 @@ internal class PartiallyLinkedIrTreePatcher(
             return ExpressionUsesPartiallyLinkedClassifier(this, partialLinkageReason)
         }
 
-        private fun <T : IrExpression> T.checkReferencedDeclaration(symbol: IrSymbol?): PartialLinkageCase? {
+        private fun <T : IrExpression> T.checkReferencedDeclaration(symbol: IrSymbol?, @Suppress("UNUSED_PARAMETER") checkVisibility: Boolean = true): PartialLinkageCase? {
             symbol ?: return null
 
             if (!symbol.isBound && !symbol.isPublicApi) {
@@ -458,11 +458,11 @@ internal class PartiallyLinkedIrTreePatcher(
             return when (symbol) {
                 is IrClassifierSymbol -> ExpressionUsesPartiallyLinkedClassifier(this, symbol.partialLinkageReason() ?: return null)
 
-                is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol)
+                is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol) // ???
 
-                is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol)
-                    ?: checkReferencedDeclaration(symbol.owner.setter?.symbol)
-                    ?: checkReferencedDeclaration(symbol.owner.backingField?.symbol)
+                is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol) // ???
+                    ?: checkReferencedDeclaration(symbol.owner.setter?.symbol) // ???
+                    ?: checkReferencedDeclaration(symbol.owner.backingField?.symbol) // ???
 
                 else -> {
                     val partialLinkageReasonInReferencedDeclaration = when (symbol) {
