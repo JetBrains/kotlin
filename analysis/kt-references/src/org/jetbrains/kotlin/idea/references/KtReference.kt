@@ -31,7 +31,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> =
         ResolveCache.getInstance(expression.project).resolveWithCaching(this, resolver, false, incompleteCode)
 
-    override fun getCanonicalText(): String = "<TBD>"
+    override fun getCanonicalText(): String = expression.text
 
     open fun canRename(): Boolean = false
     override fun handleElementRename(newElementName: String): PsiElement? =
