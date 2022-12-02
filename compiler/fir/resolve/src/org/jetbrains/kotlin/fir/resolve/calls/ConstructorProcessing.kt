@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 private operator fun <T> Pair<T, *>?.component1() = this?.first
 private operator fun <T> Pair<*, T>?.component2() = this?.second
@@ -283,6 +284,7 @@ private fun processConstructors(
             }
         }
     } catch (e: Throwable) {
+        if (shouldIjPlatformExceptionBeRethrown(e)) throw e
         throw RuntimeException("While processing constructors", e)
     }
 }

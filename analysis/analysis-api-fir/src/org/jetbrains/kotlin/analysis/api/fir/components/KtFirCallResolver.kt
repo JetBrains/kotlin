@@ -72,10 +72,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
