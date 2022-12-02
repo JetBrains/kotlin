@@ -1030,7 +1030,7 @@ class DeclarationsConverter(
             annotations += modifiers.annotations
             typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
             valueParameters += firValueParameters.map { it.firValueParameter }
-            val (body, _) = convertFunctionBody(block, null)
+            val (body, _) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
             this.body = body
             context.firFunctionTargets.removeLast()
         }.also {
@@ -1460,9 +1460,8 @@ class DeclarationsConverter(
             if (!isGetter) {
                 valueParameters += firValueParameters
             }
-
-            val hasContractEffectList = outerContractDescription != null
-            val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)
+            val allowLegacyContractDescription = outerContractDescription == null
+            val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
             this.body = bodyWithContractDescription.first
             val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
             contractDescription?.let {
@@ -1720,8 +1719,8 @@ class DeclarationsConverter(
                     ).map { it.firValueParameter }
                 }
 
-                val hasContractEffectList = outerContractDescription != null
-                val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)
+                val allowLegacyContractDescription = outerContractDescription == null && !isLocal
+                val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
                 this.body = bodyWithContractDescription.first
                 val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                 contractDescription?.let {
@@ -1755,16 +1754,13 @@ class DeclarationsConverter(
     private fun convertFunctionBody(
         blockNode: LighterASTNode?,
         expression: LighterASTNode?,
-        hasContractEffectList: Boolean = false
+        allowLegacyContractDescription: Boolean
     ): Pair<FirBlock?, FirContractDescription?> {
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
-                if (hasContractEffectList) {
-                    block to null
-                } else {
-                    block.extractContractDescriptionIfPossible()
-                }
+                val contractDescription = runIf(allowLegacyContractDescription) { processLegacyContractDescription(block) }
+                block to contractDescription
             }
             expression != null -> FirSingleExpressionBlock(
                 expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()

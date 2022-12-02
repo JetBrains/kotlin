@@ -5,7 +5,13 @@ FILE: inapplicable.kt
             Returns(FALSE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^wrongFalse Boolean(true)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun wrongTrue(x: R|kotlin/String?|): R|kotlin/Boolean|
@@ -14,7 +20,13 @@ FILE: inapplicable.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^wrongTrue Boolean(false)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun nullableConstant(x: R|kotlin/String?|): R|kotlin/Any?|
@@ -23,7 +35,13 @@ FILE: inapplicable.kt
             Returns(NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Null(null)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^nullableConstant Int(1)
     }
     public final fun string(): R|kotlin/String| {
@@ -35,7 +53,13 @@ FILE: inapplicable.kt
             Returns(NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Null(null)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^nullableReturn R|/string|()
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun returnsNull(x: R|kotlin/String?|): R|kotlin/Any?|
@@ -44,7 +68,13 @@ FILE: inapplicable.kt
             Returns(NOT_NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^returnsNull Null(null)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun wrongReturnType(x: R|kotlin/String?|): R|kotlin/Any?|
@@ -53,6 +83,12 @@ FILE: inapplicable.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^wrongReturnType String(true)
     }

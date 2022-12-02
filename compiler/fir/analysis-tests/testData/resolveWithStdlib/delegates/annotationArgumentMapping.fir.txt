@@ -12,13 +12,19 @@ FILE: annotationArgumentMapping.kt
         }
 
     }
-    public final fun buildAnnotationArgumentMapping(init: R|FirAnnotationArgumentMappingBuilder.() -> kotlin/Unit|): R|FirAnnotationArgumentMapping|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun buildAnnotationArgumentMapping(init: R|FirAnnotationArgumentMappingBuilder.() -> kotlin/Unit|): R|FirAnnotationArgumentMapping|
         [R|Contract description]
          <
             CallsInPlace(init, EXACTLY_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/init|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
         ^buildAnnotationArgumentMapping R|/FirAnnotationArgumentMappingBuilder.FirAnnotationArgumentMappingBuilder|().R|kotlin/apply|<R|FirAnnotationArgumentMappingBuilder|>(R|<local>/init|).R|/FirAnnotationArgumentMappingBuilder.build|()
     }
     public final class FirAnnotationArgumentMapping : R|kotlin/Any| {

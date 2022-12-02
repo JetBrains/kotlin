@@ -14,13 +14,13 @@ fun <T> T?.case_1() {
 
 // TESTCASE NUMBER: 2
 fun <T : Number?> T.case_2() {
-    contract { returns() implies (this@case_2 is Int && this@case_2 != null) }
+    contract { returns() implies (this@case_2 is Int && <!SENSELESS_COMPARISON!>this@case_2 != null<!>) }
     if (!(this@case_2 is Int && <!SENSELESS_COMPARISON!>this@case_2 != null<!>)) throw Exception()
 }
 
 // TESTCASE NUMBER: 3
 inline fun <reified T : Any?> T?.case_3() {
-    contract { returns() implies (this@case_3 is Number && this@case_3 is Int && this@case_3 != null) }
+    contract { returns() implies (this@case_3 is Number && this@case_3 is Int && <!SENSELESS_COMPARISON!>this@case_3 != null<!>) }
     if (!(this@case_3 is Number && this@case_3 is Int && <!SENSELESS_COMPARISON!>this@case_3 != null<!>)) throw Exception()
 }
 
@@ -44,37 +44,37 @@ fun <T> T?.case_4_4(): Boolean? {
 
 // TESTCASE NUMBER: 5
 fun <T : Number?> T.case_5_1(): Boolean {
-    contract { returns(true) implies (this@case_5_1 is Int && this@case_5_1 != null) }
+    contract { returns(true) implies (this@case_5_1 is Int && <!SENSELESS_COMPARISON!>this@case_5_1 != null<!>) }
     return this@case_5_1 is Int && <!SENSELESS_COMPARISON!>this@case_5_1 != null<!>
 }
 fun <T : Number?> T.case_5_2(): Boolean {
-    contract { returns(false) implies (this@case_5_2 is Int && this@case_5_2 != null) }
+    contract { returns(false) implies (this@case_5_2 is Int && <!SENSELESS_COMPARISON!>this@case_5_2 != null<!>) }
     return !(this@case_5_2 is Int && <!SENSELESS_COMPARISON!>this@case_5_2 != null<!>)
 }
 fun <T : Number?> T.case_5_3(): Boolean? {
-    contract { returnsNotNull() implies (this@case_5_3 is Int && this@case_5_3 != null) }
+    contract { returnsNotNull() implies (this@case_5_3 is Int && <!SENSELESS_COMPARISON!>this@case_5_3 != null<!>) }
     return if (this@case_5_3 is Int && <!SENSELESS_COMPARISON!>this@case_5_3 != null<!>) true else null
 }
 fun <T : Number?> T.case_5_4(): Boolean? {
-    contract { returns(null) implies (this@case_5_4 is Int && this@case_5_4 != null) }
+    contract { returns(null) implies (this@case_5_4 is Int && <!SENSELESS_COMPARISON!>this@case_5_4 != null<!>) }
     return if (this@case_5_4 is Int && <!SENSELESS_COMPARISON!>this@case_5_4 != null<!>) null else true
 }
 
 // TESTCASE NUMBER: 6
 inline fun <reified T : Any?> T?.case_6_1(): Boolean {
-    contract { returns(true) implies (this@case_6_1 is Number && this@case_6_1 is Int && this@case_6_1 != null) }
+    contract { returns(true) implies (this@case_6_1 is Number && this@case_6_1 is Int && <!SENSELESS_COMPARISON!>this@case_6_1 != null<!>) }
     return this@case_6_1 is Number && this@case_6_1 is Int && <!SENSELESS_COMPARISON!>this@case_6_1 != null<!>
 }
 inline fun <reified T : Any?> T?.case_6_2(): Boolean {
-    contract { returns(false) implies (this@case_6_2 is Number && this@case_6_2 is Int && this@case_6_2 != null) }
+    contract { returns(false) implies (this@case_6_2 is Number && this@case_6_2 is Int && <!SENSELESS_COMPARISON!>this@case_6_2 != null<!>) }
     return !(this@case_6_2 is Number && this@case_6_2 is Int && <!SENSELESS_COMPARISON!>this@case_6_2 != null<!>)
 }
 inline fun <reified T : Any?> T?.case_6_3(): Boolean? {
-    contract { returnsNotNull() implies (this@case_6_3 is Number && this@case_6_3 is Int && this@case_6_3 != null) }
+    contract { returnsNotNull() implies (this@case_6_3 is Number && this@case_6_3 is Int && <!SENSELESS_COMPARISON!>this@case_6_3 != null<!>) }
     return if (this@case_6_3 is Number && this@case_6_3 is Int && <!SENSELESS_COMPARISON!>this@case_6_3 != null<!>) true else null
 }
 inline fun <reified T : Any?> T?.case_6_4(): Boolean? {
-    contract { returns(null) implies (this@case_6_4 is Number && this@case_6_4 is Int && this@case_6_4 != null) }
+    contract { returns(null) implies (this@case_6_4 is Number && this@case_6_4 is Int && <!SENSELESS_COMPARISON!>this@case_6_4 != null<!>) }
     return if (this@case_6_4 is Number && this@case_6_4 is Int && <!SENSELESS_COMPARISON!>this@case_6_4 != null<!>) null else true
 }
 

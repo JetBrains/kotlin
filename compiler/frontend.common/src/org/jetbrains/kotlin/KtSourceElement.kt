@@ -113,6 +113,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake sources for the block which refers to the wrapped expression
     object SingleExpressionBlock : KtFakeSourceElementKind()
 
+    // Contract statements are wrapped in a special block to be reused between a contract FIR and a function body.
+    object ContractBlock : KtFakeSourceElementKind()
+
     // x++ -> x = x.inc()
     // x = x++ -> x = { val <unary> = x; x = <unary>.inc(); <unary> }
     object DesugaredIncrementOrDecrement : KtFakeSourceElementKind()

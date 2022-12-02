@@ -15,7 +15,13 @@ FILE: postponedLambdaInReturn.kt
             CallsInPlace(builder, EXACTLY_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/builder|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
         ^build R|/Lateinit.Lateinit|<R|R|>().R|kotlin/apply|<R|Lateinit<R>|>(R|<local>/builder|).R|SubstitutionOverride</Lateinit.value: R|R|>|
     }
     public final val p: R|kotlin/Boolean| = Boolean(false)

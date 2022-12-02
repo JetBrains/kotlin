@@ -1,11 +1,17 @@
 FILE: booleanOperators.kt
-    public final fun myRequire(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequire(b: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> b
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b|)
+            }
+            )
+        }
+
         when () {
             R|<local>/b|.R|kotlin/Boolean.not|() ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()
@@ -13,13 +19,19 @@ FILE: booleanOperators.kt
         }
 
     }
-    public final fun myRequireAnd(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequireAnd(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> b1 && b2
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b1| && R|<local>/b2|)
+            }
+            )
+        }
+
         when () {
             R|<local>/b1| && R|<local>/b2|.R|kotlin/Boolean.not|() ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()
@@ -27,13 +39,19 @@ FILE: booleanOperators.kt
         }
 
     }
-    public final fun myRequireOr(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequireOr(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> b1 || b2
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b1| || R|<local>/b2|)
+            }
+            )
+        }
+
         when () {
             R|<local>/b1| || R|<local>/b2|.R|kotlin/Boolean.not|() ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()
@@ -41,13 +59,19 @@ FILE: booleanOperators.kt
         }
 
     }
-    public final fun myRequireNot(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequireNot(b: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> !b
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b|.R|kotlin/Boolean.not|())
+            }
+            )
+        }
+
         when () {
             R|<local>/b| ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.description.ConeUnresolvedEffect
 import org.jetbrains.kotlin.fir.contracts.impl.FirResolvedContractDescriptionImpl
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirResolvedContractDescriptionBuilder {
     var source: KtSourceElement? = null
     val effects: MutableList<FirEffectDeclaration> = mutableListOf()
-    val unresolvedEffects: MutableList<FirStatement> = mutableListOf()
+    val unresolvedEffects: MutableList<ConeUnresolvedEffect> = mutableListOf()
 
     fun build(): FirResolvedContractDescription {
         return FirResolvedContractDescriptionImpl(

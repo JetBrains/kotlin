@@ -2,14 +2,21 @@ FILE: flowFromTwoInplaceLambdas.kt
     public final fun <T> n(): R|T?| {
         ^n Null(null)
     }
-    public final fun <T> run2(x: R|() -> T|, y: R|() -> T|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun <T> run2(x: R|() -> T|, y: R|() -> T|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(x, EXACTLY_ONCE)
             CallsInPlace(y, EXACTLY_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|T|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|T|>(R|<local>/y|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
         R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
         R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
     }

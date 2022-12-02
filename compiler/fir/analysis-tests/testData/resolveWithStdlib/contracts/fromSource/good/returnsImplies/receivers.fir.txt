@@ -3,13 +3,19 @@ FILE: receivers.kt
     }
     public final fun R|A|.foo(): R|kotlin/Unit| {
     }
-    public final fun R|kotlin/Any?|.myRequireNotNull(): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun R|kotlin/Any?|.myRequireNotNull(): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> this != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(!=(this@R|/myRequireNotNull|, Null(null)))
+            }
+            )
+        }
+
         when () {
             ==(this@R|/myRequireNotNull|, Null(null)) ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()

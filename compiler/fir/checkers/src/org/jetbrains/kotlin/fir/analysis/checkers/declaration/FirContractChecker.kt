@@ -26,7 +26,8 @@ object FirContractChecker : FirFunctionChecker() {
         }
 
         // Any statements that [ConeEffectExtractor] cannot extract effects will be in `unresolvedEffects`.
-        for (statement in (declaration.contractDescription as FirResolvedContractDescription).unresolvedEffects) {
+        for (unresolvedEffect in (declaration.contractDescription as FirResolvedContractDescription).unresolvedEffects) {
+            val statement = unresolvedEffect.statement
             if (statement.source == null || statement.source!!.kind is KtFakeSourceElementKind) continue
 
             // TODO: report on fine-grained locations, e.g., ... implies unresolved => report on unresolved, not the entire statement.

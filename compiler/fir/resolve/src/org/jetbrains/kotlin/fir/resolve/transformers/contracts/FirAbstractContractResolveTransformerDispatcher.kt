@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeUnresolvedEffect
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.errorTypeFromPrototype
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -128,35 +130,53 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             }
         }
 
-        private fun <T : FirContractDescriptionOwner> transformContractDescriptionOwner(
-            owner: T
-        ): T {
+        private fun <T : FirContractDescriptionOwner> transformContractDescriptionOwner(owner: T): T {
             dataFlowAnalyzer.enterContractDescription()
+
             return when (val contractDescription = owner.contractDescription) {
-                is FirLegacyRawContractDescription -> transformLegacyRawContractDescriptionOwner(owner, contractDescription)
-                is FirRawContractDescription -> transformRawContractDescriptionOwner(owner, contractDescription)
-                else -> throw IllegalArgumentException("$owner has a contract description of an unknown type")
+                is FirLegacyRawContractDescription ->
+                    transformLegacyRawContractDescriptionOwner(owner, contractDescription, hasBodyContract = true)
+                is FirRawContractDescription ->
+                    transformRawContractDescriptionOwner(owner, contractDescription)
+                else ->
+                    throw IllegalArgumentException("$owner has a contract description of an unknown type")
             }
         }
 
         private fun <T : FirContractDescriptionOwner> transformLegacyRawContractDescriptionOwner(
             owner: T,
-            contractDescription: FirLegacyRawContractDescription
+            contractDescription: FirLegacyRawContractDescription,
+            hasBodyContract: Boolean
         ): T {
             val valueParameters = owner.valueParameters
             for (valueParameter in valueParameters) {
                 context.storeVariable(valueParameter, session)
             }
-            val contractCall = try {
-                contractMode = false
-                contractDescription.contractCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            } finally {
-                contractMode = true
+
+            val resolvedContractCall = withContractModeDisabled {
+                contractDescription.contractCall
+                    .transformSingle(transformer, ResolutionMode.ContextIndependent)
+                    .apply { replaceTypeRef(session.builtinTypes.unitType) }
             }
-            val resolvedId = contractCall.toResolvedCallableSymbol()?.callableId ?: return transformOwnerWithUnresolvedContract(owner)
-            if (resolvedId != FirContractsDslNames.CONTRACT) return transformOwnerWithUnresolvedContract(owner)
-            if (contractCall.arguments.size != 1) return transformOwnerOfErrorContract(owner)
-            val argument = contractCall.argument as? FirLambdaArgumentExpression ?: return transformOwnerOfErrorContract(owner)
+
+            if (resolvedContractCall.toResolvedCallableSymbol()?.callableId != FirContractsDslNames.CONTRACT) {
+                if (hasBodyContract) {
+                    owner.body.replaceFirstStatement<FirContractCallBlock> { resolvedContractCall }
+                }
+                owner.replaceContractDescription(FirEmptyContractDescription)
+                dataFlowAnalyzer.exitContractDescription()
+                return owner
+            }
+
+            if (hasBodyContract) {
+                // Until the contract description is replaced with a resolved one, a call rests both in the description
+                // and in the callable body (scoped inside a marker block). Here we patch the second call occurrence.
+                owner.body.replaceFirstStatement<FirContractCallBlock> { FirContractCallBlock(resolvedContractCall) }
+            }
+
+            val argument = resolvedContractCall.arguments.singleOrNull() as? FirLambdaArgumentExpression
+                ?: return transformOwnerOfErrorContract(owner)
+
             val lambdaBody = (argument.expression as FirAnonymousFunctionExpression).anonymousFunction.body
                 ?: return transformOwnerOfErrorContract(owner)
 
@@ -165,16 +185,25 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 for (statement in lambdaBody.statements) {
                     val effect = statement.accept(effectExtractor, null) as? ConeEffectDeclaration
                     if (effect == null) {
-                        unresolvedEffects += statement
+                        unresolvedEffects += ConeUnresolvedEffect(statement)
                     } else {
                         effects += effect.toFirEffectDeclaration(statement.source)
                     }
                 }
-                this.source = owner.contractDescription.source
+                this.source = contractDescription.source
             }
             owner.replaceContractDescription(resolvedContractDescription)
             dataFlowAnalyzer.exitContractDescription()
             return owner
+        }
+
+        private inline fun <T> withContractModeDisabled(block: () -> T): T {
+            try {
+                contractMode = false
+                return block()
+            } finally {
+                contractMode = true
+            }
         }
 
         private fun <T : FirContractDescriptionOwner> transformRawContractDescriptionOwner(
@@ -220,25 +249,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 
             owner.replaceContractDescription(legacyRawContractDescription)
 
-            return transformLegacyRawContractDescriptionOwner(owner, legacyRawContractDescription)
-        }
-
-        private fun <T : FirContractDescriptionOwner> transformOwnerWithUnresolvedContract(owner: T): T {
-            return when (val contractDescription = owner.contractDescription) {
-                is FirLegacyRawContractDescription -> { // old syntax contract description
-                    val functionCall = contractDescription.contractCall
-                    owner.replaceContractDescription(FirEmptyContractDescription)
-                    owner.body.replaceFirstStatement(functionCall)
-                    dataFlowAnalyzer.exitContractDescription()
-                    owner
-                }
-                is FirRawContractDescription -> { // new syntax contract description
-                    owner.replaceContractDescription(FirEmptyContractDescription)
-                    dataFlowAnalyzer.exitContractDescription()
-                    owner
-                }
-                else -> owner // TODO: change
-            }
+            return transformLegacyRawContractDescriptionOwner(owner, legacyRawContractDescription, hasBodyContract = false)
         }
 
         open fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {

@@ -25,15 +25,20 @@ digraph postponedLambdaInReturn_kt {
         subgraph cluster_3 {
             color=blue
             6 [label="Enter block"];
-            7 [label="Function call: R|/Lateinit.Lateinit|<R|R|>()" style="filled" fillcolor=yellow];
-            8 [label="Access variable R|<local>/builder|"];
-            9 [label="Function call: R|/Lateinit.Lateinit|<R|R|>().R|kotlin/apply|<R|Lateinit<R>|>(...)" style="filled" fillcolor=yellow];
-            10 [label="Access variable R|SubstitutionOverride</Lateinit.value: R|R|>|"];
-            11 [label="Jump: ^build R|/Lateinit.Lateinit|<R|R|>().R|kotlin/apply|<R|Lateinit<R>|>(R|<local>/builder|).R|SubstitutionOverride</Lateinit.value: R|R|>|"];
-            12 [label="Stub" style="filled" fillcolor=gray];
-            13 [label="Exit block" style="filled" fillcolor=gray];
+            subgraph cluster_4 {
+                color=blue
+                7 [label="Enter block"];
+                8 [label="Exit block"];
+            }
+            9 [label="Function call: R|/Lateinit.Lateinit|<R|R|>()" style="filled" fillcolor=yellow];
+            10 [label="Access variable R|<local>/builder|"];
+            11 [label="Function call: R|/Lateinit.Lateinit|<R|R|>().R|kotlin/apply|<R|Lateinit<R>|>(...)" style="filled" fillcolor=yellow];
+            12 [label="Access variable R|SubstitutionOverride</Lateinit.value: R|R|>|"];
+            13 [label="Jump: ^build R|/Lateinit.Lateinit|<R|R|>().R|kotlin/apply|<R|Lateinit<R>|>(R|<local>/builder|).R|SubstitutionOverride</Lateinit.value: R|R|>|"];
+            14 [label="Stub" style="filled" fillcolor=gray];
+            15 [label="Exit block" style="filled" fillcolor=gray];
         }
-        14 [label="Exit function build" style="filled" fillcolor=red];
+        16 [label="Exit function build" style="filled" fillcolor=red];
     }
     5 -> {6};
     6 -> {7};
@@ -41,450 +46,452 @@ digraph postponedLambdaInReturn_kt {
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {14};
-    11 -> {12} [style=dotted];
-    12 -> {13} [style=dotted];
+    11 -> {12};
+    12 -> {13};
+    13 -> {16};
     13 -> {14} [style=dotted];
-
-    subgraph cluster_4 {
-        color=red
-        15 [label="Enter property" style="filled" fillcolor=red];
-        16 [label="Const: Boolean(false)"];
-        17 [label="Exit property" style="filled" fillcolor=red];
-    }
-    15 -> {16};
-    16 -> {17};
+    14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
 
     subgraph cluster_5 {
         color=red
-        18 [label="Enter function test1" style="filled" fillcolor=red];
-        subgraph cluster_6 {
+        25 [label="Enter property" style="filled" fillcolor=red];
+        26 [label="Const: Boolean(false)"];
+        27 [label="Exit property" style="filled" fillcolor=red];
+    }
+    25 -> {26};
+    26 -> {27};
+
+    subgraph cluster_6 {
+        color=red
+        28 [label="Enter function test1" style="filled" fillcolor=red];
+        subgraph cluster_7 {
             color=blue
-            19 [label="Enter block"];
-            20 [label="Const: Null(null)"];
-            21 [label="Variable declaration: lvar y: R|kotlin/String?|"];
-            22 [label="Postponed enter to lambda"];
-            subgraph cluster_7 {
+            29 [label="Enter block"];
+            30 [label="Const: Null(null)"];
+            31 [label="Variable declaration: lvar y: R|kotlin/String?|"];
+            32 [label="Postponed enter to lambda"];
+            subgraph cluster_8 {
                 color=blue
-                30 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_8 {
+                40 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_9 {
                     color=blue
-                    31 [label="Enter block"];
-                    subgraph cluster_9 {
+                    41 [label="Enter block"];
+                    subgraph cluster_10 {
                         color=blue
-                        32 [label="Enter when"];
-                        subgraph cluster_10 {
-                            color=blue
-                            33 [label="Enter when branch condition "];
-                            34 [label="Access variable R|/p|"];
-                            35 [label="Exit when branch condition"];
-                        }
+                        42 [label="Enter when"];
                         subgraph cluster_11 {
                             color=blue
-                            36 [label="Enter when branch condition else"];
-                            37 [label="Exit when branch condition"];
+                            43 [label="Enter when branch condition "];
+                            44 [label="Access variable R|/p|"];
+                            45 [label="Exit when branch condition"];
                         }
-                        38 [label="Enter when branch result"];
                         subgraph cluster_12 {
                             color=blue
-                            39 [label="Enter block"];
-                            40 [label="Const: String()"];
-                            41 [label="Jump: ^@run String()"];
-                            42 [label="Stub" style="filled" fillcolor=gray];
-                            43 [label="Exit block" style="filled" fillcolor=gray];
+                            46 [label="Enter when branch condition else"];
+                            47 [label="Exit when branch condition"];
                         }
-                        44 [label="Exit when branch result" style="filled" fillcolor=gray];
-                        45 [label="Enter when branch result"];
+                        48 [label="Enter when branch result"];
                         subgraph cluster_13 {
                             color=blue
-                            46 [label="Enter block"];
-                            47 [label="Postponed enter to lambda"];
-                            subgraph cluster_14 {
+                            49 [label="Enter block"];
+                            50 [label="Const: String()"];
+                            51 [label="Jump: ^@run String()"];
+                            52 [label="Stub" style="filled" fillcolor=gray];
+                            53 [label="Exit block" style="filled" fillcolor=gray];
+                        }
+                        54 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        55 [label="Enter when branch result"];
+                        subgraph cluster_14 {
+                            color=blue
+                            56 [label="Enter block"];
+                            57 [label="Postponed enter to lambda"];
+                            subgraph cluster_15 {
                                 color=blue
-                                57 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                                subgraph cluster_15 {
+                                67 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                subgraph cluster_16 {
                                     color=blue
-                                    58 [label="Enter block"];
-                                    59 [label="Access variable R|<local>/y|"];
-                                    60 [label="Type operator: (R|<local>/y| as R|kotlin/String|)"];
-                                    61 [label="Const: String(...)"];
-                                    62 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
-                                    63 [label="Exit block"];
+                                    68 [label="Enter block"];
+                                    69 [label="Access variable R|<local>/y|"];
+                                    70 [label="Type operator: (R|<local>/y| as R|kotlin/String|)"];
+                                    71 [label="Const: String(...)"];
+                                    72 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
+                                    73 [label="Exit block"];
                                 }
-                                64 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                74 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                             }
-                            48 [label="Postponed exit from lambda"];
-                            49 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-                            50 [label="Jump: ^@run R|/build|<R|kotlin/String|>(<L> = build@fun R|Lateinit<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline, kind=EXACTLY_ONCE>  {
+                            58 [label="Postponed exit from lambda"];
+                            59 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+                            60 [label="Jump: ^@run R|/build|<R|kotlin/String|>(<L> = build@fun R|Lateinit<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline, kind=EXACTLY_ONCE>  {
     (R|<local>/y| as R|kotlin/String|)
     this@R|special/anonymous|.R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>| = String(...)
 }
 )"];
-                            51 [label="Stub" style="filled" fillcolor=gray];
-                            52 [label="Exit block" style="filled" fillcolor=gray];
+                            61 [label="Stub" style="filled" fillcolor=gray];
+                            62 [label="Exit block" style="filled" fillcolor=gray];
                         }
-                        53 [label="Exit when branch result" style="filled" fillcolor=gray];
-                        54 [label="Exit when" style="filled" fillcolor=gray];
+                        63 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        64 [label="Exit when" style="filled" fillcolor=gray];
                     }
-                    55 [label="Exit block" style="filled" fillcolor=gray];
+                    65 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                56 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                66 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            23 [label="Postponed exit from lambda"];
-            24 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-            25 [label="Variable declaration: lval x: R|kotlin/String|"];
-            26 [label="Access variable R|<local>/y|"];
-            27 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-            28 [label="Exit block"];
+            33 [label="Postponed exit from lambda"];
+            34 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+            35 [label="Variable declaration: lval x: R|kotlin/String|"];
+            36 [label="Access variable R|<local>/y|"];
+            37 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+            38 [label="Exit block"];
         }
-        29 [label="Exit function test1" style="filled" fillcolor=red];
+        39 [label="Exit function test1" style="filled" fillcolor=red];
     }
-    18 -> {19};
-    19 -> {20};
-    20 -> {21};
-    21 -> {22};
-    22 -> {30 24};
-    22 -> {23} [style=dotted];
-    22 -> {30} [style=dashed];
-    23 -> {24};
-    24 -> {25};
-    25 -> {26};
-    26 -> {27};
-    27 -> {28};
     28 -> {29};
+    29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {33};
+    32 -> {40 34};
+    32 -> {33} [style=dotted];
+    32 -> {40} [style=dashed];
     33 -> {34};
     34 -> {35};
-    35 -> {45 36};
+    35 -> {36};
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {40};
     40 -> {41};
-    41 -> {56};
-    41 -> {42} [style=dotted];
-    42 -> {43} [style=dotted];
-    43 -> {44} [style=dotted];
-    44 -> {54} [style=dotted];
-    45 -> {46};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
+    45 -> {55 46};
     46 -> {47};
-    47 -> {49 57};
-    47 -> {48} [style=dotted];
-    47 -> {57} [style=dashed];
-    48 -> {49} [color=green];
+    47 -> {48};
+    48 -> {49};
     49 -> {50};
-    50 -> {56};
-    50 -> {51} [style=dotted];
+    50 -> {51};
+    51 -> {66};
     51 -> {52} [style=dotted];
     52 -> {53} [style=dotted];
     53 -> {54} [style=dotted];
-    54 -> {55} [style=dotted];
-    55 -> {56} [style=dotted];
-    56 -> {23};
-    57 -> {58};
-    58 -> {59};
+    54 -> {64} [style=dotted];
+    55 -> {56};
+    56 -> {57};
+    57 -> {59 67};
+    57 -> {58} [style=dotted];
+    57 -> {67} [style=dashed];
+    58 -> {59} [color=green];
     59 -> {60};
-    60 -> {61};
-    61 -> {62};
-    62 -> {63};
-    63 -> {64};
-    64 -> {48};
-
-    subgraph cluster_16 {
-        color=red
-        65 [label="Enter function test2" style="filled" fillcolor=red];
-        subgraph cluster_17 {
-            color=blue
-            66 [label="Enter block"];
-            67 [label="Postponed enter to lambda"];
-            subgraph cluster_18 {
-                color=blue
-                75 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_19 {
-                    color=blue
-                    76 [label="Enter block"];
-                    subgraph cluster_20 {
-                        color=blue
-                        77 [label="Enter while loop"];
-                        subgraph cluster_21 {
-                            color=blue
-                            78 [label="Enter loop condition"];
-                            79 [label="Const: Boolean(true)"];
-                            80 [label="Exit loop condition"];
-                        }
-                        subgraph cluster_22 {
-                            color=blue
-                            81 [label="Enter loop block"];
-                            subgraph cluster_23 {
-                                color=blue
-                                82 [label="Enter block"];
-                                subgraph cluster_24 {
-                                    color=blue
-                                    83 [label="Try expression enter"];
-                                    subgraph cluster_25 {
-                                        color=blue
-                                        84 [label="Try main block enter"];
-                                        subgraph cluster_26 {
-                                            color=blue
-                                            85 [label="Enter block"];
-                                            86 [label="Postponed enter to lambda"];
-                                            subgraph cluster_27 {
-                                                color=blue
-                                                107 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                                                subgraph cluster_28 {
-                                                    color=blue
-                                                    108 [label="Enter block"];
-                                                    109 [label="Const: String(...)"];
-                                                    110 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
-                                                    111 [label="Exit block"];
-                                                }
-                                                112 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
-                                            }
-                                            87 [label="Postponed exit from lambda"];
-                                            88 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-                                            89 [label="Jump: ^@run R|/build|<R|kotlin/String|>(<L> = build@fun R|Lateinit<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline, kind=EXACTLY_ONCE>  {
-    this@R|special/anonymous|.R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>| = String(...)
-}
-)"];
-                                            90 [label="Stub" style="filled" fillcolor=gray];
-                                            91 [label="Exit block" style="filled" fillcolor=gray];
-                                        }
-                                        92 [label="Try main block exit" style="filled" fillcolor=gray];
-                                    }
-                                    subgraph cluster_29 {
-                                        color=blue
-                                        93 [label="Catch enter"];
-                                        94 [label="Variable declaration: e: R|kotlin/Throwable|"];
-                                        subgraph cluster_30 {
-                                            color=blue
-                                            95 [label="Enter block"];
-                                            96 [label="Exit block"];
-                                        }
-                                        97 [label="Catch exit"];
-                                    }
-                                    98 [label="Try expression exit"];
-                                }
-                                99 [label="Exit block"];
-                            }
-                            100 [label="Exit loop block"];
-                        }
-                        101 [label="Exit whileloop" style="filled" fillcolor=gray];
-                    }
-                    102 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
-                    103 [label="Throw: throw R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
-                    104 [label="Stub" style="filled" fillcolor=gray];
-                    105 [label="Exit block" style="filled" fillcolor=gray];
-                }
-                106 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
-            }
-            68 [label="Postponed exit from lambda"];
-            69 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-            70 [label="Variable declaration: lval x: R|kotlin/String|"];
-            71 [label="Access variable R|<local>/x|"];
-            72 [label="Access variable R|kotlin/String.length|"];
-            73 [label="Exit block"];
-        }
-        74 [label="Exit function test2" style="filled" fillcolor=red];
-    }
-    65 -> {66};
-    66 -> {67};
-    67 -> {75 69};
-    67 -> {68} [style=dotted];
-    67 -> {75} [style=dashed];
+    60 -> {66};
+    60 -> {61} [style=dotted];
+    61 -> {62} [style=dotted];
+    62 -> {63} [style=dotted];
+    63 -> {64} [style=dotted];
+    64 -> {65} [style=dotted];
+    65 -> {66} [style=dotted];
+    66 -> {33};
+    67 -> {68};
     68 -> {69};
     69 -> {70};
     70 -> {71};
     71 -> {72};
     72 -> {73};
     73 -> {74};
+    74 -> {58};
+
+    subgraph cluster_17 {
+        color=red
+        75 [label="Enter function test2" style="filled" fillcolor=red];
+        subgraph cluster_18 {
+            color=blue
+            76 [label="Enter block"];
+            77 [label="Postponed enter to lambda"];
+            subgraph cluster_19 {
+                color=blue
+                85 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_20 {
+                    color=blue
+                    86 [label="Enter block"];
+                    subgraph cluster_21 {
+                        color=blue
+                        87 [label="Enter while loop"];
+                        subgraph cluster_22 {
+                            color=blue
+                            88 [label="Enter loop condition"];
+                            89 [label="Const: Boolean(true)"];
+                            90 [label="Exit loop condition"];
+                        }
+                        subgraph cluster_23 {
+                            color=blue
+                            91 [label="Enter loop block"];
+                            subgraph cluster_24 {
+                                color=blue
+                                92 [label="Enter block"];
+                                subgraph cluster_25 {
+                                    color=blue
+                                    93 [label="Try expression enter"];
+                                    subgraph cluster_26 {
+                                        color=blue
+                                        94 [label="Try main block enter"];
+                                        subgraph cluster_27 {
+                                            color=blue
+                                            95 [label="Enter block"];
+                                            96 [label="Postponed enter to lambda"];
+                                            subgraph cluster_28 {
+                                                color=blue
+                                                117 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                                subgraph cluster_29 {
+                                                    color=blue
+                                                    118 [label="Enter block"];
+                                                    119 [label="Const: String(...)"];
+                                                    120 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
+                                                    121 [label="Exit block"];
+                                                }
+                                                122 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                            }
+                                            97 [label="Postponed exit from lambda"];
+                                            98 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+                                            99 [label="Jump: ^@run R|/build|<R|kotlin/String|>(<L> = build@fun R|Lateinit<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline, kind=EXACTLY_ONCE>  {
+    this@R|special/anonymous|.R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>| = String(...)
+}
+)"];
+                                            100 [label="Stub" style="filled" fillcolor=gray];
+                                            101 [label="Exit block" style="filled" fillcolor=gray];
+                                        }
+                                        102 [label="Try main block exit" style="filled" fillcolor=gray];
+                                    }
+                                    subgraph cluster_30 {
+                                        color=blue
+                                        103 [label="Catch enter"];
+                                        104 [label="Variable declaration: e: R|kotlin/Throwable|"];
+                                        subgraph cluster_31 {
+                                            color=blue
+                                            105 [label="Enter block"];
+                                            106 [label="Exit block"];
+                                        }
+                                        107 [label="Catch exit"];
+                                    }
+                                    108 [label="Try expression exit"];
+                                }
+                                109 [label="Exit block"];
+                            }
+                            110 [label="Exit loop block"];
+                        }
+                        111 [label="Exit whileloop" style="filled" fillcolor=gray];
+                    }
+                    112 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
+                    113 [label="Throw: throw R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
+                    114 [label="Stub" style="filled" fillcolor=gray];
+                    115 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                116 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            78 [label="Postponed exit from lambda"];
+            79 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+            80 [label="Variable declaration: lval x: R|kotlin/String|"];
+            81 [label="Access variable R|<local>/x|"];
+            82 [label="Access variable R|kotlin/String.length|"];
+            83 [label="Exit block"];
+        }
+        84 [label="Exit function test2" style="filled" fillcolor=red];
+    }
     75 -> {76};
     76 -> {77};
-    77 -> {78};
+    77 -> {85 79};
+    77 -> {78} [style=dotted];
+    77 -> {85} [style=dashed];
     78 -> {79};
     79 -> {80};
     80 -> {81};
-    80 -> {101} [style=dotted];
     81 -> {82};
     82 -> {83};
-    83 -> {84 93};
-    84 -> {85};
+    83 -> {84};
     85 -> {86};
-    86 -> {88 107};
-    86 -> {87} [style=dotted];
-    86 -> {107} [style=dashed];
-    87 -> {88} [color=green];
+    86 -> {87};
+    87 -> {88};
     88 -> {89};
-    89 -> {106};
-    89 -> {90} [style=dotted];
-    90 -> {91} [style=dotted];
-    91 -> {92} [style=dotted];
-    92 -> {98 93} [style=dotted];
-    93 -> {94};
-    93 -> {74}    [label=onUncaughtException];
+    89 -> {90};
+    90 -> {91};
+    90 -> {111} [style=dotted];
+    91 -> {92};
+    92 -> {93};
+    93 -> {94 103};
     94 -> {95};
     95 -> {96};
-    96 -> {97};
-    97 -> {98};
+    96 -> {98 117};
+    96 -> {97} [style=dotted];
+    96 -> {117} [style=dashed];
+    97 -> {98} [color=green];
     98 -> {99};
-    99 -> {100};
-    100 -> {78} [color=green style=dashed];
+    99 -> {116};
+    99 -> {100} [style=dotted];
+    100 -> {101} [style=dotted];
     101 -> {102} [style=dotted];
-    102 -> {103} [style=dotted];
-    103 -> {104} [style=dotted];
-    103 -> {74} [style=dotted]    [label=onUncaughtException];
-    104 -> {105} [style=dotted];
-    105 -> {106} [style=dotted];
-    106 -> {68};
+    102 -> {108 103} [style=dotted];
+    103 -> {104};
+    103 -> {84}    [label=onUncaughtException];
+    104 -> {105};
+    105 -> {106};
+    106 -> {107};
     107 -> {108};
     108 -> {109};
     109 -> {110};
-    110 -> {111};
-    111 -> {112};
-    112 -> {87};
+    110 -> {88} [color=green style=dashed];
+    111 -> {112} [style=dotted];
+    112 -> {113} [style=dotted];
+    113 -> {114} [style=dotted];
+    113 -> {84} [style=dotted]    [label=onUncaughtException];
+    114 -> {115} [style=dotted];
+    115 -> {116} [style=dotted];
+    116 -> {78};
+    117 -> {118};
+    118 -> {119};
+    119 -> {120};
+    120 -> {121};
+    121 -> {122};
+    122 -> {97};
 
-    subgraph cluster_31 {
+    subgraph cluster_32 {
         color=red
-        113 [label="Enter function test3" style="filled" fillcolor=red];
-        subgraph cluster_32 {
+        123 [label="Enter function test3" style="filled" fillcolor=red];
+        subgraph cluster_33 {
             color=blue
-            114 [label="Enter block"];
-            115 [label="Variable declaration: lvar y: R|kotlin/String?|"];
-            116 [label="Const: String()"];
-            117 [label="Assignment: R|<local>/y|"];
-            118 [label="Postponed enter to lambda"];
-            subgraph cluster_33 {
+            124 [label="Enter block"];
+            125 [label="Variable declaration: lvar y: R|kotlin/String?|"];
+            126 [label="Const: String()"];
+            127 [label="Assignment: R|<local>/y|"];
+            128 [label="Postponed enter to lambda"];
+            subgraph cluster_34 {
                 color=blue
-                127 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_34 {
+                137 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_35 {
                     color=blue
-                    128 [label="Enter block"];
-                    subgraph cluster_35 {
+                    138 [label="Enter block"];
+                    subgraph cluster_36 {
                         color=blue
-                        129 [label="Enter when"];
-                        subgraph cluster_36 {
-                            color=blue
-                            130 [label="Enter when branch condition "];
-                            131 [label="Access variable R|/p|"];
-                            132 [label="Function call: R|/p|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
-                            133 [label="Exit when branch condition"];
-                        }
+                        139 [label="Enter when"];
                         subgraph cluster_37 {
                             color=blue
-                            134 [label="Enter when branch condition else"];
-                            135 [label="Exit when branch condition"];
+                            140 [label="Enter when branch condition "];
+                            141 [label="Access variable R|/p|"];
+                            142 [label="Function call: R|/p|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
+                            143 [label="Exit when branch condition"];
                         }
-                        136 [label="Enter when branch result"];
                         subgraph cluster_38 {
                             color=blue
-                            137 [label="Enter block"];
-                            138 [label="Const: String()"];
-                            139 [label="Jump: ^@run String()"];
-                            140 [label="Stub" style="filled" fillcolor=gray];
-                            141 [label="Exit block" style="filled" fillcolor=gray];
+                            144 [label="Enter when branch condition else"];
+                            145 [label="Exit when branch condition"];
                         }
-                        142 [label="Exit when branch result" style="filled" fillcolor=gray];
-                        143 [label="Enter when branch result"];
+                        146 [label="Enter when branch result"];
                         subgraph cluster_39 {
                             color=blue
-                            144 [label="Enter block"];
-                            145 [label="Postponed enter to lambda"];
-                            subgraph cluster_40 {
+                            147 [label="Enter block"];
+                            148 [label="Const: String()"];
+                            149 [label="Jump: ^@run String()"];
+                            150 [label="Stub" style="filled" fillcolor=gray];
+                            151 [label="Exit block" style="filled" fillcolor=gray];
+                        }
+                        152 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        153 [label="Enter when branch result"];
+                        subgraph cluster_40 {
+                            color=blue
+                            154 [label="Enter block"];
+                            155 [label="Postponed enter to lambda"];
+                            subgraph cluster_41 {
                                 color=blue
-                                155 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                                subgraph cluster_41 {
+                                165 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                subgraph cluster_42 {
                                     color=blue
-                                    156 [label="Enter block"];
-                                    157 [label="Const: Null(null)"];
-                                    158 [label="Assignment: R|<local>/y|"];
-                                    159 [label="Const: String(...)"];
-                                    160 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
-                                    161 [label="Exit block"];
+                                    166 [label="Enter block"];
+                                    167 [label="Const: Null(null)"];
+                                    168 [label="Assignment: R|<local>/y|"];
+                                    169 [label="Const: String(...)"];
+                                    170 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
+                                    171 [label="Exit block"];
                                 }
-                                162 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                172 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                             }
-                            146 [label="Postponed exit from lambda"];
-                            147 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-                            148 [label="Jump: ^@run R|/build|<R|kotlin/String|>(<L> = build@fun R|Lateinit<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline, kind=EXACTLY_ONCE>  {
+                            156 [label="Postponed exit from lambda"];
+                            157 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+                            158 [label="Jump: ^@run R|/build|<R|kotlin/String|>(<L> = build@fun R|Lateinit<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline, kind=EXACTLY_ONCE>  {
     R|<local>/y| = Null(null)
     this@R|special/anonymous|.R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>| = String(...)
 }
 )"];
-                            149 [label="Stub" style="filled" fillcolor=gray];
-                            150 [label="Exit block" style="filled" fillcolor=gray];
+                            159 [label="Stub" style="filled" fillcolor=gray];
+                            160 [label="Exit block" style="filled" fillcolor=gray];
                         }
-                        151 [label="Exit when branch result" style="filled" fillcolor=gray];
-                        152 [label="Exit when" style="filled" fillcolor=gray];
+                        161 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        162 [label="Exit when" style="filled" fillcolor=gray];
                     }
-                    153 [label="Exit block" style="filled" fillcolor=gray];
+                    163 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                154 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                164 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            119 [label="Postponed exit from lambda"];
-            120 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-            121 [label="Variable declaration: lval x: R|kotlin/String|"];
-            122 [label="Access variable R|<local>/y|"];
-            123 [label="Smart cast: R|<local>/y|"];
-            124 [label="Access variable R|kotlin/String.length|"];
-            125 [label="Exit block"];
+            129 [label="Postponed exit from lambda"];
+            130 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+            131 [label="Variable declaration: lval x: R|kotlin/String|"];
+            132 [label="Access variable R|<local>/y|"];
+            133 [label="Smart cast: R|<local>/y|"];
+            134 [label="Access variable R|kotlin/String.length|"];
+            135 [label="Exit block"];
         }
-        126 [label="Exit function test3" style="filled" fillcolor=red];
+        136 [label="Exit function test3" style="filled" fillcolor=red];
     }
-    113 -> {114};
-    114 -> {115};
-    115 -> {116};
-    116 -> {117};
-    117 -> {118};
-    118 -> {127 120};
-    118 -> {119} [style=dotted];
-    118 -> {127} [style=dashed];
-    119 -> {120};
-    120 -> {121};
-    121 -> {122};
-    122 -> {123};
     123 -> {124};
     124 -> {125};
     125 -> {126};
+    126 -> {127};
     127 -> {128};
-    128 -> {129};
+    128 -> {137 130};
+    128 -> {129} [style=dotted];
+    128 -> {137} [style=dashed];
     129 -> {130};
     130 -> {131};
     131 -> {132};
     132 -> {133};
-    133 -> {143 134};
+    133 -> {134};
     134 -> {135};
     135 -> {136};
-    136 -> {137};
     137 -> {138};
     138 -> {139};
-    139 -> {154};
-    139 -> {140} [style=dotted];
-    140 -> {141} [style=dotted];
-    141 -> {142} [style=dotted];
-    142 -> {152} [style=dotted];
-    143 -> {144};
+    139 -> {140};
+    140 -> {141};
+    141 -> {142};
+    142 -> {143};
+    143 -> {153 144};
     144 -> {145};
-    145 -> {147 155};
-    145 -> {146} [style=dotted];
-    145 -> {155} [style=dashed];
-    146 -> {147} [color=green];
+    145 -> {146};
+    146 -> {147};
     147 -> {148};
-    148 -> {154};
-    148 -> {149} [style=dotted];
+    148 -> {149};
+    149 -> {164};
     149 -> {150} [style=dotted];
     150 -> {151} [style=dotted];
     151 -> {152} [style=dotted];
-    152 -> {153} [style=dotted];
-    153 -> {154} [style=dotted];
-    154 -> {119};
-    155 -> {156};
-    156 -> {157};
+    152 -> {162} [style=dotted];
+    153 -> {154};
+    154 -> {155};
+    155 -> {157 165};
+    155 -> {156} [style=dotted];
+    155 -> {165} [style=dashed];
+    156 -> {157} [color=green];
     157 -> {158};
-    158 -> {159};
-    159 -> {160};
-    160 -> {161};
-    161 -> {162};
-    162 -> {146};
+    158 -> {164};
+    158 -> {159} [style=dotted];
+    159 -> {160} [style=dotted];
+    160 -> {161} [style=dotted];
+    161 -> {162} [style=dotted];
+    162 -> {163} [style=dotted];
+    163 -> {164} [style=dotted];
+    164 -> {129};
+    165 -> {166};
+    166 -> {167};
+    167 -> {168};
+    168 -> {169};
+    169 -> {170};
+    170 -> {171};
+    171 -> {172};
+    172 -> {156};
 
 }

@@ -5193,6 +5193,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
                     }
 
+                    @Test
+                    @TestMetadata("noOptIn.kt")
+                    public void testNoOptIn() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/noOptIn.kt");
+                    }
+
                     @Nested
                     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace")
                     @TestDataPath("$PROJECT_ROOT")
@@ -5246,6 +5252,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                         @TestMetadata("propertyGetter.kt")
                         public void testPropertyGetter() throws Exception {
                             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/propertyGetter.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("redundantConditions.kt")
+                        public void testRedundantConditions() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/redundantConditions.kt");
                         }
                     }
                 }

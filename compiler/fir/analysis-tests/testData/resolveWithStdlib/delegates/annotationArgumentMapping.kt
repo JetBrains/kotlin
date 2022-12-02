@@ -8,6 +8,7 @@ class FirAnnotationArgumentMappingBuilder {
     }
 }
 
+@OptIn(ExperimentalContracts::class)
 fun buildAnnotationArgumentMapping(init: FirAnnotationArgumentMappingBuilder.() -> Unit): FirAnnotationArgumentMapping {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
