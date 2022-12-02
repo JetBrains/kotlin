@@ -34,6 +34,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.internal.component.local.model.DefaultLocalComponentGraphResolveState
 import org.gradle.internal.component.model.AttributeConfigurationSelector
+import org.gradle.internal.component.model.ComponentResolveMetadata
 import org.gradle.internal.component.model.ConfigurationMetadata
 import org.gradle.internal.component.model.IvyArtifactName
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.nio.file.Path
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.functions
 import kotlin.reflect.full.staticFunctions
 
 data class AndroidDependency(
@@ -320,8 +322,12 @@ object AndroidDependencyResolver {
         attributes: AttributeContainer,
         attributesSchema: AttributesSchema,
     ) = projectDependencies.mapNotNull { projectDependency ->
-        val rootComponentMetaData = (projectDependency.findProjectConfiguration() as? ConfigurationInternal)?.toRootComponentMetaData()
-            ?: return@mapNotNull null
+        val configurationInternal = projectDependency.findProjectConfiguration() as? ConfigurationInternal ?: return@mapNotNull null
+
+        @Suppress("UNCHECKED_CAST") val toRootComponentMetadata =
+            (configurationInternal::class.functions.find { it.name == "toRootComponentMetaData" } as? KFunction<ComponentResolveMetadata>
+                ?: error("Method ConfigurationInternal.toRootComponentMetaData does not exist"))
+        val rootComponentMetaData = toRootComponentMetadata.call(configurationInternal)
 
         @Suppress("UNCHECKED_CAST") val selectConfiguration =
             AttributeConfigurationSelector::class.staticFunctions.find { it.name == "selectConfigurationUsingAttributeMatching" } as? KFunction<ConfigurationMetadata>
