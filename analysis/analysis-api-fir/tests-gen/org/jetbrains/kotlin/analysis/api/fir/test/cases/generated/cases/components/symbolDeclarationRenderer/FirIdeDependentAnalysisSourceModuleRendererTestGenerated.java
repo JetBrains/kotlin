@@ -71,6 +71,12 @@ public class FirIdeDependentAnalysisSourceModuleRendererTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("contextReceiver.kt")
+    public void testContextReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/contextReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("delegates.kt")
     public void testDelegates() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/delegates.kt");
@@ -227,6 +233,12 @@ public class FirIdeDependentAnalysisSourceModuleRendererTestGenerated extends Ab
         @TestMetadata("annotationOnTypesWithComplexExpression.kt")
         public void testAnnotationOnTypesWithComplexExpression() throws Exception {
             runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotationOnTypesWithComplexExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionTypes.kt")
+        public void testContextFunctionTypes() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/contextFunctionTypes.kt");
         }
     }
 }

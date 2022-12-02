@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.impl
 
 import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtCallableReturnTypeFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRecommendedRendererCodeStyle
@@ -29,6 +30,7 @@ public object KtDeclarationRendererForSource {
     public val WITH_QUALIFIED_NAMES: KtDeclarationRenderer = KtDeclarationRenderer {
         nameRenderer = KtDeclarationNameRenderer.QUOTED
         keywordRender = KtKeywordRenderer.AS_WORD
+        contextReceiversRenderer = KtContextReceiversRendererForSource.WITH_LABELS
         codeStyle = KtRecommendedRendererCodeStyle
         modifiersRenderer = KtDeclarationModifiersRendererForSource.NO_IMPLICIT_MODIFIERS
         classifierBodyRenderer = KtClassifierBodyRenderer.NO_BODY
@@ -87,4 +89,3 @@ public object KtDeclarationRendererForSource {
         typeRenderer = KtTypeRendererForSource.WITH_SHORT_NAMES
     }
 }
-

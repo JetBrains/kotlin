@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classi
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsAndModifiers
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
@@ -32,7 +32,7 @@ public interface KtNamedClassOrObjectSymbolRenderer {
             }
 
             " ".separated(
-                { renderAnnotationsAndModifiers(symbol, printer, keywords) },
+                { renderAnnotationsModifiersAndContextReceivers(symbol, printer, keywords) },
                 {
                     val primaryConstructor =
                         bodyMemberScopeProvider.getMemberScope(symbol).filterIsInstance<KtConstructorSymbol>()
@@ -41,7 +41,7 @@ public interface KtNamedClassOrObjectSymbolRenderer {
                     nameRenderer.renderName(symbol, printer)
                     typeParametersRenderer.renderTypeParameters(symbol, printer)
                     if (primaryConstructor != null) {
-                        val annotationsPrinted = checkIfPrinted { renderAnnotationsAndModifiers(primaryConstructor, printer) }
+                        val annotationsPrinted = checkIfPrinted { renderAnnotationsModifiersAndContextReceivers(primaryConstructor, printer) }
                         if (annotationsPrinted) {
                             withPrefix(" ") {
                                 keywordRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, primaryConstructor, printer)

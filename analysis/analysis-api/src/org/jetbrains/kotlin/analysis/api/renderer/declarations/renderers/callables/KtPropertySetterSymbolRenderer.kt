@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callab
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsAndModifiers
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -21,7 +21,7 @@ public interface KtPropertySetterSymbolRenderer {
         override fun renderSymbol(symbol: KtPropertySetterSymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
                 {
-                    renderAnnotationsAndModifiers(symbol, printer, KtTokens.SET_KEYWORD)
+                    renderAnnotationsModifiersAndContextReceivers(symbol, printer, KtTokens.SET_KEYWORD)
                     valueParametersRenderer.renderValueParameters(symbol, printer)
                 },
                 { accessorBodyRenderer.renderBody(symbol, printer) },

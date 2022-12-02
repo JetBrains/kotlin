@@ -28,7 +28,10 @@ interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
             KtFe10AnnotationsList.create(
                 type.annotations,
                 token,
-                ignoreAnnotations = setOf(StandardClassIds.Annotations.ExtensionFunctionType)
+                ignoreAnnotations = setOf(
+                    StandardClassIds.Annotations.ExtensionFunctionType,
+                    StandardClassIds.Annotations.ContextFunctionTypeParams,
+                )
             )
         }
 

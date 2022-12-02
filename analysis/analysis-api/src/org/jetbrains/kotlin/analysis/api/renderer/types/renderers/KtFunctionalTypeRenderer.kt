@@ -25,6 +25,11 @@ public interface KtFunctionalTypeRenderer {
             if (annotationsRendered || type.nullability == KtTypeNullability.NULLABLE) append("(")
             " ".separated(
                 {
+                    if (type.hasContextReceivers) {
+                        contextReceiversRenderer.renderContextReceivers(type, printer)
+                    }
+                },
+                {
                     if (type.isSuspend) {
                         keywordRenderer.renderKeyword(KtTokens.SUSPEND_KEYWORD, type, printer)
                     }

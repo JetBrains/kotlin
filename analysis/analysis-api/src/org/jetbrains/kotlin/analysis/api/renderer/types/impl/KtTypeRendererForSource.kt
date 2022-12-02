@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.types.impl
 
 import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
@@ -29,6 +30,7 @@ public object KtTypeRendererForSource {
         typeApproximator = KtRendererTypeApproximator.TO_DENNOTABLE
         typeProjectionRenderer = KtTypeProjectionRenderer.WITH_VARIANCE
         annotationsRenderer = KtAnnotationRendererForSource.WITH_QUALIFIED_NAMES
+        contextReceiversRenderer = KtContextReceiversRendererForSource.WITH_LABELS
         keywordRenderer = KtKeywordRenderer.AS_WORD
     }
 

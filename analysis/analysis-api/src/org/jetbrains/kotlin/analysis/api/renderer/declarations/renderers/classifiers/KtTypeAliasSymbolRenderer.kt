@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classi
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsAndModifiers
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -20,7 +20,7 @@ public interface KtTypeAliasSymbolRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderSymbol(symbol: KtTypeAliasSymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
-                { renderAnnotationsAndModifiers(symbol, printer, KtTokens.TYPE_ALIAS_KEYWORD) },
+                { renderAnnotationsModifiersAndContextReceivers(symbol, printer, KtTokens.TYPE_ALIAS_KEYWORD) },
                 {
                     " = ".separated(
                         {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callab
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsAndModifiers
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
@@ -19,7 +19,7 @@ public interface KtEnumEntrySymbolRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderSymbol(symbol: KtEnumEntrySymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
-                { renderAnnotationsAndModifiers(symbol, printer) },
+                { renderAnnotationsModifiersAndContextReceivers(symbol, printer) },
                 { nameRenderer.renderName(symbol, printer) },
                 { classifierBodyRenderer.renderBody(symbol, printer) },
             )

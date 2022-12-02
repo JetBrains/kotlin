@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KtDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 public class KtDeclarationRenderer private constructor(
     public val nameRenderer: KtDeclarationNameRenderer,
     public val keywordRenderer: KtKeywordRenderer,
+    public val contextReceiversRenderer: KtContextReceiversRenderer,
     public val codeStyle: KtRendererCodeStyle,
     public val typeRenderer: KtTypeRenderer,
     public val annotationRenderer: KtAnnotationRenderer,
@@ -110,6 +112,7 @@ public class KtDeclarationRenderer private constructor(
         return KtDeclarationRenderer {
             this.nameRenderer = renderer.nameRenderer
             this.keywordRender = renderer.keywordRenderer
+            this.contextReceiversRenderer = renderer.contextReceiversRenderer
             this.codeStyle = renderer.codeStyle
             this.typeRenderer = renderer.typeRenderer
             this.annotationRenderer = renderer.annotationRenderer
@@ -174,6 +177,7 @@ public class KtDeclarationRenderer private constructor(
     public open class Builder {
         public lateinit var returnTypeFilter: KtCallableReturnTypeFilter
         public lateinit var nameRenderer: KtDeclarationNameRenderer
+        public lateinit var contextReceiversRenderer: KtContextReceiversRenderer
         public lateinit var keywordRender: KtKeywordRenderer
         public lateinit var codeStyle: KtRendererCodeStyle
         public lateinit var typeRenderer: KtTypeRenderer
@@ -229,6 +233,7 @@ public class KtDeclarationRenderer private constructor(
         public fun build(): KtDeclarationRenderer = KtDeclarationRenderer(
             nameRenderer,
             keywordRender,
+            contextReceiversRenderer,
             codeStyle,
             typeRenderer,
             annotationRenderer,
