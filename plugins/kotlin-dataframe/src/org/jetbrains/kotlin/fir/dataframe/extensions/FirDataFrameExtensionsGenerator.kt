@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.dataframe.GeneratedNames
 import org.jetbrains.kotlin.fir.dataframe.Names
@@ -88,9 +89,33 @@ class FirDataFrameExtensionsGenerator(
         return when (owner) {
             null -> fields.filter { it.callableId == callableId }.flatMap { (owner, property, callableId) ->
 
-                val resolvedReturnTypeRef = property.resolvedReturnTypeRef
+                var resolvedReturnTypeRef = property.resolvedReturnTypeRef
+                val DATA_SCHEMA_CLASS_ID = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("DataSchema"))
+
                 val propertyName = property.name
                 val marker = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
+
+                val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.classId?.equals(Names.DATA_ROW_CLASS_ID) == true) {
+                    resolvedReturnTypeRef.coneType.typeArguments[0]
+                } else if (resolvedReturnTypeRef.toClassLikeSymbol(session)?.hasAnnotation(DATA_SCHEMA_CLASS_ID) == true) {
+                    resolvedReturnTypeRef.coneType
+                } else {
+                    null
+                }
+
+                val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
+                if (
+                    resolvedReturnTypeRef.type.classId?.equals(LIST) == true &&
+                    (resolvedReturnTypeRef.type.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(DATA_SCHEMA_CLASS_ID) == true
+                ) {
+                    require(columnGroupProjection == null)
+                    resolvedReturnTypeRef = ConeClassLikeTypeImpl(
+                        ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
+                        typeArguments = arrayOf(resolvedReturnTypeRef.type.typeArguments[0]),
+                        isNullable = false
+                    ).toFirResolvedTypeRef()
+                }
+
                 val rowExtension = generateExtensionProperty(
                     callableId = callableId,
                     receiverType = ConeClassLikeTypeImpl(
@@ -100,11 +125,12 @@ class FirDataFrameExtensionsGenerator(
                     ), propertyName = propertyName,
                     returnTypeRef = resolvedReturnTypeRef
                 )
+
                 val columnReturnType = when {
-                    resolvedReturnTypeRef.coneType.classId?.equals(Names.DATA_ROW_CLASS_ID) == true -> {
+                    columnGroupProjection != null -> {
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.COLUM_GROUP_CLASS_ID),
-                            typeArguments = arrayOf(resolvedReturnTypeRef.coneType.typeArguments[0]),
+                            typeArguments = arrayOf(columnGroupProjection),
                             isNullable = false
                         ).toFirResolvedTypeRef()
                     }
