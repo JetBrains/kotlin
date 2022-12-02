@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -79,8 +81,23 @@ internal abstract class SymbolLightMethodBase(
     abstract override fun hasTypeParameters(): Boolean
     abstract override fun getTypeParameterList(): PsiTypeParameterList?
 
-    override fun getThrowsList(): PsiReferenceList =
-        KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) //TODO()
+    private class SymbolLightThrowsReferencesListBuilder(
+        private val parentMethod: PsiMethod
+    ) : KotlinLightReferenceListBuilder(parentMethod.manager, parentMethod.language, PsiReferenceList.Role.THROWS_LIST) {
+        override fun getParent(): PsiElement = parentMethod
+
+        override fun getContainingFile(): PsiFile = parentMethod.containingFile
+    }
+
+    private val _throwsList by lazyPub {
+        val builder = SymbolLightThrowsReferencesListBuilder(this)
+        computeThrowsList(builder)
+        builder
+    }
+
+    protected open fun computeThrowsList(builder: LightReferenceListBuilder) {}
+
+    override fun getThrowsList(): PsiReferenceList = _throwsList
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 

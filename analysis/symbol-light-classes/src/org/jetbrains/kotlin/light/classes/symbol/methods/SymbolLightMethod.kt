@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiParameterList
+import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeThrowsList
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
@@ -119,6 +121,17 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     override fun getParameterList(): PsiParameterList = _parametersList
+
+    override fun computeThrowsList(builder: LightReferenceListBuilder) {
+        withFunctionSymbol { functionSymbol ->
+            functionSymbol.computeThrowsList(
+                builder,
+                annotationUseSiteTarget = null,
+                this@SymbolLightMethod,
+                containingClass
+            )
+        }
+    }
 
     override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: functionSymbolPointer.isValid(ktModule)
 
