@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFileAnnotationsResolveTransformer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProviderInterceptor
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTra
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
@@ -61,7 +61,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 )
             }
         } catch (e: Throwable) {
-            rethrowWithDetails(e, firFile, fromPhase, toPhase = null)
+            handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, firFile, fromPhase, toPhase = null)
         }
     }
 
@@ -142,7 +142,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 )
             }
         } catch (e: Throwable) {
-            rethrowWithDetails(e, firFile, fromPhase, toPhase)
+            handleExceptionFromResolve(e,moduleComponents.sessionInvalidator, firFile, fromPhase, toPhase)
         }
     }
 
@@ -243,7 +243,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         try {
             doLazyResolveDeclaration(firDeclarationToResolve, scopeSession, toPhase, checkPCE)
         } catch (e: Throwable) {
-            rethrowWithDetails(e, firDeclarationToResolve, fromPhase, toPhase)
+            handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, firDeclarationToResolve, fromPhase, toPhase)
         }
     }
 
@@ -410,12 +410,14 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 }
 
-private fun rethrowWithDetails(
+private fun handleExceptionFromResolve(
     e: Throwable,
+    sessionInvalidator: LLFirSessionInvalidator,
     firDeclarationToResolve: FirDeclaration,
     fromPhase: FirResolvePhase,
     toPhase: FirResolvePhase?
 ): Nothing {
+    sessionInvalidator.invalidate(firDeclarationToResolve.llFirSession)
     if (shouldIjPlatformExceptionBeRethrown(e)) throw e
     buildErrorWithAttachment(
         buildString {

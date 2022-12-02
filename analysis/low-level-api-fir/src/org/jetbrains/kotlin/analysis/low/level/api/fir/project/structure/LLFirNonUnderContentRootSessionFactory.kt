@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProvidersBySessions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -54,7 +54,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val globalResolveComponents = LLFirGlobalResolveComponents(project)
-        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
         val contentScope = module.contentScope
         val session = LLFirNonUnderContentRootSession(module, project, components, builtinsSession.builtinTypes)
         components.session = session
@@ -79,7 +79,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             )
 
             register(FirProvider::class, provider)
-            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
                 add(builtinsSession)

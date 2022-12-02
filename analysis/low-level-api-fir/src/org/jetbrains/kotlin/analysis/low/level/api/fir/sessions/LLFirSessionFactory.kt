@@ -9,11 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.registerIdeComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.project.structure.*
@@ -70,7 +68,7 @@ internal object LLFirSessionFactory {
 
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
-        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
 
         val contentScope = module.contentScope
         val session = LLFirSourcesSession(
@@ -103,7 +101,7 @@ internal object LLFirSessionFactory {
             )
 
             register(FirProvider::class, provider)
-            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             registerCompilerPluginServices(contentScope, project, module)
             registerCompilerPluginExtensions(project, module)
@@ -181,7 +179,7 @@ internal object LLFirSessionFactory {
         }
 
         val scopeProvider = FirKotlinScopeProvider()
-        val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider)
+        val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider, sessionInvalidator)
 
         val contentScope = module.contentScope
         val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, project, components, builtinSession.builtinTypes)
@@ -209,7 +207,7 @@ internal object LLFirSessionFactory {
 
             register(FirProvider::class, provider)
 
-            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
             val annotationsResolver = project.createAnnotationResolver(contentScope)
