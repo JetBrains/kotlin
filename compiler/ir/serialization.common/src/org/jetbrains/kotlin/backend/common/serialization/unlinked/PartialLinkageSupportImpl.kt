@@ -54,6 +54,7 @@ internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: Ir
             stubGenerator.getDeclaration(symbol)
         }
 
+        // Patch the IR tree.
         patchIrTree()
 
         // Patch the stubs which were not patched yet.
