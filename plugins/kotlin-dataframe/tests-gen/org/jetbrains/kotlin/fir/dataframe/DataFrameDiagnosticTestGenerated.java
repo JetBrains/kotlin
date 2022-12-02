@@ -64,6 +64,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
+    @TestMetadata("nestedDataSchemaCodegen.kt")
+    public void testNestedDataSchemaCodegen() throws Exception {
+        runTest("testData/diagnostics/nestedDataSchemaCodegen.kt");
+    }
+
+    @Test
     @TestMetadata("read.kt")
     public void testRead() throws Exception {
         runTest("testData/diagnostics/read.kt");
