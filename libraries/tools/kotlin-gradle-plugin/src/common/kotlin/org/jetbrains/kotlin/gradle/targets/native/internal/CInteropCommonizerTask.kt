@@ -128,9 +128,7 @@ internal open class CInteropCommonizerTask
     private val groupedCommonizerDependencies: Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>> by lazy {
         val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazy emptyMap()
 
-        val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet ->
-            project.getCommonizerTarget(sourceSet)
-        }
+        val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> getCommonizerTarget(sourceSet) }
         val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
             CInteropCommonizerDependent.from(project, sourceSet)?.let { findInteropsGroup(it) }
         }

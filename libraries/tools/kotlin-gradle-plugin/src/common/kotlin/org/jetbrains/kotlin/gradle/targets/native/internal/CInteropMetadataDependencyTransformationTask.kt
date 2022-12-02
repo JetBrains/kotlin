@@ -101,7 +101,7 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 }
 
 private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
-    onlyIf { project.getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
+    onlyIf { getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
 }
 
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
@@ -203,7 +203,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @TaskAction
     protected fun transformDependencies() {
         cleaning.cleanOutputDirectory(outputDirectory)
-        if (project.getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
+        if (getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
         chooseVisibleSourceSets.forEach(::materializeMetadata)
     }
 

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -28,7 +27,7 @@ import java.io.File
 
 object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        val commonizerTarget = sourceSet.project.getCommonizerTarget(sourceSet) as? LeafCommonizerTarget ?: return emptySet()
+        val commonizerTarget = getCommonizerTarget(sourceSet) as? LeafCommonizerTarget ?: return emptySet()
         val konanTarget = commonizerTarget.konanTargetOrNull ?: return emptySet()
 
         return sourceSet.project.konanDistribution.platformLibsDir.resolve(konanTarget.name)
