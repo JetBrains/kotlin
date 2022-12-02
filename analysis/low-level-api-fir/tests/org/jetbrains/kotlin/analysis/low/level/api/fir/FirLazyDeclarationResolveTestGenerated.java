@@ -49,6 +49,12 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     }
 
     @Test
+    @TestMetadata("enumEntry.kt")
+    public void testEnumEntry() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/enumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithParameter.kt")
     public void testFunctionWithParameter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/functionWithParameter.kt");

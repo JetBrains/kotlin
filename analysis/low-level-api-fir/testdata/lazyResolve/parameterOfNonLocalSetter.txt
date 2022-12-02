@@ -92,8 +92,8 @@ FILE: parameterOfNonLocalSetter.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
@@ -105,8 +105,8 @@ FILE: parameterOfNonLocalSetter.kt
 
 CONTRACTS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 

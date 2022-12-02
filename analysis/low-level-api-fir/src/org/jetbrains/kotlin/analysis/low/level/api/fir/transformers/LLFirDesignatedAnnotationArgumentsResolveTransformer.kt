@@ -35,7 +35,9 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
                 }
             }
             is FirRegularClass -> {
-                moveNextDeclaration(designationIterator)
+                context.withRegularClass(nextElement, components) {
+                    moveNextDeclaration(designationIterator)
+                }
             }
             is FirEnumEntry -> {
                 context.forEnumEntry {
