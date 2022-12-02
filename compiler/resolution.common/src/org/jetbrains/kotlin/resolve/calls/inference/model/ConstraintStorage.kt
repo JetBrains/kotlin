@@ -86,6 +86,10 @@ class Constraint(
     val position: IncorporationConstraintPosition,
     val typeHashCode: Int = type.hashCode(),
     val derivedFrom: Set<TypeVariableMarker>,
+    // This value is true for constraints of the form `Nothing? <: Tv`
+    // that have been created during incorporation phase of the constraint of the form `Kv? <: Tv` (where `Kv` another type variable).
+    // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that variable is ready for completion).
+    // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
 ) {
