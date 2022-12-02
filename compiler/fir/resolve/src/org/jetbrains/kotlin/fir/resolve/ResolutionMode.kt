@@ -27,9 +27,8 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
         override fun toString(): String = "ReceiverResolution"
     }
 
-    // TODO: it's better not to use WithExpectedType(FirImplicitTypeRef)
     class WithExpectedType(
-        val expectedTypeRef: FirTypeRef,
+        val expectedTypeRef: FirResolvedTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,
@@ -79,13 +78,13 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast
     else -> null
 }
 
-fun withExpectedType(expectedTypeRef: FirTypeRef?, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode =
-    expectedTypeRef?.let {
-        ResolutionMode.WithExpectedType(
-            it,
-            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
-        )
-    } ?: ResolutionMode.ContextDependent
+fun withExpectedType(expectedTypeRef: FirTypeRef, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode = when {
+    expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
+        expectedTypeRef,
+        expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
+    )
+    else -> ResolutionMode.ContextIndependent
+}
 
 @JvmName("withExpectedTypeNullable")
 fun withExpectedType(coneType: ConeKotlinType?, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
