@@ -61,7 +61,7 @@ internal object PartialLinkageUtils {
             override fun contains(declaration: IrDeclaration) = declaration.moduleDescriptor == module
 
             companion object {
-                inline val IrDeclaration.moduleDescriptor: ModuleDescriptor? get() = if (this is IrLazyDeclarationBase) descriptor.module else null
+                inline val IrDeclaration.moduleDescriptor: ModuleDescriptor? get() = (this as? IrLazyDeclarationBase)?.descriptor?.module
             }
         }
 
