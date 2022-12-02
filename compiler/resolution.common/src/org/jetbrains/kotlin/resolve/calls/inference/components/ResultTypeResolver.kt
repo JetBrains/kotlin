@@ -146,15 +146,33 @@ class ResultTypeResolver(
         for (constraint in filteredConstraints) {
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
-        if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) {
-            if (resultType.isNullableType() && checkSingleLowerNullabilityConstraint(filteredConstraints)) return false
-            if (isReified(variableWithConstraints.typeVariable)) return false
-        }
 
-        return true
+        // if resultType is not Nothing
+        if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) return true
+
+        // Nothing and Nothing? is not allowed for reified parameters
+        if (isReified(variableWithConstraints.typeVariable)) return false
+
+        // It's ok to fix result to non-nullable Nothing and parameter is not reified
+        if (!resultType.isNullableType()) return true
+
+        return isNullableNothingMayBeConsideredAsSuitableResultType(filteredConstraints)
     }
 
-    private fun checkSingleLowerNullabilityConstraint(constraints: List<Constraint>): Boolean {
+    private fun Context.isNullableNothingMayBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
+        isK2 -> allUpperConstraintsAreFromBounds(constraints)
+        else -> !isThereSingleLowerNullabilityConstraint(constraints)
+    }
+
+    private fun allUpperConstraintsAreFromBounds(constraints: List<Constraint>): Boolean =
+        constraints.all {
+            !it.kind.isUpper() || isFromTypeParameterUpperBound(it)
+        }
+
+    private fun isFromTypeParameterUpperBound(constraint: Constraint): Boolean =
+        constraint.position.isFromDeclaredUpperBound || constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
+
+    private fun isThereSingleLowerNullabilityConstraint(constraints: List<Constraint>): Boolean {
         return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }
 
