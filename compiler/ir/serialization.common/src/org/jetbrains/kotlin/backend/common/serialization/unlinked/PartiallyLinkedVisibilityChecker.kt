@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
+@Suppress("unused", "UNUSED_PARAMETER")
 internal object PartiallyLinkedVisibilityChecker {
     fun checkVisibilityInFile(declaration: IrDeclarationWithVisibility, file: PartialLinkageUtils.File): Boolean {
         if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
