@@ -35,7 +35,7 @@ interface PartialLinkageSupport {
      * to throw an appropriate IrLinkageError on access.
      */
     fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>)
-    fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrDeclaration>)
+    fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration)
 
     companion object {
         val DISABLED = object : PartialLinkageSupport {
@@ -43,7 +43,7 @@ interface PartialLinkageSupport {
             override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit
-            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrDeclaration>) = Unit
+            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) = Unit
         }
     }
 }

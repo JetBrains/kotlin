@@ -44,8 +44,8 @@ internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: Ir
         generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchModuleFragments(roots()) }
     }
 
-    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrDeclaration>) {
-        generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchDeclarations(roots()) }
+    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) {
+        generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchDeclarations(listOf(root)) }
     }
 
     private fun generateStubsAndPatchUsagesInternal(symbolTable: SymbolTable, patchIrTree: () -> Unit) {

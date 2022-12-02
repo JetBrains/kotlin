@@ -742,7 +742,7 @@ internal class KonanIrLinker(
 
             fakeOverrideBuilder.provideFakeOverrides()
 
-            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) { listOf(function) }
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable, function)
 
             linker.checkNoUnboundSymbols(
                     symbolTable,
