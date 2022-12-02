@@ -8,10 +8,7 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
-import kotlin.reflect.KProperty0;
-import kotlin.reflect.KProperty1;
 
-import static kotlin.jvm.internal.SyntheticAccessorsKt.checkArguments;
 import static kotlin.jvm.internal.SyntheticAccessorsKt.reportNoReflectionForSyntheticJavaProperties;
 
 @SuppressWarnings("rawtypes")
@@ -93,21 +90,5 @@ public abstract class PropertyReference extends CallableReference implements KPr
         }
 
         return "property " + getName() + Reflection.REFLECTION_NOT_AVAILABLE;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object call(Object... args) {
-        if (syntheticJavaProperty) {
-            if (this instanceof KProperty0) {
-                checkArguments(0, args);
-                return ((KProperty0)this).get();
-            }
-            if (this instanceof KProperty1) {
-                checkArguments(1, args);
-                return ((KProperty1)this).get(args[0]);
-            }
-        }
-        return super.call(args);
     }
 }

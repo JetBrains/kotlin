@@ -10,7 +10,8 @@ import kotlin.reflect.*
 
 internal sealed class SyntheticJavaPropertyAccessor<out P, out V, out R>(override val property: P) :
     KProperty.Accessor<V>, KFunction<R> where P : KProperty<V> {
-    override val isInline: Boolean by NoReflection
+    final override val name: String by NoReflection
+    final override val isInline: Boolean by NoReflection
     final override val isExternal: Boolean by NoReflection
     final override val isOperator: Boolean by NoReflection
     final override val isInfix: Boolean by NoReflection
@@ -31,17 +32,11 @@ internal sealed class SyntheticJavaPropertyAccessor<out P, out V, out R>(overrid
 
 internal sealed class SyntheticJavaPropertyGetter<out P, out V>(property: P) :
     SyntheticJavaPropertyAccessor<P, V, V>(property) where P : KProperty<V> {
-    final override val name: String
-        get() = "get-${property.name}"
-
     final override fun toString(): String = "getter of $property"
 }
 
 internal sealed class SyntheticJavaPropertySetter<out P, out V>(property: P) :
     SyntheticJavaPropertyAccessor<P, V, Unit>(property) where P : KProperty<V> {
-    final override val name: String
-        get() = "set-${property.name}"
-
     final override fun toString(): String = "setter of $property"
 }
 

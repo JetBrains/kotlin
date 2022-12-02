@@ -8,6 +8,8 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.reflect.*;
 
+import static kotlin.jvm.internal.SyntheticAccessorsKt.checkArguments;
+
 @SuppressWarnings({"rawtypes", "unused", "NullableProblems"})
 public abstract class MutablePropertyReference0 extends MutablePropertyReference implements KMutableProperty0 {
     public MutablePropertyReference0() {
@@ -49,5 +51,14 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     @SinceKotlin(version = "1.1")
     public Object getDelegate() {
         return ((KMutableProperty0) getReflected()).getDelegate();
+    }
+
+    @Override
+    public Object call(Object... args) {
+        if (syntheticJavaProperty) {
+            checkArguments(0, args);
+            return get();
+        }
+        return super.call(args);
     }
 }

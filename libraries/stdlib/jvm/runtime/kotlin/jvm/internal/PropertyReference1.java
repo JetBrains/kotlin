@@ -9,6 +9,8 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty1;
 
+import static kotlin.jvm.internal.SyntheticAccessorsKt.checkArguments;
+
 @SuppressWarnings({"unchecked", "rawtypes", "unused", "NullableProblems"})
 public abstract class PropertyReference1 extends PropertyReference implements KProperty1 {
     public PropertyReference1() {
@@ -44,5 +46,14 @@ public abstract class PropertyReference1 extends PropertyReference implements KP
     @SinceKotlin(version = "1.1")
     public Object getDelegate(Object receiver) {
         return ((KProperty1) getReflected()).getDelegate(receiver);
+    }
+
+    @Override
+    public Object call(Object... args) {
+        if (syntheticJavaProperty) {
+            checkArguments(1, args);
+            return get(args[0]);
+        }
+        return super.call(args);
     }
 }

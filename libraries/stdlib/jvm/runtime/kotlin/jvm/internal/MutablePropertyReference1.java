@@ -10,6 +10,8 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty1;
 import kotlin.reflect.KProperty1;
 
+import static kotlin.jvm.internal.SyntheticAccessorsKt.checkArguments;
+
 @SuppressWarnings({"unchecked", "rawtypes", "unused", "NullableProblems"})
 public abstract class MutablePropertyReference1 extends MutablePropertyReference implements KMutableProperty1 {
     public MutablePropertyReference1() {
@@ -50,5 +52,14 @@ public abstract class MutablePropertyReference1 extends MutablePropertyReference
     @SinceKotlin(version = "1.1")
     public Object getDelegate(Object receiver) {
         return ((KMutableProperty1) getReflected()).getDelegate(receiver);
+    }
+
+    @Override
+    public Object call(Object... args) {
+        if (syntheticJavaProperty) {
+            checkArguments(1, args);
+            return get(args[0]);
+        }
+        return super.call(args);
     }
 }

@@ -35,12 +35,16 @@ fun box(): String {
     assertEquals("property stringProperty (Kotlin reflection is not available)", stringProperty.toString())
     assertEquals("stringProperty", stringProperty.name)
     assertEquals("getter of property stringProperty (Kotlin reflection is not available)", stringProperty.getter.toString())
-    assertEquals("get-stringProperty", stringProperty.getter.name)
     assertEquals("setter of property stringProperty (Kotlin reflection is not available)", stringProperty.setter.toString())
-    assertEquals("set-stringProperty", stringProperty.setter.name)
+    assertEquals(stringProperty.getter, stringProperty.getter)
+    assertEquals(stringProperty.setter, stringProperty.setter)
+    assertEquals(stringProperty, stringProperty.getter.property)
+    assertEquals(stringProperty, stringProperty.setter.property)
 
     assertFailsWith(UnsupportedOperationException::class) { stringProperty.visibility }
     assertFailsWith(UnsupportedOperationException::class) { stringProperty.callBy(mapOf()) }
+    assertFailsWith(UnsupportedOperationException::class) { stringProperty.getter.name }
+    assertFailsWith(UnsupportedOperationException::class) { stringProperty.setter.name }
     assertFailsWith(UnsupportedOperationException::class) { stringProperty.getter.callBy(mapOf()) }
     assertFailsWith(UnsupportedOperationException::class) { stringProperty.setter.callBy(mapOf()) }
     assertFailsWith(UnsupportedOperationException::class) { stringProperty.getter.returnType }
