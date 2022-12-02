@@ -364,7 +364,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitCall(expression: IrCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
-                ?: checkReferencedDeclaration(superQualifierSymbol) // ???
+                ?: checkReferencedDeclaration(superQualifierSymbol)
                 ?: checkExpressionTypeArguments()
         }
 
