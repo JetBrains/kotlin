@@ -89,9 +89,9 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
             conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
             val conflicting = conflictingSymbol.fir
-            if (declaration.moduleData != conflicting.moduleData) return
+            if (conflicting == declaration || declaration.moduleData != conflicting.moduleData) return
             val actualConflictingPresentation = conflictingPresentation ?: presenter.represent(conflicting)
-            if (conflicting == declaration || actualConflictingPresentation != declarationPresentation) return
+            if (actualConflictingPresentation != declarationPresentation) return
             val actualConflictingFile =
                 conflictingFile ?: when (conflictingSymbol) {
                     is FirClassLikeSymbol<*> -> session.firProvider.getFirClassifierContainerFileIfAny(conflictingSymbol)
@@ -222,18 +222,34 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val inspector = DeclarationInspector()
+        val inspector: DeclarationInspector?
 
         when (declaration) {
-            is FirFile -> checkFile(declaration, inspector, context)
-            is FirRegularClass -> checkRegularClass(declaration, inspector)
+            is FirFile -> {
+                inspector = DeclarationInspector()
+                checkFile(declaration, inspector, context)
+            }
+            is FirRegularClass -> {
+                if (declaration.source?.kind !is KtFakeSourceElementKind) {
+                    checkConflictingElements(declaration.typeParameters, context, reporter)
+                }
+                inspector = DeclarationInspector()
+                checkRegularClass(declaration, inspector)
+            }
             else -> {
+                if (declaration.source?.kind !is KtFakeSourceElementKind && declaration is FirTypeParameterRefsOwner) {
+                    if (declaration is FirFunction) {
+                        checkConflictingElements(declaration.valueParameters, context, reporter)
+                    }
+                    checkConflictingElements(declaration.typeParameters, context, reporter)
+                }
+                return
             }
         }
 
         inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
             val source = conflictingDeclaration.source
-            if (source != null && symbols.isNotEmpty()) {
+            if (symbols.isNotEmpty()) {
                 when (conflictingDeclaration) {
                     is FirSimpleFunction,
                     is FirConstructor -> {
@@ -250,22 +266,6 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
                         }
                         reporter.reportOn(source, factory, symbols, context)
                     }
-                }
-            }
-        }
-
-        if (declaration.source?.kind !is KtFakeSourceElementKind) {
-            when (declaration) {
-                is FirMemberDeclaration -> {
-                    if (declaration is FirFunction) {
-                        checkConflictingParameters(declaration.valueParameters, context, reporter)
-                    }
-                    checkConflictingParameters(declaration.typeParameters, context, reporter)
-                }
-                is FirTypeParametersOwner -> {
-                    checkConflictingParameters(declaration.typeParameters, context, reporter)
-                }
-                else -> {
                 }
             }
         }
