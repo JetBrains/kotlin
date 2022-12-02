@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.DescriptorBased.Companion.moduleDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.LazyIrBased.Companion.moduleDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.IrBased.Companion.irModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
@@ -55,7 +57,7 @@ internal object PartialLinkageUtils {
             }
         }
 
-        class DescriptorBased(private val module: ModuleDescriptor) : Module {
+        class LazyIrBased(private val module: ModuleDescriptor) : Module {
             override val name get() = module.name.asString()
             override fun contains(fragment: IrModuleFragment) = fragment.descriptor == module
             override fun contains(declaration: IrDeclaration) = declaration.moduleDescriptor == module
@@ -77,7 +79,7 @@ internal object PartialLinkageUtils {
                     MissingDeclarations
                 else
                     declaration.irModule?.let(::IrBased)
-                        ?: declaration.moduleDescriptor?.let(::DescriptorBased)
+                        ?: declaration.moduleDescriptor?.let(::LazyIrBased)
                         ?: error("Can't determine module for $declaration, ${declaration.nameForIrSerialization}")
             }
         }
@@ -100,11 +102,23 @@ internal object PartialLinkageUtils {
             }
         }
 
+        class LazyIrBased(private val externalPackageFragment: IrExternalPackageFragment) : File {
+            private val location: Location
+            override val module: Module
+
+            init {
+                module = Module.LazyIrBased(externalPackageFragment.packageFragmentDescriptor.containingDeclaration)
+                location = Location(module.name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+            }
+
+            override fun computeLocationForOffset(offset: Int) = location
+        }
+
         object MissingDeclarations : File {
-            private val LOCATION = Location(module.name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+            private val location = Location(Module.MissingDeclarations.name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
 
             override val module get() = Module.MissingDeclarations
-            override fun computeLocationForOffset(offset: Int) = LOCATION
+            override fun computeLocationForOffset(offset: Int) = location
         }
 
         companion object {
@@ -112,8 +126,11 @@ internal object PartialLinkageUtils {
                 return if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                     MissingDeclarations
                 else
-                    declaration.fileOrNull?.let(::IrBased)
-                        ?: error("Can't determine file for $declaration, ${declaration.nameForIrSerialization}")
+                    when (val packageFragment = declaration.getPackageFragment()) {
+                        is IrFile -> IrBased(packageFragment)
+                        is IrExternalPackageFragment -> LazyIrBased(packageFragment)
+                        else -> error("Can't determine file for $declaration, ${declaration.nameForIrSerialization}")
+                    }
             }
         }
     }
