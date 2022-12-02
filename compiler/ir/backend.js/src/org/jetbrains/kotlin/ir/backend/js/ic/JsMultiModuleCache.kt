@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrModuleHeader
 import java.io.File
@@ -15,6 +16,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
         private const val CACHED_MODULE_JS = "module.js"
         private const val CACHED_MODULE_JS_MAP = "module.js.map"
+        private const val CACHED_MODULE_D_TS = "module.d.ts"
     }
 
     private enum class NameType(val typeMask: Int) {
@@ -71,22 +73,26 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
         }
     }
 
+    private fun File.writeIfNotNull(data: String?) {
+        if (data != null) {
+            recreate()
+            writeText(data)
+        } else {
+            ifExists { delete() }
+        }
+    }
+
     fun fetchCompiledJsCode(artifact: ModuleArtifact) = artifact.artifactsDir?.let { cacheDir ->
         val jsCode = File(cacheDir, CACHED_MODULE_JS).ifExists { readText() }
         val sourceMap = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { readText() }
-        jsCode?.let { CompilationOutputs(it, null, null, sourceMap) }
+        val tsDefinitions = File(cacheDir, CACHED_MODULE_D_TS).ifExists { TypeScriptFragment(readText()) }
+        jsCode?.let { CompilationOutputs(it, tsDefinitions, null, sourceMap) }
     }
 
     fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputs) = artifact.artifactsDir?.let { cacheDir ->
-        val jsCodeCache = File(cacheDir, CACHED_MODULE_JS).apply { recreate() }
-        jsCodeCache.writeText(compilationOutputs.jsCode)
-        val jsMapCache = File(cacheDir, CACHED_MODULE_JS_MAP)
-        if (compilationOutputs.sourceMap != null) {
-            jsMapCache.recreate()
-            jsMapCache.writeText(compilationOutputs.sourceMap)
-        } else {
-            jsMapCache.ifExists { delete() }
-        }
+        File(cacheDir, CACHED_MODULE_JS).writeIfNotNull(compilationOutputs.jsCode)
+        File(cacheDir, CACHED_MODULE_JS_MAP).writeIfNotNull(compilationOutputs.sourceMap)
+        File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
     }
 
     fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {

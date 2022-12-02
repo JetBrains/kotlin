@@ -95,10 +95,14 @@ internal fun File.fileHashForIC(): ICHash {
 }
 
 internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().apply {
-    val importantBooleanSettingKeys = listOf(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
-    updateForEach(importantBooleanSettingKeys) { key ->
+    val importantSettings = listOf(
+        JSConfigurationKeys.GENERATE_DTS,
+        JSConfigurationKeys.MODULE_KIND,
+        JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION
+    )
+    updateForEach(importantSettings) { key ->
         update(key.toString())
-        update(getBoolean(key).toString())
+        update(get(key).toString())
     }
 
     update(languageVersionSettings.toString())

@@ -47,7 +47,8 @@ class ModuleInfo(val moduleName: String) {
         val id: Int,
         val dependencies: Collection<Dependency>,
         val modifications: List<Modification>,
-        val expectedFileStats: Map<String, Set<String>>
+        val expectedFileStats: Map<String, Set<String>>,
+        val expectedDTS: Set<String>
     )
 
     val steps = mutableListOf<ModuleStep>()
@@ -65,6 +66,7 @@ private const val FRIENDS = "friends"
 private const val MODIFICATIONS = "modifications"
 private const val MODIFICATION_UPDATE = "U"
 private const val MODIFICATION_DELETE = "D"
+private const val EXPECTED_DTS_LIST = "expected dts"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
@@ -210,6 +212,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         val regularDependencies = mutableSetOf<String>()
         val friendDependencies = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
+        val expectedDTS = mutableSetOf<String>()
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
@@ -230,6 +233,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                     DEPENDENCIES -> getOpArgs().forEach { regularDependencies += it }
                     FRIENDS -> getOpArgs().forEach { friendDependencies += it }
                     MODIFICATIONS -> modifications += parseModifications()
+                    EXPECTED_DTS_LIST -> getOpArgs().forEach { expectedDTS += it }
                     else -> error(diagnosticMessage("Unknown op $op", line))
                 }
             }
@@ -250,7 +254,8 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 id = it,
                 dependencies = dependencies,
                 modifications = modifications,
-                expectedFileStats = expectedFileStats
+                expectedFileStats = expectedFileStats,
+                expectedDTS = expectedDTS
             )
         }
     }

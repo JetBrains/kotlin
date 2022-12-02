@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.ComparisonFailure
 import java.io.File
 import java.util.EnumSet
@@ -49,6 +50,8 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
 
         private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
+
+        private val JS_MODULE_KIND = ModuleKind.PLAIN
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
@@ -94,7 +97,8 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     private fun createConfiguration(moduleName: String, language: List<String>): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        copy.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        copy.put(JSConfigurationKeys.GENERATE_DTS, true)
+        copy.put(JSConfigurationKeys.MODULE_KIND, JS_MODULE_KIND)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
@@ -123,7 +127,8 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             val moduleName: String,
             val modulePath: String,
             val friends: List<String>,
-            val expectedFileStats: Map<String, Set<String>>
+            val expectedFileStats: Map<String, Set<String>>,
+            val expectedDTS: String?
         )
 
         private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String, buildKlib: Boolean): TestStepInfo {
@@ -158,11 +163,16 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val configuration = createConfiguration(module, projStep.language)
                 buildArtifact(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
             }
+
+            val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
+                moduleTestDir.resolve(singleOrNull() ?: error("$module module may generate only one d.ts at step $projStepId"))
+            }
             return TestStepInfo(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
                 friends.map { it.canonicalPath },
-                expectedFileStats
+                expectedFileStats,
+                dtsFile?.readText()
             )
         }
 
@@ -232,6 +242,17 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
+        private fun verifyDTS(stepId: Int, testInfo: List<TestStepInfo>, jsOutput: CompilationOutputs) {
+            for (info in testInfo) {
+                val expectedDTS = info.expectedDTS ?: continue
+                val output = jsOutput.dependencies.find { it.first == info.moduleName }?.second ?: jsOutput
+                val gotDTS = output.getFullTsDefinition(info.moduleName, JS_MODULE_KIND)
+                JUnit4Assertions.assertEquals(expectedDTS, gotDTS) {
+                    "Mismatched d.ts for module ${info.moduleName} at step $stepId"
+                }
+            }
+        }
+
         fun execute() {
             for (projStep in projectInfo.steps) {
                 val testInfo = projStep.order.map { setupTestStep(projStep, it, true) }
@@ -272,6 +293,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true)
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
                 verifyJsCode(projStep.id, mainModuleName, jsOutput)
+                verifyDTS(projStep.id, testInfo, jsOutput)
             }
         }
     }
