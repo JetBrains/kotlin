@@ -12,7 +12,7 @@ fun test_1(value: Any?): String? {
 }
 
 fun test_2(value: Any?): String? {
-  return run<Nothing?>(block = local fun <anonymous>(): Nothing? {
+  return run<String?>(block = local fun <anonymous>(): String? {
     return { // BLOCK
       val tmp1_safe_receiver: Any? = value
       when {

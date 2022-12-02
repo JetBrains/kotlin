@@ -14345,6 +14345,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("nothingVsParameterBound.kt")
+            public void testNothingVsParameterBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingVsParameterBound.kt");
+            }
+
+            @Test
             @TestMetadata("nullableTypeArgumentWithNotNullUpperBound.kt")
             public void testNullableTypeArgumentWithNotNullUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nullableTypeArgumentWithNotNullUpperBound.kt");
