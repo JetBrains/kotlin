@@ -440,7 +440,10 @@ internal class PartiallyLinkedIrTreePatcher(
             return ExpressionUsesPartiallyLinkedClassifier(this, partialLinkageReason)
         }
 
-        private fun <T : IrExpression> T.checkReferencedDeclaration(symbol: IrSymbol?, @Suppress("UNUSED_PARAMETER") checkVisibility: Boolean = true): PartialLinkageCase? {
+        private fun <T : IrExpression> T.checkReferencedDeclaration(
+            symbol: IrSymbol?,
+            checkVisibility: Boolean = true
+        ): PartialLinkageCase? {
             symbol ?: return null
 
             if (!symbol.isBound && !symbol.isPublicApi) {
@@ -453,8 +456,8 @@ internal class PartiallyLinkedIrTreePatcher(
             if (origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                 return ExpressionUsesMissingDeclaration(this, symbol)
 
-            return when (symbol) {
-                is IrClassifierSymbol -> ExpressionUsesPartiallyLinkedClassifier(this, symbol.partialLinkageReason() ?: return null)
+            val partialLinkageCase = when (symbol) {
+                is IrClassifierSymbol -> symbol.partialLinkageReason()?.let { ExpressionUsesPartiallyLinkedClassifier(this, it) }
 
                 is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol, checkVisibility = false)
                     ?: checkReferencedDeclaration(symbol.owner.setter?.symbol, checkVisibility = false)
@@ -474,10 +477,25 @@ internal class PartiallyLinkedIrTreePatcher(
                         is IrValueSymbol -> symbol.owner.type.precalculatedPartialLinkageReason()
 
                         else -> null
-                    } ?: return null
+                    }
 
-                    ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier(this, symbol, partialLinkageReasonInReferencedDeclaration)
+                    partialLinkageReasonInReferencedDeclaration
+                        ?.let { ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier(this, symbol, it) }
                 }
+            }
+
+            return when {
+                partialLinkageCase != null -> partialLinkageCase
+                checkVisibility -> {
+                    val declaration = symbol.owner
+                    if (declaration is IrDeclarationWithVisibility
+                        && !PartiallyLinkedVisibilityChecker.checkVisibilityInFile(declaration, currentFile)
+                    ) {
+                        error("AAA")
+                    }
+                    null
+                }
+                else -> null
             }
         }
 
