@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTask
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
@@ -80,6 +81,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         exportProjectStructureMetadataForOtherBuilds(kotlinMultiplatformExtension)
 
+        // Ensure that the instance is created and configured during apply
+        project.kotlinIdeMultiplatformImport
         project.locateOrRegisterIdeResolveDependenciesTask()
     }
 

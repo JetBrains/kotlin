@@ -50,6 +50,7 @@ internal class IdeMultiplatformImportImpl(
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
     private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
+    @OptIn(Idea222Api::class)
     @ExternalKotlinTargetApi
     override fun registerDependencyResolver(
         resolver: IdeDependencyResolver,
@@ -60,6 +61,13 @@ internal class IdeMultiplatformImportImpl(
         registeredDependencyResolvers.add(
             RegisteredDependencyResolver(resolver, constraint, phase, level)
         )
+
+        if (resolver is IdeDependencyResolver.WithBuildDependencies) {
+            val project = extension.project
+            val dependencies = project.provider { resolver.dependencies(project) }
+            extension.project.locateOrRegisterIdeResolveDependenciesTask().configure { it.dependsOn(dependencies) }
+            extension.project.prepareKotlinIdeaImportTask.configure { it.dependsOn(dependencies) }
+        }
     }
 
     @ExternalKotlinTargetApi

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeNativeDistri
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
-internal object IdeCommonizedNativePlatformDependencyResolver : IdeDependencyResolver {
+internal object IdeCommonizedNativePlatformDependencyResolver :
+    IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
+
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
         val commonizerTarget = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return emptySet()
@@ -28,5 +31,9 @@ internal object IdeCommonizedNativePlatformDependencyResolver : IdeDependencyRes
             .mapNotNull { libraryFile -> project.resolveNativeDistributionLibraryForIde(libraryFile, commonizerTarget, project.logger) }
             .onEach { dependency -> dependency.isCommonized = true }
             .toSet()
+    }
+
+    override fun dependencies(project: Project): Iterable<Any> {
+        return listOfNotNull(project.commonizeNativeDistributionTask)
     }
 }
