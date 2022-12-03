@@ -13,38 +13,27 @@ import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object WasmPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
-        NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
-        JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsNameChecker,
+        JsExternalChecker,
         JsRuntimeAnnotationChecker,
-        JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker
+        JsExportDeclarationChecker,
     ),
     additionalCallCheckers = listOf(
-        JsModuleCallChecker,
-        JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NameSuggestion())
-        container.useImpl<JsCallChecker>()
-        container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()
-        container.useImpl<JsIdentifierChecker>()
         container.useImpl<JsNameCharsChecker>()
-        container.useImpl<JsBuiltinNameClashChecker>()
-        container.useInstance(JsModuleClassLiteralChecker)
         container.useImpl<JsReflectionAPICallChecker>()
         container.useImpl<JsNativeRttiChecker>()
         container.useImpl<JsReifiedNativeChecker>()
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
-        container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
     }
 
