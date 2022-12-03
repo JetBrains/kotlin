@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object WasmPlatformConfigurator : PlatformConfiguratorBase(
-    DynamicTypesAllowed(),
     additionalDeclarationCheckers = listOf(
         NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
