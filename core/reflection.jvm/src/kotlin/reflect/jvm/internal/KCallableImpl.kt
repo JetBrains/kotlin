@@ -6,7 +6,6 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import java.lang.reflect.ParameterizedType
@@ -227,7 +226,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         }
 
     private fun extractContinuationArgument(): Type? {
-        if ((descriptor as? FunctionDescriptor)?.isSuspend == true) {
+        if (isSuspend) {
             // kotlin.coroutines.Continuation<? super java.lang.String>
             val continuationType = caller.parameterTypes.lastOrNull() as? ParameterizedType
             if (continuationType?.rawType == Continuation::class.java) {
