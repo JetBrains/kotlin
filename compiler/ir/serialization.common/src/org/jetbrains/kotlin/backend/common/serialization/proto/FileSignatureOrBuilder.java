@@ -6,4 +6,46 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 public interface FileSignatureOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature)
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+  /**
+   * <code>optional string file_path = 2;</code>
+   *
+   * <pre>
+   * The path to the file as in the corresponding FileEntry.
+   * Marked optional for compatibility, because previously we serialized file signatures as an empty structure.
+   * </pre>
+   */
+  boolean hasFilePath();
+  /**
+   * <code>optional string file_path = 2;</code>
+   *
+   * <pre>
+   * The path to the file as in the corresponding FileEntry.
+   * Marked optional for compatibility, because previously we serialized file signatures as an empty structure.
+   * </pre>
+   */
+  java.lang.String getFilePath();
+  /**
+   * <code>optional string file_path = 2;</code>
+   *
+   * <pre>
+   * The path to the file as in the corresponding FileEntry.
+   * Marked optional for compatibility, because previously we serialized file signatures as an empty structure.
+   * </pre>
+   */
+  org.jetbrains.kotlin.protobuf.ByteString
+      getFilePathBytes();
+
+  /**
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
+   */
+  java.util.List<java.lang.Integer> getFqNameList();
+  /**
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
+   */
+  int getFqNameCount();
+  /**
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
+   */
+  int getFqName(int index);
 }
