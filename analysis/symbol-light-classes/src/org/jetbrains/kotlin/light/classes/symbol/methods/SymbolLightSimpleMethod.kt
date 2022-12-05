@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -138,10 +140,11 @@ internal class SymbolLightSimpleMethod(
         }
     }
 
-    private fun modifiersForInlineOnlyCase(): Map<String, Boolean> =
-        LazyModifiersBox.MODALITY_MODIFIERS_MAP.putAll(LazyModifiersBox.VISIBILITY_MODIFIERS_MAP)
-            .with(PsiModifier.FINAL)
-            .with(PsiModifier.PRIVATE)
+    private fun modifiersForInlineOnlyCase(): PersistentMap<String, Boolean> = LazyModifiersBox.MODALITY_MODIFIERS_MAP.mutate {
+        it.putAll(LazyModifiersBox.VISIBILITY_MODIFIERS_MAP)
+        it[PsiModifier.FINAL] = true
+        it[PsiModifier.PRIVATE] = true
+    }
 
     private val hasInlineOnlyAnnotation: Boolean by lazyPub { withFunctionSymbol { it.hasInlineOnlyAnnotation() } }
 

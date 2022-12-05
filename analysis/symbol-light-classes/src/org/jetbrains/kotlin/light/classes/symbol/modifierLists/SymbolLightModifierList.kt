@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.atomic.AtomicReference
 
-internal open class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>> :
+internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>> :
     KtLightElementBase, PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
     protected val owner: T
     private val staticModifiers: Set<String>?
