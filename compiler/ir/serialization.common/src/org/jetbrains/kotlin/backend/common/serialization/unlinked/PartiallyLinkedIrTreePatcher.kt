@@ -336,7 +336,10 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlock(expression: IrBlock) = expression.maybeThrowLinkageError {
-            if (this is IrReturnableBlock) checkReferencedDeclaration(symbol) else null
+            if (this is IrReturnableBlock) {
+                checkReferencedDeclaration(symbol, checkVisibility = false)
+                    ?: checkReferencedDeclaration(inlineFunctionSymbol, checkVisibility = false)
+            } else null
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) = expression.maybeThrowLinkageError {
@@ -458,6 +461,8 @@ internal class PartiallyLinkedIrTreePatcher(
 
             val partialLinkageCase = when (symbol) {
                 is IrClassifierSymbol -> symbol.partialLinkageReason()?.let { ExpressionUsesPartiallyLinkedClassifier(this, it) }
+
+                is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol, checkVisibility = false)
 
                 is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol, checkVisibility = false)
                     ?: checkReferencedDeclaration(symbol.owner.setter?.symbol, checkVisibility = false)
