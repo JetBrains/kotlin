@@ -44,10 +44,10 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         .filter { it.isNativeDistribution }
                         .filter { it.binaryType == CLASSPATH_BINARY_TYPE }
 
-                val nativeMainDependencies = dependencies.getDependenciesForSourceSet("nativeMain").filterNativePlatformDependencies()
-                val nativeTestDependencies = dependencies.getDependenciesForSourceSet("nativeTest").filterNativePlatformDependencies()
-                val linuxMainDependencies = dependencies.getDependenciesForSourceSet("linuxMain").filterNativePlatformDependencies()
-                val linuxTestDependencies = dependencies.getDependenciesForSourceSet("linuxTest").filterNativePlatformDependencies()
+                val nativeMainDependencies = dependencies["nativeMain"].filterNativePlatformDependencies()
+                val nativeTestDependencies = dependencies["nativeTest"].filterNativePlatformDependencies()
+                val linuxMainDependencies = dependencies["linuxMain"].filterNativePlatformDependencies()
+                val linuxTestDependencies = dependencies["linuxTest"].filterNativePlatformDependencies()
 
                 /* Check test and main receive the same dependencies */
                 run {
@@ -92,9 +92,11 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 }
 
+/* Test Utils / Test Infrastructure Implementation */
+
 private fun TestProject.resolveIdeDependencies(
     subproject: String? = null,
-    assertions: BuildResult.(dependencies: ResolvedIdeDependencies) -> Unit
+    assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit
 ) {
     build("${subproject.orEmpty()}:resolveIdeDependencies") {
         val subprojectPathPrefix = subproject?.removePrefix(":")?.replace(":", "/")?.plus("/") ?: ""
@@ -111,10 +113,9 @@ private fun TestProject.resolveIdeDependencies(
             sourceSetDirectory.name to deserializedDependencies.toSet()
         }
 
-        assertions(ResolvedIdeDependencies(dependenciesBySourceSetName))
+        assertions(IdeaKotlinDependenciesContainer(dependenciesBySourceSetName))
     }
 }
-
 
 private fun deserializeIdeaKotlinDependencyOrFail(file: File): IdeaKotlinDependency {
     return GradleIntegrationTestIdeaKotlinSerializationContext.IdeaKotlinDependency(file.readBytes())
@@ -131,9 +132,9 @@ private object GradleIntegrationTestIdeaKotlinSerializationContext : IdeaKotlinS
     }
 }
 
-private class ResolvedIdeDependencies(
+private class IdeaKotlinDependenciesContainer(
     private val dependencies: Map<String, Set<IdeaKotlinDependency>>
 ) {
-    fun getDependenciesForSourceSet(sourceSetName: String) = dependencies[sourceSetName]
+    operator fun get(sourceSetName: String) = dependencies[sourceSetName]
         ?: fail("SourceSet with name $sourceSetName not found. Found: ${dependencies.keys}")
 }
