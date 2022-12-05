@@ -38,13 +38,13 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     @Override
     @SuppressWarnings("unchecked")
     public KProperty0.Getter getGetter() {
-        return syntheticJavaProperty ? new SyntheticJavaPropertyReference0Getter(this) : ((KMutableProperty0) getReflected()).getGetter();
+        return isSyntheticJavaProperty ? new SyntheticJavaPropertyReference0Getter(this) : ((KMutableProperty0) getReflected()).getGetter();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public KMutableProperty0.Setter getSetter() {
-        return syntheticJavaProperty ? new SyntheticJavaPropertyReference0Setter(this) : ((KMutableProperty0) getReflected()).getSetter();
+        return isSyntheticJavaProperty ? new SyntheticJavaPropertyReference0Setter(this) : ((KMutableProperty0) getReflected()).getSetter();
     }
 
     @Override
@@ -55,7 +55,7 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
 
     @Override
     public Object call(Object... args) {
-        if (syntheticJavaProperty) {
+        if (isSyntheticJavaProperty) {
             checkArguments(0, args);
             return get();
         }

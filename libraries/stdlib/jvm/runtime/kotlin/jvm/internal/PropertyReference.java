@@ -13,32 +13,32 @@ import static kotlin.jvm.internal.SyntheticAccessorsKt.reportNoReflectionForSynt
 
 @SuppressWarnings("rawtypes")
 public abstract class PropertyReference extends CallableReference implements KProperty {
-    protected final boolean syntheticJavaProperty;
+    protected final boolean isSyntheticJavaProperty;
 
     public PropertyReference() {
         super();
 
-        syntheticJavaProperty = false;
+        isSyntheticJavaProperty = false;
     }
 
     @SinceKotlin(version = "1.1")
     public PropertyReference(Object receiver) {
         super(receiver);
 
-        syntheticJavaProperty = false;
+        isSyntheticJavaProperty = false;
     }
 
     @SinceKotlin(version = "1.4")
     public PropertyReference(Object receiver, Class owner, String name, String signature, int flags) {
         super(receiver, owner, name, signature, (flags & 1) == 1);
 
-        syntheticJavaProperty = (flags & 2) == 2;
+        isSyntheticJavaProperty = (flags & 2) == 2;
     }
 
     @Override
     @SinceKotlin(version = "1.1")
     protected KProperty getReflected() {
-        if (syntheticJavaProperty) {
+        if (isSyntheticJavaProperty) {
             reportNoReflectionForSyntheticJavaProperties();
         }
         return (KProperty) super.getReflected();
@@ -46,7 +46,7 @@ public abstract class PropertyReference extends CallableReference implements KPr
 
     @Override
     public KCallable compute() {
-        return syntheticJavaProperty ? this : super.compute();
+        return isSyntheticJavaProperty ? this : super.compute();
     }
 
     @Override
