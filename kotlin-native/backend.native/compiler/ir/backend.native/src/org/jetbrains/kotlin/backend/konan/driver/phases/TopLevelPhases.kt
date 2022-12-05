@@ -52,7 +52,7 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
 internal fun PhaseEngine<PhaseContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full,
         isProducingLibrary: Boolean,
-): PsiToIrOutput = runPsiToIr(frontendOutput, isProducingLibrary)
+): PsiToIrOutput = runPsiToIr(frontendOutput, isProducingLibrary, {}).first
 
 internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full,
