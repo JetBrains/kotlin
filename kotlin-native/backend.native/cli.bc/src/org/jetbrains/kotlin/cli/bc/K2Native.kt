@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -87,6 +88,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(java.io.File(arguments.outputName)))
 
         try {
             KonanDriver(project, environment, configuration).run()
