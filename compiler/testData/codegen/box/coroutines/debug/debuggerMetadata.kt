@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: some error in resolve (FirErrorNamedReferenceImpl in FIR)
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // WITH_COROUTINES

@@ -168,6 +168,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("invisibleFunctionWithReceiverWithSuppress.kt")
+        public void testInvisibleFunctionWithReceiverWithSuppress() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/invisibleFunctionWithReceiverWithSuppress.kt");
+        }
+
+        @Test
         @TestMetadata("javaAnnotationArrayValueDefault.kt")
         public void testJavaAnnotationArrayValueDefault() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/javaAnnotationArrayValueDefault.kt");

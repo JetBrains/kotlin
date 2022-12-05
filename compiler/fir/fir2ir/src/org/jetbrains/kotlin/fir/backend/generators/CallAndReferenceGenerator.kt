@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -1069,8 +1066,12 @@ class CallAndReferenceGenerator(
                 }
                 if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
-                        ((qualifiedAccess.calleeReference as FirResolvedNamedReference)
-                            .resolvedSymbol.fir as? FirCallableDeclaration)?.receiverParameter?.typeRef?.let { receiverType ->
+                        val symbol = when (val reference = qualifiedAccess.calleeReference) {
+                            is FirResolvedNamedReference -> reference.resolvedSymbol
+                            is FirErrorNamedReference -> reference.candidateSymbol
+                            else -> null
+                        } ?: error("Symbol for call ${qualifiedAccess.render()} not found")
+                        (symbol.fir as? FirCallableDeclaration)?.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 it.cast(
                                     qualifiedAccess.extensionReceiver,
