@@ -200,10 +200,13 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
     })
 
+    @get:Input
+    internal val isSharedCommonizerTarget = project.provider { project.getCommonizerTarget(sourceSet) !is SharedCommonizerTarget }.orElse(false)
+
     @TaskAction
     protected fun transformDependencies() {
         cleaning.cleanOutputDirectory(outputDirectory)
-        if (project.getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
+        if (isSharedCommonizerTarget.get()) return
         chooseVisibleSourceSets.forEach(::materializeMetadata)
     }
 
