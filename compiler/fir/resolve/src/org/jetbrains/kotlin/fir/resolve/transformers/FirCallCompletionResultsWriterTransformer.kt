@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.isDefinitelyEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -848,7 +847,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
-        candidate.system.errors.any { it is InferredEmptyIntersection && it.kind.isDefinitelyEmpty() }
+        candidate.system.errors.any { it is InferredEmptyIntersection && it.kind.isDefinitelyEmpty }
 
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {

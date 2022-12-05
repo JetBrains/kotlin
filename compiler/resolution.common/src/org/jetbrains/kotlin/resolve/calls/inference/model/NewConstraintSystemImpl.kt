@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.isDefinitelyEmpty
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -519,7 +518,7 @@ class NewConstraintSystemImpl(
 
         val isInferredEmptyIntersectionForbidden =
             languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
-        val errorFactory = if (emptyIntersectionTypeInfo.kind.isDefinitelyEmpty() && isInferredEmptyIntersectionForbidden)
+        val errorFactory = if (emptyIntersectionTypeInfo.kind.isDefinitelyEmpty && isInferredEmptyIntersectionForbidden)
             ::InferredEmptyIntersectionError
         else ::InferredEmptyIntersectionWarning
 

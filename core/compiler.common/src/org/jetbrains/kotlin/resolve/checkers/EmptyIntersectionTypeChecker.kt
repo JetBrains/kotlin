@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
-import org.jetbrains.kotlin.types.isDefinitelyEmpty
-import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 
@@ -41,11 +39,13 @@ internal object EmptyIntersectionTypeChecker {
 
                 val typeInfo = computeByHavingCommonSubtype(firstSubstitutedType, secondSubstitutedType) ?: continue
 
-                if (typeInfo.kind.isDefinitelyEmpty())
+                if (typeInfo.kind.isDefinitelyEmpty) {
                     return typeInfo
+                }
 
-                if (typeInfo.kind.isPossiblyEmpty())
+                if (!typeInfo.kind.isDefinitelyEmpty) {
                     possibleEmptyIntersectionTypeInfo = typeInfo
+                }
             }
         }
 

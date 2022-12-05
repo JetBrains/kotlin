@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
-import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -468,8 +467,8 @@ private fun reportInferredIntoEmptyIntersectionError(
             ?: typeVariable.toString()
     val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
     val factory =
-        if (kind.isPossiblyEmpty()) FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
-        else FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
+        if (kind.isDefinitelyEmpty) FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
+        else FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
 
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
 }
@@ -478,7 +477,6 @@ private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType a
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
-    @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
