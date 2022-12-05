@@ -170,9 +170,9 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         }
 
         @Test
-        @TestMetadata("anonympuseObjectInInvalidPosition.kt")
-        public void testAnonympuseObjectInInvalidPosition() throws Exception {
-            runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/anonympuseObjectInInvalidPosition.kt");
+        @TestMetadata("anonymousObjectInInvalidPosition.kt")
+        public void testAnonymousObjectInInvalidPosition() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/anonymousObjectInInvalidPosition.kt");
         }
     }
 
