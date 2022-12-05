@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 
-private val LANGUAGE_VERSION: String = System.getProperty("fir.bench.language.version", "1.4")
+internal val LANGUAGE_VERSION: String = System.getProperty("fir.bench.language.version", "1.4")
 
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.useK2 = true
         args.useIR = true
+        args.languageVersion = "2.0"
         args.apiVersion = LANGUAGE_VERSION
         args.jvmDefault = "compatibility"
         args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
