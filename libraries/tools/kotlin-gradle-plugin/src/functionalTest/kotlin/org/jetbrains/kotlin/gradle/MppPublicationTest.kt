@@ -18,10 +18,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 class MppPublicationTest {
 
@@ -126,6 +123,24 @@ class MppPublicationTest {
             assertTrue(
                 message = "Sources Elements of target $targetName doesn't have 'userAttribute'"
             ) { sourceElements.attributes.toMapOfStrings().containsKey("userAttribute") }
+        }
+    }
+
+
+    @Test
+    fun `sourcesJar task should be available during configuration time`() {
+        kotlin.linuxX64("linux")
+
+        val sourcesJars = listOf(
+            "sourcesJar", // sources of common source sets i.e. root module
+            "jvmSourcesJar",
+            "jsSourcesJar",
+            "linuxSourcesJar"
+        )
+
+        for (sourcesJarTaskName in sourcesJars) {
+            val sourcesJar = project.tasks.findByName(sourcesJarTaskName)
+            assertNotNull(sourcesJar, "Task '$sourcesJarTaskName' should exist during project configuration time")
         }
     }
 
