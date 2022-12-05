@@ -124,7 +124,7 @@ interface IrBuilderWithPluginContext {
                 val irBlockBody = irBlockBody(startOffset, endOffset, initializerBuilder)
                 irBlockBody.statements.dropLast(1).forEach { +it }
                 val expression = irBlockBody.statements.last() as? IrExpression
-                    ?: throw AssertionError("Last statement in property initializer builder is not an a expression")
+                    ?: error("Last statement in property initializer builder is not an a expression")
                 +irSetField(irGetObject(companionClass), backingField!!, expression)
             }
         }
