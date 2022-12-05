@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 
 internal class SymbolLightFieldForProperty private constructor(
     private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
@@ -95,7 +93,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun getName(): String = fieldName
 
-    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? = when (modifier) {
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
         in LazyModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
@@ -113,17 +111,17 @@ internal class SymbolLightFieldForProperty private constructor(
 
         PsiModifier.STATIC -> {
             val isStatic = forceStatic || isTopLevel
-            ImmutableHashMap.of(modifier, isStatic)
+            mapOf(modifier to isStatic)
         }
 
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.hasAnnotation(VOLATILE_ANNOTATION_CLASS_ID, null)
-            ImmutableHashMap.of(modifier, hasAnnotation)
+            mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.hasAnnotation(TRANSIENT_ANNOTATION_CLASS_ID, null)
-            ImmutableHashMap.of(modifier, hasAnnotation)
+            mapOf(modifier to hasAnnotation)
         }
 
         else -> null
@@ -131,7 +129,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _modifierList: PsiModifierList by lazyPub {
         val initializerValue = if (takePropertyVisibility) {
-            ImmutableHashMap.empty()
+            emptyMap()
         } else {
             LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
         }

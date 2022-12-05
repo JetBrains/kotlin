@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnum
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import java.util.*
 
 internal class SymbolLightConstructor(
@@ -48,7 +46,7 @@ internal class SymbolLightConstructor(
         val initialValue = if (containingClass is SymbolLightClassForEnumEntry) {
             LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
         } else {
-            ImmutableHashMap.empty()
+            emptyMap()
         }
 
         SymbolLightMemberModifierList(
@@ -66,7 +64,7 @@ internal class SymbolLightConstructor(
         }
     }
 
-    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? {
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? {
         if (modifier !in LazyModifiersBox.VISIBILITY_MODIFIERS) return null
         return LazyModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
     }

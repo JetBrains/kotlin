@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
 
 internal class SymbolLightMemberModifierList<T : KtLightMember<*>> : SymbolLightModifierList<T> {
     constructor(
         containingDeclaration: T,
-        initialValue: ImmutableHashMap<String, Boolean> = ImmutableHashMap.empty(),
+        initialValue: Map<String, Boolean> = emptyMap(),
         lazyModifiersComputer: LazyModifiersComputer,
         annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
     ) : super(containingDeclaration, initialValue, lazyModifiersComputer, annotationsComputer)

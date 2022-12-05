@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
@@ -90,7 +88,7 @@ internal class SymbolLightSimpleMethod(
         )
     }
 
-    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? = when (modifier) {
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in LazyModifiersBox.MODALITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
             val modality = if (isTopLevel) PsiModifier.FINAL else withFunctionSymbol { it.computeSimpleModality() }
@@ -110,25 +108,25 @@ internal class SymbolLightSimpleMethod(
                 isTopLevel || withFunctionSymbol { it.hasJvmStaticAnnotation() }
             }
 
-            ImmutableHashMap.of(modifier, isStatic)
+            mapOf(modifier to isStatic)
         }
 
         PsiModifier.NATIVE -> {
             ifInlineOnly { return null }
             val isExternal = functionDeclaration?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: withFunctionSymbol { it.isExternal }
-            ImmutableHashMap.of(modifier, isExternal)
+            mapOf(modifier to isExternal)
         }
 
         PsiModifier.STRICTFP -> {
             ifInlineOnly { return null }
             val hasAnnotation = withFunctionSymbol { it.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID, null) }
-            ImmutableHashMap.of(modifier, hasAnnotation)
+            mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.SYNCHRONIZED -> {
             ifInlineOnly { return null }
             val hasAnnotation = withFunctionSymbol { it.hasAnnotation(SYNCHRONIZED_ANNOTATION_CLASS_ID, null) }
-            ImmutableHashMap.of(modifier, hasAnnotation)
+            mapOf(modifier to hasAnnotation)
         }
 
         else -> null
@@ -140,8 +138,8 @@ internal class SymbolLightSimpleMethod(
         }
     }
 
-    private fun modifiersForInlineOnlyCase(): ImmutableMap<String, Boolean> =
-        LazyModifiersBox.MODALITY_MODIFIERS_MAP.merge(LazyModifiersBox.VISIBILITY_MODIFIERS_MAP)
+    private fun modifiersForInlineOnlyCase(): Map<String, Boolean> =
+        LazyModifiersBox.MODALITY_MODIFIERS_MAP.putAll(LazyModifiersBox.VISIBILITY_MODIFIERS_MAP)
             .with(PsiModifier.FINAL)
             .with(PsiModifier.PRIVATE)
 

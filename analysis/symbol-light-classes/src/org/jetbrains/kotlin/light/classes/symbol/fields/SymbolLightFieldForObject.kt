@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 
 internal class SymbolLightFieldForObject private constructor(
     containingClass: SymbolLightClassForClassLike<*>,
@@ -65,7 +64,7 @@ internal class SymbolLightFieldForObject private constructor(
         }
     }
 
-    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? {
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? {
         if (modifier !in LazyModifiersBox.VISIBILITY_MODIFIERS) return null
         return LazyModifiersBox.computeVisibilityForMember(ktModule, objectSymbolPointer)
     }

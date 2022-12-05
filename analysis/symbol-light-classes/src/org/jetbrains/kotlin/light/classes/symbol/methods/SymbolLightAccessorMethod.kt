@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightAccessorMethod private constructor(
@@ -157,7 +155,7 @@ internal class SymbolLightAccessorMethod private constructor(
         annotationsFromProperty + annotationsFromAccessor
     }
 
-    private fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? {
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? {
         return when (modifier) {
             in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertyAccessorSymbolPointer)
 
@@ -176,7 +174,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     isTopLevel || hasJvmStaticAnnotation()
                 }
 
-                ImmutableHashMap.of(modifier, isStatic)
+                mapOf(modifier to isStatic)
             }
 
             else -> null

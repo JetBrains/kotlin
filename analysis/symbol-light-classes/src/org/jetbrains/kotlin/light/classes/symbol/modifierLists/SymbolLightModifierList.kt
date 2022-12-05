@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.toPersistentHashMap
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -19,9 +21,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
-import org.jetbrains.kotlin.util.javaslang.getOrNull
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.atomic.AtomicReference
 
@@ -34,7 +33,7 @@ internal open class SymbolLightModifierList<out T : KtLightElement<KtModifierLis
 
     constructor(
         owner: T,
-        initialValue: ImmutableHashMap<String, Boolean>,
+        initialValue: Map<String, Boolean>,
         lazyModifiersComputer: LazyModifiersComputer,
         annotationsComputer: ((PsiModifierList) -> List<PsiAnnotation>)?,
     ) : super(owner) {
@@ -81,41 +80,47 @@ internal open class SymbolLightModifierList<out T : KtLightElement<KtModifierLis
         staticModifiers?.contains(name) == true || lazyModifiersBox?.hasModifier(name) == true
 }
 
-internal typealias LazyModifiersComputer = (modifier: String) -> ImmutableMap<String, Boolean>?
+internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boolean>?
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun ImmutableHashMap<String, Boolean>.with(modifier: String?): ImmutableHashMap<String, Boolean> {
+internal inline fun PersistentMap<String, Boolean>.with(modifier: String?): PersistentMap<String, Boolean> {
     return modifier?.let { put(modifier, true) } ?: this
 }
 
 internal class LazyModifiersBox(
-    initialValue: ImmutableHashMap<String, Boolean>,
+    initialValue: Map<String, Boolean>,
     private val computer: LazyModifiersComputer,
 ) {
-    private val modifiersMapReference: AtomicReference<ImmutableHashMap<String, Boolean>> = AtomicReference(initialValue)
+    private val modifiersMapReference: AtomicReference<PersistentMap<String, Boolean>> = AtomicReference(initialValue.toPersistentHashMap())
 
     fun hasModifier(modifier: String): Boolean {
-        modifiersMapReference.get().getOrNull(modifier)?.let { return it }
-        val newValues = computer(modifier) ?: ImmutableHashMap.of(modifier, false)
+        modifiersMapReference.get()[modifier]?.let { return it }
+        val newValues = computer(modifier) ?: mapOf(modifier to false)
         do {
             val currentMap = modifiersMapReference.get()
-            val newMap = currentMap.merge(newValues)
+            val newMap = currentMap.putAll(newValues)
         } while (!modifiersMapReference.compareAndSet(currentMap, newMap))
 
-        return newValues.getOrNull(modifier) ?: error("Inconsistent state: $modifier")
+        return newValues[modifier] ?: error("Inconsistent state: $modifier")
     }
 
     companion object {
         internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
-        internal val VISIBILITY_MODIFIERS_MAP = ImmutableHashMap.ofAll(VISIBILITY_MODIFIERS.keysToMap { false })
+        internal val VISIBILITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
+            VISIBILITY_MODIFIERS.keysToMap {
+                false
+            }.toPersistentHashMap()
 
         internal val MODALITY_MODIFIERS = setOf(PsiModifier.FINAL, PsiModifier.ABSTRACT)
-        internal val MODALITY_MODIFIERS_MAP = ImmutableHashMap.ofAll(MODALITY_MODIFIERS.keysToMap { false })
+        internal val MODALITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
+            MODALITY_MODIFIERS.keysToMap {
+                false
+            }.toPersistentHashMap()
 
         internal fun computeVisibilityForMember(
             ktModule: KtModule,
             declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
-        ): ImmutableMap<String, Boolean> {
+        ): PersistentMap<String, Boolean> {
             val visibility = analyzeForLightClasses(ktModule) {
                 declarationPointer.restoreSymbolOrThrowIfDisposed().toPsiVisibilityForMember()
             }
@@ -126,7 +131,7 @@ internal class LazyModifiersBox(
         internal fun computeSimpleModality(
             ktModule: KtModule,
             declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
-        ): ImmutableMap<String, Boolean> {
+        ): PersistentMap<String, Boolean> {
             val visibility = analyzeForLightClasses(ktModule) {
                 declarationPointer.restoreSymbolOrThrowIfDisposed().computeSimpleModality()
             }

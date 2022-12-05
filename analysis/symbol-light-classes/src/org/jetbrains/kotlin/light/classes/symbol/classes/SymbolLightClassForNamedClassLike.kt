@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KtNamedClassOrObjectSymbol> {
@@ -128,7 +126,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         }
     }
 
-    internal fun computeModifiers(modifier: String): ImmutableMap<String, Boolean>? = when (modifier) {
+    internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in LazyModifiersBox.VISIBILITY_MODIFIERS -> {
             val visibility = withClassOrObjectSymbol { it.toPsiVisibilityForClass(isNested = !isTopLevel) }
             LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
@@ -137,7 +135,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         in LazyModifiersBox.MODALITY_MODIFIERS -> LazyModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
         PsiModifier.STATIC -> {
             val isStatic = !isTopLevel && !isInner
-            ImmutableHashMap.of(modifier, isStatic)
+            mapOf(modifier to isStatic)
         }
 
         else -> null
