@@ -68,7 +68,7 @@ internal open class SymbolLightModifierList<out T : KtLightElement<KtModifierLis
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
 
-    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations?.value?.toTypedArray().orEmpty()
+    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations?.value?.toTypedArray() ?: PsiAnnotation.EMPTY_ARRAY
     override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
         lazyAnnotations?.value?.firstOrNull { it.qualifiedName == qualifiedName }
 
