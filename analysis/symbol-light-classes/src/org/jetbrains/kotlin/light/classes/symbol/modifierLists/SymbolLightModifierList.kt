@@ -72,7 +72,8 @@ internal open class SymbolLightModifierList<out T : KtLightElement<KtModifierLis
     override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
         lazyAnnotations?.value?.firstOrNull { it.qualifiedName == qualifiedName }
 
-    override fun equals(other: Any?): Boolean = this === other
+    override fun equals(other: Any?): Boolean = this === other || other is SymbolLightModifierList<*> && other.kotlinOrigin == kotlinOrigin
+
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
