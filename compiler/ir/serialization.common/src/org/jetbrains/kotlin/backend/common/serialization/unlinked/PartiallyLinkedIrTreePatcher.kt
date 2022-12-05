@@ -530,9 +530,9 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private fun IrClassifierSymbol.partialLinkageReason(): Partially? = classifierExplorer.exploreSymbol(this)
+    private fun IrClassifierSymbol.partialLinkageReason(): Partially? = classifierExplorer.exploreSymbol(this) as? Partially
 
-    private fun IrType.partialLinkageReason(): Partially? = classifierExplorer.exploreType(this)
+    private fun IrType.partialLinkageReason(): Partially? = classifierExplorer.exploreType(this) as? Partially
     private fun IrType.hasPartialLinkageReason(): Boolean = partialLinkageReason() != null
 
     private fun IrType.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =

@@ -25,15 +25,31 @@ internal sealed interface LinkedClassifierStatus {
          * There is no real owner classifier for the symbol, only synthetic stub created by [MissingDeclarationStubGenerator].
          * Likely the classifier has been deleted in newer version of the library.
          */
-        @JvmInline
-        value class MissingClassifier(override val symbol: IrClassifierSymbol) : CanBeRootCause
+        class MissingClassifier(override val symbol: IrClassifierSymbol) : CanBeRootCause
 
         /**
          * There is no enclosing class for inner class (or enum entry). This might happen if the inner class became a top-level class
          * in newer version of the library.
          */
-        @JvmInline
-        value class MissingEnclosingClass(override val symbol: IrClassSymbol) : CanBeRootCause
+        class MissingEnclosingClass(override val symbol: IrClassSymbol) : CanBeRootCause
+
+        /**
+         * The classifier is effectively inaccessible anywhere in the program because it has conflicting visibility limitations.
+         */
+        class InaccessibleClassifier(
+            override val symbol: IrClassifierSymbol,
+            val ownLimitation: LimitedTo.CanBeRootCause,
+            val classifierWithConflictingLimitation: Fully.AccessibleClassifier
+        ) : CanBeRootCause
+
+        /**
+         * The classifier is effectively inaccessible anywhere in the program because it has conflicting visibility limitations.
+         */
+        class InaccessibleClassifierDueToOtherClassifiers(
+            override val symbol: IrClassifierSymbol,
+            val classifierWithConflictingLimitation1: Fully.AccessibleClassifier,
+            val classifierWithConflictingLimitation2: Fully.AccessibleClassifier
+        ) : CanBeRootCause
 
         /**
          * The classifier depends on another partially linked classifier. Thus, it is considered partially linked as well.
@@ -42,5 +58,24 @@ internal sealed interface LinkedClassifierStatus {
     }
 
     /** Indicates fully linked classifier. */
-    object Fully : LinkedClassifierStatus
+    sealed interface Fully : LinkedClassifierStatus {
+        val symbol: IrClassifierSymbol
+        val limitation: LimitedTo
+
+        class AccessibleClassifier(override val symbol: IrClassifierSymbol, override val limitation: LimitedTo) : Fully
+
+        class LesserAccessibleClassifier(override val symbol: IrClassifierSymbol, val dueTo: AccessibleClassifier) : Fully {
+            override val limitation = dueTo.limitation
+        }
+    }
+
+    object NoClassifier : LinkedClassifierStatus
+    object RecursionAvoidance : LinkedClassifierStatus
+
+    sealed interface LimitedTo {
+        sealed interface CanBeRootCause : LimitedTo
+        data class File(val file: PartialLinkageUtils.File) : CanBeRootCause
+        data class Module(val module: PartialLinkageUtils.Module) : CanBeRootCause
+        object WholeWorld : LimitedTo
+    }
 }

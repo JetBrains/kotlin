@@ -45,14 +45,14 @@ internal object PartialLinkageUtils {
      * - Fast check if a declaration belongs to the module
      * - Visibility check
      */
-    internal sealed interface Module {
-        val name: String
+    internal sealed class Module(val name: String) {
+        final override fun equals(other: Any?) = (other as? Module)?.name == name
+        final override fun hashCode() = name.hashCode()
 
-        operator fun contains(fragment: IrModuleFragment): Boolean
-        operator fun contains(declaration: IrDeclaration): Boolean
+        abstract operator fun contains(fragment: IrModuleFragment): Boolean
+        abstract operator fun contains(declaration: IrDeclaration): Boolean
 
-        class IrBased(private val module: IrModuleFragment) : Module {
-            override val name get() = module.name.asString()
+        class IrBased(private val module: IrModuleFragment) : Module(module.name.asString()) {
             override fun contains(fragment: IrModuleFragment) = fragment == module
             override fun contains(declaration: IrDeclaration) = declaration.irModule == module
 
@@ -61,8 +61,7 @@ internal object PartialLinkageUtils {
             }
         }
 
-        class LazyIrBased(private val module: ModuleDescriptor) : Module {
-            override val name get() = module.name.asString()
+        class LazyIrBased(private val module: ModuleDescriptor) : Module(module.name.asString()) {
             override fun contains(fragment: IrModuleFragment) = fragment.descriptor == module
             override fun contains(declaration: IrDeclaration) = declaration.moduleDescriptor == module
 
@@ -71,8 +70,7 @@ internal object PartialLinkageUtils {
             }
         }
 
-        object MissingDeclarations : Module {
-            override val name get() = "<missing declarations>"
+        object MissingDeclarations : Module("<missing declarations>") {
             override fun contains(fragment: IrModuleFragment) = false
             override fun contains(declaration: IrDeclaration) = false
         }
@@ -98,7 +96,7 @@ internal object PartialLinkageUtils {
         val module: Module
         fun computeLocationForOffset(offset: Int): Location
 
-        class IrBased(private val file: IrFile) : File {
+        data class IrBased(private val file: IrFile) : File {
             override val module = Module.IrBased(file.module)
 
             override fun computeLocationForOffset(offset: Int): Location {
@@ -110,7 +108,7 @@ internal object PartialLinkageUtils {
             }
         }
 
-        class LazyIrBased(private val externalPackageFragment: IrExternalPackageFragment) : File {
+        class LazyIrBased(externalPackageFragment: IrExternalPackageFragment) : File {
             private val location: Location
             override val module: Module
 
@@ -118,6 +116,9 @@ internal object PartialLinkageUtils {
                 module = Module.LazyIrBased(externalPackageFragment.packageFragmentDescriptor.containingDeclaration)
                 location = Location(module.name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
             }
+
+            override fun equals(other: Any?) = (other as? LazyIrBased)?.module == module
+            override fun hashCode() = module.hashCode()
 
             override fun computeLocationForOffset(offset: Int) = location
         }
