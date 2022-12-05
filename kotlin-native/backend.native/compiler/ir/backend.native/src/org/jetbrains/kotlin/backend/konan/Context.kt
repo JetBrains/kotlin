@@ -89,7 +89,7 @@ internal class Context(
      */
     override var symbolTable: SymbolTable? = null
 
-    lateinit var cAdapterGenerator: CAdapterGenerator
+    lateinit var cexportResults: CExportResults
 
     lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 

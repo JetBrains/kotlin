@@ -111,7 +111,7 @@ internal class PhaseEngine<C : PhaseContext>(
     /**
      * Switch to a more specific phase engine.
      */
-    inline fun <T : PhaseContext, R> useContext(newContext: T, action: (PhaseEngine<out T>) -> R): R {
+    inline fun <T : PhaseContext, R> useContext(newContext: T, action: (PhaseEngine<T>) -> R): R {
         val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
         try {
             return action(newEngine)
@@ -120,15 +120,15 @@ internal class PhaseEngine<C : PhaseContext>(
         }
     }
 
-    fun <Input, Output> runPhase(
-            phase: AbstractNamedCompilerPhase<C, Input, Output>,
+    fun <Input, Output, P : AbstractNamedCompilerPhase<C, Input, Output>> runPhase(
+            phase: P,
             input: Input
     ): Output {
         // We lose sticky postconditions here, but it should be ok, since type is changed.
         return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
     }
 
-    fun <Output> runPhase(
-            phase: AbstractNamedCompilerPhase<C, Unit, Output>,
+    fun <Output, P : AbstractNamedCompilerPhase<C, Unit, Output>> runPhase(
+            phase: P,
     ): Output = runPhase(phase, Unit)
 }

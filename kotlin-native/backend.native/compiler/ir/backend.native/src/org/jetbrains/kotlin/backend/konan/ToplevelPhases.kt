@@ -103,9 +103,9 @@ internal val objCExportPhase = konanUnitPhase(
 
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
-            this.cAdapterGenerator = CAdapterGenerator(this, this.moduleDescriptor).also {
-                it.buildExports(this.symbolTable!!)
-            }
+            val prefix = config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
+            val typeTranslator = CExportTypeTranslator(prefix, builtIns)
+            cexportResults = CAdapterGenerator(this, this.moduleDescriptor, typeTranslator).buildExports(this.symbolTable!!)
         },
         name = "BuildCExports",
             description = "Build C exports",

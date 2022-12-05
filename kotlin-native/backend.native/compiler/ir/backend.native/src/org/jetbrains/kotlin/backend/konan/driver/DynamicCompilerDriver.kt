@@ -46,9 +46,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, null, isProducingLibrary = false) { psiToIrEngine ->
-            val cexportResults = psiToIrEngine.runPhase(BuildCExports, frontendOutput)
+        val (psiToIrOutput, cexportResult) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) { psiToIrEngine ->
+            psiToIrEngine.runPhase(BuildCExports, frontendOutput)
         }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+            it.cexportResults = cexportResult
+        }
+        engine.runBackend(backendContext)
     }
 
     private fun produceFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -60,8 +64,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                     .produceFrameworkInterface(File(outputFiles.mainFileName))
             return
         }
-        val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, objCExportedInterface, isProducingLibrary = false)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput, objCExportedInterface, objCCodeSpec)
+        val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+        }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+            it.objCExportedInterface = objCExportedInterface
+            it.objCExportCodeSpec = objCCodeSpec
+        }
         engine.runBackend(backendContext)
     }
 
@@ -70,7 +79,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
      */
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val (psiToIrOutput, _) = engine.runPsiToIr(frontendOutput, objCInterface = null, isProducingLibrary = false)
+        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext)
     }
@@ -89,10 +98,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val (psiToIrOutput, _) = if (config.metadataKlib) {
-            null to null
+        val psiToIrOutput = if (config.metadataKlib) {
+            null
         } else {
-            engine.runPsiToIr(frontendOutput, objCInterface = null, isProducingLibrary = true)
+            engine.runPsiToIr(frontendOutput, isProducingLibrary = true)
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         engine.writeKlib(serializerOutput)

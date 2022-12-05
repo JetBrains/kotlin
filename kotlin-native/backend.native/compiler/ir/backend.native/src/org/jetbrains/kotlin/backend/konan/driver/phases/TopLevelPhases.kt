@@ -31,8 +31,7 @@ internal fun createBackendContext(
         config: KonanConfig,
         frontendOutput: FrontendPhaseOutput.Full,
         psiToIrOutput: PsiToIrOutput,
-        objCInterface: ObjCExportedInterface? = null,
-        objCCodeSpec: ObjCExportCodeSpec? = null
+        additionalDataSetter: (Context) -> Unit = {}
 ): Context =
         Context(
                 config,
@@ -42,8 +41,7 @@ internal fun createBackendContext(
                 frontendOutput.moduleDescriptor
         ).also {
             it.populateAfterPsiToIr(psiToIrOutput)
-            it.objCExportedInterface = objCInterface
-            it.objCExportCodeSpec = objCCodeSpec
+            additionalDataSetter(it)
         }
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
@@ -53,24 +51,27 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
 
 internal fun PhaseEngine<PhaseContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full,
-        objCInterface: ObjCExportedInterface?,
         isProducingLibrary: Boolean,
-        additionalSteps: (PhaseEngine<out PsiToIrContext>) -> Unit = {}
-): Pair<PsiToIrOutput, ObjCExportCodeSpec?> {
+): PsiToIrOutput = runPsiToIr(frontendOutput, isProducingLibrary)
+
+internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
+        frontendOutput: FrontendPhaseOutput.Full,
+        isProducingLibrary: Boolean,
+        produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
+): Pair<PsiToIrOutput, T> {
     val config = this.context.config
     val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val (psiToIrOutput, objCCodeSpec) = useContext(psiToIrContext) { psiToIrEngine ->
-        additionalSteps(psiToIrEngine)
-        val objCCodeSpec = objCInterface?.let { psiToIrEngine.runPhase(CreateObjCExportCodeSpecPhase, it) }
+    val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
+        val additionalOutput = produceAdditionalOutput(psiToIrEngine)
         val output = psiToIrEngine.runPsiToIr(frontendOutput, isProducingLibrary)
         psiToIrEngine.runSpecialBackendChecks(output)
-        output to objCCodeSpec
+        output to additionalOutput
     }
     runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
-    return psiToIrOutput to objCCodeSpec
+    return psiToIrOutput to additionalOutput
 }
 
-internal fun PhaseEngine<Context>.processModuleFragments(
+internal fun PhaseEngine<out Context>.processModuleFragments(
         input: IrModuleFragment,
         action: (NativeGenerationState, IrModuleFragment) -> Unit
 ): Unit = if (context.config.producePerFileCache) {

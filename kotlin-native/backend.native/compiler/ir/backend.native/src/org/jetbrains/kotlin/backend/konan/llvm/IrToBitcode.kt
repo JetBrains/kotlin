@@ -326,7 +326,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         }
     }
     private fun appendCAdapters() {
-        context.cAdapterGenerator.generateBindings(codegen)
+        CAdapterGenerator.generateBindings(codegen, context.cexportResults)
     }
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {

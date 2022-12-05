@@ -734,7 +734,9 @@ internal class CAdapterGenerator(
     private var functionIndex = 0
     fun nextFunctionIndex() = functionIndex++
 
-    fun generateBindings(codegen: CodeGenerator, exportResults: CExportResults) = BindingsBuilder(codegen, exportResults).build()
+    companion object {
+        fun generateBindings(codegen: CodeGenerator, exportResults: CExportResults) = BindingsBuilder(codegen, exportResults).build()
+    }
 
     private class BindingsBuilder(
             val codegen: CodeGenerator,

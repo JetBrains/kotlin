@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
  * 1. It couples child context with the parent one which makes it harder to reuse child context in different environment (e.g. tests).
  * 2. It couples phases that are running in child context with the parent one.
  */
-internal fun <Input, Output> PhaseEngine<NativeGenerationState>.runPhaseInParentContext(
-        phase: AbstractNamedCompilerPhase<Context, Input, Output>,
+internal fun <Input, Output, P : AbstractNamedCompilerPhase<Context, Input, Output>> PhaseEngine<NativeGenerationState>.runPhaseInParentContext(
+        phase: P,
         input: Input
 ): Output {
     return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context.context, input)
 }
 
-internal fun <Output> PhaseEngine<NativeGenerationState>.runPhaseInParentContext(
-        phase: AbstractNamedCompilerPhase<Context, Unit, Output>,
+internal fun <Output, P : AbstractNamedCompilerPhase<Context, Unit, Output>> PhaseEngine<NativeGenerationState>.runPhaseInParentContext(
+        phase: P,
 ): Output = runPhaseInParentContext(phase, Unit)
