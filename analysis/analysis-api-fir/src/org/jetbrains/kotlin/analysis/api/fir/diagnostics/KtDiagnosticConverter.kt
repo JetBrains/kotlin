@@ -63,7 +63,7 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiag
             is KtDiagnosticFactory0 -> KtFirDiagnostic0Creator {
                 KtCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
             }
-            is KtDiagnosticFactory1<*> -> KtFirDiagnostic1Creator {
+            is KtDiagnosticFactory1<*> -> KtFirDiagnostic1Creator<Any?> { // Type argument specified because of KT-55281
                 KtCompilerPluginDiagnostic1Impl(
                     it as KtPsiDiagnosticWithParameters1<*>,
                     token,
