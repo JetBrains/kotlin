@@ -21,7 +21,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     companion object {
         fun supportsConfig(config: KonanConfig): Boolean =
-                config.produce == CompilerOutputKind.LIBRARY || config.produce == CompilerOutputKind.PROGRAM || config.produce.isCache
+                config.produce != CompilerOutputKind.BITCODE
     }
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
