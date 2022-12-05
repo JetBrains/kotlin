@@ -60,8 +60,14 @@ operator fun IdeDependencyResolver.plus(other: IdeDependencyResolver): IdeDepend
 
 private class IdeCompositeDependencyResolver(
     val children: List<IdeDependencyResolver>
-) : IdeDependencyResolver {
+) : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         return children.flatMap { child -> child.resolve(sourceSet) }.toSet()
+    }
+
+    override fun dependencies(project: Project): Iterable<Any> {
+        return children.flatMap { child ->
+            if (child is IdeDependencyResolver.WithBuildDependencies) child.dependencies(project) else emptyList()
+        }
     }
 }
