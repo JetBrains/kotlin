@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -164,54 +166,43 @@ class Fir2IrLazyClass(
             }
         }
 
-        // Handle generated methods for enum classes (values(), valueOf(String)).
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
-                if (declaration !is FirCallableDeclaration || !declaration.isStatic || !shouldBuildStub(declaration)) continue
-
-                when (declaration) {
-                    is FirSimpleFunction -> {
-                        // TODO we also come here for all deserialized / enhanced static enum members (with declaration.source == null).
-                        //  For such members we currently can't tell whether they are compiler-generated methods or not.
-                        // Note: we must drop declarations from Java here to avoid FirJavaTypeRefs inside
-                        if (declaration.source == null && declaration.origin !is FirDeclarationOrigin.Java ||
-                            declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
-                        ) {
-                            result += declarationStorage.getIrFunctionSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate).owner
-                        }
-                    }
-
-                    is FirEnumEntry -> {
-                        result += declarationStorage.getIrValueSymbol(declaration.symbol).owner as IrDeclaration
-                    }
-
-                    else -> {}
+                if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
+                    result += declarationStorage.getIrValueSymbol(declaration.symbol).owner as IrDeclaration
                 }
             }
         }
 
         val ownerLookupTag = fir.symbol.toLookupTag()
-        for (name in scope.getCallableNames()) {
-            scope.processFunctionsByName(name) {
-                if (it.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
-                if (!shouldBuildStub(it.fir)) return@processFunctionsByName
-                if (it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
-                    if (it.isAbstractMethodOfAny()) {
-                        return@processFunctionsByName
+
+        fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
+            if (scope == null) return
+            for (name in scope.getCallableNames()) {
+                scope.processFunctionsByName(name) {
+                    if (it.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
+                    if (!shouldBuildStub(it.fir)) return@processFunctionsByName
+                    if (it.isStatic || it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
+                        if (it.isAbstractMethodOfAny()) {
+                            return@processFunctionsByName
+                        }
+                        result += declarationStorage.getIrFunctionSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
                     }
-                    result += declarationStorage.getIrFunctionSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
                 }
-            }
-            scope.processPropertiesByName(name) {
-                if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
-                if (!shouldBuildStub(it.fir)) return@processPropertiesByName
-                if (it is FirPropertySymbol && it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
-                    result.addIfNotNull(
-                        declarationStorage.getIrPropertySymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner as? IrDeclaration
-                    )
+                scope.processPropertiesByName(name) {
+                    if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
+                    if (!shouldBuildStub(it.fir)) return@processPropertiesByName
+                    if (it is FirPropertySymbol && (it.isStatic || it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag)) {
+                        result.addIfNotNull(
+                            declarationStorage.getIrPropertySymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner as? IrDeclaration
+                        )
+                    }
                 }
             }
         }
+
+        addDeclarationsFromScope(scope)
+        addDeclarationsFromScope(fir.staticScope(session, scopeSession))
 
         with(classifierStorage) {
             result.addAll(this@Fir2IrLazyClass.createContextReceiverFields(fir))

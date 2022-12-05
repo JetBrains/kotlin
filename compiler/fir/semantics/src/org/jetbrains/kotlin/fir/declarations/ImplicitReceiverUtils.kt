@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.declarations
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.labelName
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
@@ -240,8 +242,11 @@ fun ContextReceiverGroup.asTowerDataElement(): FirTowerDataElement =
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = isLocal)
 
-fun FirClass.staticScope(sessionHolder: SessionHolder) =
-    scopeProvider.getStaticScope(this, sessionHolder.session, sessionHolder.scopeSession)
+fun FirClass.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareScope? =
+    staticScope(sessionHolder.session, sessionHolder.scopeSession)
+
+fun FirClass.staticScope(session: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
+    scopeProvider.getStaticScope(this, session, scopeSession)
 
 typealias ContextReceiverGroup = List<ContextReceiverValue<*>>
 typealias FirLocalScopes = PersistentList<FirLocalScope>
