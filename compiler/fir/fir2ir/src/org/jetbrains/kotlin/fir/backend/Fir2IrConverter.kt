@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -183,7 +182,8 @@ class Fir2IrConverter(
     private fun processFileAndClassMembers(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         for (declaration in file.declarations) {
-            processMemberDeclaration(declaration, null, irFile)
+            val irDeclaration = processMemberDeclaration(declaration, null, irFile) ?: continue
+            irFile.declarations += irDeclaration
         }
     }
 
@@ -202,7 +202,8 @@ class Fir2IrConverter(
             )
         }
         for (declaration in syntheticPropertiesLast(anonymousObject.declarations)) {
-            processMemberDeclaration(declaration, anonymousObject, irClass)
+            val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
+            irClass.declarations += irDeclaration
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
@@ -234,7 +235,8 @@ class Fir2IrConverter(
         }
         // At least on enum entry creation we may need a default constructor, so ctors should be converted first
         for (declaration in syntheticPropertiesLast(allDeclarations)) {
-            processMemberDeclaration(declaration, regularClass, irClass)
+            val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
+            irClass.declarations += irDeclaration
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
@@ -342,60 +344,63 @@ class Fir2IrConverter(
         }
     }
 
-    // Process `declaration` and add the results to `parent`.
     private fun processMemberDeclaration(
         declaration: FirDeclaration,
         containingClass: FirClass?,
-        parent: IrDeclarationContainer
-    ) {
+        parent: IrDeclarationParent
+    ): IrDeclaration? {
         val isLocal = containingClass != null &&
                 (containingClass !is FirRegularClass || containingClass.isLocal)
-        when (declaration) {
+        return when (declaration) {
             is FirRegularClass -> {
-                parent.declarations += processClassMembers(declaration)
+                processClassMembers(declaration)
             }
             is FirScript -> {
                 assert(parent is IrFile)
                 declarationStorage.getOrCreateIrScript(declaration)
             }
             is FirSimpleFunction -> {
-                parent.declarations += declarationStorage.getOrCreateIrFunction(
+                declarationStorage.getOrCreateIrFunction(
                     declaration, parent, isLocal = isLocal
                 )
             }
             is FirProperty -> {
-                if (declaration.source?.kind != KtFakeSourceElementKind.EnumGeneratedDeclaration ||
-                    declaration.name != StandardNames.ENUM_ENTRIES ||
-                    session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
+                if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration &&
+                    declaration.name == StandardNames.ENUM_ENTRIES &&
+                    !session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
                 ) {
-                    parent.declarations += declarationStorage.getOrCreateIrProperty(
+                    // Note: we have to do it, because backend without the feature
+                    // cannot process Enum.entries properly
+                    null
+                } else {
+                    declarationStorage.getOrCreateIrProperty(
                         declaration, parent, isLocal = isLocal
                     )
                 }
             }
             is FirField -> {
-                require(declaration.isSynthetic) {
-                    "Unexpected non-synthetic field: ${declaration::class}"
-                }
-                parent.declarations.addIfNotNull(
+                if (declaration.isSynthetic) {
                     declarationStorage.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
-                )
-            }
-            is FirConstructor -> {
-                if (!declaration.isPrimary) {
-                    parent.declarations += declarationStorage.getOrCreateIrConstructor(
-                        declaration, parent as IrClass, isLocal = isLocal
-                    )
+                } else {
+                    throw AssertionError("Unexpected non-synthetic field: ${declaration::class}")
                 }
+            }
+            is FirConstructor -> if (!declaration.isPrimary) {
+                declarationStorage.getOrCreateIrConstructor(
+                    declaration, parent as IrClass, isLocal = isLocal
+                )
+            } else {
+                null
             }
             is FirEnumEntry -> {
-                parent.declarations += classifierStorage.createIrEnumEntry(declaration, parent as IrClass)
+                classifierStorage.createIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
-                parent.declarations += declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
+                declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
             }
             is FirTypeAlias -> {
                 // DO NOTHING
+                null
             }
             else -> {
                 error("Unexpected member: ${declaration::class}")
