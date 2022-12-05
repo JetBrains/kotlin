@@ -54,7 +54,7 @@ abstract class MultiplatformExtensionTest {
 
     internal fun expectCInteropCommonizerDependent(sourceSet: KotlinSourceSet): CInteropCommonizerDependent {
         return assertNotNull(
-            CInteropCommonizerDependent.from(project, sourceSet), "Can't find SharedInterops for ${sourceSet.name} source set"
+            CInteropCommonizerDependent.from(sourceSet), "Can't find SharedInterops for ${sourceSet.name} source set"
         )
     }
 
@@ -63,7 +63,7 @@ abstract class MultiplatformExtensionTest {
     }
 
     internal fun findCInteropCommonizerDependent(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
-        return CInteropCommonizerDependent.from(project, sourceSet)
+        return CInteropCommonizerDependent.from(sourceSet)
     }
 
     internal fun expectSharedNativeCompilation(sourceSet: KotlinSourceSet): KotlinSharedNativeCompilation {

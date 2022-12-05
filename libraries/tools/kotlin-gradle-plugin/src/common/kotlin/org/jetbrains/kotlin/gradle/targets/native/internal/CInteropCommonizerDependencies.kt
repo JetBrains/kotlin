@@ -45,8 +45,8 @@ private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: Default
     val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return
 
     addIntransitiveMetadataDependencyIfPossible(sourceSet, filesProvider files@{
-        val directlyDependent = CInteropCommonizerDependent.from(project, sourceSet)
-        val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(project, sourceSet)
+        val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
+        val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
 
         listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
             cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)

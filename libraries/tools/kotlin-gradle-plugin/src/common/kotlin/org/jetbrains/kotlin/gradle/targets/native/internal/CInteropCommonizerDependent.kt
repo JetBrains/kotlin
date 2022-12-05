@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -80,7 +79,7 @@ internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedN
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
+internal fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
         target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
@@ -88,9 +87,7 @@ internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSe
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
-    project: Project, sourceSet: KotlinSourceSet
-): CInteropCommonizerDependent? {
+internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
         target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations

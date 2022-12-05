@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
@@ -130,7 +128,7 @@ internal open class CInteropCommonizerTask
 
         val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> getCommonizerTarget(sourceSet) }
         val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
-            CInteropCommonizerDependent.from(project, sourceSet)?.let { findInteropsGroup(it) }
+            CInteropCommonizerDependent.from(sourceSet)?.let { findInteropsGroup(it) }
         }
         getAllInteropsGroups().associateWith { group ->
             (group.targets + group.targets.allLeaves()).map { target ->
@@ -267,11 +265,11 @@ internal open class CInteropCommonizerTask
             .toSet()
 
         val fromSourceSets = multiplatformExtension.sourceSets
-            .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(project, sourceSet) }
+            .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(sourceSet) }
             .toSet()
 
         val fromSourceSetsAssociateCompilations = multiplatformExtension.sourceSets
-            .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(project, sourceSet) }
+            .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(sourceSet) }
             .toSet()
 
         return@lazy (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
