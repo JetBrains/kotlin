@@ -3007,6 +3007,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("javaNestedClassesInHierarchy.kt")
+        public void testJavaNestedClassesInHierarchy() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/javaNestedClassesInHierarchy.kt");
+        }
+
+        @Test
         @TestMetadata("javaStaticMethod.kt")
         public void testJavaStaticMethod() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/javaStaticMethod.kt");

@@ -79,12 +79,16 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         if (externalClassIds.isEmpty()) return
 
         val baseFile = testServices.moduleStructure.originalTestDataFiles.first()
-        for (externalClassId in externalClassIds) {
-            val classDump = info.irPluginContext.findExternalClass(externalClassId).dump()
-            val suffix = ".__${externalClassId.replace("/", ".")}"
-            val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
-            assertions.assertEqualsToFile(expectedFile, classDump)
-        }
+        assertions.assertAll(
+            externalClassIds.map { externalClassId ->
+                {
+                    val classDump = info.irPluginContext.findExternalClass(externalClassId).dump()
+                    val suffix = ".__${externalClassId.replace("/", ".")}"
+                    val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
+                    assertions.assertEqualsToFile(expectedFile, classDump)
+                }
+            }
+        )
     }
 
     private fun IrPluginContext.findExternalClass(externalClassId: String): IrClass {

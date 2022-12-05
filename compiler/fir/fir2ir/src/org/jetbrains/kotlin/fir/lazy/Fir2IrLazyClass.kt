@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -159,10 +160,13 @@ class Fir2IrLazyClass(
             }
         }
 
-        for (declaration in fir.declarations) {
-            if (declaration is FirRegularClass && shouldBuildStub(declaration)) {
-                val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate)
-                result += nestedSymbol.owner
+        for (name in scope.getClassifierNames()) {
+            scope.processClassifiersByName(name) {
+                val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
+                if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
+                    val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate)
+                    result += nestedSymbol.owner
+                }
             }
         }
 
