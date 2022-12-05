@@ -188,7 +188,6 @@ class IdeResolveSourceDependenciesTest {
             enableDefaultStdlibDependency(false)
             applyMultiplatformPlugin()
             multiplatformExtension.jvm()
-            multiplatformExtension.linuxX64()
             multiplatformExtension.sourceSets.getByName("commonMain").dependencies {
                 implementation(project(":producer"))
             }
@@ -198,7 +197,9 @@ class IdeResolveSourceDependenciesTest {
         producer.evaluate()
         consumer.evaluate()
 
-        consumer.resolveDependencies("commonMain").assertMatches(emptyList<Any>())
+        consumer.resolveDependencies("commonMain").assertMatches(
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer.jar"))
+        )
 
         consumer.resolveDependencies("jvmMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
