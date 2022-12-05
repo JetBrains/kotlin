@@ -245,6 +245,25 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
+    fun testKotlinxImmutableCollectionIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: kotlinx.collections.immutable.ImmutableCollection<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testKotlinxImmutableCollectionCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.ImmutableCollection<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
     fun testKotlinxImmutableListIsStableIfItsTypesAre() = assertStability(
         """
             class Foo<T>(val x: kotlinx.collections.immutable.ImmutableList<T>)
@@ -299,6 +318,81 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         """
             class Foo(val x: kotlinx.collections.immutable.ImmutableMap<A, B>)
         """,
+        "Runtime(A),Runtime(B)"
+    )
+
+    @Test
+    fun testKotlinxPersistentCollectionIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: kotlinx.collections.immutable.PersistentCollection<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testKotlinxPersistentCollectionCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.PersistentCollection<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testKotlinxPersistentListIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: kotlinx.collections.immutable.PersistentList<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testKotlinxPersistentListCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.PersistentList<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testKotlinxPersistentSetIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: kotlinx.collections.immutable.PersistentSet<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testKotlinxPersistentSetCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.PersistentSet<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testKotlinxPersistentMapIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<K, V>(val x: kotlinx.collections.immutable.PersistentMap<K, V>)""",
+        "Parameter(K),Parameter(V)"
+    )
+
+    @Test
+    fun testKotlinxPersistentMapCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+            class B
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.PersistentMap<A, B>)""",
         "Runtime(A),Runtime(B)"
     )
 
@@ -506,6 +600,170 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         """,
         "",
         "setOf(A())",
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testImmutableListOfCallWithPrimitiveTypeIsStable() = assertStability(
+        "",
+        "",
+        "kotlinx.collections.immutable.immutableListOf(1)",
+        "Stable"
+    )
+
+    @Test
+    fun testImmutableListOfCallWithLocalInferredStableTypeIsStable() = assertStability(
+        "",
+        "class Foo",
+        "kotlinx.collections.immutable.immutableListOf(Foo())",
+        "Stable"
+    )
+
+    @Test
+    fun testImmutableListOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        "class Foo",
+        "",
+        "kotlinx.collections.immutable.immutableListOf(Foo())",
+        "Runtime(Foo)"
+    )
+
+    @Test
+    fun testImmutableMapOfCallWithPrimitiveTypesIsStable() = assertStability(
+        "",
+        "",
+        "kotlinx.collections.immutable.immutableMapOf(1 to 1)",
+        "Stable,Stable"
+    )
+
+    @Test
+    fun testImmutableMapOfCallWithStableTypeIsStable() = assertStability(
+        "",
+        """
+            class A
+            class B
+        """,
+        "kotlinx.collections.immutable.immutableMapOf(A() to B())",
+        "Stable,Stable"
+    )
+
+    @Test
+    fun testImmutableMapOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+            class B
+        """,
+        "",
+        "kotlinx.collections.immutable.immutableMapOf(A() to B())",
+        "Runtime(A),Runtime(B)"
+    )
+
+    @Test
+    fun testImmutableSetOfCallWithPrimitiveTypesIsStable() = assertStability(
+        "",
+        "",
+        "kotlinx.collections.immutable.immutableSetOf(1)",
+        "Stable"
+    )
+
+    @Test
+    fun testImmutableSetOfCallWithStableTypeIsStable() = assertStability(
+        "",
+        """
+            class A
+        """,
+        "kotlinx.collections.immutable.immutableSetOf(A())",
+        "Stable"
+    )
+
+    @Test
+    fun testImmutableSetOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        "",
+        "kotlinx.collections.immutable.immutableSetOf(A())",
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testPersistentListOfCallWithPrimitiveTypeIsStable() = assertStability(
+        "",
+        "",
+        "kotlinx.collections.immutable.persistentListOf(1)",
+        "Stable"
+    )
+
+    @Test
+    fun testPersistentListOfCallWithLocalInferredStableTypeIsStable() = assertStability(
+        "",
+        "class Foo",
+        "kotlinx.collections.immutable.persistentListOf(Foo())",
+        "Stable"
+    )
+
+    @Test
+    fun testPersistentListOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        "class Foo",
+        "",
+        "kotlinx.collections.immutable.persistentListOf(Foo())",
+        "Runtime(Foo)"
+    )
+
+    @Test
+    fun testPersistentMapOfCallWithPrimitiveTypesIsStable() = assertStability(
+        "",
+        "",
+        "kotlinx.collections.immutable.persistentMapOf(1 to 1)",
+        "Stable,Stable"
+    )
+
+    @Test
+    fun testPersistentMapOfCallWithStableTypeIsStable() = assertStability(
+        "",
+        """
+            class A
+            class B
+        """,
+        "kotlinx.collections.immutable.persistentMapOf(A() to B())",
+        "Stable,Stable"
+    )
+
+    @Test
+    fun testPersistentMapOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+            class B
+        """,
+        "",
+        "kotlinx.collections.immutable.persistentMapOf(A() to B())",
+        "Runtime(A),Runtime(B)"
+    )
+
+    @Test
+    fun testPersistentSetOfCallWithPrimitiveTypesIsStable() = assertStability(
+        "",
+        "",
+        "kotlinx.collections.immutable.persistentSetOf(1)",
+        "Stable"
+    )
+
+    @Test
+    fun testPersistentSetOfCallWithStableTypeIsStable() = assertStability(
+        "",
+        """
+            class A
+        """,
+        "kotlinx.collections.immutable.persistentSetOf(A())",
+        "Stable"
+    )
+
+    @Test
+    fun testPersistentSetOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        "",
+        "kotlinx.collections.immutable.persistentSetOf(A())",
         "Runtime(A)"
     )
 
