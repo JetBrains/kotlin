@@ -16,6 +16,8 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
@@ -79,10 +81,11 @@ abstract class KotlinSoftwareComponent(
                 }
             }
 
-            configureSourcesJarArtifact()
+            val sourcesElements = metadataTarget.sourcesElementsConfigurationName
+            addSourcesJarArtifactToConfiguration(sourcesElements)
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                dependencyConfigurationName = metadataTarget.sourcesElementsConfigurationName,
+                dependencyConfigurationName = sourcesElements,
                 includeIntoProjectStructureMetadata = false,
             )
         }
@@ -92,11 +95,14 @@ abstract class KotlinSoftwareComponent(
         return _usages
     }
 
-    private fun configureSourcesJarArtifact(): PublishArtifact {
-        fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
-                getHostSpecificMainSharedSourceSets(project)
+    private fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
+            getHostSpecificMainSharedSourceSets(project)
 
-        val sourcesJarTask = sourcesJarTaskNamed(
+    /**
+     * Registration (during object init) of [sourcesJarTask] is required for cases when
+     * user build scripts want to have access to sourcesJar task to configure it
+     */
+    private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
             "sourcesJar",
             name,
             project,
@@ -104,7 +110,8 @@ abstract class KotlinSoftwareComponent(
             name.toLowerCase()
         )
 
-        return project.artifacts.add(metadataTarget.sourcesElementsConfigurationName, sourcesJarTask) { sourcesJarArtifact ->
+    private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {
+        return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->
             sourcesJarArtifact.classifier = "sources"
         }
     }
