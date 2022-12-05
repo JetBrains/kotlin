@@ -64,10 +64,12 @@ class ClassicFrontend2IrConverter(
             .diagnosticReporter(DiagnosticReporterFactory.createReporter())
             .build()
 
+        val convertionResult =
+            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values))
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values)),
+            convertionResult,
             emptyList()
         )
     }
@@ -81,7 +83,7 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val moduleFragment = generateIrForKlibSerialization(
+        val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project,
             sourceFiles,
             configuration,
@@ -101,6 +103,7 @@ class ClassicFrontend2IrConverter(
 
         return IrBackendInput.JsIrBackendInput(
             moduleFragment,
+            pluginContext,
             sourceFiles.map(::KtPsiSourceFile),
             icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,

@@ -342,7 +342,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
         val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val moduleFragment = generateIrForKlibSerialization(
+        val (moduleFragment, _) = generateIrForKlibSerialization(
             environment.project,
             moduleSourceFiles,
             configuration,

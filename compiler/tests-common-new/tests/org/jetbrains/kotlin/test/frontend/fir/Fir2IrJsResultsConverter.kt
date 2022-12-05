@@ -68,7 +68,7 @@ class Fir2IrJsResultsConverter(
 
         val fir2IrExtensions = Fir2IrExtensions.Default
         val firFiles = inputArtifact.allFirFiles.values
-        val (irModuleFragment, components) =
+        val (irModuleFragment, components, pluginContext) =
             inputArtifact.firAnalyzerFacade.convertToJsIr(firFiles, fir2IrExtensions, module, configuration, testServices)
 
         val sourceFiles = firFiles.mapNotNull { it.sourceFile }
@@ -86,6 +86,7 @@ class Fir2IrJsResultsConverter(
 
         return IrBackendInput.JsIrBackendInput(
             irModuleFragment,
+            pluginContext,
             sourceFiles,
             icData,
             expectDescriptorToSymbol,

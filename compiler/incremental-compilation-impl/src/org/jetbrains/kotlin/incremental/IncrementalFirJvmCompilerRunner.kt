@@ -277,7 +277,7 @@ class IncrementalFirJvmCompilerRunner(
                 .filter { it.kind == FirSession.Kind.Source }
                 .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-            val (irModuleFragment, components) = Fir2IrConverter.createModuleFragmentWithoutSignatures(
+            val (irModuleFragment, components, pluginContext) = Fir2IrConverter.createModuleFragmentWithoutSignatures(
                 cycleResult.session, cycleResult.scopeSession, cycleResult.fir + allCommonFirFiles,
                 cycleResult.session.languageVersionSettings, extensions,
                 FirJvmKotlinMangler(cycleResult.session), JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
@@ -295,7 +295,8 @@ class IncrementalFirJvmCompilerRunner(
                 irModuleFragment,
                 components.symbolTable,
                 components,
-                cycleResult.session
+                cycleResult.session,
+                pluginContext
             )
 
             val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)

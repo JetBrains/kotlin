@@ -123,7 +123,7 @@ object GenerationUtils {
             generateSignatures = false
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val (moduleFragment, components) = firAnalyzerFacade.convertToIr(fir2IrExtensions)
+        val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(fir2IrExtensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(
@@ -143,7 +143,7 @@ object GenerationUtils {
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            fir2IrExtensions, FirJvmBackendExtension(session, components),
+            fir2IrExtensions, FirJvmBackendExtension(session, components), pluginContext,
         ) {}
 
         generationState.factory.done()

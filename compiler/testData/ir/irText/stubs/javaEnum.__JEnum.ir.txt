@@ -1,57 +1,57 @@
-CLASS IR_EXTERNAL_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl><<root>.JEnum?>]
-  $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.JEnum
-  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:<root>.JEnum [primary]
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>]
+  $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JEnum
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.JEnum [primary]
   ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:ONE
   ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TWO
   ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:THREE
-  FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:<unbound IrClassPublicSymbolImpl><<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+  FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Any [fake_override]
     overridden:
-      protected final fun clone (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-  FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>, other:<root>.JEnum?) returnType:<unbound IrClassPublicSymbolImpl> [fake_override,operator]
+      protected final fun clone (): kotlin.Any declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>, other:@[FlexibleNullability] <root>.JEnum?) returnType:kotlin.Int [fake_override,operator]
     overridden:
-      public final fun compareTo (other: <unbound IrTypeParameterPublicSymbolImpl>): <unbound IrClassPublicSymbolImpl> [operator] declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<root>.JEnum?
-  FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>, other:<unbound IrClassPublicSymbolImpl>?) returnType:<unbound IrClassPublicSymbolImpl> [fake_override,operator]
+      public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:@[FlexibleNullability] <root>.JEnum?
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:
-      public final fun equals (other: <unbound IrClassPublicSymbolImpl>?): <unbound IrClassPublicSymbolImpl> [operator] declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassPublicSymbolImpl>?
-  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Int [fake_override]
     overridden:
-      public final fun hashCode (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      public final fun hashCode (): kotlin.Int declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.String [fake_override]
     overridden:
-      public open fun toString (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-  FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl><<root>.JEnum?>? [fake_override]
+      public open fun toString (): kotlin.String declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.JEnum?>? [fake_override]
     overridden:
-      public final fun getDeclaringClass (): <unbound IrClassPublicSymbolImpl><<unbound IrTypeParameterPublicSymbolImpl>?>? declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-  FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Unit [fake_override]
     overridden:
-      protected/*protected and package*/ final fun finalize (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
+      protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name visibility:public modality:FINAL [fake_override,val]
     annotations:
-      <unbound>
+      IntrinsicConstEvaluation
     overridden:
-      public final name: <unbound IrClassPublicSymbolImpl> [val]
-    FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      public final name: kotlin.String [val]
+    FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.String [fake_override]
       correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final fun <get-name> (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Enum
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
+        public final fun <get-name> (): kotlin.String declared in kotlin.Enum
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal visibility:public modality:FINAL [fake_override,val]
     overridden:
-      public final ordinal: <unbound IrClassPublicSymbolImpl> [val]
-    FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.JEnum?>) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      public final ordinal: kotlin.Int [val]
+    FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Int [fake_override]
       correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final fun <get-ordinal> (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Enum
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<<root>.JEnum?>
-  FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:<unbound IrClassPublicSymbolImpl>) returnType:<root>.JEnum
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:<unbound IrClassPublicSymbolImpl>
-  FUN IR_EXTERNAL_DECLARATION_STUB name:values visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl><<root>.JEnum>
+        public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.JEnum
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:kotlin.String
+  FUN IR_EXTERNAL_DECLARATION_STUB name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.JEnum>

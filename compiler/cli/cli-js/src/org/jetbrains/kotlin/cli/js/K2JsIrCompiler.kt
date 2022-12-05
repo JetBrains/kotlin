@@ -444,7 +444,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
             val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
-            val moduleFragment = generateIrForKlibSerialization(
+            val (moduleFragment, _) = generateIrForKlibSerialization(
                 environmentForJS.project,
                 moduleSourceFiles,
                 environmentForJS.configuration,

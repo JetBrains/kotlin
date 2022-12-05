@@ -5,7 +5,17 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.SymbolTable
 
-data class Fir2IrResult(val irModuleFragment: IrModuleFragment, val components: Fir2IrComponents)
+class Fir2IrResult(
+    val irModuleFragment: IrModuleFragment,
+    val components: Fir2IrComponents,
+    moduleDescriptor: FirModuleDescriptor
+) {
+    val pluginContext: Fir2IrPluginContext = Fir2IrPluginContext(components, moduleDescriptor)
+
+    operator fun component1(): IrModuleFragment = irModuleFragment
+    operator fun component2(): Fir2IrComponents = components
+    operator fun component3(): Fir2IrPluginContext = pluginContext
+}

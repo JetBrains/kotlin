@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -24,8 +25,14 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
     abstract val irModuleFragment: IrModuleFragment
 
+    /*
+     * Here plugin context can be used as a service for inspecting resulting IR module
+     */
+    abstract val irPluginContext: IrPluginContext
+
     data class JsIrBackendInput(
         override val irModuleFragment: IrModuleFragment,
+        override val irPluginContext: IrPluginContext,
         val sourceFiles: List<KtSourceFile>,
         val icData: List<KotlinFileSerializedData>,
         val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: abstract from descriptors
@@ -41,5 +48,8 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     ) : IrBackendInput() {
         override val irModuleFragment: IrModuleFragment
             get() = backendInput.irModuleFragment
+
+        override val irPluginContext: IrPluginContext
+            get() = backendInput.pluginContext
     }
 }

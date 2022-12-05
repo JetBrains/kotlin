@@ -62,7 +62,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
         val sourceFiles = (module.mainModule as MainModule.SourceFiles).files
         val icData = module.compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val moduleFragment = generateIrForKlibSerialization(
+        val (moduleFragment, _) = generateIrForKlibSerialization(
             module.project,
             sourceFiles,
             module.compilerConfiguration,

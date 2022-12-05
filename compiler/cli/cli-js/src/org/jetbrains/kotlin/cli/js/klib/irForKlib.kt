@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.cli.js.klib
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
@@ -55,7 +56,7 @@ fun generateIrForKlibSerialization(
     irFactory: IrFactory,
     verifySignatures: Boolean = true,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
-): IrModuleFragment {
+): Pair<IrModuleFragment, IrPluginContext> {
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
@@ -90,7 +91,7 @@ fun generateIrForKlibSerialization(
 
     sortedDependencies.map { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }
 
-    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(
+    val (moduleFragment, pluginContext) = psi2IrContext.generateModuleFragmentWithPlugins(
         project,
         files,
         irLinker,
@@ -111,6 +112,6 @@ fun generateIrForKlibSerialization(
         moduleFragment.transform(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
     }
 
-    return moduleFragment
+    return moduleFragment to pluginContext
 }
 

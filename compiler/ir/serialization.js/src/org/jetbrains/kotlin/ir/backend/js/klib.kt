@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
@@ -347,7 +347,7 @@ fun getIrModuleInfoForSourceFiles(
             true
         )
 
-    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger)
+    val (moduleFragment, _) = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger)
 
     // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
     val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
@@ -400,23 +400,22 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     messageLogger: IrMessageLogger,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
     stubGenerator: DeclarationStubGenerator? = null
-): IrModuleFragment {
+): Pair<IrModuleFragment, IrPluginContext> {
     val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageLogger::checkNoUnboundSymbols)
     val extensions = IrGenerationExtension.getInstances(project)
 
+    // plugin context should be instantiated before postprocessing steps
+    val pluginContext = IrPluginContextImpl(
+        moduleDescriptor,
+        bindingContext,
+        languageVersionSettings,
+        symbolTable,
+        typeTranslator,
+        irBuiltIns,
+        linker = irLinker,
+        messageLogger
+    )
     if (extensions.isNotEmpty()) {
-        // plugin context should be instantiated before postprocessing steps
-        val pluginContext = IrPluginContextImpl(
-            moduleDescriptor,
-            bindingContext,
-            languageVersionSettings,
-            symbolTable,
-            typeTranslator,
-            irBuiltIns,
-            linker = irLinker,
-            messageLogger
-        )
-
         for (extension in extensions) {
             psi2Ir.addPostprocessingStep { module ->
                 val old = stubGenerator?.unboundSymbolGeneration
@@ -437,7 +436,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         listOf(stubGenerator ?: irLinker),
         extensions,
         expectDescriptorToSymbol
-    )
+    ) to pluginContext
 }
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
