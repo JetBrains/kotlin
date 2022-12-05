@@ -42,14 +42,18 @@ internal class TaskOutputsBackup(
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
+                val snapshotFile = File(snapshotsDir.get().asFile, index.asSnapshotArchiveName)
+                logger.debug("Packing $outputPath as $snapshotFile to make a backup")
                 compressDirectoryToZip(
-                    File(snapshotsDir.get().asFile, index.asSnapshotArchiveName),
+                    snapshotFile,
                     outputPath
                 )
             } else {
+                val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
+                logger.debug("Copying $outputPath as $snapshotFile to make a backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(outputPath)
-                    spec.into(snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile })
+                    spec.into(snapshotFile)
                 }
             }
         }
@@ -63,12 +67,14 @@ internal class TaskOutputsBackup(
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
             if (snapshotDir.isDirectory) {
+                logger.debug("Copying files from $snapshotDir into ${outputPath.parentFile} to restore from backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(snapshotDir)
                     spec.into(outputPath.parentFile)
                 }
             } else {
                 val snapshotArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
+                logger.debug("Unpacking $snapshotArchive into $outputPath to restore from backup")
                 if (!snapshotArchive.exists()) {
                     logger.warn(
                         """
