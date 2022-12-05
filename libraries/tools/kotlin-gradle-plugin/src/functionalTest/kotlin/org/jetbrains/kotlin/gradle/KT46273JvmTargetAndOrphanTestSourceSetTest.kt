@@ -41,8 +41,6 @@ class KT46273JvmTargetAndOrphanTestSourceSetTest : MultiplatformExtensionTest() 
 
 	    The dependencies' transformation will be called by the IDE during import.
          */
-        KotlinDependencyScope.values().forEach { scope ->
-            orphanTestSourceSet.getDependenciesTransformation(scope)
-        }
+        orphanTestSourceSet.getDependenciesTransformation()
     }
 }

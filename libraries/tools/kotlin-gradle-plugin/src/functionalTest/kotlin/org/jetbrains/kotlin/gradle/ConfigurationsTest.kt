@@ -76,12 +76,10 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             "MainApiDependenciesMetadata",
             "MainCompileOnlyDependenciesMetadata",
             "MainImplementationDependenciesMetadata",
-            "MainRuntimeOnlyDependenciesMetadata",
 
             "TestApiDependenciesMetadata",
             "TestCompileOnlyDependenciesMetadata",
             "TestImplementationDependenciesMetadata",
-            "TestRuntimeOnlyDependenciesMetadata",
         )
 
         // WASM
@@ -99,7 +97,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             "ApiDependenciesMetadata",
             "CompileOnlyDependenciesMetadata",
             "ImplementationDependenciesMetadata",
-            "RuntimeOnlyDependenciesMetadata",
         )
 
         // allJs

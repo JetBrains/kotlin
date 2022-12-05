@@ -919,14 +919,13 @@ class NewMultiplatformIT : BaseGradleIT() {
                                 // add these dependencies to check that they are resolved to metadata
                                 api 'com.example:sample-lib:1.0'
                                 compileOnly 'com.example:sample-lib:1.0'
-                                runtimeOnly 'com.example:sample-lib:1.0'
                             }
                         }
                     }
 
                     task('printMetadataFiles') {
                         doFirst {
-                            ['Api', 'Implementation', 'CompileOnly', 'RuntimeOnly'].each { kind ->
+                            ['Api', 'Implementation', 'CompileOnly'].each { kind ->
                                 def configuration = configurations.getByName("commonMain${'$'}kind" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
                                 configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }
                             }
@@ -947,7 +946,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .toSet()
 
                 Assert.assertEquals(
-                    listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
+                    listOf("Api", "Implementation", "CompileOnly").map {
                         "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
                     }.toSet(),
                     paths
@@ -999,14 +998,13 @@ class NewMultiplatformIT : BaseGradleIT() {
                                 api 'com.example:sample-lib-nodejs:1.0'
                                 implementation 'com.example:sample-lib-nodejs:1.0'
                                 compileOnly 'com.example:sample-lib-nodejs:1.0'
-                                runtimeOnly 'com.example:sample-lib-nodejs:1.0'
                             }
                         }
                     }
 
                     task('printMetadataFiles') {
                         doFirst {
-                            ['Api', 'Implementation', 'CompileOnly', 'RuntimeOnly'].each { kind ->
+                            ['Api', 'Implementation', 'CompileOnly'].each { kind ->
                                 def configuration = configurations.getByName("nodeJsMain${'$'}kind" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
                                 configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }
                             }
@@ -1030,7 +1028,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .toSet()
 
                 Assert.assertEquals(
-                    listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
+                    listOf("Api", "Implementation", "CompileOnly").map {
                         "nodeJsMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
                     }.toSet(),
                     paths
@@ -1541,10 +1539,10 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .count()
             )
 
+            // All scoped DependenciesMetadata should resolve consistently into the same version
             assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
-            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
-            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
+            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
+            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
 
             assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
         }

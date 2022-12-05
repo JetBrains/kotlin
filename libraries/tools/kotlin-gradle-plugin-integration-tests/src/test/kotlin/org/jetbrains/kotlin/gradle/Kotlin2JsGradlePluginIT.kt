@@ -1193,14 +1193,13 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 |                api(project(":base"))
                 |                implementation(project(":base"))
                 |                compileOnly(project(":base"))
-                |                runtimeOnly(project(":base"))
                 |            }
                 |        }
                 |    }
                 |
                 |task("printMetadataFiles") {
                 |    doFirst {
-                |        listOf("api", "implementation", "compileOnly", "runtimeOnly").forEach { kind ->
+                |        listOf("api", "implementation", "compileOnly").forEach { kind ->
                 |            val configuration = configurations.getByName(kind + "DependenciesMetadata")
                 |            configuration.files.forEach { println("$pathPrefix" + configuration.name + "->" + it.name) }
                 |        }
@@ -1223,7 +1222,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     .toSet()
 
                 assertEquals(
-                    listOf("api", "implementation", "compileOnly", "runtimeOnly").map {
+                    listOf("api", "implementation", "compileOnly").map {
                         "$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
                     }.toSet(),
                     paths
