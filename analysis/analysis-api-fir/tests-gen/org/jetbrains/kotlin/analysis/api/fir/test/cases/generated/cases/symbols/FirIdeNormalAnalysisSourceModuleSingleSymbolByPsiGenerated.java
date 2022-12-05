@@ -216,9 +216,9 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends 
         }
 
         @Test
-        @TestMetadata("anonympuseObjectInInvalidPosition.kt")
-        public void testAnonympuseObjectInInvalidPosition() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/anonympuseObjectInInvalidPosition.kt");
+        @TestMetadata("anonymousObjectInInvalidPosition.kt")
+        public void testAnonymousObjectInInvalidPosition() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/anonymousObjectInInvalidPosition.kt");
         }
 
         @Test
