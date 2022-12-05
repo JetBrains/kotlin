@@ -9,6 +9,7 @@ import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
+import kotlinx.collections.immutable.mutate
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -57,7 +57,10 @@ internal class SymbolLightFieldForObject private constructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.FINAL).with(PsiModifier.STATIC),
+            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.mutate {
+                it[PsiModifier.FINAL] = true
+                it[PsiModifier.STATIC] = true
+            },
             lazyModifiersComputer = ::computeModifiers,
         ) { modifierList ->
             listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
