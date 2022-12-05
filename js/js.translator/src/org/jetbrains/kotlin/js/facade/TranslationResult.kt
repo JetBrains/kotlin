@@ -117,7 +117,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
         override fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
             val output = TextOutputImpl()
 
-            val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
+            val sourceMapBuilder = SourceMap3Builder(outputFile, output::getColumn, config.sourceMapPrefix)
             val sourceMapBuilderConsumer =
                 if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
                     val sourceMapContentEmbedding = config.sourceMapContentEmbedding

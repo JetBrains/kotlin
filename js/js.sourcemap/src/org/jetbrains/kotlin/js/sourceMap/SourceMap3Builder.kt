@@ -13,7 +13,7 @@ import java.util.function.Supplier
 
 class SourceMap3Builder(
     private val generatedFile: File?,
-    private val textOutput: TextOutput,
+    private val getCurrentOutputColumn: () -> Int,
     private val pathPrefix: String
 ) : SourceMapBuilder {
 
@@ -169,13 +169,16 @@ class SourceMap3Builder(
         if (newGroupStarted) {
             previousGeneratedColumn = 0
         }
-        val columnDiff = textOutput.column - previousGeneratedColumn
+
+        val column = getCurrentOutputColumn()
+        
+        val columnDiff = column - previousGeneratedColumn
         if (!newGroupStarted) {
             out.append(',')
         }
         if (columnDiff > 0 || newGroupStarted) {
             Base64VLQ.encode(out, columnDiff)
-            previousGeneratedColumn = textOutput.column
+            previousGeneratedColumn = column
 
             previousMappingOffset = out.length
             previousPreviousSourceIndex = previousSourceIndex

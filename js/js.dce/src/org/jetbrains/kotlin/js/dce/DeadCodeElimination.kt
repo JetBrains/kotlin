@@ -117,7 +117,7 @@ class DeadCodeElimination(
                 val sourceMapFile = File(file.outputPath + ".map")
                 val textOutput = TextOutputImpl()
                 val outputFile = File(file.outputPath)
-                val sourceMapBuilder = SourceMap3Builder(outputFile, textOutput, "")
+                val sourceMapBuilder = SourceMap3Builder(outputFile, textOutput::getColumn, "")
 
                 val inputFile = File(file.resource.name)
                 val sourceBaseDir = if (inputFile.exists()) inputFile.parentFile else File(".")
