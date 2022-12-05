@@ -1,6 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1288
-// Because we can't call a class as a function with the `call` method
-// IGNORE_BACKEND: JS_IR_ES6
 // CHECK_CONTAINS_NO_CALLS: box except=equals;Baz_getInstance;callLocal;callLocalExtension TARGET_BACKENDS=JS
 // CHECK_CONTAINS_NO_CALLS: box except=Foo_getInstance;Bar;Baz_getInstance;callLocal;callLocalExtension IGNORED_BACKENDS=JS
 // CHECK_CONTAINS_NO_CALLS: callLocal

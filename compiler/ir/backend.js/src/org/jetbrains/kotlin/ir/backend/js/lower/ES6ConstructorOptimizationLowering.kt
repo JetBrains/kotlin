@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * 1. Has primary constructor which delegates to a secondary
  * 2. Has secondary constructor which delegates to a primary
  * 3. Has a constructor with a box parameter, and it has an external superclass
+ * 4. Is a subtype for Throwable, because we replace the super call inside constructors with `setPropertiesToThrowableInstance` call
  * Otherwise, we can generate a simple ES-class constructor in each class of the hierarchy
  */
 class ES6ConstructorOptimizationLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
@@ -68,15 +69,16 @@ class ES6ConstructorOptimizationLowering(private val context: JsIrBackendContext
         while (currentClass != null && !currentClass.isExternal && !esClassToPossibilityForOptimization.contains(currentClass)) {
             esClassToPossibilityForOptimization[currentClass] = nearestOptimizationDecision
 
-            if (
-                nearestOptimizationDecision.value &&
-                (currentClass.hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary() || currentClass.isSubclassOfExternalClassWithRequiredBoxParameter())
-            ) {
+            if (nearestOptimizationDecision.value &&  !currentClass.canBeOptimized()) {
                 nearestOptimizationDecision.value = false
             }
 
             currentClass = currentClass.superClass
         }
+    }
+
+    private fun IrClass.canBeOptimized(): Boolean {
+        return superClass?.symbol != context.throwableClass && !isSubclassOfExternalClassWithRequiredBoxParameter() && !hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary()
     }
 
     private fun IrClass.hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary(): Boolean {

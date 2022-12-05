@@ -861,6 +861,30 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("dynamicSuspendReturn.kt")
+        public void testDynamicSuspendReturn() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("dynamicSuspendReturnWithArrayAccess.kt")
+        public void testDynamicSuspendReturnWithArrayAccess() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturnWithArrayAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("dynamicSuspendReturnWithOperator.kt")
+        public void testDynamicSuspendReturnWithOperator() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturnWithOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("jsCallInsideCoroutine.kt")
+        public void testJsCallInsideCoroutine() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/jsCallInsideCoroutine.kt");
+        }
+
+        @Test
         @TestMetadata("kt54382.kt")
         public void testKt54382() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/kt54382.kt");

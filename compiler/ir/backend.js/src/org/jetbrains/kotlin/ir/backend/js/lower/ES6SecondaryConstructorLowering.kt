@@ -247,11 +247,21 @@ class ES6AddBoxParameterToConstructorsLowering(override val context: JsIrBackend
 
     private fun hackSimpleClassWithCapturing(constructor: IrConstructor) {
         val irClass = constructor.parentAsClass
+
         if (irClass.superClass != null || (!irClass.isInner && !irClass.isLocal)) return
+
         val statements = (constructor.body as IrBlockBody).statements
         val delegationConstructorIndex = statements.indexOfFirst { it is IrDelegatingConstructorCall }
+
         if (delegationConstructorIndex == -1) return
-        statements.add(0, statements[delegationConstructorIndex])
+
+        val firstClassFieldAssignment = statements.indexOfFirst { statement ->
+            statement is IrSetField && statement.receiver?.let { it is IrGetValue && it.symbol == irClass.thisReceiver?.symbol } == true
+        }
+
+        if (firstClassFieldAssignment == -1 || firstClassFieldAssignment > delegationConstructorIndex) return
+
+        statements.add(firstClassFieldAssignment, statements[delegationConstructorIndex])
         statements.removeAt(delegationConstructorIndex + 1)
     }
 
