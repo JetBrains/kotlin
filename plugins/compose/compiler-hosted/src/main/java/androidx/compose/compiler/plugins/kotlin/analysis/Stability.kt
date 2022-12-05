@@ -244,9 +244,14 @@ private val stableBuiltinTypes = mapOf(
     "com.google.common.collect.ImmutableEnumSet" to 0b1,
     "com.google.common.collect.ImmutableSet" to 0b1,
     // Kotlinx immutable
+    "kotlinx.collections.immutable.ImmutableCollection" to 0b1,
     "kotlinx.collections.immutable.ImmutableList" to 0b1,
     "kotlinx.collections.immutable.ImmutableSet" to 0b1,
     "kotlinx.collections.immutable.ImmutableMap" to 0b11,
+    "kotlinx.collections.immutable.PersistentCollection" to 0b1,
+    "kotlinx.collections.immutable.PersistentList" to 0b1,
+    "kotlinx.collections.immutable.PersistentSet" to 0b1,
+    "kotlinx.collections.immutable.PersistentMap" to 0b11,
     // Dagger
     "dagger.Lazy" to 0b1,
 )
@@ -260,6 +265,13 @@ private val stableProducingFunctions = mapOf(
     "kotlin.collections.MapsKt.emptyMap" to 0,
     "kotlin.collections.SetsKt.setOf" to 0b1,
     "kotlin.collections.SetsKt.emptySet" to 0,
+    // Kotlinx immutable
+    "kotlinx.collections.immutable.immutableListOf" to 0b1,
+    "kotlinx.collections.immutable.immutableSetOf" to 0b1,
+    "kotlinx.collections.immutable.immutableMapOf" to 0b11,
+    "kotlinx.collections.immutable.persistentListOf" to 0b1,
+    "kotlinx.collections.immutable.persistentSetOf" to 0b1,
+    "kotlinx.collections.immutable.persistentMapOf" to 0b11,
 )
 
 fun stabilityOf(irType: IrType): Stability =
