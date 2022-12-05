@@ -393,9 +393,9 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitPropertyReference(expression: IrPropertyReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
-                ?: checkReferencedDeclaration(getter, checkVisibility = false)
-                ?: checkReferencedDeclaration(setter, checkVisibility = false)
-                ?: checkReferencedDeclaration(field, checkVisibility = false)
+                ?: checkReferencedDeclaration(getter)
+                ?: checkReferencedDeclaration(setter)
+                ?: checkReferencedDeclaration(field)
                 ?: checkExpressionTypeArguments()
         }
 
@@ -463,10 +463,6 @@ internal class PartiallyLinkedIrTreePatcher(
                 is IrClassifierSymbol -> symbol.partialLinkageReason()?.let { ExpressionUsesPartiallyLinkedClassifier(this, it) }
 
                 is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol, checkVisibility = false)
-
-                is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol, checkVisibility = false)
-                    ?: checkReferencedDeclaration(symbol.owner.setter?.symbol, checkVisibility = false)
-                    ?: checkReferencedDeclaration(symbol.owner.backingField?.symbol, checkVisibility = false)
 
                 else -> {
                     val partialLinkageReasonInReferencedDeclaration = when (symbol) {
