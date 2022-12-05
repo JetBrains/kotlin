@@ -101,10 +101,6 @@ internal object EmptyIntersectionTypeChecker {
                         return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
                     }
                     firstTypeConstructor.isFinalClassConstructor() || secondTypeConstructor.isFinalClassConstructor() -> {
-                        val incompatibleSupertypes = getIncompatibleSuperTypes(firstType, secondType)
-                        if (incompatibleSupertypes != null) {
-                            return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.INCOMPATIBLE_SUPERTYPES, *incompatibleSupertypes)
-                        }
                         // don't have incompatible supertypes so can have a common subtype only if all types are interfaces
                         possibleEmptyIntersectionKind = EmptyIntersectionTypeInfo(
                             EmptyIntersectionTypeKind.FINAL_CLASS_AND_INTERFACE,
@@ -124,56 +120,6 @@ internal object EmptyIntersectionTypeChecker {
     ): Boolean = AbstractTypeChecker.findCorrespondingSupertypes(
         typeCheckerState, this, otherConstructorMarker
     ).isNotEmpty()
-
-    private fun TypeSystemInferenceExtensionContext.getIncompatibleSuperTypes(
-        firstType: KotlinTypeMarker, secondType: KotlinTypeMarker
-    ): Array<KotlinTypeMarker>? {
-        @Suppress("NAME_SHADOWING")
-        val firstType = firstType.eraseContainingTypeParameters()
-
-        @Suppress("NAME_SHADOWING")
-        val secondType = secondType.eraseContainingTypeParameters()
-
-        // interface A<K>
-        // interface B: A<String>
-        // interface C: A<Int>
-        // => B and C have incompatible supertypes
-        val superTypesOfFirst = firstType.typeConstructor().supertypes()
-        val firstTypeSubstitutor = createSubstitutorForSuperTypes(firstType)
-        val superTypesOfSecond = secondType.typeConstructor().supertypes()
-        val secondTypeSubstitutor = createSubstitutorForSuperTypes(secondType)
-
-        for (superTypeOfFirst in superTypesOfFirst) {
-            @Suppress("NAME_SHADOWING")
-            val superTypeOfFirst = firstTypeSubstitutor?.safeSubstitute(superTypeOfFirst) ?: superTypeOfFirst
-
-            if (areIncompatibleSuperTypes(superTypeOfFirst, secondType))
-                return arrayOf(superTypeOfFirst, secondType)
-
-            for (superTypeOfSecond in superTypesOfSecond) {
-                @Suppress("NAME_SHADOWING")
-                val superTypeOfSecond = secondTypeSubstitutor?.safeSubstitute(superTypeOfSecond) ?: superTypeOfSecond
-
-                if (areIncompatibleSuperTypes(firstType, superTypeOfSecond))
-                    return arrayOf(firstType, superTypeOfSecond)
-
-                if (areIncompatibleSuperTypes(superTypeOfFirst, superTypeOfSecond))
-                    return arrayOf(superTypeOfFirst, superTypeOfSecond)
-
-                getIncompatibleSuperTypes(superTypeOfFirst, superTypeOfSecond)?.let { return it }
-            }
-        }
-
-        return null
-    }
-
-    private fun TypeSystemInferenceExtensionContext.areIncompatibleSuperTypes(
-        firstType: KotlinTypeMarker, secondType: KotlinTypeMarker
-    ): Boolean = firstType.typeConstructor() == secondType.typeConstructor()
-            && !AbstractTypeChecker.equalTypes(
-        newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
-        firstType, secondType
-    )
 
     private fun TypeSystemInferenceExtensionContext.mayCauseEmptyIntersection(type: KotlinTypeMarker): Boolean {
         val typeConstructor = type.typeConstructor()
