@@ -1,0 +1,37 @@
+CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Outer modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+  $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.Outer
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:<root>.Outer [primary]
+  CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[<unbound IrClassPublicSymbolImpl>]
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.Outer.Inner
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner [primary]
+      $outer: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.Outer
+    FUN IR_EXTERNAL_DECLARATION_STUB name:foo visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:<unbound IrClassPublicSymbolImpl>
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.Outer.Inner
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassPublicSymbolImpl>, other:<unbound IrClassPublicSymbolImpl>?) returnType:<unbound IrClassPublicSymbolImpl> [fake_override,operator]
+      overridden:
+        public open fun equals (other: <unbound IrClassPublicSymbolImpl>?): <unbound IrClassPublicSymbolImpl> [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      overridden:
+        public open fun hashCode (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+      overridden:
+        public open fun toString (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<unbound IrClassPublicSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.Outer
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassPublicSymbolImpl> [fake_override,operator]
+    overridden:
+      public open fun equals (other: kotlin.Any?): <unbound IrClassPublicSymbolImpl> [operator] declared in kotlin.Any
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+    overridden:
+      public open fun hashCode (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Any
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+    overridden:
+      public open fun toString (): <unbound IrClassPublicSymbolImpl> declared in kotlin.Any
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any

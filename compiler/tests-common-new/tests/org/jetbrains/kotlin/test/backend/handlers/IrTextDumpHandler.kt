@@ -99,7 +99,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val baseFile = testServices.moduleStructure.originalTestDataFiles.first()
         for (externalClassFqn in externalClassFqns) {
             val classDump = stubGenerator.generateExternalClass(irModule.descriptor, externalClassFqn).dump()
-            val expectedFile = baseFile.withSuffixAndExtension("__$externalClassFqn", module.dumpExtension)
+            val expectedFile = baseFile.withSuffixAndExtension(".__$externalClassFqn", module.dumpExtension)
             assertions.assertEqualsToFile(expectedFile, classDump)
         }
     }
