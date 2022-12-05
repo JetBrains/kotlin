@@ -140,11 +140,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             ) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
                 // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
-                assertOutputContains("1 problem was found storing the configuration cache.")
-                assertOutputContains(
-                    """Task `\S+` of type `[\w.]+CInteropMetadataDependencyTransformationTask`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
-                        .toRegex()
-                )
+                assertOutputContains("0 problems were found storing the configuration cache.")
             }
         }
     }
