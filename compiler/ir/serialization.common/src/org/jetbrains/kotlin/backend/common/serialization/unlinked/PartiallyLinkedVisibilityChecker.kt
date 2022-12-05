@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
 @Suppress("unused", "UNUSED_PARAMETER")
 internal object PartiallyLinkedVisibilityChecker {
-    fun checkVisibilityInFile(declaration: IrDeclarationWithVisibility, file: PartialLinkageUtils.File): Boolean {
+    fun checkVisibilityInFile(declaration: IrDeclarationWithVisibility, file: ABIVisibility.File): Boolean {
         if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
             // There is no information about declaration visibility. Also, such declarations
             // are detected as linkage errors anyways.

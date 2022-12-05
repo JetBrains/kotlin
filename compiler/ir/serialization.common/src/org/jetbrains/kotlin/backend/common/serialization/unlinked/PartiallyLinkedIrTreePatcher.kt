@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ABIVisibility.Module as PLModule
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ABIVisibility.File as PLFile
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
@@ -35,7 +35,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private val stubGenerator: MissingDeclarationStubGenerator,
     private val messageLogger: IrMessageLogger
 ) {
-    private val stdlibModule by lazy { PLModule.determineFor(builtIns.anyClass.owner) }
+    private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
     fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
         roots.forEach { root ->
@@ -50,7 +50,7 @@ internal class PartiallyLinkedIrTreePatcher(
         roots.forEach { root ->
             if (root in stdlibModule) return@forEach
 
-            val startingFile = PLFile.determineFor(root)
+            val startingFile = PLFile.determineFileFor(root)
             root.transformVoid(DeclarationTransformer(startingFile))
             root.transformVoid(ExpressionTransformer(startingFile))
         }

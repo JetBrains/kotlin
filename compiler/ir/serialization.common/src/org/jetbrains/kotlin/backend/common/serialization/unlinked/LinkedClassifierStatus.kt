@@ -38,7 +38,7 @@ internal sealed interface LinkedClassifierStatus {
          */
         class InaccessibleClassifier(
             override val symbol: IrClassifierSymbol,
-            val ownLimitation: LimitedTo.CanBeRootCause,
+            val visibility: ABIVisibility.Limited,
             val classifierWithConflictingLimitation: Fully.AccessibleClassifier
         ) : CanBeRootCause
 
@@ -47,8 +47,8 @@ internal sealed interface LinkedClassifierStatus {
          */
         class InaccessibleClassifierDueToOtherClassifiers(
             override val symbol: IrClassifierSymbol,
-            val classifierWithConflictingLimitation1: Fully.AccessibleClassifier,
-            val classifierWithConflictingLimitation2: Fully.AccessibleClassifier
+            val classifierWithConflictingVisibility1: Fully.AccessibleClassifier,
+            val classifierWithConflictingVisibility2: Fully.AccessibleClassifier
         ) : CanBeRootCause
 
         /**
@@ -60,22 +60,15 @@ internal sealed interface LinkedClassifierStatus {
     /** Indicates fully linked classifier. */
     sealed interface Fully : LinkedClassifierStatus {
         val symbol: IrClassifierSymbol
-        val limitation: LimitedTo
+        val visibility: ABIVisibility
 
-        class AccessibleClassifier(override val symbol: IrClassifierSymbol, override val limitation: LimitedTo) : Fully
+        class AccessibleClassifier(override val symbol: IrClassifierSymbol, override val visibility: ABIVisibility) : Fully
 
         class LesserAccessibleClassifier(override val symbol: IrClassifierSymbol, val dueTo: AccessibleClassifier) : Fully {
-            override val limitation = dueTo.limitation
+            override val visibility = dueTo.visibility
         }
     }
 
     object NoClassifier : LinkedClassifierStatus
     object RecursionAvoidance : LinkedClassifierStatus
-
-    sealed interface LimitedTo {
-        sealed interface CanBeRootCause : LimitedTo
-        data class File(val file: PartialLinkageUtils.File) : CanBeRootCause
-        data class Module(val module: PartialLinkageUtils.Module) : CanBeRootCause
-        object WholeWorld : LimitedTo
-    }
 }

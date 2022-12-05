@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import gnu.trove.THashMap
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ABIVisibility.Companion.chooseNarrower
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -121,8 +121,8 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
 }
 
 private class StatusBuilder(private val symbol: IrClassifierSymbol) {
-    private val ownLimitation = computeOwnLimitation(symbol)
-    private var dependencyWithNarrowerLimitation: Fully.AccessibleClassifier? = null
+    private val ownVisibility = ABIVisibility.determineVisibilityFor(symbol.owner as IrDeclaration)
+    private var dependencyWithNarrowerVisibility: Fully.AccessibleClassifier? = null
 
     private var partiallyLinkedStatus: Partially? = null
     private val done get() = partiallyLinkedStatus != null
@@ -155,34 +155,28 @@ private class StatusBuilder(private val symbol: IrClassifierSymbol) {
                     is Fully.LesserAccessibleClassifier -> next.dueTo
                 }
 
-                fun checkDependency(currentLimitedTo: LimitedTo, onConflictingLimitations: (LimitedTo.CanBeRootCause) -> Partially) {
-                    val nextLimitedTo = nextAccessible.limitation
+                fun checkDependency(currentVisibility: ABIVisibility, onConflictingVisibilities: (ABIVisibility.Limited) -> Partially) {
+                    val nextVisibility = nextAccessible.visibility
 
-                    when (currentLimitedTo) {
-                        is LimitedTo.WholeWorld -> if (nextLimitedTo !is LimitedTo.WholeWorld)
-                            this.dependencyWithNarrowerLimitation = nextAccessible
-
-                        is LimitedTo.CanBeRootCause -> if (nextLimitedTo is LimitedTo.CanBeRootCause)
-                            when (chooseNarrower(currentLimitedTo, nextLimitedTo)) {
-                                null -> partiallyLinkedStatus = onConflictingLimitations(currentLimitedTo)
-                                currentLimitedTo -> Unit
-                                else -> this.dependencyWithNarrowerLimitation = nextAccessible
-                            }
+                    when (chooseNarrower(currentVisibility, nextVisibility)) {
+                        null -> partiallyLinkedStatus = onConflictingVisibilities(currentVisibility as ABIVisibility.Limited)
+                        currentVisibility -> Unit
+                        else -> this.dependencyWithNarrowerVisibility = nextAccessible
                     }
                 }
 
-                when (val dependencyWithNarrowerLimitation = dependencyWithNarrowerLimitation) {
+                when (val dependencyWithNarrowerVisibility = dependencyWithNarrowerVisibility) {
                     null -> {
-                        // Compare the own limitation of the classifier with the limitation of the `next` dependency.
-                        checkDependency(ownLimitation) { currentLimitedTo ->
-                            Partially.InaccessibleClassifier(symbol, currentLimitedTo, nextAccessible)
+                        // Compare own visibility of the classifier with the visibility of the `next` dependency.
+                        checkDependency(ownVisibility) { currentVisibility ->
+                            Partially.InaccessibleClassifier(symbol, currentVisibility, nextAccessible)
                         }
                     }
 
                     else -> {
-                        // Compare the limitation of the latest memoized dependency with the limitation of the `next` dependency.
-                        checkDependency(dependencyWithNarrowerLimitation.limitation) {
-                            Partially.InaccessibleClassifierDueToOtherClassifiers(symbol, dependencyWithNarrowerLimitation, nextAccessible)
+                        // Compare the visibility of the latest memoized dependency with the visibility of the `next` dependency.
+                        checkDependency(dependencyWithNarrowerVisibility.visibility) {
+                            Partially.InaccessibleClassifierDueToOtherClassifiers(symbol, dependencyWithNarrowerVisibility, nextAccessible)
                         }
                     }
                 }
@@ -194,34 +188,8 @@ private class StatusBuilder(private val symbol: IrClassifierSymbol) {
 
     fun toStatus(): LinkedClassifierStatus {
         return partiallyLinkedStatus
-            ?: dependencyWithNarrowerLimitation?.let { Fully.LesserAccessibleClassifier(symbol, it) }
-            ?: Fully.AccessibleClassifier(symbol, ownLimitation)
-    }
-
-    companion object {
-        private fun computeOwnLimitation(symbol: IrClassifierSymbol): LimitedTo {
-            val declaration = symbol.owner as? IrDeclarationWithVisibility
-                ?: return LimitedTo.WholeWorld // Type parameters do not have own visibility.
-
-            return when (declaration.visibility) {
-                DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> LimitedTo.WholeWorld
-                DescriptorVisibilities.INTERNAL -> LimitedTo.Module(PartialLinkageUtils.Module.determineFor(declaration))
-                else -> LimitedTo.File(PartialLinkageUtils.File.determineFor(declaration))
-            }
-        }
-
-        private fun chooseNarrower(limit1: LimitedTo.CanBeRootCause, limit2: LimitedTo.CanBeRootCause): LimitedTo.CanBeRootCause? {
-            return when (limit1) {
-                is LimitedTo.Module -> when (limit2) {
-                    is LimitedTo.Module -> if (limit1.module == limit2.module) limit2 else null
-                    is LimitedTo.File -> if (limit1.module == limit2.file.module) limit2 else null
-                }
-                is LimitedTo.File -> when (limit2) {
-                    is LimitedTo.Module -> if (limit1.file.module == limit2.module) limit1 else null
-                    is LimitedTo.File -> if (limit1.file == limit2.file) limit1 else null
-                }
-            }
-        }
+            ?: dependencyWithNarrowerVisibility?.let { Fully.LesserAccessibleClassifier(symbol, it) }
+            ?: Fully.AccessibleClassifier(symbol, ownVisibility)
     }
 }
 
