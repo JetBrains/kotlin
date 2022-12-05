@@ -16,7 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Ignore
 import org.junit.Test
 
 class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
@@ -284,14 +283,10 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    @Ignore("b/260233015")
-    fun localFunCaptures3(): Unit = verifyComposeIrTransform(
+    fun testLocalFunCaptures3(): Unit = verifyComposeIrTransform(
         """
-            import androidx.compose.animation.AnimatedContent
-            import androidx.compose.animation.ExperimentalAnimationApi
             import androidx.compose.runtime.Composable
 
-            @OptIn(ExperimentalAnimationApi::class)
             @Composable
             fun SimpleAnimatedContentSample() {
                 @Composable fun Foo() {}
@@ -302,7 +297,6 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            @OptIn(markerClass = ExperimentalAnimationApi::class)
             @Composable
             fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
@@ -323,7 +317,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
                   }
                   %composer.endReplaceableGroup()
                 }
-                AnimatedContent(1.0f, null, null, null, composableLambda(%composer, <>, false) { it: Float, %composer: Composer?, %changed: Int ->
+                AnimatedContent(1.0f, composableLambda(%composer, <>, false) { it: Float, %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<Foo()>:Test.kt")
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, <>)
@@ -332,7 +326,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
                   if (isTraceInProgress()) {
                     traceEventEnd()
                   }
-                }, %composer, 0b0110000000000110, 0b1110)
+                }, %composer, 0b00110110)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
@@ -345,6 +339,14 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.animation.AnimatedVisibilityScope
+
+            @Composable
+            fun <S> AnimatedContent(
+                targetState: S,
+                content: @Composable AnimatedVisibilityScope.(targetState: S) -> Unit
+            ) { }
         """
     )
 
