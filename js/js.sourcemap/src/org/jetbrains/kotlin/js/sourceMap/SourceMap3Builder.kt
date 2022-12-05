@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.js.sourceMap
 
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
-import org.jetbrains.kotlin.js.util.TextOutput
 import java.io.File
 import java.io.IOException
 import java.io.Reader
@@ -190,12 +189,6 @@ class SourceMap3Builder(
             previousSourceColumn = previousPreviousSourceColumn
             previousNameIndex = previousPreviousNameIndex
         }
-    }
-
-    override fun addLink() {
-        textOutput.print("\n//# sourceMappingURL=")
-        textOutput.print(generatedFile!!.name)
-        textOutput.print(".map\n")
     }
 
     private object Base64VLQ {

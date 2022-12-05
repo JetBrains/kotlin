@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.sourceMap.addSourceMappingURL
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import java.io.File
 import java.io.InputStreamReader
@@ -115,18 +116,19 @@ class DeadCodeElimination(
             for ((file, block) in inputFiles.zip(blocks)) {
                 val sourceMapFile = File(file.outputPath + ".map")
                 val textOutput = TextOutputImpl()
-                val sourceMapBuilder = SourceMap3Builder(File(file.outputPath), textOutput, "")
+                val outputFile = File(file.outputPath)
+                val sourceMapBuilder = SourceMap3Builder(outputFile, textOutput, "")
 
                 val inputFile = File(file.resource.name)
                 val sourceBaseDir = if (inputFile.exists()) inputFile.parentFile else File(".")
 
-                val sourcePathResolver = SourceFilePathResolver(emptyList(), File(file.outputPath).parentFile)
+                val sourcePathResolver = SourceFilePathResolver(emptyList(), outputFile.parentFile)
                 val consumer = SourceMapBuilderConsumer(sourceBaseDir, sourceMapBuilder, sourcePathResolver, true, true)
                 block.accept(JsToStringGenerationVisitor(textOutput, consumer))
                 val sourceMapContent = sourceMapBuilder.build()
-                sourceMapBuilder.addLink()
+                textOutput.addSourceMappingURL(outputFile)
 
-                with(File(file.outputPath)) {
+                with(outputFile) {
                     parentFile.mkdirs()
                     writeText(textOutput.toString())
                 }
