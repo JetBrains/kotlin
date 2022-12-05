@@ -54,7 +54,15 @@ message LocalSignature {
   optional int32 debug_info = 3;
 }
 
-message FileSignature {}
+message FileSignature {
+
+  // The path to the file as in the corresponding FileEntry.
+  //
+  // Marked optional for compatibility, because previously we serialized file signatures as an empty structure.
+  optional string file_path = 2;
+
+  repeated int32 fq_name = 3 [packed=true];
+}
 
 message IdSignature {
   oneof idSig {
