@@ -359,20 +359,22 @@ class KotlinMetadataTargetConfigurator :
         sourceSet: KotlinSourceSet,
         isSourceSetPublished: Boolean
     ) {
-        KotlinDependencyScope.compileScopes.forEach { scope ->
-            val granularMetadataTransformation = GranularMetadataTransformation(
-                project,
-                sourceSet,
-                listOf(scope),
-                lazy {
-                    dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                        .map { checkNotNull(it.dependencyTransformations[scope]) }
-                }
-            )
+        val dependencyScopesToTransform = KotlinDependencyScope.compileScopes
 
-            if (sourceSet is DefaultKotlinSourceSet)
-                sourceSet.dependencyTransformations[scope] = granularMetadataTransformation
+        val granularMetadataTransformation = GranularMetadataTransformation(
+            project = project,
+            kotlinSourceSet = sourceSet,
+            sourceSetRequestedScopes = dependencyScopesToTransform,
+            parentTransformations = lazy {
+                dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
+                    .map { it.compileDependenciesTransformation }
+            }
+        )
 
+        if (sourceSet is DefaultKotlinSourceSet)
+            sourceSet.setCompileDependenciesTransformation(granularMetadataTransformation)
+
+        dependencyScopesToTransform.forEach { scope ->
             val sourceSetDependencyConfigurationByScope = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)
 
             if (isSourceSetPublished) {

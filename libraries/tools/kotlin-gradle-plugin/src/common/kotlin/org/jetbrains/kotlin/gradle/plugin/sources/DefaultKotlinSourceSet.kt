@@ -118,7 +118,20 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
+    private var _compileDependenciesTransformation: GranularMetadataTransformation? = null
+
+    internal fun setCompileDependenciesTransformation(value: GranularMetadataTransformation) {
+        _compileDependenciesTransformation = value
+    }
+
+    /**
+     * Returns [GranularMetadataTransformation] for all requested compile dependencies
+     * scopes: API, IMPLEMENTATION, COMPILE_ONLY; See [KotlinDependencyScope.compileScopes]
+     */
+    internal val compileDependenciesTransformation: GranularMetadataTransformation
+        get() = _compileDependenciesTransformation
+            ?: error("Accessing Compile Dependencies Transformations is not yet initialised; " +
+                             "Check when setCompileDependenciesTransformation is called")
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 
@@ -142,22 +155,17 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         val useFilesForSourceSets: Map<String, Iterable<File>>
     )
 
-    @Suppress("unused") // Used in IDE import
+    @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility
     fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
-        val scope = KotlinDependencyScope.compileScopes.find {
-            project.sourceSetMetadataConfigurationByScope(this, it)?.name == configurationName
-        } ?: return emptyList()
-
-        return getDependenciesTransformation(scope)
+        return getDependenciesTransformation()
     }
 
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
 
-    internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
+    private fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
-            dependencyTransformations[scope]?.metadataDependencyResolutions
-                ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
-                ?: emptyMap()
+            compileDependenciesTransformation.metadataDependencyResolutions
+                .associateBy { ModuleIds.fromComponent(project, it.dependency) }
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName

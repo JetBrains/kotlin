@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
@@ -180,14 +179,16 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     @Suppress("unused")
     @get:Classpath
-    protected val inputArtifactFiles: FileCollection = project.filesProvider {
-        sourceSet.dependencyTransformations.values.map { it.configurationToResolve.withoutProjectDependencies() }
-    }
+    protected val inputArtifactFiles: FileCollection get() = sourceSet
+        .compileDependenciesTransformation
+        .configurationToResolve
+        .withoutProjectDependencies()
 
     @get:Internal
     protected val chooseVisibleSourceSets
-        get() = sourceSet.dependencyTransformations.values
-            .flatMap { it.metadataDependencyResolutions }
+        get() = sourceSet
+            .compileDependenciesTransformation
+            .metadataDependencyResolutions
             .filterIsInstance<ChooseVisibleSourceSets>()
 
     @Suppress("unused")

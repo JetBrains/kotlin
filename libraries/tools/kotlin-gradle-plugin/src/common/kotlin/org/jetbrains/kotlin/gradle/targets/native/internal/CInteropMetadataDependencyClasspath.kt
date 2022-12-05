@@ -50,7 +50,8 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
     forIde: Boolean
 ): FileCollection {
     return filesProvider {
-        sourceSet.dependencyTransformations.values.flatMap { it.metadataDependencyResolutions }
+        sourceSet.compileDependenciesTransformation
+            .metadataDependencyResolutions
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { chooseVisibleSourceSets ->
                 /* We only want to access resolutions that provide metadata from dependency projects */
