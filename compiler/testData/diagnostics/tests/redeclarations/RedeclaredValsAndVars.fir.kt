@@ -1,3 +1,4 @@
+// FIR_DUMP
 // ISSUE: KT-54405
 
 class A {
@@ -5,7 +6,7 @@ class A {
     operator fun component2() = ""
 }
 
-fun test(b: Boolean) {
+fun testRedeclaration(b: Boolean) {
     val <!REDECLARATION!>y<!> = 1
     val <!REDECLARATION!>y<!> = 2
     val <!REDECLARATION!>`_`<!> = 3
@@ -14,15 +15,16 @@ fun test(b: Boolean) {
         var <!REDECLARATION!>a<!> = 10
         var <!REDECLARATION!>a<!> = 11
     }
+}
+
+fun testNoRedeclaration(list: List<Int>, b: Boolean) {
+    for (el in list) {
+        val el = 42
+    }
     if (b) {
         val z = 3
-        val <!REDECLARATION!>x<!> = 5
-        val <!REDECLARATION!>x<!> = 6
     } else {
         val z = 4
     }
-}
-
-fun test2() {
     val (`_`, _) = A()
 }

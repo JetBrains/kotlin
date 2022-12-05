@@ -2326,14 +2326,8 @@ open class RawFirBuilder(
                     // So, prepare the loop target after building the condition.
                     target = prepareTarget(expression)
                 }.configure(target) {
-                    // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
-                    val blockBuilder = when (val body = expression.body) {
-                        is KtBlockExpression -> configureBlockWithoutBuilding(body)
-                        null -> FirBlockBuilder()
-                        else -> FirBlockBuilder().apply {
-                            source = body.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
-                            statements += body.toFirStatement()
-                        }
+                    val blockBuilder = FirBlockBuilder().apply {
+                        source = expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
                     }
                     if (ktParameter != null) {
                         val multiDeclaration = ktParameter.destructuringDeclaration
@@ -2358,11 +2352,12 @@ open class RawFirBuilder(
                                 tmpVariable = true,
                                 extractAnnotationsTo = { extractAnnotationsTo(it) },
                             ) { toFirOrImplicitType() }
-                            blockBuilder.statements.addAll(0, destructuringBlock.statements)
+                            blockBuilder.statements.addAll(destructuringBlock.statements)
                         } else {
-                            blockBuilder.statements.add(0, firLoopParameter)
+                            blockBuilder.statements.add(firLoopParameter)
                         }
                     }
+                    blockBuilder.statements.add(expression.body.toFirBlock())
                     blockBuilder.build()
                 }
             }

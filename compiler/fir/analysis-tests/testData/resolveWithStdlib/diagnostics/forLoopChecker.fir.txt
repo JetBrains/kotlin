@@ -175,6 +175,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: <ERROR TYPE REF: Unresolved name: iterator> = R|<local>/notRange1|.<Unresolved name: iterator>#()
             while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
                 lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+                 {
+                }
+
             }
 
         }
@@ -183,6 +186,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|kotlin/Unit| = R|<local>/notRange2|.R|/NotRange2.iterator|()
             while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
                 lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+                 {
+                }
+
             }
 
         }
@@ -191,6 +197,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|ImproperIterator1| = R|<local>/notRange3|.R|/NotRange3.iterator|()
             while(R|<local>/<iterator>|.R|/ImproperIterator1.hasNext|()) {
                 lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+                 {
+                }
+
             }
 
         }
@@ -199,6 +208,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|ImproperIterator2| = R|<local>/notRange4|.R|/NotRange4.iterator|()
             while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
                 lval i: R|kotlin/Boolean| = R|<local>/<iterator>|.R|/ImproperIterator2.next|()
+                 {
+                }
+
             }
 
         }
@@ -207,6 +219,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|ImproperIterator3| = R|<local>/notRange5|.R|/NotRange5.iterator|()
             while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator3.next|()
+                 {
+                }
+
             }
 
         }
@@ -215,6 +230,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|AmbiguousHasNextIterator| = R|<local>/notRange6|.R|/NotRange6.iterator|()
             while(R|<local>/<iterator>|.R|/AmbiguousHasNextIterator.hasNext|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/AmbiguousHasNextIterator.next|()
+                 {
+                }
+
             }
 
         }
@@ -223,6 +241,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|ImproperIterator3| = R|<local>/notRange7|.R|/NotRange7.iterator|()
             while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator3.next|()
+                 {
+                }
+
             }
 
         }
@@ -231,6 +252,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|ImproperIterator5| = R|<local>/notRange8|.R|/NotRange8.iterator|()
             while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator5.next|()
+                 {
+                }
+
             }
 
         }
@@ -239,6 +263,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|ImproperIterator6| = R|<local>/notRange9|.R|/NotRange9.iterator|()
             while(R|<local>/<iterator>|.R|/ImproperIterator6.hasNext|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator6.next|()
+                 {
+                }
+
             }
 
         }
@@ -247,6 +274,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|GoodIterator| = R|<local>/range0|.R|/Range0.iterator|()
             while(R|<local>/<iterator>|.R|/GoodIterator.hasNext|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/GoodIterator.next|()
+                 {
+                }
+
             }
 
         }
@@ -255,6 +285,9 @@ FILE: forLoopChecker.kt
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>| = R|<local>/range1|.R|/Range1.iterator|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Int|>|()
+                 {
+                }
+
             }
 
         }

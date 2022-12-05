@@ -13,7 +13,10 @@ FILE: varargInPrimaryConstructor.kt
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/foo|.R|/Foo.strings|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<CapturedType(out kotlin/String)>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval s: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
-                R|<local>/s|.R|kotlin/String.length|
+                 {
+                    R|<local>/s|.R|kotlin/String.length|
+                }
+
             }
 
         }
@@ -24,7 +27,10 @@ FILE: varargInPrimaryConstructor.kt
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/strings|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<CapturedType(out kotlin/String)>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval s: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
-                R|<local>/s|.R|kotlin/String.length|
+                 {
+                    R|<local>/s|.R|kotlin/String.length|
+                }
+
             }
 
         }
