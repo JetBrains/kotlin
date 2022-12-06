@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -35,6 +35,18 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.scriptConfigurators
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,10 +55,12 @@ import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
@@ -122,13 +136,48 @@ internal class ScriptingSamWithReceiverComponentContributor(val annotations: Lis
     }
 }
 
+internal class FirScriptingSamWithReceiverExtensionRegistrar() : FirExtensionRegistrar() {
+    override fun ExtensionRegistrarContext.configurePlugin() {
+        +::FirScriptSamWithReceiverConventionTransformer
+    }
+
+    class FirScriptSamWithReceiverConventionTransformer(
+        session: FirSession
+    ) : FirSamConversionTransformerExtension(session) {
+
+        val knownAnnotations: Set<String> by lazy {
+            session.extensionService.scriptConfigurators.flatMapTo(mutableSetOf()) {
+                (it as? FirScriptConfiguratorExtensionImpl)?.knownAnnotationsForSamWithReceiver ?: emptySet()
+            }
+        }
+
+        override fun getCustomFunctionalTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
+            val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
+            return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in knownAnnotations }) {
+                val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }
+                if (parameterTypes.isEmpty()) return null
+                createFunctionalType(
+                    parameters = parameterTypes.subList(1, parameterTypes.size),
+                    receiverType = parameterTypes[0],
+                    rawReturnType = function.returnTypeRef.coneType,
+                    isSuspend = function.isSuspend
+                )
+            }
+        }
+    }
+
+}
+
 internal fun SharedScriptCompilationContext.applyConfigure(): SharedScriptCompilationContext = apply {
     val samWithReceiverAnnotations = baseScriptCompilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]
     if (samWithReceiverAnnotations?.isEmpty() == false) {
-        StorageComponentContainerContributor.registerExtension(
-            environment.project,
-            ScriptingSamWithReceiverComponentContributor(samWithReceiverAnnotations.map { it.typeName })
-        )
+        val annotations = samWithReceiverAnnotations.map { it.typeName }
+        if (!environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            StorageComponentContainerContributor.registerExtension(
+                environment.project,
+                ScriptingSamWithReceiverComponentContributor(annotations)
+            )
+        }
     }
 }
 
