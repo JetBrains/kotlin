@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.wasm.ir.source.location
 
 sealed class SourceLocation {
-    object NoLocation: SourceLocation()
-    object TBDLocation: SourceLocation()
+    private object NoLocation : SourceLocation()
+    object TBDLocation : SourceLocation()
 
     data class Location(val file: String, val line: Int, val column: Int) : SourceLocation()
+
+    companion object {
+        @Suppress("FunctionName", "UNUSED_PARAMETER")
+        fun NoLocation(description: String): SourceLocation = NoLocation
+    }
 }

@@ -166,7 +166,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         val masterInitFunction = WasmFunction.Defined("__init", WasmSymbol(masterInitFunctionType))
         with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
             initFunctions.sortedBy { it.priority }.forEach {
-                buildCall(WasmSymbol(it.function), SourceLocation.NoLocation)
+                buildCall(WasmSymbol(it.function), SourceLocation.NoLocation("Generated service code"))
             }
         }
         exports += WasmExport.Function("__init", masterInitFunction)

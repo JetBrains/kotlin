@@ -10,6 +10,6 @@ value class LocationHolder(val location: SourceLocation)
 
 inline fun <R> withLocation(location: SourceLocation, body: LocationHolder.() -> R): R = LocationHolder(location).body()
 
-inline fun <R> withNoLocation(body: LocationHolder.() -> R): R = withLocation(SourceLocation.NoLocation, body)
+inline fun <R> withNoLocation(description: String, body: LocationHolder.() -> R): R = withLocation(SourceLocation.NoLocation(description), body)
 
 inline fun <R> withTBDLocation(body: LocationHolder.() -> R): R = withLocation<R>(SourceLocation.TBDLocation, body)

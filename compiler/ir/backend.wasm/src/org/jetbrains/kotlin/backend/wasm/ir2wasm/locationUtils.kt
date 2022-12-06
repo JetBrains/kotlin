@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 fun IrExpression.getSourceLocation(fileEntry: IrFileEntry?): SourceLocation {
-    if (fileEntry == null) return SourceLocation.NoLocation
+    if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
 
     val path = fileEntry.name
     val startLine = fileEntry.getLineNumber(startOffset)
     val startColumn = fileEntry.getColumnNumber(startOffset)
 
-    if (startLine < 0 || startColumn < 0) return SourceLocation.NoLocation
+    if (startLine < 0 || startColumn < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
 
     return SourceLocation.Location(path, startLine, startColumn)
 }
