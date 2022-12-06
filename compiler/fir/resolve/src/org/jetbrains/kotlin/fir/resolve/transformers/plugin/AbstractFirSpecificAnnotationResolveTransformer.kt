@@ -27,6 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.withClassDeclarationCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
+import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
@@ -35,6 +41,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     protected val session: FirSession,
@@ -76,8 +83,8 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         if (!shouldRunAnnotationResolve(name)) return annotationCall
 
-        val transformedAnnotationType = annotationCall.typeRef.transformSingle(
-            typeResolverTransformer,
+        val transformedAnnotationType = typeResolverTransformer.transformUserTypeRef(
+            annotationTypeRef.createDeepCopy(),
             ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack)
         ) as? FirResolvedTypeRef ?: return annotationCall
 
@@ -274,11 +281,47 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
      * Gets called after performing transformation of some declaration's nested declarations; can be used to restore the internal
      * state of the transformer.
      *
-     * @param parentDeclaration A declaration whose nested declarations were transformed.
      * @param state A state produced by the [beforeTransformingChildren] call before the transformation.
      */
     private fun afterTransformingChildren(state: PersistentList<FirDeclaration>?) {
         requireNotNull(state)
         owners = state
+    }
+
+    private fun FirUserTypeRef.createDeepCopy(): FirUserTypeRef {
+        val original = this
+        return buildUserTypeRef {
+            source = original.source
+            isMarkedNullable = original.isMarkedNullable
+            annotations.addAll(original.annotations)
+            original.qualifier.mapTo(qualifier) { it.createDeepCopy() }
+        }
+    }
+
+    private fun FirQualifierPart.createDeepCopy(): FirQualifierPart {
+        val newArgumentList = FirTypeArgumentListImpl(typeArgumentList.source).apply {
+            typeArgumentList.typeArguments.mapTo(typeArguments) { it.createDeepCopy() }
+        }
+        return FirQualifierPartImpl(
+            source,
+            name,
+            newArgumentList
+        )
+    }
+
+    private fun FirTypeProjection.createDeepCopy(): FirTypeProjection {
+        return when (val original = this) {
+            is FirTypeProjectionWithVariance -> buildTypeProjectionWithVariance {
+                source = original.source
+                typeRef = when (val originalTypeRef = original.typeRef) {
+                    is FirUserTypeRef -> originalTypeRef.createDeepCopy()
+                    else -> originalTypeRef
+                }
+                variance = original.variance
+            }
+            is FirStarProjection -> buildStarProjection { source = original.source }
+            is FirPlaceholderProjection -> buildPlaceholderProjection { source = original.source }
+            else -> shouldNotBeCalled()
+        }
     }
 }

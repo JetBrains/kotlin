@@ -6,11 +6,11 @@ FILE: kt55286.kt
 
     }
     public open class Base : R|kotlin/Any| {
-        public constructor(@R|Deprecated<ERROR CLASS: Symbol not found for Nested>|() a: R|kotlin/String|): R|Base| {
+        public constructor(@R|Deprecated<Base.Nested>|() a: R|kotlin/String|): R|Base| {
             super<R|kotlin/Any|>()
         }
 
-        @R|Deprecated<ERROR CLASS: Symbol not found for Nested>|() public final val a: R|kotlin/String| = R|<local>/a|
+        @R|Deprecated<Base.Nested>|() public final val a: R|kotlin/String| = R|<local>/a|
             public get(): R|kotlin/String|
 
         public final class Nested : R|kotlin/Any| {
@@ -22,11 +22,11 @@ FILE: kt55286.kt
 
     }
     public final class Derived : R|Base| {
-        public constructor(@R|Deprecated<ERROR CLASS: Symbol not found for Nested>|() b: R|kotlin/String|): R|Derived| {
+        public constructor(@R|Deprecated<Base.Nested>|() b: R|kotlin/String|): R|Derived| {
             super<R|Base|>(String())
         }
 
-        @R|Deprecated<ERROR CLASS: Symbol not found for Nested>|() public final val b: R|kotlin/String| = R|<local>/b|
+        @R|Deprecated<Base.Nested>|() public final val b: R|kotlin/String| = R|<local>/b|
             public get(): R|kotlin/String|
 
     }
