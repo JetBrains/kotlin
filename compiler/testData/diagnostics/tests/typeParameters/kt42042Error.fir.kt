@@ -8,6 +8,6 @@ sealed class Subtype<A1, B1> {
 }
 
 fun <A, B> unsafeCast(value: A): B {
-    val proof: Subtype<A, B> = Subtype.Trivial()
+    val proof: Subtype<A, B> = Subtype.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Trivial<!>()
     return proof.cast(value)
 }

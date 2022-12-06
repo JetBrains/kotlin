@@ -13,7 +13,7 @@ fun <T> readFromMyList(l: MyList<out T>, t: T) {}
 fun test1(int: Int, any: Any) {
     val a0 : MyList<Any> = getMyList(int)
 
-    val a1 : MyList<Int> = getMyList(any)
+    val a1 : MyList<Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyList(any)<!>
 
     val a2 : MyList<out Any> = getMyList(int)
 

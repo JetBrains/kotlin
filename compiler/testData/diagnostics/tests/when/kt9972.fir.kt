@@ -10,12 +10,12 @@
  */
 
 fun test1(): Int {
-    val x: String = if (true) {
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!>if (true) {
         when {
             true -> Any()
             else -> null
         }
-    } else ""
+    } else ""<!>
     return x.hashCode()
 }
 

@@ -41,7 +41,7 @@ fun bar() {
         d checkType { _<Short>() }
     }
 
-    foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
+    foo { (a: String, b) ->
         a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { _<String>() }
     }
