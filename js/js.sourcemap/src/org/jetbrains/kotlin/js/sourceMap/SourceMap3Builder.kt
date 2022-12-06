@@ -126,6 +126,18 @@ class SourceMap3Builder(
         sourceColumn: Int,
         name: String?,
     ) {
+        addMapping(source, fileIdentity, sourceContent, sourceLine, sourceColumn, name, getCurrentOutputColumn())
+    }
+
+    fun addMapping(
+        source: String,
+        fileIdentity: Any?,
+        sourceContent: Supplier<Reader?>,
+        sourceLine: Int,
+        sourceColumn: Int,
+        name: String?,
+        outputColumn: Int
+    ) {
         val sourceIndex = getSourceIndex(source.replace(File.separatorChar, '/'), fileIdentity, sourceContent)
 
         val nameIndex = name?.let(this::getNameIndex) ?: -1
@@ -138,7 +150,7 @@ class SourceMap3Builder(
             return
         }
 
-        startMapping()
+        startMapping(outputColumn)
 
         Base64VLQ.encode(out, sourceIndex - previousSourceIndex)
         previousSourceIndex = sourceIndex
@@ -159,19 +171,17 @@ class SourceMap3Builder(
 
     override fun addEmptyMapping() {
         if (!currentMappingIsEmpty) {
-            startMapping()
+            startMapping(getCurrentOutputColumn())
             currentMappingIsEmpty = true
         }
     }
 
-    private fun startMapping() {
+    private fun startMapping(column: Int) {
         val newGroupStarted = previousGeneratedColumn == -1
         if (newGroupStarted) {
             previousGeneratedColumn = 0
         }
 
-        val column = getCurrentOutputColumn()
-        
         val columnDiff = column - previousGeneratedColumn
         if (!newGroupStarted) {
             out.append(',')
