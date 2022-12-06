@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
@@ -56,7 +57,7 @@ fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage:
 fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
     val primitives = with(context.irBuiltIns) { primitiveTypesToPrimitiveArrays.values + stringClass }
     return with(parentAsClass) {
-        isExternal || isExpect || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives
+        isExternal || isExpect || isAnnotationClass || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives
     }
 }
 
