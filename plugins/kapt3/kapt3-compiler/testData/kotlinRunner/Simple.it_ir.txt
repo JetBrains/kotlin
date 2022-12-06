@@ -36,12 +36,8 @@ package test;
 import java.lang.System;
 
 @kotlin.Metadata()
-public enum EnumClass {
-    /*public static final*/ BLACK /* = new BLACK() */,
-    /*public static final*/ WHITE /* = new WHITE() */;
-
-    EnumClass() {
-    }
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MyAnnotation {
 }
 
 ////////////////////
@@ -51,8 +47,12 @@ package test;
 import java.lang.System;
 
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MyAnnotation {
+public enum EnumClass {
+    /*public static final*/ BLACK /* = new BLACK() */,
+    /*public static final*/ WHITE /* = new WHITE() */;
+
+    EnumClass() {
+    }
 }
 
 ////////////////////

@@ -26,6 +26,8 @@ import javax.tools.Diagnostic
 
 class KotlinKapt3IntegrationTest(testInfo: TestInfo) : AbstractKotlinKapt3IntegrationTestBase(testInfo, TargetBackend.JVM)
 
+class IrKotlinKapt3IntegrationTest(testInfo: TestInfo) : AbstractKotlinKapt3IntegrationTestBase(testInfo, TargetBackend.JVM_IR)
+
 abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: TestInfo, private val targetBackend: TargetBackend) {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
