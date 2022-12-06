@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
@@ -46,26 +47,22 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                 val isDelegatingCall =
                     expression.isSyntheticDelegatingReplacement && currentFunction != null && currentFunction.parentAsClass != irClass
 
-                val factoryFunctionCall = when {
-                    isDelegatingCall -> JsIrBuilder.buildCall(
-                        factoryFunction.symbol,
-                        superQualifierSymbol = irClass.symbol,
-                        origin = ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT
-                    )
-                    else -> JsIrBuilder.buildCall(factoryFunction.symbol)
-                }
+                val factoryFunctionCall = JsIrBuilder.buildCall(
+                    factoryFunction.symbol,
+                    superQualifierSymbol = irClass.symbol.takeIf { isDelegatingCall },
+                    origin = if (isDelegatingCall) ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT else JsStatementOrigins.SYNTHESIZED_STATEMENT
+                ).apply {
+                    copyValueArgumentsFrom(expression, factoryFunction)
 
-                factoryFunctionCall.copyValueArgumentsFrom(expression, factoryFunction)
-
-                if (!expression.isSyntheticDelegatingReplacement) {
-                    factoryFunctionCall.dispatchReceiver = irClass.jsConstructorReference(context)
-                } else {
-                    factoryFunctionCall.dispatchReceiver = JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
-                    currentFunction?.boxParameter?.let {
-                        factoryFunctionCall.putValueArgument(
-                            factoryFunctionCall.valueArgumentsCount - 1,
-                            JsIrBuilder.buildGetValue(it.symbol)
-                        )
+                    dispatchReceiver = when {
+                        superQualifierSymbol != null -> null
+                        expression.isSyntheticDelegatingReplacement -> {
+                            currentFunction?.boxParameter?.let {
+                                putValueArgument(valueArgumentsCount - 1, JsIrBuilder.buildGetValue(it.symbol))
+                            }
+                            JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
+                        }
+                        else -> irClass.jsConstructorReference(context)
                     }
                 }
 

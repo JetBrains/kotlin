@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -66,7 +67,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
     private fun IrConstructor.generateBoxParameter(irClass: IrClass): IrValueParameter {
         return JsIrBuilder.buildValueParameter(
             parent = this,
-            name = "box",
+            name = Namer.ES6_BOX_PARAMETER_NAME,
             index = valueParameters.size,
             type = irClass.defaultType.makeNullable(),
             origin = ES6_BOX_PARAMETER,

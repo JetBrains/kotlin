@@ -21,6 +21,7 @@ object Namer {
 
     val IMPLICIT_RECEIVER_NAME = "this"
     val SYNTHETIC_RECEIVER_NAME = "\$this"
+    val ES6_BOX_PARAMETER_NAME = "\$box"
 
     val ARGUMENTS = JsNameRef("arguments")
 
