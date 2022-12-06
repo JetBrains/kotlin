@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
-import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
@@ -128,6 +124,16 @@ internal class NativeGenerationState(
     }
 
     private var isDisposed = false
+
+    // A little hack to make logging work when executing this phase in its parent context.
+    // TODO: A better solution would be a separate logger object or something like that.
+    //  PhaseContext should not be responsible for logging.
+    override var inVerbosePhase: Boolean
+        get() = context.inVerbosePhase
+        set(value) {
+            context.inVerbosePhase = value
+        }
+
     override fun dispose() {
         if (isDisposed) return
 
