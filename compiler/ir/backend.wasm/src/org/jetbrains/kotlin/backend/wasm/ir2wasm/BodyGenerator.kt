@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
 
 class BodyGenerator(
     val context: WasmFunctionCodegenContext,
@@ -420,7 +422,9 @@ class BodyGenerator(
 
         } else {
             // Static function call
-            body.buildCall(context.referenceFunction(function.symbol))
+            withLocation(call.getSourceLocation()) {
+                body.buildCall(context.referenceFunction(function.symbol), location)
+            }
         }
 
         // Unit types don't cross function boundaries
@@ -646,7 +650,7 @@ class BodyGenerator(
             body.buildGetLocal(context.referenceLocal(0))
         }
 
-        body.buildInstr(WasmOp.RETURN)
+        body.buildInstr(WasmOp.RETURN, expression.getSourceLocation())
     }
 
     internal fun generateWithExpectedType(expression: IrExpression, expectedType: IrType) {
@@ -883,4 +887,16 @@ class BodyGenerator(
 
         return false
     }
+
+    private fun IrExpression.getSourceLocation(): SourceLocation {
+        val fileEntry = context.irFunction.fileEntry
+        val path = fileEntry.name
+        val startLine = fileEntry.getLineNumber(startOffset)
+        val startColumn = fileEntry.getColumnNumber(startOffset)
+
+        if (startLine < 0 || startColumn < 0) return SourceLocation.NoLocation
+
+        return SourceLocation.Location(path, startLine, startColumn)
+    }
+
 }

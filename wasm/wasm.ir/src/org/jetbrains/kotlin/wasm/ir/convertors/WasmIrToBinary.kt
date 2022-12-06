@@ -3,16 +3,30 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
+import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.wasm.ir.source.location.Box
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 
-class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val moduleName: String, val emitNameSection: Boolean) {
-    var b: ByteWriter = ByteWriter.OutputStream(outputStream)
+class WasmIrToBinary(
+    outputStream: OutputStream,
+    val module: WasmModule,
+    val moduleName: String,
+    val emitNameSection: Boolean,
+    private val sourceMapFileName: String? = null,
+    private val sourceLocationMappings: MutableList<SourceLocationMapping>? = null
+) {
+    private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
+
+    // "Stack" of offsets waiting initialization. 
+    // Since blocks has as a prefix variable length number encoding its size we can't calculate absolute offsets inside those blocks 
+    // until we generate whole block and generate size. So, we put them into "stack" and initialize as soo as we have all required data.
+    private var offsets = persistentListOf<Box>()
 
     fun appendWasmModule() {
         b.writeUInt32(0x6d736100u) // WebAssembly magic
@@ -114,9 +128,17 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                 data.forEach { appendData(it) }
             }
 
-            //text section (should be placed after data)
+            // text section (should be placed after data)
             if (emitNameSection) {
                 appendTextSection(definedFunctions)
+            }
+
+            if (sourceMapFileName != null) {
+                // Custom section with URL to sourcemap
+                appendSection(0u) {
+                    b.writeString("sourceMappingURL")
+                    b.writeString(sourceMapFileName)
+                }
             }
         }
     }
@@ -183,6 +205,10 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
     }
 
     private fun appendInstr(instr: WasmInstr) {
+        instr.location?.let {
+            sourceLocationMappings?.add(SourceLocationMapping(offsets + Box(b.written), it))
+        }
+
         val opcode = instr.operator.opcode
         if (opcode > 0xFF) {
             b.writeByte((opcode ushr 8).toByte())
@@ -241,14 +267,21 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         withVarUInt32PayloadSizePrepended { content() }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun withVarUInt32PayloadSizePrepended(fn: () -> Unit) {
+    private fun withVarUInt32PayloadSizePrepended(fn: () -> Unit) {
+        val box = Box(-1)
+        val previousOffsets = offsets
+        offsets += box
+
         val previousWriter = b
         val newWriter = b.createTemp()
         b = newWriter
         fn()
         b = previousWriter
         b.writeVarUInt32(newWriter.written)
+
+        box.value = b.written
+        offsets = previousOffsets
+
         b.write(newWriter)
     }
 
@@ -350,7 +383,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         }
         appendType(c.type)
         b.writeVarUInt1(c.isMutable)
-        appendExpr(c.init)
+        appendExpr(c.init, SourceLocation.TBDLocation)
     }
 
     private fun appendTag(t: WasmTag) {
@@ -365,9 +398,9 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         b.writeVarUInt32(t.type.id!!)
     }
 
-    private fun appendExpr(expr: Iterable<WasmInstr>) {
+    private fun appendExpr(expr: Iterable<WasmInstr>, location: SourceLocation) {
         expr.forEach { appendInstr(it) }
-        appendInstr(WasmInstr(WasmOp.END))
+        appendInstr(WasmInstrWithLocation(WasmOp.END, location))
     }
 
     private fun appendExport(export: WasmExport<*>) {
@@ -393,7 +426,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                 funcIndices.forEach { b.writeVarUInt32(it) }
             } else {
                 element.values.forEach {
-                    appendExpr((it as WasmTable.Value.Expression).expr)
+                    appendExpr((it as WasmTable.Value.Expression).expr, SourceLocation.TBDLocation)
                 }
             }
         }
@@ -417,18 +450,18 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                 when {
                     tableId == 0 && isFuncIndices -> {
                         b.writeByte(0x0)
-                        appendExpr(mode.offset)
+                        appendExpr(mode.offset, SourceLocation.TBDLocation)
                     }
                     isFuncIndices -> {
                         b.writeByte(0x2)
                         appendModuleFieldReference(mode.table)
-                        appendExpr(mode.offset)
+                        appendExpr(mode.offset, SourceLocation.TBDLocation)
                         writeTypeOrKind()
                     }
                     else -> {
                         b.writeByte(0x6)
                         appendModuleFieldReference(mode.table)
-                        appendExpr(mode.offset)
+                        appendExpr(mode.offset, SourceLocation.TBDLocation)
                         writeTypeOrKind()
                     }
                 }
@@ -452,7 +485,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                 }
             }
 
-            appendExpr(function.instructions)
+            appendExpr(function.instructions, SourceLocation.TBDLocation)
         }
     }
 
@@ -465,7 +498,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                     b.writeByte(2)
                     b.writeVarUInt32(mode.memoryIdx)
                 }
-                appendExpr(mode.offset)
+                appendExpr(mode.offset, SourceLocation.TBDLocation)
             }
             WasmDataMode.Passive -> b.writeByte(1)
         }

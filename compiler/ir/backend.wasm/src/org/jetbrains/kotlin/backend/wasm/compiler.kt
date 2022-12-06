@@ -11,20 +11,31 @@ import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnb
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
+import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class WasmCompilerResult(val wat: String?, val js: String, val wasm: ByteArray)
+class WasmCompilerResult(
+    val wat: String?,
+    val js: String,
+    val wasm: ByteArray,
+    val sourceMap: String?
+)
 
 fun compileToLoweredIr(
     depsDescriptors: ModulesStructure,
@@ -77,6 +88,7 @@ fun compileWasm(
     emitNameSection: Boolean = false,
     allowIncompleteImplementations: Boolean = false,
     generateWat: Boolean = false,
+    sourceMapFileName: String? = null,
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
@@ -95,14 +107,63 @@ fun compileWasm(
     val js = compiledWasmModule.generateJs()
 
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, linkedModule, allModules.last().descriptor.name.asString(), emitNameSection).appendWasmModule()
+
+    val sourceLocationMappings =
+        if (sourceMapFileName != null) mutableListOf<SourceLocationMapping>() else null
+
+    val wasmIrToBinary =
+        WasmIrToBinary(
+            os,
+            linkedModule,
+            allModules.last().descriptor.name.asString(),
+            emitNameSection,
+            sourceMapFileName,
+            sourceLocationMappings
+        )
+
+    wasmIrToBinary.appendWasmModule()
+
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(
         wat = wat,
         js = js,
-        wasm = byteArray
+        wasm = byteArray,
+        sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings)
     )
+}
+
+private fun generateSourceMap(
+    configuration: CompilerConfiguration,
+    sourceLocationMappings: MutableList<SourceLocationMapping>?
+): String? {
+    if (sourceLocationMappings == null) return null
+
+    val sourceMapsInfo = SourceMapsInfo.from(configuration) ?: return null
+
+    val sourceMapBuilder =
+        SourceMap3Builder(null, { error("This should not be called for Kotlin/Wasm") }, sourceMapsInfo.sourceMapPrefix)
+
+    val pathResolver =
+        SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapsInfo.sourceMapPrefix, sourceMapsInfo.outputDir)
+
+    var prev: SourceLocation? = null
+
+    for (mapping in sourceLocationMappings) {
+        val location = mapping.sourceLocation as? SourceLocation.Location ?: continue
+
+        if (location == prev) continue
+
+        prev = location
+
+        location.apply {
+            // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.   
+            val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).substring(3)
+            sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, mapping.offset)
+        }
+    }
+
+    return sourceMapBuilder.build()
 }
 
 fun WasmCompiledModuleFragment.generateJs(): String {
@@ -170,7 +231,8 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String = "index",
+    fileNameBase: String,
+    sourceMapFileName: String?
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -180,4 +242,8 @@ fun writeCompilationResult(
 
     val jsWithLoader = generateJsWasmLoader("./$fileNameBase.wasm", result.js)
     File(dir, "$fileNameBase.mjs").writeText(jsWithLoader)
+
+    if (sourceMapFileName != null) {
+        File(dir, sourceMapFileName).writeText(result.sourceMap!!)
+    }
 }

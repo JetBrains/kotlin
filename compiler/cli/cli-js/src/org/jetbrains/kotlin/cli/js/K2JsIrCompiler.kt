@@ -367,18 +367,23 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 if (arguments.irDce) {
                     eliminateDeadDeclarations(allModules, backendContext)
                 }
+
+                val sourceMapFileName = if (configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) "$outputName.map" else null
+
                 val res = compileWasm(
                     allModules = allModules,
                     backendContext = backendContext,
                     emitNameSection = arguments.wasmDebug,
                     allowIncompleteImplementations = arguments.irDce,
                     generateWat = true,
+                    sourceMapFileName = sourceMapFileName
                 )
 
                 writeCompilationResult(
                     result = res,
                     dir = outputDir,
-                    fileNameBase = outputName
+                    fileNameBase = outputName,
+                    sourceMapFileName = sourceMapFileName
                 )
 
                 return OK

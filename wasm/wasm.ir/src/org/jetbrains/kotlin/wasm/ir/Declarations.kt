@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+
 
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
@@ -169,10 +171,30 @@ class WasmStructFieldDeclaration(
     val isMutable: Boolean
 )
 
-class WasmInstr(
+sealed class WasmInstr(
     val operator: WasmOp,
     val immediates: List<WasmImmediate> = emptyList()
-)
+) {
+    abstract val location: SourceLocation?
+}
+
+class WasmInstrWithLocation(
+    operator: WasmOp,
+    immediates: List<WasmImmediate>,
+    override val location: SourceLocation
+) : WasmInstr(operator, immediates) {
+    constructor(
+        operator: WasmOp,
+        location: SourceLocation
+    ) : this(operator, emptyList(), location)
+}
+
+class WasmInstrWithoutLocation(
+    operator: WasmOp,
+    immediates: List<WasmImmediate> = emptyList(),
+) : WasmInstr(operator, immediates) {
+    override val location: SourceLocation? get() = null
+}
 
 data class WasmLimits(
     val minSize: UInt,

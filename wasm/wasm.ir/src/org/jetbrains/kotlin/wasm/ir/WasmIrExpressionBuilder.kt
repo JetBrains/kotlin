@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+
 private fun WasmOp.isOutCfgNode() = when (this) {
     WasmOp.UNREACHABLE, WasmOp.RETURN, WasmOp.THROW, WasmOp.RETHROW, WasmOp.BR, WasmOp.BR_TABLE -> true
     else -> false
@@ -28,8 +30,8 @@ class WasmIrExpressionBuilder(
         get() = expression.lastOrNull()
     private var eatEverythingUntilLevel: Int? = null
 
-    private fun addInstruction(op: WasmOp, immediates: Array<out WasmImmediate>) {
-        val newInstruction = WasmInstr(op, immediates.toList())
+    private fun addInstruction(op: WasmOp, location: SourceLocation, immediates: Array<out WasmImmediate>) {
+        val newInstruction = WasmInstrWithLocation(op, immediates.toList(), location)
         expression.add(newInstruction)
     }
 
@@ -46,21 +48,21 @@ class WasmIrExpressionBuilder(
         return eatLevel
     }
 
-    override fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate) {
+    override fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
         val currentEatUntil = getCurrentEatLevel(op)
         if (currentEatUntil != null) {
             if (currentEatUntil <= numberOfNestedBlocks) return
         } else {
             if (op.isOutCfgNode()) {
                 eatEverythingUntilLevel = numberOfNestedBlocks
-                addInstruction(op, immediates)
+                addInstruction(op, location, immediates)
                 return
             }
         }
 
         val lastInstruction = lastInstr
         if (lastInstruction == null) {
-            addInstruction(op, immediates)
+            addInstruction(op, location, immediates)
             return
         }
         val lastOperator = lastInstruction.operator
@@ -78,13 +80,13 @@ class WasmIrExpressionBuilder(
                 val localGetNumber = (immediates.firstOrNull() as? WasmImmediate.LocalIdx)?.value
                 if (localGetNumber == localSetNumber) {
                     expression.removeLast()
-                    addInstruction(WasmOp.LOCAL_TEE, immediates)
+                    addInstruction(WasmOp.LOCAL_TEE, location, immediates)
                     return
                 }
             }
         }
 
-        addInstruction(op, immediates)
+        addInstruction(op, location, immediates)
     }
 
     override var numberOfNestedBlocks: Int = 0

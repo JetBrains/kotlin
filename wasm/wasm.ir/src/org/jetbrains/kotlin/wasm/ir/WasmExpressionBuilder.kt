@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+
 abstract class WasmExpressionBuilder {
-    abstract fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate)
+    abstract fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate)
+
+    fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate) {
+        buildInstr(op, SourceLocation.TBDLocation, *immediates)
+    }
+
     abstract var numberOfNestedBlocks: Int
 
-    fun buildConstI32(value: Int) {
-        buildInstr(WasmOp.I32_CONST, WasmImmediate.ConstI32(value))
+    fun buildConstI32(value: Int, location: SourceLocation = SourceLocation.TBDLocation) {
+        buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
     }
 
     fun buildConstI64(value: Long) {
@@ -105,8 +112,8 @@ abstract class WasmExpressionBuilder {
         buildBrInstr(WasmOp.BR_IF, absoluteBlockLevel)
     }
 
-    fun buildCall(symbol: WasmSymbol<WasmFunction>) {
-        buildInstr(WasmOp.CALL, WasmImmediate.FuncIdx(symbol))
+    fun buildCall(symbol: WasmSymbol<WasmFunction>, location: SourceLocation = SourceLocation.TBDLocation) {
+        buildInstr(WasmOp.CALL, location, WasmImmediate.FuncIdx(symbol))
     }
 
     fun buildCallIndirect(

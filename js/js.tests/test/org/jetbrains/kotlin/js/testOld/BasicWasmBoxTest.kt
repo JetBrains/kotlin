@@ -214,7 +214,7 @@ abstract class BasicWasmBoxTest(
                     )
                 }
 
-                writeCompilationResult(res, dir)
+                writeCompilationResult(res, dir, "index", sourceMapFileName = null)
                 File(dir, "test.mjs").writeText(testJs)
                 ExternalTool(System.getProperty("javascript.engine.path.V8"))
                     .run(
