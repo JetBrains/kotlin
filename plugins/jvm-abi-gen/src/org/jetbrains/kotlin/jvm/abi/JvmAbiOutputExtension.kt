@@ -150,10 +150,15 @@ class JvmAbiOutputExtension(
                             override fun visitEnd() {}
                         }, 0)
 
+                        innerClassesToKeep.retainAll(innerClassInfos.keys)
                         for (name in innerClassesToKeep.toList()) {
-                            val info = innerClassInfos[name] ?: continue
-                            generateSequence(info) { it.outerName?.takeIf(innerClassesToKeep::add)?.let(innerClassInfos::get) }
-                                .forEach { writer.visitInnerClass(it.name, it.outerName, it.innerName, it.access) }
+                            var info = innerClassInfos[name]
+                            while (info != null) {
+                                info = info.outerName?.takeIf(innerClassesToKeep::add)?.let(innerClassInfos::get)
+                            }
+                        }
+                        for (name in innerClassesToKeep.sorted()) {
+                            innerClassInfos[name]?.let { writer.visitInnerClass(it.name, it.outerName, it.innerName, it.access) }
                         }
 
                         writer.visitEnd()

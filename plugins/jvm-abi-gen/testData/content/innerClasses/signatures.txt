@@ -6,15 +6,15 @@ public annotation class Anno {
 @kotlin.Metadata
 public final class InAnnotation {
     // source: 'innerClasses.kt'
-    public inner class Outer$Middle$Inner
     public inner class Outer$Middle
+    public inner class Outer$Middle$Inner
     public method <init>(): void
 }
 @kotlin.Metadata
 public final class InInlineMethod {
     // source: 'innerClasses.kt'
-    public inner class Outer$Middle$Inner
     public inner class Outer$Middle
+    public inner class Outer$Middle$Inner
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.Class
 }
@@ -26,8 +26,8 @@ public final class InPrivateMethod {
 @kotlin.Metadata
 public final class InPublicMethod {
     // source: 'innerClasses.kt'
-    public inner class Outer$Middle$Inner
     public inner class Outer$Middle
+    public inner class Outer$Middle$Inner
     public method <init>(): void
     public final method foo(@org.jetbrains.annotations.NotNull p0: Outer$Middle$Inner): void
 }
