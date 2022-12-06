@@ -172,4 +172,13 @@ class KotlinCompileApiTest {
         expectedPluginOptions += setOf("plugin:unknown.plugin.id:changes=unknown")
         assertEquals(expectedPluginOptions, args.pluginOptions?.toSet())
     }
+
+    @Test
+    fun testIncremental() {
+        taskApi.incremental.set(true)
+        assertEquals(true, taskImpl.incremental.get())
+
+        taskApi.incremental.set(false)
+        assertEquals(false, taskImpl.incremental.get())
+    }
 }

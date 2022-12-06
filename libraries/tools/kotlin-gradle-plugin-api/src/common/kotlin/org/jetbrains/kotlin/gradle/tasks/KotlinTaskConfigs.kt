@@ -78,6 +78,9 @@ interface BaseKotlinCompile : KotlinCompileTool {
 
     @get:Internal
     val changesToPluginOptionsTransformers: ListProperty<(ChangedFiles) -> Map<String, List<SubpluginOption>>>
+
+    @get:Input
+    val incremental: Property<Boolean>
 }
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")

@@ -37,7 +37,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             } else null
 
             taskProvider.configure { task ->
-                task.incremental = propertiesProvider.incrementalJvm ?: true
+                task.incremental.value(propertiesProvider.incrementalJvm ?: true)
 
                 if (propertiesProvider.useK2 == true) {
                     task.compilerOptions.useK2.value(true)
