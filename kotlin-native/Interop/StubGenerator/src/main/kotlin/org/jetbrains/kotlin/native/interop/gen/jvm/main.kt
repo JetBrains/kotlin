@@ -71,15 +71,21 @@ class Interop {
     /**
      * invoked via reflection from new test system: CompilationToolCallKt.invokeCInterop(),
      * `interop()` has issues to be invoked directly due to NoSuchMethodError, caused by presence of InternalInteropOptions argtype:
-     * java.lang.IllegalArgumentException: argument type mismatch
+     * java.lang.IllegalArgumentException: argument type mismatch.
+     * Also this method simplifies testing of [CInteropPrettyException] by wrapping the result in Any that acts like a "Result" class.
+     * Using "Result" directly might be complicated due to signature mangle and different class loaders.
      */
     fun interopViaReflection(
             flavor: String, args: Array<String>,
             runFromDaemon: Boolean,
             generated: String, natives: String, manifest: String? = null, cstubsName: String? = null
-    ): Array<String>? {
+    ): Any? {
         val internalInteropOptions = InternalInteropOptions(generated, natives, manifest, cstubsName)
-        return interop(flavor, args, internalInteropOptions, runFromDaemon)
+        return try {
+            interop(flavor, args, internalInteropOptions, runFromDaemon)
+        } catch (prettyException: CInteropPrettyException) {
+            prettyException
+        }
     }
 
     fun interop(
@@ -237,8 +243,12 @@ private fun processCLibSafe(flavor: KotlinPlatform, cinteropArguments: CInteropA
             }
         }
 
-private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArguments,
-                        additionalArgs: InternalInteropOptions, runFromDaemon: Boolean): Array<String>? {
+private fun processCLib(
+        flavor: KotlinPlatform,
+        cinteropArguments: CInteropArguments,
+        additionalArgs: InternalInteropOptions,
+        runFromDaemon: Boolean,
+): Array<String>? = withExceptionPrettifier(cinteropArguments.disableExceptionPrettifier) {
     val ktGenRoot = additionalArgs.generated
     val nativeLibsDir = additionalArgs.natives
     val defFile = cinteropArguments.def?.let { File(it) }
