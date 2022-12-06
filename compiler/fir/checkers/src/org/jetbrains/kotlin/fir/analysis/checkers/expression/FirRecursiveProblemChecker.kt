@@ -21,15 +21,24 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker() {
         if (expression !is FirExpression || expression.source?.kind is KtFakeSourceElementKind) return
 
         fun checkConeType(coneType: ConeKotlinType?) {
-            if (coneType is ConeErrorType && (coneType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {
-                reporter.reportOn(expression.source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, context)
-            } else if (coneType is ConeClassLikeType) {
-                for (typeArgument in coneType.typeArguments) {
-                    checkConeType(typeArgument.type)
+            val kind = coneType?.diagnosticKindIfErrorType
+            when {
+                kind == DiagnosticKind.RecursionInImplicitTypes -> {
+                    reporter.reportOn(expression.source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, context)
+                }
+                kind == DiagnosticKind.InferenceError -> {
+                    reporter.reportOn(expression.source, FirErrors.INFERENCE_ERROR, context)
+                }
+                coneType is ConeClassLikeType -> {
+                    for (typeArgument in coneType.typeArguments) {
+                        checkConeType(typeArgument.type)
+                    }
                 }
             }
         }
 
         checkConeType(expression.typeRef.coneType)
     }
+
+    private val ConeKotlinType.diagnosticKindIfErrorType get() = ((this as? ConeErrorType)?.diagnostic as? ConeSimpleDiagnostic)?.kind
 }
