@@ -97,10 +97,9 @@ internal class LazyModifiersBox(
     fun hasModifier(modifier: String): Boolean {
         modifiersMapReference.get()[modifier]?.let { return it }
         val newValues = computer(modifier) ?: mapOf(modifier to false)
-        do {
-            val currentMap = modifiersMapReference.get()
-            val newMap = currentMap.putAll(newValues)
-        } while (!modifiersMapReference.compareAndSet(currentMap, newMap))
+        modifiersMapReference.updateAndGet {
+            it.putAll(newValues)
+        }
 
         return newValues[modifier] ?: error("Inconsistent state: $modifier")
     }
