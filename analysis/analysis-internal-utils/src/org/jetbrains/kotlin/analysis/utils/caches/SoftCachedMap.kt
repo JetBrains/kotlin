@@ -10,13 +10,11 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
 public abstract class SoftCachedMap<K : Any, V : Any> {
     public abstract fun getOrPut(key: K, create: () -> V): V
 
-    @TestOnly
     public abstract fun clear()
 
     public companion object {

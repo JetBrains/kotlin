@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInva
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -34,10 +36,13 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import java.util.concurrent.ConcurrentHashMap
 
 internal class LLFirNonUnderContentRootSessionFactory(private val project: Project) {
-    private val cache = ConcurrentHashMap<KtNotUnderContentRootModule, LLFirResolvableModuleSession>()
+    private val cache = SoftCachedMap.create<KtNotUnderContentRootModule, LLFirResolvableModuleSession>(
+        project,
+        kind = SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
+        trackers = listOf(PsiModificationTracker.MODIFICATION_COUNT),
+    )
 
     fun getNonUnderContentRootSession(
         module: KtNotUnderContentRootModule,
