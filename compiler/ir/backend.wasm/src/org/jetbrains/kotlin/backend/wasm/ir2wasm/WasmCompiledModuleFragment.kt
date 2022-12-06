@@ -257,7 +257,7 @@ inline fun WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, Co
     elements.mapTo(into) {
         val id = address(wasmToIr.getValue(it))
         val offset = mutableListOf<WasmInstr>()
-        WasmIrExpressionBuilder(offset).buildConstI32(id)
+        WasmIrExpressionBuilder(offset).buildConstI32(id, SourceLocation.NoLocation("Compile time data per class"))
         WasmData(WasmDataMode.Active(0, offset), it.toBytes())
     }
 }

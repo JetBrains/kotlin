@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 private class ExtractedWhenCondition<T>(val condition: IrCall, val const: IrConst<T>)
 private class ExtractedWhenBranch<T>(val conditions: List<ExtractedWhenCondition<T>>, val expression: IrExpression)
@@ -134,11 +135,13 @@ private fun BodyGenerator.createBinaryTable(selectorLocal: WasmLocal, intBranche
     intBranches.flatMapIndexedTo(sortedCaseToBranchIndex) { index, branch -> branch.conditions.map { it.const.value to index } }
     sortedCaseToBranchIndex.sortBy { it.first }
 
+    val location = SourceLocation.NoLocation("When's binary search infra")
+
     val thenBody = { result: Int ->
-        body.buildConstI32(result)
+        body.buildConstI32(result, location)
     }
     val elseBody: () -> Unit = {
-        body.buildConstI32(intBranches.size)
+        body.buildConstI32(intBranches.size, location)
     }
     createBinaryTable(selectorLocal, WasmI32, sortedCaseToBranchIndex, 0, sortedCaseToBranchIndex.size, thenBody, elseBody)
 }
@@ -240,11 +243,13 @@ private fun <T> BodyGenerator.createBinaryTable(
     thenBody: (T) -> Unit,
     elseBody: () -> Unit
 ) {
+    val location = SourceLocation.NoLocation("When's binary search infra")
+
     val size = toExcl - fromIncl
     if (size == 1) {
         val (case, result) = sortedCases[fromIncl]
         body.buildGetLocal(selectorLocal)
-        body.buildConstI32(case)
+        body.buildConstI32(case, location)
         body.buildInstr(WasmOp.I32_EQ)
         body.buildIf("binary_tree_branch", resultType)
         thenBody(result)
@@ -257,7 +262,7 @@ private fun <T> BodyGenerator.createBinaryTable(
     val border = fromIncl + size / 2
 
     body.buildGetLocal(selectorLocal)
-    body.buildConstI32(sortedCases[border].first)
+    body.buildConstI32(sortedCases[border].first, location)
     body.buildInstr(WasmOp.I32_LT_S)
     body.buildIf("binary_tree_node", resultType)
     createBinaryTable(selectorLocal, resultType, sortedCases, fromIncl, border, thenBody, elseBody)
@@ -299,6 +304,8 @@ private fun BodyGenerator.genTableIntSwitch(
     brTable: List<Int>,
     expectedType: IrType,
 ) {
+    val location = SourceLocation.NoLocation("When's binary search infra")
+
     val baseBlockIndex = body.numberOfNestedBlocks
     //expressions + else branch + br_table
     repeat(branches.size + 2) {
@@ -308,7 +315,7 @@ private fun BodyGenerator.genTableIntSwitch(
     resultType?.let { generateDefaultInitializerForType(it, body) } //stub value
     body.buildGetLocal(selectorLocal)
     if (shift != 0) {
-        body.buildConstI32(shift)
+        body.buildConstI32(shift, location)
         body.buildInstr(WasmOp.I32_SUB)
     }
     body.buildInstr(

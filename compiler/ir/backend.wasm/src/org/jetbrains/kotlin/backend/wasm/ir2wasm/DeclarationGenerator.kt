@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.withNoLocation
 
 class DeclarationGenerator(
     val context: WasmModuleCodegenContext,
@@ -472,19 +473,22 @@ class DeclarationGenerator(
     }
 }
 
-fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
-    WasmI32 -> g.buildConstI32(0)
-    WasmI64 -> g.buildConstI64(0)
-    WasmF32 -> g.buildConstF32(0f)
-    WasmF64 -> g.buildConstF64(0.0)
-    is WasmRefNullType -> g.buildRefNull(type.heapType)
-    is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone)
-    is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern)
-    is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
-    is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
-    WasmUnreachableType -> error("Unreachable type can't be initialized")
-    else -> error("Unknown value type ${type.name}")
-}
+fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) =
+    withNoLocation("Default initializer, usually don't require location") {
+        when (type) {
+            WasmI32 -> g.buildConstI32(0, location)
+            WasmI64 -> g.buildConstI64(0)
+            WasmF32 -> g.buildConstF32(0f)
+            WasmF64 -> g.buildConstF64(0.0)
+            is WasmRefNullType -> g.buildRefNull(type.heapType)
+            is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone)
+            is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern)
+            is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
+            is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
+            WasmUnreachableType -> error("Unreachable type can't be initialized")
+            else -> error("Unknown value type ${type.name}")
+        }
+    }
 
 fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
     val implicitThis = if (this is IrConstructor) parentAsClass.thisReceiver!! else null
@@ -502,12 +506,12 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
                 val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
                 body.buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(bottomType))
             }
-            is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
-            is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
-            is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
-            is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression))
+            is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0, location)
+            is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt(), location)
+            is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt(), location)
+            is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression), location)
             is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
-            is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code)
+            is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code, location)
             is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
             is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
             is IrConstKind.String -> {
@@ -516,7 +520,7 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
                 body.commentGroupStart { "const string: \"$stringValue\"" }
                 body.buildConstI32Symbol(literalPoolId)
                 body.buildConstI32Symbol(literalAddress)
-                body.buildConstI32(stringValue.length)
+                body.buildConstI32(stringValue.length, location)
                 body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral), location)
                 body.commentGroupEnd()
             }

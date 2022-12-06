@@ -16,7 +16,7 @@ abstract class WasmExpressionBuilder {
 
     abstract var numberOfNestedBlocks: Int
 
-    fun buildConstI32(value: Int, location: SourceLocation = SourceLocation.TBDLocation) {
+    fun buildConstI32(value: Int, location: SourceLocation) {
         buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
     }
 
