@@ -675,6 +675,22 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Annotations {
+            @Test
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kt55286.kt")
+            public void testKt55286() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt55286.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arguments")
         @TestDataPath("$PROJECT_ROOT")
         public class Arguments {
