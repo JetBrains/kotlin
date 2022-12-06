@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import kotlin.script.experimental.api.*
@@ -116,6 +117,10 @@ class FirScriptConfiguratorExtensionImpl(
                     }
                 )
             }
+
+            compilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
+                _knownAnnotationsForSamWithReceiver.add(it.typeName)
+            }
         }
     }
 
@@ -131,12 +136,16 @@ class FirScriptConfiguratorExtensionImpl(
             }
         }
 
+    private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()
+
+    internal val knownAnnotationsForSamWithReceiver: Set<String>
+        get() = _knownAnnotationsForSamWithReceiver
+
     companion object {
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> FirScriptConfiguratorExtensionImpl(session, hostConfiguration) }
         }
     }
-
 }
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {

@@ -37,8 +37,8 @@ class FeaturesTest : TestCase() {
                     when (res) {
                         is ResultWithDiagnostics.Success -> fail("Expecting \"Unresolved reference\" error, got successful compilation")
                         is ResultWithDiagnostics.Failure ->
-                            if (res.reports.none { it.message.contains("Unresolved reference") }) {
-                                fail("Expecting \"Unresolved reference\" error, got:\n  ${res.reports.joinToString("\n  ")}")
+                            if (res.reports.none { it.message.contains("Unresolved reference") || it.message.contains("'this' is not defined in this context") }) {
+                                fail("Expecting \"Unresolved reference\" or \"'this' is not defined in this context\" error, got:\n  ${res.reports.joinToString("\n  ")}")
                             }
                     }
                 }
