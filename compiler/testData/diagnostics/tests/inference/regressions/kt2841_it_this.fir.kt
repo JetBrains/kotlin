@@ -1,4 +1,3 @@
-
 package a
 
 interface Closeable {
@@ -12,7 +11,7 @@ public inline fun <T: Closeable, R> use(t: T, block: T.(T)-> R) : R {
 }
 
 fun test() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>use<!>(C()) {
+    use(C()) {
         this.close()
         it.close()
         <!UNRESOLVED_REFERENCE!>xx<!>

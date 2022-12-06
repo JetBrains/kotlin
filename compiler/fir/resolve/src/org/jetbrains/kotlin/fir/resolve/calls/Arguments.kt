@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -355,13 +354,12 @@ private fun checkApplicabilityForArgumentType(
     // todo run this approximation only once for call
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, context.session)
 
-    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic? {
+    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
             return NullForNotNullType(argument)
         }
 
-        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType? {
-            if (type is ConeErrorType) return null
+        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
             if (type is ConeTypeVariableType) {
                 val lookupTag = type.lookupTag
 
@@ -383,8 +381,10 @@ private fun checkApplicabilityForArgumentType(
             return type
         }
 
-        val preparedExpectedType = tryGetConeTypeThatCompatibleWithKtType(actualExpectedType) ?: return null
-        val preparedActualType = tryGetConeTypeThatCompatibleWithKtType(argumentType) ?: return null
+        if (argumentType is ConeErrorType || actualExpectedType is ConeErrorType) return ErrorTypeInArguments
+
+        val preparedExpectedType = tryGetConeTypeThatCompatibleWithKtType(actualExpectedType)
+        val preparedActualType = tryGetConeTypeThatCompatibleWithKtType(argumentType)
         return ArgumentTypeMismatch(
             preparedExpectedType,
             preparedActualType,
@@ -422,7 +422,7 @@ private fun checkApplicabilityForArgumentType(
         }
 
         if (!isReceiver) {
-            sink.reportDiagnosticIfNotNull(subtypeError(expectedType))
+            sink.reportDiagnostic(subtypeError(expectedType))
             return
         }
 

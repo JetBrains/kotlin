@@ -41,20 +41,20 @@ fun annotatedTrueAndFalse(x: Any?) {
 }
 
 fun annotatedFalseAndTrue(x: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (falseWhenString(x) && true) {
+    if (falseWhenString(x) && true) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }<!>
+    }
 }
 
 fun annotatedFalseAndFalse(x: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (falseWhenString(x) && false) {
+    if (falseWhenString(x) && false) {
         // Unreachable
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }<!>
+    }
 }

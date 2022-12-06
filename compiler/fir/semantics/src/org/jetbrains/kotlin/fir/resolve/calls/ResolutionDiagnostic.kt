@@ -78,6 +78,8 @@ class NameForAmbiguousParameter(
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 
+object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
+
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 
 object VisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)

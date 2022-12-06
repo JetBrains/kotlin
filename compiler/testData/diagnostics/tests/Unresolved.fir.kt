@@ -17,10 +17,10 @@ fun testUnresolved() {
     foo1(<!UNRESOLVED_REFERENCE!>i<!>)
     s.<!UNRESOLVED_REFERENCE!>foo<!>()
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when(<!UNRESOLVED_REFERENCE!>a<!>) {
+    when(<!UNRESOLVED_REFERENCE!>a<!>) {
         is Int -> <!UNRESOLVED_REFERENCE!>a<!>
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
-    }<!>
+    }
 
     for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {
        var i: Int = j
