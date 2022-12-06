@@ -93,7 +93,7 @@ class FakeCallResolver(
         val reportErrorsOn: KtExpression,
         val name: Name,
         val call: Call
-    ) : TracingStrategy by TracingStrategyImpl.create(fakeExpression, call) {
+    ) : TracingStrategy by @JvmDelegateToDefaults TracingStrategyImpl.create(fakeExpression, call) {
 
         override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, resolvedCalls: Collection<ResolvedCall<D>>) {
             trace.report(Errors.COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, name, resolvedCalls))
@@ -115,7 +115,7 @@ class FakeCallResolver(
         fakeExpression: KtReferenceExpression,
         val reportErrorsOn: KtExpression,
         val call: Call
-    ) : TracingStrategy by TracingStrategyImpl.create(fakeExpression, call) {
+    ) : TracingStrategy by @JvmDelegateToDefaults TracingStrategyImpl.create(fakeExpression, call) {
 
         override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, resolvedCalls: Collection<ResolvedCall<D>>) {
             trace.report(Errors.ITERATOR_AMBIGUITY.on(reportErrorsOn, resolvedCalls))

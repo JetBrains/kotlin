@@ -28,7 +28,7 @@ interface ReadOnlyControlFlowInfo<K : Any, D : Any> {
 abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, D>, K : Any, D : Any>
 internal constructor(
     protected val map: ImmutableMap<K, D> = ImmutableHashMap.empty()
-) : ImmutableMap<K, D> by map, ReadOnlyControlFlowInfo<K, D> {
+) : ImmutableMap<K, D> by @JvmDelegateToDefaults map, ReadOnlyControlFlowInfo<K, D> {
     protected abstract fun copy(newMap: ImmutableMap<K, D>): S
 
     override fun put(key: K, value: D): S = put(key, value, this[key].getOrElse(null as D?))

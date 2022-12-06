@@ -17,8 +17,8 @@ class KtLightPsiJavaCodeReferenceElement(
     clsDelegateProvider: () -> PsiJavaCodeReferenceElement?,
     private val customReferenceName: String? = null,
 ) :
-    PsiElement by ktElement,
-    PsiReference by LazyPsiReferenceDelegate(ktElement, reference),
+    PsiElement by @JvmDelegateToDefaults ktElement,
+    PsiReference by @JvmDelegateToDefaults LazyPsiReferenceDelegate(ktElement, reference),
     PsiJavaCodeReferenceElement {
 
     private val delegate by lazyPub(clsDelegateProvider)

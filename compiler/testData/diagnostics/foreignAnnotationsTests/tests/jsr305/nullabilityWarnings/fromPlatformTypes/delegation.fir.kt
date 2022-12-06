@@ -12,6 +12,6 @@ public class J {
 }
 
 // FILE: k.kt
-class A : List<String> by J.staticNN
-class B : List<String> by J.staticN
-class C : List<String> by J.staticJ
+<!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>class A<!> : List<String> by J.staticNN
+<!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>class B<!> : List<String> by J.staticN
+<!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>class C<!> : List<String> by J.staticJ

@@ -1918,6 +1918,12 @@ internal class VirtualMemberHiddenImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VirtualMemberHidden(), KtAbstractFirDiagnostic<KtNamedDeclaration>
 
+internal class NoOverrideForDelegateWithDefaultMethodImpl(
+    override val overriddenDeclaration: KtCallableSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoOverrideForDelegateWithDefaultMethod(), KtAbstractFirDiagnostic<KtClassOrObject>
+
 internal class ManyCompanionObjectsImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

@@ -33,5 +33,6 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJavaAnnotationsChecker,
             FirJvmPackageNameAnnotationsChecker,
+            FirJvmDelegateToDefaultsChecker,
         )
 }

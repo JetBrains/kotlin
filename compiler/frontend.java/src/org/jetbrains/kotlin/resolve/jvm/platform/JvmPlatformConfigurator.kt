@@ -44,6 +44,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         FunctionDelegateMemberNameClashChecker,
         ClassInheritsJavaSealedClassChecker,
         JavaOverrideWithWrongNullabilityOverrideChecker,
+        DelegatedDefaultInterfaceMethodsAreOverriddenChecker
     ),
 
     additionalCallCheckers = listOf(
@@ -119,6 +120,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())
+        container.useInstance(JvmDelegateToDefaultsAnnotationChecker)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

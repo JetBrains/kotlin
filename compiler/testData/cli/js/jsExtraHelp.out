@@ -42,6 +42,8 @@ where advanced options include:
   -Xwasm-enable-array-range-checks
                              Turn on range checks for the array access functions
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
+  -Xallow-implicit-delegation-to-defaults
+                             Allow implicit delegation to default Java interface methods
   -Xwasm-launcher=esm|nodejs|d8 Picks flavor for the wasm launcher. Default is ESM.
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type

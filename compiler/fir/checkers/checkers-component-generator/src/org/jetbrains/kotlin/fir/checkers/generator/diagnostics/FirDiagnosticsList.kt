@@ -822,6 +822,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("declared")
             parameter<FirRegularClassSymbol>("overriddenContainer")
         }
+        // TODO: Remove as soon as KT-18324 is fixed
+        val NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {

@@ -3283,6 +3283,9 @@ public abstract interface annotation class kotlin/jvm/JvmDefaultWithCompatibilit
 public abstract interface annotation class kotlin/jvm/JvmDefaultWithoutCompatibility : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/JvmDelegateToDefaults : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
 }
 

@@ -1273,6 +1273,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("JvmDelegateToDefaultsAnnotation.kt")
+            public void testJvmDelegateToDefaultsAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/JvmDelegateToDefaultsAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("kt1860-negative.kt")
             public void testKt1860_negative() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/kt1860-negative.kt");
@@ -8546,6 +8552,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("Delegation_ScopeInitializationOrder.kt")
             public void testDelegation_ScopeInitializationOrder() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegation/Delegation_ScopeInitializationOrder.kt");
+            }
+
+            @Test
+            @TestMetadata("javaDefaultMethod.kt")
+            public void testJavaDefaultMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegation/javaDefaultMethod.kt");
             }
 
             @Test

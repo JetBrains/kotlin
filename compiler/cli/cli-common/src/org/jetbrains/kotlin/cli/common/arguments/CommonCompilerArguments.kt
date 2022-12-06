@@ -415,6 +415,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render internal names of warnings and errors")
     var renderInternalDiagnosticNames: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xallow-implicit-delegation-to-defaults", description = "Allow implicit delegation to default Java interface methods")
+    val allowImplicitDelegationToDefaults: Boolean by FreezableVar(false)
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -439,6 +442,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
+            put(AnalysisFlags.allowImplicitDelegationToDefaults, allowImplicitDelegationToDefaults)
         }
     }
 

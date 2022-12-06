@@ -229,6 +229,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE, "Java SAM interface constructor references are prohibited");
         MAP.put(ENUM_DECLARING_CLASS_DEPRECATED, "Enum.declaringClass is deprecated, use javaDeclaringClass instead");
+        MAP.put(NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD,
+                "The default Java interface method ''{0}'' should be overridden. Please see KT-18324 for details. " +
+                "You can suppress this warning and keep the old behavior by annotating the delegate expression with @JvmDelegateToDefaults.",
+                STRING);
     }
 
     @NotNull

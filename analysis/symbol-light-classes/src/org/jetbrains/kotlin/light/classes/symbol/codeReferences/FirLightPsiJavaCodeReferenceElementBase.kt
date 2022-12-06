@@ -9,7 +9,7 @@ import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 
 internal abstract class FirLightPsiJavaCodeReferenceElementBase(private val ktElement: PsiElement) :
-    PsiElement by ktElement,
+    PsiElement by @JvmDelegateToDefaults ktElement,
     PsiJavaCodeReferenceElement {
 
     override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = emptyArray()

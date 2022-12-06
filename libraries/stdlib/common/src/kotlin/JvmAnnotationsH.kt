@@ -6,6 +6,8 @@
 package kotlin.jvm
 
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.internal.RequireKotlin
+import kotlin.internal.RequireKotlinVersionKind
 
 /**
  * Instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.
@@ -166,3 +168,20 @@ public expect annotation class Synchronized()
 @SinceKotlin("1.2")
 @OptionalExpectation
 internal expect annotation class JvmPackageName(val name: String)
+
+/**
+ * When delegating to an object implementing a Java interface containing default method implementations,
+ * this annotation instructs the compiler to inherit default implementations of methods from the interface
+ * instead of delegating them to the delegate object.
+ *
+ * See [KT-55080](https://youtrack.jetbrains.com/issue/KT-55080) for more information.
+ *
+ * Can be applied to `Interface by Delegate` expressions only.
+ */
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.7")
+//@RequireKotlin("1.8.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@OptionalExpectation
+public expect annotation class JvmDelegateToDefaults

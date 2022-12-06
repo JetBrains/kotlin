@@ -61,5 +61,8 @@ object JvmNames {
     @JvmField
     val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
 
+    @JvmField
+    val JVM_DELEGATE_TO_DEFAULTS_FQ_NAME = FqName("kotlin.jvm.JvmDelegateToDefaults")
+
     const val MULTIFILE_PART_NAME_DELIMITER = "__"
 }

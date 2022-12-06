@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.PersistentMap
 
 abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, V>, K : Any, V : Any> protected constructor(
     protected val map: PersistentMap<K, V>,
-) : PersistentMap<K, V> by map {
+) : PersistentMap<K, V> by @JvmDelegateToDefaults map {
 
     protected abstract val constructor: (PersistentMap<K, V>) -> S
 
