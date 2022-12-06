@@ -974,11 +974,6 @@ val loweringList = listOf<Lowering>(
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
-    es6CollectConstructorsWhichNeedBoxParameterLowering,
-    es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
-    es6BoxParameterOptimization,
-    es6PrimaryConstructorOptimizationLowering,
-    es6PrimaryConstructorUsageOptimizationLowering,
     cleanupLoweringPhase,
     // Currently broken due to static members lowering making single-open-class
     // files non-recognizable as single-class files
