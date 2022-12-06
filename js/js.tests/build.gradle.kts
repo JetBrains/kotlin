@@ -299,6 +299,9 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
         systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
         inputs.dir(rootDir.resolve("libraries/stdlib/js-ir/build/classes/kotlin/js/main"))
 
+        systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
+        inputs.file(rootDir.resolve("libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib"))
+
         dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
         systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
         inputs.dir(rootDir.resolve("libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main"))
@@ -320,8 +323,15 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
     if (!jsEnabled) {
         if (firEnabled) {
             include("org/jetbrains/kotlin/js/test/fir/*")
+            include("org/jetbrains/kotlin/test/runners/ir/Fir2IrJsTextTestGenerated.class")
         } else {
             include("org/jetbrains/kotlin/js/test/ir/*")
+
+            include("org/jetbrains/kotlin/incremental/*")
+            include("org/jetbrains/kotlin/js/testOld/api/*")
+            include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
+            include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
+            include("org/jetbrains/kotlin/integration/JsIrAnalysisHandlerExtensionTest.class")
         }
     }
 
@@ -374,8 +384,6 @@ val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSiz
 
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
-
-    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
 
     configureTestDistribution()
 }
