@@ -32,39 +32,39 @@ fun testNotEqualsWithConstant(x: Any?) {
 fun unknownFunction(): Any? = 42
 
 fun testEqualsWithUnknown(x: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (isString(x) == unknownFunction()) {
+    if (isString(x) == unknownFunction()) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }<!>
+    }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun testNotEqualsWithUnknown(x: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (isString(x) != unknownFunction()) {
+    if (isString(x) != unknownFunction()) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }<!>
+    }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun testEqualsWithVariable(x: Any?, b: Boolean) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (isString(x) == b) {
+    if (isString(x) == b) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }<!>
+    }
 }
 
 fun testNotEqualsWithVariable(x: Any?, b: Boolean) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (isString(x) != b) {
+    if (isString(x) != b) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }<!>
+    }
 }

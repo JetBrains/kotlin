@@ -45,14 +45,14 @@ fun truetrue(x: Any?) {
 }
 
 fun truefalse(x: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (trueWhenString(x) && falseWhenInt(x)) {
+    if (trueWhenString(x) && falseWhenInt(x)) {
         x.length
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
-    }<!>
+    }
 }
 
 fun falsetrue(x: Any?) {
@@ -67,7 +67,7 @@ fun falsetrue(x: Any?) {
 }
 
 fun falsefalse(x: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (falseWhenString(x) && falseWhenInt(x)) {
+    if (falseWhenString(x) && falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
@@ -76,5 +76,5 @@ fun falsefalse(x: Any?) {
         // because we don't know which one of both arguments was 'false' to bring us here
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x.<!NONE_APPLICABLE!>inc<!>()
-    }<!>
+    }
 }

@@ -11,7 +11,7 @@ fun main() {
     val number: Int = 5 // doesn't work
 //    val number: Long = 5 // works
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!> (WrapperFunctions()) {
+    with (WrapperFunctions()) {
         wrapper <!NONE_APPLICABLE!>greaterEq<!> number
     }
 }
