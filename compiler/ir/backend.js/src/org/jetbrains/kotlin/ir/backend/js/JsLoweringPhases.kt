@@ -771,30 +771,15 @@ private val invokeStaticInitializersPhase = makeBodyLoweringPhase(
     prerequisite = setOf(objectDeclarationLoweringPhase)
 )
 
-private val es6BoxParameterOptimization = makeDeclarationTransformerPhase(
-    ::ES6CollectConstructorsWhichNeedBoxParameters,
-    name = "ES6CollectConstructorsWhichNeedBoxParameters",
-    description = "[Optimization] Collect all of the constructors which requires box parameter",
-    prerequisite = setOf(primaryConstructorLoweringPhase)
-)
-
-private val es6ConstructorOptimizationLowering = makeDeclarationTransformerPhase(
-    ::ES6ConstructorOptimizationLowering,
-    name = "ES6ConstructorOptimizationLowering",
-    description = "[Optimization] Collect all of the constructors which could be translated into a regular constructor",
-    prerequisite = setOf(es6BoxParameterOptimization)
-)
-
 private val es6AddBoxParameterToConstructorsLowering = makeDeclarationTransformerPhase(
     ::ES6AddBoxParameterToConstructorsLowering,
     name = "ES6AddBoxParameterToConstructorsLowering",
     description = "Add box parameter to a constructor if needed",
-    prerequisite = setOf(es6ConstructorOptimizationLowering)
 )
 
-private val es6SecondaryConstructorLowering = makeDeclarationTransformerPhase(
-    ::ES6SecondaryConstructorLowering,
-    name = "ES6SecondaryConstructorLowering",
+private val es6ConstructorLowering = makeDeclarationTransformerPhase(
+    ::ES6ConstructorLowering,
+    name = "ES6ConstructorLowering",
     description = "Lower constructors declarations to support ES classes",
     prerequisite = setOf(es6AddBoxParameterToConstructorsLowering)
 )
@@ -803,7 +788,7 @@ private val es6ConstructorUsageLowering = makeBodyLoweringPhase(
     ::ES6ConstructorCallLowering,
     name = "ES6ConstructorCallLowering",
     description = "Lower constructor usages to support ES classes",
-    prerequisite = setOf(es6SecondaryConstructorLowering)
+    prerequisite = setOf(es6ConstructorLowering)
 )
 
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
@@ -811,6 +796,45 @@ private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     name = "ObjectUsageLowering",
     description = "Transform IrGetObjectValue into instance generator call",
     prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
+private val es6CollectConstructorsWhichNeedBoxParameterLowering = makeDeclarationTransformerPhase(
+    ::ES6CollectConstructorsWhichNeedBoxParameters,
+    name = "ES6CollectConstructorsWhichNeedBoxParameters",
+    description = "[Optimization] Collect all of the constructors which requires box parameter",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
+private val es6BoxParameterOptimization = makeBodyLoweringPhase(
+    ::ES6ConstructorBoxParameterOptimizationLowering,
+    name = "ES6ConstructorBoxParameterOptimizationLowering",
+    description = "[Optimization] Collect all of the constructors which requires box parameter",
+    prerequisite = setOf(
+        es6CollectConstructorsWhichNeedBoxParameterLowering,
+        es6AddBoxParameterToConstructorsLowering,
+        es6ConstructorUsageLowering
+    )
+)
+
+private val es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering = makeDeclarationTransformerPhase(
+    ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
+    name = "ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering",
+    description = "[Optimization] Collect all of the constructors which could be translated into a regular constructor",
+    prerequisite = setOf(es6ConstructorLowering)
+)
+
+private val es6PrimaryConstructorOptimizationLowering = makeDeclarationTransformerPhase(
+    ::ES6PrimaryConstructorOptimizationLowering,
+    name = "ES6PrimaryConstructorOptimizationLowering",
+    description = "[Optimization] Replace synthetically generated static fabric method with a plain old ES6 constructors whenever it's possible",
+    prerequisite = setOf(es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering)
+)
+
+private val es6PrimaryConstructorUsageOptimizationLowering = makeBodyLoweringPhase(
+    ::ES6PrimaryConstructorUsageOptimizationLowering,
+    name = "ES6PrimaryConstructorUsageOptimizationLowering",
+    description = "[Optimization] Replace usage of synthetically generated static fabric method with a plain old ES6 constructors whenever it's possible",
+    prerequisite = setOf(es6BoxParameterOptimization, es6PrimaryConstructorOptimizationLowering)
 )
 
 private val escapedIdentifiersLowering = makeBodyLoweringPhase(
@@ -944,14 +968,17 @@ val loweringList = listOf<Lowering>(
     blockDecomposerLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
-    es6BoxParameterOptimization,
-    es6ConstructorOptimizationLowering,
     es6AddBoxParameterToConstructorsLowering,
-    es6SecondaryConstructorLowering,
+    es6ConstructorLowering,
     es6ConstructorUsageLowering,
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
+    es6CollectConstructorsWhichNeedBoxParameterLowering,
+    es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
+    es6BoxParameterOptimization,
+    es6PrimaryConstructorOptimizationLowering,
+    es6PrimaryConstructorUsageOptimizationLowering,
     cleanupLoweringPhase,
     // Currently broken due to static members lowering making single-open-class
     // files non-recognizable as single-class files

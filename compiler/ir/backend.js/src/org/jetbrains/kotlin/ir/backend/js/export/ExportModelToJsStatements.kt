@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticEs6Constructor
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
@@ -174,7 +174,7 @@ class ExportModelToJsStatements(
 
                 // These are only used when exporting secondary constructors annotated with @JsName
                 val staticFunctions = declaration.members
-                    .filter { it is ExportedFunction && it.isStatic && !it.ir.isSyntheticEs6Constructor }
+                    .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
                 val enumEntries = declaration.members.filter { it is ExportedProperty && it.isStatic }
@@ -268,7 +268,7 @@ class ExportModelToJsStatements(
         secondaryConstructors.forEach {
             val currentFunRef = staticContext.getNameForStaticDeclaration(it.ir)
                 .run {
-                    if (it.ir.isSyntheticEs6Constructor) {
+                    if (it.ir.isEs6ConstructorReplacement) {
                         JsNameRef(this, innerClassRef)
                     } else {
                         makeRef()

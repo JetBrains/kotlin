@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
 
@@ -50,9 +53,22 @@ fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage:
     }
 }
 
+fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
+    val primitives = with(context.irBuiltIns) { primitiveTypesToPrimitiveArrays.values + stringClass }
+    return with(parentAsClass) {
+        isExternal || isExpect || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives
+    }
+}
+
 private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
     return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.fqName.takeIf { shouldIncludePackage }
 }
+
+val IrFunctionAccessExpression.typeArguments: List<IrType?>
+    get() = List(typeArgumentsCount) { getTypeArgument(it) }
+
+val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
+    get() = List(valueArgumentsCount) { getValueArgument(it) }
 
 // TODO: the code is written to pass Repl tests, so we should understand. why in Repl tests we don't have backingField
 fun JsIrBackendContext.getVoid(): IrExpression =
@@ -68,3 +84,8 @@ fun JsIrBackendContext.getVoid(): IrExpression =
         UNDEFINED_OFFSET,
         irBuiltIns.nothingNType
     )
+
+fun irEmpty(context: JsIrBackendContext): IrExpression {
+    return JsIrBuilder.buildComposite(context.dynamicType, emptyList())
+}
+

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticEs6Constructor
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -695,7 +695,7 @@ private val IrClassifierSymbol.isInterface
     get() = (owner as? IrClass)?.isInterface == true
 
 private val IrFunction.isStaticMethod: Boolean
-    get() = isSyntheticEs6Constructor || isStaticMethodOfClass
+    get() = isEs6ConstructorReplacement || isStaticMethodOfClass
 
 private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
     // Only actual public declarations with name can be exported

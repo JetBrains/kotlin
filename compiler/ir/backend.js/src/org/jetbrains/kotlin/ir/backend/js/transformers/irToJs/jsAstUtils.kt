@@ -114,7 +114,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
-        .apply { if (declaration.isSyntheticEs6Constructor) modifiers.add(JsFunction.Modifier.STATIC) }
+        .apply { if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC) }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
@@ -650,5 +650,5 @@ private fun IrClass?.canUseSuperRef(function: IrFunction, context: JsGenerationC
             function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
             context.staticContext.backendContext.es6mode &&
             !superClass.isInterface && !isInner && !isLocal &&
-            context.currentFunction?.isSyntheticEs6Constructor != true
+            context.currentFunction?.isEs6ConstructorReplacement != true
 }

@@ -13,15 +13,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
-
-
     object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
 
     fun buildCall(
@@ -29,7 +27,7 @@ object JsIrBuilder {
         type: IrType? = null,
         typeArguments: List<IrType>? = null,
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
-        superQualifierSymbol: IrClassSymbol? = null
+        superQualifierSymbol: IrClassSymbol? = null,
     ): IrCall {
         val owner = target.owner
         return IrCallImpl(
@@ -59,6 +57,25 @@ object JsIrBuilder {
         )
     }
 
+    fun buildDelegatingConstructorCall(target: IrConstructorSymbol, typeArguments: List<IrType?>? = null): IrDelegatingConstructorCall {
+        val owner = target.owner
+        val irClass = owner.parentAsClass
+
+        return IrDelegatingConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            irClass.defaultType,
+            target,
+            typeArgumentsCount = irClass.typeParameters.size,
+            valueArgumentsCount = owner.valueParameters.size,
+        ).apply {
+            typeArguments?.let {
+                assert(it.size == typeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+        }
+    }
+
     fun buildConstructorCall(
         target: IrConstructorSymbol,
         typeArguments: List<IrType?>? = null,
@@ -71,7 +88,7 @@ object JsIrBuilder {
         return IrConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            owner.returnType,
+            irClass.defaultType,
             target,
             typeArgumentsCount = irClass.typeParameters.size,
             constructorTypeArgumentsCount = owner.typeParameters.size,
@@ -117,8 +134,8 @@ object JsIrBuilder {
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
 
-    fun buildGetValue(symbol: IrValueSymbol) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+    fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT) =
+        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, origin)
 
     fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
