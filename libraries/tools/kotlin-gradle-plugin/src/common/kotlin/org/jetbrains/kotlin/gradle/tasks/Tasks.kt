@@ -271,20 +271,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal val buildHistoryFile
         get() = taskBuildLocalStateDirectory.file("build-history.bin")
 
-    // indicates that task should compile kotlin incrementally if possible
-    // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
-    // todo: deprecate and remove (we may need to design api for configuring IC)
-    // don't rely on it to check if IC is enabled, use isIncrementalCompilationEnabled instead
-    @get:Internal
-    var incremental: Boolean = false
-        set(value) {
-            field = value
-            logger.kotlinDebug { "Set $this.incremental=$value" }
-        }
-
     @Input
     internal open fun isIncrementalCompilationEnabled(): Boolean =
-        incremental
+        incremental.get()
 
     @Deprecated("Scheduled for removal with Kotlin 1.9", ReplaceWith("moduleName"))
     @get:Input
@@ -684,10 +673,6 @@ abstract class KotlinCompile @Inject constructor(
             patternFilterable.include(ScriptFilterSpec(scriptExtensions))
         }
 
-    init {
-        incremental = true
-    }
-
     override fun skipCondition(): Boolean = sources.isEmpty && scriptSources.isEmpty
 
     override fun createCompilerArgs(): K2JVMCompilerArguments =
@@ -934,7 +919,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     KotlinJsCompile {
 
     init {
-        incremental = true
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
@@ -960,11 +944,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
     )
 
     @get:Input
+    internal var incrementalJs: Boolean = true
+
+    @get:Input
     internal var incrementalJsKlib: Boolean = true
 
     override fun isIncrementalCompilationEnabled(): Boolean {
         val freeArgs = enhancedFreeCompilerArgs.get()
-        return when {
+        return incremental.get() && when {
             PRODUCE_JS in freeArgs -> false
 
             PRODUCE_UNZIPPED_KLIB in freeArgs -> {
@@ -981,7 +968,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 incrementalJsKlib
             }
 
-            else -> incremental
+            else -> incrementalJs
         }
     }
 

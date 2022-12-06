@@ -85,10 +85,10 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         val incrementalMultiplatform = PropertiesProvider(project).incrementalMultiplatform ?: true
         project.afterEvaluate {
             project.tasks.withType(AbstractKotlinCompile::class.java).all { task ->
-                if (task.incremental && !incrementalMultiplatform) {
+                if (task.incremental.get() && !incrementalMultiplatform) {
                     task.logger.debug("IC is turned off for task '${task.path}' because multiplatform IC is not enabled")
                 }
-                task.incremental = task.incremental && incrementalMultiplatform
+                task.incremental.value(task.incremental.get() && incrementalMultiplatform)
             }
         }
     }

@@ -1454,6 +1454,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKapt : org
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile : org/jetbrains/kotlin/gradle/tasks/KotlinCompileTool {
 	public abstract fun getFriendPaths ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getIncremental ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMultiPlatformEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPluginClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;

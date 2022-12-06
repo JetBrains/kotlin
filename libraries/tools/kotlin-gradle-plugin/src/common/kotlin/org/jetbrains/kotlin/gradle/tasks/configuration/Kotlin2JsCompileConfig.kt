@@ -24,8 +24,9 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
         ) {}
 
         configureTask { task ->
-            task.incremental = propertiesProvider.incrementalJs ?: true
+            task.incrementalJs = propertiesProvider.incrementalJs ?: true
             task.incrementalJsKlib = propertiesProvider.incrementalJsKlib ?: true
+            task.incremental.value(true)
 
             configureAdditionalFreeCompilerArguments(task, compilation)
 

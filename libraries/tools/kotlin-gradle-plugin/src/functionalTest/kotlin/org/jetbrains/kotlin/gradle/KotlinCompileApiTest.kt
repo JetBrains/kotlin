@@ -140,4 +140,13 @@ class KotlinCompileApiTest {
         project.evaluate()
         assertTrue(ExplicitApiMode.Strict.toCompilerArg() in taskImpl.compilerOptions.freeCompilerArgs.get())
     }
+
+    @Test
+    fun testIncremental() {
+        taskApi.incremental.set(true)
+        assertEquals(true, taskImpl.incremental.get())
+
+        taskApi.incremental.set(false)
+        assertEquals(false, taskImpl.incremental.get())
+    }
 }
