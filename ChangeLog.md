@@ -1,3 +1,61 @@
+## 1.8.0-RC
+
+### Compiler
+
+- [`KT-55108`](https://youtrack.jetbrains.com/issue/KT-55108) IR interpreter: Error occurred while optimizing an expression: VARARG
+- [`KT-54884`](https://youtrack.jetbrains.com/issue/KT-54884) "StackOverflowError: null" caused by Enum constant name in constructor of the same Enum constant
+- [`KT-55013`](https://youtrack.jetbrains.com/issue/KT-55013) State checker use-after-free with XCode 14.1
+- [`KT-54275`](https://youtrack.jetbrains.com/issue/KT-54275) K2: "IllegalArgumentException: KtParameter is not a subtype of class KtAnnotationEntry for factory REPEATED_ANNOTATION"
+
+### JavaScript
+
+- [`KT-55097`](https://youtrack.jetbrains.com/issue/KT-55097) KJS / IR + IC: Using an internal function from a friend module throws an unbound symbol exception
+- [`KT-54934`](https://youtrack.jetbrains.com/issue/KT-54934) KJS / IR + IC: Suspend abstract function stubs are generated with unstable lowered ic signatures
+- [`KT-54895`](https://youtrack.jetbrains.com/issue/KT-54895) KJS / IR + IC: broken cross module references for function default param wrappers
+
+### Language Design
+
+- [`KT-48516`](https://youtrack.jetbrains.com/issue/KT-48516) Forbid @Synchronized annotation on suspend functions
+
+### Libraries
+
+- [`KT-54835`](https://youtrack.jetbrains.com/issue/KT-54835) Document that Iterable.all(emptyCollection) returns TRUE.
+- [`KT-54168`](https://youtrack.jetbrains.com/issue/KT-54168) Expand on natural order in comparator docs
+
+### Native. Platform Libraries
+
+- [`KT-54225`](https://youtrack.jetbrains.com/issue/KT-54225) Native: update to Xcode 14.1
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-55296`](https://youtrack.jetbrains.com/issue/KT-55296) Improve exceptions in serialization plugin
+- [`KT-55180`](https://youtrack.jetbrains.com/issue/KT-55180) KJS: regression in serialization for Kotlin 1.8.0-beta
+- [`KT-54878`](https://youtrack.jetbrains.com/issue/KT-54878) JVM/IR:  java.lang.ClassCastException: class org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl cannot be cast to class org.jetbrains.kotlin.ir.types.IrTypeProjection on serializer<Box<*>>()
+
+### Tools. Gradle
+
+- [`KT-50115`](https://youtrack.jetbrains.com/issue/KT-50115) Setting toolchain via Java extension does not configure 'kotlinOptions.jvmTarget' value when Kotlin compilation tasks are created eagerly
+- [`KT-55222`](https://youtrack.jetbrains.com/issue/KT-55222) Migrate AndroidDependencyResolver to the new Gradle API
+- [`KT-54993`](https://youtrack.jetbrains.com/issue/KT-54993) Raise kotlin.jvm.target.validation.mode check default level to error when build is running on Gradle 8+
+- [`KT-54995`](https://youtrack.jetbrains.com/issue/KT-54995) [1.8.0-Beta] compileAppleMainKotlinMetadata fails on default parameters with `No value passed for parameter 'mustExist'`
+- [`KT-45335`](https://youtrack.jetbrains.com/issue/KT-45335) kotlinOptions.jvmTarget conflicts with Gradle variants
+- [`KT-55019`](https://youtrack.jetbrains.com/issue/KT-55019) Gradle sync: UnknownConfigurationException when adding implementation dependencies to a Kotlin with Java compilation
+- [`KT-55004`](https://youtrack.jetbrains.com/issue/KT-55004) jvmTarget value is ignored by depending modules if a task "UsesKotlinJavaToolchain" is configured for all project modules using allProjects {}
+- [`KT-54888`](https://youtrack.jetbrains.com/issue/KT-54888) Add Gradle property to suppress kotlinOptions.freeCompilerArgs modification on execution phase
+
+### Tools. Gradle. JS
+
+- [`KT-55099`](https://youtrack.jetbrains.com/issue/KT-55099) K/JS: Second declaration of JS target without compiler type report warning incorrectly
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-54634`](https://youtrack.jetbrains.com/issue/KT-54634) MPP: Test Failure causes: `KotlinJvmTest$Executor$execute$1 does not define failure`
+
+### Tools. Incremental Compile
+
+- [`KT-54144`](https://youtrack.jetbrains.com/issue/KT-54144) New IC: "IllegalStateException: The following LookupSymbols are not yet converted to ProgramSymbols" when changing an inline function with custom JvmName
+
+
 ## 1.8.0-Beta
 
 ### Android
