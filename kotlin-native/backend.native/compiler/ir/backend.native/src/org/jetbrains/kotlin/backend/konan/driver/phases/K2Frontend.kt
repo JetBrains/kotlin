@@ -102,10 +102,10 @@ internal val K2FrontendPhase = createSimpleNamedCompilerPhase(
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer, PlatformDependentTypeTransformer.None)
 
 private fun phaseBody(
-        input: KotlinCoreEnvironment,
+        environment: KotlinCoreEnvironment,
         context: K2FrontendContext
 ): K2FrontendPhaseOutput {
-    val configuration = input.configuration
+    val configuration = environment.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
@@ -113,7 +113,7 @@ private fun phaseBody(
     // FIR
 
     val sessionProvider = FirProjectSessionProvider()
-    val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
+    val extensionRegistrars = FirExtensionRegistrar.getInstances(environment.project)
     val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
         if (configuration.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
             registerExtendedCommonCheckers()
@@ -123,7 +123,7 @@ private fun phaseBody(
     val klibPath = configuration.get(KonanConfigKeys.OUTPUT)!!
     val mainModuleName = Name.special("<$klibPath>")
 
-    val ktFiles = input.getSourceFiles()
+    val ktFiles = environment.getSourceFiles()
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
@@ -210,7 +210,7 @@ private fun phaseBody(
             KonanManglerIr, IrFactoryImpl,
             Fir2IrVisibilityConverter.Default,
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
-            IrGenerationExtension.getInstances(input.project),
+            IrGenerationExtension.getInstances(environment.project),
             generateSignatures = false,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance // TODO: consider passing externally
     ).also {
@@ -222,7 +222,7 @@ private fun phaseBody(
     val sourceFiles = firFiles.mapNotNull { it.sourceFile }
     val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
 
-    val icData = input.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
+    val icData = environment.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
     // TODO: expect -> actual mapping
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
@@ -256,5 +256,5 @@ private fun phaseBody(
 //                bindingContext,
 //                context.frontendServices,
             firFiles,
-            input)
+            environment)
 }
