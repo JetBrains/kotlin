@@ -6,7 +6,7 @@
 fun <T> select(a: T, b: T) = a
 
 fun testFunctionReturnSelectWithBlock(): String {
-    return select("test1", 1)
+    return <!RETURN_TYPE_MISMATCH("kotlin/String; it(kotlin/Comparable<*> & java/io/Serializable)")!>select("test1", 1)<!>
 }
 
 fun testFunctionReturnIntWithBlock(): String {
@@ -25,14 +25,14 @@ fun testFunctionNonLocalReturnInt() = "test4".also {
     }
 }
 
-val testPropertyInitializerSelect: String = select("test5", 5)
+val testPropertyInitializerSelect: String = <!INITIALIZER_TYPE_MISMATCH("kotlin/String; it(kotlin/Comparable<*> & java/io/Serializable)")!>select("test5", 5)<!>
 
 val testPropertyInitializerInt: String = <!INITIALIZER_TYPE_MISMATCH("kotlin/String; kotlin/Int")!>6<!>
 
 fun testAssignment() {
     var it = "test7"
     it = <!ASSIGNMENT_TYPE_MISMATCH("kotlin/String; kotlin/Int")!>7<!>
-    it = select("test7+", 77)
+    it = <!ASSIGNMENT_TYPE_MISMATCH("kotlin/String; it(kotlin/Comparable<*> & java/io/Serializable)")!>select("test7+", 77)<!>
 }
 
 class MyThingWithPlus(private val name: String) {
@@ -99,7 +99,7 @@ fun testWithMyThingWithIncString() {
     <!RESULT_TYPE_MISMATCH("MyThingWithIncString; kotlin/String")!>it++<!>
 }
 
-val testPropertyInitializerSelectWithNull: String = select("test12", null)
+val testPropertyInitializerSelectWithNull: String = <!INITIALIZER_TYPE_MISMATCH("kotlin/String; kotlin/String?")!>select("test12", null)<!>
 
 val testPropertyInitializerNull: String = <!NULL_FOR_NONNULL_TYPE("")!>null<!>
 
