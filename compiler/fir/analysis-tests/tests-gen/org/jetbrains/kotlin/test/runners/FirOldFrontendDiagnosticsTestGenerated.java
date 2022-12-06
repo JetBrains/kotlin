@@ -32406,6 +32406,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("explicitSuperConstructorCall.kt")
+                public void testExplicitSuperConstructorCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/explicitSuperConstructorCall.kt");
+                }
+
+                @Test
                 @TestMetadata("irrelevantFields.kt")
                 public void testIrrelevantFields() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/irrelevantFields.kt");

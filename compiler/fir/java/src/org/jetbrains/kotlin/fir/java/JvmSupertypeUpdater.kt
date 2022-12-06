@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotationSafe
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater.DelegatedConstructorCallTransformer.Companion.recordType
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -80,6 +82,14 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             delegatedConstructorCall: FirDelegatedConstructorCall,
             data: ScopeSession
         ): FirStatement {
+            /*
+             * Here we need to update only implicit calls to Any()
+             * And such calls don't have a real source and can not be an lazy calls
+             */
+            if (
+                delegatedConstructorCall is FirLazyDelegatedConstructorCall ||
+                delegatedConstructorCall.source?.kind != KtFakeSourceElementKind.DelegatingConstructorCall
+            ) return delegatedConstructorCall
             val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
             if (constructedTypeRef is FirImplicitTypeRef || constructedTypeRef.coneTypeSafe<ConeKotlinType>()?.isAny == true) {
                 delegatedConstructorCall.replaceConstructedTypeRef(constructedTypeRef.resolvedTypeFromPrototype(recordType))

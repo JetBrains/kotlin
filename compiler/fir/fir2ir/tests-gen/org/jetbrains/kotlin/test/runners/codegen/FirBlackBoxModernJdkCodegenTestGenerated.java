@@ -365,6 +365,12 @@ public class FirBlackBoxModernJdkCodegenTestGenerated extends AbstractFirBlackBo
             }
 
             @Test
+            @TestMetadata("kt54573.kt")
+            public void testKt54573() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/kt54573.kt");
+            }
+
+            @Test
             @TestMetadata("propertiesOverrides.kt")
             public void testPropertiesOverrides() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverrides.kt");
