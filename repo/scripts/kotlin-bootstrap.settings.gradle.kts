@@ -245,7 +245,7 @@ when {
         val bootstrapVersion = localBootstrapVersion.get()
 
         val localPath = localBootstrapPath.orNull
-        val rootDirectory = rootSettings.rootDir
+        val rootDirectory = kotlinRootDir
         val repoPath = if (localPath != null) {
             rootDirectory.resolve(localPath).canonicalFile
         } else {
