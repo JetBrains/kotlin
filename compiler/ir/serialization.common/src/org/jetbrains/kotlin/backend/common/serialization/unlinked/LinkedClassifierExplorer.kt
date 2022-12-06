@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ABIVisibility.Companion.chooseNarrower
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.*
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclarationStubGenerator) {
-    private val classifierSymbols = THashMap<IrClassifierSymbol, LinkedClassifierStatus>()
+    private val classifierSymbols = THashMap<IrClassifierSymbol, ClassifierExplorationResult>()
 
-    fun exploreType(type: IrType): LinkedClassifierStatus = type.exploreType(visitedSymbols = hashSetOf(), statusBuilder = null)
-    fun exploreSymbol(symbol: IrClassifierSymbol): LinkedClassifierStatus = symbol.exploreSymbol(visitedSymbols = hashSetOf())
+    fun exploreType(type: IrType): TypeExplorationResult = type.exploreType(visitedSymbols = hashSetOf(), statusBuilder = null)
+    fun exploreSymbol(symbol: IrClassifierSymbol): ClassifierExplorationResult = symbol.exploreSymbol(visitedSymbols = hashSetOf())
 
     fun exploreIrElement(element: IrElement) {
         element.acceptChildrenVoid(IrElementExplorer { it.exploreType(visitedSymbols = hashSetOf()) })
     }
 
     /** Explore the IR type to find the first cause why this type should be considered as partially linked. */
-    private fun IrType.exploreType(visitedSymbols: MutableSet<IrClassifierSymbol>, statusBuilder: StatusBuilder?): LinkedClassifierStatus {
+    private fun IrType.exploreType(visitedSymbols: MutableSet<IrClassifierSymbol>, statusBuilder: StatusBuilder?): TypeExplorationResult {
         return when (this) {
             is IrSimpleType -> {
                 val symbolStatus = classifier.exploreSymbol(visitedSymbols)
@@ -63,7 +63,7 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
     }
 
     /** Explore the IR classifier symbol to find the first cause why this symbol should be considered as partially linked. */
-    private fun IrClassifierSymbol.exploreSymbol(visitedSymbols: MutableSet<IrClassifierSymbol>): LinkedClassifierStatus {
+    private fun IrClassifierSymbol.exploreSymbol(visitedSymbols: MutableSet<IrClassifierSymbol>): ClassifierExplorationResult {
         // TODO: check filters
 //        if (this.isTrusted()) {
 //            return Fully.TrustedClassifier
@@ -111,10 +111,10 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
     }
 
     /** Iterate the collection and find the first partially linked status. */
-    private inline fun <T> List<T>.firstPartiallyLinkedStatus(transform: (T) -> LinkedClassifierStatus?): Partially? =
+    private inline fun <T> List<T>.firstPartiallyLinkedStatus(transform: (T) -> ClassifierExplorationResult?): Partially? =
         firstNotNullOfOrNull { transform(it) as? Partially }
 
-    private fun <S : LinkedClassifierStatus> registerStatus(symbol: IrClassifierSymbol, status: S): S {
+    private fun <S : ClassifierExplorationResult> registerStatus(symbol: IrClassifierSymbol, status: S): S {
         classifierSymbols[symbol] = status
         return status
     }
@@ -127,15 +127,15 @@ private class StatusBuilder(private val symbol: IrClassifierSymbol) {
     private var partiallyLinkedStatus: Partially? = null
     private val done get() = partiallyLinkedStatus != null
 
-    fun refineStatus(status: LinkedClassifierStatus) {
+    fun refineStatus(status: ClassifierExplorationResult) {
         if (!done) consumeStatus(status)
     }
 
-    fun refineStatus(block: () -> LinkedClassifierStatus) {
+    fun refineStatus(block: () -> ClassifierExplorationResult) {
         if (!done) consumeStatus(block())
     }
 
-    fun <T> refineStatus(collection: Collection<T>, block: (T) -> LinkedClassifierStatus) {
+    fun <T> refineStatus(collection: Collection<T>, block: (T) -> ClassifierExplorationResult) {
         if (!done && collection.isNotEmpty()) {
             collection.asSequence().map(block).forEach { next ->
                 consumeStatus(next)
@@ -144,7 +144,7 @@ private class StatusBuilder(private val symbol: IrClassifierSymbol) {
         }
     }
 
-    private fun consumeStatus(next: LinkedClassifierStatus) {
+    private fun consumeStatus(next: ClassifierExplorationResult) {
         when (next) {
             is Partially.CanBeRootCause -> partiallyLinkedStatus = Partially.DueToOtherClassifier(symbol, next)
             is Partially.DueToOtherClassifier -> partiallyLinkedStatus = Partially.DueToOtherClassifier(symbol, next.rootCause)
@@ -186,7 +186,7 @@ private class StatusBuilder(private val symbol: IrClassifierSymbol) {
         }
     }
 
-    fun toStatus(): LinkedClassifierStatus {
+    fun toStatus(): ClassifierExplorationResult {
         return partiallyLinkedStatus
             ?: dependencyWithNarrowerVisibility?.let { Fully.LesserAccessibleClassifier(symbol, it) }
             ?: Fully.AccessibleClassifier(symbol, ownVisibility)

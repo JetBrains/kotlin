@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
  * Can also be used as a result of exploring IR types to find out if the type uses any partially linked classifier.
  * See [LinkedClassifierExplorer.exploreType].
  */
-internal sealed interface LinkedClassifierStatus {
+internal sealed interface ClassifierExplorationResult {
     /** Indicates partially linked classifier. */
-    sealed interface Partially : LinkedClassifierStatus {
+    sealed interface Partially : ClassifierExplorationResult {
         val symbol: IrClassifierSymbol
 
         sealed interface CanBeRootCause : Partially
@@ -58,7 +58,7 @@ internal sealed interface LinkedClassifierStatus {
     }
 
     /** Indicates fully linked classifier. */
-    sealed interface Fully : LinkedClassifierStatus {
+    sealed interface Fully : ClassifierExplorationResult {
         val symbol: IrClassifierSymbol
         val visibility: ABIVisibility
 
@@ -69,6 +69,6 @@ internal sealed interface LinkedClassifierStatus {
         }
     }
 
-    object NoClassifier : LinkedClassifierStatus
-    object RecursionAvoidance : LinkedClassifierStatus
+    object NoClassifier : ClassifierExplorationResult
+    object RecursionAvoidance : ClassifierExplorationResult
 }

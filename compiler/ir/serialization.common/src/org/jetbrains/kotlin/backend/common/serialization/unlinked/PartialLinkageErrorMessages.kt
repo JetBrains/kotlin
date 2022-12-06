@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.DeclarationKind.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExpressionKind.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.Partially
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Partially
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.UNKNOWN_NAME
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.guessName
