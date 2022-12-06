@@ -53,7 +53,7 @@
 /compiler/config/ "Kotlin Compiler Core"
 /compiler/config.jvm/ "Kotlin JVM"
 /compiler/container/ "Kotlin Compiler Core"
-/compiler/daemon/ "Kotlin Compiler Core"
+/compiler/daemon/ "Kotlin Build Tools"
 /compiler/fir/ "Kotlin Compiler Core"
 /compiler/fir/fir2ir/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/frontend/ "Kotlin Compiler Core"
