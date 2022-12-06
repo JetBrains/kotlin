@@ -533,6 +533,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public final useAB()V
               static <clinit>()V
               public final static I %stable
+              public final static INNERCLASS A%B A B
             }
         """
     )
@@ -931,8 +932,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
               final synthetic I %x
               OUTERCLASS TestKt App (ILandroidx/compose/runtime/Composer;I)V
-              final static INNERCLASS TestKt%App%1%1 null null
               final static INNERCLASS TestKt%App%1 null null
+              final static INNERCLASS TestKt%App%1%1 null null
             }
             final class TestKt%App%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
               <init>(II)V
@@ -1296,8 +1297,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               static <clinit>()V
               public final static LTestKt%J%1; INSTANCE
               OUTERCLASS TestKt J ()V
-              final static INNERCLASS TestKt%J%1%1 null null
               final static INNERCLASS TestKt%J%1 null null
+              final static INNERCLASS TestKt%J%1%1 null null
             }
             final class TestKt%J%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
               <init>()V
@@ -1484,8 +1485,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public final compute(ILandroidx/compose/runtime/Composer;I)V
               final synthetic LA; %a
               OUTERCLASS TestKt Example (LA;)V
-              final static INNERCLASS TestKt%Example%1%compute%1 null null
               final static INNERCLASS TestKt%Example%1 null null
+              final static INNERCLASS TestKt%Example%1%compute%1 null null
             }
             final class TestKt%Example%1%compute%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
               <init>(LTestKt%Example%1;II)V
@@ -1654,6 +1655,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public final static LTestKt%Test%1; INSTANCE
               OUTERCLASS TestKt Test (Landroidx/compose/runtime/Composer;I)V
               final static INNERCLASS TestKt%Test%1 null null
+              public final static INNERCLASS androidx/compose/ui/graphics/Color%Companion androidx/compose/ui/graphics/Color Companion
             }
             final class TestKt%Test%2 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
               <init>(I)V
