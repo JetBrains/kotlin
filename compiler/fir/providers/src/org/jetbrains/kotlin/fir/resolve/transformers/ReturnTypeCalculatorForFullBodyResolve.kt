@@ -25,6 +25,7 @@ object ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator() {
         }
 
         return buildErrorTypeRef {
+            source = declaration.source
             diagnostic = ConeSimpleDiagnostic(
                 "Cannot calculate return type during full-body resolution (local class/object?): ${declaration.render()}",
                 DiagnosticKind.InferenceError

@@ -3,7 +3,7 @@
 fun foo() {
     fun fact(n: Int) = {
         if (n > 0) {
-            fact(n - 1) <!UNRESOLVED_REFERENCE!>*<!> n
+            <!INFERENCE_ERROR!>fact(n - 1)<!> <!UNRESOLVED_REFERENCE!>*<!> n
         }
         else {
             1
