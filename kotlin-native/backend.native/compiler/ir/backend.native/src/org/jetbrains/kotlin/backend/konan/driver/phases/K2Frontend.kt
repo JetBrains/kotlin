@@ -120,8 +120,7 @@ private fun phaseBody(
         }
     }
 
-    val klibPath = configuration.get(KonanConfigKeys.OUTPUT)!!
-    val mainModuleName = Name.special("<$klibPath>")
+    val mainModuleName = Name.special("<${context.config.moduleId}>")
 
     val ktFiles = environment.getSourceFiles()
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
@@ -218,6 +217,7 @@ private fun phaseBody(
     }
 
     // Serialize KLib
+    // TODO Maybe SerializerPhase and WriteKlibPhase can be re-used from K1?
 
     val sourceFiles = firFiles.mapNotNull { it.sourceFile }
     val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
@@ -230,8 +230,9 @@ private fun phaseBody(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
 
+    val klibPath = configuration.get(KonanConfigKeys.OUTPUT)!!
     serializeModuleIntoKlib(
-            configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+            context.config.moduleId,
             configuration,
             configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
