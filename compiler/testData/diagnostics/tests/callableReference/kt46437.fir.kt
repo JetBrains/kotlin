@@ -1,5 +1,5 @@
 fun box(): String {
-    <!INAPPLICABLE_CANDIDATE!>if (true) X::<!UNRESOLVED_REFERENCE!>y<!> else null<!>
+    if (true) X::<!UNRESOLVED_REFERENCE!>y<!> else null
     return "OK"
 }
 

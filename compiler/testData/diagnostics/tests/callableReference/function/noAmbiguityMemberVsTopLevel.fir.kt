@@ -25,7 +25,7 @@ class A {
 
         expectFunction0Unit(::foo)
         expectFunction0String(::foo)
-        <!INAPPLICABLE_CANDIDATE!>expectFunction1Unit<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
-        <!INAPPLICABLE_CANDIDATE!>expectFunction1String<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
+        expectFunction1Unit(::<!UNRESOLVED_REFERENCE!>foo<!>)
+        expectFunction1String(::<!UNRESOLVED_REFERENCE!>foo<!>)
     }
 }

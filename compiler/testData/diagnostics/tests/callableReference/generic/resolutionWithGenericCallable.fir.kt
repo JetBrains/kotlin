@@ -17,5 +17,5 @@ fun <T> bar(x: T, f: (T) -> Unit) {}
 fun test2() {
     bar(1, ::foo)
     bar("", ::foo)
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(1.0, ::<!UNRESOLVED_REFERENCE!>foo<!>)
+    bar(1.0, ::<!UNRESOLVED_REFERENCE!>foo<!>)
 }

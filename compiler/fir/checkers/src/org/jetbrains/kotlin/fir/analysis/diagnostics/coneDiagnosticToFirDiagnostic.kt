@@ -298,7 +298,17 @@ private fun mapInapplicableCandidateError(
                 source, rootCause.typeVariable, rootCause.incompatibleTypes, rootCause.causingTypes, rootCause.kind
             )
 
-            else -> genericDiagnostic
+            else -> {
+                val containsUnresolvedArguments = diagnostic.candidate.callInfo.argumentList.arguments.any {
+                    val cone = it.typeRef.coneType
+                    cone is ConeErrorType && cone.diagnostic is ConeUnresolvedReferenceError
+                }
+                if (!containsUnresolvedArguments) {
+                    genericDiagnostic
+                } else {
+                    null
+                }
+            }
         }
     }.distinct()
     return if (diagnostics.size > 1) {
