@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker() {
@@ -82,6 +84,21 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                     reporter,
                     context
                 )
+            // May occur when the expected type constraint is
+            // not added leading to no contradiction. In such
+            // a case we have to manually check the resulting
+            // types match as subtypes
+            is FirResolvedNamedReference -> {
+                checkComponentCallSubtyping(
+                    originalDestructuringDeclarationOrInitializerSource,
+                    reference.name,
+                    declaration,
+                    componentCall,
+                    originalDestructuringDeclaration,
+                    reporter,
+                    context
+                )
+            }
         }
     }
 
@@ -151,30 +168,47 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 }
             }
             is ConeConstraintSystemHasContradiction -> {
-                val componentType = componentCall.typeRef.coneType
-                if (componentType is ConeErrorType) {
-                    // There will be other errors on this error type.
-                    return
-                }
-                val expectedType = property.returnTypeRef.coneType
-                if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, componentType, expectedType)) {
-                    val typeMismatchSource =
-                        // ... = { `(entry, ...)` -> ... } // Report on specific `entry`
-                        if (destructuringDeclaration is FirValueParameter)
-                            property.source
-                        // val (entry, ...) = `destructuring_declaration` // Report on a destructuring declaration
-                        else
-                            source
-                    reporter.reportOn(
-                        typeMismatchSource,
-                        FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
-                        diagnostic.candidate.callInfo.name,
-                        componentType,
-                        expectedType,
-                        context
-                    )
-                }
+                checkComponentCallSubtyping(
+                    source,
+                    diagnostic.candidate.callInfo.name,
+                    property,
+                    componentCall, destructuringDeclaration, reporter, context
+                )
             }
+        }
+    }
+
+    private fun checkComponentCallSubtyping(
+        source: KtSourceElement,
+        name: Name,
+        property: FirProperty,
+        componentCall: FirComponentCall,
+        destructuringDeclaration: FirVariable,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        val componentType = componentCall.typeRef.coneType
+        if (componentType is ConeErrorType) {
+            // There will be other errors on this error type.
+            return
+        }
+        val expectedType = property.returnTypeRef.coneType
+        if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, componentType, expectedType)) {
+            val typeMismatchSource =
+                // ... = { `(entry, ...)` -> ... } // Report on specific `entry`
+                if (destructuringDeclaration is FirValueParameter)
+                    property.source
+                // val (entry, ...) = `destructuring_declaration` // Report on a destructuring declaration
+                else
+                    source
+            reporter.reportOn(
+                typeMismatchSource,
+                FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
+                name,
+                componentType,
+                expectedType,
+                context
+            )
         }
     }
 
