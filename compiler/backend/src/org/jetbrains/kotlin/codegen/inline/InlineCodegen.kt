@@ -230,7 +230,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             return processDefaultMaskOrMethodHandler(stackValue, kind)
         }
 
-        val info = invocationParamBuilder.addNextValueParameter(jvmKotlinType.type, false, null, parameterIndex)
+        val info = when (parameterIndex) {
+            -1 -> invocationParamBuilder.addNextParameter(jvmKotlinType.type, false)
+            else -> invocationParamBuilder.addNextValueParameter(jvmKotlinType.type, false, null, parameterIndex)
+        }
         info.functionalArgument = when (kind) {
             ValueKind.READ_OF_INLINE_LAMBDA_FOR_INLINE_SUSPEND_PARAMETER ->
                 NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
