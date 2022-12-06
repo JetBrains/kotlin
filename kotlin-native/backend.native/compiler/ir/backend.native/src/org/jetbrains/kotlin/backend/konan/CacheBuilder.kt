@@ -22,7 +22,7 @@ class CacheBuilder(
     private val configuration = konanConfig.configuration
     private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
 
-    fun needToBuild() = konanConfig.isFinalBinary && !konanConfig.optimizationsEnabled && autoCacheableFrom.isNotEmpty()
+    fun needToBuild() = konanConfig.isFinalBinary && konanConfig.ignoreCacheReason == null && autoCacheableFrom.isNotEmpty()
 
     fun build() {
         val allLibraries = konanConfig.resolvedLibraries.getFullList(TopologicalLibraryOrder)
@@ -80,12 +80,21 @@ class CacheBuilder(
                     put(KonanConfigKeys.NODEFAULTLIBS, true)
                     put(KonanConfigKeys.NOENDORSEDLIBS, true)
                     put(KonanConfigKeys.NOSTDLIB, true)
-                    put(KonanConfigKeys.PARTIAL_LINKAGE, konanConfig.partialLinkage)
-                    putIfNotNull(KonanConfigKeys.EXTERNAL_DEPENDENCIES, configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES))
                     put(KonanConfigKeys.LIBRARY_FILES, libraries)
                     put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
                     put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
                     put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
+
+                    put(KonanConfigKeys.PARTIAL_LINKAGE, konanConfig.partialLinkage)
+                    putIfNotNull(KonanConfigKeys.EXTERNAL_DEPENDENCIES, configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES))
+                    put(BinaryOptions.memoryModel, konanConfig.memoryModel)
+                    put(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
+                    put(BinaryOptions.stripDebugInfoFromNativeLibs, !konanConfig.useDebugInfoInNativeLibs)
+                    put(KonanConfigKeys.ALLOCATION_MODE, konanConfig.allocationMode)
+                    put(KonanConfigKeys.GARBAGE_COLLECTOR, konanConfig.gc)
+                    put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
+                    put(BinaryOptions.freezing, konanConfig.freezing)
+                    put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
                 }
                 caches[library] = libraryCache.absolutePath
             } catch (t: Throwable) {
