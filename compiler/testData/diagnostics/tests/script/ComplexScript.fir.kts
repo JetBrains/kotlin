@@ -4,4 +4,4 @@ fun foo(x: Int) = 1
 
 val y = 2
 
-foo(y)
+<!INFERENCE_ERROR!>foo(<!INFERENCE_ERROR!>y<!>)<!>

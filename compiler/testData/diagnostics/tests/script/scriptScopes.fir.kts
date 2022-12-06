@@ -2,7 +2,7 @@
 
 var b = true
 
-if (b) {
+if (<!INFERENCE_ERROR!>b<!>) {
     val x = 3
 }
 
