@@ -255,8 +255,12 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun serializeFileSignature(signature: IdSignature.FileSignature): ProtoFileSignature = ProtoFileSignature.getDefaultInstance()
+    private fun serializeFileSignature(signature: IdSignature.FileSignature): ProtoFileSignature {
+        return ProtoFileSignature.newBuilder()
+            .setFilePath(signature.fileName)
+            .addAllFqName(serializeFqName(signature.packageFqName().asString()))
+            .build()
+    }
 
     private fun serializeLocalSignature(signature: IdSignature.LocalSignature): ProtoLocalSignature {
         val proto = ProtoLocalSignature.newBuilder()
@@ -1404,15 +1408,10 @@ open class IrFileSerializer(
         }
     }
 
-    fun serializeIrFile(file: IrFile): SerializedIrFile {
-        var result: SerializedIrFile? = null
-
+    fun serializeIrFile(file: IrFile): SerializedIrFile =
         declarationTable.inFile(file) {
-            result = serializeIrFileImpl(file)
+            serializeIrFileImpl(file)
         }
-
-        return result!!
-    }
 
     private fun serializeIrFileImpl(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()

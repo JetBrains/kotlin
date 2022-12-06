@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 interface IdSignatureComputer {
     fun computeSignature(declaration: IrDeclaration): IdSignature?
 
-    fun inFile(file: IrFileSymbol?, block: () -> Unit)
+    fun <R> inFile(file: IrFileSymbol?, block: () -> R): R
 }
 
 class DescToIrIdSignatureComputer(private val delegate: IdSignatureDescriptor) : IdSignatureComputer {
@@ -28,7 +28,5 @@ class DescToIrIdSignatureComputer(private val delegate: IdSignatureDescriptor) :
         }
     }
 
-    override fun inFile(file: IrFileSymbol?, block: () -> Unit) {
-        block()
-    }
+    override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R = block()
 }
