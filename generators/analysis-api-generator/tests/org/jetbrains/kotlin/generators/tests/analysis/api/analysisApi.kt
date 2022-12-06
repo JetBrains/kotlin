@@ -116,6 +116,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         test(AbstractDelegateMemberScopeTest::class) {
             model("delegatedMemberScope")
         }
+
+        test(
+            AbstractDeclaredMemberScopeTest::class,
+            filter = frontendIs(FrontendKind.Fir),
+        ) {
+            model("declaredMemberScope")
+        }
     }
 
     group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
