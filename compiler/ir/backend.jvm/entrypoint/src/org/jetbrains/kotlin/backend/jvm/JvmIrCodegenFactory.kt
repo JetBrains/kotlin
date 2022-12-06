@@ -163,7 +163,7 @@ open class JvmIrCodegenFactory(
 
         SourceDeclarationsPreprocessor(psi2irContext).run(input.files)
 
-        if (pluginExtensions.isNotEmpty()) {
+        if (pluginExtensions.isNotEmpty() && psi2irContext.configuration.generateBodies) {
             // The plugin context contains unbound symbols right after construction and has to be
             // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
             val pluginContext = IrPluginContextImpl(

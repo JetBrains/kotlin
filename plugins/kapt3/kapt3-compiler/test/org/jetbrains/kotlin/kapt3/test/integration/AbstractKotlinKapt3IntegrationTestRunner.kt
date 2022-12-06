@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3.test.integration
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.kapt3.test.JvmCompilerWithKaptFacade
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
@@ -27,6 +28,7 @@ class AbstractKotlinKapt3IntegrationTestRunner(
     targetBackend: TargetBackend,
     private val processorOptions: Map<String, String>,
     private val supportedAnnotations: List<String>,
+    private val additionalPluginExtension: IrGenerationExtension?,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
 
@@ -55,7 +57,7 @@ class AbstractKotlinKapt3IntegrationTestRunner(
             { KaptIntegrationEnvironmentConfigurator(it, processorOptions, supportedAnnotations, process) }
         )
 
-        facadeStep(::JvmCompilerWithKaptFacade)
+        facadeStep { services -> JvmCompilerWithKaptFacade(services, additionalPluginExtension) }
         handlersStep(KaptContextBinaryArtifact.Kind) {
             useHandlers(::KaptIntegrationStubsDumpHandler, ::ProcessorWasCalledHandler)
         }

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.kapt3.test.integration
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -14,6 +17,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.fail
 import java.io.File
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -38,6 +42,7 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
         vararg supportedAnnotations: String,
         options: Map<String, String> = emptyMap(),
         expectFailure: Boolean = false,
+        additionalPluginExtension: IrGenerationExtension? = null,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
     ) {
         val file = File(TEST_DATA_DIR, "$name.kt")
@@ -45,6 +50,7 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
             targetBackend,
             options,
             supportedAnnotations.toList(),
+            additionalPluginExtension,
             process
         ).apply {
             initTestInfo(testInfo)
@@ -241,4 +247,14 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
         diagnostics.assertContainsDiagnostic("warning: a warning from processor", CompilerMessageSeverity.STRONG_WARNING)
         diagnostics.assertContainsDiagnostic("Note: a note from processor", CompilerMessageSeverity.INFO)
     }
+
+    @Test
+    fun testKt54245() = test(
+        "Simple", "test.MyAnnotation",
+        additionalPluginExtension = object : IrGenerationExtension {
+            override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+                fail("IR generation extensions should not be run in kapt mode.")
+            }
+        }
+    ) { _, _, _, _ -> }
 }
