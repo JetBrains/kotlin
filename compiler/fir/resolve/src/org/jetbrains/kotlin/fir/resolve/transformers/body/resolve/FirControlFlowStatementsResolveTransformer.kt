@@ -171,6 +171,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- Jumps -------------------------------
 
     override fun <E : FirTargetElement> transformJump(jump: FirJump<E>, data: ResolutionMode): FirStatement {
+        dataFlowAnalyzer.enterJump(jump)
         val result = transformer.transformExpression(jump, data)
         dataFlowAnalyzer.exitJump(jump)
         return result
