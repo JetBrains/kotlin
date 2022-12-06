@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
+import org.jetbrains.kotlin.light.classes.symbol.isConst
+import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
 internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktModule: KtModule): KtLightClass? = when {
@@ -101,7 +104,7 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
 }
 
 context(KtAnalysisSession)
-internal fun SymbolLightClassForClassLike<*>.createConstructors(
+internal fun SymbolLightClassBase.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>,
 ) {
@@ -156,10 +159,10 @@ private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
             !primaryConstructor.hasJvmOverloadsAnnotation()
 }
 
-private fun SymbolLightClassForClassLike<*>.defaultConstructor(): KtLightMethod {
+private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
-        isObject || isEnum -> PsiModifier.PRIVATE
+        this is SymbolLightClassForClassLike<*> && (isObject || isEnum) -> PsiModifier.PRIVATE
         classOrObject?.hasModifier(SEALED_KEYWORD) == true -> PsiModifier.PROTECTED
         this is SymbolLightClassForEnumEntry -> PsiModifier.PACKAGE_LOCAL
         else -> PsiModifier.PUBLIC
@@ -168,7 +171,7 @@ private fun SymbolLightClassForClassLike<*>.defaultConstructor(): KtLightMethod 
     return noArgConstructor(visibility, METHOD_INDEX_FOR_DEFAULT_CTOR)
 }
 
-private fun SymbolLightClassForClassLike<*>.noArgConstructor(
+private fun SymbolLightClassBase.noArgConstructor(
     visibility: String,
     methodIndex: Int,
 ): KtLightMethod = SymbolLightNoArgConstructor(
@@ -516,3 +519,45 @@ internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject,
 
 private val KtSymbolWithTypeParameters.hasReifiedParameters: Boolean
     get() = typeParameters.any { it.isReified }
+
+context(KtAnalysisSession)
+internal fun SymbolLightClassBase.addPropertyBackingFields(
+    result: MutableList<KtLightField>,
+    symbolWithMembers: KtSymbolWithMembers,
+) {
+    val propertySymbols = symbolWithMembers.getDeclaredMemberScope().getCallableSymbols()
+        .filterIsInstance<KtPropertySymbol>()
+        .applyIf(symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind == KtClassKind.COMPANION_OBJECT) {
+            // All fields for companion object of classes are generated to the containing class
+            // For interfaces, only @JvmField-annotated properties are generated to the containing class
+            // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
+            filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
+        }
+
+    val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
+
+    val nameGenerator = SymbolLightField.FieldNameGenerator()
+
+    val forceStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
+    fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
+        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
+        val isLateInit = propertySymbol.isLateInit
+        val isConst = propertySymbol.isConst
+
+        val takePropertyVisibility = isLateInit || isJvmField || isConst
+
+        createField(
+            declaration = propertySymbol,
+            nameGenerator = nameGenerator,
+            isTopLevel = false,
+            forceStatic = forceStatic,
+            takePropertyVisibility = takePropertyVisibility,
+            result = result
+        )
+    }
+
+    // First, properties from parameters
+    propertyGroups[true]?.forEach(::addPropertyBackingField)
+    // Then, regular member properties
+    propertyGroups[false]?.forEach(::addPropertyBackingField)
+}

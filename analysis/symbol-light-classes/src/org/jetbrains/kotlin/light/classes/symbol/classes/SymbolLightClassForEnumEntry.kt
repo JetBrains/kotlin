@@ -11,19 +11,19 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.psi.KtEnumEntry
 
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClassForClassOrObject,
     ktModule: KtModule,
-) : SymbolLightClassForClassOrObject(
-    enumConstant.kotlinOrigin,
-    ktModule,
-), PsiEnumConstantInitializer {
+) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
     override fun getBaseClassReference(): PsiJavaCodeReferenceElement =
@@ -85,10 +85,11 @@ internal class SymbolLightClassForEnumEntry(
     override fun getSuperClass(): PsiClass = enumClass
     override fun getInterfaces(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
     override fun getSupers(): Array<PsiClass> = arrayOf(enumClass)
+    override fun getSuperTypes(): Array<PsiClassType> = arrayOf(baseClassType)
 
-    override fun getParent(): PsiElement? = containingClass
+    override fun getParent(): PsiElement = containingClass
 
-    override fun getScope(): PsiElement? = parent
+    override fun getScope(): PsiElement = parent
 
     private val _ownFields: List<KtLightField> by lazyPub {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
@@ -110,9 +111,7 @@ internal class SymbolLightClassForEnumEntry(
             val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
             val visibleDeclarations = declaredMemberScope.getCallableSymbols()
 
-            val suppressStatic = isCompanionObject
-            createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)
-
+            createMethods(visibleDeclarations, result)
             createConstructors(declaredMemberScope.getConstructors(), result)
 
             result
@@ -121,4 +120,25 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getOwnMethods(): List<KtLightMethod> = _ownMethods
     override fun getOwnInnerClasses(): MutableList<PsiClass> = mutableListOf()
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        if (!checkDeep) return baseClass == enumClass
+
+        return super.isInheritor(baseClass, checkDeep = true)
+    }
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        KtLightIdentifier(this, kotlinOrigin)
+    }
+
+    // probably should be dropped after KT-54798
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getName(): String? = kotlinOrigin.name
+
+    override fun isDeprecated(): Boolean = false
+    override fun isInterface(): Boolean = false
+    override fun isAnnotationType(): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override val kotlinOrigin: KtEnumEntry get() = enumConstant.kotlinOrigin
+    override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
+    override fun isValid(): Boolean = enumConstant.isValid
 }
