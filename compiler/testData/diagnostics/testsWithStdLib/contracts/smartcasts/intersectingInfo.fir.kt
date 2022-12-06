@@ -27,7 +27,7 @@ fun notIsInt(x: Any?): Boolean {
 }
 
 fun intersectingInfo(x: Any?, y: Any?) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if ((isString(x) && y is String) || (!notIsString(x) && !notIsInt(y))) {
+    if ((isString(x) && y is String) || (!notIsString(x) && !notIsInt(y))) {
         x.length
         y.<!UNRESOLVED_REFERENCE!>length<!>
         y.<!UNRESOLVED_REFERENCE!>inc<!>()
@@ -36,7 +36,7 @@ fun intersectingInfo(x: Any?, y: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         y.<!UNRESOLVED_REFERENCE!>length<!>
         y.<!UNRESOLVED_REFERENCE!>inc<!>()
-    }<!>
+    }
 }
 
 fun intersectingInfo2(x: Any?, y: Any?) {

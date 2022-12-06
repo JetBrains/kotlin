@@ -92,14 +92,14 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (!(a is B)) {
+  if (!(a is B)) {
     a?.foo()
     <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
   else {
     a.foo()
     <!UNRESOLVED_REFERENCE!>c<!>.bar()
-  }<!>
+  }
 
   a?.foo()
   if (a is B && a.foo() == Unit) {

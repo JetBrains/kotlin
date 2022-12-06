@@ -3,7 +3,7 @@ enum class Some {
     SECOND;
 }
 
-fun foo(s: Some) = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (s) {
+fun foo(s: Some) = when (s) {
     FIRST -> <!UNRESOLVED_REFERENCE!>SECOND<!>
     SECOND -> <!UNRESOLVED_REFERENCE!>FIRST<!>
-}<!>
+}

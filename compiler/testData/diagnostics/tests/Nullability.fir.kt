@@ -63,14 +63,14 @@ fun test() {
     out.println();
   }
 
-  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (1 == 2 || out != null && out.println(1) == Unit) {
+  if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
     out<!UNSAFE_CALL!>.<!>println(2);
   }
   else {
     out?.println(3)
     out<!UNSAFE_CALL!>.<!>println(3)
-  }<!>
+  }
 
   out?.println()
   ins?.read()
@@ -124,14 +124,14 @@ fun test() {
     out.println();
   }
 
-  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (1 == 2 || out != null && out.println(1) == Unit) {
+  if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
     out<!UNSAFE_CALL!>.<!>println(2);
   }
   else {
     out?.println(3)
     out<!UNSAFE_CALL!>.<!>println(3)
-  }<!>
+  }
 
   if (1 > 2) {
     if (out == null) return;
