@@ -20,7 +20,7 @@ fun test1(): Int {
 }
 
 fun test2(): Int {
-    val x: String = <!INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>when {
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>when {
                         true -> Any()
                         else -> null
                     }<!> ?: return 0<!>

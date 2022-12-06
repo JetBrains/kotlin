@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -21,14 +19,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -46,8 +42,6 @@ import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
@@ -65,14 +59,10 @@ class FirCallCompleter(
     fun <T> completeCall(
         call: T,
         expectedTypeRef: FirTypeRef?,
-        expectedTypeOrigin: ExpectedTypeOrigin = ExpectedTypeOrigin.Unspecified,
+        expectedTypeMismatchIsReportedInChecker: Boolean = false,
     ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
         completeCall(
-            call,
-            expectedTypeRef,
-            mayBeCoercionToUnitApplied = false,
-            expectedTypeOrigin,
-            isFromCast = false,
+            call, expectedTypeRef, mayBeCoercionToUnitApplied = false, expectedTypeMismatchIsReportedInChecker, isFromCast = false,
             shouldEnforceExpectedType = true,
         )
 
@@ -81,7 +71,7 @@ class FirCallCompleter(
             call,
             data.expectedType(components, allowFromCast = true),
             (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
-            (data as? ResolutionMode.WithExpectedType)?.expectedTypeOrigin ?: ExpectedTypeOrigin.Unspecified,
+            (data as? ResolutionMode.WithExpectedType)?.expectedTypeMismatchIsReportedInChecker == true,
             isFromCast = data is ResolutionMode.WithExpectedTypeFromCast,
             shouldEnforceExpectedType = data !is ResolutionMode.WithSuggestedType,
         )
@@ -89,7 +79,7 @@ class FirCallCompleter(
     private fun <T> completeCall(
         call: T, expectedTypeRef: FirTypeRef?,
         mayBeCoercionToUnitApplied: Boolean,
-        expectedTypeOrigin: ExpectedTypeOrigin,
+        expectedTypeMismatchIsReportedInChecker: Boolean,
         isFromCast: Boolean,
         shouldEnforceExpectedType: Boolean,
     ): CompletionResult<T>
@@ -112,7 +102,7 @@ class FirCallCompleter(
         }
 
         addConstraintFromExpectedType(
-            expectedTypeOrigin,
+            expectedTypeMismatchIsReportedInChecker,
             expectedTypeRef,
             shouldEnforceExpectedType,
             candidate,
@@ -164,7 +154,7 @@ class FirCallCompleter(
     }
 
     private fun addConstraintFromExpectedType(
-        expectedTypeOrigin: ExpectedTypeOrigin,
+        expectedTypeMismatchIsReportedInChecker: Boolean,
         expectedTypeRef: FirTypeRef?,
         shouldEnforceExpectedType: Boolean,
         candidate: Candidate,
@@ -173,11 +163,17 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean
     ) {
         val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeOrigin)
+        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition()
 
         val system = candidate.system
         when {
-            !shouldEnforceExpectedType -> {
+            // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
+            // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
+            // the expected type, and then would report diagnostic in the checker.
+            // It's assumed to be safe & sound, because if constraint system has contradictions when expected type is added,
+            // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
+            // thus the diagnostic should be reported.
+            !shouldEnforceExpectedType || expectedTypeMismatchIsReportedInChecker -> {
                 system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
             }
             isFromCast -> {

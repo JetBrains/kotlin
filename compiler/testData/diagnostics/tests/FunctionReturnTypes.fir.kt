@@ -145,7 +145,7 @@ fun illegalConstantBlock(): String {
     return <!RETURN_TYPE_MISMATCH!>1<!>
 }
 fun illegalIfBody(): Int =
-        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1.0 }<!>
+        <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1.0 }<!>
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false

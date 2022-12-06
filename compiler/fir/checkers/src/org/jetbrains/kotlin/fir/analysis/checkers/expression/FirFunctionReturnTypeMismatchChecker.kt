@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
-import org.jetbrains.kotlin.fir.analysis.checkers.isResolvableWithErrorCallee
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.*
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
@@ -39,7 +36,8 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             return
         }
         val resultExpression = expression.result
-        if (expression.canBeIgnoredToPreventDuplication) return
+        // To avoid duplications with NO_ELSE_IN_WHEN or INVALID_IF_AS_EXPRESSION
+        if (resultExpression is FirWhenExpression && !resultExpression.isExhaustive) return
 
         val functionReturnType = if (targetElement is FirConstructor)
             context.session.builtinTypes.unitType.coneType
@@ -87,23 +85,4 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             }
         }
     }
-
-    private val FirReturnExpression.canBeIgnoredToPreventDuplication: Boolean
-        get() {
-            // Possible duplicates: NO_ELSE_IN_WHEN, INVALID_IF_AS_EXPRESSION, RETURN_TYPE_MISMATCH
-            val targetHadImplicitTypeRefDuringResolution = target.labeledElement.hadImplicitTypeRefDuringResolution
-            val theResult = result
-            return theResult is FirWhenExpression && !theResult.isExhaustive
-                    || theResult.isResolvableWithErrorCallee && !targetHadImplicitTypeRefDuringResolution
-        }
-
-    @OptIn(SymbolInternals::class)
-    private val FirFunction.hadImplicitTypeRefDuringResolution
-        get() = when (this) {
-            is FirConstructor -> false
-            is FirPropertyAccessor -> hasNonRealSourcedTypeRef && propertySymbol.fir.hasNonRealSourcedTypeRef
-            else -> hasNonRealSourcedTypeRef
-        }
-
-    private val FirCallableDeclaration.hasNonRealSourcedTypeRef get() = returnTypeRef.source?.kind != KtRealSourceElementKind
 }

@@ -655,10 +655,6 @@ fun FirQualifiedAccess.explicitReceiverIsNotSuperReference(): Boolean {
     return (this.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference !is FirSuperReference
 }
 
-val FirElement.isResolvableWithErrorCallee
-    get() = this is FirResolvable && calleeReference is FirErrorNamedReference
-
-
 internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
     get() = when (this) {
         is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()

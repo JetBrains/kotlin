@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.Companion.prettyString
-import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
@@ -34,7 +33,7 @@ sealed class ResolutionMode {
     class WithExpectedType(
         val expectedTypeRef: FirTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
-        val expectedTypeOrigin: ExpectedTypeOrigin = ExpectedTypeOrigin.Unspecified,
+        val expectedTypeMismatchIsReportedInChecker: Boolean = false,
     ) : ResolutionMode() {
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}"
@@ -108,12 +107,12 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast
 
 fun withExpectedType(
     expectedTypeRef: FirTypeRef?,
-    expectedTypeOrigin: ExpectedTypeOrigin = ExpectedTypeOrigin.Unspecified,
+    expectedTypeMismatchIsReportedInChecker: Boolean = false,
 ): ResolutionMode =
     expectedTypeRef?.let {
         ResolutionMode.WithExpectedType(
             it,
-            expectedTypeOrigin = expectedTypeOrigin,
+            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
         )
     } ?: ResolutionMode.ContextDependent
 

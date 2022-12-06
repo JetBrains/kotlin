@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrIni
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
-import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -389,7 +388,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             // left in the backingField (witch is always present).
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
         } else {
-            val resolutionMode = withExpectedType(variable.returnTypeRef, ExpectedTypeOrigin.Initializer)
+            val resolutionMode = withExpectedType(variable.returnTypeRef, expectedTypeMismatchIsReportedInChecker = true)
             if (variable.initializer != null) {
                 variable.transformInitializer(transformer, resolutionMode)
                 storeVariableReturnType(variable)
@@ -406,7 +405,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     private fun FirProperty.transformChildrenWithoutComponents(returnTypeRef: FirTypeRef): FirProperty {
         val data = withExpectedType(returnTypeRef)
         return transformReturnTypeRef(transformer, data)
-            .transformInitializer(transformer, withExpectedType(returnTypeRef, ExpectedTypeOrigin.Initializer))
+            .transformInitializer(transformer, withExpectedType(returnTypeRef, expectedTypeMismatchIsReportedInChecker = true))
             .transformTypeParameters(transformer, data)
             .transformOtherChildren(transformer, data)
     }

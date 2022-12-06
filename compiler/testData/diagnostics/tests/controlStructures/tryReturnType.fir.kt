@@ -13,7 +13,7 @@ fun foo() : Int {
 }
 
 fun bar() : Int =
-    <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>try {
+    <!RETURN_TYPE_MISMATCH!>try {
         doSmth()
     }
     catch (e: Exception) {

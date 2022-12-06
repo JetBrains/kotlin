@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.isUnitOrFlexibleUnit
-import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
@@ -197,7 +196,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             else -> {
                 ResolutionMode.WithExpectedType(
                     expectedTypeRef,
-                    expectedTypeOrigin = ExpectedTypeOrigin.ReturnType(returnExpression.target.labeledElement),
+                    expectedTypeMismatchIsReportedInChecker = true,
                 )
             }
         }

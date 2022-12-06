@@ -13,7 +13,7 @@ class B<T>(data: T) : A<T>(data)
 
 fun case1() {
     val tryVal: B<String> =
-    <!INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH!>try {
+    <!INITIALIZER_TYPE_MISMATCH!>try {
         throwExceptionA(false)
         A("")
     } catch (e: Exception) {
@@ -27,7 +27,7 @@ fun case1() {
 
 fun case2() {
     val tryVal: A<String> =
-    <!INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH!>try {
+    <!INITIALIZER_TYPE_MISMATCH!>try {
         throwExceptionA(false)
         A("")
     } catch (e: Exception) {
@@ -42,7 +42,7 @@ fun case2() {
  */
 fun case3() {
     val tryVal: A<Int> =
-    <!INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH, INITIALIZER_TYPE_MISMATCH!>try {
+    <!INITIALIZER_TYPE_MISMATCH!>try {
         throwExceptionA(false)
         A(2)
     } catch (e: ExcA) {

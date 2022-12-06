@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -613,7 +612,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 lhsVariable?.returnTypeRef ?: noExpectedType,
-                ExpectedTypeOrigin.Assignment(assignment),
+                expectedTypeMismatchIsReportedInChecker = true,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             return assignment.transform(transformer, ResolutionMode.ContextIndependent)
@@ -878,7 +877,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 transformer,
                 withExpectedType(
                     variableAssignment.lValueTypeRef,
-                    ExpectedTypeOrigin.Assignment(resolvedAssignment),
+                    expectedTypeMismatchIsReportedInChecker = true,
                 ),
             )
         } else {
@@ -1292,7 +1291,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedSetCall,
                 noExpectedType,
-                ExpectedTypeOrigin.Assignment(resolvedSetCall),
+                expectedTypeMismatchIsReportedInChecker = true,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)

@@ -20,16 +20,7 @@ class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVaria
 
 class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintPosition<FirElement>(argument)
 
-sealed class ExpectedTypeOrigin {
-    object Unspecified : ExpectedTypeOrigin()
-    class ReturnType(val target: FirFunction) : ExpectedTypeOrigin()
-    class Assignment(val assignment: FirResolvable) : ExpectedTypeOrigin()
-    object Initializer : ExpectedTypeOrigin()
-}
-
-class ConeExpectedTypeConstraintPosition(
-    val origin: ExpectedTypeOrigin = ExpectedTypeOrigin.Unspecified,
-) : ExpectedTypeConstraintPosition<Nothing?>(null)
+class ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothing?>(null)
 
 class ConeExplicitTypeParameterConstraintPosition(
     typeArgument: FirTypeProjection,

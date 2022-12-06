@@ -34,12 +34,12 @@ fun main() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(KotlinClass::baz)
 
     // Type mismatch
-    foo1(KotlinClass::<!UNRESOLVED_REFERENCE!>bar<!>)
+    <!INAPPLICABLE_CANDIDATE!>foo1<!>(KotlinClass::<!UNRESOLVED_REFERENCE!>bar<!>)
     foo2(KotlinClass::bar)
     foo3(KotlinClass::bar)
 
     foo1(KotlinClass2::bar)
     // Type mismatch
-    foo2(KotlinClass2::<!UNRESOLVED_REFERENCE!>bar<!>)
+    <!INAPPLICABLE_CANDIDATE!>foo2<!>(KotlinClass2::<!UNRESOLVED_REFERENCE!>bar<!>)
     foo3(KotlinClass2::bar)
 }

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
-import org.jetbrains.kotlin.fir.analysis.checkers.createDiagnosticForAssignmentTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
@@ -24,9 +23,11 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
@@ -297,17 +298,7 @@ private fun mapInapplicableCandidateError(
                 source, rootCause.typeVariable, rootCause.incompatibleTypes, rootCause.causingTypes, rootCause.kind
             )
 
-            else -> {
-                val containsUnresolvedArguments = diagnostic.candidate.callInfo.argumentList.arguments.any {
-                    val cone = it.typeRef.coneType
-                    cone is ConeErrorType && cone.diagnostic is ConeUnresolvedReferenceError
-                }
-                if (!containsUnresolvedArguments) {
-                    genericDiagnostic
-                } else {
-                    null
-                }
-            }
+            else -> genericDiagnostic
         }
     }.distinct()
     return if (diagnostics.size > 1) {
@@ -398,50 +389,12 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
 
-                    val inferredTypeWithoutTypeVariables = inferredType.removeTypeVariableTypes(typeContext)
-                    val upperConeTypeWithoutTypeVariables = upperConeType.removeTypeVariableTypes(typeContext)
-                    val elementSource = qualifiedAccessSource ?: source
-
-                    if (
-                        inferredTypeWithoutTypeVariables.isErrorType ||
-                        upperConeTypeWithoutTypeVariables.isErrorType ||
-                        elementSource.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
-                    ) {
-                        errorsToIgnore.add(this)
-                        return null
-                    }
-
-                    val origin = position.origin
-                    val theSource = qualifiedAccessSource ?: source
-
-                    when (origin) {
-                        is ExpectedTypeOrigin.ReturnType -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
-                            theSource,
-                            upperConeTypeWithoutTypeVariables,
-                            inferredTypeWithoutTypeVariables,
-                            origin.target,
-                            typeMismatchDueToNullability
-                        )
-                        is ExpectedTypeOrigin.Initializer -> FirErrors.INITIALIZER_TYPE_MISMATCH.createOn(
-                            theSource,
-                            upperConeTypeWithoutTypeVariables,
-                            inferredTypeWithoutTypeVariables,
-                            typeMismatchDueToNullability,
-                        )
-                        is ExpectedTypeOrigin.Assignment -> createDiagnosticForAssignmentTypeMismatch(
-                            theSource,
-                            upperConeTypeWithoutTypeVariables,
-                            inferredTypeWithoutTypeVariables,
-                            origin.assignment,
-                            isTypeMismatchDueToNullability = { typeMismatchDueToNullability },
-                        )
-                        else -> FirErrors.TYPE_MISMATCH.createOn(
-                            theSource,
-                            upperConeTypeWithoutTypeVariables,
-                            inferredTypeWithoutTypeVariables,
-                            typeMismatchDueToNullability
-                        )
-                    }
+                    FirErrors.TYPE_MISMATCH.createOn(
+                        qualifiedAccessSource ?: source,
+                        upperConeType.removeTypeVariableTypes(typeContext),
+                        inferredType.removeTypeVariableTypes(typeContext),
+                        typeMismatchDueToNullability
+                    )
                 }
 
                 is ExplicitTypeParameterConstraintPosition<*>,
@@ -502,9 +455,6 @@ private fun ConstraintSystemError.toDiagnostic(
         else -> null
     }
 }
-
-private val ConeKotlinType.isErrorType: Boolean
-    get() = this is ConeErrorType || typeArguments.any { it.type?.isErrorType == true }
 
 private fun reportInferredIntoEmptyIntersectionError(
     source: KtSourceElement,

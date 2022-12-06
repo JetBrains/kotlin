@@ -16,7 +16,7 @@ fun test1() {
     baz<String>(::foo).checkType { _<String?>() }
     baz<Boolean>(::foo).checkType { _<Boolean?>() }
 
-    val b1: Int = <!INITIALIZER_TYPE_MISMATCH!>baz(::<!UNRESOLVED_REFERENCE!>foo<!>)<!>
-    val b2: String = <!INITIALIZER_TYPE_MISMATCH!>baz(::<!UNRESOLVED_REFERENCE!>foo<!>)<!>
-    val b3: Boolean = <!INITIALIZER_TYPE_MISMATCH!>baz(::<!UNRESOLVED_REFERENCE!>foo<!>)<!>
+    val b1: Int = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+    val b2: String = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+    val b3: Boolean = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
