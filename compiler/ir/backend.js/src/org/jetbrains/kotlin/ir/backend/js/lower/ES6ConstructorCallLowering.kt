@@ -54,15 +54,15 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                 ).apply {
                     copyValueArgumentsFrom(expression, factoryFunction)
 
-                    dispatchReceiver = when {
-                        superQualifierSymbol != null -> null
-                        expression.isSyntheticDelegatingReplacement -> {
-                            currentFunction?.boxParameter?.let {
-                                putValueArgument(valueArgumentsCount - 1, JsIrBuilder.buildGetValue(it.symbol))
-                            }
-                            JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
+                    if (expression.isSyntheticDelegatingReplacement) {
+                        currentFunction?.boxParameter?.let {
+                            putValueArgument(valueArgumentsCount - 1, JsIrBuilder.buildGetValue(it.symbol))
                         }
-                        else -> irClass.jsConstructorReference(context)
+                        if (superQualifierSymbol == null) {
+                            dispatchReceiver = JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
+                        }
+                    } else {
+                        dispatchReceiver = irClass.jsConstructorReference(context)
                     }
                 }
 
