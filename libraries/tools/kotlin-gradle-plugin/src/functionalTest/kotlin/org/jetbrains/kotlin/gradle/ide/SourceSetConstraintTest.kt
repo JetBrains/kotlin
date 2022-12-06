@@ -34,23 +34,21 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jvmSourceSet in listOf(jvmMain, jvmTest)) {
-            jvmSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -68,23 +66,21 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jsSourceSet in listOf(jsMain, jsTest)) {
-            jsSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -102,23 +98,21 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (linuxSourceSet in listOf(linuxMain, linuxTest)) {
-            linuxSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -139,40 +133,39 @@ class SourceSetConstraintTest {
 
         project.evaluate()
 
-        commonMain.assertConstraints(
-            isAndroid = false,
-            isJvmAndAndroid = false, // TODO (kirpichenkov): investigate and explain/fix metadata jvm + android shared non-test compilations
-            isLeaf = false,
-            isNative = false,
-            isSinglePlatformType = false,
+        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+        assertConstraint(
+            commonMain, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid,
+            isMatchExpected = false // TODO (kirpichenkov): investigate and explain/fix metadata jvm + android shared non-test compilations
         )
+        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
 
-        commonTest.assertConstraints(
-            isAndroid = false,
-            isJvmAndAndroid = true,
-            isLeaf = false,
-            isNative = false,
-            isSinglePlatformType = false,
-        )
+        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = true)
+        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
 
         for (jvmSourceSet in listOf(jvmMain, jvmTest)) {
-            jvmSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (androidSourceSet in listOf(androidMain, androidUnitTest, androidInstrumentedTest)) {
-            androidSourceSet.assertConstraints(
-                isAndroid = true,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(androidSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = true)
+            assertConstraint(androidSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(androidSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(androidSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(androidSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(androidSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -201,43 +194,39 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = false,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (linuxSourceSet in listOf(linuxMain, linuxTest)) {
-            linuxSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jvmSourceSet in listOf(jvmMain, jvmTest)) {
-            jvmSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (intermediateSourceSet in listOf(jvmIntermediateMain, jvmIntermediateTest)) {
-            intermediateSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -266,43 +255,39 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = false,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (linuxSourceSet in listOf(linuxMain, linuxTest)) {
-            linuxSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jvmSourceSet in listOf(jvmMain, jvmTest)) {
-            jvmSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (intermediateSourceSet in listOf(linuxIntermediateMain, linuxIntermediateTest)) {
-            intermediateSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -331,43 +316,39 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = false,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (linuxSourceSet in listOf(linuxMain, linuxTest)) {
-            linuxSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(linuxSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jsSourceSet in listOf(jsMain, jsTest)) {
-            jsSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (intermediateSourceSet in listOf(jsIntermediateMain, jsIntermediateTest)) {
-            intermediateSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(intermediateSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
     }
 
@@ -401,69 +382,49 @@ class SourceSetConstraintTest {
         project.evaluate()
 
         for (commonSourceSet in listOf(commonMain, commonTest)) {
-            commonSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = false,
-                isSinglePlatformType = false,
-            )
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jvmSourceSet in listOf(jvmMain, jvmTest)) {
-            jvmSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (jsSourceSet in listOf(jsMain, jsTest)) {
-            jsSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = false,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(jsSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (nativeSharedSourceSet in listOf(linuxMain, linuxTest, nativeMain, nativeTest)) {
-            nativeSharedSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = false,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(nativeSharedSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(nativeSharedSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(nativeSharedSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(nativeSharedSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(nativeSharedSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(nativeSharedSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
 
         for (nativeLeafSourceSet in listOf(linuxX64Main, linuxX64Test, linuxArm64Main, linuxArm64Test)) {
-            nativeLeafSourceSet.assertConstraints(
-                isAndroid = false,
-                isJvmAndAndroid = false,
-                isLeaf = true,
-                isNative = true,
-                isSinglePlatformType = true,
-            )
+            assertConstraint(nativeLeafSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(nativeLeafSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = false)
+            assertConstraint(nativeLeafSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = true)
+            assertConstraint(nativeLeafSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = true)
+            assertConstraint(nativeLeafSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = true)
+            assertConstraint(nativeLeafSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
         }
-    }
-
-    private fun KotlinSourceSet.assertConstraints(
-        isAndroid: Boolean,
-        isJvmAndAndroid: Boolean,
-        isLeaf: Boolean,
-        isNative: Boolean,
-        isSinglePlatformType: Boolean,
-    ) {
-        assertConstraint(this, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isAndroid)
-        assertConstraint(this, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isJvmAndAndroid)
-        assertConstraint(this, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isLeaf)
-        assertConstraint(this, IdeMultiplatformImport.SourceSetConstraint.isNative, isNative)
-        assertConstraint(this, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isSinglePlatformType)
-        assertConstraint(this, IdeMultiplatformImport.SourceSetConstraint.unconstrained, true)
     }
 
     private fun assertConstraint(
