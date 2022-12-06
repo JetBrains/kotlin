@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.FileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
@@ -16,9 +15,26 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 
+/**
+ * @see getFileSignature
+ */
+fun interface KlibFileSignatureProvider {
+
+    /**
+     * Used to build a signature of a private declaration.
+     * Returns a signature of a file from the current module with the provided [fqName] and [fileName].
+     *
+     * @param fqName A fully-qualified name of the package the file belongs to.
+     * @param fileName The name of the file.
+     * @return A signature of a file from the current module.
+     */
+    fun getFileSignature(fqName: String, fileName: String): FileSignature
+}
+
 class IdSignatureDeserializer(
     private val libraryFile: IrLibraryFile,
-    private val fileSignature: FileSignature?
+    private val currentFileSignature: FileSignature?,
+    private val fileSignatureProvider: KlibFileSignatureProvider? = null,
 ) {
 
     private fun loadSignatureProto(index: Int): ProtoIdSignature {
@@ -76,8 +92,18 @@ class IdSignatureDeserializer(
         return IdSignature.LocalSignature(localFqn, localHash, description)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun deserializeFileIdSignature(proto: ProtoFileSignature): FileSignature = fileSignature ?: error("Provide file symbol")
+    private fun deserializeFileIdSignature(proto: ProtoFileSignature): FileSignature {
+        requireNotNull(fileSignatureProvider) {
+            "${(::fileSignatureProvider).name} is required for deserializing file signatures"
+        }
+        return if (proto.hasFilePath()) {
+            val fqName = libraryFile.deserializeFqName(proto.fqNameList)
+            fileSignatureProvider.getFileSignature(fqName, proto.filePath)
+        } else {
+            // Fallback for older behavior when we serialized file signatures as empty structures
+            currentFileSignature ?: error("Provide file symbol")
+        }
+    }
 
     private fun deserializeSignatureData(proto: ProtoIdSignature): IdSignature {
         return when (proto.idSigCase) {

@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 abstract class BasicIrModuleDeserializer(
@@ -49,19 +51,14 @@ abstract class BasicIrModuleDeserializer(
     protected lateinit var fileDeserializationStates: List<FileDeserializationState>
 
     override fun init(delegate: IrModuleDeserializer) {
-        val fileCount = klib.fileCount()
+        preloadFiles()
 
         val fileDeserializationStates = mutableListOf<FileDeserializationState>()
 
-        for (i in 0 until fileCount) {
-            val fileStream = klib.file(i).codedInputStream
-            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
-            val file = fileReader.createFile(moduleFragment, fileProto)
-
-            fileDeserializationStates.add(deserializeIrFile(fileProto, file, fileReader, i, delegate, containsErrorCode))
-            if (!strategyResolver(file.fileEntry.name).onDemand)
-                moduleFragment.files.add(file)
+        for ((fileIndex, fileInfo) in files.withIndex()) {
+            fileDeserializationStates.add(deserializeIrFile(fileIndex, fileInfo, delegate, containsErrorCode))
+            if (!strategyResolver(fileInfo.file.fileEntry.name).onDemand)
+                moduleFragment.files.add(fileInfo.file)
         }
 
         this.fileDeserializationStates = fileDeserializationStates
@@ -113,25 +110,72 @@ abstract class BasicIrModuleDeserializer(
 
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
 
+    /**
+     * Used to look up [IrFile]s using a serialized file signature ([org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature])
+     */
+    private var fileMap: Map<Pair<String, FqName>, List<FileDeserializationInfo>> = emptyMap()
+
+    /**
+     * A list of files as they go in the klib.
+     */
+    private var files: List<FileDeserializationInfo> = emptyList()
+
+    private fun preloadFiles() {
+        val fileMap = mutableMapOf<Pair<String, FqName>, MutableList<FileDeserializationInfo>>()
+        val files = mutableListOf<FileDeserializationInfo>()
+        for (i in 0 until klib.fileCount()) {
+            val fileStream = klib.file(i).codedInputStream
+            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
+            val file = fileReader.createFile(moduleFragment, fileProto)
+            val fileInfo = FileDeserializationInfo(file, fileReader, fileProto)
+            fileMap.getOrPut(Pair(file.path, file.fqName), ::SmartList)
+                .add(fileInfo)
+            files.add(fileInfo)
+        }
+        this.fileMap = fileMap
+        this.files = files
+    }
+
+    /**
+     * @see KlibFileSignatureProvider
+     */
+    private fun getFileSignature(fqName: String, fileName: String): IdSignature.FileSignature {
+        // FIXME: Emit proper linker errors instead of throwing exceptions!!!
+        val matchingFiles = fileMap[Pair(fileName, FqName(fqName))]
+            ?: error("Could not find file $fileName with fqName $fqName in the current module")
+        when (matchingFiles.size) {
+            0 -> error("Could not find file $fileName with fqName $fqName in the current module")
+            1 -> return IdSignature.FileSignature(matchingFiles[0].file.symbol)
+            else -> {
+                // A rare case where we have multiple DIFFERENT files with the SAME path in the SAME package.
+                // Albeit this is a really cursed situation, it is not prohibited by the frontend.
+                // However, the current design of klibs doesn't allow this, so we emit a linker error.
+                error("Multiple files in the current module have the path $fileName and are located in the package $fqName. It is unclear which file to use.")
+            }
+        }
+    }
+
     private fun deserializeIrFile(
-        fileProto: ProtoFile, file: IrFile, fileReader: IrLibraryFileFromBytes,
-        fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean
+        fileIndex: Int,
+        fileInfo: FileDeserializationInfo,
+        moduleDeserializer: IrModuleDeserializer,
+        allowErrorNodes: Boolean,
     ): FileDeserializationState {
-        val fileStrategy = strategyResolver(file.fileEntry.name)
+        val fileStrategy = strategyResolver(fileInfo.file.fileEntry.name)
 
         val fileDeserializationState = FileDeserializationState(
             linker,
             fileIndex,
-            file,
-            fileReader,
-            fileProto,
+            fileInfo,
             fileStrategy.needBodies,
             allowErrorNodes,
             fileStrategy.inlineBodies,
-            moduleDeserializer
+            moduleDeserializer,
+            fileSignatureProvider = this::getFileSignature
         )
 
-        fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
+        fileToDeserializerMap[fileInfo.file] = fileDeserializationState.fileDeserializer
 
         if (!fileStrategy.onDemand) {
             val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys

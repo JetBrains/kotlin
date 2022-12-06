@@ -55,25 +55,36 @@ class IrFileDeserializer(
     }
 }
 
+data class FileDeserializationInfo(
+    val file: IrFile,
+    val fileReader: IrLibraryFileFromBytes,
+    val fileProto: ProtoFile,
+)
+
 class FileDeserializationState(
     val linker: KotlinIrLinker,
     val fileIndex: Int,
-    val file: IrFile,
-    val fileReader: IrLibraryFileFromBytes,
-    fileProto: ProtoFile,
+    fileInfo: FileDeserializationInfo,
     deserializeBodies: Boolean,
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
-    moduleDeserializer: IrModuleDeserializer
+    moduleDeserializer: IrModuleDeserializer,
+    fileSignatureProvider: KlibFileSignatureProvider?
 ) {
 
-    val symbolDeserializer =
+    val file = fileInfo.file
+    val fileReader = fileInfo.fileReader
+
+    private val symbolDeserializer =
         IrSymbolDeserializer(
-            linker.symbolTable, fileReader, file.symbol,
-            fileProto.actualList,
+            linker.symbolTable,
+            fileInfo.fileReader,
+            fileInfo.file.symbol,
+            fileInfo.fileProto.actualList,
             ::addIdSignature,
             linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
+            fileSignatureProvider = fileSignatureProvider,
         ) { idSignature, symbolKind ->
             linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
         }
@@ -82,8 +93,8 @@ class FileDeserializationState(
         linker.builtIns,
         linker.symbolTable,
         linker.symbolTable.irFactory,
-        fileReader,
-        file,
+        fileInfo.fileReader,
+        fileInfo.file,
         allowErrorNodes,
         deserializeInlineFunctions,
         deserializeBodies,
@@ -93,14 +104,15 @@ class FileDeserializationState(
         compatibilityMode = moduleDeserializer.compatibilityMode
     )
 
-    val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
+    val fileDeserializer =
+        IrFileDeserializer(fileInfo.file, fileInfo.fileReader, fileInfo.fileProto, symbolDeserializer, declarationDeserializer)
 
     private val reachableTopLevels = LinkedHashSet<IdSignature>()
 
     init {
         // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
         // Thus we schedule their deserialization in deserializer's constructor.
-        fileProto.explicitlyExportedToCompilerList.forEach {
+        fileInfo.fileProto.explicitlyExportedToCompilerList.forEach {
             val symbolData = symbolDeserializer.parseSymbolData(it)
             val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
             assert(!sig.isPackageSignature())
