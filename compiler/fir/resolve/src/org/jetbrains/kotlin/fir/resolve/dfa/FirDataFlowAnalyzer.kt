@@ -535,6 +535,10 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Jump -----------------------------------
 
+    fun enterJump(jump: FirJump<*>) {
+        graphBuilder.enterJump(jump)
+    }
+
     fun exitJump(jump: FirJump<*>) {
         graphBuilder.exitJump(jump).mergeIncomingFlow()
     }

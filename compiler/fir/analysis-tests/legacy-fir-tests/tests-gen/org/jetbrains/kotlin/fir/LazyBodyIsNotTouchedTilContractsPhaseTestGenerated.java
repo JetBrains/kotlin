@@ -1051,6 +1051,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInConstructor.kt");
         }
 
+        @TestMetadata("postponedLambdaInReturn.kt")
+        public void testPostponedLambdaInReturn() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInReturn.kt");
+        }
+
         @TestMetadata("postponedLambdas.kt")
         public void testPostponedLambdas() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdas.kt");

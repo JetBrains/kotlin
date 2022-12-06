@@ -1220,6 +1220,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("postponedLambdaInReturn.kt")
+            public void testPostponedLambdaInReturn() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInReturn.kt");
+            }
+
+            @Test
             @TestMetadata("postponedLambdas.kt")
             public void testPostponedLambdas() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdas.kt");

@@ -669,6 +669,15 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Jump -----------------------------------
 
+    fun enterJump(jump: FirJump<*>) {
+        // Data flow from anonymous functions in return values does not merge with any enclosing calls.
+        // For named functions, the return value has to be a completed call anyway, so there should
+        // be no postponed lambdas in it.
+        if (jump is FirReturnExpression && jump.target.labeledElement is FirAnonymousFunction) {
+            splitDataFlowForPostponedLambdas()
+        }
+    }
+
     fun exitJump(jump: FirJump<*>): JumpNode {
         val node = createJumpNode(jump)
         val nextNode = when (jump) {
@@ -676,6 +685,13 @@ class ControlFlowGraphBuilder {
             is FirContinueExpression -> loopConditionEnterNodes[jump.target.labeledElement.condition]
             is FirBreakExpression -> loopExitNodes[jump.target.labeledElement]
             else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
+        }
+
+        if (jump is FirReturnExpression && jump.target.labeledElement is FirAnonymousFunction) {
+            // TODO: these should be DFA-only edges; they should be pointed into the postponed function exit node?
+            //  With builder inference, lambdas are not necessarily resolved starting from the innermost one...
+            //  See analysis test cfg/postponedLambdaInReturn.kt.
+            postponedLambdaExits.pop()
         }
 
         val labelForFinallyBLock = when (jump) {
