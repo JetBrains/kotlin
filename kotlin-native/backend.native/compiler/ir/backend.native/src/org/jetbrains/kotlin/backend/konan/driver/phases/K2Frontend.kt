@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -70,11 +71,11 @@ sealed class K2FrontendPhaseOutput {
     object ShouldNotGenerateCode : K2FrontendPhaseOutput()
 
     data class Full(
-//            val moduleDescriptor: ModuleDescriptor,
 //            val bindingContext: BindingContext,
 //            val frontendServices: FrontendServices,
-            val firFiles: List<FirFile>,
             val environment: KotlinCoreEnvironment,
+            val firFiles: List<FirFile>,    // FIR output
+            val fir2irResult: Fir2IrResult, // FIR2IR output
     ) : K2FrontendPhaseOutput()
 }
 
@@ -250,12 +251,7 @@ private fun phaseBody(
         val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
     }
-    println("OUTPUT KLIB: $klibPath")
+    println("K2 OUTPUT KLIB: $klibPath")
 
-    return K2FrontendPhaseOutput.Full(
-//                moduleDescriptor,
-//                bindingContext,
-//                context.frontendServices,
-            firFiles,
-            environment)
+    return K2FrontendPhaseOutput.Full(environment, firFiles, fir2irResult)
 }
