@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
 
 class DeclarationGenerator(
     val context: WasmModuleCodegenContext,
@@ -454,7 +456,7 @@ class DeclarationGenerator(
             check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
                 "Static field initializer should be string or const"
             }
-            generateConstExpression(initValue, wasmExpressionGenerator, context)
+            generateConstExpression(initValue, wasmExpressionGenerator, context, declaration.fileOrNull?.fileEntry)
         } else {
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
         }
@@ -493,30 +495,31 @@ fun IrFunction.isExported(): Boolean =
     isJsExport()
 
 
-fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmModuleCodegenContext) {
-    when (val kind = expression.kind) {
-        is IrConstKind.Null -> {
-            val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
-            body.buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(bottomType))
+fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmModuleCodegenContext, fileEntry: IrFileEntry?) =
+    withLocation(expression.getSourceLocation(fileEntry)) {
+        when (val kind = expression.kind) {
+            is IrConstKind.Null -> {
+                val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
+                body.buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(bottomType))
+            }
+            is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
+            is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
+            is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
+            is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression))
+            is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
+            is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code)
+            is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
+            is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
+            is IrConstKind.String -> {
+                val stringValue = kind.valueOf(expression)
+                val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+                body.commentGroupStart { "const string: \"$stringValue\"" }
+                body.buildConstI32Symbol(literalPoolId)
+                body.buildConstI32Symbol(literalAddress)
+                body.buildConstI32(stringValue.length)
+                body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral), location)
+                body.commentGroupEnd()
+            }
+            else -> error("Unknown constant kind")
         }
-        is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
-        is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
-        is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
-        is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression))
-        is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
-        is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code)
-        is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
-        is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
-        is IrConstKind.String -> {
-            val stringValue = kind.valueOf(expression)
-            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
-            body.commentGroupStart { "const string: \"$stringValue\"" }
-            body.buildConstI32Symbol(literalPoolId)
-            body.buildConstI32Symbol(literalAddress)
-            body.buildConstI32(stringValue.length)
-            body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
-            body.commentGroupEnd()
-        }
-        else -> error("Unknown constant kind")
     }
-}

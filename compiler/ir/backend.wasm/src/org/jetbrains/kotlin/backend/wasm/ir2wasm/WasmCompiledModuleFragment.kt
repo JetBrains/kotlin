@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val functions =
@@ -165,7 +166,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         val masterInitFunction = WasmFunction.Defined("__init", WasmSymbol(masterInitFunctionType))
         with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
             initFunctions.sortedBy { it.priority }.forEach {
-                buildCall(WasmSymbol(it.function))
+                buildCall(WasmSymbol(it.function), SourceLocation.NoLocation)
             }
         }
         exports += WasmExport.Function("__init", masterInitFunction)

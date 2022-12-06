@@ -112,7 +112,7 @@ abstract class WasmExpressionBuilder {
         buildBrInstr(WasmOp.BR_IF, absoluteBlockLevel)
     }
 
-    fun buildCall(symbol: WasmSymbol<WasmFunction>, location: SourceLocation = SourceLocation.TBDLocation) {
+    fun buildCall(symbol: WasmSymbol<WasmFunction>, location: SourceLocation) {
         buildInstr(WasmOp.CALL, location, WasmImmediate.FuncIdx(symbol))
     }
 
