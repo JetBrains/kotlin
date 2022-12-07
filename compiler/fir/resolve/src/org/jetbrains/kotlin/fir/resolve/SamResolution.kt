@@ -387,12 +387,15 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
     val parameterTypes = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for parameter $it"))
     }
-
+    val contextReceiversTypes = contextReceivers.map {
+        it.typeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for context receiver $it"))
+    }
     return createFunctionalType(
         parameterTypes,
         receiverType = receiverParameter?.typeRef?.coneType,
         rawReturnType = returnTypeRef.coneType,
-        isSuspend = this.isSuspend
+        isSuspend = this.isSuspend,
+        contextReceivers = contextReceiversTypes
     )
 }
 
