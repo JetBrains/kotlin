@@ -255,6 +255,15 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 element.acceptChildren(this, data)
             }
 
+            private fun visitRepeatableElement(element: FirElement, data: MiniCfgData): Set<FirProperty> {
+                // Detach the flow so that variables declared inside the structure do not leak into the outside.
+                val flow = MiniFlow.start()
+                val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
+                data.flow = flow
+                element.acceptChildren(this, data)
+                return flow.assignedLater.apply { retainAll(freeVariables) }
+            }
+
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
                 visitFunction(anonymousFunction, data)
 
@@ -262,18 +271,13 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 visitFunction(simpleFunction, data)
 
             override fun visitFunction(function: FirFunction, data: MiniCfgData) {
-                val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
                 val flow = data.flow
-                // Detach the function flow so that variables declared inside don't leak into the outside.
-                val flowInto = MiniFlow.start()
-                data.flow = flowInto
-                function.acceptChildren(this, data)
-                flowInto.assignedLater.retainAll(freeVariables)
+                val assignedInside = visitRepeatableElement(function, data)
                 // Now that the inner variables have been discarded, the rest can be propagated to prevent smartcasts
                 // in lambdas declared before this one.
-                flow.recordAssignments(flowInto.assignedLater)
+                flow.recordAssignments(assignedInside)
                 data.flow = flow.fork()
-                data.functionForks[function.symbol] = FunctionFork(data.flow.assignedLater, flowInto.assignedLater)
+                data.functionForks[function.symbol] = FunctionFork(data.flow.assignedLater, assignedInside)
             }
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
@@ -302,24 +306,21 @@ internal class FirLocalVariableAssignmentAnalyzer {
             private fun Set<MiniFlow>.join(): MiniFlow =
                 singleOrNull() ?: MiniFlow(this)
 
-            override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) {
-                // Loop entry is a merge point, so need a new node.
-                val start = data.flow.fork()
-                data.flow = start
-                whileLoop.condition.accept(this, data)
-                whileLoop.block.accept(this, data)
+            override fun visitLoop(loop: FirLoop, data: MiniCfgData) {
+                val entry = data.flow
+                val assignedInside = visitRepeatableElement(loop, data)
                 // All forks in the loop should have the same set of variables assigned later, equal to the set
                 // at the start of the loop.
-                data.flow.recordAssignments(start.assignedLater)
+                data.flow.recordAssignments(assignedInside)
+                // The loop flows are detached from the entry flow, so we need to re-join them.
+                data.flow = setOf(entry, data.flow).join()
             }
 
-            override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) {
-                val start = data.flow.fork()
-                data.flow = start
-                doWhileLoop.block.accept(this, data)
-                doWhileLoop.condition.accept(this, data)
-                data.flow.recordAssignments(start.assignedLater)
-            }
+            override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) =
+                visitLoop(whileLoop, data)
+
+            override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) =
+                visitLoop(doWhileLoop, data)
 
             // TODO: liveness analysis - return/throw/break/continue terminate the flow.
             //   This is somewhat problematic though because try-catch and loops can restore it.

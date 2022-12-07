@@ -66,3 +66,20 @@ fun test5() {
     }
     lambda?.invoke()
 }
+
+fun test6() {
+    var lambda: () -> Unit = { }
+    for (x in 1..10) {
+        var s: String? = null
+        for (y in 1..10) {
+            s = null
+            lambda()
+            s = ""
+            lambda = { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // bad - next iteration will assign s = null
+        }
+
+        if (s != null) {
+            lambda = { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // ok - s about to go out of scope
+        }
+    }
+}
