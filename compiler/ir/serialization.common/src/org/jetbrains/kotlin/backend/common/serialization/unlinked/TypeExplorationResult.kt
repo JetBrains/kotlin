@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExpl
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Partially
 
 internal sealed interface TypeExplorationResult {
-    /** Indicates unusable type */
+    /** Indicates unusable type. */
     sealed interface UnusableType : TypeExplorationResult {
         class DueToClassifier(val classifier: Partially) : UnusableType
 
@@ -19,7 +19,7 @@ internal sealed interface TypeExplorationResult {
         ) : UnusableType
     }
 
-    /** Indicates usable type that does not reference any partially linked classifiers and does not have visibility conflicts */
+    /** Indicates usable type that does not reference any partially linked classifiers and does not have visibility conflicts. */
     class UsableType(val classifierWithNarrowestVisibility: Fully?) : TypeExplorationResult {
         companion object {
             val DEFAULT_PUBLIC = UsableType(null)

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
  * See [LinkedClassifierExplorer.exploreType].
  */
 internal sealed interface ClassifierExplorationResult {
-    /** Indicates partially linked classifier. */
+    /** Indicated unusable classifier. */
     sealed interface Partially : ClassifierExplorationResult {
         val symbol: IrClassifierSymbol
 
@@ -57,7 +57,7 @@ internal sealed interface ClassifierExplorationResult {
         class DueToOtherClassifier(override val symbol: IrClassifierSymbol, val rootCause: CanBeRootCause) : Partially
     }
 
-    /** Indicates fully linked classifier. */
+    /** Indicates usable type that is fully linked and does not have visibility conflicts. */
     sealed interface Fully : ClassifierExplorationResult {
         val symbol: IrClassifierSymbol
         val visibility: ABIVisibility
