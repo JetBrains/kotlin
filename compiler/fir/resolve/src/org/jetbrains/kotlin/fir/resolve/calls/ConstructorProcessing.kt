@@ -40,26 +40,23 @@ internal fun FirScope.processConstructorsByName(
     includeInnerConstructors: Boolean,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
-    val classifierInfo = getFirstClassifierOrNull(callInfo, session, bodyResolveComponents)
-    if (classifierInfo != null) {
-        val (matchedClassifierSymbol, substitutor) = classifierInfo
-        val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*>
+    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, session, bodyResolveComponents) ?: return
+    val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
-        processConstructors(
-            matchedClassSymbol,
-            substitutor,
-            processor,
-            session,
-            bodyResolveComponents,
-            includeInnerConstructors
-        )
+    processConstructors(
+        matchedClassSymbol,
+        substitutor,
+        processor,
+        session,
+        bodyResolveComponents,
+        includeInnerConstructors
+    )
 
-        processSyntheticConstructors(
-            matchedClassSymbol,
-            processor,
-            bodyResolveComponents
-        )
-    }
+    processSyntheticConstructors(
+        matchedClassSymbol,
+        processor,
+        bodyResolveComponents
+    )
 }
 
 internal fun FirScope.processFunctionsAndConstructorsByName(
@@ -154,7 +151,7 @@ private fun FirScope.getFirstClassifierOrNull(
 }
 
 private fun processSyntheticConstructors(
-    matchedSymbol: FirClassLikeSymbol<*>?,
+    matchedSymbol: FirClassLikeSymbol<*>,
     processor: (FirFunctionSymbol<*>) -> Unit,
     bodyResolveComponents: BodyResolveComponents
 ) {
@@ -164,13 +161,13 @@ private fun processSyntheticConstructors(
     }
 }
 
-private fun FirClassLikeSymbol<*>?.findSAMConstructor(
+private fun FirClassLikeSymbol<*>.findSAMConstructor(
     bodyResolveComponents: BodyResolveComponents
 ): FirSimpleFunction? {
     return when (this) {
         is FirRegularClassSymbol -> bodyResolveComponents.samResolver.getSamConstructor(fir)
         is FirTypeAliasSymbol -> findSAMConstructorForTypeAlias(bodyResolveComponents)
-        is FirAnonymousObjectSymbol, null -> null
+        is FirAnonymousObjectSymbol -> null
     }
 }
 
@@ -235,7 +232,7 @@ private fun prepareSubstitutorForTypeAliasConstructors(
 }
 
 private fun processConstructors(
-    matchedSymbol: FirClassLikeSymbol<*>?,
+    matchedSymbol: FirClassLikeSymbol<*>,
     substitutor: ConeSubstitutor,
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
@@ -243,44 +240,42 @@ private fun processConstructors(
     includeInnerConstructors: Boolean
 ) {
     try {
-        if (matchedSymbol != null) {
-            val scope = when (matchedSymbol) {
-                is FirTypeAliasSymbol -> {
-                    matchedSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
-                    val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-                    val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        val scope = when (matchedSymbol) {
+            is FirTypeAliasSymbol -> {
+                matchedSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
+                val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
+                val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
 
-                    val outerType = bodyResolveComponents.outerClassManager.outerType(type)
+                val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 
-                    if (basicScope != null &&
-                        (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
-                    ) {
-                        TypeAliasConstructorsSubstitutingScope(
-                            matchedSymbol,
-                            basicScope,
-                            outerType
-                        )
-                    } else basicScope
-                }
-                is FirClassSymbol -> {
-                    val firClass = matchedSymbol.fir as FirClass
-                    when (firClass.classKind) {
-                        ClassKind.INTERFACE -> null
-                        else -> firClass.scopeForClass(
-                            substitutor,
-                            session,
-                            bodyResolveComponents.scopeSession,
-                            firClass.symbol.toLookupTag()
-                        )
-                    }
+                if (basicScope != null &&
+                    (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
+                ) {
+                    TypeAliasConstructorsSubstitutingScope(
+                        matchedSymbol,
+                        basicScope,
+                        outerType
+                    )
+                } else basicScope
+            }
+            is FirClassSymbol -> {
+                val firClass = matchedSymbol.fir as FirClass
+                when (firClass.classKind) {
+                    ClassKind.INTERFACE -> null
+                    else -> firClass.scopeForClass(
+                        substitutor,
+                        session,
+                        bodyResolveComponents.scopeSession,
+                        firClass.symbol.toLookupTag()
+                    )
                 }
             }
+        }
 
-            //TODO: why don't we use declared member scope at this point?
-            scope?.processDeclaredConstructors {
-                if (includeInnerConstructors || !it.fir.isInner) {
-                    processor(it)
-                }
+        //TODO: why don't we use declared member scope at this point?
+        scope?.processDeclaredConstructors {
+            if (includeInnerConstructors || !it.fir.isInner) {
+                processor(it)
             }
         }
     } catch (e: Throwable) {
