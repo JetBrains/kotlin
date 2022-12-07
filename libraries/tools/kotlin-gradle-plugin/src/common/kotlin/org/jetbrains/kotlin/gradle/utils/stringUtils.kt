@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.util.*
 
 internal fun lowerCamelCaseName(vararg nameParts: String?): String {
@@ -12,7 +13,7 @@ internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     return nonEmptyParts.drop(1).joinToString(
         separator = "",
         prefix = nonEmptyParts.firstOrNull().orEmpty(),
-        transform = String::capitalize
+        transform = String::capitalizeAsciiOnly
     )
 }
 

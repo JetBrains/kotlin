@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.readSystemPropertyAtConfigurationTime
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 /**
  * Internal service for creating aggregated test tasks and registering all test tasks.
@@ -111,7 +112,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
 
     private fun cleanTaskName(taskName: String): String {
         check(taskName.isNotEmpty())
-        return "clean" + taskName.capitalize()
+        return "clean" + taskName.capitalizeAsciiOnly()
     }
 
     private val Project.cleanAllTestTask: TaskProvider<*>

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
@@ -149,7 +150,7 @@ internal class DefaultCInteropSettingsFactory(private val compilation: KotlinCom
         val params = DefaultCInteropSettings.Params(
             name = name,
             identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
-            dependencyConfigurationName = compilation.disambiguateName("${name.capitalize()}CInterop"),
+            dependencyConfigurationName = compilation.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
             interopProcessingTaskName = lowerCamelCaseName(
                 "cinterop",
                 compilation.name.takeIf { it != "main" }.orEmpty(),
@@ -169,7 +170,7 @@ internal class GradleKpmDefaultCInteropSettingsFactory(private val compilation: 
         val params = DefaultCInteropSettings.Params(
             name = name,
             identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
-            dependencyConfigurationName = compilation.owner.disambiguateName("${name.capitalize()}CInterop"),
+            dependencyConfigurationName = compilation.owner.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
             interopProcessingTaskName = lowerCamelCaseName(
                 "cinterop",
                 compilation.compilationPurpose.takeIf { it != "main" }.orEmpty(),

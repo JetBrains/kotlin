@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
 open class KotlinJsTargetPreset(
     project: Project
@@ -117,7 +118,7 @@ class KotlinJsSingleTargetPreset(
         irPreset?.let {
             super.provideTargetDisambiguationClassifier(target)
                 ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY))
-                ?.decapitalize()
+                ?.decapitalizeAsciiOnly()
         }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator()

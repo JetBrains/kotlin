@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
 open class KotlinJsIrTargetPreset(
     project: Project
@@ -92,7 +93,7 @@ class KotlinJsIrSingleTargetPreset(
         return if (mixedMode!!) {
             super.provideTargetDisambiguationClassifier(target)
                 ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.IR))
-                ?.decapitalize()
+                ?.decapitalizeAsciiOnly()
         } else {
             null
         }

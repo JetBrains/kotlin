@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import java.util.*
+
 enum class KotlinJsCompilerType {
     LEGACY,
     IR,
@@ -33,5 +35,5 @@ fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.lowerName.capitalize())
+    return removeSuffix(compilerType.lowerName.capitalize(Locale.ENGLISH))
 }

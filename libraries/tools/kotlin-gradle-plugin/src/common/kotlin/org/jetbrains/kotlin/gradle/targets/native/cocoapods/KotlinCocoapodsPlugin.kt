@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
@@ -653,7 +654,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.outputDir = cocoapodsExtension.publishDir
                 task.buildType = buildType
                 task.baseName = cocoapodsExtension.podFrameworkName
-                task.description = "Produces ${buildType.getName().capitalize()} XCFramework for all requested targets"
+                task.description = "Produces ${buildType.getName().capitalizeAsciiOnly()} XCFramework for all requested targets"
                 task.group = TASK_GROUP
             }
         }
@@ -667,7 +668,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         with(project) {
             val task =
                 tasks.register(lowerCamelCaseName(POD_FRAMEWORK_PREFIX, "spec", buildType.getName()), PodspecTask::class.java) { task ->
-                    task.description = "Generates podspec for ${buildType.getName().capitalize()} XCFramework publishing"
+                    task.description = "Generates podspec for ${buildType.getName().capitalizeAsciiOnly()} XCFramework publishing"
                     task.outputDir.set(xcFrameworkTask.map { it.outputDir.resolve(it.buildType.getName()) })
                     task.needPodspec = provider { true }
                     task.publishing.set(true)
