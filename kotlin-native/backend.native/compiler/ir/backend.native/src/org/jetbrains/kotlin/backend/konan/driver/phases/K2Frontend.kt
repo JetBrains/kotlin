@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.backend.konan.FrontendServices
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
@@ -128,8 +129,6 @@ private fun phaseBody(
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
 
-//    val mainModule = MainModule.SourceFiles(input.getSourceFiles())
-
     val dependencyList = DependencyListForCliModule.build(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices) {
         dependencies(context.config.resolvedLibraries.getFullList().map { it.libraryFile.absolutePath })
         friendDependencies(context.config.friendModuleFiles.map { it.absolutePath })
@@ -233,13 +232,17 @@ private fun phaseBody(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
 
-    val klibPath = configuration.get(KonanConfigKeys.OUTPUT)!!
+    val outputFiles = OutputFiles(context.config.outputPath, context.config.target, context.config.produce)
+    val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
+    val klibOutputFileName = outputFiles.klibOutputFileName(!nopack)
+    println("K2 OUTPUT KLIB: $klibOutputFileName")
+
     serializeModuleIntoKlib(
             context.config.moduleId,
             configuration,
             configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
-            klibPath = klibPath,
+            klibPath = klibOutputFileName,
             resolvedLibraries.map { it.library },
             fir2irResult.irModuleFragment,
             expectDescriptorToSymbol,
@@ -253,7 +256,6 @@ private fun phaseBody(
         val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
     }
-    println("K2 OUTPUT KLIB: $klibPath")
 
     return K2FrontendPhaseOutput.Full(environment, firFiles, fir2irResult)
 }
