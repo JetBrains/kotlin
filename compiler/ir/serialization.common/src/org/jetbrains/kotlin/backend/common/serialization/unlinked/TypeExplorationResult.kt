@@ -5,11 +5,22 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Fully.AccessibleClassifier
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Fully
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Partially
 
 internal sealed interface TypeExplorationResult {
-    class UnusableType(val cause: Partially) : TypeExplorationResult
+    sealed interface UnusableType : TypeExplorationResult {
+        class DueToClassifier(val classifier: Partially) : UnusableType
 
-    class UsableType(val narrowestVisibility: ABIVisibility, val dueTo: AccessibleClassifier?) : TypeExplorationResult
+        class DueToVisibilityConflict(
+            val classifierWithConflictingVisibility1: Fully.AccessibleClassifier,
+            val classifierWithConflictingVisibility2: Fully.AccessibleClassifier
+        ) : UnusableType
+    }
+
+    class UsableType(val classifierWithNarrowestVisibility: Fully?) : TypeExplorationResult {
+        companion object {
+            val DEFAULT_PUBLIC = UsableType(null)
+        }
+    }
 }

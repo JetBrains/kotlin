@@ -69,6 +69,5 @@ internal sealed interface ClassifierExplorationResult {
         }
     }
 
-    object NoClassifier : ClassifierExplorationResult
     object RecursionAvoidance : ClassifierExplorationResult
 }
