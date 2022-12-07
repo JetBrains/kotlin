@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 
 internal class LLFirFileAnnotationsResolveTransformer(
     private val firFile: FirFile,
@@ -55,5 +56,5 @@ internal class LLFirFileAnnotationsResolveTransformer(
         }
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) = error("Not implemented")
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) = error("Not implemented")
 }

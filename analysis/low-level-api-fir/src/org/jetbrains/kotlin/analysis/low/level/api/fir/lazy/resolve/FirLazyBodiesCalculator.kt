@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -26,10 +25,10 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.psi.*
 
 internal object FirLazyBodiesCalculator {
-    fun calculateLazyBodiesInside(designation: FirDeclarationDesignation) {
-        designation.declaration.transform<FirElement, PersistentList<FirDeclaration>>(
+    fun calculateLazyBodiesInside(designation: FirDesignation) {
+        designation.target.transform<FirElement, PersistentList<FirDeclaration>>(
             FirLazyBodiesCalculatorTransformer,
-            designation.toSequence(includeTarget = false).toList().toPersistentList()
+            designation.path.toPersistentList(),
         )
     }
 
@@ -37,8 +36,8 @@ internal object FirLazyBodiesCalculator {
         firFile.transform<FirElement, PersistentList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
-    fun calculateLazyBodiesForFunction(designation: FirDeclarationDesignation) {
-        val simpleFunction = designation.declaration as FirSimpleFunction
+    fun calculateLazyBodiesForFunction(designation: FirDesignation) {
+        val simpleFunction = designation.target as FirSimpleFunction
         if (simpleFunction.body !is FirLazyBlock) return
         val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = simpleFunction.moduleData.session,
@@ -52,8 +51,8 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyBodyForConstructor(designation: FirDeclarationDesignation) {
-        val constructor = designation.declaration as FirConstructor
+    fun calculateLazyBodyForConstructor(designation: FirDesignation) {
+        val constructor = designation.target as FirConstructor
         require(constructor.psi is KtConstructor<*>)
         require(constructor.body is FirLazyBlock || constructor.delegatedConstructor is FirLazyDelegatedConstructorCall)
 
@@ -70,8 +69,8 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyBodyForProperty(designation: FirDeclarationDesignation) {
-        val firProperty = designation.declaration as FirProperty
+    fun calculateLazyBodyForProperty(designation: FirDesignation) {
+        val firProperty = designation.target as FirProperty
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
         val newProperty = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
@@ -119,8 +118,8 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyInitializerForEnumEntry(designation: FirDeclarationDesignation) {
-        val enumEntry = designation.declaration as FirEnumEntry
+    fun calculateLazyInitializerForEnumEntry(designation: FirDesignation) {
+        val enumEntry = designation.target as FirEnumEntry
         require(enumEntry.initializer is FirLazyExpression)
         val newEntry = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = enumEntry.moduleData.session,
@@ -133,8 +132,8 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
-    fun calculateLazyBodyForAnonymousInitializer(designation: FirDeclarationDesignation) {
-        val initializer = designation.declaration as FirAnonymousInitializer
+    fun calculateLazyBodyForAnonymousInitializer(designation: FirDesignation) {
+        val initializer = designation.target as FirAnonymousInitializer
         require(initializer.body is FirLazyBlock)
         val newInitializer = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = initializer.moduleData.session,
@@ -180,7 +179,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         data: PersistentList<FirDeclaration>
     ): FirSimpleFunction {
         if (simpleFunction.body is FirLazyBlock) {
-            val designation = FirDeclarationDesignation(data, simpleFunction)
+            val designation = FirDesignation(data, simpleFunction)
             FirLazyBodiesCalculator.calculateLazyBodiesForFunction(designation)
         }
         return simpleFunction
@@ -191,7 +190,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         data: PersistentList<FirDeclaration>
     ): FirConstructor {
         if (constructor.body is FirLazyBlock || constructor.delegatedConstructor is FirLazyDelegatedConstructorCall) {
-            val designation = FirDeclarationDesignation(data, constructor)
+            val designation = FirDesignation(data, constructor)
             FirLazyBodiesCalculator.calculateLazyBodyForConstructor(designation)
         }
         return constructor
@@ -199,7 +198,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
 
     override fun transformProperty(property: FirProperty, data: PersistentList<FirDeclaration>): FirProperty {
         if (FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(property)) {
-            val designation = FirDeclarationDesignation(data, property)
+            val designation = FirDesignation(data, property)
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(designation)
         }
         return property
@@ -211,7 +210,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
         if (enumEntry.initializer is FirLazyExpression) {
-            val designation = FirDeclarationDesignation(data, enumEntry)
+            val designation = FirDesignation(data, enumEntry)
             FirLazyBodiesCalculator.calculateLazyInitializerForEnumEntry(designation)
         }
         return enumEntry
@@ -221,7 +220,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         anonymousInitializer: FirAnonymousInitializer, data: PersistentList<FirDeclaration>
     ): FirAnonymousInitializer {
         if (anonymousInitializer.body is FirLazyBlock) {
-            val designation = FirDeclarationDesignation(data, anonymousInitializer)
+            val designation = FirDesignation(data, anonymousInitializer)
             FirLazyBodiesCalculator.calculateLazyBodyForAnonymousInitializer(designation)
         }
         return anonymousInitializer

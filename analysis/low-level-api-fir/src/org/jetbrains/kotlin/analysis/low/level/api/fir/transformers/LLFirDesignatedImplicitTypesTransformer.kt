@@ -14,17 +14,18 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 
 /**
  * Transform designation into IMPLICIT_TYPES_BODY_RESOLVE declaration. Affects only for target declaration, it's children and dependents
  */
 internal class LLFirDesignatedImplicitTypesTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     towerDataContextCollector: FirTowerDataContextCollector?,
@@ -50,8 +51,8 @@ internal class LLFirDesignatedImplicitTypesTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
-        designation.declaration.checkPhase(FirResolvePhase.CONTRACTS)
+        if (designation.target.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
+        designation.target.checkPhase(FirResolvePhase.CONTRACTS)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
@@ -59,15 +60,15 @@ internal class LLFirDesignatedImplicitTypesTransformer(
     
 
         ideDeclarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.declaration, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        checkIsResolved(designation.declaration)
+        updatePhaseDeep(designation.target, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        if (declaration is FirCallableDeclaration) {
-            checkReturnTypeRefIsResolved(declaration)
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        resolvable.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        if (resolvable is FirCallableDeclaration) {
+            checkReturnTypeRefIsResolved(resolvable)
         }
-        checkNestedDeclarationsAreResolved(declaration)
+        checkNestedDeclarationsAreResolved(resolvable)
     }
 }

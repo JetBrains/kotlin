@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
  * Transform designation into SUPER_TYPES phase. Affects only for designation, target declaration, it's children and dependents
  */
 internal class LLFirDesignatedSupertypeResolverTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val lockProvider: LLFirLockProvider,
@@ -39,7 +40,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
 
     private val supertypeComputationSession = SupertypeComputationSession()
 
-    private inner class DesignatedFirSupertypeResolverVisitor(classDesignation: FirDeclarationDesignation) :
+    private inner class DesignatedFirSupertypeResolverVisitor(classDesignation: FirDesignation) :
         FirSupertypeResolverVisitor(
             session = session,
             supertypeComputationSession = supertypeComputationSession,
@@ -58,7 +59,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         }
     }
 
-    private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
+    private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDesignation) :
         FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession) {
 
         val declarationTransformer = LLFirDeclarationTransformer(classDesignation)
@@ -70,9 +71,9 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         }
     }
 
-    private fun collect(designation: FirDeclarationDesignationWithFile): Collection<FirDeclarationDesignationWithFile> {
-        val visited = mutableMapOf<FirDeclaration, FirDeclarationDesignationWithFile>()
-        val toVisit = mutableListOf<FirDeclarationDesignationWithFile>()
+    private fun collect(designation: FirDesignationWithFile): Collection<FirDesignationWithFile> {
+        val visited = mutableMapOf<FirElementWithResolvePhase, FirDesignationWithFile>()
+        val toVisit = mutableListOf<FirDesignationWithFile>()
 
         toVisit.add(designation)
         while (toVisit.isNotEmpty()) {
@@ -84,7 +85,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
                     nowVisit.firFile.accept(resolver, null)
                 }
                 resolver.declarationTransformer.ensureDesignationPassed()
-                visited[nowVisit.declaration] = nowVisit
+                visited[nowVisit.target] = nowVisit
             }
             toVisit.clear()
 
@@ -104,8 +105,8 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         return visited.values
     }
 
-    private fun apply(visited: Collection<FirDeclarationDesignationWithFile>) {
-        fun applyToFileSymbols(designations: List<FirDeclarationDesignationWithFile>) {
+    private fun apply(visited: Collection<FirDesignationWithFile>) {
+        fun applyToFileSymbols(designations: List<FirDesignationWithFile>) {
             for (designation in designations) {
                 if (checkPCE) checkCanceled()
                 val applier = DesignatedFirApplySupertypesTransformer(designation)
@@ -128,18 +129,18 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
+        if (designation.target.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
         designation.firFile.checkPhase(FirResolvePhase.IMPORTS)
 
-        val targetDesignation = if (designation.declaration !is FirClassLikeDeclaration) {
+        val targetDesignation = if (designation.target !is FirClassLikeDeclaration) {
             val resolvableTarget = designation.path.lastOrNull()
             if (resolvableTarget == null) {
-                updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
+                updatePhaseDeep(designation.target, FirResolvePhase.SUPER_TYPES)
                 return
             }
             check(resolvableTarget is FirClassLikeDeclaration)
             val targetPath = designation.path.dropLast(1)
-            FirDeclarationDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
+            FirDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.SUPER_TYPES) {
@@ -148,25 +149,25 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             apply(collected)
         }
 
-        updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
-        checkIsResolved(designation.declaration)
+        updatePhaseDeep(designation.target, FirResolvePhase.SUPER_TYPES)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
-        when (declaration) {
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        resolvable.checkPhase(FirResolvePhase.SUPER_TYPES)
+        when (resolvable) {
             is FirClass -> {
-                for (superTypeRef in declaration.superTypeRefs) {
-                    checkTypeRefIsResolved(superTypeRef, "class super type", declaration)
+                for (superTypeRef in resolvable.superTypeRefs) {
+                    checkTypeRefIsResolved(superTypeRef, "class super type", resolvable)
                 }
             }
 
             is FirTypeAlias -> {
-                checkTypeRefIsResolved(declaration.expandedTypeRef, typeRefName = "type alias expanded type", declaration)
+                checkTypeRefIsResolved(resolvable.expandedTypeRef, typeRefName = "type alias expanded type", resolvable)
             }
 
             else -> {}
         }
-        checkNestedDeclarationsAreResolved(declaration)
+        checkNestedDeclarationsAreResolved(resolvable)
     }
 }

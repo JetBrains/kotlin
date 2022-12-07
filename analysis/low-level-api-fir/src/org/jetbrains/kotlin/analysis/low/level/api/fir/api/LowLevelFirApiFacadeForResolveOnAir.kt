@@ -8,20 +8,25 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirReplacement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.buildFileFirAnnotation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.buildFirUserTypeRef
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
@@ -34,14 +39,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 object LowLevelFirApiFacadeForResolveOnAir {
@@ -254,12 +257,12 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 }
             } else newDeclarationWithReplacement
 
-            val onAirDesignation = FirDeclarationDesignationWithFile(
+            val onAirDesignation = FirDesignationWithFile(
                 path = originalDesignation.path,
-                declaration = copiedFirDeclaration,
+                target = copiedFirDeclaration,
                 firFile = originalFirFile
             )
-            val resolvableSession = onAirDesignation.declaration.llFirResolvableSession
+            val resolvableSession = onAirDesignation.target.llFirResolvableSession
                 ?: error("Expected resolvable session")
             resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
                 .runLazyDesignatedOnAirResolveToBodyWithoutLock(

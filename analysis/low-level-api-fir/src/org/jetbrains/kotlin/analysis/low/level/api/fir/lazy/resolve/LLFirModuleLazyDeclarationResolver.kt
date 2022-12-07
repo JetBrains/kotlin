@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -180,7 +180,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
         if (validForResolveDeclarations.isEmpty()) return
         val designations = validForResolveDeclarations.map {
-            FirDeclarationDesignationWithFile(path = emptyList(), declaration = it, firFile = firFile)
+            FirDesignationWithFile(path = emptyList(), target = it, firFile = firFile)
         }
 
         var currentPhase = FirResolvePhase.IMPORTS
@@ -189,7 +189,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             if (checkPCE) checkCanceled()
 
             val transformersToApply = designations.filter { designation ->
-                designation.declaration.resolvePhase < currentPhase
+                designation.target.resolvePhase < currentPhase
             }
 
             if (transformersToApply.isEmpty()) continue
@@ -283,7 +283,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
         val requestedDeclarationDesignation = firDeclarationToResolve.tryCollectDesignationWithFile()
 
-        val designation: FirDeclarationDesignationWithFile
+        val designation: FirDesignationWithFile
         val neededPhase: FirResolvePhase
 
         if (requestedDeclarationDesignation != null) {
@@ -322,7 +322,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             designation = declarationToResolve.collectDesignationWithFile()
         }
 
-        if (designation.declaration.resolvePhase >= neededPhase) return
+        if (designation.target.resolvePhase >= neededPhase) return
 
         if (neededPhase == FirResolvePhase.IMPORTS) {
             resolveFileToImports(designation.firFile, checkPCE)
@@ -336,13 +336,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 toPhase = neededPhase,
                 checkPCE = checkPCE,
             )
-            designation.declaration
+            designation.target
         }
     }
 
 
     private fun runLazyDesignatedResolveWithoutLock(
-        designation: FirDeclarationDesignationWithFile,
+        designation: FirDesignationWithFile,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
         checkPCE: Boolean,
@@ -351,7 +351,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         resolveFileToImportsWithoutLock(designation.firFile, checkPCE)
         if (toPhase == FirResolvePhase.IMPORTS) return
 
-        val declarationResolvePhase = designation.declaration.resolvePhase
+        val declarationResolvePhase = designation.target.resolvePhase
         if (declarationResolvePhase >= toPhase) return
 
         var currentPhase = maxOf(declarationResolvePhase, FirResolvePhase.IMPORTS)
@@ -374,13 +374,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 
     internal fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
-        designation: FirDeclarationDesignationWithFile,
+        designation: FirDesignationWithFile,
         checkPCE: Boolean,
         onAirCreatedDeclaration: Boolean,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         resolveFileToImportsWithoutLock(designation.firFile, checkPCE)
-        var currentPhase = maxOf(designation.declaration.resolvePhase, FirResolvePhase.IMPORTS)
+        var currentPhase = maxOf(designation.target.resolvePhase, FirResolvePhase.IMPORTS)
 
         val scopeSession = ScopeSession()
 
@@ -388,7 +388,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             LLFirFirProviderInterceptor.createForFirElement(
                 session = designation.firFile.moduleData.session,
                 firFile = designation.firFile,
-                element = designation.declaration
+                element = designation.target
             )
         } else null
 

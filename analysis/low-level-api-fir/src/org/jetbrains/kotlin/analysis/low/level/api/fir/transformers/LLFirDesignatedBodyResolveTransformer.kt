@@ -15,16 +15,17 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirEnsureBasedTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 
 /**
  * Transform designation into BODY_RESOLVE declaration. Affects only for target declaration and it's children
  */
 internal class LLFirDesignatedBodyResolveTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     towerDataContextCollector: FirTowerDataContextCollector?,
@@ -50,8 +51,8 @@ internal class LLFirDesignatedBodyResolveTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.BODY_RESOLVE) return
-        designation.declaration.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        if (designation.target.resolvePhase >= FirResolvePhase.BODY_RESOLVE) return
+        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
@@ -59,13 +60,13 @@ internal class LLFirDesignatedBodyResolveTransformer(
     
 
         ideDeclarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.declaration, FirResolvePhase.BODY_RESOLVE, withNonLocalDeclarations = true)
-        checkIsResolved(designation.declaration)
+        updatePhaseDeep(designation.target, FirResolvePhase.BODY_RESOLVE, withNonLocalDeclarations = true)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
-        checkNestedDeclarationsAreResolved(declaration)
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        resolvable.checkPhase(FirResolvePhase.BODY_RESOLVE)
+        checkNestedDeclarationsAreResolved(resolvable)
     }
 }
 

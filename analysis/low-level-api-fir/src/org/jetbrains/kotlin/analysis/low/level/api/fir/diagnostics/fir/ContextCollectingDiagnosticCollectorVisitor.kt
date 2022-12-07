@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -14,21 +18,18 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 
 private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     sessionHolder: SessionHolder,
-    designation: FirDeclarationDesignationWithFile,
+    designation: FirDesignationWithFile,
 ) : AbstractDiagnosticCollectorVisitor(
     PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
 ) {
     private val contextCollector = object : ContextByDesignationCollector<CheckerContext>(designation) {
         override fun getCurrentContext(): CheckerContext = context
 
-        override fun goToNestedDeclaration(declaration: FirDeclaration) {
-            declaration.accept(this@ContextCollectingDiagnosticCollectorVisitor, null)
+        override fun goToNestedDeclaration(target: FirElementWithResolvePhase) {
+            target.accept(this@ContextCollectingDiagnosticCollectorVisitor, null)
         }
     }
 
@@ -43,7 +44,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     override fun checkElement(element: FirElement) {}
 
     companion object {
-        fun collect(sessionHolder: SessionHolder, designation: FirDeclarationDesignationWithFile): CheckerContext {
+        fun collect(sessionHolder: SessionHolder, designation: FirDesignationWithFile): CheckerContext {
             val visitor = ContextCollectingDiagnosticCollectorVisitor(sessionHolder, designation)
             designation.firFile.accept(visitor, null)
             return visitor.contextCollector.getCollectedContext()
