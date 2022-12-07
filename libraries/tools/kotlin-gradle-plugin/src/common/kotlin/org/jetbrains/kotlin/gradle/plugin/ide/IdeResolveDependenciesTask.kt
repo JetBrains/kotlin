@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.File
@@ -56,6 +57,15 @@ internal open class IdeResolveDependenciesTask : DefaultTask() {
                 protoOutput.parentFile.mkdirs()
                 protoOutput.writeBytes(proto)
             }
+        }
+
+        (project.kotlinIdeMultiplatformImport as? IdeMultiplatformImportImpl)?.statistics?.let { statistics ->
+            val timeStatisticsFile = outputDirectory.resolve("times.txt")
+            timeStatisticsFile.writeText(buildString {
+                statistics.getExecutionTimes().forEach { (clazz, time) ->
+                    appendLine("${clazz.name} $time.ms")
+                }
+            })
         }
     }
 

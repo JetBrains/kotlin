@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.re
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
 import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 
 
 internal class IdeMultiplatformImportImpl(
-    private val extension: KotlinProjectExtension
+    private val extension: KotlinProjectExtension,
+    val statistics: IdeMultiplatformImportStatistics = IdeMultiplatformImportStatistics()
 ) : IdeMultiplatformImport {
 
     override fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency> {
@@ -59,7 +61,7 @@ internal class IdeMultiplatformImportImpl(
         level: DependencyResolutionLevel
     ) {
         registeredDependencyResolvers.add(
-            RegisteredDependencyResolver(resolver, constraint, phase, level)
+            RegisteredDependencyResolver(statistics, resolver, constraint, phase, level)
         )
 
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {
@@ -159,28 +161,40 @@ internal class IdeMultiplatformImportImpl(
         val constraint: SourceSetConstraint,
     )
 
-    private class RegisteredDependencyResolver(
+    private data class RegisteredDependencyResolver(
+        private val statistics: IdeMultiplatformImportStatistics,
         private val resolver: IdeDependencyResolver,
         val constraint: SourceSetConstraint,
         val phase: DependencyResolutionPhase,
         val level: DependencyResolutionLevel,
     ) : IdeDependencyResolver {
 
+        private class TimeMeasuredResult(val timeInMillis: Long, val dependencies: Set<IdeaKotlinDependency>)
+
         override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-            return runCatching { resolver.resolve(sourceSet) }
+            return runCatching { resolveTimed(sourceSet) }
                 .onFailure { error -> reportError(sourceSet, error) }
-                .onSuccess { dependencies -> reportSuccess(sourceSet, dependencies) }
-                .onSuccess { dependencies -> attachResolvedByExtra(dependencies) }
-                .getOrNull().orEmpty()
+                .onSuccess { result -> reportSuccess(sourceSet, result) }
+                .onSuccess { result -> attachResolvedByExtra(result.dependencies) }
+                .getOrNull()?.dependencies.orEmpty()
+        }
+
+        private fun resolveTimed(sourceSet: KotlinSourceSet): TimeMeasuredResult {
+            val (time, result) = measureTimeMillisWithResult { resolver.resolve(sourceSet) }
+            statistics.addExecutionTime(resolver::class.java, time)
+            return TimeMeasuredResult(time, result)
         }
 
         private fun reportError(sourceSet: KotlinSourceSet, error: Throwable) {
             logger.error("e: ${resolver::class.java.name} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}", error)
         }
 
-        private fun reportSuccess(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
+        private fun reportSuccess(sourceSet: KotlinSourceSet, result: TimeMeasuredResult) {
             if (!logger.isDebugEnabled) return
-            logger.debug("${resolver::class.java.name} resolved on ${IdeaKotlinSourceCoordinates(sourceSet)}: $dependencies")
+            logger.debug(
+                "${resolver::class.java.name} resolved on ${IdeaKotlinSourceCoordinates(sourceSet)}: " +
+                        "${result.dependencies} (${result.timeInMillis} ms)"
+            )
         }
 
         private fun attachResolvedByExtra(dependencies: Iterable<IdeaKotlinDependency>) {
@@ -189,5 +203,4 @@ internal class IdeMultiplatformImportImpl(
             }
         }
     }
-
 }
