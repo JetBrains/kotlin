@@ -19,7 +19,7 @@ internal sealed interface TypeExplorationResult {
         ) : UnusableType
     }
 
-    /** Indicates usable type that does not reference any partially-linked classifiers and does not have visibility conflicts */
+    /** Indicates usable type that does not reference any partially linked classifiers and does not have visibility conflicts */
     class UsableType(val classifierWithNarrowestVisibility: Fully?) : TypeExplorationResult {
         companion object {
             val DEFAULT_PUBLIC = UsableType(null)
