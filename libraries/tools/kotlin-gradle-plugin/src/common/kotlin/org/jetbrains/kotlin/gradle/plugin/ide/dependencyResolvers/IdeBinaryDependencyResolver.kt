@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.LibraryBinaryIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
@@ -40,14 +42,24 @@ internal class IdeBinaryDependencyResolver(
 ) : IdeDependencyResolver {
 
     sealed class ArtifactResolutionStrategy {
+
         /**
-         * Resolve the artifacts from a [GradleKpmVariant] using its [GradleKpmVariant.compileDependenciesConfiguration],
+         * Resolve the artifacts from a [KotlinSourceSet] using its [KotlinCompilation.compileDependencyConfigurationName],
          * which already knows how to resolve platform artifacts.
          * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
          */
         data class Compilation(
             internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? =
                 { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
+            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
+        ) : ArtifactResolutionStrategy()
+
+        /**
+         * Resolve the artifacts from a [KotlinSourceSet] using the configuration returned by [configurationSelector].
+         * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
+         */
+        data class ResolvableConfiguration(
+            internal val configurationSelector: (KotlinSourceSet) -> Configuration?,
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
         ) : ArtifactResolutionStrategy()
 
@@ -134,6 +146,7 @@ internal class IdeBinaryDependencyResolver(
     private fun ArtifactResolutionStrategy.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
         return when (this) {
             is ArtifactResolutionStrategy.Compilation -> createArtifactView(sourceSet)
+            is ArtifactResolutionStrategy.ResolvableConfiguration -> createArtifactView(sourceSet)
             is ArtifactResolutionStrategy.PlatformLikeSourceSet -> createArtifactView(sourceSet)
         }
     }
@@ -156,11 +169,20 @@ internal class IdeBinaryDependencyResolver(
         }
     }
 
+    private fun ArtifactResolutionStrategy.ResolvableConfiguration.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
+        val configuration = configurationSelector(sourceSet) ?: return null
+        return configuration.incoming.artifactView { view ->
+            view.isLenient = true
+            view.attributes.setupArtifactViewAttributes(sourceSet)
+        }
+    }
+
     private fun ArtifactResolutionStrategy.PlatformLikeSourceSet.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
         if (sourceSet !is DefaultKotlinSourceSet) return null
         val project = sourceSet.project
 
         val platformLikeCompileDependenciesConfiguration = project.configurations.detachedConfiguration()
+        platformLikeCompileDependenciesConfiguration.markResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
 
