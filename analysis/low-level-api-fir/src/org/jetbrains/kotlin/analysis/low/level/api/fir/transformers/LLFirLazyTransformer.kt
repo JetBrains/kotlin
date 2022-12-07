@@ -63,7 +63,7 @@ internal interface LLFirLazyTransformer {
     companion object {
         private object WholeTreePhaseUpdater : FirVisitor<Unit, FirResolvePhase>() {
             override fun visitElement(element: FirElement, data: FirResolvePhase) {
-                if (element is FirDeclaration) {
+                if (element is FirElementWithResolvePhase) {
                     if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
                     element.replaceResolvePhase(data)
                 }
