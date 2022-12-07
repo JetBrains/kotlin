@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -159,6 +160,7 @@ dependencies {
 }
 
 apply plugin: CompilationDatabasePlugin
+apply plugin: GitClangFormatPlugin
 apply plugin: 'maven-publish'
 apply plugin: BasePlugin
 

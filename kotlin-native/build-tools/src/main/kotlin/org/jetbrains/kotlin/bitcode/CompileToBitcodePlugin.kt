@@ -16,10 +16,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
-import org.jetbrains.kotlin.cpp.CompilationDatabaseExtension
-import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
-import org.jetbrains.kotlin.cpp.CompileToExecutable
-import org.jetbrains.kotlin.cpp.RunGTest
+import org.jetbrains.kotlin.cpp.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
@@ -68,6 +65,7 @@ private abstract class CompileTestsSemaphore : BuildService<BuildServiceParamete
 open class CompileToBitcodePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.apply<CompilationDatabasePlugin>()
+        target.apply<GitClangFormatPlugin>()
         target.extensions.create<CompileToBitcodeExtension>(EXTENSION_NAME, target)
     }
 
