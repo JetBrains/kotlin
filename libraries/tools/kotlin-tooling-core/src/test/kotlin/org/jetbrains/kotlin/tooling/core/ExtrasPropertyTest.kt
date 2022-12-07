@@ -34,6 +34,9 @@ class ExtrasPropertyTest {
     private val keyList = extrasKeyOf<MutableList<Dummy>>()
     private val Subject.factoryList: MutableList<Dummy> by keyList.factoryProperty { mutableListOf() }
 
+    private val keySubjectList = extrasKeyOf<MutableList<Subject>>()
+    private val Subject.lazyList: MutableList<Subject> by keySubjectList.lazyProperty { mutableListOf(this) }
+
     @Test
     fun `test - readOnlyProperty`() {
         val subject = Subject()
@@ -108,6 +111,29 @@ class ExtrasPropertyTest {
             val list = mutableListOf(Dummy())
             subject.extras[keyList] = list
             assertSame(list, subject.factoryList)
+        }
+    }
+
+
+    @Test
+    fun `test - lazyProperty`() {
+        run {
+            val subject = Subject()
+            assertNotNull(subject.lazyList)
+            assertSame(subject.lazyList, subject.lazyList)
+            assertSame(subject.extras[keySubjectList], subject.lazyList)
+            assertSame(subject, subject.lazyList.firstOrNull())
+
+            val subject2 = Subject()
+            assertSame(subject2, subject2.lazyList.firstOrNull())
+            assertNotSame(subject.lazyList.firstOrNull(), subject2.lazyList.firstOrNull())
+        }
+
+        run {
+            val subject = Subject()
+            val list = mutableListOf<Subject>()
+            subject.extras[keySubjectList] = list
+            assertSame(list, subject.lazyList)
         }
     }
 }
