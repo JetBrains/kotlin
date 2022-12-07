@@ -456,7 +456,7 @@ abstract class IncrementalCompilerRunner<
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
-            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
+            val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
             //TODO(valtman) sourceToCompile calculate based on abiSnapshot
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
@@ -576,6 +576,8 @@ abstract class IncrementalCompilerRunner<
 
         return exitCode
     }
+
+    open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
 
     protected fun getRemovedClassesChanges(
         caches: IncrementalCachesManager<*>,

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt;
+import org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt;
 import org.jetbrains.kotlin.maven.incremental.FileCopier;
 import org.jetbrains.kotlin.maven.incremental.MavenICReporter;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
@@ -267,7 +267,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 arguments.setClasspath(StringUtil.join(filteredClasspath, File.pathSeparator));
             }
 
-            IncrementalJvmCompilerRunnerKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
+            CompilerRunnerUtilsKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
 
             int compiledKtFilesCount = icReporter.getCompiledKotlinFiles().size();
             getLog().info("Compiled " + icReporter.getCompiledKotlinFiles().size() + " Kotlin files using incremental compiler");
