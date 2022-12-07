@@ -546,6 +546,13 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
     )
     var oldInnerClassesLogic: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xir-inliner",
+        description = "Inline functions using IR inliner instead of bytecode inliner"
+    )
+    var enableIrInliner: Boolean by FreezableVar(false)
+
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

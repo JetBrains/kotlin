@@ -30,6 +30,7 @@ where advanced options include:
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless their liveness.
+  -Xir-inliner               Inline functions using IR inliner instead of bytecode inliner
   -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
                              Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
   -Xenhance-type-parameter-types-to-def-not-null
