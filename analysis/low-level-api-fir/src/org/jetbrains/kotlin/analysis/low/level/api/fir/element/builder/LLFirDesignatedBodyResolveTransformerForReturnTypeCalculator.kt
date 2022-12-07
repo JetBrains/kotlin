@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 
 fun LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
@@ -60,14 +60,14 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
 ) {
     private val targetDeclaration = designation.last()
 
-    private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDeclarationDesignation) -> Unit) {
+    private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDesignation) -> Unit) {
         if (this !== targetDeclaration) return
         if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
         lazyResolveToPhase(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
             val declarationList = designation.filterIsInstance<FirDeclaration>()
             check(declarationList.isNotEmpty()) { "Invalid empty declaration designation" }
-            body(FirDeclarationDesignation(declarationList.dropLast(1), this))
+            body(FirDesignation(declarationList.dropLast(1), this))
         }
     }
 

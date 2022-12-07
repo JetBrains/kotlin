@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -15,12 +16,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 internal interface LLFirLazyTransformer {
     fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
 
-    fun checkIsResolved(declaration: FirDeclaration)
+    fun checkIsResolved(resolvable: FirElementWithResolvePhase)
 
-    fun checkNestedDeclarationsAreResolved(declaration: FirDeclaration) {
-        checkFunctionParametersAreResolved(declaration)
-        checkPropertyAccessorsAreResolved(declaration)
-        checkClassMembersAreResolved(declaration)
+    fun checkNestedDeclarationsAreResolved(resolvable: FirElementWithResolvePhase) {
+        if (resolvable !is FirDeclaration) return
+        checkFunctionParametersAreResolved(resolvable)
+        checkPropertyAccessorsAreResolved(resolvable)
+        checkClassMembersAreResolved(resolvable)
     }
 
     fun checkClassMembersAreResolved(declaration: FirDeclaration) {
@@ -69,7 +71,7 @@ internal interface LLFirLazyTransformer {
             }
         }
 
-        private fun updatePhaseForNonLocals(element: FirDeclaration, newPhase: FirResolvePhase) {
+        private fun updatePhaseForNonLocals(element: FirElementWithResolvePhase, newPhase: FirResolvePhase) {
             if (element.resolvePhase >= newPhase) return
             element.replaceResolvePhase(newPhase)
 
@@ -99,7 +101,7 @@ internal interface LLFirLazyTransformer {
             }
         }
 
-        fun updatePhaseDeep(element: FirDeclaration, newPhase: FirResolvePhase, withNonLocalDeclarations: Boolean = false) {
+        fun updatePhaseDeep(element: FirElementWithResolvePhase, newPhase: FirResolvePhase, withNonLocalDeclarations: Boolean = false) {
             if (withNonLocalDeclarations) {
                 WholeTreePhaseUpdater.visitElement(element, newPhase)
             } else {
@@ -112,7 +114,7 @@ internal interface LLFirLazyTransformer {
 
         val DUMMY = object : LLFirLazyTransformer {
             override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) = Unit
-            override fun checkIsResolved(declaration: FirDeclaration) = error("Not implemented")
+            override fun checkIsResolved(resolvable: FirElementWithResolvePhase) = error("Not implemented")
         }
     }
 }

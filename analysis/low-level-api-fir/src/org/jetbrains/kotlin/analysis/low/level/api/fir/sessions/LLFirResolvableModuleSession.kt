@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class LLFirResolvableModuleSession(
@@ -24,7 +21,7 @@ abstract class LLFirResolvableModuleSession(
     }
 }
 
-internal val FirDeclaration.llFirResolvableSession: LLFirResolvableModuleSession?
+internal val FirElementWithResolvePhase.llFirResolvableSession: LLFirResolvableModuleSession?
     get() = llFirSession as? LLFirResolvableModuleSession
 
 internal val FirBasedSymbol<*>.llFirResolvableSession: LLFirResolvableModuleSession?

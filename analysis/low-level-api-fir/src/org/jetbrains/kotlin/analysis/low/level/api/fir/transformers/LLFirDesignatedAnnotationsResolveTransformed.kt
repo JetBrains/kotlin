@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -15,14 +16,14 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnno
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 
 internal class LLFirDesignatedAnnotationsResolveTransformed(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirLazyTransformer, FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession, CompilerRequiredAnnotationsComputationSession()) {
 
-    private fun moveNextDeclaration(designationIterator: Iterator<FirDeclaration>) {
+    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolvePhase>) {
         if (!designationIterator.hasNext()) {
-            val declaration = designation.declaration
+            val declaration = designation.target
             if (declaration is FirRegularClass || declaration is FirTypeAlias) {
                 declaration.transform<FirDeclaration, Nothing?>(this, null)
             }
@@ -44,7 +45,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) return
+        if (designation.target.resolvePhase >= FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) return
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
@@ -52,12 +53,12 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
             moveNextDeclaration(designationIterator)
         }
 
-        LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-        checkIsResolved(designation.declaration)
+        LLFirLazyTransformer.updatePhaseDeep(designation.target, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        resolvable.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
 //        checkNestedDeclarationsAreResolved(declaration)
     }

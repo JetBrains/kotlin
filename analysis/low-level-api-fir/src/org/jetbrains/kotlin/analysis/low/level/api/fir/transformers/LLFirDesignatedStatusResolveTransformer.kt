@@ -12,16 +12,17 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 
 /**
  * Transform designation into STATUS phase. Affects only for designation, target declaration, it's children and dependents
  */
 internal class LLFirDesignatedStatusResolveTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
 ) : LLFirLazyTransformer {
@@ -37,8 +38,8 @@ internal class LLFirDesignatedStatusResolveTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.STATUS) return
-        designation.declaration.checkPhase(FirResolvePhase.TYPES)
+        if (designation.target.resolvePhase >= FirResolvePhase.STATUS) return
+        designation.target.checkPhase(FirResolvePhase.TYPES)
 
         val transformer = FirDesignatedStatusResolveTransformerForIDE()
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
@@ -46,17 +47,17 @@ internal class LLFirDesignatedStatusResolveTransformer(
         }
         
         transformer.designationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.declaration, FirResolvePhase.STATUS)
-        checkIsResolved(designation.declaration)
+        updatePhaseDeep(designation.target, FirResolvePhase.STATUS)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        if (declaration !is FirAnonymousInitializer) {
-            declaration.checkPhase(FirResolvePhase.STATUS)
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        if (resolvable !is FirAnonymousInitializer) {
+            resolvable.checkPhase(FirResolvePhase.STATUS)
         }
-        if (declaration is FirMemberDeclaration) {
-            checkDeclarationStatusIsResolved(declaration)
+        if (resolvable is FirMemberDeclaration) {
+            checkDeclarationStatusIsResolved(resolvable)
         }
-        checkNestedDeclarationsAreResolved(declaration)
+        checkNestedDeclarationsAreResolved(resolvable)
     }
 }

@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
 
 internal class LLFirDesignatedExpectActualMatcherTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirLazyTransformer, FirExpectActualMatcherTransformer(session, scopeSession) {
@@ -37,8 +38,8 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.EXPECT_ACTUAL_MATCHING) return
-        designation.declaration.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        if (designation.target.resolvePhase >= FirResolvePhase.EXPECT_ACTUAL_MATCHING) return
+        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
@@ -47,14 +48,14 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
     
 
         declarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.declaration, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-        checkIsResolved(designation.declaration)
+        updatePhaseDeep(designation.target, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        resolvable.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         // TODO check if expect-actual matching is present
-        checkNestedDeclarationsAreResolved(declaration)
+        checkNestedDeclarationsAreResolved(resolvable)
     }
 }
 

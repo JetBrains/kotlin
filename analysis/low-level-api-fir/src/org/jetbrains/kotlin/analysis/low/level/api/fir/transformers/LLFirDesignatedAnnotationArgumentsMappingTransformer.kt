@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumen
  * Transform designation into ANNOTATIONS_ARGUMENTS_MAPPING declaration. Affects only for target declaration, it's children and dependents
  */
 internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirLazyTransformer, FirAnnotationArgumentsMappingTransformer(session, scopeSession, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
@@ -35,24 +37,25 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) return
-        designation.declaration.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        if (designation.target.resolvePhase >= FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) return
+        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         }
 
-        updatePhaseDeep(designation.declaration, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-        checkIsResolved(designation.declaration)
+        updatePhaseDeep(designation.target, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-        for (annotation in declaration.annotations) {
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        resolvable.checkPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        if (resolvable !is FirAnnotationContainer) return
+        for (annotation in resolvable.annotations) {
             if (annotation is FirAnnotationCall) {
-                checkAnnotationArgumentsMappingIsResolved(annotation, declaration)
+                checkAnnotationArgumentsMappingIsResolved(annotation, resolvable)
             }
         }
-        checkNestedDeclarationsAreResolved(declaration)
+        checkNestedDeclarationsAreResolved(resolvable)
     }
 }
