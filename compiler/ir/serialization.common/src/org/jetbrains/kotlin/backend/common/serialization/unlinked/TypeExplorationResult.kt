@@ -11,13 +11,13 @@ internal sealed interface TypeExplorationResult {
         class DueToClassifier(val classifier: ClassifierExplorationResult.Unusable) : UnusableType
 
         class DueToVisibilityConflict(
-            val classifierWithConflictingVisibility1: ClassifierExplorationResult.Fully.AccessibleClassifier,
-            val classifierWithConflictingVisibility2: ClassifierExplorationResult.Fully.AccessibleClassifier
+            val classifierWithConflictingVisibility1: ClassifierExplorationResult.Usable.AccessibleClassifier,
+            val classifierWithConflictingVisibility2: ClassifierExplorationResult.Usable.AccessibleClassifier
         ) : UnusableType
     }
 
     /** Indicates usable type that does not reference any partially linked classifiers and does not have visibility conflicts. */
-    class UsableType(val classifierWithNarrowestVisibility: ClassifierExplorationResult.Fully?) : TypeExplorationResult {
+    class UsableType(val classifierWithNarrowestVisibility: ClassifierExplorationResult.Usable?) : TypeExplorationResult {
         companion object {
             val DEFAULT_PUBLIC = UsableType(null)
         }

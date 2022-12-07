@@ -39,7 +39,7 @@ internal sealed interface ClassifierExplorationResult {
         class InaccessibleClassifier(
             override val symbol: IrClassifierSymbol,
             val visibility: ABIVisibility.Limited,
-            val classifierWithConflictingLimitation: Fully.AccessibleClassifier
+            val classifierWithConflictingLimitation: Usable.AccessibleClassifier
         ) : CanBeRootCause
 
         /**
@@ -47,8 +47,8 @@ internal sealed interface ClassifierExplorationResult {
          */
         class InaccessibleClassifierDueToOtherClassifiers(
             override val symbol: IrClassifierSymbol,
-            val classifierWithConflictingVisibility1: Fully.AccessibleClassifier,
-            val classifierWithConflictingVisibility2: Fully.AccessibleClassifier
+            val classifierWithConflictingVisibility1: Usable.AccessibleClassifier,
+            val classifierWithConflictingVisibility2: Usable.AccessibleClassifier
         ) : CanBeRootCause
 
         /**
@@ -58,13 +58,13 @@ internal sealed interface ClassifierExplorationResult {
     }
 
     /** Indicates usable type that is fully linked and does not have visibility conflicts. */
-    sealed interface Fully : ClassifierExplorationResult {
+    sealed interface Usable : ClassifierExplorationResult {
         val symbol: IrClassifierSymbol
         val visibility: ABIVisibility
 
-        class AccessibleClassifier(override val symbol: IrClassifierSymbol, override val visibility: ABIVisibility) : Fully
+        class AccessibleClassifier(override val symbol: IrClassifierSymbol, override val visibility: ABIVisibility) : Usable
 
-        class LesserAccessibleClassifier(override val symbol: IrClassifierSymbol, val dueTo: AccessibleClassifier) : Fully {
+        class LesserAccessibleClassifier(override val symbol: IrClassifierSymbol, val dueTo: AccessibleClassifier) : Usable {
             override val visibility = dueTo.visibility
         }
     }

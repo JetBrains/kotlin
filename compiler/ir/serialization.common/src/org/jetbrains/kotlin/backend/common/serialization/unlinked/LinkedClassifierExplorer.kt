@@ -69,7 +69,7 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
         }
 
         if (!visitedSymbols.add(this)) {
-            return ClassifierExplorationResult.RecursionAvoidance // Recursion avoidance.
+            return ClassifierExplorationResult.RecursionAvoidance
         }
 
         val explorationResult = when (val classifier = owner) {
@@ -106,7 +106,7 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
 }
 
 private abstract class ExplorationResultBuilder<R, UR : R> {
-    protected var dependencyWithNarrowerVisibility: ClassifierExplorationResult.Fully.AccessibleClassifier? = null
+    protected var dependencyWithNarrowerVisibility: ClassifierExplorationResult.Usable.AccessibleClassifier? = null
 
     protected var unusableResult: UR? = null
     private inline val done get() = unusableResult != null
@@ -148,20 +148,20 @@ private abstract class ExplorationResultBuilder<R, UR : R> {
     private fun consume(exploredClassifier: ClassifierExplorationResult) {
         when (exploredClassifier) {
             is ClassifierExplorationResult.Unusable -> onPartiallyLinkedClassifier(exploredClassifier)
-            is ClassifierExplorationResult.Fully -> onFullyLinkedClassifier(exploredClassifier.accessibleClassifier)
+            is ClassifierExplorationResult.Usable -> onFullyLinkedClassifier(exploredClassifier.accessibleClassifier)
             is ClassifierExplorationResult.RecursionAvoidance -> return // Just skip it.
         }
     }
 
-    private inline val ClassifierExplorationResult.Fully.accessibleClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier
+    private inline val ClassifierExplorationResult.Usable.accessibleClassifier: ClassifierExplorationResult.Usable.AccessibleClassifier
         get() = when (this) {
-            is ClassifierExplorationResult.Fully.AccessibleClassifier -> this
-            is ClassifierExplorationResult.Fully.LesserAccessibleClassifier -> dueTo
+            is ClassifierExplorationResult.Usable.AccessibleClassifier -> this
+            is ClassifierExplorationResult.Usable.LesserAccessibleClassifier -> dueTo
         }
 
     protected fun checkDependencyVisibility(
         currentVisibility: ABIVisibility,
-        nextClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier,
+        nextClassifier: ClassifierExplorationResult.Usable.AccessibleClassifier,
         onConflictingVisibilities: (ABIVisibility.Limited) -> UR
     ) {
         val nextVisibility = nextClassifier.visibility
@@ -174,7 +174,7 @@ private abstract class ExplorationResultBuilder<R, UR : R> {
     }
 
     protected abstract fun onPartiallyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Unusable)
-    protected abstract fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier)
+    protected abstract fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Usable.AccessibleClassifier)
     protected abstract fun onVisibilityConflict(exploredType: TypeExplorationResult.UnusableType.DueToVisibilityConflict)
 
     abstract fun build(): R
@@ -185,7 +185,7 @@ private class TypeExplorationResultBuilder : ExplorationResultBuilder<TypeExplor
         unusableResult = TypeExplorationResult.UnusableType.DueToClassifier(exploredClassifier)
     }
 
-    override fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier) {
+    override fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Usable.AccessibleClassifier) {
         when (val dependencyWithNarrowerVisibility = dependencyWithNarrowerVisibility) {
             null -> {
                 // Memoize the dependency if it has non-default public visibility.
@@ -225,7 +225,7 @@ private class ClassifierExplorationResultBuilder(
         }
     }
 
-    override fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier) {
+    override fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Usable.AccessibleClassifier) {
         when (val dependencyWithNarrowerVisibility = dependencyWithNarrowerVisibility) {
             null -> {
                 // Compare own visibility of the classifier with the visibility of the `next` dependency.
@@ -253,8 +253,8 @@ private class ClassifierExplorationResultBuilder(
 
     override fun build(): ClassifierExplorationResult {
         return unusableResult
-            ?: dependencyWithNarrowerVisibility?.let { ClassifierExplorationResult.Fully.LesserAccessibleClassifier(symbol, it) }
-            ?: ClassifierExplorationResult.Fully.AccessibleClassifier(symbol, ownVisibility)
+            ?: dependencyWithNarrowerVisibility?.let { ClassifierExplorationResult.Usable.LesserAccessibleClassifier(symbol, it) }
+            ?: ClassifierExplorationResult.Usable.AccessibleClassifier(symbol, ownVisibility)
     }
 }
 
