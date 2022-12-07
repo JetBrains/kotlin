@@ -23,13 +23,6 @@ sourceSets {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-old-backend")
-}
-
-projectTest(taskName = "testWithIr", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-ir")
 }
 
 projectTest(taskName = "testWithK2", parallel = true) {
