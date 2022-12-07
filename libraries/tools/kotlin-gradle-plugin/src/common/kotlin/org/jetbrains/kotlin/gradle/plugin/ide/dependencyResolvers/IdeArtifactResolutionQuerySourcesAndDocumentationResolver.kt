@@ -21,7 +21,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 
-internal object IdeSlowSourcesAndDocumentationResolver : IdeDependencyResolver {
+/**
+ * Resolved sources.jar and javadoc.jar files using Gradle's artifact resolution query.
+ * ⚠️: This resolution method is slow and shall be replaced by ArtifactViews. However,
+ * before 1.8.20 Kotlin MPP did not publish sources as variants which requires us to keep this resolver
+ * for compatibility with libraries published prior to 1.8.20
+ *
+ * cc Anton Lakotka, Sebastian Sellmair
+ */
+internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
         val configuration = sourceSet.internal.resolvableMetadataConfiguration

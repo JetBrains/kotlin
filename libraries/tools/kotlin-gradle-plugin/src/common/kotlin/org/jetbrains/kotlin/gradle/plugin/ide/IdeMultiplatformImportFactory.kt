@@ -126,7 +126,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         if (extension.project.kotlinPropertiesProvider.enableSlowIdeSourcesJarResolver) {
             registerDependencyResolver(
-                resolver = IdeSlowSourcesAndDocumentationResolver,
+                resolver = IdeArtifactResolutionQuerySourcesAndDocumentationResolver,
                 constraint = SourceSetConstraint.unconstrained,
                 phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
                 level = IdeMultiplatformImport.DependencyResolutionLevel.Default
