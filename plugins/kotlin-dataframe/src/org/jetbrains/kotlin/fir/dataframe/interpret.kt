@@ -262,17 +262,6 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
 
 private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
     when {
-        isDataFrame(it) -> {
-            val nestedColumns = it.resolvedReturnType.typeArguments[0].type
-                ?.toRegularClassSymbol(session)
-                ?.declaredMemberScope(session)
-                ?.collectAllProperties()
-                ?.filterIsInstance<FirPropertySymbol>()
-                ?.map { columnOf(it) }
-                ?: emptyList()
-
-            SimpleFrameColumn(it.name.identifier, nestedColumns, false, anyDataFrame)
-        }
         shouldBeConvertedToFrameColumn(it) -> {
                 val nestedColumns = it.resolvedReturnType.typeArguments[0].type
                     ?.toRegularClassSymbol(session)
@@ -284,18 +273,9 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
 
                 SimpleFrameColumn(it.name.identifier, nestedColumns, false, anyDataFrame)
             }
-        isDataRow(it) -> {
-            val nestedColumns = it.resolvedReturnType.typeArguments[0].type
-                ?.toRegularClassSymbol(session)
-                ?.declaredMemberScope(session)
-                ?.collectAllProperties()
-                ?.filterIsInstance<FirPropertySymbol>()
-                ?.map { columnOf(it) }
-                ?: emptyList()
-            SimpleColumnGroup(it.name.identifier, nestedColumns, anyRow)
-        }
         shouldBeConvertedToColumnGroup(it) -> {
-            val nestedColumns = it.resolvedReturnType
+            val type = if (isDataRow(it)) it.resolvedReturnType.typeArguments[0].type!! else it.resolvedReturnType
+            val nestedColumns = type
                 .toRegularClassSymbol(session)
                 ?.declaredMemberScope(session)
                 ?.collectAllProperties()
@@ -310,17 +290,19 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
     }
 
 private fun KotlinTypeFacade.shouldBeConvertedToColumnGroup(it: FirPropertySymbol) =
-    it.resolvedReturnType.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true
-
-private fun isDataFrame(it: FirPropertySymbol) =
-    it.resolvedReturnType.classId == Names.DF_CLASS_ID
+    isDataRow(it) ||
+        it.resolvedReturnType.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true
 
 private fun isDataRow(it: FirPropertySymbol) =
     it.resolvedReturnType.classId == Names.DATA_ROW_CLASS_ID
 
 private fun KotlinTypeFacade.shouldBeConvertedToFrameColumn(it: FirPropertySymbol) =
-    it.resolvedReturnType.classId == Names.LIST &&
-        it.resolvedReturnType.typeArguments[0].type?.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true
+    isDataFrame(it) ||
+        (it.resolvedReturnType.classId == Names.LIST &&
+            it.resolvedReturnType.typeArguments[0].type?.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true)
+
+private fun isDataFrame(it: FirPropertySymbol) =
+    it.resolvedReturnType.classId == Names.DF_CLASS_ID
 
 fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     val colName = f(propertyAccessExpression)
