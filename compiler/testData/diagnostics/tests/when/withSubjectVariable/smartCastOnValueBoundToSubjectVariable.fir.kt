@@ -43,6 +43,6 @@ fun test5(x: Inv<out Any?>) {
 
 fun test6(x: Inv<out String?>) {
     when (val y = x.data) {
-        is String -> x.data<!UNSAFE_CALL!>.<!>length // should be ok
+        is String -> x.data.length // should be ok
     }
 }
