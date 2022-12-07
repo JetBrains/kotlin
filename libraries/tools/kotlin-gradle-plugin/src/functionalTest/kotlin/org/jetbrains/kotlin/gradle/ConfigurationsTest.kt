@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -20,9 +21,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class ConfigurationsTest : MultiplatformExtensionTest() {
 
@@ -367,6 +371,43 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         project.assertContainsDependencies(
             "browserMainImplementation",
             project.dependencies.enforcedPlatform("test:enforced-platform-dependency")
+        )
+    }
+
+    /**
+     * This tests verifies only turkish letters 'İ' and 'ı' because only with turkish locale ASCII letters 'i' and 'I' are
+     * capitalised/decapitalised to non-ascii letters.
+     * It was discovered using code that iterates over all ascii chars and available JVM locales
+     * and checks their capitalisation/decapitalisation behavior.
+     */
+    @Test
+    fun `gradle entities should have correct names when default locale is turkish`() {
+        Locale.setDefault(Locale("tr", "TR"))
+
+        val project = buildProjectWithMPP {
+            kotlin {
+                jvm()
+                ios()
+            }
+        }
+        project.evaluate()
+
+        val gradleEntityNames: List<String> = with (project) {
+            listOf(
+                tasks.names,
+                configurations.names,
+                components.names,
+                extensions.asMap.keys,
+                kotlin.sourceSets.names,
+                kotlin.targets.names,
+            ).flatten()
+        }
+
+        val entityNamesWithTurkishI = gradleEntityNames.filter { it.contains('İ') || it.contains('ı') }
+        assertTrue(
+            entityNamesWithTurkishI.isEmpty(),
+            "Following entities should not have turkish 'İ' or 'ı' in their names:\n" +
+                    entityNamesWithTurkishI.joinToString("\n")
         )
     }
 }
