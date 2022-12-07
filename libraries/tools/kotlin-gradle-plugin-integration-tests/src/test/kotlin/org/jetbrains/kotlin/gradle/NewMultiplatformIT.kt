@@ -34,10 +34,7 @@ import org.junit.Test
 import java.util.*
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class NewMultiplatformIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
@@ -1527,17 +1524,16 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         fun testDependencies() = testResolveAllConfigurations("app") {
             assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.13.2.jar")
-            assertEquals(
-                1,
-                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
+            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> kotlin-stdlib-common-${KOTLIN_VERSION}.jar")
+            val dependenciesOnNonTransitive = (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*")
+                .toRegex().findAll(output)
+
+            if (dependenciesOnNonTransitive.count() != 2) fail(
+                "Expected two resolved dependencies on testNonTransitiveStringNotationApiDependenciesMetadata. " +
+                        "Found: ${dependenciesOnNonTransitive.toList().map { it.value }}"
             )
 
             assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-            assertEquals(
-                1,
-                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output)
-                    .count()
-            )
 
             // All scoped DependenciesMetadata should resolve consistently into the same version
             assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
