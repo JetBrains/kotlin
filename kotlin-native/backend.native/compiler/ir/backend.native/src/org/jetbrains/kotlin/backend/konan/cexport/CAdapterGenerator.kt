@@ -33,19 +33,19 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.io.PrintWriter
 
-private enum class ScopeKind {
+internal enum class ScopeKind {
     TOP,
     CLASS,
     PACKAGE
 }
 
-private enum class ElementKind {
+internal enum class ElementKind {
     FUNCTION,
     PROPERTY,
     TYPE
 }
 
-private enum class DefinitionKind {
+internal enum class DefinitionKind {
     C_HEADER_DECLARATION,
     C_HEADER_STRUCT,
     C_SOURCE_DECLARATION,
@@ -109,7 +109,7 @@ private fun functionImplName(descriptor: DeclarationDescriptor, default: String,
 
 internal data class SignatureElement(val name: String, val type: KotlinType)
 
-private class ExportedElementScope(val kind: ScopeKind, val name: String) {
+internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
     val elements = mutableListOf<ExportedElement>()
     val scopes = mutableListOf<ExportedElementScope>()
     private val scopeNames = mutableSetOf<String>()
@@ -147,7 +147,7 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
     }
 }
 
-private class ExportedElement(
+internal class ExportedElement(
         val kind: ElementKind,
         val scope: ExportedElementScope,
         val declaration: DeclarationDescriptor,
@@ -423,8 +423,6 @@ internal class CAdapterGenerator(
         val context: Context,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
-    private val builtIns = context.builtIns
-
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
     private val paramNamesRecorded = mutableMapOf<String, Int>()
@@ -560,10 +558,14 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
+    // TODO: Use explicit I/O between phases.
+    private lateinit var cAdapterExportedElements: CAdapterExportedElements
+
     fun buildExports(symbolTable: SymbolTable) {
         this.symbolTableOrNull = symbolTable
         try {
             buildExports()
+            cAdapterExportedElements = CAdapterExportedElements(typeTranslator, scopes)
         } finally {
             this.symbolTableOrNull = null
         }
@@ -600,10 +602,17 @@ internal class CAdapterGenerator(
     private var functionIndex = 0
     fun nextFunctionIndex() = functionIndex++
 
-    fun generateBindings(codegen: CodeGenerator) = BindingsBuilder(codegen).build()
+    fun generateBindings(codegen: CodeGenerator) = BindingsBuilder(codegen, cAdapterExportedElements).build()
 
-    inner class BindingsBuilder(val codegen: CodeGenerator) : ContextUtils {
+    class BindingsBuilder(
+            val codegen: CodeGenerator,
+            val elements: CAdapterExportedElements,
+    ) : ContextUtils {
         override val generationState = codegen.generationState
+
+        private val typeTranslator = elements.typeTranslator
+        private val builtIns = elements.typeTranslator.builtIns
+        private val scopes = elements.scopes
 
         internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
         private lateinit var outputStreamWriter: PrintWriter
