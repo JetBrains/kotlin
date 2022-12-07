@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
@@ -361,6 +362,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableIntransitiveMetadataConfiguration: Boolean
         get() = booleanProperty("kotlin.mpp.enableIntransitiveMetadataConfiguration") ?: false
 
+    val enableSlowIdeSourcesJarResolver: Boolean
+        get() = booleanProperty(KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER) ?: true
+
     /**
      * Dependencies caching strategy for all targets that support caches.
      */
@@ -505,6 +509,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION = "kotlin.mpp.androidSourceSetLayoutVersion"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN = "${KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}1.nowarn"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN = "kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn"
+        const val KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER = "kotlin.mpp.import.enableSlowSourcesJarResolver"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"

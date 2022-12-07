@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
@@ -101,6 +102,36 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
         )
+
+        registerDependencyResolver(
+            resolver = IdeNativeStdlibSourcesResolver,
+            constraint = SourceSetConstraint.isNative,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
+            resolver = IdePlatformSourcesResolver(),
+            constraint = SourceSetConstraint.isSinglePlatformType,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
+            resolver = IdeMetadataSourcesResolver(),
+            constraint = !SourceSetConstraint.isSinglePlatformType,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        if (extension.project.kotlinPropertiesProvider.enableSlowIdeSourcesJarResolver) {
+            registerDependencyResolver(
+                resolver = IdeSlowSourcesAndDocumentationResolver,
+                constraint = SourceSetConstraint.unconstrained,
+                phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+                level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            )
+        }
 
         registerDependencyTransformer(
             transformer = IdePlatformStdlibCommonDependencyFilter,

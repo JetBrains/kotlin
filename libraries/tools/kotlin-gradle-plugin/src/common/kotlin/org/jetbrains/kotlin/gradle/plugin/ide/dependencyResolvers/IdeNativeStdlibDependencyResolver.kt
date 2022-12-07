@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.commonizer.KonanDistribution
@@ -47,9 +48,7 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
             IdeaKotlinResolvedBinaryDependency(
                 binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
                 binaryFile = binaryFile,
-                coordinates = IdeaKotlinBinaryCoordinates(
-                    "org.jetbrains.kotlin.native", "stdlib", sourceSet.project.konanVersion.toString(),
-                )
+                coordinates = nativeStdlibCoordinates(sourceSet.project)
             ).apply {
                 this.isNativeDistribution = true
                 this.isNativeStdlib = true
@@ -57,4 +56,8 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
             }
         )
     }
+
+    fun nativeStdlibCoordinates(project: Project): IdeaKotlinBinaryCoordinates = IdeaKotlinBinaryCoordinates(
+        "org.jetbrains.kotlin.native", "stdlib", project.konanVersion.toString(),
+    )
 }

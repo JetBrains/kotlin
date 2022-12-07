@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.LibraryBinaryIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
+import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal class IdePlatformDependencyResolver(
@@ -43,8 +45,8 @@ internal class IdePlatformDependencyResolver(
          * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
          */
         data class Compilation(
-            internal val compilationSelector: (Set<KotlinCompilation<*>>) -> KotlinCompilation<*>? =
-                { compilations -> compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
+            internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? =
+                { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
         ) : ArtifactResolutionStrategy()
 
@@ -136,7 +138,7 @@ internal class IdePlatformDependencyResolver(
     }
 
     private fun ArtifactResolutionStrategy.Compilation.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
-        val compilation = compilationSelector(sourceSet.compilations) ?: return null
+        val compilation = compilationSelector(sourceSet) ?: return null
 
         /*
         Prevent case where this resolver was configured to resolve dependencies for a metadata compilation:
@@ -155,36 +157,46 @@ internal class IdePlatformDependencyResolver(
 
     private fun ArtifactResolutionStrategy.PlatformLikeSourceSet.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
         if (sourceSet !is DefaultKotlinSourceSet) return null
-        val sourceSetCompileDependencies = sourceSet.project.configurations.detachedConfiguration()
-        sourceSetCompileDependencies.attributes.setupPlatformResolutionAttributes(sourceSet)
 
-        ((sourceSet.getAdditionalVisibleSourceSets() + sourceSet).withDependsOnClosure).forEach { visibleSourceSet ->
-            sourceSetCompileDependencies.dependencies.addAll(
-                sourceSet.project.configurations.getByName(visibleSourceSet.apiConfigurationName).allDependencies
+        val platformLikeCompileDependenciesConfiguration = sourceSet.platformLikeCompileDependenciesConfiguration ?: run {
+            /* Create new 'platform like compileDependencies configuration */
+            val configuration = sourceSet.project.configurations.detachedConfiguration()
+            configuration.attributes.setupPlatformResolutionAttributes(sourceSet)
+
+            ((sourceSet.getAdditionalVisibleSourceSets() + sourceSet).withDependsOnClosure).forEach { visibleSourceSet ->
+                configuration.dependencies.addAll(
+                    sourceSet.project.configurations.getByName(visibleSourceSet.apiConfigurationName).allDependencies
+                )
+
+                configuration.dependencies.addAll(
+                    sourceSet.project.configurations.getByName(visibleSourceSet.implementationConfigurationName).allDependencies
+                )
+
+                configuration.dependencies.addAll(
+                    sourceSet.project.configurations.getByName(visibleSourceSet.compileOnlyConfigurationName).allDependencies
+                )
+            }
+
+            /* Ensure consistent dependency resolution result within the whole module */
+            configuration.shouldResolveConsistentlyWith(
+                sourceSet.project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
             )
 
-            sourceSetCompileDependencies.dependencies.addAll(
-                sourceSet.project.configurations.getByName(visibleSourceSet.implementationConfigurationName).allDependencies
-            )
-
-            sourceSetCompileDependencies.dependencies.addAll(
-                sourceSet.project.configurations.getByName(visibleSourceSet.compileOnlyConfigurationName).allDependencies
-            )
+            sourceSet.platformLikeCompileDependenciesConfiguration = configuration
+            configuration
         }
 
-        /* Ensure consistent dependency resolution result within the whole module */
-        sourceSetCompileDependencies.shouldResolveConsistentlyWith(
-            sourceSet.project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
-        )
-
-        return sourceSetCompileDependencies.incoming.artifactView { view ->
+        return platformLikeCompileDependenciesConfiguration.incoming.artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)
         }
     }
 
-
     private companion object {
         val logger: Logger = Logging.getLogger(IdePlatformDependencyResolver::class.java)
+
+        /* This special 'platform like compileDependency configurations' can be attached to the SourceSet and re-used */
+        var InternalKotlinSourceSet.platformLikeCompileDependenciesConfiguration: Configuration?
+                by extrasReadWriteProperty("platformLikeCompileDependenciesConfiguration")
     }
 }
