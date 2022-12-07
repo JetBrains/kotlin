@@ -496,6 +496,10 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
         }
     }
 
+    while (srcValueArgumentIndex < src.symbol.owner.contextReceiverParametersCount) {
+        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
+    }
+
     when {
         receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
             putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
@@ -1188,29 +1192,55 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
         annotations = oldFunction.annotations
 
-        var offset = 0
-        val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
-            this,
-            name = Name.identifier("\$this"),
-            index = offset++,
-            type = remap(dispatchReceiverType!!),
-            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-        )
-        val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
-            this,
-            name = Name.identifier("\$receiver"),
-            index = offset++,
-            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
-            remapTypeMap = typeParameterMap
-        )
-        valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                oldFunction.valueParameters.map {
-                    it.copyTo(
-                        this,
-                        index = it.index + offset,
-                        remapTypeMap = typeParameterMap
-                    )
-                }
+        valueParameters = buildList {
+            var offset = 0
+
+            addIfNotNull(
+                oldFunction.dispatchReceiverParameter?.copyTo(
+                    this@apply,
+                    name = Name.identifier("\$this"),
+                    index = offset++,
+                    type = remap(dispatchReceiverType!!),
+                    origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                )
+            )
+
+            addAll(
+                oldFunction.valueParameters
+                    .asSequence()
+                    .take(oldFunction.contextReceiverParametersCount)
+                    .map {
+                        it.copyTo(
+                            this@apply,
+                            index = offset++,
+                            remapTypeMap = typeParameterMap
+                        )
+                    }
+            )
+
+            addIfNotNull(
+                oldFunction.extensionReceiverParameter?.copyTo(
+                    this@apply,
+                    name = Name.identifier("\$receiver"),
+                    index = offset++,
+                    origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
+                    remapTypeMap = typeParameterMap
+                )
+            )
+
+            addAll(
+                oldFunction.valueParameters
+                    .asSequence()
+                    .drop(oldFunction.contextReceiverParametersCount)
+                    .map {
+                        it.copyTo(
+                            this@apply,
+                            index = offset++,
+                            remapTypeMap = typeParameterMap
+                        )
+                    }
+            )
+        }
 
         if (copyMetadata) metadata = oldFunction.metadata
 
