@@ -70,14 +70,6 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             ) {
                 addSubtypeConstraint(resultingType, expectedType, position)
             }
-
-            val declarationReceiverType: ConeKotlinType? =
-                fir.receiverParameter?.typeRef?.coneType?.let(candidate.substitutor::substituteOrSelf)
-
-            if (resultingReceiverType != null && declarationReceiverType != null) {
-                val capturedReceiver = context.session.typeContext.captureFromExpression(resultingReceiverType) ?: resultingReceiverType
-                addSubtypeConstraint(capturedReceiver, declarationReceiverType, position)
-            }
         }
 
         var isApplicable = true
