@@ -20,8 +20,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
     }
 
-    fun buildConstI64(value: Long) {
-        buildInstr(WasmOp.I64_CONST, WasmImmediate.ConstI64(value))
+    fun buildConstI64(value: Long, location: SourceLocation) {
+        buildInstr(WasmOp.I64_CONST, location, WasmImmediate.ConstI64(value))
     }
 
     fun buildConstF32(value: Float) {

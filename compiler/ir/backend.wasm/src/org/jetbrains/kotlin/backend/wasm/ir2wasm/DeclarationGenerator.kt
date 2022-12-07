@@ -477,7 +477,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
     withNoLocation("Default initializer, usually don't require location") {
         when (type) {
             WasmI32 -> g.buildConstI32(0, location)
-            WasmI64 -> g.buildConstI64(0)
+            WasmI64 -> g.buildConstI64(0, location)
             WasmF32 -> g.buildConstF32(0f)
             WasmF64 -> g.buildConstF64(0.0)
             is WasmRefNullType -> g.buildRefNull(type.heapType)
@@ -510,7 +510,7 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
             is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt(), location)
             is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt(), location)
             is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression), location)
-            is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
+            is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression), location)
             is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code, location)
             is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
             is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
