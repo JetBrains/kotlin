@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -104,7 +105,9 @@ internal val objCExportPhase = konanUnitPhase(
 
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
-            this.cAdapterGenerator = CAdapterGenerator(this).also {
+            val prefix = config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
+            val cAdapterTypeTranslator = CAdapterTypeTranslator(prefix, this.builtIns)
+            this.cAdapterGenerator = CAdapterGenerator(this, cAdapterTypeTranslator).also {
                 it.buildExports(this.symbolTable!!)
             }
         },
