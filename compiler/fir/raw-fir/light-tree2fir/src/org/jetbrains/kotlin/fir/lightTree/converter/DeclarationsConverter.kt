@@ -93,7 +93,8 @@ class DeclarationsConverter(
             throw Exception()
         }
 
-        val fileAnnotationList = mutableListOf<FirAnnotation>()
+        val fileSymbol = FirFileSymbol()
+        var fileAnnotationContainer: FirFileAnnotationsContainer? = null
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
         context.packageFqName = FqName.ROOT
@@ -101,7 +102,7 @@ class DeclarationsConverter(
         file.forEachChildren { child ->
             @Suppress("RemoveRedundantQualifierName")
             when (child.tokenType) {
-                FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotationList(child)
+                FILE_ANNOTATION_LIST -> fileAnnotationContainer = convertFileAnnotationsContainer(child, fileSymbol)
                 PACKAGE_DIRECTIVE -> {
                     packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
@@ -119,6 +120,7 @@ class DeclarationsConverter(
         }
 
         return buildFile {
+            symbol = fileSymbol
             source = file.toFirSourceElement()
             origin = FirDeclarationOrigin.Source
             moduleData = baseModuleData
@@ -126,7 +128,11 @@ class DeclarationsConverter(
             this.sourceFile = sourceFile
             this.sourceFileLinesMapping = linesMapping
             this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
-            annotations += fileAnnotationList
+            annotationsContainer = fileAnnotationContainer
+                 ?: buildFileAnnotationsContainer {
+                    moduleData = baseModuleData
+                    containingFileSymbol = fileSymbol
+                }
             imports += importList
             declarations += firDeclarationList
         }
@@ -317,11 +323,19 @@ class DeclarationsConverter(
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFileAnnotationList]
      */
-    private fun convertFileAnnotationList(fileAnnotationList: LighterASTNode): List<FirAnnotation> {
-        return fileAnnotationList.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ANNOTATION -> container += convertAnnotation(node)
-                ANNOTATION_ENTRY -> container += convertAnnotationEntry(node)
+    private fun convertFileAnnotationsContainer(
+        fileAnnotationList: LighterASTNode,
+        fileSymbol: FirFileSymbol
+    ): FirFileAnnotationsContainer {
+        return buildFileAnnotationsContainer {
+            moduleData = baseModuleData
+            source = fileAnnotationList.toFirSourceElement()
+            containingFileSymbol = fileSymbol
+            annotations += fileAnnotationList.forEachChildrenReturnList { node, container ->
+                when (node.tokenType) {
+                    ANNOTATION -> container += convertAnnotation(node)
+                    ANNOTATION_ENTRY -> container += convertAnnotationEntry(node)
+                }
             }
         }
     }

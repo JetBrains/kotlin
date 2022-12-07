@@ -1010,6 +1010,7 @@ open class RawFirBuilder(
                 BodyBuildingMode.LAZY_BODIES -> file.packageFqName
             }
             return buildFile {
+                symbol = FirFileSymbol()
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -1020,9 +1021,15 @@ open class RawFirBuilder(
                     packageFqName = context.packageFqName
                     source = file.packageDirective?.toKtPsiSourceElement()
                 }
-                for (annotationEntry in file.annotationEntries) {
-                    annotations += annotationEntry.convert<FirAnnotation>()
+                annotationsContainer = buildFileAnnotationsContainer {
+                    moduleData = baseModuleData
+                    containingFileSymbol = this@buildFile.symbol
+                    source = file.fileAnnotationList?.toKtPsiSourceElement()
+                    for (annotationEntry in file.annotationEntries) {
+                        annotations += annotationEntry.convert<FirAnnotation>()
+                    }
                 }
+
                 for (importDirective in file.importDirectives) {
                     imports += buildImport {
                         source = importDirective.toFirSourceElement()

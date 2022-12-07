@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
+import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -35,34 +36,39 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirFileBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    lateinit var annotationsContainer: FirFileAnnotationsContainer
     lateinit var packageDirective: FirPackageDirective
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
     var sourceFile: KtSourceFile? = null
     var sourceFileLinesMapping: KtSourceFileLinesMapping? = null
+    lateinit var symbol: FirFileSymbol
 
     override fun build(): FirFile {
         return FirFileImpl(
             source,
             resolvePhase,
-            annotations,
             moduleData,
             origin,
             attributes,
+            annotationsContainer,
             packageDirective,
             imports,
             declarations,
             name,
             sourceFile,
             sourceFileLinesMapping,
+            symbol,
         )
     }
 
+
+    @Deprecated("Modification of 'annotations' has no impact for FirFileBuilder", level = DeprecationLevel.HIDDEN)
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)
