@@ -1,0 +1,5 @@
+one.MyAnnotationClass|java.lang.annotation.Annotation|false| -> true
+one.MyAnnotationClass|java.lang.annotation.Annotation|true| -> true
+one.MyAnnotationClass|java.lang.Object|false| -> true
+one.MyAnnotationClass|java.lang.Object|true| -> true
+one.MyAnnotationClass|java.util.Collection|true| -> false

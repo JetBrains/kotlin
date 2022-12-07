@@ -1,0 +1,14 @@
+one.two.EnumEntries|java.lang.Object|false| -> false
+one.two.EnumEntries|java.lang.Object|true| -> true
+one.two.EnumEntries|java.lang.Enum|false| -> true
+one.two.EnumEntries|java.lang.Enum|true| -> true
+one.two.EnumEntries.SecondEntryWithBody|java.lang.Enum|false| -> false
+one.two.EnumEntries.SecondEntryWithBody|java.lang.Enum|true| -> true
+one.two.EnumEntries.SecondEntryWithBody|one.two.EnumEntries|false| -> true
+one.two.EnumEntries.SecondEntryWithBody|one.two.EnumEntries|true| -> true
+one.two.EnumEntries.SecondEntryWithBody|java.lang.Object|false| -> false
+one.two.EnumEntries.SecondEntryWithBody|java.lang.Object|true| -> true
+one.two.EnumEntries.SecondEntryWithBody|one.two.BaseInterface|false| -> false
+one.two.EnumEntries.SecondEntryWithBody|one.two.BaseInterface|true| -> false
+one.two.EnumClassWithInterface.NewSecondEntryWithBody|one.two.BaseInterface|false| -> false
+one.two.EnumClassWithInterface.NewSecondEntryWithBody|one.two.BaseInterface|true| -> true

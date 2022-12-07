@@ -1,0 +1,12 @@
+cba.ChildOfOpen|cba.OpenClassFromAbstractClass|false| -> true
+cba.ChildOfOpen|cba.OpenClassFromAbstractClass|true| -> true
+cba.ChildOfOpen|java.lang.Object|false| -> false
+cba.ChildOfOpen|java.lang.Object|true| -> true
+cba.ChildOfOpen|cba.AbstractClass|false| -> false
+cba.ChildOfOpen|cba.AbstractClass|true| -> true
+cba.OpenClassFromAbstractClass|cba.AbstractClass|false| -> true
+cba.OpenClassFromAbstractClass|cba.AbstractClass|true| -> true
+cba.OpenClassFromAbstractClass|cba.OpenClassFromAbstractClass|false| -> false
+cba.OpenClassFromAbstractClass|cba.OpenClassFromAbstractClass|true| -> false
+cba.OpenClassFromAbstractClass|cba.FinalClass|false| -> false
+cba.OpenClassFromAbstractClass|cba.FinalClass|true| -> false

@@ -58,9 +58,11 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     protected abstract fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices)
 
-    protected fun AssertionsService.assertEqualsToTestDataFileSibling(actual: String, extension: String = ".txt") {
-        val testPrefix = configurator.testPrefix
-
+    protected fun AssertionsService.assertEqualsToTestDataFileSibling(
+        actual: String,
+        extension: String = ".txt",
+        testPrefix: String? = configurator.testPrefix,
+    ) {
         val expectedFile = getTestDataFileSiblingPath(extension, testPrefix = testPrefix)
         assertEqualsToFile(expectedFile, actual)
 
