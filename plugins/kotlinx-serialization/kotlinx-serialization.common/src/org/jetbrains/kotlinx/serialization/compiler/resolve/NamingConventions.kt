@@ -208,6 +208,8 @@ object SerializersClassIds {
     val sealedSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.sealedSerializer))
     val contextSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
     val generatedSerializerId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
+
+    val setOfSpecialSerializers = setOf(contextSerializerId, polymorphicSerializerId)
 }
 
 fun findStandardKotlinTypeSerializerName(typeName: String?): String? {

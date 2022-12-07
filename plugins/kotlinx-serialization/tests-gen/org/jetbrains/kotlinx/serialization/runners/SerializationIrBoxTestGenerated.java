@@ -132,4 +132,10 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     public void testTypealiasesTest() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesTest.kt");
     }
+
+    @Test
+    @TestMetadata("useSerializersChain.kt")
+    public void testUseSerializersChain() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/useSerializersChain.kt");
+    }
 }

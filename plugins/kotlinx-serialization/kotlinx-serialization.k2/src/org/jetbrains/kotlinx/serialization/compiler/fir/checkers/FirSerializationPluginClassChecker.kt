@@ -34,6 +34,7 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSeriali
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.versionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 object FirSerializationPluginClassChecker : FirClassChecker() {
     private val JAVA_SERIALIZABLE_ID = ClassId.topLevel(FqName("java.io.Serializable"))
@@ -421,27 +422,31 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     ) {
         for (property in properties) {
             // TODO: reporting diagnostics on properties from superclasses looks a bad idea
-            val serializerType = property.serializableWith
-            val serializerSymbol = serializerType?.toRegularClassSymbol(session)
+            val customSerializerType = property.serializableWith
+            val serializerSymbol = customSerializerType?.toRegularClassSymbol(session)
             val propertySymbol = property.propertySymbol
             val typeRef = propertySymbol.resolvedReturnTypeRef
             val propertyType = typeRef.coneType
             val source = typeRef.source ?: propertySymbol.source
-            if (serializerType != null && serializerSymbol != null) {
+            if (customSerializerType != null && serializerSymbol != null) {
+                // Do not account for @Polymorphic and @Contextual, as they are serializers for T: Any
+                // and would not be compatible on direct comparison
+                if (customSerializerType.classId in SerializersClassIds.setOfSpecialSerializers) return
+
                 checkCustomSerializerMatch(
                     classSymbol,
                     source = typeRef.source ?: propertySymbol.source,
                     propertyType,
-                    serializerType,
+                    customSerializerType,
                     reporter
                 )
                 checkCustomSerializerIsNotLocal(
                     source = propertySymbol.serializableAnnotation(needArguments = false)?.source,
                     classSymbol,
-                    serializerType,
+                    customSerializerType,
                     reporter
                 )
-                checkSerializerNullability(propertyType, serializerType, source, reporter)
+                checkSerializerNullability(propertyType, customSerializerType, source, reporter)
             } else {
                 checkType(propertyType, source, reporter)
                 checkGenericArrayType(propertyType, source, reporter)
