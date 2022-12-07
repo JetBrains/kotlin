@@ -9,6 +9,7 @@ import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
@@ -90,7 +91,7 @@ internal class Context(
      */
     override var symbolTable: SymbolTable? = null
 
-    lateinit var cAdapterGenerator: CAdapterGenerator
+    lateinit var cAdapterExportedElements: CAdapterExportedElements
 
     lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 

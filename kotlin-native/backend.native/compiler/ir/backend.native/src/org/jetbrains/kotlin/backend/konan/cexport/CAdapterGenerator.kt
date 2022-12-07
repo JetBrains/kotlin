@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -108,7 +109,7 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
     fun scopeUniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
         scopeNamesMap[descriptor to shortName]?.apply { return this }
         var computedName = when (descriptor) {
-            is ConstructorDescriptor -> "${descriptor.constructedClass.fqNameSafe.shortName().asString()}"
+            is ConstructorDescriptor -> descriptor.constructedClass.fqNameSafe.shortName().asString()
             is PropertyGetterDescriptor -> "get_${descriptor.correspondingProperty.name.asString()}"
             is PropertySetterDescriptor -> "set_${descriptor.correspondingProperty.name.asString()}"
             is FunctionDescriptor -> functionImplName(descriptor, descriptor.fqNameSafe.shortName().asString(), shortName)
@@ -140,7 +141,7 @@ internal class ExportedElement(
     lateinit var cname: String
 
     override fun toString(): String {
-        return "$kind: $name (aliased to ${if (::cname.isInitialized) cname.toString() else "<unknown>"})"
+        return "$kind: $name (aliased to ${if (::cname.isInitialized) cname else "<unknown>"})"
     }
 
     fun uniqueName(descriptor: DeclarationDescriptor, shortName: Boolean) =
@@ -167,9 +168,9 @@ internal class ExportedElement(
         else -> error("unexpected $kind element: $declaration")
     }
 
-    fun KotlinType.includeToSignature() = !this.isUnit()
+    private fun KotlinType.includeToSignature() = !this.isUnit()
 
-    fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
+    private fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
         if (!isFunction) {
             throw Error("only for functions")
         }
@@ -195,7 +196,7 @@ internal class ExportedElement(
         val descriptor = declaration
         val original = descriptor.original as FunctionDescriptor
         val returnedType = when {
-            original is ConstructorDescriptor -> owner.context.builtIns.unitType
+            original is ConstructorDescriptor -> typeTranslator.builtIns.unitType
             else -> original.returnType!!
         }
         val params = ArrayList(original.allParameters
@@ -396,11 +397,12 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
         }
 
 internal class CAdapterGenerator(
-        val context: Context,
+        private val context: PsiToIrContext,
+        private val moduleDescriptor: ModuleDescriptor,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
+    internal val prefix = typeTranslator.prefix
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
     private var symbolTableOrNull: SymbolTable? = null
@@ -410,7 +412,7 @@ internal class CAdapterGenerator(
         paramNamesRecorded.clear()
         return params.associate {
             val name = translateName(it.name)
-            val count = paramNamesRecorded.getOrDefault(name, 0)
+            val count = paramNamesRecorded.getOrPut(name) { 0 }
             paramNamesRecorded[name] = count + 1
             if (count == 0) {
                 it to name
@@ -534,14 +536,11 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
-    // TODO: Use explicit I/O between phases.
-    private lateinit var cAdapterExportedElements: CAdapterExportedElements
-
-    fun buildExports(symbolTable: SymbolTable) {
+    fun buildExports(symbolTable: SymbolTable): CAdapterExportedElements {
         this.symbolTableOrNull = symbolTable
         try {
             buildExports()
-            cAdapterExportedElements = CAdapterExportedElements(typeTranslator, scopes)
+            return CAdapterExportedElements(typeTranslator, scopes)
         } finally {
             this.symbolTableOrNull = null
         }
@@ -549,15 +548,15 @@ internal class CAdapterGenerator(
 
     private fun buildExports() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
-        moduleDescriptors += context.moduleDescriptor
-        moduleDescriptors += context.getExportedDependencies()
+        moduleDescriptors += moduleDescriptor
+        moduleDescriptors += moduleDescriptor.getExportedDependencies(context.config)
 
         currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
                 Comparator { o1, o2 ->
                     o1.fqName.toString().compareTo(o2.fqName.toString())
                 })
 
-        context.moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
+        moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
     }
 
     private val simpleNameMapping = mapOf(
@@ -565,7 +564,7 @@ internal class CAdapterGenerator(
             "<set-?>" to "set"
     )
 
-    fun translateName(name: Name): String {
+    private fun translateName(name: Name): String {
         val nameString = name.asString()
         return when {
             simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
@@ -577,6 +576,4 @@ internal class CAdapterGenerator(
 
     private var functionIndex = 0
     fun nextFunctionIndex() = functionIndex++
-
-    fun generateBindings(codegen: CodeGenerator) = CAdapterBindingsBuilder(codegen, cAdapterExportedElements).build()
 }

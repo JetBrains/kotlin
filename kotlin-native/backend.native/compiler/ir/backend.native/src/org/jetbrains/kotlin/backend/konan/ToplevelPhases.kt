@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
@@ -107,9 +108,8 @@ internal val buildCExportsPhase = konanUnitPhase(
         op = {
             val prefix = config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
             val cAdapterTypeTranslator = CAdapterTypeTranslator(prefix, this.builtIns)
-            this.cAdapterGenerator = CAdapterGenerator(this, cAdapterTypeTranslator).also {
-                it.buildExports(this.symbolTable!!)
-            }
+            this.cAdapterExportedElements = CAdapterGenerator(this, this.moduleDescriptor, cAdapterTypeTranslator)
+                    .buildExports(this.symbolTable!!)
         },
         name = "BuildCExports",
         description = "Build C exports",
