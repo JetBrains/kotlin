@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
 
-class IdeStdlibImportTest {
+class IdeStdlibResolutionTest {
 
     @Test
     fun `test single jvm target`() {
