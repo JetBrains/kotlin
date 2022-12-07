@@ -607,6 +607,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
 
     @DisplayName("test compilation can access internal symbols of main compilation")
     @GradleTest
+    @Disabled // Rhino doesn't support ES6 syntax
     fun testCompilerTestAccessInternalProduction(gradleVersion: GradleVersion) {
         project("kotlin2JsInternalTest", gradleVersion) {
             build("build") {

@@ -64,7 +64,7 @@ object JsIrBuilder {
         return IrDelegatingConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            irClass.defaultType,
+            owner.returnType,
             target,
             typeArgumentsCount = irClass.typeParameters.size,
             valueArgumentsCount = owner.valueParameters.size,
@@ -88,7 +88,7 @@ object JsIrBuilder {
         return IrConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            irClass.defaultType,
+            owner.returnType,
             target,
             typeArgumentsCount = irClass.typeParameters.size,
             constructorTypeArgumentsCount = owner.typeParameters.size,
