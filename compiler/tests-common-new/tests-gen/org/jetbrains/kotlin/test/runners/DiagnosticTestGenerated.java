@@ -30766,6 +30766,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("capturedLoopVariable.kt")
+                public void testCapturedLoopVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedLoopVariable.kt");
+                }
+
+                @Test
                 @TestMetadata("capturedWithControlJumps.kt")
                 public void testCapturedWithControlJumps() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedWithControlJumps.kt");
