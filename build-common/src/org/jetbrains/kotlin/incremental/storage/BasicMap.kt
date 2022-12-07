@@ -29,14 +29,9 @@ abstract class BasicMap<K : Comparable<K>, V>(
         valueExternalizer: DataExternalizer<V>
 ) {
     protected val storage: LazyStorage<K, V>
-    private val nonCachingStorage = System.getProperty("kotlin.jps.non.caching.storage")?.toBoolean() ?: false
 
     init {
-        storage = if (nonCachingStorage) {
-            NonCachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
-        } else {
-            CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
-        }
+        storage = CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
     }
 
     fun clean() {
