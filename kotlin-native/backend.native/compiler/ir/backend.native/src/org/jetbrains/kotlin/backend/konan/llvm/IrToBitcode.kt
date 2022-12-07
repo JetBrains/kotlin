@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterBindingsBuilder
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -326,7 +327,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         }
     }
     private fun appendCAdapters() {
-        context.cAdapterGenerator.generateBindings(codegen)
+        CAdapterBindingsBuilder(codegen, context.cAdapterExportedElements).build()
     }
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
