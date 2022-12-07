@@ -11,16 +11,13 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -121,11 +118,11 @@ internal class GranularMetadataTransformation(
     )
 
     private val requestedDependencies: Iterable<Dependency> by lazy {
-        requestedDependencies(project, kotlinSourceSet, sourceSetRequestedScopes)
+        kotlinSourceSet.internal.resolvableMetadataConfiguration.incoming.dependencies
     }
 
     internal val configurationToResolve: Configuration by lazy {
-        resolvableMetadataConfigurationForDependencies(project, requestedDependencies)
+        kotlinSourceSet.internal.resolvableMetadataConfiguration
     }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
@@ -305,51 +302,6 @@ internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): P
         identifier is ProjectComponentIdentifier && identifier.build.isCurrentBuild -> currentProject.project(identifier.projectPath)
         else -> null
     }
-}
-
-
-/** If a source set is not a published source set, its dependencies are not included in [allSourceSetsConfiguration].
- * In that case, to resolve the dependencies of the source set in a way that is consistent with the published source sets,
- * we need to create a new configuration with the dependencies from both [allSourceSetsConfiguration] and the
- * other [requestedDependencies] */
-// TODO: optimize by caching the resulting configurations?
-internal fun resolvableMetadataConfigurationForDependencies(
-    project: Project,
-    requestedDependencies: Iterable<Dependency>
-): Configuration {
-    val allSourceSetsConfiguration = project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
-
-    var modifiedConfiguration: Configuration? = null
-
-    val originalDependencies = allSourceSetsConfiguration.allDependencies
-
-    requestedDependencies.forEach { dependency ->
-        if (dependency !in originalDependencies) {
-            modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
-                fun <T> copyAttribute(key: Attribute<T>) {
-                    attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
-                }
-                allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
-                dependencies.addAll(originalDependencies)
-            }
-            modifiedConfiguration!!.dependencies.add(dependency)
-        }
-    }
-    return modifiedConfiguration ?: allSourceSetsConfiguration
-}
-
-internal fun requestedDependencies(
-    project: Project,
-    sourceSet: KotlinSourceSet,
-    requestedScopes: Iterable<KotlinDependencyScope>
-): Iterable<Dependency> {
-    fun collectScopedDependenciesFromSourceSet(sourceSet: KotlinSourceSet): Set<Dependency> =
-        requestedScopes.flatMapTo(mutableSetOf()) { scope ->
-            project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope).incoming.dependencies
-        }
-
-    val otherContributingSourceSets = dependsOnClosureWithInterCompilationDependencies(sourceSet)
-    return listOf(sourceSet, *otherContributingSourceSets.toTypedArray()).flatMap(::collectScopedDependenciesFromSourceSet)
 }
 
 private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<KotlinSourceSet>

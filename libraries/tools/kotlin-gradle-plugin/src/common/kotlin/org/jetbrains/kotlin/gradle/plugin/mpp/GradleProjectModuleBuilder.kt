@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.representsProject
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 
@@ -186,7 +186,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                     fragment.kotlinSourceRoots = sourceSet.kotlin.sourceDirectories.toList()
 
                     // FIXME: Kotlin/Native implementation-effective-api dependencies are missing here. Introduce dependency scopes
-                    requestedDependencies(project, sourceSet, listOf(KotlinDependencyScope.API_SCOPE)).forEach {
+                    sourceSet.internal.resolvableMetadataConfiguration.incoming.dependencies.forEach {
                         val moduleDependency = it.toKpmModuleDependency(project)
                         fragment.declaredModuleDependencies.add(moduleDependency)
                     }
