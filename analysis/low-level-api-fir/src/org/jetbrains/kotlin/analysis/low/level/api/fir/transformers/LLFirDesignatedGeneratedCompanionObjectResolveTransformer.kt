@@ -6,30 +6,31 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompanionGenerationTransformer
 
 internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
-    val designation: FirDeclarationDesignationWithFile,
+    val designation: FirDesignationWithFile,
     session: FirSession
 ) : LLFirLazyTransformer {
     private val transformer: FirCompanionGenerationTransformer = FirCompanionGenerationTransformer(session)
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.COMPANION_GENERATION) return
+        if (designation.target.resolvePhase >= FirResolvePhase.COMPANION_GENERATION) return
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.COMPANION_GENERATION) {
-            designation.declaration.transform<FirDeclaration, Nothing?>(transformer, null)
+            designation.target.transform<FirDeclaration, Nothing?>(transformer, null)
         }
 
-        LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.COMPANION_GENERATION)
-        checkIsResolved(designation.declaration)
+        LLFirLazyTransformer.updatePhaseDeep(designation.target, FirResolvePhase.COMPANION_GENERATION)
+        checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        check(declaration.resolvePhase >= FirResolvePhase.COMPANION_GENERATION)
+    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
+        check(resolvable.resolvePhase >= FirResolvePhase.COMPANION_GENERATION)
     }
 }

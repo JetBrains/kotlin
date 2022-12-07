@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -38,7 +39,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         fun buildWithReplacement(
             session: FirSession,
             scopeProvider: FirScopeProvider,
-            designation: FirDeclarationDesignation,
+            designation: FirDesignation,
             rootNonLocalDeclaration: KtDeclaration,
             replacement: RawFirReplacement?
         ): FirDeclaration {
@@ -46,7 +47,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.declaration,
+                originalDeclaration = designation.target as FirDeclaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 replacementApplier = replacementApplier
             )
@@ -59,10 +60,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         fun buildWithFunctionSymbolRebind(
             session: FirSession,
             scopeProvider: FirScopeProvider,
-            designation: FirDeclarationDesignation,
+            designation: FirDesignation,
             rootNonLocalDeclaration: KtDeclaration,
         ): FirDeclaration {
-            val functionsToRebind = when (val originalDeclaration = designation.declaration) {
+            val functionsToRebind = when (val originalDeclaration = designation.target) {
                 is FirFunction -> setOf(originalDeclaration)
                 is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
                 else -> null
@@ -71,7 +72,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.declaration,
+                originalDeclaration = designation.target as FirDeclaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 functionsToRebind = functionsToRebind,
             )

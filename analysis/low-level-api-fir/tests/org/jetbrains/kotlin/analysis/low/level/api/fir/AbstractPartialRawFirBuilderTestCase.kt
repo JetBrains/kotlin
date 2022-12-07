@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
@@ -59,7 +59,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
 
     private class DesignationBuilder(private val elementToBuild: KtDeclaration) : FirVisitorVoid() {
         private val path = mutableListOf<FirDeclaration>()
-        var resultDesignation: FirDeclarationDesignation? = null
+        var resultDesignation: FirDesignation? = null
             private set
 
         override fun visitElement(element: FirElement) {
@@ -68,7 +68,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
                 is FirSimpleFunction, is FirProperty -> {
                     if (element.psi == elementToBuild) {
                         val originalDeclaration = element as FirDeclaration
-                        resultDesignation = FirDeclarationDesignation(path, originalDeclaration)
+                        resultDesignation = FirDesignation(path, originalDeclaration)
                     } else {
                         element.acceptChildren(this)
                     }
