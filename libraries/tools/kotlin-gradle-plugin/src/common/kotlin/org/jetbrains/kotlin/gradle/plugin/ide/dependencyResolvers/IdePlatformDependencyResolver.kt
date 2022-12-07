@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.LibraryBinaryIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
@@ -28,9 +27,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
-import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
-import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal class IdePlatformDependencyResolver(
@@ -157,34 +158,11 @@ internal class IdePlatformDependencyResolver(
 
     private fun ArtifactResolutionStrategy.PlatformLikeSourceSet.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
         if (sourceSet !is DefaultKotlinSourceSet) return null
+        val project = sourceSet.project
 
-        val platformLikeCompileDependenciesConfiguration = sourceSet.platformLikeCompileDependenciesConfiguration ?: run {
-            /* Create new 'platform like compileDependencies configuration */
-            val configuration = sourceSet.project.configurations.detachedConfiguration()
-            configuration.attributes.setupPlatformResolutionAttributes(sourceSet)
-
-            ((sourceSet.getAdditionalVisibleSourceSets() + sourceSet).withDependsOnClosure).forEach { visibleSourceSet ->
-                configuration.dependencies.addAll(
-                    sourceSet.project.configurations.getByName(visibleSourceSet.apiConfigurationName).allDependencies
-                )
-
-                configuration.dependencies.addAll(
-                    sourceSet.project.configurations.getByName(visibleSourceSet.implementationConfigurationName).allDependencies
-                )
-
-                configuration.dependencies.addAll(
-                    sourceSet.project.configurations.getByName(visibleSourceSet.compileOnlyConfigurationName).allDependencies
-                )
-            }
-
-            /* Ensure consistent dependency resolution result within the whole module */
-            configuration.shouldResolveConsistentlyWith(
-                sourceSet.project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
-            )
-
-            sourceSet.platformLikeCompileDependenciesConfiguration = configuration
-            configuration
-        }
+        val platformLikeCompileDependenciesConfiguration = project.configurations.detachedConfiguration()
+        platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
+        platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
 
         return platformLikeCompileDependenciesConfiguration.incoming.artifactView { view ->
             view.isLenient = true
@@ -194,9 +172,5 @@ internal class IdePlatformDependencyResolver(
 
     private companion object {
         val logger: Logger = Logging.getLogger(IdePlatformDependencyResolver::class.java)
-
-        /* This special 'platform like compileDependency configurations' can be attached to the SourceSet and re-used */
-        var InternalKotlinSourceSet.platformLikeCompileDependenciesConfiguration: Configuration?
-                by extrasReadWriteProperty("platformLikeCompileDependenciesConfiguration")
     }
 }

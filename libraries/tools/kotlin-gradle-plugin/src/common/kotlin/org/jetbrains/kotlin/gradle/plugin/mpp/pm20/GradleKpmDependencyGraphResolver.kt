@@ -5,35 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfigurationForSourceSets
 import org.jetbrains.kotlin.project.model.*
 
 internal fun resolvableMetadataConfiguration(
     module: GradleKpmModule
 ) = module.project.configurations.getByName(module.resolvableMetadataConfigurationName)
 
-internal fun configurationToResolveMetadataDependencies(project: Project, requestingModule: KpmModule): Configuration =
-    when {
-        project.pm20ExtensionOrNull != null -> resolvableMetadataConfiguration(requestingModule as GradleKpmModule)
-        else -> resolvableMetadataConfigurationForSourceSets(
-            project,
-            project.kotlinExtension.sourceSets, // take dependencies from all source sets; TODO introduce consistency scopes?
-        )
-    }
-
+internal fun configurationToResolveMetadataDependencies(requestingModule: KpmModule): Configuration =
+    resolvableMetadataConfiguration(requestingModule as GradleKpmModule)
 
 class GradleKpmDependencyGraphResolver(
     private val moduleResolver: KpmModuleDependencyResolver
 ) : KpmDependencyGraphResolver {
 
     private fun configurationToResolve(requestingModule: GradleKpmModule): Configuration =
-        configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
+        configurationToResolveMetadataDependencies(requestingModule)
 
     override fun resolveDependencyGraph(requestingModule: KpmModule): KpmDependencyGraphResolution {
         if (requestingModule !is GradleKpmModule)

@@ -307,13 +307,6 @@ internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): P
     }
 }
 
-internal fun resolvableMetadataConfigurationForSourceSets(
-    project: Project,
-    sourceSets: Iterable<KotlinSourceSet>,
-): Configuration = resolvableMetadataConfigurationForDependencies(
-    project,
-    sourceSets.flatMapTo(mutableListOf()) { requestedDependencies(project, it, KotlinDependencyScope.compileScopes) }
-)
 
 /** If a source set is not a published source set, its dependencies are not included in [allSourceSetsConfiguration].
  * In that case, to resolve the dependencies of the source set in a way that is consistent with the published source sets,

@@ -35,7 +35,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
     private val dependencyGraphResolver = GradleKpmDependencyGraphResolver(moduleResolver)
 
     private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
-        val configurationToResolve = configurationToResolveMetadataDependencies(project, requestingFragment.containingModule)
+        val configurationToResolve = configurationToResolveMetadataDependencies(requestingFragment.containingModule)
         val resolvedComponentsByModuleId =
             configurationToResolve.incoming.resolutionResult.allComponents.associateBy { it.toSingleKpmModuleIdentifier() }
         val resolvedDependenciesByModuleId =
