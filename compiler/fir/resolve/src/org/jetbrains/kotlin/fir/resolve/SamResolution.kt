@@ -269,11 +269,6 @@ class FirSamResolver(
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun shouldRunSamConversionForFunction(firFunction: FirFunction): Boolean {
-        // TODO: properly support, see org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer.shouldRunSamConversionForFunction
-        return true
-    }
 }
 
 private fun FirTypeParameterRefsOwner.buildSubstitutorForSamTypeAlias(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
