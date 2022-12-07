@@ -53,23 +53,23 @@ internal class LLFirDesignatedTypeResolverTransformer(
         (designation.target as? FirDeclaration)?.let { checkClassMembersAreResolved(it) }
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.TYPES)
-        when (resolvable) {
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.TYPES)
+        when (target) {
             is FirCallableDeclaration -> {
-                checkReturnTypeRefIsResolved(resolvable, acceptImplicitTypeRef = true)
-                checkReceiverTypeRefIsResolved(resolvable)
+                checkReturnTypeRefIsResolved(target, acceptImplicitTypeRef = true)
+                checkReceiverTypeRefIsResolved(target)
             }
 
             is FirTypeParameter -> {
-                for (bound in resolvable.bounds) {
-                    checkTypeRefIsResolved(bound, "type parameter bound", resolvable)
+                for (bound in target.bounds) {
+                    checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
             }
 
             else -> {}
         }
-        checkNestedDeclarationsAreResolved(resolvable)
-        (resolvable as? FirDeclaration)?.let { checkTypeParametersAreResolved(it) }
+        checkNestedDeclarationsAreResolved(target)
+        (target as? FirDeclaration)?.let { checkTypeParametersAreResolved(it) }
     }
 }

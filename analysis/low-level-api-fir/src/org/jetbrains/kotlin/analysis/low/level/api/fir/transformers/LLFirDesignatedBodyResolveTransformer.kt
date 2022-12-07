@@ -64,9 +64,9 @@ internal class LLFirDesignatedBodyResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.BODY_RESOLVE)
-        checkNestedDeclarationsAreResolved(resolvable)
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.BODY_RESOLVE)
+        checkNestedDeclarationsAreResolved(target)
     }
 }
 

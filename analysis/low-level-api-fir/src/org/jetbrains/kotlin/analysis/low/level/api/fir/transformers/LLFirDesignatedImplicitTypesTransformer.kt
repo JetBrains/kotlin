@@ -64,11 +64,11 @@ internal class LLFirDesignatedImplicitTypesTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        if (resolvable is FirCallableDeclaration) {
-            checkReturnTypeRefIsResolved(resolvable)
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        if (target is FirCallableDeclaration) {
+            checkReturnTypeRefIsResolved(target)
         }
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 }

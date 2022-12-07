@@ -30,7 +30,7 @@ internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        check(resolvable.resolvePhase >= FirResolvePhase.COMPANION_GENERATION)
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        check(target.resolvePhase >= FirResolvePhase.COMPANION_GENERATION)
     }
 }
