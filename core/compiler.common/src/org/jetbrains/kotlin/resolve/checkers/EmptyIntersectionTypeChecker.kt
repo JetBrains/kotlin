@@ -21,7 +21,7 @@ internal object EmptyIntersectionTypeChecker {
         val types = types.toList()
         var possibleEmptyIntersectionTypeInfo: EmptyIntersectionTypeInfo? = null
 
-        for (i in 0 until types.size) {
+        for (i in types.indices) {
             val firstType = types[i]
 
             if (!mayCauseEmptyIntersection(firstType)) continue
@@ -75,24 +75,11 @@ internal object EmptyIntersectionTypeChecker {
                 val secondType = expandedTypes[j].withNullability(false)
                 val secondTypeConstructor = secondType.typeConstructor()
 
-                if (!mayCauseEmptyIntersection(secondType))
-                    continue
-
-                if (areEqualTypeConstructors(firstTypeConstructor, secondTypeConstructor) && secondTypeConstructor.parametersCount() == 0)
-                    continue
-
-                if (AbstractTypeChecker.areRelatedBySubtyping(this, firstType, secondType))
-                    continue
-
-                // If two classes aren't related by subtyping and no need to compare their type arguments, then they can't have a common subtype
-                if (
-                    firstTypeConstructor.isDefinitelyClassTypeConstructor() && secondTypeConstructor.isDefinitelyClassTypeConstructor()
-                    && (firstTypeConstructor.parametersCount() == 0 || secondTypeConstructor.parametersCount() == 0)
-                ) {
-                    return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
-                }
-
                 when {
+                    !mayCauseEmptyIntersection(secondType) -> {
+                    }
+                    areEqualTypeConstructors(firstTypeConstructor, secondTypeConstructor) -> {
+                    }
                     firstType.lowerBoundIfFlexible().isSubtypeOfIgnoringArguments(typeCheckerState, secondTypeConstructor) ||
                             secondType.lowerBoundIfFlexible().isSubtypeOfIgnoringArguments(typeCheckerState, firstTypeConstructor) -> {
                     }
