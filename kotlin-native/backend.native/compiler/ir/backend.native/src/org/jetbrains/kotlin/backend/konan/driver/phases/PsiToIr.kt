@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.psiToIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -91,12 +90,4 @@ internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiTo
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
 ) { context, input ->
     context.psiToIr(input, useLinkerWhenProducingLibrary = false)
-}
-
-internal fun <T : PsiToIrContext> PhaseEngine<T>.runPsiToIr(
-        frontendResult: FrontendPhaseOutput.Full,
-        isProducingLibrary: Boolean
-): PsiToIrOutput {
-    val psiToIrInput = PsiToIrInput(frontendResult.moduleDescriptor, frontendResult.environment, isProducingLibrary)
-    return this.runPhase(PsiToIrPhase, psiToIrInput)
 }

@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.driver.phases.runFrontend
-import org.jetbrains.kotlin.backend.konan.driver.phases.runPsiToIr
-import org.jetbrains.kotlin.backend.konan.driver.phases.runSerializer
-import org.jetbrains.kotlin.backend.konan.driver.phases.writeKlib
+import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -22,7 +20,12 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     companion object {
         fun supportsConfig(config: KonanConfig): Boolean =
-                config.produce == CompilerOutputKind.LIBRARY
+                config.produce in setOf(
+                        CompilerOutputKind.PROGRAM,
+                        CompilerOutputKind.LIBRARY,
+                        CompilerOutputKind.DYNAMIC_CACHE,
+                        CompilerOutputKind.STATIC_CACHE,
+                )
     }
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -30,14 +33,14 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
                     when (config.produce) {
-                        CompilerOutputKind.PROGRAM -> error("Dynamic compiler driver does not support `program` output yet.")
+                        CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
                         CompilerOutputKind.DYNAMIC -> error("Dynamic compiler driver does not support `dynamic` output yet.")
                         CompilerOutputKind.STATIC -> error("Dynamic compiler driver does not support `static` output yet.")
                         CompilerOutputKind.FRAMEWORK -> error("Dynamic compiler driver does not support `framework` output yet.")
                         CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
                         CompilerOutputKind.BITCODE -> error("Dynamic compiler driver does not support `bitcode` output yet.")
-                        CompilerOutputKind.DYNAMIC_CACHE -> error("Dynamic compiler driver does not support `dynamic_cache` output yet.")
-                        CompilerOutputKind.STATIC_CACHE -> error("Dynamic compiler driver does not support `static_cache` output yet.")
+                        CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
                     }
                 }
@@ -54,5 +57,31 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         engine.writeKlib(serializerOutput)
+    }
+
+    /**
+     * Produce a single binary artifact.
+     */
+    private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        engine.runBackend(backendContext)
+    }
+
+    private fun createBackendContext(
+            config: KonanConfig,
+            frontendOutput: FrontendPhaseOutput.Full,
+            psiToIrOutput: PsiToIrOutput,
+            additionalDataSetter: (Context) -> Unit = {}
+    ) = Context(
+            config,
+            frontendOutput.environment,
+            frontendOutput.frontendServices,
+            frontendOutput.bindingContext,
+            frontendOutput.moduleDescriptor
+    ).also {
+        it.populateAfterPsiToIr(psiToIrOutput)
+        additionalDataSetter(it)
     }
 }

@@ -140,7 +140,8 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         },
         name = "BuildAdditionalCacheInfo",
         description = "Build additional cache info (inline functions bodies and fields of classes)",
-        prerequisite = setOf(psiToIrPhase)
+// prerequisites generally do not work in dynamic driver.
+//        prerequisite = setOf(psiToIrPhase)
 )
 
 internal val destroySymbolTablePhase = konanUnitPhase(
@@ -423,7 +424,7 @@ internal val bitcodePhase = SameTypeNamedCompilerPhase(
                 cStubsPhase
 )
 
-private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
+internal val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then
