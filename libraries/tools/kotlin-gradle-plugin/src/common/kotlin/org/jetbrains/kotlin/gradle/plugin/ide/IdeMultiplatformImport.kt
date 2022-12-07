@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationE
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
@@ -154,7 +155,7 @@ interface IdeMultiplatformImport {
             }
 
             val isJvmAndAndroid = SourceSetConstraint { sourceSet ->
-                sourceSet.internal.compilations.map { it.platformType }.toSet() == setOf(jvm, androidJvm)
+                sourceSet.internal.compilations.map { it.platformType }.filter { it != common }.toSet() == setOf(jvm, androidJvm)
             }
 
             val isAndroid = SourceSetConstraint { sourceSet ->

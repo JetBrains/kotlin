@@ -133,22 +133,14 @@ class SourceSetConstraintTest {
 
         project.evaluate()
 
-        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
-        assertConstraint(
-            commonMain, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid,
-            isMatchExpected = false // TODO (kirpichenkov): investigate and explain/fix metadata jvm + android shared non-test compilations
-        )
-        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
-        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
-        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
-        assertConstraint(commonMain, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
-
-        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
-        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = true)
-        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
-        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
-        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
-        assertConstraint(commonTest, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
+        for (commonSourceSet in listOf(commonMain, commonTest)) {
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid, isMatchExpected = true)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isLeaf, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isNative, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.isSinglePlatformType, isMatchExpected = false)
+            assertConstraint(commonSourceSet, IdeMultiplatformImport.SourceSetConstraint.unconstrained, isMatchExpected = true)
+        }
 
         for (jvmSourceSet in listOf(jvmMain, jvmTest)) {
             assertConstraint(jvmSourceSet, IdeMultiplatformImport.SourceSetConstraint.isAndroid, isMatchExpected = false)
