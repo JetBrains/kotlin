@@ -52,10 +52,10 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         // TODO check if expect-actual matching is present
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 }
 

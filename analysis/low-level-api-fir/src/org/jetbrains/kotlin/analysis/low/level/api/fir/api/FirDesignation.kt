@@ -62,19 +62,19 @@ private fun FirRegularClass.collectForNonLocal(): List<FirDeclaration> {
     return designation
 }
 
-private fun collectDesignationPath(resolvable: FirElementWithResolvePhase): List<FirDeclaration>? {
-    val containingClass = when (resolvable) {
+private fun collectDesignationPath(target: FirElementWithResolvePhase): List<FirDeclaration>? {
+    val containingClass = when (target) {
         is FirCallableDeclaration -> {
-            if (resolvable !is FirConstructor && resolvable.symbol.callableId.isLocal) return null
-            if ((resolvable as? FirCallableDeclaration)?.status?.visibility == Visibilities.Local) return null
-            when (resolvable) {
+            if (target !is FirConstructor && target.symbol.callableId.isLocal) return null
+            if ((target as? FirCallableDeclaration)?.status?.visibility == Visibilities.Local) return null
+            when (target) {
                 is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor, is FirEnumEntry, is FirPropertyAccessor -> {
-                    val klass = resolvable.containingClassLookupTag() ?: return emptyList()
+                    val klass = target.containingClassLookupTag() ?: return emptyList()
                     if (klass.classId.isLocal) return null
-                    klass.toFirRegularClassFromSameSession(resolvable.moduleData.session)
+                    klass.toFirRegularClassFromSameSession(target.moduleData.session)
                 }
                 is FirErrorProperty -> {
-                    return if (resolvable.diagnostic == ConeDestructuringDeclarationsOnTopLevel) {
+                    return if (target.diagnostic == ConeDestructuringDeclarationsOnTopLevel) {
                         emptyList()
                     } else {
                         null
@@ -84,10 +84,10 @@ private fun collectDesignationPath(resolvable: FirElementWithResolvePhase): List
             }
         }
         is FirClassLikeDeclaration -> {
-            if (resolvable.isLocal) return null
-            val outerClassId = resolvable.symbol.classId.outerClassId
-            outerClassId?.let(resolvable.moduleData.session.firProvider::getFirClassifierByFqName)
-                ?: outerClassId?.let(resolvable.moduleData.session.javaSymbolProvider::getClassLikeSymbolByClassId)?.fir
+            if (target.isLocal) return null
+            val outerClassId = target.symbol.classId.outerClassId
+            outerClassId?.let(target.moduleData.session.firProvider::getFirClassifierByFqName)
+                ?: outerClassId?.let(target.moduleData.session.javaSymbolProvider::getClassLikeSymbolByClassId)?.fir
         }
         else -> return null
     } ?: return emptyList()

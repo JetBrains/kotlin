@@ -51,13 +51,13 @@ internal class LLFirDesignatedStatusResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        if (resolvable !is FirAnonymousInitializer) {
-            resolvable.checkPhase(FirResolvePhase.STATUS)
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        if (target !is FirAnonymousInitializer) {
+            target.checkPhase(FirResolvePhase.STATUS)
         }
-        if (resolvable is FirMemberDeclaration) {
-            checkDeclarationStatusIsResolved(resolvable)
+        if (target is FirMemberDeclaration) {
+            checkDeclarationStatusIsResolved(target)
         }
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 }

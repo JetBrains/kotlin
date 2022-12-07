@@ -49,7 +49,7 @@ internal class FileStructure private constructor(
             when {
                 structureElement == null -> createStructureElement(declaration)
                 structureElement is ReanalyzableStructureElement<KtDeclaration, *> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(newKtDeclaration = declaration as KtDeclaration,)
+                    structureElement.reanalyze(newKtDeclaration = declaration as KtDeclaration)
                 }
                 else -> structureElement
             }
@@ -115,12 +115,13 @@ internal class FileStructure private constructor(
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            moduleComponents.firModuleLazyDeclarationResolver.resolveFileAnnotations(
-                firFile = firFile,
-                annotations = firFile.annotations,
+            moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
+                target = firFile.annotationsContainer,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
+                FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true
             )
+
             RootStructureElement(firFile, container, moduleComponents)
         }
         is KtDeclaration -> createDeclarationStructure(container)

@@ -18,8 +18,8 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
         val session = fir.moduleData.session
         if (session !is LLFirResolvableModuleSession) return
         val moduleComponents = session.moduleComponents
-        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
-            firDeclarationToResolve = fir,
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
+            target = fir,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = toPhase,
             checkPCE = true,

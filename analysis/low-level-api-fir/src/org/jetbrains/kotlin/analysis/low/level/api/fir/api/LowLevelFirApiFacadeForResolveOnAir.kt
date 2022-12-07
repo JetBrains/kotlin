@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.realPsi
@@ -188,18 +189,22 @@ object LowLevelFirApiFacadeForResolveOnAir {
             fileAnnotation = annotationEntry,
             replacement = replacement
         )
+        val fileAnnotationsContainer = buildFileAnnotationsContainer {
+            moduleData = firFile.moduleData
+            containingFileSymbol = firFile.symbol
+            annotations += annotationCall
+        }
         val llFirResolvableSession = firFile.llFirResolvableSession
             ?: buildErrorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
                 withEntry("firSession", firFile.llFirSession) { it.toString() }
             }
         val declarationResolver = llFirResolvableSession.moduleComponents.firModuleLazyDeclarationResolver
 
-        declarationResolver.resolveFileAnnotations(
-            firFile = firFile,
-            annotations = listOf(annotationCall),
-            scopeSession = ScopeSession(),
+        declarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
+            FirDesignationWithFile(path = emptyList(), target = fileAnnotationsContainer, firFile),
             checkPCE = true,
-            collector = collector
+            onAirCreatedDeclaration = true,
+            collector
         )
 
         return annotationCall

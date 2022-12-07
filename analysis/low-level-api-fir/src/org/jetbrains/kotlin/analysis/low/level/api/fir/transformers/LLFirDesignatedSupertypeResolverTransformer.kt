@@ -153,21 +153,21 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.SUPER_TYPES)
-        when (resolvable) {
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.SUPER_TYPES)
+        when (target) {
             is FirClass -> {
-                for (superTypeRef in resolvable.superTypeRefs) {
-                    checkTypeRefIsResolved(superTypeRef, "class super type", resolvable)
+                for (superTypeRef in target.superTypeRefs) {
+                    checkTypeRefIsResolved(superTypeRef, "class super type", target)
                 }
             }
 
             is FirTypeAlias -> {
-                checkTypeRefIsResolved(resolvable.expandedTypeRef, typeRefName = "type alias expanded type", resolvable)
+                checkTypeRefIsResolved(target.expandedTypeRef, typeRefName = "type alias expanded type", target)
             }
 
             else -> {}
         }
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 }

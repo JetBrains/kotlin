@@ -57,11 +57,11 @@ internal class LLFirDesignatedContractsResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.CONTRACTS)
-        if (resolvable is FirContractDescriptionOwner) {
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.CONTRACTS)
+        if (target is FirContractDescriptionOwner) {
            // TODO checkContractDescriptionIsResolved(declaration)
         }
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 }

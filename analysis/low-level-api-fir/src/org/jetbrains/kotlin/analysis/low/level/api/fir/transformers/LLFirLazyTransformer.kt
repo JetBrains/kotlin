@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 internal interface LLFirLazyTransformer {
     fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
 
-    fun checkIsResolved(resolvable: FirElementWithResolvePhase)
+    fun checkIsResolved(target: FirElementWithResolvePhase)
 
-    fun checkNestedDeclarationsAreResolved(resolvable: FirElementWithResolvePhase) {
-        if (resolvable !is FirDeclaration) return
-        checkFunctionParametersAreResolved(resolvable)
-        checkPropertyAccessorsAreResolved(resolvable)
-        checkClassMembersAreResolved(resolvable)
+    fun checkNestedDeclarationsAreResolved(target: FirElementWithResolvePhase) {
+        if (target !is FirDeclaration) return
+        checkFunctionParametersAreResolved(target)
+        checkPropertyAccessorsAreResolved(target)
+        checkClassMembersAreResolved(target)
     }
 
     fun checkClassMembersAreResolved(declaration: FirDeclaration) {
@@ -63,7 +63,7 @@ internal interface LLFirLazyTransformer {
     companion object {
         private object WholeTreePhaseUpdater : FirVisitor<Unit, FirResolvePhase>() {
             override fun visitElement(element: FirElement, data: FirResolvePhase) {
-                if (element is FirDeclaration) {
+                if (element is FirElementWithResolvePhase) {
                     if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
                     element.replaceResolvePhase(data)
                 }
@@ -114,7 +114,7 @@ internal interface LLFirLazyTransformer {
 
         val DUMMY = object : LLFirLazyTransformer {
             override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) = Unit
-            override fun checkIsResolved(resolvable: FirElementWithResolvePhase) = error("Not implemented")
+            override fun checkIsResolved(target: FirElementWithResolvePhase) = error("Not implemented")
         }
     }
 }
