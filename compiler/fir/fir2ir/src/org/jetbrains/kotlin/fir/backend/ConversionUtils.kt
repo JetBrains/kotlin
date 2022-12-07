@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
@@ -691,6 +692,11 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     return buildList {
         for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
             this += buildFile {
+                symbol = FirFileSymbol()
+                annotationsContainer = buildFileAnnotationsContainer {
+                    moduleData = this@createFilesWithGeneratedDeclarations.moduleData
+                    containingFileSymbol = this@buildFile.symbol
+                }
                 origin = FirDeclarationOrigin.Synthetic
                 moduleData = this@createFilesWithGeneratedDeclarations.moduleData
                 packageDirective = buildPackageDirective {

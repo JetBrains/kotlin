@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -27,6 +28,7 @@ abstract class FirFile : FirDeclaration() {
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract val annotationsContainer: FirFileAnnotationsContainer
     abstract val packageDirective: FirPackageDirective
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
@@ -44,6 +46,8 @@ abstract class FirFile : FirDeclaration() {
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
+
+    abstract fun <D> transformAnnotationsContainer(transformer: FirTransformer<D>, data: D): FirFile
 
     abstract fun <D> transformImports(transformer: FirTransformer<D>, data: D): FirFile
 

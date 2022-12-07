@@ -552,7 +552,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(userTypeRef)
 
         impl(file) {
-            default("symbol", "FirFileSymbol()")
+            default("annotations") {
+                value = "annotationsContainer.annotations"
+                withGetter = true
+            }
         }
 
         noImpl(argumentList)
