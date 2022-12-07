@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
  */
 internal sealed interface ClassifierExplorationResult {
     /** Indicated unusable classifier. */
-    sealed interface Partially : ClassifierExplorationResult {
+    sealed interface Unusable : ClassifierExplorationResult {
         val symbol: IrClassifierSymbol
 
-        sealed interface CanBeRootCause : Partially
+        sealed interface CanBeRootCause : Unusable
 
         /**
          * There is no real owner classifier for the symbol, only synthetic stub created by [MissingDeclarationStubGenerator].
@@ -54,7 +54,7 @@ internal sealed interface ClassifierExplorationResult {
         /**
          * The classifier depends on another partially linked classifier. Thus, it is considered partially linked as well.
          */
-        class DueToOtherClassifier(override val symbol: IrClassifierSymbol, val rootCause: CanBeRootCause) : Partially
+        class DueToOtherClassifier(override val symbol: IrClassifierSymbol, val rootCause: CanBeRootCause) : Unusable
     }
 
     /** Indicates usable type that is fully linked and does not have visibility conflicts. */

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 internal sealed interface TypeExplorationResult {
     /** Indicates unusable type. */
     sealed interface UnusableType : TypeExplorationResult {
-        class DueToClassifier(val classifier: ClassifierExplorationResult.Partially) : UnusableType
+        class DueToClassifier(val classifier: ClassifierExplorationResult.Unusable) : UnusableType
 
         class DueToVisibilityConflict(
             val classifierWithConflictingVisibility1: ClassifierExplorationResult.Fully.AccessibleClassifier,

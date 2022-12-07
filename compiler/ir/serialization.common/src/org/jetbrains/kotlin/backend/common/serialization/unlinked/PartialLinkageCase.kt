@@ -43,7 +43,7 @@ internal sealed interface PartialLinkageCase {
      */
     class DeclarationUsesPartiallyLinkedClassifier(
         val declarationSymbol: IrSymbol,
-        val cause: ClassifierExplorationResult.Partially
+        val cause: ClassifierExplorationResult.Unusable
     ) : PartialLinkageCase
 
     /**
@@ -72,7 +72,7 @@ internal sealed interface PartialLinkageCase {
      */
     class ExpressionUsesPartiallyLinkedClassifier(
         val expression: IrExpression,
-        val cause: ClassifierExplorationResult.Partially
+        val cause: ClassifierExplorationResult.Unusable
     ) : PartialLinkageCase
 
     /**
@@ -83,7 +83,7 @@ internal sealed interface PartialLinkageCase {
     class ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
-        val cause: ClassifierExplorationResult.Partially
+        val cause: ClassifierExplorationResult.Unusable
     ) : PartialLinkageCase
 
     /**
