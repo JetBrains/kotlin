@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
 import java.util.IdentityHashMap
 
-class SourceSetConstraintTest {
+class IdeSourceSetConstraintTest {
     @Test
     fun `test single target JVM project`() {
         val project = buildMppProject()
