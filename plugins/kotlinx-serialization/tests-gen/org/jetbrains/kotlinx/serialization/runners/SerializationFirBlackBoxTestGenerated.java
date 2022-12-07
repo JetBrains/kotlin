@@ -110,6 +110,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         public void testStarProjections() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");
         }
+
+        @Test
+        @TestMetadata("useSerializersChain.kt")
+        public void testUseSerializersChain() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/useSerializersChain.kt");
+        }
     }
 
     @Nested

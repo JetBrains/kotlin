@@ -86,10 +86,10 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
     }
 
     val additionalSerializersInScopeOfCurrentFile: Map<Pair<IrClassSymbol, Boolean>, IrClassSymbol> by lazy {
-        getClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName,)
+        getClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName)
             .associateBy(
                 { serializerSymbol ->
-                    val kotlinType = (serializerSymbol.owner.superTypes.find(IrType::isKSerializer) as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull
+                    val kotlinType = getAllSubstitutedSupertypes(serializerSymbol.owner).find(IrType::isKSerializer)?.arguments?.firstOrNull()?.typeOrNull
                     val classSymbol = kotlinType?.classOrNull
                         ?: error("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
                     classSymbol to kotlinType.isNullable()

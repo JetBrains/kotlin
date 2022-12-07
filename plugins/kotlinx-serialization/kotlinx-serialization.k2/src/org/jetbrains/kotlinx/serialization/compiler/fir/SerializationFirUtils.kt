@@ -16,9 +16,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -249,11 +252,29 @@ val ConeKotlinType.isKSerializer: Boolean
 fun ConeKotlinType.serializerForType(session: FirSession): ConeKotlinType? {
     return this.fullyExpandedType(session)
         .toRegularClassSymbol(session)
-        ?.resolvedSuperTypes
+        ?.getAllSubstitutedSupertypes(session)
         ?.find { it.isKSerializer }
         ?.typeArguments
         ?.firstOrNull()
         ?.type
+}
+
+fun FirRegularClassSymbol.getAllSubstitutedSupertypes(session: FirSession): Set<ConeKotlinType> {
+    val result = mutableSetOf<ConeKotlinType>()
+
+    fun process(symbol: FirRegularClassSymbol, substitutor: ConeSubstitutor) {
+        for (superType in symbol.resolvedSuperTypes) {
+            if (result.add(substitutor.substituteOrSelf(superType))) {
+                val superClassSymbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
+                val superSubstitutor =
+                    (superType as? ConeLookupTagBasedType)?.let { createSubstitutionForSupertype(it, session) } ?: ConeSubstitutor.Empty
+                process(superClassSymbol, ChainedSubstitutor(superSubstitutor, substitutor))
+            }
+        }
+    }
+
+    process(this, ConeSubstitutor.Empty)
+    return result
 }
 
 val ConeKotlinType.isTypeParameter: Boolean
