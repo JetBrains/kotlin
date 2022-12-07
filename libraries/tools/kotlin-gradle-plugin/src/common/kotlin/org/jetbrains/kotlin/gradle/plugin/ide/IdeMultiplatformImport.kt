@@ -89,6 +89,11 @@ interface IdeMultiplatformImport {
         BinaryDependencyResolution,
 
         /**
+         * Resolution phase intended to resolve sources.jar and javadoc.jar dependencies (downloading and transforming from repositories)
+         */
+        SourcesAndDocumentationResolution,
+
+        /**
          * Generic phase intended to run after all other resolvers.
          */
         PostDependencyResolution

@@ -95,32 +95,24 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 
-        /* Overwrite android dependencies by empty resolver */
-        registerDependencyResolver(
-            resolver = IdeDependencyResolver.Empty,
-            constraint = SourceSetConstraint.isAndroid,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
-        )
-
         registerDependencyResolver(
             resolver = IdeNativeStdlibSourcesResolver,
             constraint = SourceSetConstraint.isNative,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 
         registerDependencyResolver(
             resolver = IdePlatformSourcesResolver(),
             constraint = SourceSetConstraint.isSinglePlatformType,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 
         registerDependencyResolver(
             resolver = IdeMetadataSourcesResolver(),
             constraint = !SourceSetConstraint.isSinglePlatformType,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 
@@ -128,7 +120,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             registerDependencyResolver(
                 resolver = IdeArtifactResolutionQuerySourcesAndDocumentationResolver,
                 constraint = SourceSetConstraint.unconstrained,
-                phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+                phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
                 level = IdeMultiplatformImport.DependencyResolutionLevel.Default
             )
         }
@@ -145,5 +137,20 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
         )
 
         registerExtrasSerializationExtension(kotlinExtrasSerialization)
+
+        /* Overwrite android dependencies by empty resolver */
+        registerDependencyResolver(
+            resolver = IdeDependencyResolver.Empty,
+            constraint = SourceSetConstraint.isAndroid,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
+        )
+
+        registerDependencyResolver(
+            resolver = IdeDependencyResolver.Empty,
+            constraint = SourceSetConstraint.isAndroid,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
+        )
     }
 }
