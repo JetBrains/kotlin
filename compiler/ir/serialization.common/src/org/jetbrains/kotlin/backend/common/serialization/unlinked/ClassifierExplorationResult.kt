@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 
 /**
- * Describes the reason why a certain classifier is considered as partially linked. See [LinkedClassifierExplorer.exploreSymbol].
- *
- * Can also be used as a result of exploring IR types to find out if the type uses any partially linked classifier.
- * See [LinkedClassifierExplorer.exploreType].
+ * Describes the reason why a certain classifier is considered as unusable (partially linked or having visibility conflicts).
+ * For more details see [LinkedClassifierExplorer.exploreSymbol].
  */
 internal sealed interface ClassifierExplorationResult {
     /** Indicated unusable classifier. */

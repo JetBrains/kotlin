@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
+/**
+ * Used as a result of exploring IR types to find out if the type uses any partially linked classifier or has a visibility conflict.
+ * For more details see [LinkedClassifierExplorer.exploreType].
+ */
 internal sealed interface TypeExplorationResult {
     /** Indicates unusable type. */
     sealed interface UnusableType : TypeExplorationResult {
