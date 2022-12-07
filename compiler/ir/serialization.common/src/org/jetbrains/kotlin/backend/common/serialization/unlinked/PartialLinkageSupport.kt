@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface PartialLinkageSupport {
@@ -33,14 +34,16 @@ interface PartialLinkageSupport {
      * Generate stubs for the remaining unbound symbols. Traverse the IR tree and patch every usage of any unbound symbol
      * to throw an appropriate IrLinkageError on access.
      */
-    fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrElement>) {}
+    fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>)
+    fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration)
 
     companion object {
         val DISABLED = object : PartialLinkageSupport {
             override val partialLinkageEnabled get() = false
             override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
-            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrElement>) = Unit
+            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit
+            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) = Unit
         }
     }
 }

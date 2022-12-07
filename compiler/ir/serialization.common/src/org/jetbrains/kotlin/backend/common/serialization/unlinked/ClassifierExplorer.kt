@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.Partially.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Usable
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,83 +27,78 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-internal class LinkedClassifierExplorer(
-    private val classifierSymbols: LinkedClassifierSymbols,
-    private val stubGenerator: MissingDeclarationStubGenerator
-) {
+internal class ClassifierExplorer(private val stubGenerator: MissingDeclarationStubGenerator) {
+    private val exploredSymbols = ExploredClassifiers()
 
-    fun exploreType(type: IrType): Partially? = type.exploreType(visitedSymbols = hashSetOf()) as? Partially
-    fun exploreSymbol(symbol: IrClassifierSymbol): Partially? = symbol.exploreSymbol(visitedSymbols = hashSetOf()) as? Partially
+    fun exploreType(type: IrType): Unusable? = type.exploreType(visitedSymbols = hashSetOf()) as? Unusable
+    fun exploreSymbol(symbol: IrClassifierSymbol): Unusable? = symbol.exploreSymbol(visitedSymbols = hashSetOf()) as? Unusable
 
     fun exploreIrElement(element: IrElement) {
         element.acceptChildrenVoid(IrElementExplorer { it.exploreType(visitedSymbols = hashSetOf()) })
     }
 
-    /** Explore the IR type to find the first cause why this type should be considered as partially linked. */
-    private fun IrType.exploreType(visitedSymbols: MutableSet<IrClassifierSymbol>): LinkedClassifierStatus {
+    /** Explore the IR type to find the first cause why this type should be considered as unusable. */
+    private fun IrType.exploreType(visitedSymbols: MutableSet<IrClassifierSymbol>): ExploredClassifier {
         return when (this) {
-            is IrSimpleType -> classifier.exploreSymbol(visitedSymbols) as? Partially
-                ?: arguments.firstPartiallyLinkedStatus { (it as? IrTypeProjection)?.type?.exploreType(visitedSymbols) }
-                ?: Fully
-            is IrDynamicType -> Fully
+            is IrSimpleType -> (classifier.exploreSymbol(visitedSymbols) as? Unusable)
+                ?: arguments.firstUnusable { (it as? IrTypeProjection)?.type?.exploreType(visitedSymbols) }
+                ?: Usable
+            is IrDynamicType -> Usable
             else -> throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
         }
     }
 
-    /** Explore the IR classifier symbol to find the first cause why this symbol should be considered as partially linked. */
-    private fun IrClassifierSymbol.exploreSymbol(visitedSymbols: MutableSet<IrClassifierSymbol>): LinkedClassifierStatus {
-        classifierSymbols[this]?.let { status ->
+    /** Explore the IR classifier symbol to find the first cause why this symbol should be considered as unusable. */
+    private fun IrClassifierSymbol.exploreSymbol(visitedSymbols: MutableSet<IrClassifierSymbol>): ExploredClassifier {
+        exploredSymbols[this]?.let { result ->
             // Already explored and registered symbol.
-            return status
+            return result
         }
 
         if (!isBound) {
             stubGenerator.getDeclaration(this) // Generate a stub and bind the symbol immediately.
-            return classifierSymbols.registerPartiallyLinked(this, MissingClassifier(this))
+            return exploredSymbols.registerUnusable(this, MissingClassifier(this))
         } else if ((owner as? IrLazyDeclarationBase)?.descriptor is NotFoundClasses.MockClassDescriptor) {
             // In case of Lazy IR the declaration is present, but wraps a special descriptor.
-            return classifierSymbols.registerPartiallyLinked(this, MissingClassifier(this))
+            return exploredSymbols.registerUnusable(this, MissingClassifier(this))
         }
 
         if (!visitedSymbols.add(this)) {
-            return Fully // Recursion avoidance.
+            return Usable // Recursion avoidance.
         }
 
-        val dependencyStatus: Partially? = when (val classifier = owner) {
+        val cause: Unusable? = when (val classifier = owner) {
             is IrClass -> {
                 if (classifier.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
-                    return classifierSymbols.registerPartiallyLinked(this, MissingClassifier(this))
+                    return exploredSymbols.registerUnusable(this, MissingClassifier(this))
 
-                val parentStatus: Partially? = if (classifier.isInner || classifier.isEnumEntry) {
-                    when (val parentClassSymbol = classifier.parentClassOrNull?.symbol) {
-                        null -> return classifierSymbols.registerPartiallyLinked(this, MissingEnclosingClass(this as IrClassSymbol))
-                        else -> parentClassSymbol.exploreSymbol(visitedSymbols) as? Partially
-                    }
-                } else
-                    null
+                val outerClassSymbol = if (classifier.isInner || classifier.isEnumEntry) {
+                    classifier.parentClassOrNull?.symbol
+                        ?: return exploredSymbols.registerUnusable(this, MissingEnclosingClass(this as IrClassSymbol))
+                } else null
 
-                parentStatus
-                    ?: classifier.typeParameters.firstPartiallyLinkedStatus { it.symbol.exploreSymbol(visitedSymbols) }
-                    ?: classifier.superTypes.firstPartiallyLinkedStatus { it.exploreType(visitedSymbols) }
+                (outerClassSymbol?.exploreSymbol(visitedSymbols) as? Unusable)
+                    ?: classifier.typeParameters.firstUnusable { it.symbol.exploreSymbol(visitedSymbols) }
+                    ?: classifier.superTypes.firstUnusable { it.exploreType(visitedSymbols) }
             }
 
-            is IrTypeParameter -> classifier.superTypes.firstPartiallyLinkedStatus { it.exploreType(visitedSymbols) }
+            is IrTypeParameter -> classifier.superTypes.firstUnusable { it.exploreType(visitedSymbols) }
 
             else -> null
         }
 
-        val rootCause = when (dependencyStatus) {
-            null -> return classifierSymbols.registerFullyLinked(this)
-            is DueToOtherClassifier -> dependencyStatus.rootCause
-            is CanBeRootCause -> dependencyStatus
+        val rootCause = when (cause) {
+            null -> return exploredSymbols.registerUsable(this)
+            is DueToOtherClassifier -> cause.rootCause
+            is CanBeRootCause -> cause
         }
 
-        return classifierSymbols.registerPartiallyLinked(this, DueToOtherClassifier(this, rootCause))
+        return exploredSymbols.registerUnusable(this, DueToOtherClassifier(this, rootCause))
     }
 
-    /** Iterate the collection and find the first partially linked status. */
-    private inline fun <T> List<T>.firstPartiallyLinkedStatus(transform: (T) -> LinkedClassifierStatus?): Partially? =
-        firstNotNullOfOrNull { transform(it) as? Partially }
+    /** Iterate the collection and find the first unusable classifier. */
+    private inline fun <T> List<T>.firstUnusable(transform: (T) -> ExploredClassifier?): Unusable? =
+        firstNotNullOfOrNull { transform(it) as? Unusable }
 }
 
 private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrElementVisitorVoid {
