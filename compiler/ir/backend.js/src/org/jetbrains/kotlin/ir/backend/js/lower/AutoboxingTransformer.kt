@@ -114,7 +114,7 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
             if (icUtils.isTypeInlined(element.type) && !icUtils.isTypeInlined(expression.type) && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
-                expression.varargElementType
+                if (!expression.type.isPrimitiveArray()) irBuiltIns.anyNType else expression.varargElementType
         )
 }
 
@@ -134,6 +134,14 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
         val res = super.visitReturn(expression)
         processingReturnStack.pop()
         return res
+    }
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        return super.visitFunction(declaration)
+    }
+
+    override fun visitVararg(expression: IrVararg): IrExpression {
+        return super.visitVararg(expression)
     }
 
     override fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression {
