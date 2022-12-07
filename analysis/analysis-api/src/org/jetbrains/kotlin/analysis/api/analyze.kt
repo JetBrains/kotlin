@@ -53,8 +53,7 @@ public inline fun <R> analyze(
     nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     crossinline action: KtAnalysisSession.() -> R
 ): R {
-    checkNotNull(useSiteKtModule.project)
-    val sessionProvider = KtAnalysisSessionProvider.getInstance(useSiteKtModule.project!!)
+    val sessionProvider = KtAnalysisSessionProvider.getInstance(useSiteKtModule.project)
     return sessionProvider.analyze(useSiteKtModule, nonDefaultLifetimeTokenFactory, action)
 }
 

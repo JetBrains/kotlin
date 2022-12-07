@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -20,6 +21,7 @@ internal class KtNotUnderContentRootModuleImpl(
     override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
     psiFile: PsiFile? = null,
     override val moduleDescription: String,
+    override val project: Project,
 ) : KtNotUnderContentRootModule, KtModuleWithPlatform {
     override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 

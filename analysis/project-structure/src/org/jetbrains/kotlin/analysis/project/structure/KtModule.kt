@@ -65,7 +65,7 @@ public sealed interface KtModule {
      * [Project] to which module belongs.
      * If current module depends on some other modules, all those modules should have the same [Project] as the current one.
      */
-    public val project: Project?
+    public val project: Project
 
     /**
      * Human-readable description of the module. E.g, "main sources of module 'analysis-api'"
@@ -73,16 +73,12 @@ public sealed interface KtModule {
     public val moduleDescription: String
 }
 
-public sealed interface KtModuleWithProject : KtModule {
-    override val project: Project
-}
-
 /**
  * A module which consists of a set of source declarations inside a projects.
  *
  * Generally, a main or test Source Set.
  */
-public interface KtSourceModule : KtModule, KtModuleWithProject {
+public interface KtSourceModule : KtModule {
     public val moduleName: String
 
     override val moduleDescription: String
@@ -97,7 +93,7 @@ public interface KtSourceModule : KtModule, KtModuleWithProject {
 /**
  * A module which consists of binary declarations.
  */
-public sealed interface KtBinaryModule : KtModule, KtModuleWithProject {
+public sealed interface KtBinaryModule : KtModule {
     /**
      * A list of binary files which forms a binary module. It can be a list of JARs, KLIBs, folders with .class files.
      * Should be consistent with [contentScope],
@@ -137,7 +133,7 @@ public interface KtSdkModule : KtBinaryModule {
 /**
  * A sources for some [KtLibraryModule]
  */
-public interface KtLibrarySourceModule : KtModuleWithProject {
+public interface KtLibrarySourceModule : KtModule {
     public val libraryName: String
 
     /**
@@ -174,7 +170,4 @@ public class KtBuiltinsModule(
 /**
  * A set of sources which lives outside project content root. E.g, testdata files or source files of some other project.
  */
-public interface KtNotUnderContentRootModule : KtModule {
-    override val project: Project?
-        get() = null
-}
+public interface KtNotUnderContentRootModule : KtModule
