@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrErrorType
@@ -47,6 +45,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
@@ -409,11 +408,20 @@ private fun stabilityOf(
             substitutions,
             currentlyAnalyzing
         )
-        type.isInlineClassType() -> stabilityOf(
-            type.getInlinedClass()!!,
-            substitutions,
-            currentlyAnalyzing
-        )
+        type.isInlineClassType() -> {
+            val inlineClassDeclaration = type.getClass()
+                ?: error("Failed to resolve the class definition of inline type $type")
+
+            if (inlineClassDeclaration.hasStableMarker()) {
+                Stability.Stable
+            } else {
+                stabilityOf(
+                    type = getInlineClassUnderlyingType(inlineClassDeclaration),
+                    substitutions = substitutions,
+                    currentlyAnalyzing = currentlyAnalyzing
+                )
+            }
+        }
         type is IrSimpleType -> {
             stabilityOf(
                 type.classifier,
@@ -486,21 +494,3 @@ fun stabilityOf(expr: IrExpression): Stability {
         else -> stability
     }
 }
-
-private fun IrType.getInlinedClass(): IrClass? {
-    val erased = erase(this) ?: return null
-    if (this is IrSimpleType && isInlineClassType()) {
-        val fieldType = getInlineClassUnderlyingType(erased)
-        return fieldType.getInlinedClass()
-    }
-    return erased
-}
-
-// From Kotin's InlineClasses.kt
-private tailrec fun erase(type: IrType): IrClass? =
-    when (val classifier = type.classifierOrFail) {
-        is IrClassSymbol -> classifier.owner
-        is IrScriptSymbol -> null // TODO: check if correct
-        is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
-        else -> error(classifier)
-    }

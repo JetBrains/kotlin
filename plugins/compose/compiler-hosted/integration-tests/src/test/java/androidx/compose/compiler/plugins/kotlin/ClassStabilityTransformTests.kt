@@ -161,6 +161,51 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
+    fun testValueClassIsStableIfItsValueIsStable() = assertStability(
+        """
+            @JvmInline value class Px(val pixels: Int)
+        """,
+        "Stable"
+    )
+
+    @Test
+    fun testValueClassIsUnstableIfItsValueIsUnstable() = assertStability(
+        """
+            @JvmInline value class UnstableWrapper(val backingValue: Unstable)
+        """,
+        "Unstable"
+    )
+
+    @Test
+    fun testValueClassIsStableIfAnnotatedAsStableRegardlessOfWrappedValue() = assertStability(
+        """
+            @Stable @JvmInline value class StableWrapper(val backingValue: Unstable)
+        """,
+        "Stable"
+    )
+
+    @Test
+    fun testGenericValueClassIsStableIfTypeIsStable() = assertStability(
+        """
+            @JvmInline value class PairWrapper<T, U>(val pair: Pair<T, U>)
+        """,
+        "Parameter(T),Parameter(U)"
+    )
+
+    @Test
+    fun testDeeplyNestedValueClassIsTreatedAsStable() = assertStability(
+        """
+            @Stable @JvmInline value class UnsafeStableList(val list: MutableList<Int>)
+
+            @JvmInline value class StableWrapper(val backingValue: UnsafeStableList)
+        """,
+        """
+            @JvmInline value class InferredStable(val backingValue: StableWrapper)
+        """,
+        "Stable"
+    )
+
+    @Test
     fun testProtobufLiteTypesAreStable() = assertStability(
         """
             class Foo(val x: androidx.compose.compiler.plugins.StabilityTestProtos.SampleProto)
