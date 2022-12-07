@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 
@@ -13,6 +14,7 @@ fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependency
     return when (notation) {
         null -> return emptyList()
         is IdeaKotlinDependency -> listOf(IdeaKotlinDependencyInstanceMatcher(notation))
+        is IdeaKotlinBinaryCoordinates -> listOf(IdeaBinaryCoordinatesInstanceMatcher(notation))
         is IdeaKotlinDependencyMatcher -> listOf(notation)
         is Iterable<*> -> notation.flatMap { buildIdeaKotlinDependencyMatchers(it) }
         else -> error("Can't build ${IdeaKotlinSourceDependencyMatcher::class.java.simpleName} from $notation")

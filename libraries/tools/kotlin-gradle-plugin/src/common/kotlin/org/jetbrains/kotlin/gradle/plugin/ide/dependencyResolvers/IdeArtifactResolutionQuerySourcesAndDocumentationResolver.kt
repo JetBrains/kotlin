@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ArtifactResolutionResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
@@ -14,9 +15,11 @@ import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.language.java.artifact.JavadocArtifact
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
@@ -32,7 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.project
 internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
-        val configuration = sourceSet.internal.resolvableMetadataConfiguration
+        val configuration = selectConfiguration(sourceSet)
         val resolutionResult = project.dependencies.createArtifactResolutionQuery()
             .forComponents(configuration.incoming.resolutionResult.allComponents.map { it.id })
             .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java, JavadocArtifact::class.java)
@@ -57,5 +60,11 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeD
                     )
                 }
         }.toSet()
+    }
+
+    private fun selectConfiguration(sourceSet: KotlinSourceSet): Configuration {
+        val platformCompilation = sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common }
+        return platformCompilation?.internal?.configurations?.compileDependencyConfiguration
+            ?: sourceSet.internal.resolvableMetadataConfiguration
     }
 }
