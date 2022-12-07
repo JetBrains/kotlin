@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.utils.named
 
-internal fun IdePlatformSourcesResolver(): IdePlatformDependencyResolver = IdePlatformDependencyResolver(
+internal fun IdePlatformSourcesResolver(): IdeBinaryDependencyResolver = IdeBinaryDependencyResolver(
     binaryType = IdeaKotlinDependency.SOURCES_BINARY_TYPE,
-    artifactResolutionStrategy = IdePlatformDependencyResolver.ArtifactResolutionStrategy.Compilation(
+    artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.Compilation(
         setupArtifactViewAttributes = {
             attribute(Category.CATEGORY_ATTRIBUTE, it.project.objects.named(Category.DOCUMENTATION))
             attribute(DocsType.DOCS_TYPE_ATTRIBUTE, it.project.objects.named(DocsType.SOURCES))

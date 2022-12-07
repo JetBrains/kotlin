@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.gradle.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdePlatformDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver
 import kotlin.test.Test
 
-class IdePlatformBinaryDependencyResolverTest {
+class IdeBinaryDependencyResolverTest {
 
     @Test
     fun `test - MVIKotlin - on jvm and linux platform source sets`() {
@@ -46,7 +46,7 @@ class IdePlatformBinaryDependencyResolverTest {
         }
 
         /* This resolver shall refuse to resolve for dependencies for metadata based dependencies */
-        IdePlatformDependencyResolver().resolve(commonMain).assertMatches()
+        IdeBinaryDependencyResolver().resolve(commonMain).assertMatches()
 
         val jvmDependencies = listOf(
             binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
@@ -72,9 +72,9 @@ class IdePlatformBinaryDependencyResolverTest {
             binaryCoordinates("com.arkivanov.essenty:utils-internal-linuxx64:0.4.2"),
         )
 
-        IdePlatformDependencyResolver().resolve(jvmMain).assertMatches(jvmDependencies)
-        IdePlatformDependencyResolver().resolve(jvmTest).assertMatches(jvmDependencies)
-        IdePlatformDependencyResolver().resolve(linuxX64Main).assertMatches(linuxDependencies)
-        IdePlatformDependencyResolver().resolve(linuxX64Test).assertMatches(linuxDependencies)
+        IdeBinaryDependencyResolver().resolve(jvmMain).assertMatches(jvmDependencies)
+        IdeBinaryDependencyResolver().resolve(jvmTest).assertMatches(jvmDependencies)
+        IdeBinaryDependencyResolver().resolve(linuxX64Main).assertMatches(linuxDependencies)
+        IdeBinaryDependencyResolver().resolve(linuxX64Test).assertMatches(linuxDependencies)
     }
 }

@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.utils.named
 
-internal fun IdeMetadataSourcesResolver(): IdePlatformDependencyResolver = IdePlatformDependencyResolver(
+internal fun IdeMetadataSourcesResolver(): IdeBinaryDependencyResolver = IdeBinaryDependencyResolver(
     binaryType = IdeaKotlinDependency.SOURCES_BINARY_TYPE,
-    artifactResolutionStrategy = IdePlatformDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
+    artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
         setupPlatformResolutionAttributes = {
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
             attribute(Usage.USAGE_ATTRIBUTE, it.project.objects.named(Usage.JAVA_RUNTIME))
