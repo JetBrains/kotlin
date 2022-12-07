@@ -121,9 +121,7 @@ internal class GranularMetadataTransformation(
         kotlinSourceSet.internal.resolvableMetadataConfiguration.incoming.dependencies
     }
 
-    internal val configurationToResolve: Configuration by lazy {
-        kotlinSourceSet.internal.resolvableMetadataConfiguration
-    }
+    internal val configurationToResolve: Configuration = kotlinSourceSet.internal.resolvableMetadataConfiguration
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
