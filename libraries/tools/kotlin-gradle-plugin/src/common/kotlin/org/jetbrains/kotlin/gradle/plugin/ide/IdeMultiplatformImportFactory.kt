@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.UnusedSourcesAndDocumentationFilter
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -129,6 +130,12 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             transformer = IdePlatformStdlibCommonDependencyFilter,
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
+        )
+
+        registerDependencyTransformer(
+            transformer = UnusedSourcesAndDocumentationFilter,
+            constraint = SourceSetConstraint.unconstrained,
+            phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase
         )
 
         registerDependencyEffect(

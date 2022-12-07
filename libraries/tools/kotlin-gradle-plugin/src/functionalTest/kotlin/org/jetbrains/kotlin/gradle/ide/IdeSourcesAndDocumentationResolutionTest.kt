@@ -66,10 +66,6 @@ class IdeSourcesAndDocumentationResolutionTest {
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2"),
-
-                /* sources.jar resolution using ArtifactResolutionQuery will resolve those additionally */
-                binaryCoordinates("org.jetbrains:annotations:13.0"),
-                binaryCoordinates(Regex(escape("org.jetbrains.kotlin:kotlin-stdlib") + ".*"))
             )
 
             val resolvedDependencies = resolveDependencySources(commonMain)
@@ -84,11 +80,7 @@ class IdeSourcesAndDocumentationResolutionTest {
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2"),
-                IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project),
-
-                /* sources.jar resolution using ArtifactResolutionQuery will resolve those additionally */
-                binaryCoordinates("org.jetbrains:annotations:13.0"),
-                binaryCoordinates(Regex(escape("org.jetbrains.kotlin:kotlin-stdlib") + ".*"))
+                IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project)
             )
 
             val resolvedDependencies = resolveDependencySources(nativeMain)
@@ -100,16 +92,6 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check linuxX64Main and linuxX64Test */
         run {
             val expectedDependencies = listOf(
-                /* Artifact Query is 'over providing' */
-                listOf(
-                    binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2"),
-                    binaryCoordinates("com.arkivanov.mvikotlin:utils-internal:3.0.2"),
-                    binaryCoordinates("com.arkivanov.mvikotlin:rx:3.0.2"),
-                    binaryCoordinates("com.arkivanov.mvikotlin:rx-internal:3.0.2"),
-                    binaryCoordinates("com.arkivanov.essenty:utils-internal:0.4.2"),
-                    binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2"),
-                    binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2")
-                ),
 
                 /* Required dependencies */
                 listOf(
