@@ -237,9 +237,8 @@ internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
 context(KtAnalysisSession)
-internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T = requireNotNull(restoreSymbol()) {
-    "${this::class} pointer already disposed"
-}
+internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
+    restoreSymbol() ?: error("${this::class} pointer already disposed")
 
 internal fun hasTypeParameters(
     ktModule: KtModule,
