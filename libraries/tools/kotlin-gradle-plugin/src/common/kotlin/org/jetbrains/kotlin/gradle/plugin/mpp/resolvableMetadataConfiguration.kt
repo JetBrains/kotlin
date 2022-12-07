@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by extrasLazyProperty(
     "resolvableMetadataConfiguration"
 ) {
-    /* Create new 'platform like compileDependencies configuration */
     val configuration = project.configurations.detachedConfiguration()
     configuration.markResolvable()
 
