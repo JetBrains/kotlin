@@ -48,14 +48,14 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-        if (resolvable !is FirAnnotationContainer) return
-        for (annotation in resolvable.annotations) {
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        if (target !is FirAnnotationContainer) return
+        for (annotation in target.annotations) {
             if (annotation is FirAnnotationCall) {
-                checkAnnotationArgumentsMappingIsResolved(annotation, resolvable)
+                checkAnnotationArgumentsMappingIsResolved(annotation, target)
             }
         }
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 }

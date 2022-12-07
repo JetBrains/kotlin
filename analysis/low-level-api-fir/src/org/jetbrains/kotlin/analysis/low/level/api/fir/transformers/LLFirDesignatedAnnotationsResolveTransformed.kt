@@ -57,8 +57,8 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        resolvable.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
 //        checkNestedDeclarationsAreResolved(declaration)
     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -66,23 +67,23 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(resolvable: FirElementWithResolvePhase) {
-        if (resolvable !is FirDeclaration) return
-        val unresolvedAnnotation = resolvable.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        if (target !is FirAnnotationContainer) return
+        val unresolvedAnnotation = target.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
         check(unresolvedAnnotation == null) {
             "Unexpected annotationTypeRef annotation, expected resolvedType but actual ${unresolvedAnnotation?.annotationTypeRef}"
         }
-        resolvable.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        target.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
 
-        for (annotation in resolvable.annotations) {
+        for (annotation in target.annotations) {
             for (argument in annotation.argumentMapping.mapping.values) {
-                checkTypeRefIsResolved(argument.typeRef, "annotation argument", resolvable) {
+                checkTypeRefIsResolved(argument.typeRef, "annotation argument", target) {
                     withFirEntry("firAnnotation", annotation)
                     withFirEntry("firArgument", argument)
                 }
             }
         }
-        checkNestedDeclarationsAreResolved(resolvable)
+        checkNestedDeclarationsAreResolved(target)
     }
 
 }
