@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
  * Describes the reason why a certain classifier is considered as unusable (partially linked or having visibility conflicts).
  * For more details see [LinkedClassifierExplorer.exploreSymbol].
  */
-internal sealed interface ClassifierExplorationResult {
-    /** Indicated unusable classifier. */
-    sealed interface Unusable : ClassifierExplorationResult {
-        val symbol: IrClassifierSymbol
+internal sealed interface ExploredClassifier {
+    val symbol: IrClassifierSymbol
 
+    /** Indicated unusable classifier. */
+    sealed interface Unusable : ExploredClassifier {
         sealed interface CanBeRootCause : Unusable
 
         /**
@@ -56,8 +56,7 @@ internal sealed interface ClassifierExplorationResult {
     }
 
     /** Indicates usable type that is fully linked and does not have visibility conflicts. */
-    sealed interface Usable : ClassifierExplorationResult {
-        val symbol: IrClassifierSymbol
+    sealed interface Usable : ExploredClassifier {
         val visibility: ABIVisibility
 
         class AccessibleClassifier(override val symbol: IrClassifierSymbol, override val visibility: ABIVisibility) : Usable
@@ -67,5 +66,7 @@ internal sealed interface ClassifierExplorationResult {
         }
     }
 
-    object RecursionAvoidance : ClassifierExplorationResult
+    object RecursionAvoidance : ExploredClassifier {
+        override val symbol get() = error("Not supposed to be called")
+    }
 }

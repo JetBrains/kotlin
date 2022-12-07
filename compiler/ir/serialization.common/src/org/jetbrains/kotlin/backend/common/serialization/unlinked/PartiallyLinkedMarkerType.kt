@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.types.Variance
 
 /**
  * Replacement for IR types that use partially linked classifier symbols.
- * Behaves like [kotlin.Any]?. Preserves [ClassifierExplorationResult.Unusable].
+ * Behaves like [kotlin.Any]?. Preserves [ExploredClassifier.Unusable].
  */
 internal class PartiallyLinkedMarkerType(
     builtIns: IrBuiltIns,
-    val partialLinkageReason: ClassifierExplorationResult.Unusable
+    val partialLinkageReason: ExploredClassifier.Unusable
 ) : IrSimpleType(null) {
     override val annotations get() = emptyList<IrConstructorCall>()
     override val classifier = builtIns.anyClass

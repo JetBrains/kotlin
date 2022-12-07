@@ -12,16 +12,16 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 internal sealed interface TypeExplorationResult {
     /** Indicates unusable type. */
     sealed interface UnusableType : TypeExplorationResult {
-        class DueToClassifier(val classifier: ClassifierExplorationResult.Unusable) : UnusableType
+        class DueToClassifier(val classifier: ExploredClassifier.Unusable) : UnusableType
 
         class DueToVisibilityConflict(
-            val classifierWithConflictingVisibility1: ClassifierExplorationResult.Usable.AccessibleClassifier,
-            val classifierWithConflictingVisibility2: ClassifierExplorationResult.Usable.AccessibleClassifier
+            val classifierWithConflictingVisibility1: ExploredClassifier.Usable.AccessibleClassifier,
+            val classifierWithConflictingVisibility2: ExploredClassifier.Usable.AccessibleClassifier
         ) : UnusableType
     }
 
     /** Indicates usable type that does not reference any partially linked classifiers and does not have visibility conflicts. */
-    class UsableType(val classifierWithNarrowestVisibility: ClassifierExplorationResult.Usable?) : TypeExplorationResult {
+    class UsableType(val classifierWithNarrowestVisibility: ExploredClassifier.Usable?) : TypeExplorationResult {
         companion object {
             val DEFAULT_PUBLIC = UsableType(null)
         }

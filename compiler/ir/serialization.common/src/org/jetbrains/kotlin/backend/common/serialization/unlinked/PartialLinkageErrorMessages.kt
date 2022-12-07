@@ -194,14 +194,14 @@ private fun StringBuilder.expression(expression: IrExpression): Appendable {
     return append(": ")
 }
 
-private fun Appendable.cause(cause: ClassifierExplorationResult.Unusable): Appendable =
+private fun Appendable.cause(cause: ExploredClassifier.Unusable): Appendable =
     when (cause) {
-        is ClassifierExplorationResult.Unusable.MissingClassifier -> unlinkedSymbol(cause)
-        is ClassifierExplorationResult.Unusable.MissingEnclosingClass -> noEnclosingClass(cause)
-        is ClassifierExplorationResult.Unusable.DueToOtherClassifier -> {
+        is ExploredClassifier.Unusable.MissingClassifier -> unlinkedSymbol(cause)
+        is ExploredClassifier.Unusable.MissingEnclosingClass -> noEnclosingClass(cause)
+        is ExploredClassifier.Unusable.DueToOtherClassifier -> {
             when (val rootCause = cause.rootCause) {
-                is ClassifierExplorationResult.Unusable.MissingClassifier -> unlinkedSymbol(rootCause, cause)
-                is ClassifierExplorationResult.Unusable.MissingEnclosingClass -> noEnclosingClass(rootCause, cause)
+                is ExploredClassifier.Unusable.MissingClassifier -> unlinkedSymbol(rootCause, cause)
+                is ExploredClassifier.Unusable.MissingEnclosingClass -> noEnclosingClass(rootCause, cause)
             }
         }
     }
@@ -213,8 +213,8 @@ private fun Appendable.noEnclosingClass(symbol: IrClassSymbol): Appendable =
     declarationKindName(symbol, capitalized = true).append(" lacks enclosing class")
 
 private fun Appendable.unlinkedSymbol(
-    rootCause: ClassifierExplorationResult.Unusable.MissingClassifier,
-    cause: ClassifierExplorationResult.Unusable.DueToOtherClassifier? = null
+    rootCause: ExploredClassifier.Unusable.MissingClassifier,
+    cause: ExploredClassifier.Unusable.DueToOtherClassifier? = null
 ): Appendable {
     append("unlinked ").append(rootCause.symbol.declarationKind.displayName).append(" symbol ").signature(rootCause.symbol)
     if (cause != null) through(cause)
@@ -222,15 +222,15 @@ private fun Appendable.unlinkedSymbol(
 }
 
 private fun Appendable.noEnclosingClass(
-    rootCause: ClassifierExplorationResult.Unusable.MissingEnclosingClass,
-    cause: ClassifierExplorationResult.Unusable.DueToOtherClassifier? = null
+    rootCause: ExploredClassifier.Unusable.MissingEnclosingClass,
+    cause: ExploredClassifier.Unusable.DueToOtherClassifier? = null
 ): Appendable {
     declarationKindName(rootCause.symbol, capitalized = false)
     if (cause != null) through(cause)
     return append(". ").noEnclosingClass(rootCause.symbol)
 }
 
-private fun Appendable.through(cause: ClassifierExplorationResult.Unusable.DueToOtherClassifier): Appendable =
+private fun Appendable.through(cause: ExploredClassifier.Unusable.DueToOtherClassifier): Appendable =
     append(" (through ").declarationKindName(cause.symbol, capitalized = false).append(")")
 
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =

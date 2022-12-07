@@ -131,9 +131,9 @@ internal class PartiallyLinkedIrTreePatcher(
             if (partialLinkageReason != null) {
                 // Transform the reason into the most appropriate linkage case.
                 val partialLinkageCase = when (partialLinkageReason) {
-                    is ClassifierExplorationResult.Unusable.MissingClassifier -> MissingDeclaration(declaration.symbol)
-                    is ClassifierExplorationResult.Unusable.MissingEnclosingClass -> MissingEnclosingClass(declaration.symbol)
-                    is ClassifierExplorationResult.Unusable.DueToOtherClassifier -> DeclarationUsesPartiallyLinkedClassifier(
+                    is ExploredClassifier.Unusable.MissingClassifier -> MissingDeclaration(declaration.symbol)
+                    is ExploredClassifier.Unusable.MissingEnclosingClass -> MissingEnclosingClass(declaration.symbol)
+                    is ExploredClassifier.Unusable.DueToOtherClassifier -> DeclarationUsesPartiallyLinkedClassifier(
                         declaration.symbol,
                         partialLinkageReason.rootCause
                     )
@@ -233,11 +233,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         /**
-         * Returns the first encountered [ClassifierExplorationResult.Unusable].
+         * Returns the first encountered [ExploredClassifier.Unusable].
          */
-        private fun IrFunction.rewriteTypesInFunction(): ClassifierExplorationResult.Unusable? {
+        private fun IrFunction.rewriteTypesInFunction(): ExploredClassifier.Unusable? {
             // Remember the first assignment. Ignore all subsequent.
-            var result: ClassifierExplorationResult.Unusable? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
+            var result: ExploredClassifier.Unusable? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
 
             fun IrValueParameter.fixType() {
                 val newType = type.toPartiallyLinkedMarkerTypeOrNull() ?: return
@@ -509,10 +509,10 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        private fun IrType.precalculatedPartialLinkageReason(): ClassifierExplorationResult.Unusable? =
+        private fun IrType.precalculatedPartialLinkageReason(): ExploredClassifier.Unusable? =
             (this as? PartiallyLinkedMarkerType)?.partialLinkageReason ?: partialLinkageReason()
 
-        private fun List<IrType>.precalculatedPartialLinkageReason(): ClassifierExplorationResult.Unusable? =
+        private fun List<IrType>.precalculatedPartialLinkageReason(): ExploredClassifier.Unusable? =
             firstNotNullOfOrNull { it.precalculatedPartialLinkageReason() }
 
         /**
@@ -529,8 +529,8 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private fun IrClassifierSymbol.partialLinkageReason(): ClassifierExplorationResult.Unusable? =
-        classifierExplorer.exploreSymbol(this) as? ClassifierExplorationResult.Unusable
+    private fun IrClassifierSymbol.partialLinkageReason(): ExploredClassifier.Unusable? =
+        classifierExplorer.exploreSymbol(this) as? ExploredClassifier.Unusable
 
     private fun IrType.partialLinkageReason(): TypeExplorationResult.UnusableType? =
         classifierExplorer.exploreType(this) as? TypeExplorationResult.UnusableType

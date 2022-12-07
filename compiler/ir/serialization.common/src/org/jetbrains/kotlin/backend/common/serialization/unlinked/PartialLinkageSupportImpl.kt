@@ -27,7 +27,7 @@ internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: Ir
 
         val toExclude = buildSet {
             for (clazz in entries.keys) {
-                if (classifierExplorer.exploreSymbol(clazz.symbol) is ClassifierExplorationResult.Unusable) {
+                if (classifierExplorer.exploreSymbol(clazz.symbol) is ExploredClassifier.Unusable) {
                     this += clazz
                 }
             }
