@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.markResolvable
-import org.jetbrains.kotlin.gradle.plugin.sources.*
+import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
@@ -23,7 +25,7 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
     "resolvableMetadataConfiguration"
 ) {
     /* Create new 'platform like compileDependencies configuration */
-    val configuration = project.configurations.maybeCreate(disambiguateName("resolvable$METADATA_CONFIGURATION_NAME_SUFFIX"))
+    val configuration = project.configurations.detachedConfiguration()
     configuration.markResolvable()
 
     ((getVisibleSourceSetsFromAssociateCompilations(this) + this).withDependsOnClosure).forEach { visibleSourceSet ->
