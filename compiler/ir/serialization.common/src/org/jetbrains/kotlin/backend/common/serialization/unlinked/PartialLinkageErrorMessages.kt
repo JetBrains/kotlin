@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.DeclarationKind.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExpressionKind.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Partially
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.UNKNOWN_NAME
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.guessName
@@ -195,14 +194,14 @@ private fun StringBuilder.expression(expression: IrExpression): Appendable {
     return append(": ")
 }
 
-private fun Appendable.cause(cause: Partially): Appendable =
+private fun Appendable.cause(cause: ClassifierExplorationResult.Partially): Appendable =
     when (cause) {
-        is Partially.MissingClassifier -> unlinkedSymbol(cause)
-        is Partially.MissingEnclosingClass -> noEnclosingClass(cause)
-        is Partially.DueToOtherClassifier -> {
+        is ClassifierExplorationResult.Partially.MissingClassifier -> unlinkedSymbol(cause)
+        is ClassifierExplorationResult.Partially.MissingEnclosingClass -> noEnclosingClass(cause)
+        is ClassifierExplorationResult.Partially.DueToOtherClassifier -> {
             when (val rootCause = cause.rootCause) {
-                is Partially.MissingClassifier -> unlinkedSymbol(rootCause, cause)
-                is Partially.MissingEnclosingClass -> noEnclosingClass(rootCause, cause)
+                is ClassifierExplorationResult.Partially.MissingClassifier -> unlinkedSymbol(rootCause, cause)
+                is ClassifierExplorationResult.Partially.MissingEnclosingClass -> noEnclosingClass(rootCause, cause)
             }
         }
     }
@@ -214,8 +213,8 @@ private fun Appendable.noEnclosingClass(symbol: IrClassSymbol): Appendable =
     declarationKindName(symbol, capitalized = true).append(" lacks enclosing class")
 
 private fun Appendable.unlinkedSymbol(
-    rootCause: Partially.MissingClassifier,
-    cause: Partially.DueToOtherClassifier? = null
+    rootCause: ClassifierExplorationResult.Partially.MissingClassifier,
+    cause: ClassifierExplorationResult.Partially.DueToOtherClassifier? = null
 ): Appendable {
     append("unlinked ").append(rootCause.symbol.declarationKind.displayName).append(" symbol ").signature(rootCause.symbol)
     if (cause != null) through(cause)
@@ -223,15 +222,15 @@ private fun Appendable.unlinkedSymbol(
 }
 
 private fun Appendable.noEnclosingClass(
-    rootCause: Partially.MissingEnclosingClass,
-    cause: Partially.DueToOtherClassifier? = null
+    rootCause: ClassifierExplorationResult.Partially.MissingEnclosingClass,
+    cause: ClassifierExplorationResult.Partially.DueToOtherClassifier? = null
 ): Appendable {
     declarationKindName(rootCause.symbol, capitalized = false)
     if (cause != null) through(cause)
     return append(". ").noEnclosingClass(rootCause.symbol)
 }
 
-private fun Appendable.through(cause: Partially.DueToOtherClassifier): Appendable =
+private fun Appendable.through(cause: ClassifierExplorationResult.Partially.DueToOtherClassifier): Appendable =
     append(" (through ").declarationKindName(cause.symbol, capitalized = false).append(")")
 
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =

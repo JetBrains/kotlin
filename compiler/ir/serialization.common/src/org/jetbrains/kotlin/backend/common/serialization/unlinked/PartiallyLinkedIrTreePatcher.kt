@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Partially
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -132,9 +131,9 @@ internal class PartiallyLinkedIrTreePatcher(
             if (partialLinkageReason != null) {
                 // Transform the reason into the most appropriate linkage case.
                 val partialLinkageCase = when (partialLinkageReason) {
-                    is Partially.MissingClassifier -> MissingDeclaration(declaration.symbol)
-                    is Partially.MissingEnclosingClass -> MissingEnclosingClass(declaration.symbol)
-                    is Partially.DueToOtherClassifier -> DeclarationUsesPartiallyLinkedClassifier(
+                    is ClassifierExplorationResult.Partially.MissingClassifier -> MissingDeclaration(declaration.symbol)
+                    is ClassifierExplorationResult.Partially.MissingEnclosingClass -> MissingEnclosingClass(declaration.symbol)
+                    is ClassifierExplorationResult.Partially.DueToOtherClassifier -> DeclarationUsesPartiallyLinkedClassifier(
                         declaration.symbol,
                         partialLinkageReason.rootCause
                     )
@@ -166,7 +165,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     }
                 }
 
-                declaration.superTypes = declaration.superTypes.filter { !it.hasPartialLinkageReason() }
+                declaration.superTypes = declaration.superTypes.filter { it.partialLinkageReason() == null }
 
                 /**
                  * Remove the class in the following cases:
@@ -234,11 +233,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         /**
-         * Returns the first [Partially] from the first encountered partially linked type.
+         * Returns the first [ClassifierExplorationResult.Partially] from the first encountered partially linked type.
          */
-        private fun IrFunction.rewriteTypesInFunction(): Partially? {
+        private fun IrFunction.rewriteTypesInFunction(): ClassifierExplorationResult.Partially? {
             // Remember the first assignment. Ignore all subsequent.
-            var result: Partially? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
+            var result: ClassifierExplorationResult.Partially? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
 
             fun IrValueParameter.fixType() {
                 val newType = type.toPartiallyLinkedMarkerTypeOrNull() ?: return
@@ -510,10 +509,10 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        private fun IrType.precalculatedPartialLinkageReason(): Partially? =
+        private fun IrType.precalculatedPartialLinkageReason(): ClassifierExplorationResult.Partially? =
             (this as? PartiallyLinkedMarkerType)?.partialLinkageReason ?: partialLinkageReason()
 
-        private fun List<IrType>.precalculatedPartialLinkageReason(): Partially? =
+        private fun List<IrType>.precalculatedPartialLinkageReason(): ClassifierExplorationResult.Partially? =
             firstNotNullOfOrNull { it.precalculatedPartialLinkageReason() }
 
         /**
@@ -530,10 +529,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private fun IrClassifierSymbol.partialLinkageReason(): Partially? = classifierExplorer.exploreSymbol(this) as? Partially
+    private fun IrClassifierSymbol.partialLinkageReason(): ClassifierExplorationResult.Partially? =
+        classifierExplorer.exploreSymbol(this) as? ClassifierExplorationResult.Partially
 
-    private fun IrType.partialLinkageReason(): Partially? = classifierExplorer.exploreType(this) as? Partially
-    private fun IrType.hasPartialLinkageReason(): Boolean = partialLinkageReason() != null
+    private fun IrType.partialLinkageReason(): TypeExplorationResult.UnusableType? =
+        classifierExplorer.exploreType(this) as? TypeExplorationResult.UnusableType
 
     private fun IrType.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         partialLinkageReason()?.let { PartiallyLinkedMarkerType(builtIns, it) }

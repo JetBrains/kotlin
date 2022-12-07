@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ABIVisibility.Companion.chooseNarrower
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.*
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -63,24 +62,24 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
 
         if (!isBound) {
             stubGenerator.getDeclaration(this) // Generate a stub and bind the symbol immediately.
-            return registerClassifier(this, Partially.MissingClassifier(this))
+            return registerClassifier(this, ClassifierExplorationResult.Partially.MissingClassifier(this))
         } else if ((owner as? IrLazyDeclarationBase)?.descriptor is NotFoundClasses.MockClassDescriptor) {
             // In case of Lazy IR the declaration is present, but wraps a special descriptor.
-            return registerClassifier(this, Partially.MissingClassifier(this))
+            return registerClassifier(this, ClassifierExplorationResult.Partially.MissingClassifier(this))
         }
 
         if (!visitedSymbols.add(this)) {
-            return RecursionAvoidance // Recursion avoidance.
+            return ClassifierExplorationResult.RecursionAvoidance // Recursion avoidance.
         }
 
         val explorationResult = when (val classifier = owner) {
             is IrClass -> {
                 if (classifier.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
-                    return registerClassifier(this, Partially.MissingClassifier(this))
+                    return registerClassifier(this, ClassifierExplorationResult.Partially.MissingClassifier(this))
 
                 val outerClassSymbol = if (classifier.isInner || classifier.isEnumEntry) {
                     classifier.parentClassOrNull?.symbol
-                        ?: return registerClassifier(this, Partially.MissingEnclosingClass(this as IrClassSymbol))
+                        ?: return registerClassifier(this, ClassifierExplorationResult.Partially.MissingEnclosingClass(this as IrClassSymbol))
                 } else null
 
                 classifierExploration {
@@ -107,7 +106,7 @@ internal class LinkedClassifierExplorer(private val stubGenerator: MissingDeclar
 }
 
 private abstract class ExplorationResultBuilder<R, UR : R> {
-    protected var dependencyWithNarrowerVisibility: Fully.AccessibleClassifier? = null
+    protected var dependencyWithNarrowerVisibility: ClassifierExplorationResult.Fully.AccessibleClassifier? = null
 
     protected var unusableResult: UR? = null
     private inline val done get() = unusableResult != null
@@ -148,21 +147,21 @@ private abstract class ExplorationResultBuilder<R, UR : R> {
 
     private fun consume(exploredClassifier: ClassifierExplorationResult) {
         when (exploredClassifier) {
-            is Partially -> onPartiallyLinkedClassifier(exploredClassifier)
-            is Fully -> onFullyLinkedClassifier(exploredClassifier.accessibleClassifier)
-            is RecursionAvoidance -> return // Just skip it.
+            is ClassifierExplorationResult.Partially -> onPartiallyLinkedClassifier(exploredClassifier)
+            is ClassifierExplorationResult.Fully -> onFullyLinkedClassifier(exploredClassifier.accessibleClassifier)
+            is ClassifierExplorationResult.RecursionAvoidance -> return // Just skip it.
         }
     }
 
-    private inline val Fully.accessibleClassifier: Fully.AccessibleClassifier
+    private inline val ClassifierExplorationResult.Fully.accessibleClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier
         get() = when (this) {
-            is Fully.AccessibleClassifier -> this
-            is Fully.LesserAccessibleClassifier -> dueTo
+            is ClassifierExplorationResult.Fully.AccessibleClassifier -> this
+            is ClassifierExplorationResult.Fully.LesserAccessibleClassifier -> dueTo
         }
 
     protected fun checkDependencyVisibility(
         currentVisibility: ABIVisibility,
-        nextClassifier: Fully.AccessibleClassifier,
+        nextClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier,
         onConflictingVisibilities: (ABIVisibility.Limited) -> UR
     ) {
         val nextVisibility = nextClassifier.visibility
@@ -174,19 +173,19 @@ private abstract class ExplorationResultBuilder<R, UR : R> {
         }
     }
 
-    protected abstract fun onPartiallyLinkedClassifier(exploredClassifier: Partially)
-    protected abstract fun onFullyLinkedClassifier(exploredClassifier: Fully.AccessibleClassifier)
+    protected abstract fun onPartiallyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Partially)
+    protected abstract fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier)
     protected abstract fun onVisibilityConflict(exploredType: TypeExplorationResult.UnusableType.DueToVisibilityConflict)
 
     abstract fun build(): R
 }
 
 private class TypeExplorationResultBuilder : ExplorationResultBuilder<TypeExplorationResult, TypeExplorationResult.UnusableType>() {
-    override fun onPartiallyLinkedClassifier(exploredClassifier: Partially) {
+    override fun onPartiallyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Partially) {
         unusableResult = TypeExplorationResult.UnusableType.DueToClassifier(exploredClassifier)
     }
 
-    override fun onFullyLinkedClassifier(exploredClassifier: Fully.AccessibleClassifier) {
+    override fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier) {
         when (val dependencyWithNarrowerVisibility = dependencyWithNarrowerVisibility) {
             null -> {
                 // Memoize the dependency if it has non-default public visibility.
@@ -219,33 +218,33 @@ private class ClassifierExplorationResultBuilder(
 ) : (ExplorationResultBuilder<ClassifierExplorationResult, ClassifierExplorationResult>)() {
     private val ownVisibility = ABIVisibility.determineVisibilityFor(symbol.owner as IrDeclaration)
 
-    override fun onPartiallyLinkedClassifier(exploredClassifier: Partially) {
+    override fun onPartiallyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Partially) {
         unusableResult = when (exploredClassifier) {
-            is Partially.CanBeRootCause -> Partially.DueToOtherClassifier(symbol, exploredClassifier)
-            is Partially.DueToOtherClassifier -> Partially.DueToOtherClassifier(symbol, exploredClassifier.rootCause)
+            is ClassifierExplorationResult.Partially.CanBeRootCause -> ClassifierExplorationResult.Partially.DueToOtherClassifier(symbol, exploredClassifier)
+            is ClassifierExplorationResult.Partially.DueToOtherClassifier -> ClassifierExplorationResult.Partially.DueToOtherClassifier(symbol, exploredClassifier.rootCause)
         }
     }
 
-    override fun onFullyLinkedClassifier(exploredClassifier: Fully.AccessibleClassifier) {
+    override fun onFullyLinkedClassifier(exploredClassifier: ClassifierExplorationResult.Fully.AccessibleClassifier) {
         when (val dependencyWithNarrowerVisibility = dependencyWithNarrowerVisibility) {
             null -> {
                 // Compare own visibility of the classifier with the visibility of the `next` dependency.
                 checkDependencyVisibility(ownVisibility, exploredClassifier) { currentVisibility ->
-                    Partially.InaccessibleClassifier(symbol, currentVisibility, exploredClassifier)
+                    ClassifierExplorationResult.Partially.InaccessibleClassifier(symbol, currentVisibility, exploredClassifier)
                 }
             }
 
             else -> {
                 // Compare the visibility of the latest memoized dependency with the visibility of the `next` dependency.
                 checkDependencyVisibility(dependencyWithNarrowerVisibility.visibility, exploredClassifier) {
-                    Partially.InaccessibleClassifierDueToOtherClassifiers(symbol, dependencyWithNarrowerVisibility, exploredClassifier)
+                    ClassifierExplorationResult.Partially.InaccessibleClassifierDueToOtherClassifiers(symbol, dependencyWithNarrowerVisibility, exploredClassifier)
                 }
             }
         }
     }
 
     override fun onVisibilityConflict(exploredType: TypeExplorationResult.UnusableType.DueToVisibilityConflict) {
-        unusableResult = Partially.InaccessibleClassifierDueToOtherClassifiers(
+        unusableResult = ClassifierExplorationResult.Partially.InaccessibleClassifierDueToOtherClassifiers(
             symbol,
             exploredType.classifierWithConflictingVisibility1,
             exploredType.classifierWithConflictingVisibility2
@@ -254,8 +253,8 @@ private class ClassifierExplorationResultBuilder(
 
     override fun build(): ClassifierExplorationResult {
         return unusableResult
-            ?: dependencyWithNarrowerVisibility?.let { Fully.LesserAccessibleClassifier(symbol, it) }
-            ?: Fully.AccessibleClassifier(symbol, ownVisibility)
+            ?: dependencyWithNarrowerVisibility?.let { ClassifierExplorationResult.Fully.LesserAccessibleClassifier(symbol, it) }
+            ?: ClassifierExplorationResult.Fully.AccessibleClassifier(symbol, ownVisibility)
     }
 }
 

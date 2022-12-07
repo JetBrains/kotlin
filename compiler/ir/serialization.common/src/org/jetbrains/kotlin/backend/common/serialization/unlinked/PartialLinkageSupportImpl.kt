@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ClassifierExplorationResult.Partially
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -28,7 +27,7 @@ internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: Ir
 
         val toExclude = buildSet {
             for (clazz in entries.keys) {
-                if (classifierExplorer.exploreSymbol(clazz.symbol) is Partially) {
+                if (classifierExplorer.exploreSymbol(clazz.symbol) is ClassifierExplorationResult.Partially) {
                     this += clazz
                 }
             }
