@@ -87,7 +87,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 { serializerSymbol ->
                     val kotlinType = (serializerSymbol.owner.superTypes.find(IrType::isKSerializer) as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull
                     val classSymbol = kotlinType?.classOrNull
-                        ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
+                        ?: error("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
                     classSymbol to kotlinType.isNullable()
                 },
                 { it }
@@ -372,7 +372,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         cacheableSerializers.firstOrNull { it != null } ?: return null
 
         val kSerializerClass = compilerContext.kSerializerClass
-            ?: throw AssertionError("Serializer class '$KSERIALIZER_NAME_FQ' not found. Check that the kotlinx.serialization runtime is connected correctly")
+            ?: error("Serializer class '$KSERIALIZER_NAME_FQ' not found. Check that the kotlinx.serialization runtime is connected correctly")
         val kSerializerType = kSerializerClass.typeWith(compilerContext.irBuiltIns.anyType)
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(kSerializerType)
 

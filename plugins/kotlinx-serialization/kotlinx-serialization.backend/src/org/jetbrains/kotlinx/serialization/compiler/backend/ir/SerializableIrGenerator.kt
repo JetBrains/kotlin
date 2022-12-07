@@ -401,7 +401,7 @@ class SerializableIrGenerator(
                     hasSerializableOrMetaAnnotationWithoutArgs() && !isInternalSerializable && !hasCompanionObjectAsSerializer && kind != ClassKind.ENUM_CLASS && !isSealedSerializableInterface
                 }
                 if (serializableAnnotationIsUseless)
-                    throw AssertionError(
+                    error(
                         "@Serializable annotation on $irClass would be ignored because it is impossible to serialize it automatically. " +
                                 "Provide serializer manually via e.g. companion object"
                     )

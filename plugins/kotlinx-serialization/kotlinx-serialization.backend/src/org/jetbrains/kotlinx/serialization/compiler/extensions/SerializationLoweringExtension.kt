@@ -106,13 +106,16 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
 private inline fun IrClass.runPluginSafe(block: () -> Unit) {
     try {
         block()
-    } catch (e: Exception) {
-        throw CompilationException(
-            "kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause",
-            this.fileParent,
-            this,
-            e
-        )
+    } catch (e: Throwable) {
+        throw when (e) {
+            is VirtualMachineError, is ThreadDeath -> e
+            else -> CompilationException(
+                "kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause",
+                this.fileParent,
+                this,
+                e
+            )
+        }
     }
 }
 
@@ -163,7 +166,9 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
 
     private var intrinsicsState = SerializationIntrinsicsState.NORMAL
 
-    constructor(metadataPlugin: SerializationDescriptorSerializerPlugin, intrinsicsState: SerializationIntrinsicsState) : this(metadataPlugin) {
+    constructor(metadataPlugin: SerializationDescriptorSerializerPlugin, intrinsicsState: SerializationIntrinsicsState) : this(
+        metadataPlugin
+    ) {
         this.intrinsicsState = intrinsicsState
     }
 
