@@ -146,6 +146,8 @@ fun <T> KotlinTypeFacade.interpret(
                                         interpreter?.let { interpret(result, interpreter, reporter = reporter)?.value }
                                     }
 
+                                    is FirErrorExpression -> null
+
                                     else -> TODO(result::class.toString())
                                 }
                             }
