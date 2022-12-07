@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
@@ -293,6 +294,11 @@ internal val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
                 return irFunction.symbol
             }
         }
+
+        if (!context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)) {
+            return@makeIrModulePhase FileLoweringPass.Empty
+        }
+
         FunctionInlining(
             context, JvmInlineFunctionResolver(), context.innerClassesSupport,
             inlinePureArguments = false,
