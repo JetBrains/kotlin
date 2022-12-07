@@ -13837,6 +13837,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("elvisInsideWhen.kt")
+            public void testElvisInsideWhen() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/elvisInsideWhen.kt");
+            }
+
+            @Test
             @TestMetadata("equalitySubstitutionInsideNonInvariantType.kt")
             public void testEqualitySubstitutionInsideNonInvariantType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/equalitySubstitutionInsideNonInvariantType.kt");

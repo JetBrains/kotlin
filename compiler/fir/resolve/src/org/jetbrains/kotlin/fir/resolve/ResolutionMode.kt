@@ -44,6 +44,7 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
     ) : ResolutionMode(forceFullCompletion) {
 
         fun copy(
+            expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
             mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
             forceFullCompletion: Boolean = this.forceFullCompletion
         ): WithExpectedType = WithExpectedType(

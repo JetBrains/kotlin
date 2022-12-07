@@ -239,6 +239,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression
         elvisExpression.transformAnnotations(transformer, data)
 
+        @Suppress("NAME_SHADOWING")
+        val data = data.takeUnless { it is ResolutionMode.WithExpectedType && !it.forceFullCompletion } ?: ResolutionMode.ContextDependent
         val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
         val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
 
