@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.runFrontend
+import org.jetbrains.kotlin.backend.konan.driver.phases.runPsiToIr
+import org.jetbrains.kotlin.backend.konan.driver.phases.runSerializer
+import org.jetbrains.kotlin.backend.konan.driver.phases.writeKlib
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -43,22 +46,11 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = engine.useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
-        if (frontendOutput == FrontendPhaseOutput.ShouldNotGenerateCode) {
-            return
-        }
-        require(frontendOutput is FrontendPhaseOutput.Full)
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = if (config.metadataKlib) {
             null
         } else {
-            val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-            val psiToIrOutput = engine.useContext(psiToIrContext) { psiToIrEngine ->
-                val output = psiToIrEngine.runPsiToIr(frontendOutput, isProducingLibrary = true)
-                psiToIrEngine.runSpecialBackendChecks(output)
-                output
-            }
-            engine.runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
-            psiToIrOutput
+            engine.runPsiToIr(frontendOutput, isProducingLibrary = true)
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         engine.writeKlib(serializerOutput)

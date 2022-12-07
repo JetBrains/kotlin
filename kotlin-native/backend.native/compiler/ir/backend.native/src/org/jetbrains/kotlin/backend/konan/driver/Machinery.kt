@@ -80,8 +80,8 @@ internal open class BasicPhaseContext(
  * This way, PhaseEngine forces user to create more specialized contexts that have a limited lifetime.
  */
 internal class PhaseEngine<C : PhaseContext>(
-        private val phaseConfig: PhaseConfigurationService,
-        private val phaserState: PhaserState<Any>,
+        val phaseConfig: PhaseConfigurationService,
+        val phaserState: PhaserState<Any>,
         val context: C
 ) {
     companion object {
@@ -120,11 +120,15 @@ internal class PhaseEngine<C : PhaseContext>(
         }
     }
 
-    fun <Input, Output> runPhase(
-            phase: AbstractNamedCompilerPhase<C, Input, Output>,
+    fun <Input, Output, P : AbstractNamedCompilerPhase<C, Input, Output>> runPhase(
+            phase: P,
             input: Input
     ): Output {
         // We lose sticky postconditions here, but it should be ok, since type is changed.
         return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
     }
+
+    fun <Output, P : AbstractNamedCompilerPhase<C, Unit, Output>> runPhase(
+            phase: P,
+    ): Output = runPhase(phase, Unit)
 }
