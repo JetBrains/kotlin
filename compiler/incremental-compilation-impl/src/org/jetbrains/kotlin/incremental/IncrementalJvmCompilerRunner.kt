@@ -22,7 +22,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.build.report.*
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -39,7 +37,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
@@ -54,7 +51,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnap
 import org.jetbrains.kotlin.incremental.classpathDiff.toChangesEither
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.Either
@@ -66,67 +62,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
-
-@TestOnly
-fun makeIncrementally(
-    cachesDir: File,
-    sourceRoots: Iterable<File>,
-    args: K2JVMCompilerArguments,
-    messageCollector: MessageCollector = MessageCollector.NONE,
-    reporter: ICReporter = DoNothingICReporter
-) {
-    val kotlinExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-    val allExtensions = kotlinExtensions + "java"
-    val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
-    val files = rootsWalk.filter(File::isFile)
-    val sourceFiles = files.filter { it.extension.lowercase() in allExtensions }.toList()
-    val buildHistoryFile = File(cachesDir, "build-history.bin")
-    args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
-    val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
-
-    withIC(args) {
-        val compiler =
-            if (args.useK2 && args.useFirIC && args.useFirLT /* TODO: move LT check into runner */ )
-                IncrementalFirJvmCompilerRunner(
-                    cachesDir,
-                    buildReporter,
-                    buildHistoryFile,
-                    outputDirs = null,
-                    EmptyModulesApiHistory,
-                    kotlinExtensions,
-                    ClasspathSnapshotDisabled
-                )
-            else
-                IncrementalJvmCompilerRunner(
-                    cachesDir,
-                    buildReporter,
-                    // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = !args.useK2, // TODO: add fir-based java classes tracker when available and set this to true
-                    buildHistoryFile = buildHistoryFile,
-                    outputDirs = null,
-                    modulesApiHistory = EmptyModulesApiHistory,
-                    kotlinSourceFilesExtensions = kotlinExtensions,
-                    classpathChanges = ClasspathSnapshotDisabled
-                )
-        //TODO set properly
-        compiler.compile(sourceFiles, args, messageCollector, changedFiles = null)
-    }
-}
-
-@Suppress("DEPRECATION")
-inline fun <R> withIC(args: CommonCompilerArguments, enabled: Boolean = true, fn: () -> R): R {
-    val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-    IncrementalCompilation.setIsEnabledForJvm(enabled)
-
-    try {
-        if (args.incrementalCompilation == null) {
-            args.incrementalCompilation = enabled
-        }
-        return fn()
-    } finally {
-        IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
-    }
-}
 
 open class IncrementalJvmCompilerRunner(
     workingDir: File,
@@ -173,7 +108,8 @@ open class IncrementalJvmCompilerRunner(
             val filterMessageCollector = FilteringMessageCollector(messageCollector, { !it.isError })
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, filterMessageCollector)
             configuration.configureJdkClasspathRoots()
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment =
+                KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             val project = environment.project
             PsiFileFactory.getInstance(project)
         }
@@ -277,7 +213,8 @@ open class IncrementalJvmCompilerRunner(
                 if (!lastBuildInfoFile.exists()) {
                     return CompilationMode.Rebuild(BuildAttribute.NO_LAST_BUILD_INFO)
                 }
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector)
+                    ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
                 reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
@@ -506,15 +443,3 @@ open class IncrementalJvmCompilerRunner(
         }
     }
 }
-
-var K2JVMCompilerArguments.destinationAsFile: File
-    get() = File(destination)
-    set(value) {
-        destination = value.path
-    }
-
-var K2JVMCompilerArguments.classpathAsList: List<File>
-    get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
-    set(value) {
-        classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path })
-    }

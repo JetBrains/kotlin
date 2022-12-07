@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture

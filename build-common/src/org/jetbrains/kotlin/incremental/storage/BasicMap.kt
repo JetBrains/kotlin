@@ -61,7 +61,7 @@ abstract class BasicMap<K : Comparable<K>, V>(
     fun dump(): String {
         return with(StringBuilder()) {
             with(Printer(this)) {
-                println(this@BasicMap::class.java.simpleName)
+                println("${this@BasicMap.storageFile.name.toString().substringBefore(".tab")} (${this@BasicMap::class.java.simpleName})")
                 pushIndent()
 
                 for (key in storage.keys.sorted()) {

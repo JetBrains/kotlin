@@ -22,10 +22,11 @@ import java.io.File
 data class TestCompilationResult(
     val exitCode: ExitCode,
     val compiledSources: Iterable<File>,
-    val compileErrors: Collection<String>
+    val compileErrors: Collection<String>,
+    val mappingsDump: String
 ) {
     constructor(
         icReporter: TestICReporter,
-        messageCollector: TestMessageCollector
-    ) : this(icReporter.exitCode, icReporter.compiledSources, messageCollector.errors)
+        messageCollector: TestMessageCollector,
+    ) : this(icReporter.exitCode, icReporter.compiledSources, messageCollector.errors, icReporter.cachesDump)
 }
