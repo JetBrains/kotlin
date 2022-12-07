@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import kotlin.test.Test
 
-class IdeResolveSourceDependenciesTest {
+class IdeSourceDependencyResolutionTest {
     @Test
     fun `test - multiplatform to multiplatform - sample 0`() {
         val root = buildProject()
