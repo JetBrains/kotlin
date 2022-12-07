@@ -37,7 +37,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
 
     private var declarationsToPatch = arrayListOf<IrDeclaration>()
 
-    fun grabDeclarationsToPatch(): List<IrDeclaration> {
+    fun grabDeclarationsToPatch(): Collection<IrDeclaration> {
         val result = declarationsToPatch
         declarationsToPatch = arrayListOf()
         return result
