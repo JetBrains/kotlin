@@ -109,6 +109,10 @@ internal object EmptyIntersectionTypeChecker {
     ).isNotEmpty()
 
     private fun TypeSystemInferenceExtensionContext.mayCauseEmptyIntersection(type: KotlinTypeMarker): Boolean {
+        if (type.lowerBoundIfFlexible().isStubType() || type.isError()) {
+            return false
+        }
+
         val typeConstructor = type.typeConstructor()
 
         if (!typeConstructor.isClassTypeConstructor() && !typeConstructor.isTypeParameterTypeConstructor())
