@@ -1298,8 +1298,8 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
 val IrSymbol.isSuspend: Boolean
     get() = this is IrSimpleFunctionSymbol && owner.isSuspend
 
-fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): List<IrSimpleFunction> {
-    val result = mutableListOf<IrSimpleFunction>()
+fun <T : IrOverridableDeclaration<*>> T.allOverridden(includeSelf: Boolean = false): List<T> {
+    val result = mutableListOf<T>()
     if (includeSelf) {
         result.add(this)
     }
@@ -1310,7 +1310,8 @@ fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): List<IrSimpleF
         when (overridden.size) {
             0 -> return result
             1 -> {
-                current = overridden[0].owner
+                @Suppress("UNCHECKED_CAST")
+                current = overridden[0].owner as T
                 result.add(current)
             }
             else -> {
@@ -1322,9 +1323,9 @@ fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): List<IrSimpleF
     }
 }
 
-private fun computeAllOverridden(function: IrSimpleFunction, result: MutableSet<IrSimpleFunction>) {
-    for (overriddenSymbol in function.overriddenSymbols) {
-        val override = overriddenSymbol.owner
+private fun <T : IrOverridableDeclaration<*>> computeAllOverridden(overridable: T, result: MutableSet<T>) {
+    for (overriddenSymbol in overridable.overriddenSymbols) {
+        @Suppress("UNCHECKED_CAST") val override = overriddenSymbol.owner as T
         if (result.add(override)) {
             computeAllOverridden(override, result)
         }

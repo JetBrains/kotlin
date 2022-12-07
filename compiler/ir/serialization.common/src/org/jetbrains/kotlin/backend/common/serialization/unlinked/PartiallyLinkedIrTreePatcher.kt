@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -36,22 +37,25 @@ internal class PartiallyLinkedIrTreePatcher(
 ) {
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
+    private inline val PLModule.shouldBeSkipped: Boolean get() = this == PLModule.SyntheticBuiltInFunctions || this == stdlibModule
+    private inline val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
+
     fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
         roots.forEach { root ->
-            if (root.files.isEmpty() || root in stdlibModule) return@forEach
-
-            root.transformVoid(DeclarationTransformer(startingFile = null))
-            root.transformVoid(ExpressionTransformer(startingFile = null))
+            if (!root.shouldBeSkipped) {
+                root.transformVoid(DeclarationTransformer(startingFile = null))
+                root.transformVoid(ExpressionTransformer(startingFile = null))
+            }
         }
     }
 
     fun patchDeclarations(roots: Collection<IrDeclaration>) {
         roots.forEach { root ->
-            if (root in stdlibModule) return@forEach
-
             val startingFile = PLFile.determineFileFor(root)
-            root.transformVoid(DeclarationTransformer(startingFile))
-            root.transformVoid(ExpressionTransformer(startingFile))
+            if (!startingFile.module.shouldBeSkipped) {
+                root.transformVoid(DeclarationTransformer(startingFile))
+                root.transformVoid(ExpressionTransformer(startingFile))
+            }
         }
     }
 
@@ -331,12 +335,13 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitReturn(expression: IrReturn) = expression.maybeThrowLinkageError {
-            checkReferencedDeclaration(returnTargetSymbol)
+            checkReferencedDeclaration(returnTargetSymbol, checkVisibility = false)
         }
 
         override fun visitBlock(expression: IrBlock) = expression.maybeThrowLinkageError {
             if (this is IrReturnableBlock)
-                checkReferencedDeclaration(symbol) ?: checkReferencedDeclaration(inlineFunctionSymbol)
+                checkReferencedDeclaration(symbol, checkVisibility = false)
+                    ?: checkReferencedDeclaration(inlineFunctionSymbol, checkVisibility = false)
             else null
         }
 
@@ -429,7 +434,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 linkageError
         }
 
-        private fun <T : IrExpression> T.checkExpressionType(type: IrType): PartialLinkageCase? {
+        private fun IrExpression.checkExpressionType(type: IrType): PartialLinkageCase? {
             return ExpressionUsesPartiallyLinkedClassifier(this, type.explore() ?: return null)
         }
 
@@ -440,7 +445,10 @@ internal class PartiallyLinkedIrTreePatcher(
             )
         }
 
-        private fun <T : IrExpression> T.checkReferencedDeclaration(symbol: IrSymbol?): PartialLinkageCase? {
+        private fun IrExpression.checkReferencedDeclaration(
+            symbol: IrSymbol?,
+            checkVisibility: Boolean = true
+        ): PartialLinkageCase? {
             symbol ?: return null
 
             if (!symbol.isBound && !symbol.isPublicApi) {
@@ -453,37 +461,87 @@ internal class PartiallyLinkedIrTreePatcher(
             if (origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                 return ExpressionUsesMissingDeclaration(this, symbol)
 
-            return when (symbol) {
-                is IrClassifierSymbol -> ExpressionUsesPartiallyLinkedClassifier(this, symbol.explore() ?: return null)
+            val partialLinkageCase = when (symbol) {
+                is IrClassifierSymbol -> symbol.explore()?.let { ExpressionUsesPartiallyLinkedClassifier(this, it) }
 
-                is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol)
+                is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol, checkVisibility = false)
 
-                is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol)
-                    ?: checkReferencedDeclaration(symbol.owner.setter?.symbol)
-                    ?: checkReferencedDeclaration(symbol.owner.backingField?.symbol)
+                is IrPropertySymbol -> checkReferencedDeclaration(symbol.owner.getter?.symbol, checkVisibility = false)
+                    ?: checkReferencedDeclaration(symbol.owner.setter?.symbol, checkVisibility = false)
+                    ?: checkReferencedDeclaration(symbol.owner.backingField?.symbol, checkVisibility = false)
 
-                else -> {
-                    val unusableClassifierInReferencedDeclaration = when (symbol) {
-                        is IrFunctionSymbol -> with(symbol.owner) {
-                            extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
-                                ?: valueParameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
-                                ?: returnType.precalculatedUnusableClassifier()
-                                ?: typeParameters.firstNotNullOfOrNull { it.superTypes.precalculatedUnusableClassifier() }
-                                ?: dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
-                        }
+                else -> when (symbol) {
+                    is IrFunctionSymbol -> with(symbol.owner) {
+                        extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
+                            ?: valueParameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
+                            ?: returnType.precalculatedUnusableClassifier()
+                            ?: typeParameters.firstNotNullOfOrNull { it.superTypes.precalculatedUnusableClassifier() }
+                            ?: dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
+                    }
 
-                        is IrFieldSymbol -> symbol.owner.type.precalculatedUnusableClassifier()
-                        is IrValueSymbol -> symbol.owner.type.precalculatedUnusableClassifier()
+                    is IrFieldSymbol -> symbol.owner.type.precalculatedUnusableClassifier()
+                    is IrValueSymbol -> symbol.owner.type.precalculatedUnusableClassifier()
 
-                        else -> null
-                    } ?: return null
-
+                    else -> null
+                }?.let { unusableClassifierInReferencedDeclaration ->
                     ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier(this, symbol, unusableClassifierInReferencedDeclaration)
+                }
+            }
+
+            if (partialLinkageCase != null)
+                return partialLinkageCase
+            else if (!checkVisibility)
+                return null
+
+            // Do the minimal visibility check: Make sure that private declaration is not used outside its declaring entity.
+            // This should be enough to fix KT-54469 (cases #2 and #3).
+
+            val signature = symbol.signature
+            if (signature != null
+                && (!signature.isPubliclyVisible || (signature as? IdSignature.CompositeSignature)?.container is IdSignature.FileSignature)
+            ) {
+                // Special case: A declaration with private signature can't be referenced from another module. So nothing to check.
+                return null
+            }
+
+            val declaration = symbol.owner as? IrDeclarationWithVisibility ?: return null
+            val containingModule = PLModule.determineModuleFor(declaration)
+
+            return when {
+                containingModule == currentFile.module -> {
+                    // OK. Used in the same module.
+                    null
+                }
+                containingModule.shouldBeSkipped -> {
+                    // Optimization: Don't check visibility of declarations in stdlib & co.
+                    null
+                }
+                !declaration.isEffectivelyPrivate() -> {
+                    // Effectively public. Nothing to check.
+                    null
+                }
+                else -> {
+                    val declaringModule = if (declaration is IrOverridableDeclaration<*> && declaration.isFakeOverride) {
+                        // Compute the declaring module.
+                        declaration.allOverridden()
+                            .firstOrNull { !it.isFakeOverride }
+                            ?.let(PartialLinkageUtils.Module.Companion::determineModuleFor)
+                            ?: containingModule
+                    } else
+                        containingModule
+
+                    ExpressionsUsesInaccessibleDeclaration(this, symbol, declaringModule, currentFile.module)
                 }
             }
         }
 
-        private fun <T : IrExpression, D : IrDeclaration> T.checkReferencedDeclarationType(
+        private fun IrType.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
+            (this as? PartiallyLinkedMarkerType)?.unusableClassifier ?: explore()
+
+        private fun List<IrType>.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
+            firstNotNullOfOrNull { it.precalculatedUnusableClassifier() }
+
+        private fun <D : IrDeclaration> IrExpression.checkReferencedDeclarationType(
             declaration: D,
             expectedDeclarationDescription: String,
             checkDeclarationType: (D) -> Boolean
@@ -492,12 +550,6 @@ internal class PartiallyLinkedIrTreePatcher(
                 ExpressionUsesWrongTypeOfDeclaration(this, declaration.symbol, expectedDeclarationDescription)
             else null
         }
-
-        private fun IrType.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
-            (this as? PartiallyLinkedMarkerType)?.unusableClassifier ?: explore()
-
-        private fun List<IrType>.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
-            firstNotNullOfOrNull { it.precalculatedUnusableClassifier() }
 
         /**
          * Removes statements after the first IR p.l. error (everything after the IR p.l. error if effectively dead code and do not need

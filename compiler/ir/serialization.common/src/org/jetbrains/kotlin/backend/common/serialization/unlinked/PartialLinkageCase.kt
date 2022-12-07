@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -96,5 +97,18 @@ internal sealed interface PartialLinkageCase {
         val expression: IrExpression,
         val actualDeclarationSymbol: IrSymbol,
         val expectedDeclarationDescription: String
+    ) : PartialLinkageCase
+
+    /**
+     * Expression refers an IR declaration that is not accessible at the use site.
+     * Example: An [IrCall] that refers a private [IrSimpleFunction] from another module.
+     *
+     * Applicable to: Expressions.
+     */
+    class ExpressionsUsesInaccessibleDeclaration(
+        val expression: IrExpression,
+        val referencedDeclarationSymbol: IrSymbol,
+        val declaringModule: PartialLinkageUtils.Module,
+        val useSiteModule: PartialLinkageUtils.Module
     ) : PartialLinkageCase
 }

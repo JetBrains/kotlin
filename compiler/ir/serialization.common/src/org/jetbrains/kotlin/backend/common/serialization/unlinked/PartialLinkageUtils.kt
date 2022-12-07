@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.IrBased.Companion.irModule
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module.LazyIrBased.Companion.moduleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal object PartialLinkageUtils {
     val UNKNOWN_NAME = Name.identifier("<unknown name>")
@@ -37,96 +32,106 @@ internal object PartialLinkageUtils {
     }
 
     /** For fast check if a declaration is in the module */
-    internal sealed class Module(val name: String) {
-        final override fun equals(other: Any?) = (other as? Module)?.name == name
-        final override fun hashCode() = name.hashCode()
+    sealed interface Module {
+        val name: String
 
-        abstract operator fun contains(fragment: IrModuleFragment): Boolean
-        abstract operator fun contains(declaration: IrDeclaration): Boolean
-
-        class IrBased(private val module: IrModuleFragment) : Module(module.name.asString()) {
-            override fun contains(fragment: IrModuleFragment) = fragment == module
-            override fun contains(declaration: IrDeclaration) = declaration.irModule == module
-
-            companion object {
-                inline val IrDeclaration.irModule: IrModuleFragment? get() = fileOrNull?.module
-            }
+        data class Real(override val name: String) : Module {
+            constructor(name: Name) : this(name.asString())
         }
 
-        class LazyIrBased(private val module: ModuleDescriptor) : Module(module.name.asString()) {
-            override fun contains(fragment: IrModuleFragment) = fragment.descriptor == module
-            override fun contains(declaration: IrDeclaration) = declaration.moduleDescriptor == module
-
-            companion object {
-                inline val IrDeclaration.moduleDescriptor: ModuleDescriptor? get() = (this as? IrLazyDeclarationBase)?.descriptor?.module
-            }
+        object SyntheticBuiltInFunctions : Module {
+            override val name = "<synthetic built-in functions>"
         }
 
-        object MissingDeclarations : Module("<missing declarations>") {
-            override fun contains(fragment: IrModuleFragment) = false
-            override fun contains(declaration: IrDeclaration) = false
+        object MissingDeclarations : Module {
+            override val name = "<missing declarations>"
         }
+
+        fun defaultLocationWithoutPath() = Location(name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
 
         companion object {
-            fun determineModuleFor(declaration: IrDeclaration): Module {
-                return if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
-                    MissingDeclarations
-                else
-                    declaration.irModule?.let(::IrBased)
-                        ?: declaration.moduleDescriptor?.let(::LazyIrBased)
-                        ?: error("Can't determine module for $declaration, ${declaration.nameForIrSerialization}")
-            }
+            fun determineModuleFor(declaration: IrDeclaration): Module = determineFor(
+                declaration,
+                onMissingDeclaration = MissingDeclarations,
+                onSyntheticBuiltInFunction = SyntheticBuiltInFunctions,
+                onIrBased = { Real(it.module.name) },
+                onLazyIrBased = { Real(it.containingDeclaration.name) },
+                onError = { error("Can't determine module for $declaration, ${declaration.nameForIrSerialization}") }
+            )
         }
     }
 
     sealed interface File {
         val module: Module
-        fun computeLocationForOffset(offset: Int): IrMessageLogger.Location
+        fun computeLocationForOffset(offset: Int): Location
 
         data class IrBased(private val file: IrFile) : File {
-            override val module = Module.IrBased(file.module)
+            override val module = Module.Real(file.module.name)
 
-            override fun computeLocationForOffset(offset: Int): IrMessageLogger.Location {
+            override fun computeLocationForOffset(offset: Int): Location {
                 val lineNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_LINE_NUMBER else file.fileEntry.getLineNumber(offset)
                 val columnNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_COLUMN_NUMBER else file.fileEntry.getColumnNumber(offset)
 
                 // TODO: should module name still be added here?
-                return IrMessageLogger.Location("${module.name} @ ${file.fileEntry.name}", lineNumber, columnNumber)
+                return Location("${module.name} @ ${file.fileEntry.name}", lineNumber, columnNumber)
             }
         }
 
-        class LazyIrBased(externalPackageFragment: IrExternalPackageFragment) : File {
-            private val location: IrMessageLogger.Location
-            override val module: Module
-
-            init {
-                module = Module.LazyIrBased(externalPackageFragment.packageFragmentDescriptor.containingDeclaration)
-                location = IrMessageLogger.Location(module.name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
-            }
+        class LazyIrBased(packageFragmentDescriptor: PackageFragmentDescriptor) : File {
+            override val module = Module.Real(packageFragmentDescriptor.containingDeclaration.name)
+            private val defaultLocation = module.defaultLocationWithoutPath()
 
             override fun equals(other: Any?) = (other as? LazyIrBased)?.module == module
             override fun hashCode() = module.hashCode()
 
-            override fun computeLocationForOffset(offset: Int) = location
+            override fun computeLocationForOffset(offset: Int) = defaultLocation
+        }
+
+        object SyntheticBuiltInFunctions : File {
+            override val module = Module.SyntheticBuiltInFunctions
+            private val defaultLocation = module.defaultLocationWithoutPath()
+
+            override fun computeLocationForOffset(offset: Int) = defaultLocation
         }
 
         object MissingDeclarations : File {
-            private val location = IrMessageLogger.Location(Module.MissingDeclarations.name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+            override val module = Module.MissingDeclarations
+            private val defaultLocation = module.defaultLocationWithoutPath()
 
-            override val module get() = Module.MissingDeclarations
-            override fun computeLocationForOffset(offset: Int) = location
+            override fun computeLocationForOffset(offset: Int) = defaultLocation
         }
 
         companion object {
-            fun determineFileFor(declaration: IrDeclaration): File {
-                return if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
-                    MissingDeclarations
-                else
-                    when (val packageFragment = declaration.getPackageFragment()) {
-                        is IrFile -> IrBased(packageFragment)
-                        is IrExternalPackageFragment -> LazyIrBased(packageFragment)
-                        else -> error("Can't determine file for $declaration, ${declaration.nameForIrSerialization}")
-                    }
+            fun determineFileFor(declaration: IrDeclaration): File = determineFor(
+                declaration,
+                onMissingDeclaration = MissingDeclarations,
+                onSyntheticBuiltInFunction = SyntheticBuiltInFunctions,
+                onIrBased = ::IrBased,
+                onLazyIrBased = ::LazyIrBased,
+                onError = { error("Can't determine file for $declaration, ${declaration.nameForIrSerialization}") }
+            )
+        }
+    }
+
+    private inline fun <R> determineFor(
+        declaration: IrDeclaration,
+        onMissingDeclaration: R,
+        onSyntheticBuiltInFunction: R,
+        onIrBased: (IrFile) -> R,
+        onLazyIrBased: (PackageFragmentDescriptor) -> R,
+        onError: () -> Nothing
+    ): R {
+        return if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
+            onMissingDeclaration
+        else {
+            val packageFragment = declaration.getPackageFragment()
+            val packageFragmentDescriptor = with(packageFragment.symbol) { if (hasDescriptor) descriptor else null }
+
+            when {
+                packageFragmentDescriptor is FunctionInterfacePackageFragment -> onSyntheticBuiltInFunction
+                packageFragment is IrFile -> onIrBased(packageFragment)
+                packageFragment is IrExternalPackageFragment && packageFragmentDescriptor != null -> onLazyIrBased(packageFragmentDescriptor)
+                else -> onError()
             }
         }
     }

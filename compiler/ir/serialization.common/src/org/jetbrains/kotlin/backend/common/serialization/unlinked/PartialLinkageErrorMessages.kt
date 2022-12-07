@@ -36,6 +36,9 @@ internal fun PartialLinkageCase.renderErrorMessage(): String = buildString {
             .declarationKindName(referencedDeclarationSymbol, capitalized = true).append(" uses ").cause(cause)
         is ExpressionUsesWrongTypeOfDeclaration -> expression(expression)
             .declarationNameIsKind(actualDeclarationSymbol).append(" while ").append(expectedDeclarationDescription).append(" is expected")
+        is ExpressionsUsesInaccessibleDeclaration -> expression(expression)
+            .append("Private ").declarationKindName(referencedDeclarationSymbol, capitalized = false)
+            .append(" declared in ").module(declaringModule).append(" can not be accessed from ").module(useSiteModule)
     }
 }
 
@@ -233,6 +236,9 @@ private fun Appendable.noEnclosingClass(
 
 private fun Appendable.through(cause: Unusable.DueToOtherClassifier): Appendable =
     append(" (through ").declarationKindName(cause.symbol, capitalized = false).append(")")
+
+private fun Appendable.module(module: PartialLinkageUtils.Module): Appendable =
+    append("module ").append(module.name)
 
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =
     append("Abstract ").declarationKindName(callable.symbol, capitalized = false)
