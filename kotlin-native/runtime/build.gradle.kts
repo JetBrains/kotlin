@@ -244,6 +244,33 @@ bitcode {
     }
 }
 
+val runtimeBitcode by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(CompileToBitcodeExtension.USAGE))
+    }
+}
+
+dependencies {
+    runtimeBitcode(project(":kotlin-native:runtime"))
+}
+
+targetList.forEach { targetName ->
+    // TODO: replace with a more convenient user-facing task that can build for a specific target.
+    //       like compileToBitcode with optional argument --target.
+    tasks.register("${targetName}Runtime") {
+        description = "Build all main runtime modules for $targetName"
+        group = CompileToBitcodeExtension.BUILD_TASK_GROUP
+        val dependencies = runtimeBitcode.incoming.artifactView {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
+            }
+        }.files
+        dependsOn(dependencies)
+    }
+}
+
 val hostRuntime by tasks.registering {
     description = "Build all main runtime modules for host"
     group = CompileToBitcodeExtension.BUILD_TASK_GROUP
@@ -367,7 +394,12 @@ targetList.forEach { targetName ->
         destinationDir = project.buildDir.resolve("${targetName}Stdlib")
 
         from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
-        from(project.buildDir.resolve("bitcode/main/$targetName")) {
+        val runtimeFiles = runtimeBitcode.incoming.artifactView {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
+            }
+        }.files
+        from(runtimeFiles) {
             include("runtime.bc", "compiler_interface.bc")
             into("default/targets/$targetName/native")
         }

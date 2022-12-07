@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.CopyCommonSources
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.*
 import org.jetbrains.gradle.plugins.tools.*
+import org.jetbrains.kotlin.bitcode.*
 /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
@@ -40,6 +41,32 @@ compileCli_bcKotlin {
     kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
 }
 
+configurations {
+    commonFilesBitcode {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CompileToBitcodeExtension.USAGE))
+            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+            attribute(CompileToBitcodeExtension.MODULE_ATTRIBUTE, "files")
+        }
+    }
+    commonEnvBitcode {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CompileToBitcodeExtension.USAGE))
+            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+            attribute(CompileToBitcodeExtension.MODULE_ATTRIBUTE, "env")
+        }
+    }
+}
+
+dependencies {
+    commonFilesBitcode project(":kotlin-native:common")
+    commonEnvBitcode project(":kotlin-native:common")
+}
+
 kotlinNativeInterop {
     llvm {
 
@@ -63,8 +90,9 @@ kotlinNativeInterop {
 
     files {
         linker 'clang++'
-        linkOutputs ":kotlin-native:common:${hostName}Files"
+        link configurations.commonFilesBitcode
 
+        // TODO: These should come from some sort of commonFilesApi configuration
         headers fileTree('../common/src/files/headers') {
             include '**/*.h'
             include '**/*.hpp'
@@ -76,8 +104,9 @@ kotlinNativeInterop {
 
     env {
         linker 'clang++'
-        linkOutputs ":kotlin-native:common:${hostName}Env"
+        link configurations.commonEnvBitcode
 
+        // TODO: These should come from some sort of commonEnvApi configuration
         headers fileTree('../common/src/env/headers') {
             include '**/*.h'
             include '**/*.hpp'
@@ -155,7 +184,7 @@ jar {
             sourceSets.envInteropStubs.output,
             sourceSets.llvmInteropStubs.output
 
-    dependsOn ':kotlin-native:runtime:hostRuntime', 'external_jars'
+    dependsOn 'external_jars'
 }
 
 def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']

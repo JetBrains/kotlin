@@ -9,6 +9,8 @@ import kotlinBuildProperties
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.BuildService
@@ -51,25 +53,19 @@ private val SanitizerKind?.description
 private abstract class RunGTestSemaphore : BuildService<BuildServiceParameters.None>
 private abstract class CompileTestsSemaphore : BuildService<BuildServiceParameters.None>
 
-/**
- * A plugin creating extensions to compile
- */
-open class CompileToBitcodePlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        target.apply<CompilationDatabasePlugin>()
-        target.apply<GitClangFormatPlugin>()
-        target.extensions.create<CompileToBitcodeExtension>(EXTENSION_NAME, target)
-    }
-
-    companion object {
-        const val EXTENSION_NAME = "bitcode"
-    }
-}
-
 open class CompileToBitcodeExtension @Inject constructor(val project: Project) : TargetDomainObjectContainer<CompileToBitcodeExtension.Target>(project) {
     init {
         this.factory = { target ->
             project.objects.newInstance<Target>(this, target)
+        }
+    }
+
+    val compileBitcodeMainElements by project.configurations.creating {
+        description = "LLVM bitcode of all defined modules (main sources)"
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
         }
     }
 
@@ -87,16 +83,6 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
     private val targetList = with(project) {
         provider { (rootProject.project(":kotlin-native").property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
-    }
-
-    private val allMainModulesTasks by lazy {
-        val name = project.name.capitalized
-        targetList.get().associateBy(keySelector = { it }, valueTransform = {
-            project.tasks.register("${it}$name") {
-                description = "Build all main modules of $name for $it"
-                group = BUILD_TASK_GROUP
-            }
-        })
     }
 
     private val allTestsTasks by lazy {
@@ -147,6 +133,12 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             maxParallelUsages.set(5)
         }
 
+        private val compileBitcodeMainElements = owner.compileBitcodeMainElements.outgoing.variants.create("$_target") {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+            }
+        }
+
         private fun addToCompdb(compileTask: CompileToBitcode) {
             compilationDatabase.target(_target) {
                 entry {
@@ -169,9 +161,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
         fun module(name: String, srcRoot: File = project.file("src/$name"), outputGroup: String = "main", configurationBlock: CompileToBitcode.() -> Unit = {}) {
             val targetName = target.name
-            val allMainModulesTask = owner.allMainModulesTasks[targetName]!!
             val taskName = fullTaskName(name, targetName, sanitizer)
-            val task = project.tasks.create(taskName, CompileToBitcode::class.java, _target).apply {
+            val task = project.tasks.register<CompileToBitcode>(taskName, _target)
+            task.configure {
                 this.moduleName.set(name)
                 this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/$outputGroup/$target${sanitizer.dirSuffix}/$it.bc") })
                 this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/$outputGroup/$target${sanitizer.dirSuffix}/$it") })
@@ -190,10 +182,30 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 dependsOn(":kotlin-native:dependencies:update")
                 configurationBlock()
             }
-            addToCompdb(task)
-            if (outputGroup == "main" && sanitizer == null) {
-                allMainModulesTask.configure {
-                    dependsOn(taskName)
+            addToCompdb(task.get()) // TODO: Do not force task configuration.
+            if (outputGroup == "main") {
+                compileBitcodeMainElements.artifact(task)
+                // TODO: This seems to go against gradle conventions. So, each module should probably be in
+                //       a gradle project of its own. Current project should be used for grouping (i.e. reexporting all
+                //       compileBitcodeMainElements from subprojects under a single umbrella configuration) and integration testing.
+                project.configurations.maybeCreate("${name}CompileBitcodeMainElements").apply {
+                    description = "LLVM bitcode of $name module (main sources)"
+                    isCanBeConsumed = true
+                    isCanBeResolved = false
+                    attributes {
+                        attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
+                        attribute(MODULE_ATTRIBUTE, name)
+                    }
+                    outgoing {
+                        variants {
+                            create("$_target") {
+                                attributes {
+                                    attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                                }
+                                artifact(task)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -317,5 +329,39 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         const val BUILD_TASK_GROUP = LifecycleBasePlugin.BUILD_GROUP
         const val VERIFICATION_TASK_GROUP = LifecycleBasePlugin.VERIFICATION_GROUP
         const val VERIFICATION_BUILD_TASK_GROUP = "verification build"
+
+        @JvmField
+        val USAGE = "llvm-bitcode"
+
+        @JvmField
+        val MODULE_ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.bitcode.module", String::class.java)
+    }
+}
+
+/**
+ * Compiling C and C++ modules into LLVM bitcode.
+ *
+ * Creates [CompileToBitcodeExtension] extension named `bitcode`.
+ *
+ * Creates the following [configurations][org.gradle.api.artifacts.Configuration]:
+ * * `compileBitcodeMainElements` - like `apiElements` (sort of) from java plugin, or `{variant}LinkElements` from C++ plugin.
+ *    Contains bitcode produced from main sources of all defined modules.
+ * * `{module}CompileBitcodeMainElements` - like `compileBitcodeMainElements` but for a single `module`.
+ *
+ * Each of the defined configuration has [Usage attribute][Usage] set to [CompileToBitcodeExtension.USAGE]. Module-specific configurations
+ * additionally have a [CompileToBitcodeExtension.MODULE_ATTRIBUTE] set to the module name.
+ * Each `*Elements` configuration has variants with [TargetWithSanitizer.TARGET_ATTRIBUTE] values.
+ *
+ * @see CompileToBitcodeExtension extension that this plugin creates.
+ */
+open class CompileToBitcodePlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        project.apply<CompilationDatabasePlugin>()
+        project.apply<GitClangFormatPlugin>()
+        project.dependencies.attributesSchema {
+            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE)
+            attribute(CompileToBitcodeExtension.MODULE_ATTRIBUTE)
+        }
+        project.extensions.create<CompileToBitcodeExtension>("bitcode", project)
     }
 }

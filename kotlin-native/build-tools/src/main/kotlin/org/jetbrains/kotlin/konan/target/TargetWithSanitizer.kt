@@ -32,8 +32,11 @@ class TargetWithSanitizer(
     }
 
     companion object {
-        @JvmStatic
+        @JvmField
         val TARGET_ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.target", TargetWithSanitizer::class.java)
+
+        @JvmField
+        val host = TargetWithSanitizer(HostManager.host, null)
     }
 }
 
