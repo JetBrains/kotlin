@@ -518,8 +518,8 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
                 val stringValue = kind.valueOf(expression)
                 val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
                 body.commentGroupStart { "const string: \"$stringValue\"" }
-                body.buildConstI32Symbol(literalPoolId)
-                body.buildConstI32Symbol(literalAddress)
+                body.buildConstI32Symbol(literalPoolId, location)
+                body.buildConstI32Symbol(literalAddress, location)
                 body.buildConstI32(stringValue.length, location)
                 body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral), location)
                 body.commentGroupEnd()

@@ -32,8 +32,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.F64_CONST, location, WasmImmediate.ConstF64(value.toRawBits().toULong()))
     }
 
-    fun buildConstI32Symbol(value: WasmSymbol<Int>) {
-        buildInstr(WasmOp.I32_CONST, WasmImmediate.SymbolI32(value))
+    fun buildConstI32Symbol(value: WasmSymbol<Int>, location: SourceLocation) {
+        buildInstr(WasmOp.I32_CONST, location, WasmImmediate.SymbolI32(value))
     }
 
     fun buildUnreachable() {
