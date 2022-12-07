@@ -24,12 +24,12 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.I64_CONST, location, WasmImmediate.ConstI64(value))
     }
 
-    fun buildConstF32(value: Float) {
-        buildInstr(WasmOp.F32_CONST, WasmImmediate.ConstF32(value.toRawBits().toUInt()))
+    fun buildConstF32(value: Float, location: SourceLocation) {
+        buildInstr(WasmOp.F32_CONST, location, WasmImmediate.ConstF32(value.toRawBits().toUInt()))
     }
 
-    fun buildConstF64(value: Double) {
-        buildInstr(WasmOp.F64_CONST, WasmImmediate.ConstF64(value.toRawBits().toULong()))
+    fun buildConstF64(value: Double, location: SourceLocation) {
+        buildInstr(WasmOp.F64_CONST, location, WasmImmediate.ConstF64(value.toRawBits().toULong()))
     }
 
     fun buildConstI32Symbol(value: WasmSymbol<Int>) {
