@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.backend.konan.cexport
 
 import org.jetbrains.kotlin.konan.exec.*
 import org.jetbrains.kotlin.konan.target.*
