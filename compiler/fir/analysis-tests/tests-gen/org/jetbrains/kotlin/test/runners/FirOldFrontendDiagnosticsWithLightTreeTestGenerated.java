@@ -14938,6 +14938,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("differentCapturedTypes.kt")
+                public void testDifferentCapturedTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/differentCapturedTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt")
                 public void testDontCheckNewCapturedTypeSpecificChecksForOldOnes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt");
