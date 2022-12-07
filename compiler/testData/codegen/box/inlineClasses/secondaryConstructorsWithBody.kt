@@ -1,12 +1,13 @@
 // LANGUAGE: +ValueClassesSecondaryConstructorWithBody
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // FIR_IDENTICAL
+// WORKS_WHEN_VALUE_CLASS
 
 val l = mutableListOf<Any>()
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VC(val x: Int) {
     constructor(xD: Double): this(-xD.toInt()) {
         l.add(xD)

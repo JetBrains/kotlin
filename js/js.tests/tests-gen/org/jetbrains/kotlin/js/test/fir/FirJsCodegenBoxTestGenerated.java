@@ -17276,6 +17276,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("secondaryConstructorsWithBody.kt")
+        public void testSecondaryConstructorsWithBody() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("simpleSecondaryConstructor.kt")
         public void testSimpleSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());

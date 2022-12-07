@@ -22802,7 +22802,7 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @Test
         @TestMetadata("secondaryConstructorsWithBody.kt")
         public void testSecondaryConstructorsWithBody() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test

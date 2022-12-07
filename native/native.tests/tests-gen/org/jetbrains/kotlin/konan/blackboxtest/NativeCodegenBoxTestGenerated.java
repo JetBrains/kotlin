@@ -16889,6 +16889,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19043,6 +19044,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("secondaryConstructorsWithBody.kt")
+            public void testSecondaryConstructorsWithBody() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt");
             }
 
             @Test
