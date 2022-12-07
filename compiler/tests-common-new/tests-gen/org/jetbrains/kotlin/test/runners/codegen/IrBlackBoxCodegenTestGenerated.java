@@ -22800,6 +22800,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("secondaryConstructorsWithBody.kt")
+        public void testSecondaryConstructorsWithBody() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt");
+        }
+
+        @Test
         @TestMetadata("simpleSecondaryConstructor.kt")
         public void testSimpleSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -50619,6 +50625,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("overrides_typeParameters.kt")
         public void testOverrides_typeParameters() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/overrides_typeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorsWithBody.kt")
+        public void testSecondaryConstructorsWithBody() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/secondaryConstructorsWithBody.kt");
         }
 
         @Test

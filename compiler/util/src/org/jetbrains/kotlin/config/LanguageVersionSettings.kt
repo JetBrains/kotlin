@@ -282,6 +282,7 @@ enum class LanguageFeature(
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
     InlineLateinit(KOTLIN_1_9, kind = OTHER), // KT-23814
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
+    ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
 
 
     // Disabled for indefinite time. See KT-53751
@@ -314,7 +315,6 @@ enum class LanguageFeature(
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null),
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = UNSTABLE_FEATURE),
-    ValueClassesSecondaryConstructorWithBody(sinceVersion = null, kind = UNSTABLE_FEATURE),
     ;
 
     init {
