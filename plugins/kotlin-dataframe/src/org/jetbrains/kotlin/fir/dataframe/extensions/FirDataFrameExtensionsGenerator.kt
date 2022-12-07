@@ -90,23 +90,21 @@ class FirDataFrameExtensionsGenerator(
             null -> fields.filter { it.callableId == callableId }.flatMap { (owner, property, callableId) ->
 
                 var resolvedReturnTypeRef = property.resolvedReturnTypeRef
-                val DATA_SCHEMA_CLASS_ID = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("DataSchema"))
 
                 val propertyName = property.name
                 val marker = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
 
                 val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.classId?.equals(Names.DATA_ROW_CLASS_ID) == true) {
                     resolvedReturnTypeRef.coneType.typeArguments[0]
-                } else if (resolvedReturnTypeRef.toClassLikeSymbol(session)?.hasAnnotation(DATA_SCHEMA_CLASS_ID) == true) {
+                } else if (resolvedReturnTypeRef.toClassLikeSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true) {
                     resolvedReturnTypeRef.coneType
                 } else {
                     null
                 }
 
-                val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
                 if (
-                    resolvedReturnTypeRef.type.classId?.equals(LIST) == true &&
-                    (resolvedReturnTypeRef.type.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(DATA_SCHEMA_CLASS_ID) == true
+                    resolvedReturnTypeRef.type.classId?.equals(Names.LIST) == true &&
+                    (resolvedReturnTypeRef.type.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true
                 ) {
                     require(columnGroupProjection == null)
                     resolvedReturnTypeRef = ConeClassLikeTypeImpl(

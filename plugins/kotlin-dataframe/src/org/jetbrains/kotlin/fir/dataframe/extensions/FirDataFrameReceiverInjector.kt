@@ -46,7 +46,7 @@ class FirDataFrameReceiverInjector(
         val classId = runIf(functionCall.calleeReference.name == Name.identifier("injectAccessors")) {
             ((functionCall.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance)?.typeRef?.coneType as? ConeClassLikeType)?.classId
         }
-        return buildList {
+        val types =  buildList {
             if (classId != null) {
                 associatedScopes[classId]?.let {
                     addAll(it)
@@ -54,6 +54,7 @@ class FirDataFrameReceiverInjector(
             }
             addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenIds, tokenState, associatedScopes))
         }
+        return types
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()

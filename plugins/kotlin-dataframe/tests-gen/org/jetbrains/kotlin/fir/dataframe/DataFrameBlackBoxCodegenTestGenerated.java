@@ -34,6 +34,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("extractPluginSchemaWithUnfold.kt")
+    public void testExtractPluginSchemaWithUnfold() throws Exception {
+        runTest("testData/box/extractPluginSchemaWithUnfold.kt");
+    }
+
+    @Test
     @TestMetadata("flexibleReturnType.kt")
     public void testFlexibleReturnType() throws Exception {
         runTest("testData/box/flexibleReturnType.kt");

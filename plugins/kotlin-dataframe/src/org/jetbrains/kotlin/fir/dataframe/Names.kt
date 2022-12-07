@@ -31,4 +31,7 @@ object Names {
         get() = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
     val INTERPRETABLE_FQNAME: FqName
         get() = FqName(Interpretable::class.qualifiedName!!)
+
+    val DATA_SCHEMA_CLASS_ID = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("DataSchema"))
+    val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
 }
