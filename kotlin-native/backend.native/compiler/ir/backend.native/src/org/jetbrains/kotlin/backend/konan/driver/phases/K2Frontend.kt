@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -257,18 +258,16 @@ internal fun serializeModuleIntoKlib(
     val compatibilityMode = CompatibilityMode(KotlinAbiVersion.CURRENT) // TODO get from test file data)
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
-    val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: false
 
     val serializedIr =
-            JsIrModuleSerializer(
+            KonanIrModuleSerializer(
                     messageLogger,
                     moduleFragment.irBuiltins,
                     mutableMapOf(), // TODO: expect -> actual mapping
-                    compatibilityMode,
                     skipExpects = !configuration.expectActualLinker,
+                    compatibilityMode,
                     normalizeAbsolutePaths = absolutePathNormalization,
-                    sourceBaseDirs = sourceBaseDirs,
-                    signatureClashChecks
+                    sourceBaseDirs = sourceBaseDirs
             ).serializedIrModule(moduleFragment)
 
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
