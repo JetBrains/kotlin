@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyTransformer
 
-object IdePlatformStdlibCommonDependencyFilter : IdeDependencyTransformer {
+internal object IdePlatformStdlibCommonDependencyFilter : IdeDependencyTransformer {
     private const val stdlibCoordinatesGroup = "org.jetbrains.kotlin"
     private val stdlibCoordinatesModules = setOf("kotlin-stdlib-common", "kotlin-test-common", "kotlin-test-annotations-common")
 

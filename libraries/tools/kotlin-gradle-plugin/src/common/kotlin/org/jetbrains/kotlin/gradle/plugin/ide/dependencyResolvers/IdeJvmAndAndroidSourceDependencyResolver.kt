@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
-object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver {
+internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (!sourceSet.isJvmAndAndroid) return emptySet()
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()

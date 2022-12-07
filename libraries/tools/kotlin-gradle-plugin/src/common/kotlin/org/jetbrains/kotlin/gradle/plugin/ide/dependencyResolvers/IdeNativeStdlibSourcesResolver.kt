@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 
-object IdeNativeStdlibSourcesResolver : IdeDependencyResolver {
+internal object IdeNativeStdlibSourcesResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         return KonanDistribution(sourceSet.project.konanHome).sourcesDir.listFiles().orEmpty()
             /* Ignore org.jetbrains.kotlinx. in this case */

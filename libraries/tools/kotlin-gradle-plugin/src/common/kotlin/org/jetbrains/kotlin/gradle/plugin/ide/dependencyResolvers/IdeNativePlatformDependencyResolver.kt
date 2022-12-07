@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
-object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
+internal object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
         val commonizerTarget = getCommonizerTarget(sourceSet) as? LeafCommonizerTarget ?: return emptySet()

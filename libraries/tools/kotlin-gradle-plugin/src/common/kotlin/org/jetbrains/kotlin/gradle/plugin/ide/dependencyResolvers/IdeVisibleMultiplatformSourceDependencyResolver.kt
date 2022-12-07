@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
-object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
+internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()

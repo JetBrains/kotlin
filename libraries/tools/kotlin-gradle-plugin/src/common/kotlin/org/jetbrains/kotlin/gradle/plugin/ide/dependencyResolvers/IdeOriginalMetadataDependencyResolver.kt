@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
-object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
+internal object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val metadataDependenciesConfiguration = sourceSet.internal.resolvableMetadataConfiguration
 
