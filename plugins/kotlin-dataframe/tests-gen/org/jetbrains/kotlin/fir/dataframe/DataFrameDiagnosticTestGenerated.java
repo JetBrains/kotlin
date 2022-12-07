@@ -28,6 +28,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
+    @TestMetadata("deeplyNestedSchema.kt")
+    public void testDeeplyNestedSchema() throws Exception {
+        runTest("testData/diagnostics/deeplyNestedSchema.kt");
+    }
+
+    @Test
     @TestMetadata("dfIde.kt")
     public void testDfIde() throws Exception {
         runTest("testData/diagnostics/dfIde.kt");
