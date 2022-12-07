@@ -1,6 +1,6 @@
 
 fun test(mc: MutableCollection<out CharSequence>) {
-    mc.addAll(mc)
+    mc.addAll(<!ARGUMENT_TYPE_MISMATCH!>mc<!>)
 
     mc.addAll(<!ARGUMENT_TYPE_MISMATCH!>arrayListOf<CharSequence>()<!>)
     mc.addAll(arrayListOf())
