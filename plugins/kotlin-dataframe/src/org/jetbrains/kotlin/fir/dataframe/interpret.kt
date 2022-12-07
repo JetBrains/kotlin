@@ -163,7 +163,7 @@ fun <T> KotlinTypeFacade.interpret(
 
             is Interpreter.ReturnType -> {
                 val returnType = it.expression.typeRef.coneType.returnType(session)
-                Interpreter.Success(TypeApproximationImpl(returnType.classId?.asFqNameString()!!, returnType.isNullable))
+                Interpreter.Success(Marker(returnType))
             }
 
             is Interpreter.Dsl -> {
@@ -206,10 +206,11 @@ fun <T> KotlinTypeFacade.interpret(
     functionCall.typeArguments.forEachIndexed { index, firTypeProjection ->
         val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.type
         if (type is ConeIntersectionType) return@forEachIndexed
-        val approximation = TypeApproximationImpl(
-            type.classId!!.asFqNameString(),
-            type.isMarkedNullable
-        )
+//        val approximation = TypeApproximationImpl(
+//            type.classId!!.asFqNameString(),
+//            type.isMarkedNullable
+//        )
+        val approximation = Marker(type)
         arguments["typeArg$index"] = Interpreter.Success(approximation)
     }
 
