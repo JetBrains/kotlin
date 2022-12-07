@@ -1,5 +1,5 @@
 // !LANGUAGE: -AbstractClassMemberNotImplementedWithIntermediateAbstractClass
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: don't support legacy feature
 
 // FILE: 1.kt
