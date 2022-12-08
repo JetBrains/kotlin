@@ -99,8 +99,9 @@ fun create(project: Project): ExecutorService {
         configurables is WasmConfigurables -> WasmExecutor(configurables).service(project)
         configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> EmulatorExecutor(configurables).service(project)
         configurables is AppleConfigurables && configurables.targetTriple.isSimulator -> XcodeSimulatorExecutor(configurables).apply {
+            // Property can specify device identifier to be run on. For example, `com.apple.CoreSimulator.SimDeviceType.iPhone-11`
             project.findProperty("iosDevice")?.toString()?.let {
-                deviceName = it
+                deviceId = it
             }
         }.service(project)
         supportsRunningTestsOnDevice(testTarget) -> deviceLauncher(project)
