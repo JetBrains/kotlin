@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
@@ -25,12 +26,12 @@ internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyR
     private fun resolveSourceDependencies(
         resolution: MetadataDependencyResolution.ChooseVisibleSourceSets
     ): Iterable<IdeaKotlinDependency> {
-        val project = resolution.projectDependency ?: return emptyList()
+        val projectComponentIdentifier = resolution.dependency.id as? ProjectComponentIdentifier ?: return emptyList()
         return resolution.allVisibleSourceSetNames.map { visibleSourceSetName ->
             IdeaKotlinSourceDependency(
                 type = IdeaKotlinSourceDependency.Type.Regular,
                 coordinates = IdeaKotlinSourceCoordinates(
-                    project = IdeaKotlinProjectCoordinates(project),
+                    project = IdeaKotlinProjectCoordinates(projectComponentIdentifier),
                     sourceSetName = visibleSourceSetName
                 )
             )

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> =
         sourceSet.resolveMetadata<ChooseVisibleSourceSets>()
+            .filter { resolution -> resolution.dependency.id !is ProjectComponentIdentifier }
             .flatMap { resolution -> resolve(sourceSet, resolution) }
             .toSet()
 
