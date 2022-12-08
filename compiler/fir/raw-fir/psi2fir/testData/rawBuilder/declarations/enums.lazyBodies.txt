@@ -57,7 +57,7 @@ FILE: enums.kt
 
     }
     public? final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
-        private constructor(signature: String = String(()V)): R|PseudoInsn| {
+        private constructor(signature: String = LAZY_EXPRESSION): R|PseudoInsn| {
             LAZY_super<R|kotlin/Enum<PseudoInsn>|>
         }
 

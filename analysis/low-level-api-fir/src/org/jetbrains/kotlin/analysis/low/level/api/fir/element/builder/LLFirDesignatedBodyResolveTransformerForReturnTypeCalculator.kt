@@ -75,8 +75,10 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        simpleFunction.processCallable {
-            FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
+        if (FirLazyBodiesCalculator.needCalculatingLazyBodyForFunction(simpleFunction)) {
+            simpleFunction.processCallable {
+                FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
+            }
         }
 
         return super.transformSimpleFunction(simpleFunction, data)

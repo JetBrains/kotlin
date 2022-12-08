@@ -179,6 +179,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
     }
 
+    override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
+        error("Java value parameter cannot has default value")
+    }
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
     }
 

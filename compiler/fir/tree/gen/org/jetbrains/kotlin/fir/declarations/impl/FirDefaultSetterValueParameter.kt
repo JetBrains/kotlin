@@ -195,4 +195,8 @@ internal class FirDefaultSetterValueParameter(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
+
+    override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
+        defaultValue = newDefaultValue
+    }
 }

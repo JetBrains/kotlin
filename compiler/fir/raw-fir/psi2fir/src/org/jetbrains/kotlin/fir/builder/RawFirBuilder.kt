@@ -586,10 +586,7 @@ open class RawFirBuilder(
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
                 defaultValue = if (hasDefaultValue()) {
-                    disabledLazyMode {
-                        // TODO build lazy initializers here
-                        { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
-                    }
+                    buildOrLazyExpression(null, { { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value") })
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)

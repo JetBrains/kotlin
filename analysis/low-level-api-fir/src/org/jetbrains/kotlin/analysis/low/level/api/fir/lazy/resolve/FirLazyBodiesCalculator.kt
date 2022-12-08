@@ -37,9 +37,18 @@ internal object FirLazyBodiesCalculator {
         firFile.transform<FirElement, PersistentList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
+    private fun replaceValueParameterDefaultValues(valueParameters: List<FirValueParameter>, newValueParameters: List<FirValueParameter>) {
+        require(valueParameters.size == newValueParameters.size)
+        for ((valueParameter, newValueParameter) in valueParameters.zip(newValueParameters)) {
+            if (newValueParameter.defaultValue != null) {
+                valueParameter.replaceDefaultValue(newValueParameter.defaultValue)
+            }
+        }
+    }
+
     fun calculateLazyBodiesForFunction(designation: FirDeclarationDesignation) {
         val simpleFunction = designation.declaration as FirSimpleFunction
-        if (simpleFunction.body !is FirLazyBlock) return
+        require(needCalculatingLazyBodyForFunction(simpleFunction))
         val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = simpleFunction.moduleData.session,
             scopeProvider = simpleFunction.moduleData.session.kotlinScopeProvider,
@@ -49,13 +58,14 @@ internal object FirLazyBodiesCalculator {
         simpleFunction.apply {
             replaceBody(newFunction.body)
             replaceContractDescription(newFunction.contractDescription)
+            replaceValueParameterDefaultValues(valueParameters, newFunction.valueParameters)
         }
     }
 
     fun calculateLazyBodyForConstructor(designation: FirDeclarationDesignation) {
         val constructor = designation.declaration as FirConstructor
         require(constructor.psi is KtConstructor<*>)
-        require(constructor.body is FirLazyBlock || constructor.delegatedConstructor is FirLazyDelegatedConstructorCall)
+        require(needCalculatingLazyBodyForConstructor(constructor))
 
         val newConstructor = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = constructor.moduleData.session,
@@ -67,6 +77,7 @@ internal object FirLazyBodiesCalculator {
         constructor.apply {
             replaceBody(newConstructor.body)
             replaceDelegatedConstructor(newConstructor.delegatedConstructor)
+            replaceValueParameterDefaultValues(valueParameters, newConstructor.valueParameters)
         }
     }
 
@@ -147,9 +158,15 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean =
+        needCalculatingLazyBodyForFunction(firConstructor) || firConstructor.delegatedConstructor is FirLazyDelegatedConstructorCall
+
+    fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolean =
+        firFunction.body is FirLazyBlock || firFunction.valueParameters.any { it.defaultValue is FirLazyExpression }
+
     fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
-        firProperty.getter?.body is FirLazyBlock
-                || firProperty.setter?.body is FirLazyBlock
+        firProperty.getter?.let { needCalculatingLazyBodyForFunction(it) } == true
+                || firProperty.setter?.let { needCalculatingLazyBodyForFunction(it) } == true
                 || firProperty.initializer is FirLazyExpression
                 || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
                 || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
@@ -179,7 +196,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         simpleFunction: FirSimpleFunction,
         data: PersistentList<FirDeclaration>
     ): FirSimpleFunction {
-        if (simpleFunction.body is FirLazyBlock) {
+        if (FirLazyBodiesCalculator.needCalculatingLazyBodyForFunction(simpleFunction)) {
             val designation = FirDeclarationDesignation(data, simpleFunction)
             FirLazyBodiesCalculator.calculateLazyBodiesForFunction(designation)
         }
@@ -190,7 +207,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         constructor: FirConstructor,
         data: PersistentList<FirDeclaration>
     ): FirConstructor {
-        if (constructor.body is FirLazyBlock || constructor.delegatedConstructor is FirLazyDelegatedConstructorCall) {
+        if (FirLazyBodiesCalculator.needCalculatingLazyBodyForConstructor(constructor)) {
             val designation = FirDeclarationDesignation(data, constructor)
             FirLazyBodiesCalculator.calculateLazyBodyForConstructor(designation)
         }

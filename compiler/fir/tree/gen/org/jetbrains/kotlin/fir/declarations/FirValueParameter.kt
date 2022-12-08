@@ -79,6 +79,8 @@ abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
+    abstract fun replaceDefaultValue(newDefaultValue: FirExpression?)
+
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameter

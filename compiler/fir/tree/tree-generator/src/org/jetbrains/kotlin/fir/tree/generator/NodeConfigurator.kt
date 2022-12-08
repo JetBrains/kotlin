@@ -393,7 +393,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         valueParameter.configure {
             +symbol("FirValueParameterSymbol")
-            +field("defaultValue", expression, nullable = true)
+            +field("defaultValue", expression, nullable = true, withReplace = true)
             +field("containingFunctionSymbol", functionSymbolType, "*").apply {
                 withBindThis = false
             }
