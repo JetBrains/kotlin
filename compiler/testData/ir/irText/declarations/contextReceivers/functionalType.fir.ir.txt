@@ -172,78 +172,77 @@ FILE fqName:<root> fileName:/functionalType.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.C
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
-                  <T>: <root>.R
-                  <R>: kotlin.Unit
-                  receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.R' type=<root>.R origin=null
-                  block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.R, kotlin.Unit> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R) returnType:kotlin.Unit
-                      $receiver: VALUE_PARAMETER name:$this$with type:<root>.R
-                      BLOCK_BODY
-                        CALL 'public final fun f1 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: GET_VAR 'val lf1: @[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> [val] declared in <root>.test' type=@[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=null
-                        CALL 'public final fun f1 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=LAMBDA
-                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, _context_receiver_0:<root>.C, <unused var>:<root>.Param) returnType:kotlin.Unit
-                              contextReceiverParametersCount: 1
-                              $receiver: VALUE_PARAMETER name:$this$f1 type:<root>.R
-                              VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
-                              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<root>.Param
-                              BLOCK_BODY
-                                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                  CALL 'public final fun <get-r> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
-                                    $this: GET_VAR '$this$f1: <root>.R declared in <root>.test.<anonymous>.<anonymous>.<anonymous>' type=<root>.R origin=null
-                                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                  CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-                                    $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                        CALL 'public final fun f2 (_context_receiver_0: <root>.C, g: kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: GET_VAR 'val lf2: kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> [val] declared in <root>.test' type=kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=null
-                        CALL 'public final fun f2 (_context_receiver_0: <root>.C, g: kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: FUN_EXPR type=kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=LAMBDA
-                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (_context_receiver_0:<root>.C, <unused var>:<root>.Param) returnType:kotlin.Unit
-                              contextReceiverParametersCount: 1
-                              VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
-                              VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<root>.Param
-                              BLOCK_BODY
-                                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                  CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-                                    $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                        CALL 'public final fun f3 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: GET_VAR 'val lf3: @[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> [val] declared in <root>.test' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> origin=null
-                        CALL 'public final fun f3 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> origin=LAMBDA
-                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, _context_receiver_0:<root>.C) returnType:kotlin.Unit
-                              contextReceiverParametersCount: 1
-                              $receiver: VALUE_PARAMETER name:$this$f3 type:<root>.R
-                              VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
-                              BLOCK_BODY
-                                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                  CALL 'public final fun <get-r> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
-                                    $this: GET_VAR '$this$f3: <root>.R declared in <root>.test.<anonymous>.<anonymous>.<anonymous>' type=<root>.R origin=null
-                                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                  CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-                                    $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                        CALL 'public final fun f4 (_context_receiver_0: <root>.C, g: kotlin.Function1<<root>.C, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: GET_VAR 'val lf4: kotlin.Function1<<root>.C, kotlin.Unit> [val] declared in <root>.test' type=kotlin.Function1<<root>.C, kotlin.Unit> origin=null
-                        CALL 'public final fun f4 (_context_receiver_0: <root>.C, g: kotlin.Function1<<root>.C, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                          _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-                          g: FUN_EXPR type=kotlin.Function1<<root>.C, kotlin.Unit> origin=LAMBDA
-                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (_context_receiver_0:<root>.C) returnType:kotlin.Unit
-                              contextReceiverParametersCount: 1
-                              VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
-                              BLOCK_BODY
-                                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                  CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-                                    $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+                <T>: <root>.R
+                <R>: kotlin.Unit
+                receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.R' type=<root>.R origin=null
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.R, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.R
+                    BLOCK_BODY
+                      CALL 'public final fun f1 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: GET_VAR 'val lf1: @[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> [val] declared in <root>.test' type=@[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=null
+                      CALL 'public final fun f1 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, _context_receiver_0:<root>.C, <unused var>:<root>.Param) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
+                            $receiver: VALUE_PARAMETER name:$this$f1 type:<root>.R
+                            VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
+                            VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<root>.Param
+                            BLOCK_BODY
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public final fun <get-r> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$f1: <root>.R declared in <root>.test.<anonymous>.<anonymous>.<anonymous>' type=<root>.R origin=null
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                      CALL 'public final fun f2 (_context_receiver_0: <root>.C, g: kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: GET_VAR 'val lf2: kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> [val] declared in <root>.test' type=kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=null
+                      CALL 'public final fun f2 (_context_receiver_0: <root>.C, g: kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: FUN_EXPR type=kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (_context_receiver_0:<root>.C, <unused var>:<root>.Param) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
+                            VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
+                            VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:<root>.Param
+                            BLOCK_BODY
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                      CALL 'public final fun f3 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: GET_VAR 'val lf3: @[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> [val] declared in <root>.test' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> origin=null
+                      CALL 'public final fun f3 (_context_receiver_0: <root>.C, g: @[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, _context_receiver_0:<root>.C) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
+                            $receiver: VALUE_PARAMETER name:$this$f3 type:<root>.R
+                            VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
+                            BLOCK_BODY
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public final fun <get-r> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$f3: <root>.R declared in <root>.test.<anonymous>.<anonymous>.<anonymous>' type=<root>.R origin=null
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                      CALL 'public final fun f4 (_context_receiver_0: <root>.C, g: kotlin.Function1<<root>.C, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: GET_VAR 'val lf4: kotlin.Function1<<root>.C, kotlin.Unit> [val] declared in <root>.test' type=kotlin.Function1<<root>.C, kotlin.Unit> origin=null
+                      CALL 'public final fun f4 (_context_receiver_0: <root>.C, g: kotlin.Function1<<root>.C, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
+                        g: FUN_EXPR type=kotlin.Function1<<root>.C, kotlin.Unit> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (_context_receiver_0:<root>.C) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
+                            VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
+                            BLOCK_BODY
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null

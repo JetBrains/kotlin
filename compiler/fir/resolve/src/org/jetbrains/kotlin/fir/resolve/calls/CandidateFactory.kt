@@ -167,18 +167,22 @@ class CandidateFactory private constructor(
     }
 }
 
-fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement) {
-    when (statement) {
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement): Boolean {
+    return when (statement) {
         is FirQualifiedAccessExpression,
         is FirWhenExpression,
         is FirTryExpression,
         is FirCheckNotNullCall,
-        is FirElvisExpression
-        -> (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
+        is FirElvisExpression -> {
+            val candidate = (statement as FirResolvable).candidate() ?: return false
+            addOtherSystem(candidate.system.asReadOnlyStorage())
+            true
+        }
 
         is FirSafeCallExpression -> addSubsystemFromExpression(statement.selector)
         is FirWrappedArgumentExpression -> addSubsystemFromExpression(statement.expression)
-        is FirBlock -> statement.returnExpressions().forEach { addSubsystemFromExpression(it) }
+        is FirBlock -> statement.returnExpressions().any { addSubsystemFromExpression(it) }
+        else -> false
     }
 }
 

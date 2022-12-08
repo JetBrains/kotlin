@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.shouldReturnUnit
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -170,23 +170,29 @@ class PostponedArgumentsAnalyzer(
     ) {
         val (returnArguments, inferenceSession) = results
 
-        returnArguments.forEach { c.addSubsystemFromExpression(it) }
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
         val builder = c.getBuilder()
 
         val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
         var hasExpressionInReturnArguments = false
-        // No constraint for return expressions of lambda if it has Unit return type.
-        val lambdaReturnType = lambda.returnType.let(substitute).takeUnless { it.isUnitOrFlexibleUnit }
+        val lambdaReturnType = lambda.returnType.let(substitute)
         returnArguments.forEach {
+            val haveSubsystem = c.addSubsystemFromExpression(it)
             if (it !is FirExpression) return@forEach
+            // If the lambda returns Unit, the last expression is not returned and should not be constrained.
+            // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
+            //    fun <T> foo(): T
+            //    run {
+            //      if (p) return@run
+            //      foo() // T = Unit, even though there is no implicit return
+            //    }
+            //  Things get even weirder if T has an upper bound incompatible with Unit.
+            if (it == lastExpression && !haveSubsystem &&
+                (expectedReturnType?.isUnitOrFlexibleUnit == true || lambda.atom.shouldReturnUnit(returnArguments))
+            ) return@forEach
+
             hasExpressionInReturnArguments = true
-            // If it is the last expression, and the expected type is Unit, that expression will be coerced to Unit.
-            // If the last expression is of Unit type, of course it's not coercion-to-Unit case.
-            val lastExpressionCoercedToUnit =
-                it == lastExpression && expectedReturnType?.isUnitOrFlexibleUnit == true && !it.typeRef.coneType.isUnitOrFlexibleUnit
-            // No constraint for the last expression of lambda if it will be coerced to Unit.
-            if (!lastExpressionCoercedToUnit && !builder.hasContradiction) {
+            if (!builder.hasContradiction) {
                 candidate.resolveArgumentExpression(
                     builder,
                     it,
@@ -200,7 +206,7 @@ class PostponedArgumentsAnalyzer(
             }
         }
 
-        if (!hasExpressionInReturnArguments && lambdaReturnType != null) {
+        if (!hasExpressionInReturnArguments && !lambdaReturnType.isUnitOrFlexibleUnit) {
             builder.addSubtypeConstraint(
                 components.session.builtinTypes.unitType.type,
                 lambdaReturnType,

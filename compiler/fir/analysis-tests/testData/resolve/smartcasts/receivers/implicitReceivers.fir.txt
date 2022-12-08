@@ -51,7 +51,7 @@ FILE: implicitReceivers.kt
     }
     public final fun test_3(a: R|kotlin/Any|, b: R|kotlin/Any|, c: R|kotlin/Any|): R|kotlin/Unit| {
         R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                     (this@R|special/anonymous| as R|A|)
                     this@R|special/anonymous|.R|/A.foo|()
