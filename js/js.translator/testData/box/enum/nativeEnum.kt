@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1571
 // KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +SafeExternalEnums
-// IGNORE_FIR
+// IGNORE_BACKEND_K2: JS_IR
 // Because there is a bug inside FIR related to `enumValues` and `enumValueOf` resolution
 
 package foo
