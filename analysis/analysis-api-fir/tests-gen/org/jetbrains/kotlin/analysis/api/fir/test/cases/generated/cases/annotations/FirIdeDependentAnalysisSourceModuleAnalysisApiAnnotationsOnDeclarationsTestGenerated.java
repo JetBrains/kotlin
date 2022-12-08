@@ -108,6 +108,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiAnnotationsOnDeclarat
         public void testVarargParameter() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargParameter.kt");
         }
+
+        @Test
+        @TestMetadata("varargSpreadParameter.kt")
+        public void testVarargSpreadParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargSpreadParameter.kt");
+        }
     }
 
     @Nested

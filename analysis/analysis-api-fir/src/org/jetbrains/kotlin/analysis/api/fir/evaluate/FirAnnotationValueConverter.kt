@@ -41,37 +41,19 @@ internal object FirAnnotationValueConverter {
         return KtConstantAnnotationValue(constantValue)
     }
 
-    private fun Collection<FirExpression>.convertConstantExpression(
+    private fun Collection<FirExpression>.convertVarargsExpression(
         session: FirSession,
     ): Collection<KtAnnotationValue> =
-        mapNotNull { it.convertConstantExpression(session) }
-
-    // Refer to KtLightAnnotationParameterList#checkIfToArrayConversionExpected
-    private fun ValueArgument?.arrayConversionExpected(): Boolean {
-        return when {
-            this == null -> false
-            this is KtValueArgument && isSpread -> {
-                // Anno(*[1,2,3])
-                false
-            }
-
-            else -> {
-                // Anno(a = [1,2,3]) v.s. Anno(1) or Anno(1,2,3)
-                !isNamed()
+        flatMap { expr ->
+            val annotationValue = expr.convertConstantExpression(session)
+            when {
+                annotationValue == null -> listOf()
+                expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression ->
+                    (annotationValue as KtArrayAnnotationValue).values
+                else -> listOf(annotationValue)
             }
         }
-    }
 
-    private fun Collection<KtAnnotationValue>.toArrayConstantValueIfNecessary(sourcePsi: KtElement?): KtAnnotationValue? {
-        val valueArgument = if (sourcePsi is ValueArgument) sourcePsi else
-            (sourcePsi?.parents?.firstOrNull { it is ValueArgument } as? ValueArgument)
-        val wrap = valueArgument?.arrayConversionExpected() ?: false
-        return if (wrap) {
-            KtArrayAnnotationValue(this, sourcePsi)
-        } else {
-            singleOrNull()
-        }
-    }
 
     fun toConstantValue(
         firExpression: FirExpression,
@@ -94,12 +76,12 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirVarargArgumentsExpression -> {
-                arguments.convertConstantExpression(session).toArrayConstantValueIfNecessary(sourcePsi)
+                KtArrayAnnotationValue(arguments.convertVarargsExpression(session), sourcePsi)
             }
 
             is FirArrayOfCall -> {
                 // Desugared collection literals.
-                KtArrayAnnotationValue(argumentList.arguments.convertConstantExpression(session), sourcePsi)
+                KtArrayAnnotationValue(argumentList.arguments.convertVarargsExpression(session), sourcePsi)
             }
 
             is FirFunctionCall -> {
