@@ -5,26 +5,24 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
-import llvm.*
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
-import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.referenceFunction
-import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal enum class ScopeKind {
     TOP,
@@ -94,11 +92,6 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
 
     override fun toString(): String {
         return "$kind: $name ${elements.joinToString(", ")} ${scopes.joinToString("\n")}"
-    }
-
-    fun generateCAdapters(builder: (ExportedElement) -> Unit) {
-        elements.forEach { builder(it) }
-        scopes.forEach { it.generateCAdapters(builder) }
     }
 
     // collects names of inner scopes to make sure function<->scope name clashes would be detected, and functions would be mangled with "_" suffix
@@ -396,17 +389,18 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
             getPackage(it).fragments.filter { it.module == this }
         }
 
+/**
+ * First phase of C export: walk given declaration descriptors and create [CAdapterExportedElements] from them.
+ */
 internal class CAdapterGenerator(
         private val context: PsiToIrContext,
-        private val moduleDescriptor: ModuleDescriptor,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = typeTranslator.prefix
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
-    private var symbolTableOrNull: SymbolTable? = null
-    internal val symbolTable get() = symbolTableOrNull!!
+    internal val symbolTable get() = context.symbolTable!!
 
     internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
         paramNamesRecorded.clear()
@@ -536,17 +530,7 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
-    fun buildExports(symbolTable: SymbolTable): CAdapterExportedElements {
-        this.symbolTableOrNull = symbolTable
-        try {
-            buildExports()
-            return CAdapterExportedElements(typeTranslator, scopes)
-        } finally {
-            this.symbolTableOrNull = null
-        }
-    }
-
-    private fun buildExports() {
+    fun buildExports(moduleDescriptor: ModuleDescriptor): CAdapterExportedElements {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         moduleDescriptors += moduleDescriptor
         moduleDescriptors += moduleDescriptor.getExportedDependencies(context.config)
@@ -557,6 +541,7 @@ internal class CAdapterGenerator(
                 })
 
         moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
+        return CAdapterExportedElements(typeTranslator, scopes)
     }
 
     private val simpleNameMapping = mapOf(
