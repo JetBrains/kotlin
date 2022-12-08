@@ -251,19 +251,16 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                     String valueString;
                     if (value instanceof Object[]) {
                         valueString = Arrays.deepToString((Object[]) value);
-                    }
-                    else if (value != null) {
+                    } else if (value != null) {
                         valueString = String.valueOf(value);
-                    }
-                    else {
+                    } else {
                         valueString = "(null)";
                     }
 
                     getLog().debug(f.getName() + "=" + valueString);
                 }
                 getLog().debug("End of arguments");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 getLog().warn("Failed to print compiler arguments: " + e, e);
             }
         }
@@ -444,13 +441,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
-        try {
-            if (args != null && args.contains(null)) {
-                throw new IllegalArgumentException("Invalid compiler argument: null");
-            }
-            compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
+        if (args != null && args.contains(null)) {
+            throw new MojoExecutionException("Invalid compiler argument: null");
         }
-        catch (IllegalArgumentException e) {
+
+        try {
+            compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
+        } catch (IllegalArgumentException e) {
             throw new MojoExecutionException(e.getMessage());
         }
 
