@@ -18,17 +18,21 @@ class KotlinJsOptionsCompat(
     override val options: KotlinJsCompilerOptions
 ) : KotlinJsOptions {
     override var freeCompilerArgs: List<String>
-        get() = if (isTaskExecuting) {
-            task().enhancedFreeCompilerArgs.get()
-                .union(task().additionalFreeCompilerArgs)
-                .toList()
-        } else {
-            options.freeCompilerArgs.get()
+        get() {
+            val executionTimeFreeCompilerArgs = task().executionTimeFreeCompilerArgs
+            return if (!isTaskExecuting) {
+                options.freeCompilerArgs.get()
+            } else if (executionTimeFreeCompilerArgs != null) {
+                executionTimeFreeCompilerArgs
+            } else {
+                // returned at execution time before freeCompilerArgs modification
+                task().enhancedFreeCompilerArgs.get()
+            }
         }
 
         set(value) = if (isTaskExecuting) {
             task().nagUserFreeArgsModifiedOnExecution(value)
-            task().additionalFreeCompilerArgs = value
+            task().executionTimeFreeCompilerArgs = value
         } else {
             options.freeCompilerArgs.set(value)
         }

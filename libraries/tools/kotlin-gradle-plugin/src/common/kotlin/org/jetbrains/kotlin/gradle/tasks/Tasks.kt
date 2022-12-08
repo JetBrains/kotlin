@@ -689,7 +689,7 @@ abstract class KotlinCompile @Inject constructor(
      * this input will always be empty.
      */
     @get:Internal
-    internal var additionalFreeCompilerArgs: List<String> = listOf()
+    internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         compilerArgumentsContributor.contributeArguments(
@@ -703,8 +703,9 @@ abstract class KotlinCompile @Inject constructor(
             args.reportPerf = true
         }
 
-        if (additionalFreeCompilerArgs.isNotEmpty()) {
-            args.freeArgs = compilerOptions.freeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
+        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+        if (localExecutionTimeFreeCompilerArgs != null) {
+            args.freeArgs = localExecutionTimeFreeCompilerArgs
         }
     }
 
@@ -1001,7 +1002,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
      * this input will always be empty.
      */
     @get:Internal
-    internal var additionalFreeCompilerArgs: List<String> = listOf()
+    internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
@@ -1029,7 +1030,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
         // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
         // containing additional arguments based on the js compilation configuration
-        args.freeArgs = enhancedFreeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
+        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+        args.freeArgs = if (localExecutionTimeFreeCompilerArgs != null) localExecutionTimeFreeCompilerArgs else enhancedFreeCompilerArgs.get()
     }
 
     @get:InputFiles

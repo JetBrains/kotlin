@@ -15,17 +15,18 @@ class KotlinMultiplatformCommonOptionsCompat(
 ) : KotlinMultiplatformCommonOptions {
 
     override var freeCompilerArgs: List<String>
-        get() = if (isTaskExecuting) {
-            options.freeCompilerArgs.get()
-                .union(task().additionalFreeCompilerArgs)
-                .toList()
-        } else {
-            options.freeCompilerArgs.get()
+        get() {
+            val executionTimeFreeCompilerArgs = task().executionTimeFreeCompilerArgs
+            return if (isTaskExecuting && executionTimeFreeCompilerArgs != null) {
+                executionTimeFreeCompilerArgs
+            } else {
+                options.freeCompilerArgs.get()
+            }
         }
 
         set(value) = if (isTaskExecuting) {
             task().nagUserFreeArgsModifiedOnExecution(value)
-            task().additionalFreeCompilerArgs = value
+            task().executionTimeFreeCompilerArgs = value
         } else {
             options.freeCompilerArgs.set(value)
         }
