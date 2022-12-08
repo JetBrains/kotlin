@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -53,6 +55,81 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("assemble") {
                 assertOutputDoesNotContain("kotlinOptions.freeCompilerArgs were changed on task")
+            }
+        }
+    }
+
+    @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly")
+    @JvmGradlePluginTests
+    @GradleTest
+    @Disabled
+    internal fun freeArgsModifiedAtExecutionTimeCorrectly(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                //language=Gradle
+                """
+                |
+                |tasks.named("compileKotlin") {
+                |    kotlinOptions.freeCompilerArgs += ["-P", "plugin:blah-blah:blah-blah1=1"]
+                |    doFirst {
+                |        kotlinOptions.freeCompilerArgs += ["-P", "plugin:blah-blah:blah-blah2=1", "-P", "plugin:blah-blah:blah-blah3=1"]
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            gradleProperties.appendText(
+                //language=properties
+                """
+                |
+                |kotlin.options.suppressFreeCompilerArgsModificationWarning=true
+                """.trimMargin()
+            )
+
+            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3)
+            }
+        }
+    }
+
+    @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly in MPP")
+    @MppGradlePluginTests
+    @GradleTest
+    @Disabled
+    internal fun freeArgsModifiedAtExecutionTimeCorrectlyMpp(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-with-tests", gradleVersion) {
+            buildGradle.appendText(
+                //language=Gradle
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).configureEach {
+                |    kotlinOptions.freeCompilerArgs += ["-P", "plugin:blah-blah:blah-blah1=1"]
+                |    doFirst {
+                |        kotlinOptions.freeCompilerArgs += ["-P", "plugin:blah-blah:blah-blah2=1", "-P", "plugin:blah-blah:blah-blah3=1"]
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            gradleProperties.appendText(
+                //language=properties
+                """
+                |
+                |kotlin.options.suppressFreeCompilerArgsModificationWarning=true
+                |# to enable the :compileKotlinMetadata task
+                |kotlin.mpp.enableCompatibilityMetadataVariant=true
+                """.trimMargin()
+            )
+
+            val compileTasks = listOf(
+                "compileKotlinMetadata",
+                "compileKotlinJvmWithJava",
+                "compileKotlinJvmWithoutJava",
+                "compileKotlinJs",
+                // we do not allow modifying free args for K/N at execution time
+            )
+            build(*compileTasks.toTypedArray(), buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
             }
         }
     }
