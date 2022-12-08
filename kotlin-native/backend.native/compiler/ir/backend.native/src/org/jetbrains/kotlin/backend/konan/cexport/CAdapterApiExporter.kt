@@ -5,44 +5,31 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
-import kotlinx.cinterop.cValuesOf
-import llvm.*
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
-import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
-import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionWithDefaultAttributes
-import org.jetbrains.kotlin.backend.konan.llvm.generateFunction
-import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.io.PrintWriter
 
-internal class CAdapterBindingsBuilder(
-        val codegen: CodeGenerator,
-        val elements: CAdapterExportedElements,
-) : ContextUtils {
-    override val generationState = codegen.generationState
-
+/**
+ * Third phase of C export:
+ *  1. Create a C++ file with runtime bindings
+ *  2. Create a header file with API
+ *  3. (MinGW only) create EXPORTS def file.
+ */
+internal class CAdapterApiExporter(
+        private val generationState: NativeGenerationState,
+        private val elements: CAdapterExportedElements,
+) {
     private val typeTranslator = elements.typeTranslator
     private val builtIns = elements.typeTranslator.builtIns
-    private val scopes = elements.scopes
 
-    internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
+    private val prefix = elements.typeTranslator.prefix
     private lateinit var outputStreamWriter: PrintWriter
 
     // Primitive built-ins and unsigned types
@@ -56,92 +43,6 @@ internal class CAdapterBindingsBuilder(
         // Unfortunately, `context.ir` and `context.irBuiltins` are not initialized, so `context.ir.symbols.ubyte`, etc, are unreachable.
         builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
     }
-
-    fun build() {
-        val top = scopes.pop()
-        assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
-
-        // Now, let's generate C world adapters for all functions.
-        top.generateCAdapters(::buildCAdapter)
-
-        // Then generate data structure, describing generated adapters.
-        makeGlobalStruct(top)
-    }
-
-    private fun buildCAdapter(exportedElement: ExportedElement): Unit = with(exportedElement) {
-        when {
-            isFunction -> {
-                val function = declaration as FunctionDescriptor
-                val irFunction = irSymbol.owner as IrFunction
-                cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val llvmCallable = codegen.llvmFunction(irFunction)
-                // If function is virtual, we need to resolve receiver properly.
-                val bridge = generateFunction(codegen, llvmCallable.functionType, cname) {
-                    val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
-                            irFunction.isOverridable
-                    ) {
-                        val receiver = param(0)
-                        lookupVirtualImpl(receiver, irFunction)
-                    } else {
-                        // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
-                        // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
-                        llvmCallable
-                    }
-
-                    val numParams = LLVMCountParams(llvmCallable.llvmValue)
-                    val args = (0 until numParams).map { index -> param(index) }
-                    callee.attributeProvider.addFunctionAttributes(this.function)
-                    val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
-                    ret(result)
-                }
-                LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
-            }
-            isClass -> {
-                val irClass = irSymbol.owner as IrClass
-                cname = "_konan_function_${owner.nextFunctionIndex()}"
-                // Produce type getter.
-                val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
-                        context,
-                        llvm.module,
-                        "${cname}_type",
-                        kGetTypeFuncType
-                )
-                val builder = LLVMCreateBuilderInContext(llvm.llvmContext)!!
-                val bb = LLVMAppendBasicBlockInContext(llvm.llvmContext, getTypeFunction, "")!!
-                LLVMPositionBuilderAtEnd(builder, bb)
-                LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
-                LLVMDisposeBuilder(builder)
-                // Produce instance getter if needed.
-                if (isSingletonObject) {
-                    generateFunction(codegen, kGetObjectFuncType, "${cname}_instance") {
-                        val value = call(
-                                codegen.llvmFunction(context.getObjectClassInstanceFunction(irClass)),
-                                emptyList(),
-                                Lifetime.GLOBAL,
-                                ExceptionHandler.Caller,
-                                false,
-                                returnSlot
-                        )
-                        ret(value)
-                    }
-                }
-            }
-            isEnumEntry -> {
-                // Produce entry getter.
-                cname = "_konan_function_${owner.nextFunctionIndex()}"
-                generateFunction(codegen, kGetObjectFuncType, cname) {
-                    val irEnumEntry = irSymbol.owner as IrEnumEntry
-                    val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
-                    ret(value)
-                }
-            }
-        }
-    }
-
-    private val kGetTypeFuncType = LLVMFunctionType(codegen.kTypeInfoPtr, null, 0, 0)!!
-
-    // Abstraction leak for slot :(.
-    private val kGetObjectFuncType = LLVMFunctionType(codegen.kObjHeaderPtr, cValuesOf(codegen.kObjHeaderPtrPtr), 1, 0)!!
 
     private fun output(string: String, indent: Int = 0) {
         if (indent != 0) outputStreamWriter.print("  " * indent)
@@ -249,9 +150,11 @@ internal class CAdapterBindingsBuilder(
                 }
     }
 
-    val exportedSymbols = mutableListOf<String>()
+    private val exportedSymbols = mutableListOf<String>()
 
-    private fun makeGlobalStruct(top: ExportedElementScope) {
+    // TODO: Pass temp and output files explicitly and untie from `NativeGenerationState`.
+    fun makeGlobalStruct() {
+        val top = elements.scopes.first()
         val headerFile = generationState.outputFiles.cAdapterHeader
         outputStreamWriter = headerFile.printWriter()
 
@@ -285,7 +188,7 @@ internal class CAdapterBindingsBuilder(
         output("typedef double             ${prefix}_KDouble;")
 
         val typedef_KVector128 = "typedef float __attribute__ ((__vector_size__ (16))) ${prefix}_KVector128;"
-        if (context.config.target.family == Family.MINGW) {
+        if (generationState.config.target.family == Family.MINGW) {
             // Separate `output` for each line to ensure Windows EOL (LFCR), otherwise generated file will have inconsistent line ending.
             output("#ifndef _MSC_VER")
             output(typedef_KVector128)
@@ -476,7 +379,7 @@ internal class CAdapterBindingsBuilder(
         output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
-        if (context.config.target.family == Family.MINGW) {
+        if (generationState.config.target.family == Family.MINGW) {
             outputStreamWriter = generationState.outputFiles
                     .cAdapterDef
                     .printWriter()

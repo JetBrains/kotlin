@@ -15,5 +15,5 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, Fron
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
     val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
-    CAdapterGenerator(context, input.moduleDescriptor, typeTranslator).buildExports(context.symbolTable!!)
+    CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor)
 }

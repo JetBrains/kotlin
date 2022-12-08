@@ -10,7 +10,8 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterBindingsBuilder
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -327,7 +328,10 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         }
     }
     private fun appendCAdapters() {
-        CAdapterBindingsBuilder(codegen, context.cAdapterExportedElements).build()
+        val elements = context.cAdapterExportedElements
+        CAdapterCodegen(codegen, generationState).buildAllAdaptersRecursively(elements)
+        // TODO: It is not a part of IrToBitcode. Maybe move it somewhere?
+        CAdapterApiExporter(generationState, elements).makeGlobalStruct()
     }
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
