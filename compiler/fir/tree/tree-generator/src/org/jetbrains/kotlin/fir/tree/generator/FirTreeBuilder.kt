@@ -30,6 +30,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val contextReceiver by element(Declaration)
 
     val elementWithResolvePhase by element(Other)
+    val fileAnnotationsContainer by element(Other, elementWithResolvePhase, annotationContainer)
     val declaration by sealedElement(Declaration, elementWithResolvePhase, annotationContainer)
     val typeParameterRefsOwner by sealedElement(Declaration)
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)

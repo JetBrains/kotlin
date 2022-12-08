@@ -83,6 +83,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             shouldBeAbstractClass()
         }
 
+        fileAnnotationsContainer.configure {
+            +field("containingFileSymbol", type("fir.symbols.impl", "FirFileSymbol"), argument = null)
+        }
+
         declaration.configure {
             +symbolWithPackage("fir.symbols", "FirBasedSymbol", "out FirDeclaration")
             +field("moduleData", firModuleDataType)
