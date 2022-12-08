@@ -135,11 +135,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
 
         property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
-        dataFlowAnalyzer.enterProperty(property)
         doTransformTypeParameters(property)
         val shouldResolveEverything = !implicitTypeOnly
         return withFullBodyResolve {
             val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
+            if (!initializerIsAlreadyResolved) {
+                dataFlowAnalyzer.enterProperty(property)
+            }
             var backingFieldIsAlreadyResolved = false
             context.withProperty(property) {
                 context.forPropertyInitializer {
