@@ -15,8 +15,10 @@ public final class InInlineMethod {
     // source: 'innerClasses.kt'
     public inner class Outer$Middle
     public inner class Outer$Middle$Inner
+    public final inner class OuterKt$MiddleKt
+    public final inner class OuterKt$MiddleKt$InnerKt
     public method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.Class
+    public final @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: Outer$Middle$Inner): java.lang.Class
 }
 @kotlin.Metadata
 public final class InPrivateMethod {
@@ -29,7 +31,7 @@ public final class InPublicMethod {
     public inner class Outer$Middle
     public inner class Outer$Middle$Inner
     public method <init>(): void
-    public final method foo(@org.jetbrains.annotations.NotNull p0: Outer$Middle$Inner): void
+    public final @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: Outer$Middle$Inner): java.lang.Class
 }
 public class Outer$Middle$Inner {
     // source: 'Outer.java'
@@ -46,5 +48,25 @@ public class Outer$Middle {
 public class Outer {
     // source: 'Outer.java'
     public inner class Outer$Middle
+    public method <init>(): void
+}
+@kotlin.Metadata
+public final class OuterKt$MiddleKt$InnerKt {
+    // source: 'innerClasses.kt'
+    public final inner class OuterKt$MiddleKt
+    public final inner class OuterKt$MiddleKt$InnerKt
+    public method <init>(): void
+}
+@kotlin.Metadata
+public final class OuterKt$MiddleKt {
+    // source: 'innerClasses.kt'
+    public final inner class OuterKt$MiddleKt
+    public final inner class OuterKt$MiddleKt$InnerKt
+    public method <init>(): void
+}
+@kotlin.Metadata
+public final class OuterKt {
+    // source: 'innerClasses.kt'
+    public final inner class OuterKt$MiddleKt
     public method <init>(): void
 }
