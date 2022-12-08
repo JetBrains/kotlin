@@ -15141,6 +15141,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestDataPath("$PROJECT_ROOT")
             public class CoercionToUnit {
                 @Test
+                @TestMetadata("afterBareReturn.kt")
+                public void testAfterBareReturn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/afterBareReturn.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInCoercionToUnit() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/coercionToUnit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
