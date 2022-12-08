@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -62,7 +61,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly")
     @JvmGradlePluginTests
     @GradleTest
-    @Disabled
     internal fun freeArgsModifiedAtExecutionTimeCorrectly(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildGradle.appendText(
@@ -95,7 +93,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly in MPP")
     @MppGradlePluginTests
     @GradleTest
-    @Disabled
     internal fun freeArgsModifiedAtExecutionTimeCorrectlyMpp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-with-tests", gradleVersion) {
             buildGradle.appendText(

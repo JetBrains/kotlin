@@ -61,7 +61,7 @@ abstract class KotlinCompileCommon @Inject constructor(
      * this input will always be empty.
      */
     @get:Internal
-    internal var additionalFreeCompilerArgs: List<String> = listOf()
+    internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
@@ -90,8 +90,9 @@ abstract class KotlinCompileCommon @Inject constructor(
 
         (compilerOptions as KotlinMultiplatformCommonCompilerOptionsDefault).fillCompilerArguments(args)
 
-        if (additionalFreeCompilerArgs.isNotEmpty()) {
-            args.freeArgs = compilerOptions.freeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
+        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+        if (localExecutionTimeFreeCompilerArgs != null) {
+            args.freeArgs = localExecutionTimeFreeCompilerArgs
         }
     }
 
