@@ -81,8 +81,7 @@ fun <T> File.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T {
 
 fun <T> File.withZipFileSystem(action: (FileSystem) -> T): T = this.withZipFileSystem(false, action)
 
-// TODO: Make this function private after boostrap advance
-fun File.recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
+private fun File.recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
     val sourcePath = javaPath
     val destPath = destination.javaPath
     val destFs = destPath.fileSystem
