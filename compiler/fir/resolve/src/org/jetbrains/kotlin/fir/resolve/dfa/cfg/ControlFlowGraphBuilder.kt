@@ -584,8 +584,11 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Property -----------------------------------
 
+    private val FirProperty.hasInitialization: Boolean
+        get() = initializer != null || delegate != null || hasExplicitBackingField
+
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
-        if (property.initializer == null && property.delegate == null && !property.hasExplicitBackingField) return null
+        if (!property.hasInitialization) return null
 
         val graph = ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer)
         pushGraph(graph, Mode.PropertyInitializer)
@@ -603,7 +606,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
-        if (property.initializer == null && property.delegate == null && !property.hasExplicitBackingField) return null
+        if (!property.hasInitialization) return null
         val exitNode = exitTargetsForTry.pop() as PropertyInitializerExitNode
         popAndAddEdge(exitNode)
         val graph = popGraph()
