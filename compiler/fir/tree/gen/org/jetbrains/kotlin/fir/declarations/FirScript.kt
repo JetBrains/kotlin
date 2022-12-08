@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirScript : FirDeclaration() {
     abstract override val source: KtSourceElement?
+    abstract override val resolvePhase: FirResolvePhase
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
-    abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract val name: Name

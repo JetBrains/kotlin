@@ -76,10 +76,16 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("labelNameFromTypeRef", nameType, nullable = true)
         }
 
+
+        elementWithResolvePhase.configure {
+            +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true; isVolatile = true }
+            +field("moduleData", firModuleDataType)
+            shouldBeAbstractClass()
+        }
+
         declaration.configure {
             +symbolWithPackage("fir.symbols", "FirBasedSymbol", "out FirDeclaration")
             +field("moduleData", firModuleDataType)
-            +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true; isVolatile = true }
             +field("origin", declarationOriginType)
             +field("attributes", declarationAttributesType)
             shouldBeAbstractClass()

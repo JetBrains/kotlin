@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.types.Variance
 @FirBuilderDsl
 class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
@@ -48,8 +48,8 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirTypeParameter {
         return FirTypeParameterImpl(
             source,
-            moduleData,
             resolvePhase,
+            moduleData,
             origin,
             attributes,
             name,
@@ -79,8 +79,8 @@ inline fun buildTypeParameterCopy(original: FirTypeParameter, init: FirTypeParam
     }
     val copyBuilder = FirTypeParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.moduleData = original.moduleData
     copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.name = original.name

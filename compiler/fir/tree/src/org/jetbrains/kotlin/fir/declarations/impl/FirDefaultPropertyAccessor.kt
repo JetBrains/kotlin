@@ -41,8 +41,8 @@ abstract class FirDefaultPropertyAccessor(
     symbol: FirPropertyAccessorSymbol
 ) : FirPropertyAccessorImpl(
     source,
-    moduleData,
     resolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData,
     origin,
     FirDeclarationAttributes(),
     status = if (effectiveVisibility == null)
