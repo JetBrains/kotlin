@@ -113,6 +113,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         !element.type.contains("Reference")
                         && !element.type.contains("ResolvedQualifier")
                         && !element.type.endsWith("Ref")
+                        && !element.type.endsWith("AnnotationsContainer")
             }?.let { symbolFields ->
                 println("init {")
                 for (symbolField in symbolFields) {
