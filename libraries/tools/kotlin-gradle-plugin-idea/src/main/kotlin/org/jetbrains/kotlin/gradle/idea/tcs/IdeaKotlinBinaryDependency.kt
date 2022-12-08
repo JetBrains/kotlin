@@ -33,3 +33,12 @@ data class IdeaKotlinUnresolvedBinaryDependency(
         const val serialVersionUID = 0L
     }
 }
+
+val IdeaKotlinResolvedBinaryDependency.isClasspathBinaryType
+    get() = this.binaryType == IdeaKotlinDependency.CLASSPATH_BINARY_TYPE
+
+val IdeaKotlinResolvedBinaryDependency.isSourcesBinaryType
+    get() = this.binaryType == IdeaKotlinDependency.SOURCES_BINARY_TYPE
+
+val IdeaKotlinResolvedBinaryDependency.isDocumentationBinaryType
+    get() = this.binaryType == IdeaKotlinDependency.DOCUMENTATION_BINARY_TYPE

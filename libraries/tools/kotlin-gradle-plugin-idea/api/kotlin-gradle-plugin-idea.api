@@ -321,6 +321,12 @@ public abstract class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDepen
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
 }
 
+public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependencyKt {
+	public static final fun isClasspathBinaryType (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinResolvedBinaryDependency;)Z
+	public static final fun isDocumentationBinaryType (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinResolvedBinaryDependency;)Z
+	public static final fun isSourcesBinaryType (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinResolvedBinaryDependency;)Z
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency : java/io/Serializable, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public static final field CLASSPATH_BINARY_TYPE Ljava/lang/String;
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency$Companion;

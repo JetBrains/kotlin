@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.gradle.buildProject
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.enableDependencyVerification
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.isSourcesBinaryType
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
@@ -57,7 +57,7 @@ class IdeSourcesAndDocumentationResolutionTest {
         fun resolveDependencySources(sourceSet: KotlinSourceSet): List<IdeaKotlinResolvedBinaryDependency> =
             project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)
                 .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
-                .filter { it.binaryType == IdeaKotlinDependency.SOURCES_BINARY_TYPE }
+                .filter { it.isSourcesBinaryType }
 
 
         /* Check commonMain&commonTest */
