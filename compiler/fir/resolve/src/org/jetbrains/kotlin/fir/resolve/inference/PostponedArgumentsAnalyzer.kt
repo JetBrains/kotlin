@@ -213,6 +213,7 @@ class PostponedArgumentsAnalyzer(
 
         lambda.analyzed = true
         lambda.returnStatements = returnArguments
+        lambda.resolvedCalls = inferenceSession?.getCompletedCalls()
 
         if (inferenceSession != null) {
             val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode)

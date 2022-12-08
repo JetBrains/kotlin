@@ -52,21 +52,21 @@ class FirDelegatedPropertyInferenceSession(
         )
     }
 
-    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+    override fun addCompletedCall(call: FirResolvable, candidate: Candidate) {
         partiallyResolvedCalls += call to candidate
         if (candidate.isSuccessful) {
             integrateResolvedCall(candidate.system.asReadOnlyStorage())
         }
     }
 
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
+    override fun addPartiallyResolvedCall(call: FirResolvable) {
         super.addPartiallyResolvedCall(call)
         if (call.candidate.isSuccessful) {
             integrateResolvedCall(call.candidate.system.currentStorage())
         }
     }
 
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
+    override fun shouldRunCompletion(call: FirResolvable): Boolean {
         val callee = call.calleeReference as? FirNamedReferenceWithCandidate ?: return true
 
         if (callee.candidate.system.hasContradiction) return true

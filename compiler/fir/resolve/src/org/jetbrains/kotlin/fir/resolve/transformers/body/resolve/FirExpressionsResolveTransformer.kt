@@ -713,7 +713,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private object InferenceSessionForAssignmentOperatorCall : FirStubInferenceSession() {
-        override fun <T> shouldRunCompletion(call: T): Boolean where T : FirStatement, T : FirResolvable = false
+        override fun shouldRunCompletion(call: FirResolvable): Boolean = false
     }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {

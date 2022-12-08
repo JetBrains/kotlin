@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -169,10 +169,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(label)
     }
 
-    open fun visitResolvable(resolvable: FirResolvable) {
-        visitElement(resolvable)
-    }
-
     open fun visitTargetElement(targetElement: FirTargetElement) {
         visitElement(targetElement)
     }
@@ -195,6 +191,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitExpression(expression: FirExpression) {
         visitElement(expression)
+    }
+
+    open fun visitResolvable(resolvable: FirResolvable) {
+        visitElement(resolvable)
     }
 
     open fun visitContextReceiver(contextReceiver: FirContextReceiver) {
@@ -725,10 +725,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitLabel(label)
     }
 
-    final override fun visitResolvable(resolvable: FirResolvable, data: Nothing?) {
-        visitResolvable(resolvable)
-    }
-
     final override fun visitTargetElement(targetElement: FirTargetElement, data: Nothing?) {
         visitTargetElement(targetElement)
     }
@@ -751,6 +747,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
         visitExpression(expression)
+    }
+
+    final override fun visitResolvable(resolvable: FirResolvable, data: Nothing?) {
+        visitResolvable(resolvable)
     }
 
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: Nothing?) {

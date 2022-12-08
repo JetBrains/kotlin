@@ -16501,6 +16501,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("unionOfCompleteAndIncomplete.kt")
+                public void testUnionOfCompleteAndIncomplete() throws Exception {
+                    runTest("compiler/testData/codegen/box/inference/builderInference/unionOfCompleteAndIncomplete.kt");
+                }
+
+                @Test
                 @TestMetadata("withExpectedType.kt")
                 public void testWithExpectedType() throws Exception {
                     runTest("compiler/testData/codegen/box/inference/builderInference/withExpectedType.kt");

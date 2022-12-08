@@ -142,16 +142,14 @@ class FirCallCompleter(
                     inferenceSession.addCompletedCall(completedCall, candidate)
                     CompletionResult(completedCall, true)
                 } else {
-                    inferenceSession.addPartiallyResolvedCall(call)
+                    inferenceSession.addSkippedCall(call)
                     CompletionResult(call, false)
                 }
             }
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                if (inferenceSession !is FirBuilderInferenceSession) {
-                    inferenceSession.addPartiallyResolvedCall(call)
-                }
+                inferenceSession.addPartiallyResolvedCall(call)
                 CompletionResult(call, false)
             }
 

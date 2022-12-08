@@ -472,80 +472,47 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 }
 
 fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, processor: (Candidate) -> Unit) {
-    when (this) {
-        is FirFunctionCall -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
-        }
-
-        is FirSafeCallExpression -> {
-            this.selector.processAllContainingCallCandidates(processBlocks, processor)
-        }
-
-        is FirWhenExpression -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            this.branches.forEach { it.result.processAllContainingCallCandidates(processBlocks, processor) }
-        }
-
-        is FirTryExpression -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            tryBlock.processAllContainingCallCandidates(processBlocks, processor)
-            catches.forEach { it.block.processAllContainingCallCandidates(processBlocks, processor) }
-        }
-
-        is FirCheckNotNullCall -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
-        }
-
-        is FirQualifiedAccessExpression -> {
-            processCandidateIfApplicable(processor, processBlocks)
-        }
-
-        is FirVariableAssignment -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            rValue.processAllContainingCallCandidates(processBlocks, processor)
-        }
-
-        is FirWrappedArgumentExpression -> this.expression.processAllContainingCallCandidates(processBlocks, processor)
-        is FirBlock -> {
-            if (processBlocks) {
-                this.returnExpressions().forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+    fun FirStatement.visit(completedCalls: Map<FirResolvable, Candidate>?) {
+        if (this is FirResolvable) {
+            val candidate = (calleeReference as? FirNamedReferenceWithCandidate)?.candidate ?: completedCalls?.get(this)
+            if (candidate != null) {
+                processor(candidate)
+                for (atom in candidate.postponedAtoms) {
+                    if (atom !is ResolvedLambdaAtom || !atom.analyzed) continue
+                    atom.returnStatements.forEach { it.visit(atom.resolvedCalls) }
+                }
             }
         }
 
-        is FirDelegatedConstructorCall -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
-        }
+        when (this) {
+            is FirFunctionCall -> this.arguments.forEach { it.visit(completedCalls) }
+            is FirAnnotationCall -> this.arguments.forEach { it.visit(completedCalls) }
+            is FirCheckNotNullCall -> this.arguments.forEach { it.visit(completedCalls) }
+            is FirDelegatedConstructorCall -> this.arguments.forEach { it.visit(completedCalls) }
+            is FirWhenExpression -> this.branches.forEach { it.result.visit(completedCalls) }
+            is FirSafeCallExpression -> this.selector.visit(completedCalls)
+            is FirVariableAssignment -> this.rValue.visit(completedCalls)
+            is FirWrappedArgumentExpression -> this.expression.visit(completedCalls)
 
-        is FirElvisExpression -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            lhs.processAllContainingCallCandidates(processBlocks, processor)
-            rhs.processAllContainingCallCandidates(processBlocks, processor)
-        }
+            is FirTryExpression -> {
+                tryBlock.visit(completedCalls)
+                catches.forEach { it.block.visit(completedCalls) }
+            }
 
-        is FirAnnotationCall -> {
-            processCandidateIfApplicable(processor, processBlocks)
-            arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
-        }
-    }
-}
+            is FirBlock -> {
+                if (processBlocks) {
+                    this.returnExpressions().forEach { it.visit(completedCalls) }
+                }
+            }
 
-private fun FirResolvable.processCandidateIfApplicable(
-    processor: (Candidate) -> Unit,
-    processBlocks: Boolean
-) {
-    val candidate = (calleeReference as? FirNamedReferenceWithCandidate)?.candidate ?: return
-    processor(candidate)
-
-    for (atom in candidate.postponedAtoms) {
-        if (atom !is ResolvedLambdaAtom || !atom.analyzed) continue
-
-        atom.returnStatements.forEach {
-            it.processAllContainingCallCandidates(processBlocks, processor)
+            is FirElvisExpression -> {
+                lhs.visit(completedCalls)
+                rhs.visit(completedCalls)
+            }
         }
     }
+
+    visit(null)
 }
 
 val Candidate.csBuilder: NewConstraintSystemImpl get() = system.getBuilder()

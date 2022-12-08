@@ -16414,6 +16414,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithTwoBuilderInferenceCalls.kt");
             }
 
+            @TestMetadata("unionOfCompleteAndIncomplete.kt")
+            public void testUnionOfCompleteAndIncomplete() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/unionOfCompleteAndIncomplete.kt");
+            }
+
             @TestMetadata("withExpectedType.kt")
             public void testWithExpectedType() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/withExpectedType.kt");

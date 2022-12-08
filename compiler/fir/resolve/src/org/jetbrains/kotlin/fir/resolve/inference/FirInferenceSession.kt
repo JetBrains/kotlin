@@ -25,11 +25,13 @@ abstract class FirInferenceSession {
         val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
     }
 
-    abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
+    abstract fun shouldRunCompletion(call: FirResolvable): Boolean
     abstract val currentConstraintStorage: ConstraintStorage
 
-    abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
+    abstract fun addSkippedCall(call: FirResolvable)
+    abstract fun addPartiallyResolvedCall(call: FirResolvable)
+    abstract fun addCompletedCall(call: FirResolvable, candidate: Candidate)
+    open fun getCompletedCalls(): Map<FirResolvable, Candidate>? = null
 
     abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
 
@@ -52,13 +54,14 @@ abstract class FirInferenceSession {
 }
 
 abstract class FirStubInferenceSession : FirInferenceSession() {
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+    override fun shouldRunCompletion(call: FirResolvable): Boolean = true
 
     override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
 
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
+    override fun addSkippedCall(call: FirResolvable) {}
+    override fun addPartiallyResolvedCall(call: FirResolvable) {}
+    override fun addCompletedCall(call: FirResolvable, candidate: Candidate) {}
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,

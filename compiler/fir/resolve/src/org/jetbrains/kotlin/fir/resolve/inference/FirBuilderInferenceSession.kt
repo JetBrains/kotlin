@@ -35,7 +35,7 @@ class FirBuilderInferenceSession(
     resolutionContext: ResolutionContext,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
 ) : FirInferenceSessionForChainedResolve(resolutionContext) {
-    private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
+    private val commonCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
     private var lambdaImplicitReceivers: MutableList<ImplicitExtensionReceiverValue> = mutableListOf()
 
     override val currentConstraintStorage: ConstraintStorage
@@ -47,7 +47,7 @@ class FirBuilderInferenceSession(
         return false
     }
 
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
+    override fun shouldRunCompletion(call: FirResolvable): Boolean {
         val candidate = call.candidate
         val system = candidate.system
 
@@ -99,13 +99,21 @@ class FirBuilderInferenceSession(
         lambdaImplicitReceivers += receiver
     }
 
-    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+    override fun addCompletedCall(call: FirResolvable, candidate: Candidate) {
         if (skipCall(call)) return
         commonCalls += call to candidate
     }
 
+    override fun addPartiallyResolvedCall(call: FirResolvable) {
+        if (skipCall(call)) return
+        commonCalls += call to call.candidate
+    }
+
+    override fun getCompletedCalls(): Map<FirResolvable, Candidate> =
+        commonCalls.toMap()
+
     @Suppress("UNUSED_PARAMETER")
-    private fun <T> skipCall(call: T): Boolean where T : FirResolvable, T : FirStatement {
+    private fun skipCall(call: FirResolvable): Boolean {
         // TODO: what is FIR analog?
         // if (descriptor is FakeCallableDescriptorForObject) return true
         // if (!DescriptorUtils.isObject(descriptor) && isInLHSOfDoubleColonExpression(callInfo)) return true
@@ -130,7 +138,7 @@ class FirBuilderInferenceSession(
         components.callCompleter.completer.complete(
             context,
             completionMode,
-            partiallyResolvedCalls.map { it.first as FirStatement },
+            partiallyResolvedCalls.map { it.first },
             components.session.builtinTypes.unitType.type, resolutionContext,
             collectVariablesFromContext = true
         ) {
@@ -248,7 +256,8 @@ class FirBuilderInferenceSession(
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
 
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(substitutor)
-        for ((call, _) in partiallyResolvedCalls) {
+        for ((call, candidate) in partiallyResolvedCalls) {
+            addCompletedCall(call, candidate)
             call.transformSingle(completionResultsWriter, null)
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }
