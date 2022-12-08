@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
@@ -156,6 +157,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         ) {
             model("annotationsOnFiles")
         }
+
+        test(AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest::class) {
+            model("metaAnnotations")
+        }
+
     }
 
     group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
