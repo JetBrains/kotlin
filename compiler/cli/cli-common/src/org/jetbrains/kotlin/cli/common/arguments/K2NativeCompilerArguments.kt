@@ -315,7 +315,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options")
     var clangOptions: Array<String>? = null
 
-    @Argument(value="-Xallocator", valueDescription = "std | mimalloc", description = "Allocator used in runtime")
+    @Argument(value="-Xallocator", valueDescription = "std | mimalloc | custom", description = "Allocator used in runtime")
     var allocator: String? = null
 
     @Argument(value = "-Xmetadata-klib", description = "Produce a klib that only contains the declarations metadata")

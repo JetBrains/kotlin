@@ -324,8 +324,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     null -> null
                     "std" -> AllocationMode.STD
                     "mimalloc" -> AllocationMode.MIMALLOC
+                    "custom" -> AllocationMode.CUSTOM
                     else -> {
-                        configuration.report(ERROR, "Expected 'std' or 'mimalloc' for allocator")
+                        configuration.report(ERROR, "Expected 'std', 'mimalloc', or 'custom' for allocator")
                         AllocationMode.STD
                     }
                 })

@@ -14,18 +14,19 @@
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectFactory.hpp"
 #include "ScopedThread.hpp"
+#include "ThreadData.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 #include "GCState.hpp"
 #include "std_support/Memory.hpp"
 #include "GCStatistics.hpp"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomAllocator.hpp"
+#include "Heap.hpp"
+#endif
+
 namespace kotlin {
-
-namespace mm {
-class ThreadData;
-}
-
 namespace gc {
 
 class FinalizerProcessor;
@@ -72,6 +73,7 @@ public:
     class ThreadData : private Pinned {
     public:
         using ObjectData = ConcurrentMarkAndSweep::ObjectData;
+
         using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
         explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData, GCSchedulerThreadData& gcScheduler) noexcept :
@@ -111,11 +113,19 @@ public:
     void WaitForThreadsReadyToMark() noexcept;
     void CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept;
 
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap& heap() noexcept { return heap_; }
+#endif
+
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC(int64_t epoch) noexcept;
 
+#ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
+#else
+    alloc::Heap heap_;
+#endif
     GCScheduler& gcScheduler_;
 
     GCStateHolder state_;
