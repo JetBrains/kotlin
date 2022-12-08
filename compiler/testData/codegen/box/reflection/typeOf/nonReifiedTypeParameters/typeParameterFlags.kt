@@ -1,6 +1,7 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: WASM
+// IGNORE_INLINER: IR
 package test
 
 import kotlin.reflect.*

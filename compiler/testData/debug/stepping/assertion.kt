@@ -1,4 +1,4 @@
-
+// IGNORE_INLINER: IR
 // FILE: test.kt
 
 public val MASSERTIONS_ENABLED: Boolean = true

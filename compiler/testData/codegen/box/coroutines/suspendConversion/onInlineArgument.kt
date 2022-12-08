@@ -3,6 +3,7 @@
 // WITH_COROUTINES
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
+// IGNORE_INLINER: IR
 
 // `lambda` should not be wrapped in yet another object (so no OnInlineArgumentKt$box$1$1).
 // CHECK_BYTECODE_LISTING

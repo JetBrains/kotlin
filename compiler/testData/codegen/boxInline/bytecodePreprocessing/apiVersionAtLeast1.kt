@@ -2,6 +2,7 @@
 
 // Wrong function resolution after package renaming
 // IGNORE_BACKEND: ANDROID
+// IGNORE_INLINER: IR
 
 // FILE: 1.kt
 package kotlin.internal
