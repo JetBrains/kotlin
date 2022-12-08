@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirTypeParameterImpl(
     override val source: KtSourceElement?,
-    override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
+    override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val name: Name,

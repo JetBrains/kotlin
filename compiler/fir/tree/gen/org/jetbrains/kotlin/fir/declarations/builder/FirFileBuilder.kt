@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirFileBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var packageDirective: FirPackageDirective
@@ -49,9 +49,9 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirFile {
         return FirFileImpl(
             source,
+            resolvePhase,
             annotations,
             moduleData,
-            resolvePhase,
             origin,
             attributes,
             packageDirective,

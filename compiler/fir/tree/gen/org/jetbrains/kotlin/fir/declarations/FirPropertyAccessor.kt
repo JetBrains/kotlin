@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {
     abstract override val source: KtSourceElement?
-    abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val status: FirDeclarationStatus

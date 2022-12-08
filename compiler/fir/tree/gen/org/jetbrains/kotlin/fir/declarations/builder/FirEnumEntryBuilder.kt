@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
@@ -62,8 +62,8 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirEnumEntry {
         return FirEnumEntryImpl(
             source,
-            moduleData,
             resolvePhase,
+            moduleData,
             origin,
             attributes,
             typeParameters,
