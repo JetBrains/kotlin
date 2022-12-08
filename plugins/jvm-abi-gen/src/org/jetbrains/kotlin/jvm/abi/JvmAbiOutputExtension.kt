@@ -73,7 +73,7 @@ class JvmAbiOutputExtension(
                     else -> /* abiInfo is AbiClassInfo.Stripped */ {
                         val methodInfo = (abiInfo as AbiClassInfo.Stripped).methodInfo
                         val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
-                        val innerClassesToKeep = abiClassInfos.keys.toMutableSet()
+                        val innerClassesToKeep = mutableSetOf<String>()
                         val writer = ClassWriter(0)
                         val remapper = ClassRemapper(writer, object : Remapper() {
                             override fun map(internalName: String): String =
@@ -150,13 +150,11 @@ class JvmAbiOutputExtension(
                             override fun visitEnd() {}
                         }, 0)
 
-                        innerClassesToKeep.retainAll(innerClassInfos.keys)
-                        for (name in innerClassesToKeep.toList()) {
-                            var info = innerClassInfos[name]
-                            while (info != null) {
-                                info = info.outerName?.takeIf(innerClassesToKeep::add)?.let(innerClassInfos::get)
-                            }
-                        }
+                        innerClassesToKeep.addInnerClasses(innerClassInfos, internalName)
+                        innerClassesToKeep.addOuterClasses(innerClassInfos)
+
+                        // Output classes in sorted order so that changes in original ordering due to method bodies, etc.
+                        // don't affect the ABI JAR.
                         for (name in innerClassesToKeep.sorted()) {
                             innerClassInfos[name]?.let { writer.visitInnerClass(it.name, it.outerName, it.innerName, it.access) }
                         }
@@ -169,6 +167,29 @@ class JvmAbiOutputExtension(
             }
 
             return metadata + classFiles
+        }
+
+        // Outer class infos for a class and all classes transitively nested in it (that are public ABI)
+        // should be kept in its own class file even if the classes are otherwise unused.
+        private fun MutableSet<String>.addInnerClasses(innerClassInfos: Map<String, InnerClassInfo>, internalName: String) {
+            val innerClassesByOuterName = innerClassInfos.values.groupBy { it.outerName }
+            val stack = mutableListOf(internalName)
+            while (stack.isNotEmpty()) {
+                val next = stack.removeLast()
+                add(next)
+                // Classes form a tree by nesting, so none of the children have been visited yet.
+                innerClassesByOuterName[next]?.mapNotNullTo(stack) { it.name.takeIf(abiClassInfos::contains) }
+            }
+        }
+
+        // For every class A.B, if its outer class info is kept then so should be A's.
+        private fun MutableSet<String>.addOuterClasses(innerClassInfos: Map<String, InnerClassInfo>) {
+            for (name in toList()) {
+                var info = innerClassInfos[name]
+                while (info != null) {
+                    info = info.outerName?.takeIf(::add)?.let(innerClassInfos::get)
+                }
+            }
         }
     }
 }
