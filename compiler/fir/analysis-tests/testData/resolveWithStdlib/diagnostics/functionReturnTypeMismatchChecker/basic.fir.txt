@@ -48,7 +48,7 @@ FILE: basic.kt
         foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@foo Unit
         }
-        .R|/foo|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        .R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/A.bar|()
             ^@foo Int(10)
         }

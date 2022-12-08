@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrIni
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
@@ -49,8 +46,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
@@ -590,34 +585,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return result
     }
 
-    private fun transformAnonymousFunctionWithLambdaResolution(
-        anonymousFunction: FirAnonymousFunction, lambdaResolution: ResolutionMode.LambdaResolution
-    ): FirAnonymousFunction {
-        val expectedReturnType =
-            lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-        val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)) as FirAnonymousFunction
-        val body = result.body
-        if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-            // TODO: This part seems unnecessary because for lambdas in dependent context will be completed and their type
-            //  should be replaced there properly
-            val returnType =
-                dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
-                    .firstNotNullOfOrNull { (it as? FirExpression)?.resultType?.coneTypeSafe() }
-            val resolutionMode = if (returnType != null) {
-                withExpectedType(returnType)
-            } else {
-                withExpectedType(buildErrorTypeRef {
-                    diagnostic =
-                        ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
-                })
-            }
-
-            result.transformReturnTypeRef(transformer, resolutionMode)
-        }
-
-        return result
-    }
-
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
@@ -785,37 +752,38 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return when (data) {
             is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
                 context.withAnonymousFunction(anonymousFunction, components, data) {
-                    anonymousFunction.addReturn()
+                    anonymousFunction
                 }
             }
             is ResolutionMode.LambdaResolution -> {
-                context.withAnonymousFunction(anonymousFunction, components, data) {
-                    withFullBodyResolve {
-                        transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn()
-                    }
-                }
+                val expectedReturnTypeRef =
+                    data.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
+                transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
             }
-            is ResolutionMode.WithExpectedType,
-            is ResolutionMode.ContextIndependent,
-            is ResolutionMode.ReceiverResolution,
-            is ResolutionMode.WithSuggestedType -> {
-                val expectedTypeRef = when (data) {
-                    is ResolutionMode.WithExpectedType -> {
-                        data.expectedTypeRef
-                    }
-                    is ResolutionMode.WithSuggestedType -> {
-                        data.suggestedTypeRef
-                    }
-                    else -> {
-                        buildImplicitTypeRef()
-                    }
-                }
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, expectedTypeRef, data)
-            }
-            is ResolutionMode.WithStatus, is ResolutionMode.WithExpectedTypeFromCast -> {
+            is ResolutionMode.WithExpectedType ->
+                transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
+            is ResolutionMode.WithSuggestedType ->
+                transformAnonymousFunctionWithExpectedType(anonymousFunction, data.suggestedTypeRef, data)
+            is ResolutionMode.ContextIndependent, is ResolutionMode.ReceiverResolution ->
+                transformAnonymousFunctionWithExpectedType(anonymousFunction, buildImplicitTypeRef(), data)
+            is ResolutionMode.WithStatus, is ResolutionMode.WithExpectedTypeFromCast ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
-            }
         }
+    }
+
+
+    private fun transformAnonymousFunctionBody(
+        anonymousFunction: FirAnonymousFunction,
+        expectedReturnTypeRef: FirTypeRef?,
+        data: ResolutionMode
+    ): FirAnonymousFunction {
+        // `transformFunction` will replace both `typeRef` and `returnTypeRef`, so make sure to keep the former.
+        val lambdaType = anonymousFunction.typeRef
+        return context.withAnonymousFunction(anonymousFunction, components, data) {
+            withFullBodyResolve {
+                transformFunction(anonymousFunction, withExpectedType(expectedReturnTypeRef)) as FirAnonymousFunction
+            }
+        }.apply { replaceTypeRef(lambdaType) }
     }
 
     private fun transformAnonymousFunctionWithExpectedType(
@@ -829,12 +797,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             )
         }
         var lambda = anonymousFunction
-        val initialReturnTypeRef = lambda.returnTypeRef
         val valueParameters = when {
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
             else -> obtainValueParametersFromExpectedType(expectedTypeRef.coneTypeSafe(), lambda)
         }
-        val returnTypeRefFromResolvedAtom = resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
         lambda = buildAnonymousFunctionCopy(lambda) {
             receiverParameter = lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
                 ?: resolvedLambdaAtom?.receiver?.let { coneKotlinType ->
@@ -857,71 +823,38 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
             this.valueParameters.clear()
             this.valueParameters.addAll(valueParameters)
-            returnTypeRef = (lambda.returnTypeRef as? FirResolvedTypeRef)
-                ?: returnTypeRefFromResolvedAtom
-                        ?: lambda.returnTypeRef
-        }
-        lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
-        val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
-        context.withAnonymousFunction(lambda, components, data) {
-            withFullBodyResolve {
-                lambda = transformFunction(lambda, withExpectedType(bodyExpectedType)) as FirAnonymousFunction
-            }
-        }
-        // To separate function and separate commit
-        val writer = FirCallCompletionResultsWriterTransformer(
-            session,
-            ConeSubstitutor.Empty,
-            components.returnTypeCalculator,
-            session.typeApproximator,
-            dataFlowAnalyzer,
-            components.integerLiteralAndOperatorApproximationTransformer,
-            components.context
-        )
-        lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
+        }.transformValueParameters(ImplicitToErrorTypeTransformer, null)
 
-        val returnStatements = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)
-        val returnExpressionsExceptLast =
-            if (returnStatements.size > 1)
-                returnStatements - lambda.body?.statements?.lastOrNull()
-            else
-                returnStatements
-        val implicitReturns = returnExpressionsExceptLast.filter {
-            (it as? FirExpression)?.typeRef is FirImplicitUnitTypeRef
+        val initialReturnTypeRef = lambda.returnTypeRef as? FirResolvedTypeRef
+        val expectedReturnTypeRef = initialReturnTypeRef
+            ?: resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
+        lambda = transformAnonymousFunctionBody(lambda, expectedReturnTypeRef ?: components.noExpectedType, data)
+
+        if (initialReturnTypeRef == null) {
+            lambda.replaceReturnTypeRef(lambda.computeReturnTypeRef(expectedReturnTypeRef))
+            session.lookupTracker?.recordTypeResolveAsLookup(lambda.returnTypeRef, lambda.source, context.file.source)
         }
 
-        val returnType = when {
-            initialReturnTypeRef is FirResolvedTypeRef -> {
-                initialReturnTypeRef.coneType
-            }
-            implicitReturns.isNotEmpty() || (lambda.returnType?.isUnit == true && lambda.isLambda) -> {
-                // i.e., early return, e.g., l@{ ... return@l ... }
-                // Note that the last statement will be coerced to Unit if needed.
-                // also we don't coerce to Unit anonymous functions, only lambdas
-                session.builtinTypes.unitType.type
-            }
-            else -> {
-                // Otherwise, compute the common super type of all possible return expressions
-                session.typeContext.commonSuperTypeOrNull(
-                    returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType }
-                ) ?: session.builtinTypes.unitType.type
-            }
-        }
-        if (lambda.returnTypeRef !is FirImplicitUnitTypeRef) {
-            lambda.replaceReturnTypeRef(
-                initialReturnTypeRef.resolvedTypeFromPrototype(returnType).also {
-                    session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, components.file.source)
-                }
-            )
-        }
-        lambda.replaceTypeRef(
-            lambda.constructFunctionalTypeRef(
-                isSuspend = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
-            ).also {
-                session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, components.file.source)
-            }
-        )
-        return lambda.addReturn()
+        lambda.replaceTypeRef(lambda.constructFunctionalTypeRef(resolvedLambdaAtom?.isSuspend == true))
+        session.lookupTracker?.recordTypeResolveAsLookup(lambda.typeRef, lambda.source, context.file.source)
+        lambda.addReturnToLastStatementIfNeeded()
+        return lambda
+    }
+
+    private fun FirAnonymousFunction.computeReturnTypeRef(expected: FirResolvedTypeRef?): FirResolvedTypeRef {
+        // Any lambda expression assigned to `(...) -> Unit` returns Unit
+        if (isLambda && expected?.type?.isUnit == true) return expected
+        // `lambda@ { return@lambda }` always returns Unit
+        val returnStatements = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this)
+        if (shouldReturnUnit(returnStatements)) return session.builtinTypes.unitType
+        // Here is a questionable moment where we could prefer the expected type over an inferred one.
+        // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
+        // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
+        // return statements. The former kind of makes more sense, but the latter is more readable.
+        val inferredFromReturnStatements =
+            session.typeContext.commonSuperTypeOrNull(returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType })
+        return inferredFromReturnStatements?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
+            ?: session.builtinTypes.unitType // Empty lambda returns Unit
     }
 
     private fun obtainValueParametersFromResolvedLambdaAtom(
@@ -980,47 +913,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 param
             }
         }
-    }
-
-    private fun FirAnonymousFunction.addReturn(): FirAnonymousFunction {
-        // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
-        // During conversion (to backend IR), the last expression will be coerced to Unit if needed.
-        // As per KT-41005, we should not force coercion to Unit for nullable return type, though.
-        if (returnTypeRef.isUnit && body?.typeRef?.isMarkedNullable == false) {
-            return this
-        }
-        val lastStatement = body?.statements?.lastOrNull()
-        val returnType = (body?.typeRef as? FirResolvedTypeRef) ?: return this
-        val returnNothing = returnType.isNothing || returnType.isUnit
-        if (lastStatement is FirExpression && !returnNothing) {
-            body?.transformChildren(
-                object : FirDefaultTransformer<FirExpression>() {
-                    override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
-                        if (element == lastStatement) {
-                            val returnExpression = buildReturnExpression {
-                                source = element.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
-                                result = lastStatement
-                                target = FirFunctionTarget(null, isLambda = this@addReturn.isLambda).also {
-                                    it.bind(this@addReturn)
-                                }
-                            }
-                            @Suppress("UNCHECKED_CAST")
-                            return (returnExpression as E)
-                        }
-                        return element
-                    }
-
-                    override fun transformReturnExpression(
-                        returnExpression: FirReturnExpression,
-                        data: FirExpression
-                    ): FirStatement {
-                        return returnExpression
-                    }
-                },
-                buildUnitExpression()
-            )
-        }
-        return this
     }
 
     override fun transformBackingField(

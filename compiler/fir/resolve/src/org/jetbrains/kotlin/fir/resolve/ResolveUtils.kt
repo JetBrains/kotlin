@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -62,6 +64,39 @@ import kotlin.contracts.contract
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
+
+fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirStatement>): Boolean =
+    isLambda && returnStatements.any { it is FirUnitExpression }
+
+fun FirAnonymousFunction.isExplicitlySuspend(session: FirSession): Boolean =
+    typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
+
+fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
+    // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
+    // During conversion (to backend IR), the last expression will be coerced to Unit if needed.
+    if (returnTypeRef.isUnit) return
+
+    val body = this.body ?: return
+    val lastStatement = body.statements.lastOrNull() as? FirExpression ?: return
+    if (lastStatement is FirReturnExpression) return
+
+    val returnType = (body.typeRef as? FirResolvedTypeRef) ?: return
+    if (returnType.isNothing || returnType.isUnit) return
+
+    val returnTarget = FirFunctionTarget(null, isLambda = isLambda).also { it.bind(this) }
+    val returnExpression = buildReturnExpression {
+        source = lastStatement.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
+        result = lastStatement
+        target = returnTarget
+    }
+    body.transformStatements(
+        object : FirTransformer<Nothing?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E =
+                @Suppress("UNCHECKED_CAST")
+                if (element == lastStatement) returnExpression as E else element
+        }, null
+    )
+}
 
 fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {

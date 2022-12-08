@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -575,12 +574,10 @@ class FirCallCompletionResultsWriterTransformer(
         anonymousFunction: FirAnonymousFunction,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        // This case is not common, and happens when there are anonymous function arguments that aren't mapped to any parameter in the call
-        // So, we don't run body resolve transformation for them, thus there's no control flow info either
-        // Control flow info is necessary prerequisite because we collect return expressions in that function
-        //
-        // Example: second lambda in the call like list.filter({}, {})
-        val returnExpressionsOfAnonymousFunction = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
+        // The case where we can't find any return expressions not common, and happens when there are anonymous function arguments
+        // that aren't mapped to any parameter in the call. So, we don't run body resolve transformation for them, thus there's
+        // no control flow info either. Example: second lambda in the call like list.filter({}, {})
+        val returnStatements = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
             ?: return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
 
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
@@ -609,7 +606,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        var needUpdateLambdaType = false
+        var needUpdateLambdaType = anonymousFunction.typeRef is FirImplicitTypeRef
 
         val receiverParameter = anonymousFunction.receiverParameter
         val initialReceiverType = receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>()
@@ -619,63 +616,38 @@ class FirCallCompletionResultsWriterTransformer(
             needUpdateLambdaType = true
         }
 
-        val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+        val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+        val expectedReturnType = initialReturnType?.let { finalSubstitutor.substituteOrSelf(it) }
+            ?: expectedType?.returnType(session) as? ConeClassLikeType
+            ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
 
-        val finalType = if (anonymousFunction.isLambda) {
-            expectedType?.returnType(session) as? ConeClassLikeType
-                ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
-                ?: initialType?.let(finalSubstitutor::substituteOrSelf)
-        } else {
-            initialType?.let(finalSubstitutor::substituteOrSelf)
-                ?: expectedType?.returnType(session) as? ConeClassLikeType
-                ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
+        val newData = expectedReturnType?.toExpectedType()
+        val result = transformElement(anonymousFunction, newData)
+        for (expression in returnStatements) {
+            expression.transformSingle(this, newData)
         }
 
-        if (finalType != null) {
-            if (anonymousFunction.returnTypeRef !is FirImplicitUnitTypeRef) {
-                val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
-                anonymousFunction.replaceReturnTypeRef(resultType)
-            }
+        // Prefer the expected type over the inferred one - the latter is a subtype of the former in valid code,
+        // and there will be ARGUMENT_TYPE_MISMATCH errors on the lambda's return expressions in invalid code.
+        val resultReturnType = expectedReturnType
+            ?: session.typeContext.commonSuperTypeOrNull(returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType })
+            ?: session.builtinTypes.unitType.type
+
+        if (initialReturnType != resultReturnType) {
+            result.replaceReturnTypeRef(result.returnTypeRef.resolvedTypeFromPrototype(resultReturnType))
+            session.lookupTracker?.recordTypeResolveAsLookup(result.returnTypeRef, result.source, context.file.source)
             needUpdateLambdaType = true
         }
 
         if (needUpdateLambdaType) {
-            val resolvedTypeRef =
-                anonymousFunction.constructFunctionalTypeRef(
-                    isSuspend = expectedType?.isSuspendFunctionType(session) == true ||
-                            (expectedType == null && anonymousFunction.isSuspendFunctionType())
-                )
-            anonymousFunction.replaceTypeRef(resolvedTypeRef)
-            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, anonymousFunction.source, context.file.source)
+            val isSuspend = expectedType?.isSuspendFunctionType(session) ?: result.isExplicitlySuspend(session)
+            result.replaceTypeRef(result.constructFunctionalTypeRef(isSuspend))
+            session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }
-
-        val result = transformElement(anonymousFunction, null)
-
-        for (expression in returnExpressionsOfAnonymousFunction) {
-            expression.transform<FirElement, ExpectedArgumentType?>(this, finalType?.toExpectedType())
-        }
-
-        if (result.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {
-            val lastExpressionType =
-                (returnExpressionsOfAnonymousFunction.lastOrNull() as? FirExpression)
-                    ?.typeRef?.coneTypeSafe<ConeKotlinType>()
-
-            val newReturnTypeRef = result.returnTypeRef.withReplacedConeType(lastExpressionType)
-            result.replaceReturnTypeRef(newReturnTypeRef)
-            val resolvedTypeRef =
-                result.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
-            result.replaceTypeRef(resolvedTypeRef)
-            session.lookupTracker?.let {
-                it.recordTypeResolveAsLookup(newReturnTypeRef, anonymousFunction.source, context.file.source)
-                it.recordTypeResolveAsLookup(resolvedTypeRef, anonymousFunction.source, context.file.source)
-            }
-        }
-
+        // Have to delay this until the type is written to avoid adding a return if the type is Unit.
+        result.addReturnToLastStatementIfNeeded()
         return result
     }
-
-    private fun FirAnonymousFunction.isSuspendFunctionType() =
-        typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
 
     private fun transformImplicitTypeRefInAnonymousFunction(
         anonymousFunction: FirAnonymousFunction

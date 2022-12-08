@@ -31,9 +31,9 @@ FILE: threeReceiversCorrect.kt
                 (this@R|special/anonymous|, R|<local>/b|).R|/A.foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/c|)
             }
             )
-            ^ R|/with|<R|B|, R|kotlin/Unit|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/with|<R|B|, R|kotlin/Unit|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/c|)
-                ^ R|/with|<R|C|, R|kotlin/Unit|>(R|<local>/c|, <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                R|/with|<R|C|, R|kotlin/Unit|>(R|<local>/c|, <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                     (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|)
                 }
                 )

@@ -34,7 +34,7 @@ fun test4() = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>run<!> {
 
 fun main() {
     // all ok
-    expectUnit(<!ARGUMENT_TYPE_MISMATCH!>test1()<!>)
+    expectUnit(test1())
     expectUnit(test2())
     expectUnit(test3())
     expectUnit(test4())
