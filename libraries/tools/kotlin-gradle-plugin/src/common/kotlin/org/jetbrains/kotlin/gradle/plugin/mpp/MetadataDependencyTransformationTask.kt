@@ -89,7 +89,6 @@ open class MetadataDependencyTransformationTask
         GranularMetadataTransformation(
             project,
             kotlinSourceSet,
-            KotlinDependencyScope.compileScopes,
             lazy {
                 dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).map {
                     project.tasks.withType(MetadataDependencyTransformationTask::class.java)

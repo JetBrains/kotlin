@@ -76,23 +76,24 @@ internal class DefaultKotlinSourceSetFactory(
 
         val dependencyConfigurationWithMetadata = with(sourceSet) {
             listOf(
-                apiConfigurationName to apiMetadataConfigurationName,
-                implementationConfigurationName to implementationMetadataConfigurationName,
-                compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
+                listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName) to metadataLibrariesConfigurationName,
                 null to intransitiveMetadataConfigurationName
             )
         }
 
-        dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
+        dependencyConfigurationWithMetadata.forEach { (configurationNames, metadataName) ->
             project.configurations.maybeCreate(metadataName).apply {
                 attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 isVisible = false
                 isCanBeConsumed = false
+                isCanBeResolved = true
 
-                if (configurationName != null) {
-                    extendsFrom(project.configurations.maybeCreate(configurationName))
+                if (configurationNames != null) {
+                    for (configurationName in configurationNames) {
+                        extendsFrom(project.configurations.maybeCreate(configurationName))
+                    }
                 }
 
                 if (project.isKotlinGranularMetadataEnabled) {

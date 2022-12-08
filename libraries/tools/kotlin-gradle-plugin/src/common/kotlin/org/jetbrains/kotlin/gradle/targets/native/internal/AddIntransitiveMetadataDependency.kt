@@ -18,6 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 internal fun Project.addIntransitiveMetadataDependencyIfPossible(sourceSet: DefaultKotlinSourceSet, dependency: FileCollection) {
     val dependencyConfigurationName =
         if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-        else sourceSet.implementationMetadataConfigurationName
+        else sourceSet.metadataLibrariesConfigurationName
     project.dependencies.add(dependencyConfigurationName, dependency)
 }
