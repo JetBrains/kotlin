@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
-import org.jetbrains.kotlin.test.runners.ir.AbstractLoweredIrInterpreterTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractLightTreeFir2IrTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractLoweredIrInterpreterTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterFir2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
@@ -91,11 +91,19 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box")
             }
 
+            testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
+                model("codegen/box")
+            }
+
             testClass<AbstractSteppingTest> {
                 model("debug/stepping")
             }
 
-            testClass<AbstractIrSteppingTest> {
+            testClass<AbstractIrSteppingWithBytecodeInlinerTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrSteppingWithIrInlinerTest> {
                 model("debug/stepping")
             }
 
@@ -139,7 +147,11 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenTest> {
+            testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
             }
 
@@ -249,11 +261,19 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractFirBlackBoxInlineCodegenTest> {
+            testClass<AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTest> {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
+            testClass<AbstractFirBlackBoxInlineCodegenWithIrInlinerTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
             }
 

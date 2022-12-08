@@ -15,21 +15,47 @@ open class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     }
 }
 
-open class AbstractIrBlackBoxInlineCodegenTest : AbstractIrBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest(useIrInliner = true) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+    }
+}
+
+open class AbstractFirBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest(useIrInliner = true) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+    }
+}
+
+open class AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useInlineHandlers()
+            defaultDirectives {
+                +FirDiagnosticsDirectives.USE_LIGHT_TREE
+            }
+        }
+    }
+}
+
+open class AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest(useIrInliner = true) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

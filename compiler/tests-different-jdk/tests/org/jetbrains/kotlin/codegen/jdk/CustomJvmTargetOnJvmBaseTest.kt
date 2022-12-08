@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
     CompileKotlinAgainstInlineKotlinTestGenerated::class,
 
     IrBlackBoxCodegenTestGenerated::class,
-    IrBlackBoxInlineCodegenTestGenerated::class,
+    IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
     IrCompileKotlinAgainstInlineKotlinTestGenerated::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
