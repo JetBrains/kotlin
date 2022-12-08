@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirScriptBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
@@ -45,9 +45,9 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirScript {
         return FirScriptImpl(
             source,
+            resolvePhase,
             annotations,
             moduleData,
-            resolvePhase,
             origin,
             attributes,
             name,

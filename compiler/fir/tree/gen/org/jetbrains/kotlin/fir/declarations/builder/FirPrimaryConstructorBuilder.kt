@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
@@ -66,8 +66,8 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override fun build(): FirConstructor {
         return FirPrimaryConstructor(
             source,
-            moduleData,
             resolvePhase,
+            moduleData,
             origin,
             attributes,
             typeParameters,

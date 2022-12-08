@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
@@ -71,8 +71,8 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirBackingField {
         return FirBackingFieldImpl(
             source,
-            moduleData,
             resolvePhase,
+            moduleData,
             origin,
             attributes,
             returnTypeRef,

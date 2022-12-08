@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override var source: KtSourceElement?
+    abstract override var resolvePhase: FirResolvePhase
     abstract override val annotations: MutableList<FirAnnotation>
     abstract override var moduleData: FirModuleData
-    abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
     abstract override var status: FirDeclarationStatus
