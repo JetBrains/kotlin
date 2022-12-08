@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -52,20 +54,28 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
-        val source = errorNamedReference.source ?: return
-        val qualifiedAccessOrAnnotationCall = data.qualifiedAccessOrAnnotationCalls.lastOrNull()?.takeIf {
+        processErrorReference(errorNamedReference, errorNamedReference.diagnostic, data)
+    }
+
+    override fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference, data: CheckerContext) {
+        processErrorReference(resolvedErrorReference, resolvedErrorReference.diagnostic, data)
+    }
+
+    private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
+        val source = reference.source ?: return
+        val qualifiedAccessOrAnnotationCall = context.qualifiedAccessOrAnnotationCalls.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
             when (it) {
-                is FirQualifiedAccess -> it.calleeReference == errorNamedReference
-                is FirAnnotationCall -> it.calleeReference == errorNamedReference
+                is FirQualifiedAccess -> it.calleeReference == reference
+                is FirAnnotationCall -> it.calleeReference == reference
                 else -> false
             }
         }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
-        if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
+        if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && diagnostic is ConeUnresolvedNameError) return
         // Already reported in FirConventionFunctionCallChecker
         if (source.kind == KtFakeSourceElementKind.ArrayAccessNameReference &&
-            errorNamedReference.diagnostic is ConeUnresolvedNameError
+            diagnostic is ConeUnresolvedNameError
         ) return
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
@@ -76,7 +86,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             ) return
         }
 
-        reportFirDiagnostic(errorNamedReference.diagnostic, source, data, qualifiedAccessOrAnnotationCall?.source)
+        reportFirDiagnostic(diagnostic, source, context, qualifiedAccessOrAnnotationCall?.source)
     }
 
     private fun FirExpression?.cannotBeResolved(): Boolean {

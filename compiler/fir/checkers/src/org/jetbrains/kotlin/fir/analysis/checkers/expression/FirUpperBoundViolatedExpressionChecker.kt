@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isTypeAliasedConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -29,15 +28,15 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         // declarations with their declared bounds.
         // it may be the called function declaration
         // or the class declaration
-        val calleeReference = expression.calleeReference
-        var calleeSymbol: FirCallableSymbol<*>? = null
-        if (calleeReference is FirResolvedNamedReference) {
-            calleeSymbol = calleeReference.toResolvedCallableSymbol()
-        } else if (calleeReference is FirErrorNamedReference) {
-            if (calleeReference.diagnostic is ConeInapplicableWrongReceiver) {
-                return
+        val calleeSymbol = when (val calleeReference = expression.calleeReference) {
+            is FirResolvedErrorReference -> {
+                if (calleeReference.diagnostic is ConeInapplicableWrongReceiver) {
+                    return
+                }
+                calleeReference.toResolvedCallableSymbol()
             }
-            calleeSymbol = calleeReference.candidateSymbol as? FirCallableSymbol<*>
+            is FirResolvedNamedReference -> calleeReference.toResolvedCallableSymbol()
+            else -> null
         }
 
         val typeArguments: List<TypeArgumentWithSourceInfo>

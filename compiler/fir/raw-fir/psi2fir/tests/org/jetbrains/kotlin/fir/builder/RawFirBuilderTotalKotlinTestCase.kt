@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -82,12 +84,14 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                     }
 
                     override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: FirElement) {
-                        val calleeReference = qualifiedAccess.calleeReference
-                        if (calleeReference is FirErrorNamedReference) {
-                            errorReferences++
-                            println(calleeReference.diagnostic.reason)
-                        } else {
-                            normalReferences++
+                        when (val calleeReference = qualifiedAccess.calleeReference) {
+                            is FirErrorNamedReference, is FirResolvedErrorReference -> {
+                                errorReferences++
+                                println((calleeReference as FirDiagnosticHolder).diagnostic.reason)
+                            }
+                            else -> {
+                                normalReferences++
+                            }
                         }
                         visitStatement(qualifiedAccess, data)
                     }

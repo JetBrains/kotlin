@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -891,9 +892,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
                     else -> {
                         val altererNames = alteredAssignments.map { it.second::class.qualifiedName }
-                        val errorReference = buildErrorNamedReference {
+                        val errorReference = buildResolvedErrorReference {
                             source = resolvedReference.source
-                            candidateSymbol = resolvedReference.resolvedSymbol
+                            name = resolvedReference.name
+                            resolvedSymbol = resolvedReference.resolvedSymbol
                             diagnostic = ConeAmbiguousAlteredAssign(altererNames)
                         }
                         completeAssignment.replaceCalleeReference(errorReference)

@@ -26,11 +26,11 @@ object RedundantExplicitTypeChecker : FirPropertyChecker() {
         if (!declaration.isLocal) return
 
         val initializer = declaration.initializer ?: return
-        val typeReference = declaration.returnTypeRef
+        val typeReference = declaration.returnTypeRef.takeUnless { it is FirErrorTypeRef } ?: return
 
         if (typeReference.source?.kind is KtFakeSourceElementKind) return
 
-        val type = declaration.returnTypeRef.coneType
+        val type = typeReference.coneType
 
         if (type.toSymbol(context.session) is FirTypeAliasSymbol) return
         if (typeReference.annotations.isNotEmpty()) return

@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -70,19 +72,24 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 else -> null
             } ?: return
 
-        when (val reference = componentCall.calleeReference) {
-            is FirErrorNamedReference ->
-                checkComponentCall(
-                    originalDestructuringDeclarationOrInitializerSource,
-                    originalDestructuringDeclarationType,
-                    reference,
-                    declaration,
-                    componentCall,
-                    originalDestructuringDeclaration,
-                    reporter,
-                    context
-                )
+        val diagnostic = when (val reference = componentCall.calleeReference) {
+            is FirErrorNamedReference -> reference.diagnostic
+            is FirResolvedErrorReference -> reference.diagnostic
+            else -> null
         }
+        if (diagnostic != null) {
+            checkComponentCall(
+                originalDestructuringDeclarationOrInitializerSource,
+                originalDestructuringDeclarationType,
+                diagnostic,
+                declaration,
+                componentCall,
+                originalDestructuringDeclaration,
+                reporter,
+                context
+            )
+        }
+
     }
 
     private fun checkInitializer(
@@ -105,14 +112,14 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     private fun checkComponentCall(
         source: KtSourceElement,
         destructuringDeclarationType: ConeKotlinType,
-        reference: FirErrorNamedReference,
+        diagnostic: ConeDiagnostic,
         property: FirProperty,
         componentCall: FirComponentCall,
         destructuringDeclaration: FirVariable,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        when (val diagnostic = reference.diagnostic) {
+        when (diagnostic) {
             is ConeUnresolvedNameError -> {
                 reporter.reportOn(
                     source,

@@ -839,7 +839,14 @@ class FirRenderer(
                 }
                 print(">")
             }
+            if (resolvedNamedReference is FirResolvedErrorReference) {
+                print("<${resolvedNamedReference.diagnostic.reason}>#")
+            }
             print("|")
+        }
+
+        override fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference) {
+            visitResolvedNamedReference(resolvedErrorReference)
         }
 
         private fun FirBasedSymbol<*>.unwrapIntersectionOverrides(): FirBasedSymbol<*> {

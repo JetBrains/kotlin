@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
@@ -176,9 +173,29 @@ internal class KtFirCallResolver(
                 resolveFragmentOfCall = resolveFragmentOfCall
             )
         }
+
+        fun <T> transformErrorReference(call: FirResolvable, calleeReference: T): KtCallInfo where T : FirNamedReference, T : FirDiagnosticHolder {
+            val diagnostic = calleeReference.diagnostic
+            val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
+
+            if (diagnostic is ConeHiddenCandidateError)
+                return KtErrorCallInfo(emptyList(), ktDiagnostic, token)
+
+            val candidateCalls = mutableListOf<KtCall>()
+            if (diagnostic is ConeDiagnosticWithCandidates) {
+                diagnostic.candidates.mapNotNullTo(candidateCalls) {
+                    createKtCall(psi, call, it, resolveFragmentOfCall)
+                }
+            } else {
+                candidateCalls.addIfNotNull(createKtCall(psi, call, null, resolveFragmentOfCall))
+            }
+            return KtErrorCallInfo(candidateCalls, ktDiagnostic, token)
+        }
+
         return when (this) {
             is FirResolvable -> {
                 when (val calleeReference = calleeReference) {
+                    is FirResolvedErrorReference -> transformErrorReference(this, calleeReference)
                     is FirResolvedNamedReference -> when (calleeReference.resolvedSymbol) {
                         // `calleeReference.resolvedSymbol` isn't guaranteed to be callable. For example, function type parameters used in
                         // expression positions (e.g. `T` in `println(T)`) are parsed as `KtSimpleNameExpression` and built into
@@ -194,23 +211,7 @@ internal class KtFirCallResolver(
                         }
                         else -> null
                     }
-                    is FirErrorNamedReference -> {
-                        val diagnostic = calleeReference.diagnostic
-                        val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
-
-                        if (diagnostic is ConeHiddenCandidateError)
-                            return KtErrorCallInfo(emptyList(), ktDiagnostic, token)
-
-                        val candidateCalls = mutableListOf<KtCall>()
-                        if (diagnostic is ConeDiagnosticWithCandidates) {
-                            diagnostic.candidates.mapNotNullTo(candidateCalls) {
-                                createKtCall(psi, this@toKtCallInfo, it, resolveFragmentOfCall)
-                            }
-                        } else {
-                            candidateCalls.addIfNotNull(createKtCall(psi, this, null, resolveFragmentOfCall))
-                        }
-                        KtErrorCallInfo(candidateCalls, ktDiagnostic, token)
-                    }
+                    is FirErrorNamedReference -> transformErrorReference(this, calleeReference)
                     // Unresolved delegated constructor call is untransformed and end up as an `FirSuperReference`
                     is FirSuperReference -> {
                         val delegatedConstructorCall = this as? FirDelegatedConstructorCall ?: return null

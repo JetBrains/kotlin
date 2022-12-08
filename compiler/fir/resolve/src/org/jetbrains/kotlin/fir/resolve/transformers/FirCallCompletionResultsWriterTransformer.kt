@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -37,9 +39,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOp
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -379,11 +379,7 @@ class FirCallCompletionResultsWriterTransformer(
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, typeRef.source ?: callableReferenceAccess.source, context.file.source)
 
         val resolvedReference = when (calleeReference) {
-            is FirErrorReferenceWithCandidate -> buildErrorNamedReference {
-                source = calleeReference.source
-                diagnostic = calleeReference.diagnostic
-                candidateSymbol = calleeReference.candidateSymbol
-            }
+            is FirErrorReferenceWithCandidate -> calleeReference.toErrorReference(calleeReference.diagnostic)
             else -> buildResolvedCallableReference {
                 source = calleeReference.source
                 name = calleeReference.name
@@ -398,6 +394,23 @@ class FirCallCompletionResultsWriterTransformer(
             resolvedReference,
         ).transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
             .transformExtensionReceiver(StoreReceiver, subCandidate.chosenExtensionReceiverExpression())
+    }
+
+    private fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic): FirNamedReference {
+        val calleeReference = this
+        return when (calleeReference.candidateSymbol) {
+            is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
+                source = calleeReference.source
+                candidateSymbol = calleeReference.candidateSymbol
+                this.diagnostic = diagnostic
+            }
+            else -> buildResolvedErrorReference {
+                source = calleeReference.source
+                name = calleeReference.name
+                resolvedSymbol = calleeReference.candidateSymbol
+                this.diagnostic = diagnostic
+            }
+        }
     }
 
     override fun transformVariableAssignment(
@@ -866,18 +879,14 @@ class FirCallCompletionResultsWriterTransformer(
             else -> null
         }
 
-        return if (errorDiagnostic != null) {
-            buildErrorNamedReference {
-                source = this@toResolvedReference.source
-                diagnostic = errorDiagnostic
-                candidateSymbol = this@toResolvedReference.candidateSymbol
-            }
-        } else {
-            buildResolvedNamedReference {
+        return when (errorDiagnostic) {
+            null -> buildResolvedNamedReference {
                 source = this@toResolvedReference.source
                 name = this@toResolvedReference.name
                 resolvedSymbol = this@toResolvedReference.candidateSymbol
             }
+
+            else -> toErrorReference(errorDiagnostic)
         }
     }
 }

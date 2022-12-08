@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_MODIFIER_REQUIRED
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
@@ -104,8 +106,8 @@ object FirForLoopChecker : FirBlockChecker() {
         unsafeCallFactory: KtDiagnosticFactory0? = null,
     ): Boolean {
         when (val calleeReference = call.calleeReference) {
-            is FirErrorNamedReference -> {
-                when (val diagnostic = calleeReference.diagnostic) {
+            is FirErrorNamedReference, is FirResolvedErrorReference -> {
+                when (val diagnostic = (calleeReference as FirDiagnosticHolder).diagnostic) {
                     is ConeAmbiguityError -> if (diagnostic.applicability.isSuccess) {
                         reporter.reportOn(reportSource, ambiguityFactory, diagnostic.candidates.map { it.symbol }, context)
                     } else if (noneApplicableFactory != null) {

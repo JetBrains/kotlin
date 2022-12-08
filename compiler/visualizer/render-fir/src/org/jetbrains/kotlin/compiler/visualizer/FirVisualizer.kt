@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
@@ -675,10 +676,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitNamedReference(namedReference: FirNamedReference, data: StringBuilder) {
             if (namedReference is FirErrorNamedReference) {
-                data.append("[ERROR : ${namedReference.diagnostic.reason}]")
+                data.append(namedReference.diagnostic.dump())
                 return
             }
             visitElement(namedReference, data)
+        }
+
+        private fun ConeDiagnostic.dump(): String {
+            return "[ERROR : ${reason}]"
         }
 
         override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: StringBuilder) {
@@ -696,6 +701,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 symbol is FirFieldSymbol -> renderField(symbol.fir, data)
                 else -> (symbol.fir as? FirVariable)?.let { renderVariable(it, data) }
             }
+        }
+
+        override fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference, data: StringBuilder) {
+            visitResolvedNamedReference(resolvedErrorReference, data)
+            data.append(resolvedErrorReference.diagnostic.dump())
         }
 
         override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: StringBuilder) {
@@ -772,8 +782,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         is FirConstructorSymbol -> visitConstructor(callee.resolvedSymbol.fir as FirConstructor, data)
                         else -> renderFunctionSymbol(callee.resolvedSymbol as FirNamedFunctionSymbol, data, functionCall)
                     }
+                    if (callee is FirResolvedErrorReference) {
+                        data.append(callee.diagnostic.dump())
+                    }
                 }
-                is FirErrorNamedReference -> data.append("[ERROR : ${callee.diagnostic.reason}]")
+                is FirErrorNamedReference -> data.append(callee.diagnostic.dump())
             }
         }
 

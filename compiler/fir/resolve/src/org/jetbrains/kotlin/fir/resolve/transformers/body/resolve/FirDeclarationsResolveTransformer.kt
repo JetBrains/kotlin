@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
@@ -362,7 +363,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             return provideDelegateCall
         }
 
-        if (provideDelegateCall.calleeReference is FirResolvedNamedReference) {
+        val provideDelegateReference = provideDelegateCall.calleeReference
+        if (provideDelegateReference is FirResolvedNamedReference && provideDelegateReference !is FirResolvedErrorReference) {
             return provideDelegateCall
         }
 

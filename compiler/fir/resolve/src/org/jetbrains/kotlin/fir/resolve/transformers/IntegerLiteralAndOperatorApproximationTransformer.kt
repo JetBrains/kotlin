@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -90,13 +90,21 @@ class IntegerLiteralAndOperatorApproximationTransformer(
             val wrappedFunctionSymbol = calleeReference.resolvedSymbol as FirNamedFunctionSymbol
             val originalFunctionSymbol = wrappedFunctionSymbol.fir.originalForWrappedIntegerOperator!!
 
-            call.replaceCalleeReference(
-                buildResolvedNamedReference {
+            val newCalleeReference = when (calleeReference) {
+                is FirResolvedErrorReference -> buildResolvedErrorReference {
+                    name = calleeReference.name
+                    source = calleeReference.source
+                    resolvedSymbol = originalFunctionSymbol
+                    diagnostic = calleeReference.diagnostic
+                }
+                else -> buildResolvedNamedReference {
                     name = calleeReference.name
                     source = calleeReference.source
                     resolvedSymbol = originalFunctionSymbol
                 }
-            )
+            }
+
+            call.replaceCalleeReference(newCalleeReference)
         }
 
         if (approximatedType.isInt || approximatedType.isUInt) return call

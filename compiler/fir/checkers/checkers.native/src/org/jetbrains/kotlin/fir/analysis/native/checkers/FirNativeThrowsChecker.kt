@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -142,8 +143,8 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
         }
 
         if (this is FirResolvable) {
-            if (this.calleeReference is FirErrorNamedReference) {
-                return true
+            when (this.calleeReference) {
+                is FirErrorNamedReference, is FirResolvedErrorReference -> return true
             }
         }
 

@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -42,10 +44,13 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker() {
     private fun FirFunctionCall.isOverloadAssignCallCandidate() =
         arguments.size == 1 && source?.kind == KtFakeSourceElementKind.DesugaredCompoundAssignment
 
-    private fun FirFunctionCall.isFunctionResolveError() = calleeReference is FirErrorNamedReference
+    private fun FirFunctionCall.isFunctionResolveError() = when(calleeReference){
+        is FirErrorNamedReference, is FirResolvedErrorReference -> true
+        else -> false
+    }
 
     private fun FirFunctionCall.isOverloadedAssignCallError(session: FirSession): Boolean {
-        val functionName = when (val diagnostic = (calleeReference as? FirErrorNamedReference)?.diagnostic) {
+        val functionName = when (val diagnostic = (calleeReference as? FirDiagnosticHolder)?.diagnostic) {
             is ConeAmbiguityError -> diagnostic.name
             is ConeDiagnosticWithSingleCandidate -> diagnostic.candidate.callInfo.name
             is ConeUnresolvedNameError -> diagnostic.name

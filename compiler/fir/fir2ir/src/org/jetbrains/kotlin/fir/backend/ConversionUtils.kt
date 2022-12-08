@@ -197,15 +197,6 @@ fun FirReference.toSymbolForCall(
                 isReference
             )
 
-        is FirErrorNamedReference ->
-            candidateSymbol?.toSymbolForCall(
-                dispatchReceiver,
-                preferGetter,
-                explicitReceiver,
-                isDelegate,
-                isReference
-            )
-
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol

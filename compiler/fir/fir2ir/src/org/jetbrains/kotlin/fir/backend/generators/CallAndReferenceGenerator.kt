@@ -1066,12 +1066,9 @@ class CallAndReferenceGenerator(
                 }
                 if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
-                        val symbol = when (val reference = qualifiedAccess.calleeReference) {
-                            is FirResolvedNamedReference -> reference.resolvedSymbol
-                            is FirErrorNamedReference -> reference.candidateSymbol
-                            else -> null
-                        } ?: error("Symbol for call ${qualifiedAccess.render()} not found")
-                        (symbol.fir as? FirCallableDeclaration)?.receiverParameter?.typeRef?.let { receiverType ->
+                        val symbol = qualifiedAccess.calleeReference.toResolvedCallableSymbol()
+                            ?: error("Symbol for call ${qualifiedAccess.render()} not found")
+                        symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 it.cast(
                                     qualifiedAccess.extensionReceiver,

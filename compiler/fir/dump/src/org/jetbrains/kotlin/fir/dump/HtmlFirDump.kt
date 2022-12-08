@@ -1302,6 +1302,18 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     simpleName(reference.name)
                 }
             }
+            is FirResolvedErrorReference -> {
+                errorWithDiagnostic {
+                    resolved {
+                        symbolRef(reference.resolvedSymbol) {
+                            simpleName(reference.name)
+                        }
+                    }
+                    diagnosticHover {
+                        generate(reference.diagnostic)
+                    }
+                }
+            }
             is FirResolvedNamedReference -> {
                 resolved {
                     symbolRef(reference.resolvedSymbol) {

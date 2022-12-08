@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -79,6 +80,7 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
 
 private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
     val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
+        is FirResolvedErrorReference -> null
         is FirResolvedNamedReference -> reference.resolvedSymbol
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
