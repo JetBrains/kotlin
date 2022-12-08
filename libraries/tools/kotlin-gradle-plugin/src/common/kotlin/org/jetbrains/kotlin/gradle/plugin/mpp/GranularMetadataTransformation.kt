@@ -364,3 +364,5 @@ private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<Kotl
         .flatMap { target -> target.compilations }
         .flatMap { it.kotlinSourceSets }
         .toSet()
+
+internal val GranularMetadataTransformation?.metadataDependencyResolutionsOrEmpty get() = this?.metadataDependencyResolutions ?: emptyList()

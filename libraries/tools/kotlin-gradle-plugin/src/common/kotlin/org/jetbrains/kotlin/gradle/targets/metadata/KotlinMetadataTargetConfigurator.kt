@@ -367,12 +367,12 @@ class KotlinMetadataTargetConfigurator :
             sourceSetRequestedScopes = dependencyScopesToTransform,
             parentTransformations = lazy {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                    .map { it.compileDependenciesTransformation }
+                    .map { it.compileDependenciesTransformationOrFail }
             }
         )
 
         if (sourceSet is DefaultKotlinSourceSet)
-            sourceSet.setCompileDependenciesTransformation(granularMetadataTransformation)
+            sourceSet.compileDependenciesTransformation = granularMetadataTransformation
 
         dependencyScopesToTransform.forEach { scope ->
             val sourceSetDependencyConfigurationByScope = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)

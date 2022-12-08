@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrFail
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -83,7 +84,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
 }
 
 /**
- * The transformation tasks will internally access the lazy [GranularMetadataTransformation.metadataDependencyResolutions] property
+ * The transformation tasks will internally access the lazy [GranularMetadataTransformation.metadataDependencyResolutionsOrEmpty] property
  * which internally will potentially resolve dependencies. Having multiple tasks accessing this synchronized lazy property
  * during execution and/or configuration phase will result in an internal deadlock in Gradle
  * `DefaultResourceLockCoordinationService.withStateLock`
@@ -180,14 +181,14 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @Suppress("unused")
     @get:Classpath
     protected val inputArtifactFiles: FileCollection get() = sourceSet
-        .compileDependenciesTransformation
+        .compileDependenciesTransformationOrFail
         .configurationToResolve
         .withoutProjectDependencies()
 
     @get:Internal
     protected val chooseVisibleSourceSets
         get() = sourceSet
-            .compileDependenciesTransformation
+            .compileDependenciesTransformationOrFail
             .metadataDependencyResolutions
             .filterIsInstance<ChooseVisibleSourceSets>()
 
