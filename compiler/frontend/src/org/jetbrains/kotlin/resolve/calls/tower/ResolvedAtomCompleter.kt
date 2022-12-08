@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
@@ -365,13 +366,17 @@ class ResolvedAtomCompleter(
                 .replaceBindingTrace(topLevelTrace)
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
 
-            kotlinToResolvedCallTransformer.updateRecordedType(
+            val updatedType = kotlinToResolvedCallTransformer.updateRecordedType(
                 argumentExpression,
                 parameter = null,
                 context = newContext,
                 reportErrorForTypeMismatch = true,
                 convertedArgumentType = null
             )
+
+            if (updatedType != null) {
+                NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(updatedType, argumentExpression, topLevelTrace, moduleDescriptor)
+            }
         }
     }
 

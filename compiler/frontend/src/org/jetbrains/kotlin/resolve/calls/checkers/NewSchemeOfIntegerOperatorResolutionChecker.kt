@@ -36,7 +36,7 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
             } else {
                 valueParameter.type
             }.unwrap().lowerIfFlexible()
-            if (!expectedType.isPrimitiveNumberOrNullableType()) {
+            if (!needToCheck(expectedType)) {
                 continue
             }
             for (argument in arguments.arguments) {
@@ -53,10 +53,14 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         trace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ) {
-        val type = expectedType.lowerIfFlexible()
-        if (type.isPrimitiveNumberOrNullableType()) {
-            checkArgumentImpl(type, KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)
+        if (needToCheck(expectedType)) {
+            checkArgumentImpl(expectedType.lowerIfFlexible(), KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)
         }
+    }
+
+    fun needToCheck(expectedType: KotlinType): Boolean {
+        if (TypeUtils.noExpectedType(expectedType)) return false
+        return expectedType.lowerIfFlexible().isPrimitiveNumberOrNullableType()
     }
 
     private fun checkArgumentImpl(

@@ -10,9 +10,9 @@ val d_1: Long = 1
 var d_2: Long = 1
 
 val e_1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
-var e_2: Byte = 1 + 2
+var e_2: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
 val f_1: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
-var f_2: Short = 1 + 2
+var f_2: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
 val g_1: Int = 1 + 2
 var g_2: Int = 1 + 2
 val h_1: Long = 1 + 2
@@ -28,10 +28,10 @@ fun local() {
     val d_1: Long = 1
     var d_2: Long = 1
 
-    val e_1: Byte = 1 + 2
-    var e_2: Byte = 1 + 2
-    val f_1: Short = 1 + 2
-    var f_2: Short = 1 + 2
+    val e_1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
+    var e_2: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
+    val f_1: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
+    var f_2: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
     val g_1: Int = 1 + 2
     var g_2: Int = 1 + 2
     val h_1: Long = 1 + 2
@@ -49,9 +49,9 @@ class Member {
     var d_2: Long = 1
 
     val e_1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
-    var e_2: Byte = 1 + 2
+    var e_2: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
     val f_1: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
-    var f_2: Short = 1 + 2
+    var f_2: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>
     val g_1: Int = 1 + 2
     var g_2: Int = 1 + 2
     val h_1: Long = 1 + 2

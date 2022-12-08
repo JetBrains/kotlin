@@ -2989,6 +2989,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("referenceInCycleInProperties.kt")
+            public void testReferenceInCycleInProperties() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/referenceInCycleInProperties.kt");
+            }
+
+            @Test
             @TestMetadata("referenceToCompanionObjectMemberViaClassName.kt")
             public void testReferenceToCompanionObjectMemberViaClassName() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/referenceToCompanionObjectMemberViaClassName.kt");
@@ -22258,6 +22264,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("intValuesOutOfRange.kt")
             public void testIntValuesOutOfRange() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/intValuesOutOfRange.kt");
+            }
+
+            @Test
+            @TestMetadata("integerLiteralWillChangeResolveInFunctionReturnPosition.kt")
+            public void testIntegerLiteralWillChangeResolveInFunctionReturnPosition() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/integerLiteralWillChangeResolveInFunctionReturnPosition.kt");
             }
 
             @Test
