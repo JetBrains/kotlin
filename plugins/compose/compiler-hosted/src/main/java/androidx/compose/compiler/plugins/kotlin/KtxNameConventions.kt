@@ -6,6 +6,7 @@ object KtxNameConventions {
     val COMPOSER = Name.identifier("composer")
     val COMPOSER_PARAMETER = Name.identifier("\$composer")
     val CHANGED_PARAMETER = Name.identifier("\$changed")
+    val FORCE_PARAMETER = Name.identifier("\$force")
     val STABILITY_FLAG = Name.identifier("\$stable")
     val STABILITY_PROP_FLAG = Name.identifier("\$stableprop")
     val DEFAULT_PARAMETER = Name.identifier("\$default")
