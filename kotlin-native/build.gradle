@@ -591,6 +591,9 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         if (!containsPlatformLibraries || !isMac()) {
             exclude '**/xcode_license.pdf'
         }
+        if (!containsPlatformLibraries) {
+            exclude '**/mingw-w64-headers_LICENSE.txt'
+        }
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
     }
 
