@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -83,6 +84,12 @@ fun TestConfigurationBuilder.useInlineHandlers() {
     }
 
     applyDumpSmapDirective()
+}
+
+fun TestConfigurationBuilder.useIrInliner() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
+    }
 }
 
 fun TestConfigurationBuilder.applyDumpSmapDirective() {

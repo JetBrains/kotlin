@@ -88,11 +88,19 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box")
             }
 
+            testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
+                model("codegen/box")
+            }
+
             testClass<AbstractSteppingTest> {
                 model("debug/stepping")
             }
 
-            testClass<AbstractIrSteppingTest> {
+            testClass<AbstractIrSteppingWithBytecodeInlinerTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrSteppingWithIrInlinerTest> {
                 model("debug/stepping")
             }
 
@@ -136,7 +144,11 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenTest> {
+            testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
             }
 
@@ -254,11 +266,19 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
+            testClass<AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest> {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
+            testClass<AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
             }
 

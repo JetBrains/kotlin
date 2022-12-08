@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/debug/stepping")
 @TestDataPath("$PROJECT_ROOT")
-public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
+public class IrSteppingWithBytecodeInlinerTestGenerated extends AbstractIrSteppingWithBytecodeInlinerTest {
     @Test
     public void testAllFilesPresentInStepping() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);

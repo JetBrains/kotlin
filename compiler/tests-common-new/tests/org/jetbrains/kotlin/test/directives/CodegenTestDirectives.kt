@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.TargetInliner
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
@@ -46,6 +47,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_BACKEND_K2_MULTI_MODULE by enumDirective<TargetBackend>(
         description = "Ignore failures of multimodule test on target backend if test uses K2 frontend",
+        applicability = Global
+    )
+
+    val IGNORE_INLINER by enumDirective<TargetInliner>(
+        description = "Ignore failures of tests with given inliner",
         applicability = Global
     )
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -23,10 +24,9 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 
-open class AbstractIrSteppingTest : AbstractSteppingTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
-    FrontendKinds.ClassicFrontend,
-    TargetBackend.JVM_IR
-) {
+open class AbstractIrSteppingWithBytecodeInlinerTest(
+    private val useIrInliner: Boolean = false
+) : AbstractSteppingTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(FrontendKinds.ClassicFrontend, TargetBackend.JVM_IR) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
 
@@ -39,8 +39,13 @@ open class AbstractIrSteppingTest : AbstractSteppingTestBase<ClassicFrontendOutp
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureDumpHandlersForCodegenTest()
+        if (useIrInliner) {
+            builder.defaultDirectives { +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER }
+        }
     }
 }
+
+open class AbstractIrSteppingWithIrInlinerTest : AbstractIrSteppingWithBytecodeInlinerTest(useIrInliner = true) {}
 
 open class AbstractSteppingTest : AbstractSteppingTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
     FrontendKinds.ClassicFrontend,
