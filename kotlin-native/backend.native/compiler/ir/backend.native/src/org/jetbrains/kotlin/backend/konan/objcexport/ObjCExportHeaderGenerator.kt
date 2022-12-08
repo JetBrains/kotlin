@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -261,7 +260,7 @@ internal class ObjCExportTranslatorImpl(
 
         val name = referenceClass(classDescriptor).objCName
         val members = buildMembers {
-            translatePlainMembers(declarations, ObjCNoneExportScope)
+            translatePlainMembers(declarations, ObjCRootExportScope)
         }
         return ObjCInterfaceImpl(name, categoryName = "Extensions", members = members)
     }
@@ -271,7 +270,7 @@ internal class ObjCExportTranslatorImpl(
 
         // TODO: stop inheriting KotlinBase.
         val members = buildMembers {
-            translatePlainMembers(declarations, ObjCNoneExportScope)
+            translatePlainMembers(declarations, ObjCRootExportScope)
         }
         return objCInterface(
                 name,
@@ -342,7 +341,7 @@ internal class ObjCExportTranslatorImpl(
                     ?.forEach {
                         val selector = getSelector(it)
                         if (selector !in presentConstructors) {
-                            add { buildMethod(it, it, ObjCNoneExportScope, unavailable = true) }
+                            add { buildMethod(it, it, ObjCRootExportScope, unavailable = true) }
 
                             if (selector == "init") {
                                 add { ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable")) }
@@ -383,7 +382,7 @@ internal class ObjCExportTranslatorImpl(
                     }
                 }
                 ClassKind.ENUM_CLASS -> {
-                    val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCNoneExportScope)
+                    val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
@@ -434,9 +433,9 @@ internal class ObjCExportTranslatorImpl(
     }
 
     internal fun createGenericExportScope(descriptor: ClassDescriptor): ObjCExportScope = if (objcGenerics) {
-        ObjCClassExportScope(descriptor, namer)
+        ObjCRootExportScope.deriveForClass(descriptor, namer)
     } else {
-        ObjCNoneExportScope
+        ObjCRootExportScope
     }
 
     private fun buildThrowableAsErrorMethod(): ObjCMethod {
@@ -560,7 +559,7 @@ internal class ObjCExportTranslatorImpl(
             }
         }
 
-        translatePlainMembers(methods, properties, ObjCNoneExportScope)
+        translatePlainMembers(methods, properties, ObjCRootExportScope)
     }
 
     private fun StubBuilder<Stub<*>>.translatePlainMembers(members: List<CallableMemberDescriptor>, objCExportScope: ObjCExportScope) {
@@ -922,12 +921,18 @@ internal class ObjCExportTranslatorImpl(
         }
 
         mostSpecificMatches.firstOrNull()?.let {
-            return it.mapper.mapType(it.type, this, objCExportScope)
+            try {
+                return it.mapper.mapType(it.type, this, objCExportScope.deriveForType(it.type))
+            } catch (e: ObjCExportScope.RecursionBreachException) {
+                return ObjCIdType
+            }
         }
 
-        if(objcGenerics && kotlinType.isTypeParameter()){
-            val genericTypeUsage = objCExportScope.getGenericTypeUsage(TypeUtils.getTypeParameterDescriptorOrNull(kotlinType))
-            if(genericTypeUsage != null)
+        if (objcGenerics && kotlinType.isTypeParameter()) {
+            val genericTypeUsage = objCExportScope
+                    .nearestScopeOfType<ObjCClassExportScope>()
+                    ?.getGenericTypeUsage(TypeUtils.getTypeParameterDescriptorOrNull(kotlinType))
+            if (genericTypeUsage != null)
                 return genericTypeUsage
         }
 
@@ -1014,7 +1019,9 @@ internal class ObjCExportTranslatorImpl(
                 } else {
                     mapReferenceType(functionType.getReturnTypeFromFunctionType(), objCExportScope)
                 },
-                parameterTypes.map { mapReferenceType(it, objCExportScope) }
+                parameterTypes.map {
+                    mapReferenceType(it, objCExportScope)
+                }
         )
     }
 
@@ -1369,36 +1376,8 @@ internal fun ObjCExportNamer.ClassOrProtocolName.toNameAttributes(): List<String
 private fun swiftNameAttribute(swiftName: String) = "swift_name(\"$swiftName\")"
 private fun objcRuntimeNameAttribute(name: String) = "objc_runtime_name(\"$name\")"
 
-interface ObjCExportScope{
-    fun getGenericTypeUsage(typeParameterDescriptor: TypeParameterDescriptor?): ObjCGenericTypeUsage?
-}
-
-internal class ObjCClassExportScope constructor(container:DeclarationDescriptor, val namer: ObjCExportNamer): ObjCExportScope {
-    private val typeNames = if(container is ClassDescriptor && !container.isInterface) {
-        container.typeConstructor.parameters
-    } else {
-        emptyList<TypeParameterDescriptor>()
-    }
-
-    override fun getGenericTypeUsage(typeParameterDescriptor: TypeParameterDescriptor?): ObjCGenericTypeUsage? {
-        val localTypeParam = typeNames.firstOrNull {
-            typeParameterDescriptor != null &&
-                    (it == typeParameterDescriptor || (it.isCapturedFromOuterDeclaration && it.original == typeParameterDescriptor))
-        }
-
-        return if(localTypeParam == null) {
-            null
-        } else {
-            ObjCGenericTypeParameterUsage(localTypeParam, namer)
-        }
-    }
-}
-
-internal object ObjCNoneExportScope: ObjCExportScope{
-    override fun getGenericTypeUsage(typeParameterDescriptor: TypeParameterDescriptor?): ObjCGenericTypeUsage? = null
-}
-
-private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? = descriptor.typeConstructor.supertypes.filter { !it.isInterface() }.firstOrNull()
+private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? =
+        descriptor.typeConstructor.supertypes.firstOrNull { !it.isInterface() }
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
 
@@ -1414,7 +1393,6 @@ internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer,
 
     return true
 }
-
 
 private fun DeprecationInfo.toDeprecationAttribute(): String {
     val attribute = when (deprecationLevel) {

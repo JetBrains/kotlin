@@ -1462,6 +1462,20 @@ __attribute__((swift_name("OverrideMethodsOfAnyKt")))
 + (BOOL)testObj:(id)obj other:(id)other swift:(BOOL)swift error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test(obj:other:swift:)")));
 @end
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("RecList")))
+@interface KtRecList<T> : KtBase
+- (instancetype)initWithValue:(NSArray<id> *)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) NSArray<id> *value __attribute__((swift_name("value")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("RecFunc")))
+@interface KtRecFunc<T> : KtBase
+- (instancetype)initWithValue:(id (^)(void))value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) id (^value)(void) __attribute__((swift_name("value")));
+@end
+
 __attribute__((swift_name("RefinedClassA")))
 @interface KtRefinedClassA : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
