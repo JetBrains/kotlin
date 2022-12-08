@@ -21,6 +21,8 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object SYNTHETIC_MARKER_PARAMETER : IrDeclarationOriginImpl("SYNTHETIC_MARKER_PARAMETER", isSynthetic = true)
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
     object JVM_STATIC_WRAPPER : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER")
+    // Used to distinguish a bridge JvmStatic method (above) from one with a full body and no corresponding companion method (below).
+    object JVM_STATIC_REPLACEMENT_METHOD : IrDeclarationOriginImpl("JVM_STATIC_METHOD")
     object JVM_OVERLOADS_WRAPPER : IrDeclarationOriginImpl("JVM_OVERLOADS_WRAPPER")
     object SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS :
         IrDeclarationOriginImpl("SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS", isSynthetic = true)

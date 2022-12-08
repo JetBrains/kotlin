@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEA
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_NEW_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OLD_INNER_CLASSES_LOGIC
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.REWRITE_JVM_STATIC_IN_COMPANION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -177,6 +178,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(ENABLE_DEBUG_MODE, JVMConfigurationKeys.ENABLE_DEBUG_MODE)
         register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
         register(OLD_INNER_CLASSES_LOGIC, JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
+        register(REWRITE_JVM_STATIC_IN_COMPANION, JVMConfigurationKeys.REWRITE_JVM_STATIC_IN_COMPANION)
         register(LINK_VIA_SIGNATURES, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
     }
 

@@ -1853,9 +1853,21 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("jvmStaticExternalWithDeclarationRewrite.kt")
+        public void testJvmStaticExternalWithDeclarationRewrite() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticExternalWithDeclarationRewrite.kt");
+        }
+
+        @Test
         @TestMetadata("jvmStaticPrivate.kt")
         public void testJvmStaticPrivate() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticPrivate.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmStaticPrivateWithDeclarationRewrite.kt")
+        public void testJvmStaticPrivateWithDeclarationRewrite() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticPrivateWithDeclarationRewrite.kt");
         }
 
         @Test
@@ -1865,9 +1877,21 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("jvmStaticWithDefaultParametersWithDeclarationRewrite.kt")
+        public void testJvmStaticWithDefaultParametersWithDeclarationRewrite() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticWithDefaultParametersWithDeclarationRewrite.kt");
+        }
+
+        @Test
         @TestMetadata("kt31389.kt")
         public void testKt31389() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/kt31389.kt");
+        }
+
+        @Test
+        @TestMetadata("kt31389WithDeclarationRewrite.kt")
+        public void testKt31389WithDeclarationRewrite() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/kt31389WithDeclarationRewrite.kt");
         }
     }
 

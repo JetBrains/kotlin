@@ -163,6 +163,12 @@ public class SymbolLightClassesLoadingForLibraryTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("jvmOverloadsWithStaticDeclarationRewrite.kt")
+    public void testJvmOverloadsWithStaticDeclarationRewrite() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/jvmOverloadsWithStaticDeclarationRewrite.kt");
+    }
+
+    @Test
     @TestMetadata("jvmRecord.kt")
     public void testJvmRecord() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/jvmRecord.kt");
@@ -214,6 +220,12 @@ public class SymbolLightClassesLoadingForLibraryTestGenerated extends AbstractSy
     @TestMetadata("objects.kt")
     public void testObjects() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/objects.kt");
+    }
+
+    @Test
+    @TestMetadata("objectsWithStaticDeclarationRewrite.kt")
+    public void testObjectsWithStaticDeclarationRewrite() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/objectsWithStaticDeclarationRewrite.kt");
     }
 
     @Test

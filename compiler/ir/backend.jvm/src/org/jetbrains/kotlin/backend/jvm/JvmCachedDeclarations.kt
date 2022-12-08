@@ -36,6 +36,7 @@ class JvmCachedDeclarations(
     private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
     private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
     private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
+    private val staticCompanionReplacementDeclarations = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
     private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
@@ -181,6 +182,29 @@ class JvmCachedDeclarations(
                 })
             }
         }
+
+    fun getStaticCompanionReplacementDeclaration(jvmStaticFunction: IrSimpleFunction): IrSimpleFunction =
+        staticCompanionReplacementDeclarations.getOrPut(jvmStaticFunction) {
+            val companion = jvmStaticFunction.parentAsClass
+            assert(companion.isCompanion)
+            companion.parentAsClass.makeStaticCopyFunction(jvmStaticFunction)
+        }
+
+    private fun IrClass.makeStaticCopyFunction(target: IrSimpleFunction): IrSimpleFunction = context.irFactory.buildFun {
+        updateFrom(target)
+        name = Name.identifier(context.defaultMethodSignatureMapper.mapFunctionName(target))
+        returnType = target.returnType
+        origin = JvmLoweredDeclarationOrigin.JVM_STATIC_REPLACEMENT_METHOD
+    }.apply proxy@{
+        parent = this@makeStaticCopyFunction
+        copyAttributes(target)
+        copyTypeParametersFrom(target)
+        copyAnnotationsFrom(target)
+        extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
+        valueParameters = target.valueParameters.map { it.copyTo(this) }
+        metadata = target.metadata
+        body = target.body?.deepCopyWithSymbols(this@makeStaticCopyFunction.companionObject())
+    }
 
     fun getDefaultImplsFunction(interfaceFun: IrSimpleFunction, forCompatibilityMode: Boolean = false): IrSimpleFunction {
         val parent = interfaceFun.parentAsClass

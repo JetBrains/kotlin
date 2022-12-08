@@ -168,4 +168,8 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> OLD_INNER_CLASSES_LOGIC =
             CompilerConfigurationKey.create("Use old logic for generation of InnerClasses attributes");
+
+    public static final CompilerConfigurationKey<Boolean> REWRITE_JVM_STATIC_IN_COMPANION =
+            CompilerConfigurationKey.create("If JvmStatic methods should be generated as static methods without a companion declaration," +
+                                            "or as a static method that acts as a proxy to a companion method.");
 }

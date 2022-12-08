@@ -546,6 +546,13 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
     )
     var oldInnerClassesLogic: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xrewrite-jvm-static-in-companion",
+        description = "If JvmStatic methods should be generated as static methods without a companion declaration, or as a static " +
+                "method that acts as a proxy to a companion method."
+    )
+    var rewriteJvmStaticInCompanion: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
