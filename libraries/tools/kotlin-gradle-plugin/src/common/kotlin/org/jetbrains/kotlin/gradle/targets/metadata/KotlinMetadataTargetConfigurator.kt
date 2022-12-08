@@ -345,7 +345,7 @@ class KotlinMetadataTargetConfigurator :
         }
 
         compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
-            project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
+            project.configurations.getByName(compilation.defaultSourceSet.metadataLibrariesConfigurationName),
             compilation
         )
 
@@ -364,7 +364,6 @@ class KotlinMetadataTargetConfigurator :
         val granularMetadataTransformation = GranularMetadataTransformation(
             project = project,
             kotlinSourceSet = sourceSet,
-            sourceSetRequestedScopes = dependencyScopesToTransform,
             parentTransformations = lazy {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                     .map { it.compileDependenciesTransformationOrFail }
@@ -379,20 +378,27 @@ class KotlinMetadataTargetConfigurator :
 
             if (isSourceSetPublished) {
                 project.addExtendsFromRelation(
+                    sourceSet.metadataLibrariesConfigurationName,
+                    sourceSetDependencyConfigurationByScope.name
+                )
+
+                // we need to include dependencies from sourceSetDependencyConfigurationByScope to
+                // ALL_COMPILE_METADATA_CONFIGURATION_NAME so then we can resolve consistently with it
+                // when resolving [sourceSet.metadataLibrariesConfigurationName]
+                project.addExtendsFromRelation(
                     ALL_COMPILE_METADATA_CONFIGURATION_NAME,
                     sourceSetDependencyConfigurationByScope.name
                 )
             }
-
-            val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
-            if (sourceSetMetadataConfigurationByScope != null) {
-                granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                )
-            }
         }
+
+        val sourceSetMetadataConfiguration = project.configurations.getByName(sourceSet.metadataLibrariesConfigurationName)
+        // not necessary: because granularMetadataTransformation already created out of this configuration
+        // so there is no real logic to do dependency handling there.
+        // !!!! granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfiguration)
+        sourceSetMetadataConfiguration.shouldResolveConsistentlyWith(
+            project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
+        )
     }
 
     /** Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as

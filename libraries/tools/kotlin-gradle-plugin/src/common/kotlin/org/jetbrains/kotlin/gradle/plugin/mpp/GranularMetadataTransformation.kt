@@ -97,17 +97,9 @@ internal sealed class MetadataDependencyResolution(
 internal class GranularMetadataTransformation(
     val project: Project,
     val kotlinSourceSet: KotlinSourceSet,
-    /** A list of scopes that the dependencies from [kotlinSourceSet] are treated as requested dependencies. */
-    private val sourceSetRequestedScopes: List<KotlinDependencyScope>,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
     private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
-    init {
-        require(KotlinDependencyScope.RUNTIME_ONLY_SCOPE !in sourceSetRequestedScopes) {
-            "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation"
-        }
-    }
-
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
     // Keep parents of each dependency, too. We need a dependency's parent when it's an MPP's metadata module dependency:
@@ -232,7 +224,6 @@ internal class GranularMetadataTransformation(
         val sourceSetVisibility =
             SourceSetVisibilityProvider(project).getVisibleSourceSets(
                 kotlinSourceSet,
-                sourceSetRequestedScopes,
                 if (projectStructureMetadata.isPublishedAsRoot) module else parent, module,
                 projectStructureMetadata,
                 resolvedToProject
