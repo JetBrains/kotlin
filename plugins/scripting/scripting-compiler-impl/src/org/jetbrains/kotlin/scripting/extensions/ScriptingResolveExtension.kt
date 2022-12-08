@@ -24,6 +24,7 @@ class ScriptingResolveExtension : SyntheticResolveExtension {
     ) {
         declarationProvider.getScriptDeclarations(name).mapTo(result) {
             LazyScriptDescriptor(ctx as ResolveSession, thisDescriptor, name, it)
+                .also(LazyScriptDescriptor::recordToTrace)
         }
 
         super.generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result)

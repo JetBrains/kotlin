@@ -197,7 +197,7 @@ class LocalClassDescriptorHolder(
                 classOrObject.nameAsSafeName,
                 KtClassInfoUtil.createClassOrObjectInfo(classOrObject),
                 classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
-            )
+            ).also(LazyClassDescriptor::recordToTrace)
             writableScope?.addClassifierDescriptor(classDescriptor!!)
         }
 

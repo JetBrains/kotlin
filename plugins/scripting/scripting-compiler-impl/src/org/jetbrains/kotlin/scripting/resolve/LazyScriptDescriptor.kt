@@ -67,7 +67,8 @@ class LazyScriptDescriptor(
     scriptInfo,
     /* isExternal = */ false
 ) {
-    init {
+    override fun recordToTrace() {
+        super.recordToTrace()
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
     }
 

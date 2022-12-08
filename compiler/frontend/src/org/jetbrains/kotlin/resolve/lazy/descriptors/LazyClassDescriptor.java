@@ -124,10 +124,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.c = c;
 
         classOrObject = classLikeInfo.getCorrespondingClassOrObject();
-        if (classOrObject != null) {
-            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
-        }
-        this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
+        recordToTrace();
 
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
@@ -341,6 +338,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
             return contextReceiverDescriptors;
         });
+    }
+
+    public void recordToTrace() {
+        if (classOrObject != null) {
+            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
+        }
+        this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {

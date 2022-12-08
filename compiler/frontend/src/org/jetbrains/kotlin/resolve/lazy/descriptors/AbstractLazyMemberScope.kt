@@ -65,7 +65,7 @@ protected constructor(
         val result = linkedSetOf<ClassDescriptor>()
         declarationProvider.getClassOrObjectDeclarations(name).mapTo(result) {
             val isExternal = it.modifierList?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: false
-            LazyClassDescriptor(c, thisDescriptor, name, it, isExternal)
+            LazyClassDescriptor(c, thisDescriptor, name, it, isExternal).also(LazyClassDescriptor::recordToTrace)
         }
         getNonDeclaredClasses(name, result)
         return result.toList()
