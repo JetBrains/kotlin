@@ -267,7 +267,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 arguments.setClasspath(StringUtil.join(filteredClasspath, File.pathSeparator));
             }
 
-            IncrementalJvmCompilerRunnerKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
+            CompilerRunnerUtilsKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
 
             int compiledKtFilesCount = icReporter.getCompiledKotlinFiles().size();
             getLog().info("Compiled " + icReporter.getCompiledKotlinFiles().size() + " Kotlin files using incremental compiler");
