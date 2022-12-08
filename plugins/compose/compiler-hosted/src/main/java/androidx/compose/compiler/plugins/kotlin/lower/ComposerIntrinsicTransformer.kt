@@ -20,16 +20,15 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ComposerIntrinsicTransformer(
     val context: IrPluginContext,
@@ -57,10 +56,8 @@ class ComposerIntrinsicTransformer(
         irFile.transformChildrenVoid(this)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall): IrExpression {
-        val calleeFqName = expression.symbol.descriptor.fqNameSafe
-        if (calleeFqName == currentComposerIntrinsic) {
+        if (expression.symbol.owner.kotlinFqName == currentComposerIntrinsic) {
             // since this call was transformed by the ComposerParamTransformer, the first argument
             // to this call is the composer itself. We just replace this expression with the
             // argument expression and we are good.
@@ -74,9 +71,8 @@ class ComposerIntrinsicTransformer(
                         expression: ${expression.dump()}
                 """.trimIndent()
             }
-            val composerExpr = expression.getValueArgument(0)
-            if (composerExpr == null) error("Expected non-null composer argument")
-            return composerExpr
+            return expression.getValueArgument(0)
+                ?: error("Expected non-null composer argument")
         }
         return super.visitCall(expression)
     }
