@@ -5,11 +5,27 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 import java.io.File
+
+private val elementsWithMultipleSupertypesForDefaultVisitor = mapOf(
+    FirTreeBuilder.resolvedErrorReference to FirTreeBuilder.resolvedNamedReference
+)
+
+private fun Element.isAcceptableForDefaultVisiting(): Boolean {
+    if (this == AbstractFirTreeBuilder.baseFirElement) return false
+    val hasSingleSupertype = parents.size == 1 && parents.single().name != "Element"
+    return hasSingleSupertype || this in elementsWithMultipleSupertypesForDefaultVisitor
+}
+
+private fun Element.getNameOfSupertypeForDefaultVisiting(): String {
+    val parentForDefaultVisiting = parents.singleOrNull() ?: elementsWithMultipleSupertypesForDefaultVisitor.getValue(this)
+    return parentForDefaultVisiting.name
+}
 
 fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeByDefault: Boolean): GeneratedFile {
     val className = if (visitSuperTypeByDefault) "FirDefaultVisitor" else "FirVisitor"
@@ -35,9 +51,8 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
             println("abstract fun visitElement(element: FirElement, data: D): R\n")
         }
         for (element in elements) {
-            if (element == AbstractFirTreeBuilder.baseFirElement ||
-                visitSuperTypeByDefault && (element.parents.size != 1 || element.parents.single().name == "Element")
-            ) continue
+            if (element == AbstractFirTreeBuilder.baseFirElement) continue
+            if (visitSuperTypeByDefault && !element.isAcceptableForDefaultVisiting()) continue
             with(element) {
                 val varName = safeDecapitalizedName
                 if (visitSuperTypeByDefault) {
@@ -47,7 +62,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
                 }
                 print(" fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visit")
                 if (visitSuperTypeByDefault) {
-                    print(parents.single().name)
+                    print(element.getNameOfSupertypeForDefaultVisiting())
                 } else {
                     print("Element")
                 }
@@ -126,10 +141,10 @@ fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File): Gene
 
         pushIndent()
         for (element in elements) {
-            if (element == AbstractFirTreeBuilder.baseFirElement || element.parents.size != 1 || element.parents.single().name == "Element") continue
+            if (!element.isAcceptableForDefaultVisiting()) continue
             with(element) {
                 val varName = safeDecapitalizedName
-                println("override fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${parents.first().name}($varName)")
+                println("override fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${element.getNameOfSupertypeForDefaultVisiting()}($varName)")
                 println()
             }
         }

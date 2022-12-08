@@ -413,6 +413,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
+        impl(resolvedErrorReference) {
+            defaultNull("candidateSymbol", withGetter = true)
+        }
+
         impl(resolvedCallableReference) {
             defaultNull("candidateSymbol", withGetter = true)
         }

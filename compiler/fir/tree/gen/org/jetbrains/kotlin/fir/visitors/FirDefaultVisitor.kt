@@ -130,6 +130,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -268,6 +269,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): R  = visitReference(controlFlowGraphReference, data)
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R  = visitNamedReference(resolvedNamedReference, data)
+
+    override fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference, data: D): R  = visitResolvedNamedReference(resolvedErrorReference, data)
 
     override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: D): R  = visitResolvedNamedReference(delegateFieldReference, data)
 

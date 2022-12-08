@@ -158,6 +158,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val controlFlowGraphReference by element(Reference, reference)
 
     val resolvedNamedReference by element(Reference, namedReference)
+    val resolvedErrorReference by element(Reference, resolvedNamedReference, diagnosticHolder)
     val delegateFieldReference by element(Reference, resolvedNamedReference)
     val backingFieldReference by element(Reference, resolvedNamedReference)
 
