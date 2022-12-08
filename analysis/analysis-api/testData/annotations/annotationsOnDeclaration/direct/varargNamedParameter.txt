@@ -1,0 +1,5 @@
+KtDeclaration: KtClass Foo
+annotations: [
+  A(strings = ["foo", "bar"])
+    psi: KtAnnotationEntry
+]
