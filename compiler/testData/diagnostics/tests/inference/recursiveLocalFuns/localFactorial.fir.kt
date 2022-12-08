@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // See KT-6271
 fun foo() {
     fun fact(n: Int) = {
