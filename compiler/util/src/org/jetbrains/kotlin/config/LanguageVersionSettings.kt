@@ -239,7 +239,6 @@ enum class LanguageFeature(
     // 1.8
 
     DontLoseDiagnosticsDuringOverloadResolutionByReturnType(KOTLIN_1_8),
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_8, kind = BUG_FIX), // KT-36770
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
@@ -284,6 +283,11 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
     ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
 
+
+    // This feature effectively might be removed because we decided to disable it until K2 and there it will be unconditionally enabled.
+    // But we leave it here just to minimize the changes in K1 and also to allow use the feature once somebody needs it.
+    // The reason for it's being disabled is described at KT-55357
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = null), // KT-36770
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
