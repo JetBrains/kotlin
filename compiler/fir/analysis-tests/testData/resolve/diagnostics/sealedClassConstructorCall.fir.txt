@@ -5,5 +5,5 @@ FILE: sealedClassConstructorCall.kt
         }
 
     }
-    public final val b: R|A| = <HIDDEN: /A.A is invisible>#()
+    public final val b: R|A| = R|/A.A<HIDDEN: /A.A is invisible>#|()
         public get(): R|A|

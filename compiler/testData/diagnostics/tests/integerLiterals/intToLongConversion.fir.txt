@@ -24,13 +24,13 @@ FILE: intToLongConversion.fir.kt
     public final fun takeB(b: R|B|): R|kotlin/Unit| {
     }
     public final fun test_constants(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.plus|(Int(1)))
+        R|/takeByte<Inapplicable(INAPPLICABLE): /takeByte>#|(Int(1).R|kotlin/Int.plus|(Int(1)))
         R|/takeInt|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)))
         R|/takeNullableInt|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)))
         R|/takeLong|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toLong|())
         R|/takeNullableLong|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toLong|())
         lval x: R|B| = R|/takeOverloaded|(Long(2147483648).R|kotlin/Long.minus|(Int(1)).R|kotlin/Long.plus|(Int(1)))
-        <Inapplicable(INAPPLICABLE): /takeA>#(R|<local>/x|)
+        R|/takeA<Inapplicable(INAPPLICABLE): /takeA>#|(R|<local>/x|)
         R|/takeB|(R|<local>/x|)
     }
     public final val topLevelIntProperty: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1))
@@ -46,8 +46,8 @@ FILE: intToLongConversion.fir.kt
         R|/takeLong|(R|/topLevelLongProperty|)
         R|/takeInt|(R|/topLevelImplicitIntProperty|)
         R|/takeLong|(R|/topLevelImplicitLongProperty|)
-        <Inapplicable(INAPPLICABLE): /takeLong>#(R|/topLevelIntProperty|)
-        <Inapplicable(INAPPLICABLE): /takeLong>#(R|/topLevelImplicitIntProperty|)
+        R|/takeLong<Inapplicable(INAPPLICABLE): /takeLong>#|(R|/topLevelIntProperty|)
+        R|/takeLong<Inapplicable(INAPPLICABLE): /takeLong>#|(R|/topLevelImplicitIntProperty|)
     }
     public final fun testLocalProperties(): R|kotlin/Unit| {
         lval localIntProperty: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
@@ -58,6 +58,6 @@ FILE: intToLongConversion.fir.kt
         R|/takeLong|(R|<local>/localLongProperty|)
         R|/takeInt|(R|<local>/localImplicitIntProperty|)
         R|/takeLong|(R|<local>/localImplicitLongProperty|)
-        <Inapplicable(INAPPLICABLE): /takeLong>#(R|<local>/localIntProperty|)
-        <Inapplicable(INAPPLICABLE): /takeLong>#(R|<local>/localImplicitIntProperty|)
+        R|/takeLong<Inapplicable(INAPPLICABLE): /takeLong>#|(R|<local>/localIntProperty|)
+        R|/takeLong<Inapplicable(INAPPLICABLE): /takeLong>#|(R|<local>/localImplicitIntProperty|)
     }

@@ -133,7 +133,7 @@ digraph jumps_kt {
             }
             55 [label="Variable declaration: lval y: R|kotlin/Int?|"];
             56 [label="Access variable R|<local>/y|"];
-            57 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()" style="filled" fillcolor=yellow];
+            57 [label="Function call: R|<local>/y|.R|kotlin/Int.inc<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#|()" style="filled" fillcolor=yellow];
             58 [label="Exit block"];
         }
         59 [label="Exit function test_2" style="filled" fillcolor=red];

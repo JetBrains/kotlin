@@ -54,7 +54,7 @@ digraph safeCalls_kt {
             20 [label="Function call: $subj$.R|/foo|(...)" style="filled" fillcolor=yellow];
             21 [label="Exit safe call"];
             22 [label="Access variable R|<local>/x|"];
-            23 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            23 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             24 [label="Exit block"];
         }
         25 [label="Exit function test" style="filled" fillcolor=red];
@@ -218,7 +218,7 @@ digraph safeCalls_kt {
             83 [label="Exit safe call"];
             84 [label="Exit safe call"];
             85 [label="Access variable R|<local>/x|"];
-            86 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.id>#()" style="filled" fillcolor=yellow];
+            86 [label="Function call: R|<local>/x|.R|/A.id<Inapplicable(UNSAFE_CALL): /A.id>#|()" style="filled" fillcolor=yellow];
             87 [label="Exit block"];
         }
         88 [label="Exit function test_4" style="filled" fillcolor=red];
@@ -282,7 +282,7 @@ digraph safeCalls_kt {
             106 [label="Exit safe call"];
             107 [label="Exit safe call"];
             108 [label="Access variable R|<local>/x|"];
-            109 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.id>#()" style="filled" fillcolor=yellow];
+            109 [label="Function call: R|<local>/x|.R|/A.id<Inapplicable(UNSAFE_CALL): /A.id>#|()" style="filled" fillcolor=yellow];
             110 [label="Exit block"];
         }
         111 [label="Exit function test_5" style="filled" fillcolor=red];

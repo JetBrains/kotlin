@@ -158,5 +158,5 @@ FILE: whenExpressionType.kt
             }
         }
 
-        lval x1: R|C| = <Inapplicable(INAPPLICABLE): /C.C>#(R|<local>/l1|)
+        lval x1: R|C| = R|/C.C<Inapplicable(INAPPLICABLE): /C.C>#|(R|<local>/l1|)
     }

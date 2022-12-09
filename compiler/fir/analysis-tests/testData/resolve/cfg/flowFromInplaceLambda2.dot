@@ -112,7 +112,7 @@ digraph flowFromInplaceLambda2_kt {
                     color=blue
                     49 [label="Enter block"];
                     50 [label="Access variable R|<local>/x|"];
-                    51 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    51 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     52 [label="Const: Int(123)"];
                     53 [label="Exit block"];
                 }
@@ -197,7 +197,7 @@ digraph flowFromInplaceLambda2_kt {
                     color=blue
                     80 [label="Enter block"];
                     81 [label="Access variable R|<local>/x|"];
-                    82 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    82 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     83 [label="Const: Int(123)"];
                     84 [label="Exit block"];
                 }
@@ -313,7 +313,7 @@ digraph flowFromInplaceLambda2_kt {
                     color=blue
                     126 [label="Enter block"];
                     127 [label="Access variable R|<local>/x|"];
-                    128 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    128 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     129 [label="Const: Int(123)"];
                     130 [label="Exit block"];
                 }
@@ -476,7 +476,7 @@ digraph flowFromInplaceLambda2_kt {
                             193 [label="Enter block"];
                             194 [label="Access variable R|<local>/p|"];
                             195 [label="Smart cast: R|<local>/p|"];
-                            196 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#"];
+                            196 [label="Access variable R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|"];
                             197 [label="Const: Int(123)"];
                             198 [label="Exit block"];
                         }
@@ -487,7 +487,7 @@ digraph flowFromInplaceLambda2_kt {
                     171 [label="Merge postponed lambda exits"];
                     172 [label="Function call: R|/foo|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
                     173 [label="Access variable R|<local>/p|"];
-                    174 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    174 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     175 [label="Exit block"];
                 }
                 176 [label="Exit when branch result"];
@@ -617,7 +617,7 @@ digraph flowFromInplaceLambda2_kt {
             212 [label="Merge postponed lambda exits"];
             213 [label="Function call: R|/foo|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
             214 [label="Access variable R|<local>/x|"];
-            215 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            215 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             216 [label="Exit block"];
         }
         217 [label="Exit function test5" style="filled" fillcolor=red];
@@ -736,7 +736,7 @@ digraph flowFromInplaceLambda2_kt {
                     color=blue
                     279 [label="Enter block"];
                     280 [label="Access variable R|<local>/x|"];
-                    281 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    281 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     282 [label="Const: Int(123)"];
                     283 [label="Exit block"];
                 }
@@ -747,7 +747,7 @@ digraph flowFromInplaceLambda2_kt {
             258 [label="Merge postponed lambda exits"];
             259 [label="Function call: R|/foo|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             260 [label="Access variable R|<local>/x|"];
-            261 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            261 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             262 [label="Exit block"];
         }
         263 [label="Exit function test6" style="filled" fillcolor=red];
@@ -867,7 +867,7 @@ digraph flowFromInplaceLambda2_kt {
                             323 [label="Enter block"];
                             324 [label="Access variable R|<local>/p|"];
                             325 [label="Smart cast: R|<local>/p|"];
-                            326 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#"];
+                            326 [label="Access variable R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|"];
                             327 [label="Const: Int(123)"];
                             328 [label="Exit block"];
                         }
@@ -878,7 +878,7 @@ digraph flowFromInplaceLambda2_kt {
                     306 [label="Function call: R|/foo|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
                     307 [label="Access variable R|<local>/p|"];
                     308 [label="Smart cast: R|<local>/p|"];
-                    309 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    309 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     310 [label="Exit block"];
                 }
                 311 [label="Exit when branch result"];

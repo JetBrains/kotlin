@@ -613,9 +613,9 @@ digraph boundSmartcastsInBranches_kt {
                     230 [label="Smart cast: R|<local>/x|"];
                     231 [label="Access variable R|kotlin/String.length|"];
                     232 [label="Access variable R|<local>/y|"];
-                    233 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    233 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     234 [label="Access variable R|<local>/z|"];
-                    235 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    235 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     236 [label="Exit block"];
                 }
                 237 [label="Exit when branch result"];
@@ -638,12 +638,12 @@ digraph boundSmartcastsInBranches_kt {
                     color=blue
                     247 [label="Enter block"];
                     248 [label="Access variable R|<local>/x|"];
-                    249 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    249 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     250 [label="Access variable R|<local>/y|"];
                     251 [label="Smart cast: R|<local>/y|"];
                     252 [label="Access variable R|kotlin/String.length|"];
                     253 [label="Access variable R|<local>/z|"];
-                    254 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    254 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     255 [label="Exit block"];
                 }
                 256 [label="Exit when branch result"];
@@ -666,9 +666,9 @@ digraph boundSmartcastsInBranches_kt {
                     color=blue
                     266 [label="Enter block"];
                     267 [label="Access variable R|<local>/x|"];
-                    268 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    268 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     269 [label="Access variable R|<local>/y|"];
-                    270 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    270 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     271 [label="Access variable R|<local>/z|"];
                     272 [label="Smart cast: R|<local>/z|"];
                     273 [label="Access variable R|kotlin/String.length|"];
@@ -700,9 +700,9 @@ digraph boundSmartcastsInBranches_kt {
                     290 [label="Access variable R|kotlin/String.length|"];
                     291 [label="Access variable R|<local>/y|"];
                     292 [label="Smart cast: R|<local>/y|"];
-                    293 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    293 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     294 [label="Access variable R|<local>/z|"];
-                    295 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    295 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     296 [label="Exit block"];
                 }
                 297 [label="Exit when branch result"];
@@ -726,13 +726,13 @@ digraph boundSmartcastsInBranches_kt {
                     color=blue
                     308 [label="Enter block"];
                     309 [label="Access variable R|<local>/x|"];
-                    310 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    310 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     311 [label="Access variable R|<local>/y|"];
                     312 [label="Smart cast: R|<local>/y|"];
                     313 [label="Stub" style="filled" fillcolor=gray];
                     314 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
                     315 [label="Access variable R|<local>/z|" style="filled" fillcolor=gray];
-                    316 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#" style="filled" fillcolor=gray];
+                    316 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|" style="filled" fillcolor=gray];
                     317 [label="Exit block" style="filled" fillcolor=gray];
                 }
                 318 [label="Exit when branch result" style="filled" fillcolor=gray];
@@ -755,10 +755,10 @@ digraph boundSmartcastsInBranches_kt {
                     color=blue
                     328 [label="Enter block"];
                     329 [label="Access variable R|<local>/x|"];
-                    330 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    330 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     331 [label="Access variable R|<local>/y|"];
                     332 [label="Smart cast: R|<local>/y|"];
-                    333 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    333 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     334 [label="Access variable R|<local>/z|"];
                     335 [label="Smart cast: R|<local>/z|"];
                     336 [label="Access variable R|kotlin/String.length|"];
@@ -1027,7 +1027,7 @@ digraph boundSmartcastsInBranches_kt {
                     426 [label="Access variable R|kotlin/String.length|"];
                     427 [label="Access variable R|<local>/y|"];
                     428 [label="Smart cast: R|<local>/y|"];
-                    429 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    429 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     430 [label="Access variable R|<local>/z|"];
                     431 [label="Smart cast: R|<local>/z|"];
                     432 [label="Access variable R|kotlin/String.length|"];
@@ -1054,13 +1054,13 @@ digraph boundSmartcastsInBranches_kt {
                     color=blue
                     445 [label="Enter block"];
                     446 [label="Access variable R|<local>/x|"];
-                    447 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    447 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     448 [label="Access variable R|<local>/y|"];
                     449 [label="Smart cast: R|<local>/y|"];
                     450 [label="Stub" style="filled" fillcolor=gray];
                     451 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
                     452 [label="Access variable R|<local>/z|" style="filled" fillcolor=gray];
-                    453 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#" style="filled" fillcolor=gray];
+                    453 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|" style="filled" fillcolor=gray];
                     454 [label="Exit block" style="filled" fillcolor=gray];
                 }
                 455 [label="Exit when branch result" style="filled" fillcolor=gray];
@@ -1087,7 +1087,7 @@ digraph boundSmartcastsInBranches_kt {
                     468 [label="Access variable R|kotlin/String.length|"];
                     469 [label="Access variable R|<local>/y|"];
                     470 [label="Smart cast: R|<local>/y|"];
-                    471 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    471 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     472 [label="Access variable R|<local>/z|"];
                     473 [label="Smart cast: R|<local>/z|"];
                     474 [label="Access variable R|kotlin/String.length|"];
@@ -1287,7 +1287,7 @@ digraph boundSmartcastsInBranches_kt {
                 507 [label="Exit when"];
             }
             508 [label="Access variable R|<local>/b|"];
-            509 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            509 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             subgraph cluster_97 {
                 color=blue
                 510 [label="Enter when"];

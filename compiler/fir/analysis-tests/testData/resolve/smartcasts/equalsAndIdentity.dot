@@ -140,9 +140,9 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     52 [label="Enter block"];
                     53 [label="Access variable R|<local>/x|"];
-                    54 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    54 [label="Function call: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     55 [label="Access variable R|<local>/y|"];
-                    56 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    56 [label="Function call: R|<local>/y|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     57 [label="Exit block"];
                 }
                 58 [label="Exit when branch result"];
@@ -165,9 +165,9 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     68 [label="Enter block"];
                     69 [label="Access variable R|<local>/x|"];
-                    70 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    70 [label="Function call: R|<local>/x|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     71 [label="Access variable R|<local>/y|"];
-                    72 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    72 [label="Function call: R|<local>/y|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     73 [label="Exit block"];
                 }
                 74 [label="Exit when branch result"];

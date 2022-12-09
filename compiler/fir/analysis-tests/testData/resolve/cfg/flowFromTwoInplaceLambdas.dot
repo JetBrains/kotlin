@@ -75,7 +75,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                             46 [label="Enter block"];
                             47 [label="Access variable R|<local>/p|"];
                             48 [label="Smart cast: R|<local>/p|"];
-                            49 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#"];
+                            49 [label="Access variable R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|"];
                             50 [label="Const: Int(123)"];
                             51 [label="Exit block"];
                         }
@@ -99,7 +99,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                     29 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
                     30 [label="Access variable R|<local>/p|"];
                     31 [label="Smart cast: R|<local>/p|"];
-                    32 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    32 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     33 [label="Exit block"];
                 }
                 34 [label="Exit when branch result"];
@@ -184,7 +184,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                             86 [label="Enter block"];
                             87 [label="Access variable R|<local>/p|"];
                             88 [label="Smart cast: R|<local>/p|"];
-                            89 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#"];
+                            89 [label="Access variable R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|"];
                             90 [label="Const: Int(123)"];
                             91 [label="Exit block"];
                         }
@@ -208,7 +208,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                     69 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
                     70 [label="Access variable R|<local>/p|"];
                     71 [label="Smart cast: R|<local>/p|"];
-                    72 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    72 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     73 [label="Exit block"];
                 }
                 74 [label="Exit when branch result"];
@@ -390,7 +390,7 @@ digraph flowFromTwoInplaceLambdas_kt {
             136 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
             137 [label="Access variable R|<local>/p|"];
             138 [label="Smart cast: R|<local>/p|"];
-            139 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            139 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             140 [label="Access variable R|<local>/p|"];
             141 [label="Smart cast: R|<local>/p|"];
             142 [label="Enter safe call"];
@@ -588,7 +588,7 @@ digraph flowFromTwoInplaceLambdas_kt {
             212 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
             213 [label="Access variable R|<local>/p|"];
             214 [label="Smart cast: R|<local>/p|"];
-            215 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            215 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             216 [label="Access variable R|<local>/p|"];
             217 [label="Smart cast: R|<local>/p|"];
             218 [label="Enter safe call"];

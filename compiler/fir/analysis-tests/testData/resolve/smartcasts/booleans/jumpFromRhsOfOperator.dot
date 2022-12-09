@@ -280,7 +280,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             108 [label="Access variable R|<local>/a|"];
             109 [label="Smart cast: R|<local>/a|"];
-            110 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            110 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             111 [label="Exit block"];
         }
         112 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -324,7 +324,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             125 [label="Access variable R|<local>/a|"];
             126 [label="Smart cast: R|<local>/a|"];
-            127 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            127 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             128 [label="Exit block"];
         }
         129 [label="Exit function teat_6" style="filled" fillcolor=red];
@@ -381,7 +381,7 @@ digraph jumpFromRhsOfOperator_kt {
                     147 [label="Enter block"];
                     148 [label="Access variable R|<local>/a|"];
                     149 [label="Smart cast: R|<local>/a|"];
-                    150 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    150 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     151 [label="Exit block"];
                 }
                 152 [label="Exit when branch result"];
@@ -389,7 +389,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             154 [label="Access variable R|<local>/a|"];
             155 [label="Smart cast: R|<local>/a|"];
-            156 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            156 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             157 [label="Exit block"];
         }
         158 [label="Exit function test_7" style="filled" fillcolor=red];
@@ -458,7 +458,7 @@ digraph jumpFromRhsOfOperator_kt {
                     176 [label="Enter block"];
                     177 [label="Access variable R|<local>/a|"];
                     178 [label="Smart cast: R|<local>/a|"];
-                    179 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    179 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     180 [label="Exit block"];
                 }
                 181 [label="Exit when branch result"];
@@ -466,7 +466,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             183 [label="Access variable R|<local>/a|"];
             184 [label="Smart cast: R|<local>/a|"];
-            185 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            185 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             186 [label="Exit block"];
         }
         187 [label="Exit function test_8" style="filled" fillcolor=red];

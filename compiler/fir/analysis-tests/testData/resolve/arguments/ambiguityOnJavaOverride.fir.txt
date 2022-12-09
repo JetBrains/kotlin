@@ -10,5 +10,5 @@ FILE: main.kt
 
     }
     public final fun test(b: R|B|): R|kotlin/Unit| {
-        R|<local>/b|.<HIDDEN: /B.foo is invisible>#(String())
+        R|<local>/b|.R|/B.foo<HIDDEN: /B.foo is invisible>#|(String())
     }

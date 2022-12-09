@@ -213,7 +213,7 @@ digraph bangbang_kt {
                 84 [label="Exit when"];
             }
             85 [label="Access variable R|<local>/a|"];
-            86 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            86 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             87 [label="Exit block"];
         }
         88 [label="Exit function test_3" style="filled" fillcolor=red];
@@ -347,14 +347,14 @@ digraph bangbang_kt {
                     color=blue
                     131 [label="Enter block"];
                     132 [label="Access variable R|<local>/a|"];
-                    133 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+                    133 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     134 [label="Exit block"];
                 }
                 135 [label="Exit when branch result"];
                 136 [label="Exit when"];
             }
             137 [label="Access variable R|<local>/a|"];
-            138 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            138 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             139 [label="Exit block"];
         }
         140 [label="Exit function test_5" style="filled" fillcolor=red];

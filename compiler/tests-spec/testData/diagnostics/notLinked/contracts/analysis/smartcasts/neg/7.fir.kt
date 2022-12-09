@@ -237,9 +237,9 @@ fun case_4(value_1: Any?) {
     case_4_1(value_1)
     value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>()
     case_4_2(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)
-    value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-    case_4_3(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)
-    value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+    value_1.toByte()
+    case_4_3(value_1)
+    value_1.inv()
 }
 
 // TESTCASE NUMBER: 5
@@ -331,29 +331,29 @@ fun case_8(value_1: Any?) {
     if (case_8_1(value_1)) {
         value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>()
         if (case_8_2(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) {
-            value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (case_8_3(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            value_1.toByte()
+            if (case_8_3(value_1)) value_1.inv()
         }
     }
     if (!case_8_4(value_1)) {
         value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>()
         if (!case_8_5(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) {
-            value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (!case_8_6(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            value_1.toByte()
+            if (!case_8_6(value_1)) value_1.inv()
         }
     }
     if (case_8_7(value_1) == null) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
         if (case_8_8(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) != null) {
-            value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (case_8_9(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) != null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            value_1<!UNSAFE_CALL!>.<!>toByte()
+            if (case_8_9(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) != null) value_1<!UNSAFE_CALL!>.<!>inv()
         }
     }
     if (case_8_10(value_1) != null) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
         if (case_8_11(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) == null) {
-            value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (case_8_12(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) == null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            value_1<!UNSAFE_CALL!>.<!>toByte()
+            if (case_8_12(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) == null) value_1<!UNSAFE_CALL!>.<!>inv()
         }
     }
 }

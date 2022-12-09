@@ -54,7 +54,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/s|"];
-                    23 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    23 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     24 [label="Exit block"];
                 }
                 25 [label="Exit when branch result"];
@@ -133,7 +133,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     50 [label="Enter block"];
                     51 [label="Access variable R|<local>/s|"];
-                    52 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    52 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     53 [label="Exit block"];
                 }
                 54 [label="Exit when branch result"];
@@ -222,7 +222,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     86 [label="Enter block"];
                     87 [label="Access variable R|<local>/s|"];
-                    88 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    88 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     89 [label="Exit block"];
                 }
                 90 [label="Exit when branch result"];
@@ -301,7 +301,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     115 [label="Enter block"];
                     116 [label="Access variable R|<local>/s|"];
-                    117 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    117 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     118 [label="Exit block"];
                 }
                 119 [label="Exit when branch result"];

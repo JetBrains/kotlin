@@ -22,11 +22,11 @@ FILE: flowFromTwoInplaceLambdas.kt
                     ^ R|/n|<R|kotlin/Int?|>()
                 }
                 , run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
-                    R|<local>/p|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
+                    R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|
                     ^ Int(123)
                 }
                 )
-                R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
@@ -40,11 +40,11 @@ FILE: flowFromTwoInplaceLambdas.kt
                     ^ R|/n|<R|kotlin/Int?|>()
                 }
                 , <L> = run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
-                    R|<local>/p|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
+                    R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|
                     ^ Int(123)
                 }
                 )
-                R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
@@ -76,7 +76,7 @@ FILE: flowFromTwoInplaceLambdas.kt
             ^ Int(123)
         }
         )
-        R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+        R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
         R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
     }
     public abstract interface I1 : R|kotlin/Any| {
@@ -118,7 +118,7 @@ FILE: flowFromTwoInplaceLambdas.kt
             ^ R|/n|<R|kotlin/Int?|>()
         }
         )
-        R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+        R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
         R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
     }
     public final fun test6(): R|kotlin/Unit| {

@@ -85,5 +85,5 @@ FILE: typeAliasWithTypeArguments.kt
         R|<local>/inv3|.R|SubstitutionOverride</Invariant.value: R|CapturedType(out A)|>|().R|/A.foo|()
         R|<local>/inv1|.R|SubstitutionOverride</Invariant.take: R|kotlin/Unit|>|(R|<local>/a|)
         R|<local>/inv2|.R|SubstitutionOverride</Invariant.take: R|kotlin/Unit|>|(R|<local>/a|)
-        R|<local>/inv3|.<Inapplicable(INAPPLICABLE): /Invariant.take>#(R|<local>/a|)
+        R|<local>/inv3|.R|SubstitutionOverride</Invariant.take: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /Invariant.take>#|(R|<local>/a|)
     }

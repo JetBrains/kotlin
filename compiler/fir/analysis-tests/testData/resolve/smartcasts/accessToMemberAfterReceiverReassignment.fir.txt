@@ -17,7 +17,7 @@ FILE: accessToMemberAfterReceiverReassignment.kt
             !=(R|<local>/y|?.{ $subj$.R|/My.x| }, Null(null)) ->  {
                 R|<local>/y|.R|/My.x|.R|/My.x|
                 R|<local>/y| = R|/My.My|(Null(null))
-                R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#
+                R|<local>/y|.R|/My.x|.R|/My.x<Inapplicable(UNSAFE_CALL): /My.x>#|
             }
         }
 
@@ -28,7 +28,7 @@ FILE: accessToMemberAfterReceiverReassignment.kt
             !=(R|<local>/y|?.{ $subj$.R|/My.x| }?.{ $subj$.R|/My.x| }, Null(null)) ->  {
                 R|<local>/y|.R|/My.x|.R|/My.x|.R|/My.x|
                 R|<local>/y| = R|/My.My|(Null(null))
-                R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#.<Inapplicable(UNSAFE_CALL): /My.x>#
+                R|<local>/y|.R|/My.x|.R|/My.x<Inapplicable(UNSAFE_CALL): /My.x>#|.R|/My.x<Inapplicable(UNSAFE_CALL): /My.x>#|
             }
         }
 
@@ -39,7 +39,7 @@ FILE: accessToMemberAfterReceiverReassignment.kt
             !=(R|<local>/y|.R|/My.x|, Null(null)) ->  {
                 R|<local>/y|.R|/My.x|.R|/My.x|
                 R|<local>/y| = R|/My.My|(Null(null))
-                R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#
+                R|<local>/y|.R|/My.x|.R|/My.x<Inapplicable(UNSAFE_CALL): /My.x>#|
             }
         }
 
@@ -53,8 +53,8 @@ FILE: accessToMemberAfterReceiverReassignment.kt
                         R|<local>/y|.R|/My.x|.R|/My.x|
                         R|<local>/y|.R|/My.z|.R|/My.z|
                         R|<local>/y| = R|/My.My|(Null(null))
-                        R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#
-                        R|<local>/y|.R|/My.z|.<Inapplicable(UNSAFE_CALL): /My.z>#
+                        R|<local>/y|.R|/My.x|.R|/My.x<Inapplicable(UNSAFE_CALL): /My.x>#|
+                        R|<local>/y|.R|/My.z|.R|/My.z<Inapplicable(UNSAFE_CALL): /My.z>#|
                     }
                 }
 

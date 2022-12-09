@@ -134,7 +134,7 @@ digraph postponedLambdaInReturn_kt {
             24 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
             25 [label="Variable declaration: lval x: R|kotlin/String|"];
             26 [label="Access variable R|<local>/y|"];
-            27 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            27 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
             28 [label="Exit block"];
         }
         29 [label="Exit function test1" style="filled" fillcolor=red];

@@ -78,7 +78,7 @@ digraph delayedAssignment_kt {
                 33 [label="Exit when"];
             }
             34 [label="Access variable R|<local>/a|"];
-            35 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
+            35 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             36 [label="Exit block"];
         }
         37 [label="Exit function test" style="filled" fillcolor=red];
