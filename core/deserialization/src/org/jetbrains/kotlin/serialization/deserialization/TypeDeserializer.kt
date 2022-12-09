@@ -126,7 +126,8 @@ class TypeDeserializer(
             else ->
                 KotlinTypeFactory.simpleType(attributes, constructor, arguments, proto.nullable).let {
                     if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
-                        DefinitelyNotNullType.makeDefinitelyNotNull(it) ?: error("null DefinitelyNotNullType for '$it'")
+                        DefinitelyNotNullType.makeDefinitelyNotNull(it, useCorrectedNullabilityForTypeParameters = true)
+                            ?: error("null DefinitelyNotNullType for '$it'")
                     else
                         it
                 }
