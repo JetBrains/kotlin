@@ -419,21 +419,27 @@ class ControlFlowGraphBuilder {
             else -> throw IllegalArgumentException("Unknown class kind: ${klass::class}")
         }
 
+        val calledInPlace = mutableListOf<ControlFlowGraph>()
+        val calledLater = mutableListOf<ControlFlowGraph>()
+        for (declaration in klass.declarations) {
+            if (declaration is FirControlFlowGraphOwner) {
+                // TODO: constructors are also called-in-place, but after everything else, and only one of them is chosen.
+                val target = if (declaration is FirFunction || declaration is FirClass) calledLater else calledInPlace
+                declaration.controlFlowGraphReference?.controlFlowGraph?.let(target::add)
+            }
+            if (declaration is FirProperty) {
+                declaration.getter?.controlFlowGraphReference?.controlFlowGraph?.let(calledLater::add)
+                declaration.setter?.controlFlowGraphReference?.controlFlowGraph?.let(calledLater::add)
+            }
+        }
+
         val classGraph = ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer)
         pushGraph(classGraph, Mode.ClassInitializer)
         val exitNode = createClassExitNode(klass)
         var node: CFGNode<*> = createClassEnterNode(klass)
         var prevInitPartNode: CFGNode<*>? = null
-        for (declaration in klass.declarations) {
-            val graph = when (declaration) {
-                // TODO: property accessors?
-                is FirProperty -> declaration.controlFlowGraphReference?.controlFlowGraph
-                is FirField -> declaration.controlFlowGraphReference?.controlFlowGraph
-                is FirAnonymousInitializer -> declaration.controlFlowGraphReference?.controlFlowGraph
-                else -> null
-            } ?: continue
-
-            createPartOfClassInitializationNode(declaration as FirControlFlowGraphOwner).also {
+        for (graph in calledInPlace) {
+            createPartOfClassInitializationNode(graph.declaration as FirControlFlowGraphOwner).also {
                 currentGraph.addSubGraph(graph)
                 addEdge(node, it, preferredKind = EdgeKind.CfgForward)
                 addEdge(it, graph.enterNode, preferredKind = EdgeKind.CfgForward)
@@ -456,9 +462,7 @@ class ControlFlowGraphBuilder {
         //         init { x = bar() }
         //     }
         //     println(x)
-        for (declaration in klass.declarations) {
-            if (declaration !is FirFunction) continue
-            val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: continue
+        for (graph in calledLater) {
             addEdge(exitNode, graph.enterNode, preferredKind = EdgeKind.CfgForward)
             exitNode.addSubGraph(graph)
             currentGraph.addSubGraph(graph)
