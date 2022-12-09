@@ -1605,6 +1605,7 @@ open class RawFirBuilder(
                     isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                 }
                 dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
+                contextReceivers.addAll(convertContextReceivers(owner.contextReceivers))
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
                 delegatedConstructor = buildOrLazyDelegatedConstructorCall(
                     isThis = isDelegatedCallToThis(),

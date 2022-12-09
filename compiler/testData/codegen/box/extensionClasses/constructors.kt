@@ -1,7 +1,6 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: context receivers aren't yet supported
+// IGNORE_BACKEND_K2: JS_IR
 // WITH_STDLIB
 
 class A(val ok: String)
