@@ -27440,6 +27440,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("delegationToJavaDnn.kt")
+        public void testDelegationToJavaDnn() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/delegationToJavaDnn.kt");
+        }
+
+        @Test
         @TestMetadata("genericSamProjectedOut.kt")
         public void testGenericSamProjectedOut() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt");
