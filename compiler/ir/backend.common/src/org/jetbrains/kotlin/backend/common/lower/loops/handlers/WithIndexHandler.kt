@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
-import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoFromCallHandler
+import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.NestedHeaderInfoBuilderForWithIndex
 import org.jetbrains.kotlin.backend.common.lower.loops.WithIndexHeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.matchers.Quantifier
@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for calls to `withIndex()`. */
-internal class WithIndexHandler(context: CommonBackendContext, private val visitor: NestedHeaderInfoBuilderForWithIndex) :
-    HeaderInfoFromCallHandler<Nothing?> {
-
+internal class WithIndexHandler(
+    context: CommonBackendContext, private val visitor: NestedHeaderInfoBuilderForWithIndex
+) : HeaderInfoHandler<IrCall, Nothing?> {
     private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     // Use Quantifier.ANY so we can handle all `withIndex()` calls in the same manner.
-    override val matcher =
+    private val matcher =
         createIrCallMatcher(Quantifier.ANY) {
             callee {
                 fqName { it == FqName("kotlin.collections.withIndex") }
@@ -52,6 +52,8 @@ internal class WithIndexHandler(context: CommonBackendContext, private val visit
                 parameterCount { it == 0 }
             }
         }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? {
         // WithIndexHeaderInfo is a composite that contains the HeaderInfo for the underlying iterable (if any).

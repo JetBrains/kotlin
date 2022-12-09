@@ -17,19 +17,19 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
-internal class RangeToHandler(private val context: CommonBackendContext) :
-    ProgressionHandler {
-
+internal class RangeToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
 
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
-    override val matcher = SimpleCalleeMatcher {
+    private val matcher = SimpleCalleeMatcher {
         dispatchReceiver { it != null && it.type in progressionElementTypes }
         fqName { it.pathSegments().last() == OperatorNameConventions.RANGE_TO }
         parameterCount { it == 1 }
         parameter(0) { it.type in progressionElementTypes }
     }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
