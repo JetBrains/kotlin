@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDecla
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -204,34 +203,23 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Classes -----------------------------------
 
-    fun enterClass() {
-        graphBuilder.enterClass()
+    fun enterClass(klass: FirClass, buildGraph: Boolean) {
+        graphBuilder.enterClass(klass, buildGraph)?.mergeIncomingFlow()
     }
 
-    fun exitClass() {
-        graphBuilder.exitClass()
-    }
-
-    fun exitRegularClass(klass: FirRegularClass): ControlFlowGraph {
-        if (klass.isLocal && components.container !is FirClass) return exitLocalClass(klass)
-        return graphBuilder.exitClass(klass)
-    }
-
-    private fun exitLocalClass(klass: FirRegularClass): ControlFlowGraph {
-        // TODO: support capturing of mutable properties, KT-44877
-        val (node, controlFlowGraph) = graphBuilder.exitLocalClass(klass)
-        node.mergeIncomingFlow()
-        return controlFlowGraph
-    }
-
-    fun enterAnonymousObject(anonymousObject: FirAnonymousObject) {
-        graphBuilder.enterAnonymousObject(anonymousObject).mergeIncomingFlow()
-    }
-
-    fun exitAnonymousObject(anonymousObject: FirAnonymousObject): ControlFlowGraph {
-        val (node, controlFlowGraph) = graphBuilder.exitAnonymousObject(anonymousObject)
-        node.mergeIncomingFlow()
-        return controlFlowGraph
+    fun exitClass(): ControlFlowGraph? {
+        // TODO: support capturing of mutable properties
+        //   var x: String?
+        //   x = ""
+        //   class C { init { x = maybeNull() } }
+        //   // C will be initialized at first use - x is no longer safe to smart cast
+        val (node, graph) = graphBuilder.exitClass() ?: return null
+        if (node != null) {
+            node.mergeIncomingFlow()
+        } else {
+            resetReceivers() // to state before class initialization
+        }
+        return graph
     }
 
     fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
