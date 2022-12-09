@@ -20,7 +20,6 @@ internal object LazyTransformerFactory {
         lockProvider: LLFirLockProvider,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
-        checkPCE: Boolean,
     ): LLFirLazyTransformer = when (phase) {
         FirResolvePhase.COMPANION_GENERATION -> LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
             designation = designation,
@@ -33,7 +32,6 @@ internal object LazyTransformerFactory {
             scopeSession = scopeSession,
             lockProvider = lockProvider,
             firProviderInterceptor = firProviderInterceptor,
-            checkPCE = checkPCE,
         )
         FirResolvePhase.TYPES -> LLFirDesignatedTypeResolverTransformer(
             designation,

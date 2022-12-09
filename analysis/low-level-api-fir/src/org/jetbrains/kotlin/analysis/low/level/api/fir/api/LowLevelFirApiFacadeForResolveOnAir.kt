@@ -202,7 +202,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         declarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
             FirDesignationWithFile(path = emptyList(), target = fileAnnotationsContainer, firFile),
-            checkPCE = true,
             onAirCreatedDeclaration = true,
             collector
         )
@@ -248,7 +247,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         val isInBodyReplacement = isInBodyReplacement(nonLocalDeclaration, replacement)
 
-        return firResolveSession.globalComponents.lockProvider.runCustomResolveUnderLock(originalFirFile, true) {
+        return firResolveSession.globalComponents.lockProvider.runCustomResolveUnderLock(originalFirFile) {
             val copiedFirDeclaration = if (isInBodyReplacement) {
                 when (originalDeclaration) {
                     is FirSimpleFunction ->
@@ -272,7 +271,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
             resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
                 .runLazyDesignatedOnAirResolveToBodyWithoutLock(
                     designation = onAirDesignation,
-                    checkPCE = true,
                     onAirCreatedDeclaration = onAirCreatedDeclaration,
                     towerDataContextCollector = collector,
                 )

@@ -23,7 +23,6 @@ internal class LLFirLazyTransformerExecutor {
             lockProvider: LLFirLockProvider,
             towerDataContextCollector: FirTowerDataContextCollector?,
             firProviderInterceptor: FirProviderInterceptor?,
-            checkPCE: Boolean
         ) {
 
             val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
@@ -33,7 +32,6 @@ internal class LLFirLazyTransformerExecutor {
                 lockProvider,
                 towerDataContextCollector,
                 firProviderInterceptor,
-                checkPCE
             )
             lazyTransformer.transformDeclaration(phaseRunner)
         }

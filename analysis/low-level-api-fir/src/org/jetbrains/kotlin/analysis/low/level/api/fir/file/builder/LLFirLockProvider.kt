@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -32,12 +32,7 @@ internal class LLFirLockProvider {
  */
 internal inline fun <R> LLFirLockProvider.runCustomResolveUnderLock(
     firFile: FirFile,
-    checkPCE: Boolean,
     body: () -> R
 ): R {
-    return if (checkPCE) {
-        withWriteLockPCECheck(key = firFile, lockingIntervalMs = 50L, body)
-    } else {
-        withWriteLock(key = firFile, action = body)
-    }
+    return withWriteLockPCECheck(key = firFile, lockingIntervalMs = 50L, body)
 }
