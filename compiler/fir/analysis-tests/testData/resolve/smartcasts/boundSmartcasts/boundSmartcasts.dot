@@ -345,24 +345,23 @@ digraph boundSmartcasts_kt {
 
     subgraph cluster_28 {
         color=red
-        128 [label="Enter property" style="filled" fillcolor=red];
-        129 [label="Access variable R|<local>/any|"];
-        130 [label="Exit property" style="filled" fillcolor=red];
-    }
-    128 -> {129};
-    129 -> {130};
-    130 -> {133} [color=green];
-
-    subgraph cluster_29 {
-        color=red
         131 [label="Enter class D" style="filled" fillcolor=red];
         132 [label="Part of class initialization"];
+        subgraph cluster_29 {
+            color=blue
+            128 [label="Enter property" style="filled" fillcolor=red];
+            129 [label="Access variable R|<local>/any|"];
+            130 [label="Exit property" style="filled" fillcolor=red];
+        }
         133 [label="Exit class D" style="filled" fillcolor=red];
     }
     131 -> {132} [color=green];
     132 -> {128} [color=green];
     132 -> {133} [style=dotted];
     132 -> {128} [style=dashed];
+    128 -> {129};
+    129 -> {130};
+    130 -> {133} [color=green];
 
     subgraph cluster_30 {
         color=red

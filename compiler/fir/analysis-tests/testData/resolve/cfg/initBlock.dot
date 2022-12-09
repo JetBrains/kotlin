@@ -14,33 +14,32 @@ digraph initBlock_kt {
 
     subgraph cluster_1 {
         color=red
-        3 [label="Enter init block" style="filled" fillcolor=red];
-        subgraph cluster_2 {
-            color=blue
-            4 [label="Enter block"];
-            5 [label="Const: Int(1)"];
-            6 [label="Variable declaration: lval x: R|kotlin/Int|"];
-            7 [label="Exit block"];
-        }
-        8 [label="Exit init block" style="filled" fillcolor=red];
-    }
-    3 -> {4};
-    4 -> {5};
-    5 -> {6};
-    6 -> {7};
-    7 -> {8};
-    8 -> {11} [color=green];
-
-    subgraph cluster_3 {
-        color=red
         9 [label="Enter class Foo" style="filled" fillcolor=red];
         10 [label="Part of class initialization"];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_3 {
+                color=blue
+                4 [label="Enter block"];
+                5 [label="Const: Int(1)"];
+                6 [label="Variable declaration: lval x: R|kotlin/Int|"];
+                7 [label="Exit block"];
+            }
+            8 [label="Exit init block" style="filled" fillcolor=red];
+        }
         11 [label="Exit class Foo" style="filled" fillcolor=red];
     }
     9 -> {10} [color=green];
     10 -> {3} [color=green];
     10 -> {11} [style=dotted];
     10 -> {3} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {11} [color=green];
 
     subgraph cluster_4 {
         color=red
@@ -53,21 +52,31 @@ digraph initBlock_kt {
 
     subgraph cluster_5 {
         color=red
-        15 [label="Enter init block" style="filled" fillcolor=red];
+        26 [label="Enter class Bar" style="filled" fillcolor=red];
+        27 [label="Part of class initialization"];
         subgraph cluster_6 {
             color=blue
-            16 [label="Enter block"];
-            17 [label="Const: Int(1)"];
-            18 [label="Variable declaration: lval x: R|kotlin/Int|"];
-            19 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-            20 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-            21 [label="Stub" style="filled" fillcolor=gray];
-            22 [label="Const: Int(2)" style="filled" fillcolor=gray];
-            23 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
-            24 [label="Exit block" style="filled" fillcolor=gray];
+            15 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_7 {
+                color=blue
+                16 [label="Enter block"];
+                17 [label="Const: Int(1)"];
+                18 [label="Variable declaration: lval x: R|kotlin/Int|"];
+                19 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                20 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                21 [label="Stub" style="filled" fillcolor=gray];
+                22 [label="Const: Int(2)" style="filled" fillcolor=gray];
+                23 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
+                24 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            25 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
         }
-        25 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        28 [label="Exit class Bar" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
+    26 -> {27} [color=green];
+    27 -> {15} [color=green];
+    27 -> {28} [style=dotted];
+    27 -> {15} [style=dashed];
     15 -> {16};
     16 -> {17};
     17 -> {18};
@@ -79,16 +88,5 @@ digraph initBlock_kt {
     23 -> {24} [style=dotted];
     24 -> {25} [style=dotted];
     25 -> {28} [style=dotted];
-
-    subgraph cluster_7 {
-        color=red
-        26 [label="Enter class Bar" style="filled" fillcolor=red];
-        27 [label="Part of class initialization"];
-        28 [label="Exit class Bar" style="filled" fillcolor=red style="filled" fillcolor=gray];
-    }
-    26 -> {27} [color=green];
-    27 -> {15} [color=green];
-    27 -> {28} [style=dotted];
-    27 -> {15} [style=dashed];
 
 }

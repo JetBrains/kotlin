@@ -73,18 +73,8 @@ digraph postponedLambdaInConstructor_kt {
 
     subgraph cluster_7 {
         color=red
-        22 [label="Enter property" style="filled" fillcolor=red];
-        23 [label="Access variable R|<local>/s|"];
-        24 [label="Exit property" style="filled" fillcolor=red];
-    }
-    22 -> {23};
-    23 -> {24};
-    24 -> {32} [color=green];
-
-    subgraph cluster_8 {
-        color=red
         25 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_9 {
+        subgraph cluster_8 {
             color=blue
             26 [label="Enter block"];
             27 [label="Function call: this@R|/B|.R|/B.foo|()" style="filled" fillcolor=yellow];
@@ -97,15 +87,24 @@ digraph postponedLambdaInConstructor_kt {
     27 -> {28};
     28 -> {29};
 
-    subgraph cluster_10 {
+    subgraph cluster_9 {
         color=red
         30 [label="Enter class B" style="filled" fillcolor=red];
         31 [label="Part of class initialization"];
+        subgraph cluster_10 {
+            color=blue
+            22 [label="Enter property" style="filled" fillcolor=red];
+            23 [label="Access variable R|<local>/s|"];
+            24 [label="Exit property" style="filled" fillcolor=red];
+        }
         32 [label="Exit class B" style="filled" fillcolor=red];
     }
     30 -> {31} [color=green];
     31 -> {22} [color=green];
     31 -> {32} [style=dotted];
     31 -> {22} [style=dashed];
+    22 -> {23};
+    23 -> {24};
+    24 -> {32} [color=green];
 
 }

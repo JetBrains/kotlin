@@ -63,18 +63,8 @@ digraph nullability_kt {
 
     subgraph cluster_8 {
         color=red
-        17 [label="Enter property" style="filled" fillcolor=red];
-        18 [label="Access variable R|<local>/data|"];
-        19 [label="Exit property" style="filled" fillcolor=red];
-    }
-    17 -> {18};
-    18 -> {19};
-    19 -> {29} [color=green];
-
-    subgraph cluster_9 {
-        color=red
         20 [label="Enter function fdata" style="filled" fillcolor=red];
-        subgraph cluster_10 {
+        subgraph cluster_9 {
             color=blue
             21 [label="Enter block"];
             22 [label="Const: Null(null)"];
@@ -92,16 +82,25 @@ digraph nullability_kt {
     24 -> {25} [style=dotted];
     25 -> {26} [style=dotted];
 
-    subgraph cluster_11 {
+    subgraph cluster_10 {
         color=red
         27 [label="Enter class QImpl" style="filled" fillcolor=red];
         28 [label="Part of class initialization"];
+        subgraph cluster_11 {
+            color=blue
+            17 [label="Enter property" style="filled" fillcolor=red];
+            18 [label="Access variable R|<local>/data|"];
+            19 [label="Exit property" style="filled" fillcolor=red];
+        }
         29 [label="Exit class QImpl" style="filled" fillcolor=red];
     }
     27 -> {28} [color=green];
     28 -> {17} [color=green];
     28 -> {29} [style=dotted];
     28 -> {17} [style=dashed];
+    17 -> {18};
+    18 -> {19};
+    19 -> {29} [color=green];
 
     subgraph cluster_12 {
         color=red
@@ -114,18 +113,8 @@ digraph nullability_kt {
 
     subgraph cluster_13 {
         color=red
-        33 [label="Enter property" style="filled" fillcolor=red];
-        34 [label="Access variable R|<local>/data|"];
-        35 [label="Exit property" style="filled" fillcolor=red];
-    }
-    33 -> {34};
-    34 -> {35};
-    35 -> {45} [color=green];
-
-    subgraph cluster_14 {
-        color=red
         36 [label="Enter function fdata" style="filled" fillcolor=red];
-        subgraph cluster_15 {
+        subgraph cluster_14 {
             color=blue
             37 [label="Enter block"];
             38 [label="Const: Null(null)"];
@@ -143,16 +132,25 @@ digraph nullability_kt {
     40 -> {41} [style=dotted];
     41 -> {42} [style=dotted];
 
-    subgraph cluster_16 {
+    subgraph cluster_15 {
         color=red
         43 [label="Enter class QImplMutable" style="filled" fillcolor=red];
         44 [label="Part of class initialization"];
+        subgraph cluster_16 {
+            color=blue
+            33 [label="Enter property" style="filled" fillcolor=red];
+            34 [label="Access variable R|<local>/data|"];
+            35 [label="Exit property" style="filled" fillcolor=red];
+        }
         45 [label="Exit class QImplMutable" style="filled" fillcolor=red];
     }
     43 -> {44} [color=green];
     44 -> {33} [color=green];
     44 -> {45} [style=dotted];
     44 -> {33} [style=dashed];
+    33 -> {34};
+    34 -> {35};
+    35 -> {45} [color=green];
 
     subgraph cluster_17 {
         color=red

@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.coneEffects
 import org.jetbrains.kotlin.fir.contracts.description.*
+import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -34,27 +33,32 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        val function = graph.declaration as? FirFunction ?: return
-        val graphRef = function.controlFlowGraphReference as FirControlFlowGraphReferenceImpl
-        val dataFlowInfo = graphRef.dataFlowInfo
-        if (function !is FirContractDescriptionOwner || dataFlowInfo == null) return
-
-        val effects = (function.contractDescription as? FirResolvedContractDescription)?.coneEffects
-            ?.filter { it is ConeConditionalEffectDeclaration && it.effect is ConeReturnsEffectDeclaration }
-
-        if (effects.isNullOrEmpty()) return
-
         val logicSystem = object : LogicSystem(context.session.typeContext) {
             override val variableStorage: VariableStorageImpl
                 get() = throw IllegalStateException("shouldn't be called")
         }
+        analyze(graph, reporter, context, logicSystem)
+    }
 
-        effects.forEach { effect ->
+    private fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext, logicSystem: LogicSystem) {
+        // Not quadratic since we don't traverse the graph, we only care about (declaration, exit node) pairs.
+        for (subGraph in graph.subGraphs) {
+            analyze(subGraph, reporter, context)
+        }
+
+        val function = graph.declaration as? FirFunction ?: return
+        if (function !is FirContractDescriptionOwner) return
+        val effects = function.contractDescription.effects ?: return
+        val dataFlowInfo = function.controlFlowGraphReference?.dataFlowInfo ?: return
+        for (firEffect in effects) {
+            // TODO: why is *everything* an "effect"? Something's not right with this terminology.
+            val coneEffect = firEffect.effect as? ConeConditionalEffectDeclaration ?: continue
+            val returnValue = coneEffect.effect as? ConeReturnsEffectDeclaration ?: continue
             val wrongCondition = graph.exitNode.previousCfgNodes.any {
-                isWrongConditionOnNode(it, effect as ConeConditionalEffectDeclaration, function, logicSystem, dataFlowInfo, context)
+                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, dataFlowInfo, context)
             }
-
             if (wrongCondition) {
+                // TODO: reportOn(firEffect.source, ...)
                 reporter.reportOn(function.contractDescription.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
             }
         }
@@ -63,12 +67,12 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private fun isWrongConditionOnNode(
         node: CFGNode<*>,
         effectDeclaration: ConeConditionalEffectDeclaration,
+        effect: ConeReturnsEffectDeclaration,
         function: FirFunction,
         logicSystem: LogicSystem,
         dataFlowInfo: DataFlowInfo,
         context: CheckerContext
     ): Boolean {
-        val effect = effectDeclaration.effect as ConeReturnsEffectDeclaration
         val builtinTypes = context.session.builtinTypes
         val typeContext = context.session.typeContext
 
@@ -80,7 +84,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         if (isReturn && resultExpression is FirWhenExpression) {
             return node.collectBranchExits().any {
-                isWrongConditionOnNode(it, effectDeclaration, function, logicSystem, dataFlowInfo, context)
+                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, dataFlowInfo, context)
             }
         }
 
@@ -106,6 +110,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         // TODO: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
         //  from `dataFlowInfo.variableStorage` for some reason, so its `getLocalVariable` doesn't work.
         val knownVariables = flow.knownVariables.associateBy { it.identifier }
+        // TODO: these should be the same on all return paths, so maybe don't recompute them every time?
         val argumentVariables = Array(function.valueParameters.size + 1) { i ->
             val parameterSymbol = if (i > 0) {
                 function.valueParameters[i - 1].symbol

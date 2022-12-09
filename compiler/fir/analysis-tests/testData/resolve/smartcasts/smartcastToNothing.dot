@@ -125,29 +125,21 @@ digraph smartcastToNothing_kt {
 
     subgraph cluster_11 {
         color=red
-        42 [label="Enter property" style="filled" fillcolor=red];
-        43 [label="Const: Int(1)"];
-        44 [label="Exit property" style="filled" fillcolor=red];
-    }
-    42 -> {43};
-    43 -> {44};
-    44 -> {50} [color=green];
-
-    subgraph cluster_12 {
-        color=red
-        45 [label="Enter property" style="filled" fillcolor=red];
-        46 [label="Const: Boolean(true)"];
-        47 [label="Exit property" style="filled" fillcolor=red];
-    }
-    45 -> {46};
-    46 -> {47};
-    47 -> {51} [color=green];
-
-    subgraph cluster_13 {
-        color=red
         48 [label="Enter class A" style="filled" fillcolor=red];
         49 [label="Part of class initialization"];
+        subgraph cluster_12 {
+            color=blue
+            42 [label="Enter property" style="filled" fillcolor=red];
+            43 [label="Const: Int(1)"];
+            44 [label="Exit property" style="filled" fillcolor=red];
+        }
         50 [label="Part of class initialization"];
+        subgraph cluster_13 {
+            color=blue
+            45 [label="Enter property" style="filled" fillcolor=red];
+            46 [label="Const: Boolean(true)"];
+            47 [label="Exit property" style="filled" fillcolor=red];
+        }
         51 [label="Exit class A" style="filled" fillcolor=red];
     }
     48 -> {49} [color=green];
@@ -157,6 +149,12 @@ digraph smartcastToNothing_kt {
     50 -> {45} [color=green];
     50 -> {51} [style=dotted];
     50 -> {45} [style=dashed];
+    42 -> {43};
+    43 -> {44};
+    44 -> {50} [color=green];
+    45 -> {46};
+    46 -> {47};
+    47 -> {51} [color=green];
 
     subgraph cluster_14 {
         color=red
