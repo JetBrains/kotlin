@@ -12,18 +12,13 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
-import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -34,14 +29,17 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isFunctionalType
 
-object UnusedChecker : FirControlFlowChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        if (graph.declaration?.getContainingClassSymbol(context.session)?.takeIf { !it.isLocal } != null) return
-        val (properties, _) = LocalPropertyAndCapturedWriteCollector.collect(graph)
-        if (properties.isEmpty()) return
-
-        val data = ValueWritesWithoutReading(context.session, properties).getData(graph)
-        graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter, context))
+object UnusedChecker : AbstractFirPropertyInitializationChecker() {
+    override fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: PropertyInitializationInfoData,
+        properties: Set<FirPropertySymbol>,
+        capturedWrites: Set<FirVariableAssignment>,
+        context: CheckerContext
+    ) {
+        val ownData = ValueWritesWithoutReading(context.session, properties).getData(graph)
+        graph.traverse(TraverseDirection.Backward, CfaVisitor(ownData, reporter, context))
     }
 
     class CfaVisitor(

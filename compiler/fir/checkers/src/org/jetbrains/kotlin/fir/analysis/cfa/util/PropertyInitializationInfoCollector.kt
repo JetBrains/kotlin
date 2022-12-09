@@ -13,6 +13,16 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
+class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, graph: ControlFlowGraph) {
+    private val data by lazy(LazyThreadSafetyMode.NONE) {
+        PropertyInitializationInfoCollector(properties).getData(graph)
+    }
+
+    fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
+        return data.getValue(node)
+    }
+}
+
 class PropertyInitializationInfoCollector(
     private val localProperties: Set<FirPropertySymbol>,
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),

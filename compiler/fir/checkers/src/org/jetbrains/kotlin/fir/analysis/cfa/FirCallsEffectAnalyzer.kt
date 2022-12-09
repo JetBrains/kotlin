@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.coneEffects
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -43,10 +43,15 @@ import kotlin.contracts.contract
 object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+        // TODO: this is quadratic due to `graph.traverse`, surely there is a better way?
+        for (subGraph in graph.subGraphs) {
+            analyze(subGraph, reporter, context)
+        }
+
         val session = context.session
         val function = (graph.declaration as? FirFunction) ?: return
         if (function !is FirContractDescriptionOwner) return
-        if (function.contractDescription.coneEffects?.any { it is ConeCallsEffectDeclaration } != true) return
+        if (function.contractDescription.effects?.any { it.effect is ConeCallsEffectDeclaration } != true) return
 
         val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
@@ -298,7 +303,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
     }
 
     private fun FirContractDescription?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {
-        val effects = this?.coneEffects
+        val effects = this?.effects?.map { it.effect }
         val callsEffect = effects?.find { it is ConeCallsEffectDeclaration && it.valueParameterReference.parameterIndex == index }
         return callsEffect as? ConeCallsEffectDeclaration?
     }

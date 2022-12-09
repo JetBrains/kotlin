@@ -433,6 +433,7 @@ class ControlFlowGraphBuilder {
             } ?: continue
 
             createPartOfClassInitializationNode(declaration as FirControlFlowGraphOwner).also {
+                currentGraph.addSubGraph(graph)
                 addEdge(node, it, preferredKind = EdgeKind.CfgForward)
                 addEdge(it, graph.enterNode, preferredKind = EdgeKind.CfgForward)
                 node = graph.exitNode
@@ -537,6 +538,7 @@ class ControlFlowGraphBuilder {
             if (functionGraph != null && functionGraph.owner == null) {
                 addEdge(node, functionGraph.enterNode, preferredKind = EdgeKind.CfgForward)
                 node.addSubGraph(functionGraph)
+                currentGraph.addSubGraph(functionGraph)
             }
         }
     }

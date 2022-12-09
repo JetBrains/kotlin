@@ -60,24 +60,23 @@ digraph plusAssignWithLambdaInRhs_kt {
 
     subgraph cluster_5 {
         color=red
-        20 [label="Enter property" style="filled" fillcolor=red];
-        21 [label="Access variable R|<local>/executor|"];
-        22 [label="Exit property" style="filled" fillcolor=red];
-    }
-    20 -> {21};
-    21 -> {22};
-    22 -> {25} [color=green];
-
-    subgraph cluster_6 {
-        color=red
         23 [label="Enter class A" style="filled" fillcolor=red];
         24 [label="Part of class initialization"];
+        subgraph cluster_6 {
+            color=blue
+            20 [label="Enter property" style="filled" fillcolor=red];
+            21 [label="Access variable R|<local>/executor|"];
+            22 [label="Exit property" style="filled" fillcolor=red];
+        }
         25 [label="Exit class A" style="filled" fillcolor=red];
     }
     23 -> {24} [color=green];
     24 -> {20} [color=green];
     24 -> {25} [style=dotted];
     24 -> {20} [style=dashed];
+    20 -> {21};
+    21 -> {22};
+    22 -> {25} [color=green];
 
     subgraph cluster_7 {
         color=red

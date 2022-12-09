@@ -30,11 +30,11 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
         get() = setOf(
             CanBeValChecker,
+            UnusedChecker,
         )
 
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = setOf(
-            UnusedChecker,
             UnreachableCodeChecker,
         )
 
