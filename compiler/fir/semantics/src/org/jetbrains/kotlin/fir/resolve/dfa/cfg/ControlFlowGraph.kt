@@ -26,14 +26,14 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     @set:CfgInternals
     lateinit var exitNode: CFGNode<*>
 
-    var owner: ControlFlowGraph? = null
-        private set
+    val isSubGraph: Boolean
+        get() = enterNode.previousNodes.isNotEmpty()
 
     var state: State = State.Building
         private set
 
-    private val _subGraphs: MutableList<ControlFlowGraph> = mutableListOf()
-    val subGraphs: List<ControlFlowGraph> get() = _subGraphs
+    val subGraphs: List<ControlFlowGraph>
+        get() = _nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
     @CfgInternals
     fun complete() {
@@ -48,15 +48,6 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
 //        }
         _nodes.clear()
         _nodes.addAll(sortedNodes)
-    }
-
-    @CfgInternals
-    fun addSubGraph(graph: ControlFlowGraph) {
-        assert(graph.owner == null) {
-            "SubGraph already has owner"
-        }
-        graph.owner = this
-        _subGraphs += graph
     }
 
     private fun assertState(state: State) {
@@ -171,34 +162,16 @@ private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
             continue
         }
         if (!visitedNodes.add(node)) continue
-        val followingNodes = node.followingNodes
 
-        for (followingNode in followingNodes) {
+        // NOTE: this intentionally does not walk through subgraphs. If the only path from A to B
+        //  is through a subgraph, add a dead edge between them to enforce ordering.
+        for (followingNode in node.followingNodes) {
             if (followingNode.owner == this) {
                 if (followingNode !in visitedNodes) {
                     stack.addFirst(followingNode)
                 }
-            } else {
-                walkThrowSubGraphs(followingNode.owner, visitedNodes, stack)
             }
         }
     }
     return visitedNodes
-}
-
-private fun ControlFlowGraph.walkThrowSubGraphs(
-    otherGraph: ControlFlowGraph,
-    visitedNodes: Set<CFGNode<*>>,
-    stack: ArrayDeque<CFGNode<*>>
-) {
-    if (otherGraph.owner != this) return
-    for (otherNode in otherGraph.exitNode.followingNodes) {
-        if (otherNode.owner == this) {
-            if (otherNode !in visitedNodes) {
-                stack.addFirst(otherNode)
-            }
-        } else if (otherNode.owner != otherGraph) {
-            walkThrowSubGraphs(otherNode.owner, visitedNodes, stack)
-        }
-    }
 }

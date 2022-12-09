@@ -142,21 +142,12 @@ interface UnionNodeMarker
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
 sealed class CFGNodeWithSubgraphs<out E : FirElement>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<E>(owner, level, id) {
-    private val _subGraphs = mutableListOf<ControlFlowGraph>()
-
-    fun addSubGraph(graph: ControlFlowGraph){
-        _subGraphs += graph
-    }
-
-    open val subGraphs: List<ControlFlowGraph>
-        get() = _subGraphs
+    abstract val subGraphs: List<ControlFlowGraph>
 }
 
 sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNodeWithSubgraphs<E>(owner, level, id) {
-    override val subGraphs: List<ControlFlowGraph> by lazy {
-        fir.controlFlowGraphReference?.controlFlowGraph?.run(::addSubGraph)
-        super.subGraphs
-    }
+    final override val subGraphs: List<ControlFlowGraph>
+        get() = listOfNotNull(fir.controlFlowGraphReference?.controlFlowGraph)
 }
 
 // ----------------------------------- Named function -----------------------------------
@@ -222,6 +213,10 @@ class ExitValueParameterNode(owner: ControlFlowGraph, override val fir: FirValue
 
 class SplitPostponedLambdasNode(owner: ControlFlowGraph, override val fir: FirStatement, val lambdas: List<FirAnonymousFunction>, level: Int, id: Int)
     : CFGNodeWithSubgraphs<FirStatement>(owner, level, id) {
+
+    override val subGraphs: List<ControlFlowGraph>
+        get() = lambdas.mapNotNull { it.controlFlowGraphReference?.controlFlowGraph }
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitSplitPostponedLambdasNode(this, data)
     }
@@ -240,6 +235,9 @@ class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: F
 }
 
 class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int, id: Int) : CFGNodeWithSubgraphs<FirAnonymousFunctionExpression>(owner, level, id) {
+    override val subGraphs: List<ControlFlowGraph>
+        get() = listOfNotNull(fir.anonymousFunction.controlFlowGraphReference?.controlFlowGraph)
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousFunctionExpressionNode(this, data)
     }
@@ -265,6 +263,8 @@ class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass, level: 
     init {
         owner.exitNode = this
     }
+
+    lateinit override var subGraphs: List<ControlFlowGraph>
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitClassExitNode(this, data)

@@ -25,7 +25,7 @@ class ControlFlowAnalysisDiagnosticComponent(
 
     private fun analyze(declaration: FirControlFlowGraphOwner, context: CheckerContext) {
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
-        if (graph.owner != null) return
+        if (graph.isSubGraph) return
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
 
         val (properties, capturedWrites) = LocalPropertyAndCapturedWriteCollector.collect(graph)

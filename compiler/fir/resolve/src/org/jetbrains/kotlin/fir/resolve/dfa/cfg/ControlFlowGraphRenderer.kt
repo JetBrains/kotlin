@@ -154,7 +154,7 @@ class FirControlFlowGraphRenderVisitor(
     private fun initializeNodes(graph: ControlFlowGraph) {
         if (graph in allGraphs) return
         graph.collectNodes()
-        if (graph.owner == null) {
+        if (!graph.isSubGraph) {
             topLevelGraphs += graph
         }
         allGraphs += graph

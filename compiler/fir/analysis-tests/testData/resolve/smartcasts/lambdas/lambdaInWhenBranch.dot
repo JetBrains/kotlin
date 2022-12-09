@@ -70,7 +70,7 @@ digraph lambdaInWhenBranch_kt {
     11 -> {12};
     13 -> {14};
     14 -> {15 17};
-    14 -> {17 17} [style=dashed];
+    14 -> {17} [style=dashed];
     15 -> {16};
     17 -> {18};
     18 -> {19};
