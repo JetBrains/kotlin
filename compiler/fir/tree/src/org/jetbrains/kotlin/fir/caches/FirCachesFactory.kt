@@ -21,6 +21,24 @@ abstract class FirCachesFactory : FirSessionComponent {
     abstract fun <K : Any, V, CONTEXT> createCache(createValue: (K, CONTEXT) -> V): FirCache<K, V, CONTEXT>
 
     /**
+     * Creates a cache with returns a value by key on demand if it is computed
+     * Otherwise computes the value in [createValue] and caches it for future invocations
+     *
+     * [FirCache.getValue] should not be called inside [createValue]
+     *
+     * Where:
+     * [CONTEXT] -- type of value which be used to create value by [createValue]
+     *
+     * @param initialCapacity initial capacity for the underlying cache map
+     * @param loadFactor loadFactor for the underlying cache map
+     */
+    abstract fun <K : Any, V, CONTEXT> createCache(
+        initialCapacity: Int,
+        loadFactor: Float,
+        createValue: (K, CONTEXT) -> V
+    ): FirCache<K, V, CONTEXT>
+
+    /**
      * Creates a cache with returns a caches value on demand if it is computed
      * Otherwise computes the value in two phases:
      *  - [createValue] -- creates values and stores value of type [V] to cache and passes [V] & [DATA] to [postCompute]
