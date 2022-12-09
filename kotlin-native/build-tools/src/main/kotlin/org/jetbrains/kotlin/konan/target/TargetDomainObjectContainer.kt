@@ -16,7 +16,7 @@ import org.gradle.kotlin.dsl.getByType
  * Associative container from a [KonanTarget] with optional [SanitizerKind] to [T].
  *
  * Serves similar purpose to [NamedDomainObjectContainer][org.gradle.api.NamedDomainObjectContainer]
- * except this is keyed on a target instead of a name. Also this implementation does not support lazy
+ * except this is keyed on a target instead of a name. Also, this implementation does not support lazy
  * creation.
  *
  * Plugin extensions can inherit from this to automatically get API suitable for `build.gradle.kts`.
@@ -31,14 +31,11 @@ import org.gradle.kotlin.dsl.getByType
  *    target(someTarget) {
  *        // This is a lambda inside of a T scope. Called for `someTarget` without any sanitizer.
  *    }
- *    target(someTarget, someSanitizer) {
+ *    target(someTarget.withSanitizer(someSanitizer)) {
  *        // This is a lambda inside of a T scope. Called for `someTarget` with `someSanitizer`.
  *    }
  *    hostTarget {
  *        // This is a lambda inside of a T scope. Called for the host target without any sanitizer.
- *    }
- *    hostTarget(someSanitizer) {
- *        // This is a lambda inside of a T scope. Called for the host target with `someSanitizer`.
  *    }
  * }
  *
@@ -57,36 +54,32 @@ open class TargetDomainObjectContainer<T : Any> constructor(
     /**
      * How to create [T]. Must be set before using the rest of API.
      */
-    lateinit var factory: (KonanTarget, SanitizerKind?) -> T
+    lateinit var factory: (TargetWithSanitizer) -> T
 
-    private val targets: MutableMap<Pair<KonanTarget, SanitizerKind?>, T> = mutableMapOf()
+    private val targets: MutableMap<TargetWithSanitizer, T> = mutableMapOf()
 
     /**
-     * Create or update configuration [T] for [target] with optional [sanitizer] and apply [action] to it.
+     * Create or update configuration [T] for [target] and apply [action] to it.
      *
      * @param target target of the configuration
-     * @param sanitizer optional sanitizer for [target]
      * @param action action to apply to the configuration
      * @return resulting configuration
      */
-    fun target(target: KonanTarget, sanitizer: SanitizerKind? = null, action: Action<in T>): T {
-        val key = target to sanitizer
-        val element = targets.getOrPut(key) { factory(target, sanitizer) }
+    fun target(target: TargetWithSanitizer, action: Action<in T>): T {
+        val element = targets.getOrPut(target) { factory(target) }
         action.execute(element)
         return element
     }
 
     /**
-     * Get configuration [T] for [target] with optional [sanitizer].
+     * Get configuration [T] for [target].
      *
      * @param target target of the configuration
-     * @param sanitizer optional sanitizer for [target]
      * @return resulting configuration
-     * @throws UnknownDomainObjectException if configuration for [target] and [sanitizer] does not exist
+     * @throws UnknownDomainObjectException if configuration for [target] does not exist
      */
-    fun target(target: KonanTarget, sanitizer: SanitizerKind? = null): T {
-        val key = target to sanitizer
-        return targets.get(key) ?: throw UnknownDomainObjectException("Configuration for $target${sanitizer.targetSuffix} does not exists")
+    fun target(target: TargetWithSanitizer): T {
+        return targets[target] ?: throw UnknownDomainObjectException("Configuration for $target does not exists")
     }
 
     /**
@@ -95,13 +88,8 @@ open class TargetDomainObjectContainer<T : Any> constructor(
      * @param action action to apply to the configuration
      * @return list of configurations
      */
-    fun allTargets(action: Action<in T>): List<T> {
-        return platformManager.enabled.flatMap { target ->
-            val sanitizers = target.supportedSanitizers() + listOf(null)
-            sanitizers.map { sanitizer ->
-                this.target(target, sanitizer, action)
-            }
-        }
+    fun allTargets(action: Action<in T>): List<T> = platformManager.allTargetsWithSanitizers.map {
+        this.target(it, action)
     }
 
     /**
@@ -114,33 +102,21 @@ open class TargetDomainObjectContainer<T : Any> constructor(
     }
 
     /**
-     * Create or update configuration [T] for [host target][HostManager.host] with optional [sanitizer] and apply [action] to it.
+     * Create or update configuration [T] for [host target][HostManager.host] and apply [action] to it.
      *
-     * @param sanitizer optional sanitizer for [host target][HostManager.host]
      * @param action action to apply to the configuration
      * @return resulting configuration
      */
-    fun hostTarget(sanitizer: SanitizerKind? = null, action: Action<in T>): T {
-        return target(HostManager.host, sanitizer, action)
+    fun hostTarget(action: Action<in T>): T {
+        return target(HostManager.host.withSanitizer(), action)
     }
 
     /**
-     * Get configuration [T] for [host target][HostManager.host] with optional [sanitizer].
-     *
-     * @param sanitizer optional sanitizer for [host target][HostManager.host]
-     * @return resulting configuration
-     * @throws UnknownDomainObjectException if configuration for [host target][HostManager.host] and [sanitizer] does not exist
-     */
-    fun hostTarget(sanitizer: SanitizerKind? = null): T {
-        return target(HostManager.host, sanitizer)
-    }
-
-    /**
-     * Get configuration [T] for [host target][HostManager.host] without sanitizer.
+     * Get configuration [T] for [host target][HostManager.host].
      *
      * @return resulting configuration
-     * @throws UnknownDomainObjectException if configuration for [host target][HostManager.host] without sanitizer does not exist
+     * @throws UnknownDomainObjectException if configuration for [host target][HostManager.host] does not exist
      */
     val hostTarget: T
-        get() = hostTarget()
+        get() = target(HostManager.host.withSanitizer())
 }

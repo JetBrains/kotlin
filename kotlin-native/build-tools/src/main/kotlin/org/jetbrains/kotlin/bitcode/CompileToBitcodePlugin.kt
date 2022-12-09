@@ -17,19 +17,11 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.cpp.*
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.target.SanitizerKind
-import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
-import org.jetbrains.kotlin.utils.Maybe
-import org.jetbrains.kotlin.utils.asMaybe
+import org.jetbrains.kotlin.utils.capitalized
 import java.io.File
 import javax.inject.Inject
-
-@OptIn(ExperimentalStdlibApi::class)
-private val String.capitalized: String
-    get() = replaceFirstChar { it.uppercase() }
 
 private fun String.snakeCaseToUpperCamelCase() = split('_').joinToString(separator = "") { it.capitalized }
 
@@ -76,8 +68,8 @@ open class CompileToBitcodePlugin : Plugin<Project> {
 
 open class CompileToBitcodeExtension @Inject constructor(val project: Project) : TargetDomainObjectContainer<CompileToBitcodeExtension.Target>(project) {
     init {
-        this.factory = { target, sanitizer ->
-            project.objects.newInstance<Target>(this, target, sanitizer.asMaybe)
+        this.factory = { target ->
+            project.objects.newInstance<Target>(this, target)
         }
     }
 
@@ -118,11 +110,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     }
 
     abstract class TestsGroup @Inject constructor(
-            val target: KonanTarget,
-            private val _sanitizer: Maybe<SanitizerKind>,
+            private val _target: TargetWithSanitizer,
     ) {
-        val sanitizer
-            get() = _sanitizer.orNull
+        val target by _target::target
+        val sanitizer by _target::sanitizer
         abstract val testedModules: ListProperty<String>
         abstract val testSupportModules: ListProperty<String>
         abstract val testFrameworkModules: ListProperty<String>
@@ -131,10 +122,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
     abstract class Target @Inject constructor(
             private val owner: CompileToBitcodeExtension,
-            val target: KonanTarget,
-            _sanitizer: Maybe<SanitizerKind>,
+            private val _target: TargetWithSanitizer,
     ) {
-        val sanitizer = _sanitizer.orNull
+        val target by _target::target
+        val sanitizer by _target::sanitizer
 
         private val project by owner::project
 
@@ -157,7 +148,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         }
 
         private fun addToCompdb(compileTask: CompileToBitcode) {
-            compilationDatabase.target(target, sanitizer) {
+            compilationDatabase.target(_target) {
                 entry {
                     val args = listOf(execClang.resolveExecutable(compileTask.compiler.get())) + compileTask.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name)
                     directory.set(compileTask.compilerWorkingDirectory)
@@ -166,6 +157,13 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     // Only the location of output file matters, compdb does not depend on the compilation result.
                     output.set(compileTask.outputFile.locationOnly.map { it.asFile.absolutePath })
                 }
+                // Compile task depends on the toolchain (including headers) and on the source code (e.g. googletest).
+                // compdb task should also have these dependencies. This way the generated database will point to the
+                // code that actually exists.
+                // TODO: Probably module should know dependencies on its own.
+                task.configure {
+                    dependsOn(compileTask.dependsOn)
+                }
             }
         }
 
@@ -173,7 +171,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             val targetName = target.name
             val allMainModulesTask = owner.allMainModulesTasks[targetName]!!
             val taskName = fullTaskName(name, targetName, sanitizer)
-            val task = project.tasks.create(taskName, CompileToBitcode::class.java, target, sanitizer.asMaybe).apply {
+            val task = project.tasks.create(taskName, CompileToBitcode::class.java, _target).apply {
                 this.moduleName.set(name)
                 this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/$outputGroup/$target${sanitizer.dirSuffix}/$it.bc") })
                 this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/$outputGroup/$target${sanitizer.dirSuffix}/$it") })
@@ -204,7 +202,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 testTaskName: String,
                 action: Action<in TestsGroup>,
         ) {
-            val testsGroup = project.objects.newInstance(TestsGroup::class.java, target, sanitizer.asMaybe).apply {
+            val testsGroup = project.objects.newInstance(TestsGroup::class.java, _target).apply {
                 testFrameworkModules.convention(listOf("googletest", "googlemock"))
                 testLauncherModule.convention("test_support")
                 action.execute(this)
@@ -219,7 +217,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             val testedModulesTestTasks = testedModulesMainTasks.mapNotNull {
                 val name = "${it.name}TestBitcode"
                 val task = project.tasks.findByName(name) as? CompileToBitcode
-                        ?: project.tasks.create(name, CompileToBitcode::class.java, it.target, it.sanitizer.asMaybe).apply {
+                        ?: project.tasks.create(name, CompileToBitcode::class.java, _target).apply {
                             this.moduleName.set(it.moduleName)
                             this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/test/$target${sanitizer.dirSuffix}/${it}Tests.bc") })
                             this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/test/$target${sanitizer.dirSuffix}/${it}Tests") })
@@ -247,7 +245,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             val testedAndTestSupportModulesTestSupportTasks = (testedModulesMainTasks + testSupportModulesMainTasks).mapNotNull {
                 val name = "${it.name}TestSupportBitcode"
                 val task = project.tasks.findByName(name) as? CompileToBitcode
-                        ?: project.tasks.create(name, CompileToBitcode::class.java, it.target, it.sanitizer.asMaybe).apply {
+                        ?: project.tasks.create(name, CompileToBitcode::class.java, _target).apply {
                             this.moduleName.set(it.moduleName)
                             this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/test/$target${sanitizer.dirSuffix}/${it}TestSupport.bc") })
                             this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/test/$target${sanitizer.dirSuffix}/${it}TestSupport") })

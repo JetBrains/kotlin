@@ -142,6 +142,8 @@ configurations {
     commonSources
 }
 
+apply plugin: CompilationDatabasePlugin
+
 dependencies {
     ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
     distPack project(':kotlin-native:Interop:Runtime')
@@ -157,9 +159,10 @@ dependencies {
     commonSources project(path: ':kotlin-stdlib-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-annotations-common', configuration: 'sources')
+    compilationDatabase project(":kotlin-native:common")
+    compilationDatabase project(":kotlin-native:runtime")
 }
 
-apply plugin: CompilationDatabasePlugin
 apply plugin: GitClangFormatPlugin
 apply plugin: 'maven-publish'
 apply plugin: BasePlugin
@@ -725,13 +728,7 @@ task pusher(type: KotlinBuildPusher){
 
 compilationDatabase {
     allTargets {
-        mergeFrom(provider { project("common") })
-        mergeFrom(provider { project("runtime") })
-
-        // TODO: Reconsider this
-        task.configure {
-            dependsOn(":kotlin-native:runtime:downloadGoogleTest")
-        }
+        mergeFrom(configurations.compilationDatabase)
     }
 }
 

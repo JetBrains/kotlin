@@ -22,10 +22,9 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.execLlvmUtility
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
-import org.jetbrains.kotlin.utils.Maybe
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import java.io.File
 import javax.inject.Inject
 
@@ -83,21 +82,23 @@ private abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeJob.Para
  *
  * Compiles [inputFiles] into [outputFile] with [compiler] and `llvm-link`.
  *
- * @property target target for which to compile
  * @see CompileToBitcodePlugin
  */
 abstract class CompileToBitcode @Inject constructor(
-        @Input val target: KonanTarget,
-        private val _sanitizer: Maybe<SanitizerKind>,
+        private val _target: TargetWithSanitizer,
 ) : DefaultTask() {
+    /**
+     * Target for which to compile
+     */
+    @get:Input
+    val target by _target::target
 
     /**
-     * Compile with sanitizer enabled.
+     * Optional [sanitizer][SanitizerKind] for [target].
      */
     @get:Input
     @get:Optional
-    val sanitizer
-        get() = _sanitizer.orNull
+    val sanitizer by _target::sanitizer
 
     /**
      * Final output file.
