@@ -137,7 +137,8 @@ private fun buildReflectionType(
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
                 isKFunctionType = true,
-                isSuspend = isSuspend
+                isSuspend = isSuspend,
+                contextReceivers = fir.contextReceivers.map { it.typeRef.coneType }
             ) to callableReferenceAdaptation
         }
         is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, candidate) to null
