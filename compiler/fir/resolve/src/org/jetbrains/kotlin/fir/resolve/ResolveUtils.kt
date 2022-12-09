@@ -65,7 +65,7 @@ import kotlin.contracts.contract
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
-fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirStatement>): Boolean =
+fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
     isLambda && returnStatements.any { it is FirUnitExpression }
 
 fun FirAnonymousFunction.isExplicitlySuspend(session: FirSession): Boolean =

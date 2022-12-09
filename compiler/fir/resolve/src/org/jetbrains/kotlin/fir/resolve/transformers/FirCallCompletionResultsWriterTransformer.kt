@@ -577,7 +577,7 @@ class FirCallCompletionResultsWriterTransformer(
         // The case where we can't find any return expressions not common, and happens when there are anonymous function arguments
         // that aren't mapped to any parameter in the call. So, we don't run body resolve transformation for them, thus there's
         // no control flow info either. Example: second lambda in the call like list.filter({}, {})
-        val returnStatements = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
+        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
             ?: return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
 
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
@@ -623,14 +623,14 @@ class FirCallCompletionResultsWriterTransformer(
 
         val newData = expectedReturnType?.toExpectedType()
         val result = transformElement(anonymousFunction, newData)
-        for (expression in returnStatements) {
+        for (expression in returnExpressions) {
             expression.transformSingle(this, newData)
         }
 
         // Prefer the expected type over the inferred one - the latter is a subtype of the former in valid code,
         // and there will be ARGUMENT_TYPE_MISMATCH errors on the lambda's return expressions in invalid code.
         val resultReturnType = expectedReturnType
-            ?: session.typeContext.commonSuperTypeOrNull(returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType })
+            ?: session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.resultType.coneType })
             ?: session.builtinTypes.unitType.type
 
         if (initialReturnType != resultReturnType) {

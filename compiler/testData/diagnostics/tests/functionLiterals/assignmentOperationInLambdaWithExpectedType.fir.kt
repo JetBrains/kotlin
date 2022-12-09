@@ -11,5 +11,5 @@ fun test(bal: Array<Int>) {
 
     val e: Unit = run { bar += 4 }
 
-    val f: Int = <!INITIALIZER_TYPE_MISMATCH!>run <!ARGUMENT_TYPE_MISMATCH!>{ bar += 4 }<!><!>
+    val f: Int = run { <!ARGUMENT_TYPE_MISMATCH!>bar += 4<!> }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
@@ -96,19 +97,22 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Public API -----------------------------------
 
-    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement>? {
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirExpression>? {
         val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode ?: return null
 
-        fun FirElement.extractArgument(): FirElement = when {
-            this is FirReturnExpression && target.labeledElement.symbol == function.symbol -> result.extractArgument()
-            else -> this
-        }
-
-        fun CFGNode<*>.extractArgument(): FirStatement? = when (this) {
-            is FunctionEnterNode, is TryMainBlockEnterNode, is FinallyBlockExitNode, is CatchClauseEnterNode -> null
-            is BlockExitNode -> if (function.isLambda || isDead) firstPreviousNode.extractArgument() else null
-            is StubNode -> firstPreviousNode.extractArgument()
-            else -> fir.extractArgument() as FirStatement?
+        fun CFGNode<*>.returnExpression(): FirExpression? = when (this) {
+            is BlockExitNode -> when {
+                // lambda@{ x } -> x
+                // lambda@{ class C } -> Unit-returning stub
+                function.isLambda -> fir.statements.lastOrNull() as? FirExpression
+                    ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }
+                // fun() { terminatingExpression } -> nothing (checker will emit an error if return type is not Unit)
+                // fun() { throw } or fun() { returnsNothing() } -> Nothing-returning stub
+                else -> FirStub.takeIf { _ -> previousNodes.all { it is StubNode } }
+            }
+            // lambda@{ return@lambda x } -> x
+            is JumpNode -> (fir as? FirReturnExpression)?.takeIf { it.target.labeledElement.symbol == function.symbol }?.result
+            else -> null // shouldn't happen? expression bodies are implicitly wrapped in `FirBlock`s
         }
 
         val returnValues = exitNode.previousNodes.mapNotNullTo(mutableSetOf()) {
@@ -117,9 +121,9 @@ class ControlFlowGraphBuilder {
             // * UncaughtExceptionPath: last expression = whatever threw, *not* a return value
             // * ReturnPath(this lambda): these go from `finally` blocks, so that's not the return value;
             //   look in `nonDirectJumps` instead.
-            it.takeIf { edge.kind.usedInCfa && edge.label == NormalPath }?.extractArgument()
+            it.takeIf { edge.kind.usedInCfa && edge.label == NormalPath }?.returnExpression()
         }
-        return nonDirectJumps[exitNode].mapNotNullTo(returnValues) { it.extractArgument() }
+        return nonDirectJumps[exitNode].mapNotNullTo(returnValues) { it.returnExpression() }
     }
 
     @OptIn(CfgBuilderInternals::class)
