@@ -113,8 +113,6 @@ class SingletonObjectJvmStaticTransformer(
 }
 
 private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
-    // TODO: would be nice to add a mode that *only* leaves static versions for all annotated methods, with nothing
-    //  in companions - this would reduce the number of classes if the companion only has `@JvmStatic` declarations.
     private fun IrSimpleFunction.needsStaticProxy(): Boolean = when {
         // Case 1: `external` static methods are moved to the outer class. JNI code does not care about visibility.
         isExternal -> true
@@ -132,6 +130,11 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
     private fun shouldReplaceDeclarations(): Boolean =
         context.configuration.getBoolean(JVMConfigurationKeys.REWRITE_JVM_STATIC_IN_COMPANION)
 
+    // TODO: We avoid trying to replace property accessors because it's not worth it for now, as it would require us to manually rewrite
+    //  the whole function body and stop the accessors getting generated. Is it worth trying this in the future?
+    private fun IrSimpleFunction.shouldReplaceDeclaration(): Boolean =
+        shouldReplaceDeclarations() && origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+
     override fun visitClass(declaration: IrClass): IrStatement =
         super.visitClass(declaration).also {
             val iterator = declaration.companionObject()?.declarations?.listIterator() ?: return@also
@@ -140,7 +143,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
                 // Skip all non-functions as we shouldn't be doing anything with them.
                 if (function !is IrSimpleFunction) continue
                 if (function.isJvmStaticDeclaration() && function.needsStaticProxy()) {
-                    if (shouldReplaceDeclarations()) {
+                    if (function.shouldReplaceDeclaration()) {
                         val replacement = context.cachedDeclarations.getStaticCompanionReplacementDeclaration(function)
                         declaration.declarations.add(replacement)
                         iterator.remove()
@@ -160,7 +163,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         val callee = expression.symbol.owner
         return when {
             shouldReplaceWithStaticCall(callee) -> {
-                val static = if (shouldReplaceDeclarations()) {
+                val static = if (callee.shouldReplaceDeclaration()) {
                     // If this is true, we know that companion jvm statics were replaced with actual static methods, so we know we need to
                     // replace the calls with the corresponding static replacement methods.
                     context.cachedDeclarations.getStaticCompanionReplacementDeclaration(callee)
