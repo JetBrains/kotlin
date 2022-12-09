@@ -25,33 +25,32 @@ public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent(
 
 
 public sealed class KtExtensionApplicabilityResult : KtLifetimeOwner {
-    public abstract val isApplicable: Boolean
-    public abstract val substitutor: KtSubstitutor
+    public sealed class Applicable : KtExtensionApplicabilityResult() {
+        public abstract val receiverCastRequired: Boolean
+        public abstract val substitutor: KtSubstitutor
+    }
 
     public class ApplicableAsExtensionCallable(
         private val _substitutor: KtSubstitutor,
+        private val _receiverCastRequired: Boolean,
         override val token: KtLifetimeToken
-    ) : KtExtensionApplicabilityResult() {
+    ) : Applicable() {
         override val substitutor: KtSubstitutor = withValidityAssertion { _substitutor }
-        override val isApplicable: Boolean get() = withValidityAssertion { true }
+        override val receiverCastRequired: Boolean get() = withValidityAssertion { _receiverCastRequired }
     }
 
     public class ApplicableAsFunctionalVariableCall(
         private val _substitutor: KtSubstitutor,
+        private val _receiverCastRequired: Boolean,
         override val token: KtLifetimeToken
-    ) : KtExtensionApplicabilityResult() {
+    ) : Applicable() {
         override val substitutor: KtSubstitutor get() = withValidityAssertion { _substitutor }
-        override val isApplicable: Boolean get() = withValidityAssertion { true }
+        override val receiverCastRequired: Boolean get() = withValidityAssertion { _receiverCastRequired }
     }
-
 
     public class NonApplicable(
-        private val _substitutor: KtSubstitutor,
         override val token: KtLifetimeToken
-    ) : KtExtensionApplicabilityResult() {
-        override val substitutor: KtSubstitutor = withValidityAssertion { _substitutor }
-        override val isApplicable: Boolean get() = withValidityAssertion { false }
-    }
+    ) : KtExtensionApplicabilityResult()
 }
 
 public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
