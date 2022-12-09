@@ -12,17 +12,18 @@ digraph smartCastInInit_kt {
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function foo" style="filled" fillcolor=red];
-        3 [label="Exit function foo" style="filled" fillcolor=red];
-    }
-    2 -> {3};
-
-    subgraph cluster_2 {
-        color=red
         4 [label="Enter class S" style="filled" fillcolor=red];
         5 [label="Exit class S" style="filled" fillcolor=red];
     }
+    subgraph cluster_2 {
+        color=blue
+        2 [label="Enter function foo" style="filled" fillcolor=red];
+        3 [label="Exit function foo" style="filled" fillcolor=red];
+    }
     4 -> {5} [color=green];
+    5 -> {2} [color=green];
+    5 -> {2} [style=dashed];
+    2 -> {3};
 
     subgraph cluster_3 {
         color=red
@@ -48,21 +49,12 @@ digraph smartCastInInit_kt {
 
     subgraph cluster_5 {
         color=red
-        14 [label="Enter function <init>" style="filled" fillcolor=red];
-        15 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        16 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    14 -> {15};
-    15 -> {16};
-
-    subgraph cluster_6 {
-        color=red
         26 [label="Enter class Main" style="filled" fillcolor=red];
         27 [label="Part of class initialization"];
-        subgraph cluster_7 {
+        subgraph cluster_6 {
             color=blue
             17 [label="Enter init block" style="filled" fillcolor=red];
-            subgraph cluster_8 {
+            subgraph cluster_7 {
                 color=blue
                 18 [label="Enter block"];
                 19 [label="Function call: R|/s|()" style="filled" fillcolor=yellow];
@@ -76,10 +68,18 @@ digraph smartCastInInit_kt {
         }
         28 [label="Exit class Main" style="filled" fillcolor=red];
     }
+    subgraph cluster_8 {
+        color=blue
+        14 [label="Enter function <init>" style="filled" fillcolor=red];
+        15 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        16 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
     26 -> {27} [color=green];
     27 -> {17} [color=green];
     27 -> {28} [style=dotted];
     27 -> {17} [style=dashed];
+    28 -> {14} [color=green];
+    28 -> {14} [style=dashed];
     17 -> {18};
     18 -> {19};
     19 -> {20};
@@ -89,5 +89,7 @@ digraph smartCastInInit_kt {
     23 -> {24};
     24 -> {25};
     25 -> {28} [color=green];
+    14 -> {15};
+    15 -> {16};
 
 }

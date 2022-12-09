@@ -5,19 +5,20 @@ digraph postponedLambdaInReturn_kt {
 
     subgraph cluster_0 {
         color=red
+        3 [label="Enter class Lateinit" style="filled" fillcolor=red];
+        4 [label="Exit class Lateinit" style="filled" fillcolor=red];
+    }
+    subgraph cluster_1 {
+        color=blue
         0 [label="Enter function <init>" style="filled" fillcolor=red];
         1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
+    3 -> {4} [color=green];
+    4 -> {0} [color=green];
+    4 -> {0} [style=dashed];
     0 -> {1};
     1 -> {2};
-
-    subgraph cluster_1 {
-        color=red
-        3 [label="Enter class Lateinit" style="filled" fillcolor=red];
-        4 [label="Exit class Lateinit" style="filled" fillcolor=red];
-    }
-    3 -> {4} [color=green];
 
     subgraph cluster_2 {
         color=red

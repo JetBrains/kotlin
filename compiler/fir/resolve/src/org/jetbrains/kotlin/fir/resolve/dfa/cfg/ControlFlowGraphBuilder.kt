@@ -426,6 +426,7 @@ class ControlFlowGraphBuilder {
         var prevInitPartNode: CFGNode<*>? = null
         for (declaration in klass.declarations) {
             val graph = when (declaration) {
+                // TODO: property accessors?
                 is FirProperty -> declaration.controlFlowGraphReference?.controlFlowGraph
                 is FirField -> declaration.controlFlowGraphReference?.controlFlowGraph
                 is FirAnonymousInitializer -> declaration.controlFlowGraphReference?.controlFlowGraph
@@ -446,6 +447,23 @@ class ControlFlowGraphBuilder {
         addEdge(node, exitNode, preferredKind = EdgeKind.CfgForward)
         if (prevInitPartNode != null) addEdge(prevInitPartNode!!, exitNode, preferredKind = EdgeKind.DeadForward)
         exitNode.updateDeadStatus()
+
+        // TODO: Here we're assuming that the methods are called after the object is constructed, which is really not true
+        //   (init blocks can call them). But FE1.0 did so too, hence the following code compiles and prints 0:
+        //     val x: Int
+        //     object {
+        //         fun bar() = x
+        //         init { x = bar() }
+        //     }
+        //     println(x)
+        for (declaration in klass.declarations) {
+            if (declaration !is FirFunction) continue
+            val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: continue
+            addEdge(exitNode, graph.enterNode, preferredKind = EdgeKind.CfgForward)
+            exitNode.addSubGraph(graph)
+            currentGraph.addSubGraph(graph)
+        }
+
         return popGraph()
     }
 
@@ -468,7 +486,6 @@ class ControlFlowGraphBuilder {
         val node = createLocalClassExitNode(klass).also {
             addNewSimpleNodeIfPossible(it)
         }
-        visitLocalClassFunctions(klass, node)
         addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
         return node to graph
     }
@@ -497,15 +514,6 @@ class ControlFlowGraphBuilder {
             addEdge(graph.exitNode, exitNode, preferredKind = EdgeKind.CfgForward)
         }
         addEdge(enterNode, exitNode, preferredKind = EdgeKind.DfgForward)
-        // TODO: Here we're assuming that the methods are called after the object is constructed, which is really not true
-        //   (init blocks can call them). But FE1.0 did so too, hence the following code compiles and prints 0:
-        //     val x: Int
-        //     object {
-        //         fun bar() = x
-        //         init { x = bar() }
-        //     }
-        //     println(x)
-        visitLocalClassFunctions(anonymousObject, exitNode)
         lastNodes.push(exitNode)
         return exitNode to graph
     }
@@ -529,17 +537,6 @@ class ControlFlowGraphBuilder {
     fun exitScript(script: FirScript): ScriptExitNode {
         return createScriptExitNode(script).also {
             addNewSimpleNodeIfPossible(it)
-        }
-    }
-
-    private fun visitLocalClassFunctions(klass: FirClass, node: CFGNodeWithSubgraphs<*>) {
-        klass.declarations.filterIsInstance<FirFunction>().forEach { function ->
-            val functionGraph = function.controlFlowGraphReference?.controlFlowGraph
-            if (functionGraph != null && functionGraph.owner == null) {
-                addEdge(node, functionGraph.enterNode, preferredKind = EdgeKind.CfgForward)
-                node.addSubGraph(functionGraph)
-                currentGraph.addSubGraph(functionGraph)
-            }
         }
     }
 

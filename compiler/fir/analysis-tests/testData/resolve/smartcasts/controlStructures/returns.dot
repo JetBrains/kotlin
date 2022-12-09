@@ -154,45 +154,48 @@ digraph returns_kt {
 
     subgraph cluster_14 {
         color=red
-        53 [label="Enter function foo" style="filled" fillcolor=red];
-        54 [label="Exit function foo" style="filled" fillcolor=red];
-    }
-    53 -> {54};
-
-    subgraph cluster_15 {
-        color=red
         55 [label="Enter class A" style="filled" fillcolor=red];
         56 [label="Exit class A" style="filled" fillcolor=red];
     }
+    subgraph cluster_15 {
+        color=blue
+        53 [label="Enter function foo" style="filled" fillcolor=red];
+        54 [label="Exit function foo" style="filled" fillcolor=red];
+    }
     55 -> {56} [color=green];
+    56 -> {53} [color=green];
+    56 -> {53} [style=dashed];
+    53 -> {54};
 
     subgraph cluster_16 {
-        color=red
-        57 [label="Enter function bar" style="filled" fillcolor=red];
-        58 [label="Exit function bar" style="filled" fillcolor=red];
-    }
-    57 -> {58};
-
-    subgraph cluster_17 {
         color=red
         59 [label="Enter class B" style="filled" fillcolor=red];
         60 [label="Exit class B" style="filled" fillcolor=red];
     }
+    subgraph cluster_17 {
+        color=blue
+        57 [label="Enter function bar" style="filled" fillcolor=red];
+        58 [label="Exit function bar" style="filled" fillcolor=red];
+    }
     59 -> {60} [color=green];
+    60 -> {57} [color=green];
+    60 -> {57} [style=dashed];
+    57 -> {58};
 
     subgraph cluster_18 {
-        color=red
-        61 [label="Enter function baz" style="filled" fillcolor=red];
-        62 [label="Exit function baz" style="filled" fillcolor=red];
-    }
-    61 -> {62};
-
-    subgraph cluster_19 {
         color=red
         63 [label="Enter class C" style="filled" fillcolor=red];
         64 [label="Exit class C" style="filled" fillcolor=red];
     }
+    subgraph cluster_19 {
+        color=blue
+        61 [label="Enter function baz" style="filled" fillcolor=red];
+        62 [label="Exit function baz" style="filled" fillcolor=red];
+    }
     63 -> {64} [color=green];
+    64 -> {61} [color=green];
+    64 -> {61} [style=dashed];
+    61 -> {62};
 
     subgraph cluster_20 {
         color=red

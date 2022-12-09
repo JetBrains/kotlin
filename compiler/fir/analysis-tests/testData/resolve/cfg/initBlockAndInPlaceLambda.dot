@@ -19,31 +19,22 @@ digraph initBlockAndInPlaceLambda_kt {
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter function <init>" style="filled" fillcolor=red];
-        5 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        6 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    4 -> {5};
-    5 -> {6};
-
-    subgraph cluster_3 {
-        color=red
         26 [label="Enter class C" style="filled" fillcolor=red];
         27 [label="Part of class initialization"];
-        subgraph cluster_4 {
+        subgraph cluster_3 {
             color=blue
             7 [label="Enter init block" style="filled" fillcolor=red];
-            subgraph cluster_5 {
+            subgraph cluster_4 {
                 color=blue
                 8 [label="Enter block"];
                 9 [label="Access variable R|<local>/a|"];
                 10 [label="Access variable R|/A.b|"];
                 11 [label="Enter safe call"];
                 12 [label="Postponed enter to lambda"];
-                subgraph cluster_6 {
+                subgraph cluster_5 {
                     color=blue
                     19 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                    subgraph cluster_7 {
+                    subgraph cluster_6 {
                         color=blue
                         20 [label="Enter block"];
                         21 [label="Access variable R|<local>/a|"];
@@ -63,10 +54,18 @@ digraph initBlockAndInPlaceLambda_kt {
         }
         28 [label="Exit class C" style="filled" fillcolor=red];
     }
+    subgraph cluster_7 {
+        color=blue
+        4 [label="Enter function <init>" style="filled" fillcolor=red];
+        5 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        6 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
     26 -> {27} [color=green];
     27 -> {7} [color=green];
     27 -> {28} [style=dotted];
     27 -> {7} [style=dashed];
+    28 -> {4} [color=green];
+    28 -> {4} [style=dashed];
     7 -> {8};
     8 -> {9};
     9 -> {10};
@@ -88,5 +87,7 @@ digraph initBlockAndInPlaceLambda_kt {
     23 -> {24};
     24 -> {25};
     25 -> {13};
+    4 -> {5};
+    5 -> {6};
 
 }
