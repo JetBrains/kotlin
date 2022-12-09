@@ -156,34 +156,13 @@ digraph nullability_kt {
 
     subgraph cluster_17 {
         color=red
-        49 [label="Enter function getter" style="filled" fillcolor=red];
-        subgraph cluster_18 {
-            color=blue
-            50 [label="Enter block"];
-            51 [label="Const: Null(null)"];
-            52 [label="Jump: ^ Null(null)"];
-            53 [label="Stub" style="filled" fillcolor=gray];
-            54 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        55 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    49 -> {50};
-    50 -> {51};
-    51 -> {52};
-    52 -> {55};
-    52 -> {53} [style=dotted];
-    53 -> {54} [style=dotted];
-    54 -> {55} [style=dotted];
-
-    subgraph cluster_19 {
-        color=red
         63 [label="Enter class QImplWithCustomGetter" style="filled" fillcolor=red];
         64 [label="Exit class QImplWithCustomGetter" style="filled" fillcolor=red];
     }
-    subgraph cluster_20 {
+    subgraph cluster_18 {
         color=blue
         56 [label="Enter function fdata" style="filled" fillcolor=red];
-        subgraph cluster_21 {
+        subgraph cluster_19 {
             color=blue
             57 [label="Enter block"];
             58 [label="Const: Null(null)"];
@@ -193,6 +172,19 @@ digraph nullability_kt {
         }
         62 [label="Exit function fdata" style="filled" fillcolor=red];
     }
+    subgraph cluster_20 {
+        color=blue
+        49 [label="Enter function getter" style="filled" fillcolor=red];
+        subgraph cluster_21 {
+            color=blue
+            50 [label="Enter block"];
+            51 [label="Const: Null(null)"];
+            52 [label="Jump: ^ Null(null)"];
+            53 [label="Stub" style="filled" fillcolor=gray];
+            54 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        55 [label="Exit function getter" style="filled" fillcolor=red];
+    }
     subgraph cluster_22 {
         color=blue
         46 [label="Enter function <init>" style="filled" fillcolor=red];
@@ -200,10 +192,17 @@ digraph nullability_kt {
         48 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     63 -> {64} [color=green];
-    64 -> {46 56} [color=green];
-    64 -> {46 56} [style=dashed];
+    64 -> {46 49 56} [color=green];
+    64 -> {46 49 56} [style=dashed];
     46 -> {47};
     47 -> {48};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+    52 -> {55};
+    52 -> {53} [style=dotted];
+    53 -> {54} [style=dotted];
+    54 -> {55} [style=dotted];
     56 -> {57};
     57 -> {58};
     58 -> {59};
