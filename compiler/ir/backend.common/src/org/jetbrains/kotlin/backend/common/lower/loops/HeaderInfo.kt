@@ -266,6 +266,7 @@ internal abstract class HeaderInfoBuilder(
         ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
         UntilHandler(context),
+        RangeUntilHandler(context),
         DownToHandler(context),
         RangeToHandler(context),
         StepHandler(context, this)
