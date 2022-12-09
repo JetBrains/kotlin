@@ -845,15 +845,14 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         // Any lambda expression assigned to `(...) -> Unit` returns Unit
         if (isLambda && expected?.type?.isUnit == true) return expected
         // `lambda@ { return@lambda }` always returns Unit
-        val returnStatements = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this)
-        if (shouldReturnUnit(returnStatements)) return session.builtinTypes.unitType
+        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this)
+        if (shouldReturnUnit(returnExpressions)) return session.builtinTypes.unitType
         // Here is a questionable moment where we could prefer the expected type over an inferred one.
         // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
         // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
         // return statements. The former kind of makes more sense, but the latter is more readable.
-        val inferredFromReturnStatements =
-            session.typeContext.commonSuperTypeOrNull(returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType })
-        return inferredFromReturnStatements?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
+        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.resultType.coneType })
+        return inferredFromReturnExpressions?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
             ?: session.builtinTypes.unitType // Empty lambda returns Unit
     }
 

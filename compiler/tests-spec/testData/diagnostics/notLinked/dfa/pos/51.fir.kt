@@ -170,8 +170,8 @@ fun case_15(z: Any?) {
         return@let it as Int
         while (true) { println(1) }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
 
 /*
@@ -183,8 +183,8 @@ fun case_16(z: Any?) {
         return@run this as Int
         while (true) { println(1) }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
 
 /*
