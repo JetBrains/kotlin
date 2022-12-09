@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
@@ -53,24 +54,28 @@ class BodyGenerator(
     }
 
     // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
-    internal fun generateExpression(elem: IrElement) {
-        assert(elem is IrExpression || elem is IrVariable) { "Unsupported statement kind" }
+    internal fun generateExpression(expression: IrExpression) {
+        expression.acceptVoid(this)
 
-        elem.acceptVoid(this)
-
-        if (elem is IrExpression && elem.type.isNothing()) {
+        if (expression.type.isNothing()) {
             // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
             body.buildUnreachableAfterNothingType()
         }
     }
 
     // Generates code for the given IR element but *never* leaves anything on the stack.
-    private fun generateStatement(statement: IrElement) {
-        assert(statement is IrExpression || statement is IrVariable) { "Unsupported statement kind" }
-
+    private fun generateAsStatement(statement: IrExpression) {
         generateExpression(statement)
-        if (statement is IrExpression && statement.type != wasmSymbols.voidType) {
+        if (statement.type != wasmSymbols.voidType) {
             body.buildDrop()
+        }
+    }
+
+    private fun generateStatement(statement: IrStatement) {
+        when(statement) {
+            is IrExpression -> generateAsStatement(statement)
+            is IrVariable -> statement.acceptVoid(this)
+            else -> error("Unsupported node type: ${statement::class.simpleName}")
         }
     }
 
@@ -161,7 +166,7 @@ class BodyGenerator(
         when (expression.operator) {
             IrTypeOperator.REINTERPRET_CAST -> generateExpression(expression.argument)
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                generateStatement(expression.argument)
+                generateAsStatement(expression.argument)
                 body.buildGetUnit()
             }
             else -> assert(false) { "Other types of casts must be lowered" }
@@ -654,7 +659,7 @@ class BodyGenerator(
     private fun visitFunctionReturn(expression: IrReturn) {
         val returnType = expression.returnTargetSymbol.owner.returnType(backendContext)
         if (returnType == irBuiltIns.unitType && expression.returnTargetSymbol.owner != unitGetInstance) {
-            generateStatement(expression.value)
+            generateAsStatement(expression.value)
         } else {
             if (isGetUnitFunction) {
                 generateExpression(expression.value)
@@ -674,12 +679,12 @@ class BodyGenerator(
         val actualType = expression.type
 
         if (expectedType == wasmSymbols.voidType) {
-            generateStatement(expression)
+            generateAsStatement(expression)
             return
         }
 
         if (expectedType.isUnit() && !actualType.isUnit()) {
-            generateStatement(expression)
+            generateAsStatement(expression)
             body.buildGetUnit()
             return
         }
@@ -817,7 +822,7 @@ class BodyGenerator(
                 body.buildBlock("CONTINUE_$label") { wasmContinueBlock ->
                     functionContext.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
                     functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
-                    loop.body?.let { generateStatement(it) }
+                    loop.body?.let { generateAsStatement(it) }
                 }
                 generateExpression(loop.condition)
                 body.buildBrIf(wasmLoop)
@@ -845,7 +850,7 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.I32_EQZ)
                 body.buildBrIf(wasmBreakBlock)
                 loop.body?.let {
-                    generateStatement(it)
+                    generateAsStatement(it)
                 }
                 body.buildBr(wasmLoop)
             }
