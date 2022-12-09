@@ -115,8 +115,10 @@ fun CFGNode<*>.render(): String =
 
                 is ContractDescriptionEnterNode -> "Enter contract description"
 
+                is EnterValueParameterNode -> "Enter default value of ${fir.name}"
                 is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"
                 is ExitDefaultArgumentsNode -> "Exit default value of ${fir.name}"
+                is ExitValueParameterNode -> "Exit default value of ${fir.name}"
 
                 is ElvisLhsExitNode -> "Exit lhs of ?:"
                 is ElvisLhsIsNotNullNode -> "Lhs of ?: is not null"

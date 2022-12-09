@@ -252,12 +252,15 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
     fun enterValueParameter(valueParameter: FirValueParameter) {
-        graphBuilder.enterValueParameter(valueParameter)?.mergeIncomingFlow()
+        val (outerNode, innerNode) = graphBuilder.enterValueParameter(valueParameter) ?: return
+        outerNode.mergeIncomingFlow()
+        innerNode.mergeIncomingFlow()
     }
 
     fun exitValueParameter(valueParameter: FirValueParameter): ControlFlowGraph? {
-        val (node, graph) = graphBuilder.exitValueParameter(valueParameter) ?: return null
-        node.mergeIncomingFlow()
+        val (innerNode, outerNode, graph) = graphBuilder.exitValueParameter(valueParameter) ?: return null
+        innerNode.mergeIncomingFlow()
+        outerNode.mergeIncomingFlow()
         return graph
     }
 

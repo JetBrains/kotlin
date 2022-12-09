@@ -542,29 +542,35 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
-    fun enterValueParameter(valueParameter: FirValueParameter): EnterDefaultArgumentsNode? {
+    fun enterValueParameter(valueParameter: FirValueParameter): Pair<EnterValueParameterNode, EnterDefaultArgumentsNode>? {
         if (valueParameter.defaultValue == null) return null
+
+        val outerEnterNode = createEnterValueParameterNode(valueParameter)
         val graph = ControlFlowGraph(valueParameter, "default value of ${valueParameter.name}", ControlFlowGraph.Kind.DefaultArgument)
-        currentGraph.addSubGraph(graph)
         pushGraph(graph, Mode.Body)
-
-        createExitDefaultArgumentsNode(valueParameter).also {
-            exitTargetsForTry.push(it)
-        }
-
-        return createEnterDefaultArgumentsNode(valueParameter).also {
-            addEdge(lastNode, it)
-            lastNodes.push(it)
-        }
+        val innerExitNode = createExitDefaultArgumentsNode(valueParameter)
+        val innerEnterNode = createEnterDefaultArgumentsNode(valueParameter)
+        addNewSimpleNode(outerEnterNode)
+        addEdge(outerEnterNode, innerEnterNode)
+        lastNodes.push(innerEnterNode)
+        exitTargetsForTry.push(innerExitNode)
+        return outerEnterNode to innerEnterNode
     }
 
-    fun exitValueParameter(valueParameter: FirValueParameter): Pair<ExitDefaultArgumentsNode, ControlFlowGraph>? {
+    fun exitValueParameter(valueParameter: FirValueParameter): Triple<ExitDefaultArgumentsNode, ExitValueParameterNode, ControlFlowGraph>? {
         if (valueParameter.defaultValue == null) return null
+
         val exitNode = exitTargetsForTry.pop() as ExitDefaultArgumentsNode
         popAndAddEdge(exitNode)
         val graph = popGraph()
         require(exitNode == graph.exitNode)
-        return exitNode to graph
+        val outerEnterNode = lastNode as EnterValueParameterNode
+        val outerExitNode = createExitValueParameterNode(valueParameter)
+        addNewSimpleNode(outerExitNode)
+        addEdge(exitNode, outerExitNode, propagateDeadness = false)
+        outerEnterNode.addSubGraph(graph)
+        currentGraph.addSubGraph(graph)
+        return Triple(exitNode, outerExitNode, graph)
     }
 
     // ----------------------------------- Block -----------------------------------
