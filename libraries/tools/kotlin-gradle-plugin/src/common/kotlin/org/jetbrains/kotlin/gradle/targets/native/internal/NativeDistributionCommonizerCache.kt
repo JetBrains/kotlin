@@ -14,6 +14,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.Serializable
+import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -105,12 +106,11 @@ class NativeDistributionCommonizerCache(
         logger.info("Native Distribution Commonization: $message")
 
     private inner class Lock {
-        private val reentrantLock = ReentrantLock()
         private val lockedOutputDirectories = mutableSetOf<File>()
 
         fun <T> withLock(action: () -> T): T {
             /* Enter intra-process wide lock */
-            reentrantLock.withLock {
+            intraProcessLock.withLock {
                 if (outputDirectory in lockedOutputDirectories) {
                     /* Already acquired this directory and re-entered: We can just execute the action */
                     return action()
@@ -137,7 +137,7 @@ class NativeDistributionCommonizerCache(
         }
 
         fun checkLocked(outputDirectory: File) {
-            check(reentrantLock.isHeldByCurrentThread) {
+            check(intraProcessLock.isHeldByCurrentThread) {
                 "Expected lock to be held by current thread ${Thread.currentThread().name}"
             }
 
@@ -150,5 +150,9 @@ class NativeDistributionCommonizerCache(
     private fun readObject(input: ObjectInputStream) {
         input.defaultReadObject()
         lock = Lock()
+    }
+
+    private companion object {
+        val intraProcessLock: ReentrantLock = ReentrantLock()
     }
 }
