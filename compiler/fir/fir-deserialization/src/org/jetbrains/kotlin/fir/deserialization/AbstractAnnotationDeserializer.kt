@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -182,7 +183,9 @@ abstract class AbstractAnnotationDeserializer(
             annotationTypeRef = buildResolvedTypeRef {
                 type = ConeClassLikeLookupTagImpl(classId).constructClassType(emptyArray(), isNullable = false)
             }
-            this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
+            session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
+            }
             useSiteTarget?.let {
                 this.useSiteTarget = it
             }
