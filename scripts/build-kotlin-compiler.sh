@@ -22,4 +22,4 @@ echo "DEPLOY_VERSION=$DEPLOY_VERSION"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
 
 # Build dist/kotlin-compiler.zip
-./gradlew -PdeployVersion=$DEPLOY_VERSION -Pbuild.number=$BUILD_NUMBER -Pteamcity=true zipCompiler -Dfile.encoding=UTF-8 --no-daemon
+./gradlew -PdeployVersion=$DEPLOY_VERSION -Pbuild.number=$BUILD_NUMBER -Pteamcity=true zipCompiler --no-daemon
