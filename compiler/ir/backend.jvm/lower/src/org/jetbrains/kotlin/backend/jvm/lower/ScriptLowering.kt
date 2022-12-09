@@ -489,18 +489,22 @@ private class ScriptToClassTransformer(
             transformAnnotations(data)
             typeRemapper.withinScope(this) {
                 val newDispatchReceiverParameter = dispatchReceiverParameter?.transform(data)
+                val isInScriptConstructor = this@transformFunctionChildren is IrConstructor && parent == irScript
                 val dataForChildren =
                     when {
                         newDispatchReceiverParameter == null -> data
+
                         newDispatchReceiverParameter.type == scriptClassReceiver.type ->
-                            ScriptToClassTransformerContext(newDispatchReceiverParameter.symbol, null, null, this is IrConstructor)
+                            ScriptToClassTransformerContext(newDispatchReceiverParameter.symbol, null, null, isInScriptConstructor)
+
                         newDispatchReceiverParameter.type == data.valueParameterForFieldReceiver?.owner?.type ->
                             ScriptToClassTransformerContext(
                                 null,
                                 data.fieldForScriptThis,
                                 newDispatchReceiverParameter.symbol,
-                                this is IrConstructor
+                                isInScriptConstructor
                             )
+
                         else -> data
                     }
                 dispatchReceiverParameter = newDispatchReceiverParameter
