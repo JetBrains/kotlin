@@ -108,6 +108,10 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/customScript", pattern = "^(.*)$")
             }
 
+            testClass<AbstractIrCustomScriptCodegenTest> {
+                model("codegen/customScript", pattern = "^(.*)$")
+            }
+
             testClass<AbstractIrJsTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
             }
