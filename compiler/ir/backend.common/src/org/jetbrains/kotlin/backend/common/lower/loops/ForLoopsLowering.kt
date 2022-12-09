@@ -79,7 +79,7 @@ val forLoopsPhase = makeIrFilePhase(
  *       } while (loopVar != last)
  *   }
  * ```
- * If loop is an until loop (e.g., `for (i in A until B)`), it is transformed into:
+ * If loop is an until loop (e.g., `for (i in A until B)` or `for (i in A..<B)`, it is transformed into:
  * ```
  *   var inductionVar = A
  *   val last = B - 1

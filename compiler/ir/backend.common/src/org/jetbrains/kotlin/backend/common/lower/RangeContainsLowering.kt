@@ -393,6 +393,7 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
         ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
         UntilHandler(context),
+        RangeUntilHandler(context),
         DownToHandler(context),
         RangeToHandler(context)
     )
