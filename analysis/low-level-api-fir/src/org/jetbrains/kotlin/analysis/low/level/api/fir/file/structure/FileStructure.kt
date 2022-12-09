@@ -119,7 +119,6 @@ internal class FileStructure private constructor(
                 target = firFile.annotationsContainer,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
                 FirResolvePhase.BODY_RESOLVE,
-                checkPCE = true
             )
 
             RootStructureElement(firFile, container, moduleComponents)

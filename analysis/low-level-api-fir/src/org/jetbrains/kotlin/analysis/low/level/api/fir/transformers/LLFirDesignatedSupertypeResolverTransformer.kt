@@ -35,7 +35,6 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private val scopeSession: ScopeSession,
     private val lockProvider: LLFirLockProvider,
     private val firProviderInterceptor: FirProviderInterceptor?,
-    private val checkPCE: Boolean,
 ) : LLFirLazyTransformer {
 
     private val supertypeComputationSession = SupertypeComputationSession()
@@ -78,10 +77,10 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         toVisit.add(designation)
         while (toVisit.isNotEmpty()) {
             for (nowVisit in toVisit) {
-                if (checkPCE) checkCanceled()
+                checkCanceled()
                 val resolver = DesignatedFirSupertypeResolverVisitor(nowVisit)
                 nowVisit.firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-                lockProvider.runCustomResolveUnderLock(nowVisit.firFile, checkPCE) {
+                lockProvider.runCustomResolveUnderLock(nowVisit.firFile) {
                     nowVisit.firFile.accept(resolver, null)
                 }
                 resolver.declarationTransformer.ensureDesignationPassed()
@@ -108,7 +107,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private fun apply(visited: Collection<FirDesignationWithFile>) {
         fun applyToFileSymbols(designations: List<FirDesignationWithFile>) {
             for (designation in designations) {
-                if (checkPCE) checkCanceled()
+                checkCanceled()
                 val applier = DesignatedFirApplySupertypesTransformer(designation)
                 designation.firFile.transform<FirElement, Void?>(applier, null)
                 applier.declarationTransformer.ensureDesignationPassed()
@@ -117,8 +116,8 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
 
         val filesToDesignations = visited.groupBy { it.firFile }
         for (designationsPerFile in filesToDesignations) {
-            if (checkPCE) checkCanceled()
-            lockProvider.runCustomResolveUnderLock(designationsPerFile.key, checkPCE) {
+            checkCanceled()
+            lockProvider.runCustomResolveUnderLock(designationsPerFile.key) {
                 val session = designationsPerFile.key.llFirResolvableSession
                     ?: error("When FirFile exists for the declaration, the session should be resolvevablable")
                 session.moduleComponents.sessionInvalidator.withInvalidationOnException(session) {

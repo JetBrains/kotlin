@@ -22,7 +22,6 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
             target = fir,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = toPhase,
-            checkPCE = true,
         )
     }
 }

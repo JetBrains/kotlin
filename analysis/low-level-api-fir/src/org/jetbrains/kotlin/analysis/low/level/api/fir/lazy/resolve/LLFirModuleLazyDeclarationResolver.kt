@@ -72,21 +72,19 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         toPhase: FirResolvePhase,
         scopeSession: ScopeSession,
         collector: FirTowerDataContextCollector? = null,
-        checkPCE: Boolean = false,
     ) {
         val fromPhase = firFile.resolvePhase
         try {
             if (toPhase == FirResolvePhase.RAW_FIR) return
-            resolveFileToImports(firFile, checkPCE)
+            resolveFileToImports(firFile)
             if (toPhase == FirResolvePhase.IMPORTS) return
             if (firFile.resolvePhase >= toPhase) return
-            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
+            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile) {
                 lazyResolveFileDeclarationWithoutLock(
                     firFile = firFile,
                     toPhase = toPhase,
                     collector = collector,
                     scopeSession = scopeSession,
-                    checkPCE = checkPCE,
                 )
             }
         } catch (e: Throwable) {
@@ -94,16 +92,16 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun resolveFileToImports(firFile: FirFile, checkPCE: Boolean) {
+    private fun resolveFileToImports(firFile: FirFile) {
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
-            resolveFileToImportsWithoutLock(firFile, checkPCE)
+        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile) {
+            resolveFileToImportsWithoutLock(firFile)
         }
     }
 
-    private fun resolveFileToImportsWithoutLock(firFile: FirFile, checkPCE: Boolean) {
+    private fun resolveFileToImportsWithoutLock(firFile: FirFile) {
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        if (checkPCE) checkCanceled()
+        checkCanceled()
         firFile.transform<FirElement, Any?>(FirImportResolveTransformer(firFile.moduleData.session), null)
         firFile.replaceResolvePhase(FirResolvePhase.IMPORTS)
 
@@ -113,13 +111,12 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         firFile: FirFile,
         toPhase: FirResolvePhase,
         scopeSession: ScopeSession,
-        checkPCE: Boolean = false,
         collector: FirTowerDataContextCollector? = null,
     ) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
-        resolveFileToImportsWithoutLock(firFile, checkPCE)
+        resolveFileToImportsWithoutLock(firFile)
         if (toPhase == FirResolvePhase.IMPORTS) return
-        if (checkPCE) checkCanceled()
+        checkCanceled()
 
         val validForResolveDeclarations = buildList {
             add(firFile.annotationsContainer)
@@ -135,7 +132,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         var currentPhase = FirResolvePhase.IMPORTS
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
-            if (checkPCE) checkCanceled()
+            checkCanceled()
 
             val transformersToApply = designations.filter { designation ->
                 designation.target.resolvePhase < currentPhase
@@ -145,6 +142,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
             moduleComponents.globalResolveComponents.phaseRunner.runPhaseWithCustomResolve(currentPhase) {
                 for (curDesignation in transformersToApply) {
+                    checkCanceled()
                     LLFirLazyTransformerExecutor.execute(
                         phase = currentPhase,
                         designation = curDesignation,
@@ -153,7 +151,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                         lockProvider = moduleComponents.globalResolveComponents.lockProvider,
                         towerDataContextCollector = collector,
                         firProviderInterceptor = null,
-                        checkPCE = checkPCE,
                     )
                 }
             }
@@ -161,10 +158,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun fastTrackForImportsPhase(
-        target: FirElementWithResolvePhase,
-        checkPCE: Boolean,
-    ): Boolean {
+    private fun fastTrackForImportsPhase(target: FirElementWithResolvePhase): Boolean {
         val provider = target.moduleData.session.firProvider
         val firFile = when (target) {
             is FirFile -> target
@@ -172,7 +166,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             is FirClassLikeDeclaration -> provider.getFirClassifierContainerFile(target.symbol)
             else -> null
         } ?: return false
-        resolveFileToImports(firFile, checkPCE)
+        resolveFileToImports(firFile)
         return true
     }
 
@@ -186,11 +180,10 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         target: FirElementWithResolvePhase,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
-        checkPCE: Boolean,
     ) {
         val fromPhase = target.resolvePhase
         try {
-            doLazyResolve(target, scopeSession, toPhase, checkPCE)
+            doLazyResolve(target, scopeSession, toPhase)
         } catch (e: Throwable) {
             handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, target, fromPhase, toPhase)
         }
@@ -200,27 +193,26 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         target: FirElementWithResolvePhase,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
-        checkPCE: Boolean,
     ) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
         if (toPhase == FirResolvePhase.IMPORTS) {
-            if (fastTrackForImportsPhase(target, checkPCE)) {
+            if (fastTrackForImportsPhase(target)) {
                 return
             }
         }
         when (target) {
             is FirSyntheticPropertyAccessor -> {
-                lazyResolve(target.delegate, scopeSession, toPhase, checkPCE,)
+                lazyResolve(target.delegate, scopeSession, toPhase)
                 return
             }
 
             is FirBackingField -> {
-                lazyResolve(target.propertySymbol.fir, scopeSession, toPhase, checkPCE,)
+                lazyResolve(target.propertySymbol.fir, scopeSession, toPhase)
                 return
             }
 
             is FirFile -> {
-                lazyResolveFileDeclaration(target, toPhase, scopeSession, checkPCE = checkPCE)
+                lazyResolveFileDeclaration(target, toPhase, scopeSession)
                 return
             }
             else -> {}
@@ -273,16 +265,15 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         if (designation.target.resolvePhase >= neededPhase) return
 
         if (neededPhase == FirResolvePhase.IMPORTS) {
-            resolveFileToImports(designation.firFile, checkPCE)
+            resolveFileToImports(designation.firFile)
             return
         }
 
-        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile, checkPCE) {
+        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile) {
             runLazyDesignatedResolveWithoutLock(
                 designation = designation,
                 scopeSession = scopeSession,
                 toPhase = neededPhase,
-                checkPCE = checkPCE,
             )
             designation.target
         }
@@ -293,10 +284,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         designation: FirDesignationWithFile,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
-        checkPCE: Boolean,
     ) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
-        resolveFileToImportsWithoutLock(designation.firFile, checkPCE)
+        resolveFileToImportsWithoutLock(designation.firFile)
         if (toPhase == FirResolvePhase.IMPORTS) return
 
         val declarationResolvePhase = designation.target.resolvePhase
@@ -306,7 +296,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
-            if (checkPCE) checkCanceled()
+            checkCanceled()
 
             LLFirLazyTransformerExecutor.execute(
                 phase = currentPhase,
@@ -316,18 +306,16 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 lockProvider = moduleComponents.globalResolveComponents.lockProvider,
                 towerDataContextCollector = null,
                 firProviderInterceptor = null,
-                checkPCE = checkPCE,
             )
         }
     }
 
     internal fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
         designation: FirDesignationWithFile,
-        checkPCE: Boolean,
         onAirCreatedDeclaration: Boolean,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
-        resolveFileToImportsWithoutLock(designation.firFile, checkPCE)
+        resolveFileToImportsWithoutLock(designation.firFile)
         var currentPhase = maxOf(designation.target.resolvePhase, FirResolvePhase.IMPORTS)
 
         val scopeSession = ScopeSession()
@@ -342,7 +330,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
         while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
             currentPhase = currentPhase.next
-            if (checkPCE) checkCanceled()
+            checkCanceled()
 
             LLFirLazyTransformerExecutor.execute(
                 phase = currentPhase,
@@ -352,7 +340,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 lockProvider = moduleComponents.globalResolveComponents.lockProvider,
                 towerDataContextCollector = towerDataContextCollector,
                 firProviderInterceptor = firProviderInterceptor,
-                checkPCE = checkPCE,
             )
         }
     }
