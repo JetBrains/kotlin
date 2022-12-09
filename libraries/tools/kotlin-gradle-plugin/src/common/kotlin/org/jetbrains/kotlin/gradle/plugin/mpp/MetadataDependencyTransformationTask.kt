@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvide
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
+import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import java.io.File
 import javax.inject.Inject
 
@@ -117,8 +118,11 @@ open class MetadataDependencyTransformationTask
         get() = metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .associateWith { chooseVisibleSourceSets ->
-                val files = project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false)
-                project.files(files).builtBy(this)
+                outputFilesProvider {
+                    project.transformMetadataLibrariesForBuild(
+                        chooseVisibleSourceSets, outputsDir, materializeFiles = false
+                    )
+                }
             }
 
     @TaskAction

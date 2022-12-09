@@ -82,6 +82,16 @@ private fun transformMetadataLibrariesForBuild(
     materializeFiles: Boolean,
     compositeMetadataArtifact: CompositeMetadataArtifact
 ): Set<File> {
+    /*
+    Careful handling of composite builds:
+    Right now, composite multiplatform builds will compile against the composite artifact build by the producer build (not
+    against compiled source sets directly).
+
+    This means, that this function might be called to figure out task inputs at a time, where
+    this composite artifact is not present on disk yet.
+     */
+    if (!materializeFiles && !compositeMetadataArtifact.exists()) return emptySet()
+
     return compositeMetadataArtifact.read { artifactContent ->
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
             val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null

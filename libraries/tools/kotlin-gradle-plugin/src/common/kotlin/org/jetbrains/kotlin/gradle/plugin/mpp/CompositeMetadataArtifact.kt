@@ -21,6 +21,11 @@ internal interface CompositeMetadataArtifact {
      * Alternatively use the [read] function instead.
      */
     fun open(): CompositeMetadataArtifactContent
+
+    /**
+     * Checks if physical files are present on disk
+     */
+    fun exists(): Boolean
 }
 
 /**
