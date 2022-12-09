@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
 internal val LLVMValueRef.type: LLVMTypeRef
     get() = LLVMTypeOf(this)!!
@@ -170,7 +170,7 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
     return LLVMAddGlobal(llvm.module, type, name)!!
 }
 
-private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
     val found = LLVMGetNamedGlobal(llvm.module, name)
     return if (found == null)
         addGlobal(name, type, isExported = false)
@@ -181,13 +181,13 @@ private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValu
     }
 }
 
-internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKlibFileOrigin) =
-        importGlobal(name, type).also { llvm.imports.add(origin) }
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, declaration: IrDeclaration) =
+        importGlobal(name, type).also { llvm.dependenciesTracker.add(declaration) }
 
 internal fun ContextUtils.importObjCGlobal(name: String, type: LLVMTypeRef) = importGlobal(name, type)
 
 internal fun ContextUtils.importNativeRuntimeGlobal(name: String, type: LLVMTypeRef) =
-        importGlobal(name, type, CompiledKlibFileOrigin.StdlibRuntime)
+        importGlobal(name, type).also { llvm.dependenciesTracker.addNativeRuntime() }
 
 internal abstract class AddressAccess {
     abstract fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef

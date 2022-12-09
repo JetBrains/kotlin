@@ -11,10 +11,8 @@ import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
-import org.jetbrains.kotlin.library.metadata.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -149,6 +147,13 @@ internal open class LlvmFunctionSignature(
     }
 }
 
+internal sealed class FunctionOrigin {
+    object FromNativeRuntime : FunctionOrigin()
+
+    class OwnedBy(val declaration: IrDeclaration) : FunctionOrigin()
+}
+
+
 /**
  * Prototype of a LLVM function that is not tied to a specific LLVM module.
  */
@@ -157,14 +162,14 @@ internal class LlvmFunctionProto(
         returnType: LlvmRetType,
         parameterTypes: List<LlvmParamType> = emptyList(),
         functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
-        val origin: CompiledKlibFileOrigin,
+        val origin: FunctionOrigin,
         isVararg: Boolean = false,
         val independent: Boolean = false,
 ) : LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes) {
     constructor(
             name: String,
             signature: LlvmFunctionSignature,
-            origin: CompiledKlibFileOrigin,
+            origin: FunctionOrigin,
             independent: Boolean = false,
     ) : this(name, signature.returnType, signature.parameterTypes, signature.functionAttributes, origin, signature.isVararg, independent)
 
@@ -173,7 +178,7 @@ internal class LlvmFunctionProto(
             returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
             parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
             functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
-            origin = contextUtils.generationState.computeOrigin(irFunction),
+            origin = FunctionOrigin.OwnedBy(irFunction),
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
 }

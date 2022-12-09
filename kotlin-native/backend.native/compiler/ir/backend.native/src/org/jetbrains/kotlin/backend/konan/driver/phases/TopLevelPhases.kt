@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.runPhaseInParentContext
 import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
 import org.jetbrains.kotlin.backend.konan.llvm.printBitcodePhase
-import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val frontendOutput = useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
@@ -102,10 +99,8 @@ internal fun PhaseEngine<out Context>.processModuleFragments(
             module.files += functionInterfaceFiles
 
         if (generationState.shouldLinkRuntimeNativeLibraries) {
-            val stdlib = (context.standardLlvmSymbolsOrigin as DeserializedKlibModuleOrigin).library
             filesReferencedByNativeRuntime.forEach {
-                generationState.llvmImports.add(
-                        CompiledKlibFileOrigin.CertainFile(stdlib, it.fqName.asString(), it.path))
+                generationState.dependenciesTracker.add(it)
             }
         }
 

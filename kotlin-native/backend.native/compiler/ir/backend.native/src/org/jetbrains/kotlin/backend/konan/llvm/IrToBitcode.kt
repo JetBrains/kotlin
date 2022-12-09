@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDA
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -1639,7 +1638,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
             } else if (dstClass.isObjCProtocolClass()) {
                 // Note: it is not clear whether this class should be looked up this way.
                 // clang does the same, however swiftc uses dynamic lookup.
-                val protocolClass = functionGenerationContext.getObjCClass("Protocol", CompiledKlibFileOrigin.StdlibRuntime)
+                val protocolClass = functionGenerationContext.getObjCClassFromNativeRuntime("Protocol")
                 call(
                         llvm.Kotlin_Interop_IsObjectKindOfClass,
                         listOf(objCObject, protocolClass)
@@ -2494,7 +2493,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
                 LlvmRetType(llvm.int8PtrType),
-                origin = generationState.computeOrigin(irClass),
+                origin = FunctionOrigin.OwnedBy(irClass),
                 independent = true // Protocol is header-only declaration.
         )
         val protocolGetter = llvm.externalFunction(protocolGetterProto)
@@ -2687,7 +2686,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
             llvm.otherStaticInitializers += initializer
         } else {
-            generationState.llvmImports.add(CompiledKlibFileOrigin.StdlibRuntime)
+            generationState.dependenciesTracker.addNativeRuntime()
             // Define a strong runtime global. It'll overrule a weak global defined in a statically linked runtime.
             val global = llvm.staticData.placeGlobal(name, value, true)
 
@@ -2757,7 +2756,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
-        val dependencies = (llvm.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
+        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
 
         val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<LLVMValueRef>() }
 
@@ -2812,9 +2811,9 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                     is CachedLibraries.Cache.Monolithic -> listOf(addCtorFunction(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
                         val files = when (dependency) {
-                            is Llvm.CachedBitcodeDependency.WholeModule ->
+                            is DependenciesTracker.CachedBitcodeDependency.WholeModule ->
                                 context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds
-                            is Llvm.CachedBitcodeDependency.CertainFiles ->
+                            is DependenciesTracker.CachedBitcodeDependency.CertainFiles ->
                                 dependency.files
                         }
                         files.map { addCtorFunction(fileCtorName(library.uniqueName, it)) }

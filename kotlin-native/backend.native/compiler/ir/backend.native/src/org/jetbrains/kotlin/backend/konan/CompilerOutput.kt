@@ -119,7 +119,7 @@ private data class LlvmModules(
 private fun collectLlvmModules(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>): LlvmModules {
     val config = generationState.config
 
-    val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.llvm.bitcodeToLink
+    val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
             .partition { it.isStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()
             .map { libraries ->
@@ -231,7 +231,7 @@ private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
     }
 
     val optionsToEmbed = findEmbeddableOptions(config.platform.configurables.linkerKonanFlags) +
-            llvm.allNativeDependencies.flatMap { findEmbeddableOptions(it.linkerOpts) }
+            llvm.dependenciesTracker.allNativeDependencies.flatMap { findEmbeddableOptions(it.linkerOpts) }
 
     embedLlvmLinkOptions(llvm.llvmContext, llvm.module, optionsToEmbed)
 }

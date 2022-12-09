@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -151,8 +150,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
 internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
     private val cachesAbiSupport = generationState.context.cachesAbiSupport
     private val innerClassesSupport = generationState.context.innerClassesSupport
-    private val llvmImports = generationState.llvmImports
-    private val irLinker = generationState.context.irLinker
+    private val dependenciesTracker = generationState.dependenciesTracker
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -171,7 +169,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
 
             irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
-                llvmImports.add(generationState.computeOrigin(irClass))
+                dependenciesTracker.add(irClass)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     putValueArgument(0, expression.receiver)
                 }
@@ -179,7 +177,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
 
             property?.isLateinit == true -> {
                 val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
-                llvmImports.add(generationState.computeOrigin(property))
+                dependenciesTracker.add(property)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     if (irClass != null)
                         putValueArgument(0, expression.receiver)

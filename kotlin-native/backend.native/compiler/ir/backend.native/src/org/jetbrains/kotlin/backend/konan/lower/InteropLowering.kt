@@ -543,7 +543,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     ): IrExpression = generateWithStubs(call) {
         if (method.parent !is IrClass) {
             // Category-provided.
-            generationState.llvmImports.add(generationState.computeOrigin(method))
+            generationState.dependenciesTracker.add(method)
         }
 
         this.generateObjCCall(
@@ -1011,7 +1011,7 @@ private class InteropTransformer(
     private fun generateCCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
-        generationState.llvmImports.add(generationState.computeOrigin(function))
+        generationState.dependenciesTracker.add(function)
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )

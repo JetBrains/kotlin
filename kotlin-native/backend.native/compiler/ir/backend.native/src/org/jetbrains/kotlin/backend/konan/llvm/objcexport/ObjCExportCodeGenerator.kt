@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
@@ -464,10 +463,9 @@ internal class ObjCExportCodeGenerator(
         emitSpecialClassesConvertions()
 
         // Replace runtime global with weak linkage:
-        replaceExternalWeakOrCommonGlobal(
+        replaceExternalWeakOrCommonGlobalFromNativeRuntime(
                 "Kotlin_ObjCInterop_uniquePrefix",
-                codegen.staticData.cStringLiteral(namer.topLevelNamePrefix),
-                CompiledKlibFileOrigin.StdlibRuntime
+                codegen.staticData.cStringLiteral(namer.topLevelNamePrefix)
         )
 
         emitSelectorsHolder()
@@ -513,9 +511,8 @@ internal class ObjCExportCodeGenerator(
                 val sortedAdaptersPointer = staticData.placeGlobalConstArray("", type, sortedAdapters)
 
                 // Note: this globals replace runtime globals with weak linkage:
-                val origin = CompiledKlibFileOrigin.StdlibRuntime
-                replaceExternalWeakOrCommonGlobal(prefix, sortedAdaptersPointer, origin)
-                replaceExternalWeakOrCommonGlobal("${prefix}Num", llvm.constInt32(sortedAdapters.size), origin)
+                replaceExternalWeakOrCommonGlobalFromNativeRuntime(prefix, sortedAdaptersPointer)
+                replaceExternalWeakOrCommonGlobalFromNativeRuntime("${prefix}Num", llvm.constInt32(sortedAdapters.size))
             }
         }
 
@@ -523,10 +520,9 @@ internal class ObjCExportCodeGenerator(
         emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
 
         if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
-            replaceExternalWeakOrCommonGlobal(
+            replaceExternalWeakOrCommonGlobalFromNativeRuntime(
                     "Kotlin_ObjCExport_initTypeAdapters",
-                    llvm.constInt1(true),
-                    CompiledKlibFileOrigin.StdlibRuntime
+                    llvm.constInt1(true)
             )
         }
     }
@@ -692,15 +688,13 @@ internal class ObjCExportCodeGenerator(
 
 private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
         name: String,
-        value: ConstValue,
-        origin: CompiledKlibFileOrigin
+        value: ConstValue
 ) {
     // TODO: A similar mechanism is used in `IrToBitcode.overrideRuntimeGlobal`. Consider merging them.
     if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
-        val global = codegen.importGlobal(name, value.llvmType, origin)
+        val global = codegen.importGlobal(name, value.llvmType)
         externalGlobalInitializers[global] = value
     } else {
-        generationState.llvmImports.add(origin)
         val global = staticData.placeGlobal(name, value, isExported = true)
 
         if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
@@ -713,6 +707,17 @@ private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
         }
     }
 }
+
+private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
+        name: String,
+        value: ConstValue,
+        declaration: IrDeclaration
+) = replaceExternalWeakOrCommonGlobal(name, value).also { generationState.dependenciesTracker.add(declaration) }
+
+private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
+        name: String,
+        value: ConstValue
+) = replaceExternalWeakOrCommonGlobal(name, value).also { generationState.dependenciesTracker.addNativeRuntime() }
 
 private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
         irClass: IrClass,
@@ -731,7 +736,7 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
         replaceExternalWeakOrCommonGlobal(
                 irClass.writableTypeInfoSymbolName,
                 writableTypeInfoValue,
-                generationState.computeOrigin(irClass)
+                irClass
         )
     } else {
         setOwnWritableTypeInfo(irClass, writableTypeInfoValue)
