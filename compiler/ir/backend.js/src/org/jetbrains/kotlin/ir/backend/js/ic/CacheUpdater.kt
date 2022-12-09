@@ -367,17 +367,44 @@ class CacheUpdater(
                 val dependentSrcMetadata = dependentCache.fetchSourceFileFullMetadata(dependentSrcFile)
                 val dependentSignatures = dependentSrcMetadata.directDependencies[libFile, srcFile] ?: emptyMap()
                 when {
+                    // ignore if the dependent file is already dirty
                     dependentSrcMetadata is DirtyFileMetadata -> continue
-                    this[dependentLibFile, dependentSrcFile]?.importedSignaturesModified == true -> continue
+
+                    // ignore if the dependent file imports have been modified, the metadata for it will be rebuilt later
+                    this[dependentLibFile, dependentSrcFile]?.importedSignaturesState == ImportedSignaturesState.MODIFIED -> continue
+
+                    // update metadata if the direct dependencies have been modified
                     dependentSignatures.any { signatureHashCalculator[it.key] != it.value } -> {
                         val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
-                        newMetadata.importedSignaturesModified = true
+                        newMetadata.importedSignaturesState = ImportedSignaturesState.MODIFIED
                     }
 
+                    // update metadata if the signature set of the direct dependencies has been updated
                     dependentSignatures.keys != newSignatures -> {
                         val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
-                        newMetadata.directDependencies[libFile, srcFile] = newSignatures.associateWithTo(HashMap(newSignatures.size)) {
-                            signatureHashCalculator[it] ?: notFoundIcError("signature $it hash", libFile, srcFile)
+
+                        if (newMetadata.importedSignaturesState == ImportedSignaturesState.UNKNOWN) {
+                            val isNonModified = dependentSrcMetadata.directDependencies.allFiles { _, _, signatures ->
+                                signatures.all {
+                                    val newHash = signatureHashCalculator[it.key]
+                                    // a new hash may be not calculated for the non-loaded symbols, it is ok
+                                    newHash == null || newHash == it.value
+                                }
+                            }
+                            newMetadata.importedSignaturesState = if (isNonModified) {
+                                ImportedSignaturesState.NON_MODIFIED
+                            } else {
+                                ImportedSignaturesState.MODIFIED
+                            }
+                        }
+
+                        // if imports have been modified, metadata for the file will be rebuilt later,
+                        // so if the imports haven't been modified, update the metadata manually
+                        if (newMetadata.importedSignaturesState == ImportedSignaturesState.NON_MODIFIED) {
+                            val newDirectDependencies = newSignatures.associateWithTo(HashMap(newSignatures.size)) {
+                                signatureHashCalculator[it] ?: notFoundIcError("signature $it hash", libFile, srcFile)
+                            }
+                            newMetadata.directDependencies[libFile, srcFile] = newDirectDependencies
                         }
                     }
                 }
@@ -411,13 +438,13 @@ class CacheUpdater(
 
             for ((srcFile, srcFileMetadata) in srcFiles) {
                 val isExportedSignatureUpdated = srcFileMetadata.isExportedSignaturesUpdated()
-                if (isExportedSignatureUpdated || srcFileMetadata.importedSignaturesModified) {
+                if (isExportedSignatureUpdated || srcFileMetadata.importedSignaturesState == ImportedSignaturesState.MODIFIED) {
                     // if exported signatures or imported inline functions were modified - rebuild
                     filesToRebuild[srcFile] = srcFileMetadata
                     if (isExportedSignatureUpdated) {
                         fileStats.addDirtFileStat(srcFile, DirtyFileState.UPDATED_EXPORTS)
                     }
-                    if (srcFileMetadata.importedSignaturesModified) {
+                    if (srcFileMetadata.importedSignaturesState == ImportedSignaturesState.MODIFIED) {
                         fileStats.addDirtFileStat(srcFile, DirtyFileState.UPDATED_IMPORTS)
                     }
                 } else {
