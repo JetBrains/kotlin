@@ -25,6 +25,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.LIBRARY,
                         CompilerOutputKind.DYNAMIC_CACHE,
                         CompilerOutputKind.STATIC_CACHE,
+                        CompilerOutputKind.FRAMEWORK,
                 )
     }
 
@@ -36,7 +37,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
                         CompilerOutputKind.DYNAMIC -> error("Dynamic compiler driver does not support `dynamic` output yet.")
                         CompilerOutputKind.STATIC -> error("Dynamic compiler driver does not support `static` output yet.")
-                        CompilerOutputKind.FRAMEWORK -> error("Dynamic compiler driver does not support `framework` output yet.")
+                        CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
                         CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
                         CompilerOutputKind.BITCODE -> error("Dynamic compiler driver does not support `bitcode` output yet.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
@@ -46,6 +47,29 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                 }
             }
         }
+    }
+
+    /**
+     * Create an Objective-C framework which is a directory consisting of
+     * - Objective-C header
+     * - Info.plist
+     * - Binary (if -Xomit-framework-binary is not passed).
+     */
+    private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
+        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
+        if (config.omitFrameworkBinary) {
+            return
+        }
+        val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+        }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+            it.objCExportedInterface = objCExportedInterface
+            it.objCExportCodeSpec = objCCodeSpec
+        }
+        engine.runBackend(backendContext)
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
