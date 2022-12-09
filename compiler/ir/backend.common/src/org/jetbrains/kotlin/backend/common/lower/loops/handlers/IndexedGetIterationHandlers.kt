@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.loops.ExpressionHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
+import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.IndexedGetHeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.matchers.Quantifier
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 abstract class IndexedGetIterationHandler(
     protected val context: CommonBackendContext,
     private val canCacheLast: Boolean
-) : ExpressionHandler {
-    override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
+) : HeaderInfoHandler<IrExpression, Nothing?> {
+    override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Consider the case like:
             //

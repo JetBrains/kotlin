@@ -28,18 +28,18 @@ import kotlin.math.absoluteValue
 
 /** Builds a [HeaderInfo] for progressions built using the `step` extension function. */
 internal class StepHandler(
-    private val context: CommonBackendContext,
-    private val visitor: HeaderInfoBuilder
-) : ProgressionHandler {
-
+    private val context: CommonBackendContext, private val visitor: HeaderInfoBuilder
+) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val symbols = context.ir.symbols
 
-    override val matcher = SimpleCalleeMatcher {
+    private val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(
             FqName("kotlin.ranges.step"),
             symbols.progressionClasses.map { it.defaultType })
         parameter(0) { it.type.isInt() || it.type.isLong() }
     }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {

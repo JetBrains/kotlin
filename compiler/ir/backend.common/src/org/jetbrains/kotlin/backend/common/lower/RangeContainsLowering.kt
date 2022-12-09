@@ -411,14 +411,15 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
 }
 
 /** Builds a [HeaderInfo] for closed floating-point ranges built using the `rangeTo` function. */
-internal object FloatingPointRangeToHandler : HeaderInfoFromCallHandler<Nothing?> {
-
-    override val matcher = SimpleCalleeMatcher {
+internal object FloatingPointRangeToHandler : HeaderInfoHandler<IrCall, Nothing?> {
+    private val matcher = SimpleCalleeMatcher {
         fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}") }
         extensionReceiver { it != null && it.type.run { isFloat() || isDouble() } }
         parameterCount { it == 1 }
         parameter(0) { it.type.run { isFloat() || isDouble() } }
     }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         FloatingPointRangeHeaderInfo(
@@ -428,13 +429,14 @@ internal object FloatingPointRangeToHandler : HeaderInfoFromCallHandler<Nothing?
 }
 
 /** Builds a [HeaderInfo] for ranges of Comparables built using the `rangeTo` extension function. */
-internal class ComparableRangeToHandler(context: CommonBackendContext) : HeaderInfoFromCallHandler<Nothing?> {
-
-    override val matcher = SimpleCalleeMatcher {
+internal class ComparableRangeToHandler(context: CommonBackendContext) : HeaderInfoHandler<IrCall, Nothing?> {
+    private val matcher = SimpleCalleeMatcher {
         fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}") }
         extensionReceiver { it != null && it.type.isSubtypeOfClass(context.ir.symbols.comparable) }
         parameterCount { it == 1 }
     }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         ComparableRangeInfo(

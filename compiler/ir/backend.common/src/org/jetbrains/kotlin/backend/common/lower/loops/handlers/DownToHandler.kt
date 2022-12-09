@@ -20,18 +20,18 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `downTo` extension function. */
-internal class DownToHandler(private val context: CommonBackendContext) :
-    ProgressionHandler {
-
+internal class DownToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
 
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
-    override val matcher = SimpleCalleeMatcher {
+    private val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(FqName("kotlin.ranges.downTo"), progressionElementTypes)
         parameterCount { it == 1 }
         parameter(0) { it.type in progressionElementTypes }
     }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {

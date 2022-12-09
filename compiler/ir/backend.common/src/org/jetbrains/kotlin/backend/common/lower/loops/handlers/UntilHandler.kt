@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `until` extension function. */
-internal class UntilHandler(private val context: CommonBackendContext) :
-    ProgressionHandler {
-
+internal class UntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val symbols = context.ir.symbols
     private val progressionElementTypes = symbols.progressionElementTypes
 
-    override val matcher = SimpleCalleeMatcher {
+    private val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(FqName("kotlin.ranges.until"), progressionElementTypes)
         parameterCount { it == 1 }
         parameter(0) { it.type in progressionElementTypes }
     }
+
+    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {

@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
@@ -258,27 +256,11 @@ internal interface HeaderInfoHandler<E : IrExpression, D> {
         }
 }
 
-internal interface ExpressionHandler : HeaderInfoHandler<IrExpression, Nothing?> {
-    fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo?
-    override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol) = build(expression, scopeOwner)
-}
-
-/** Matches a call to build an iterable and builds a [HeaderInfo] from the call's context. */
-internal interface HeaderInfoFromCallHandler<D> : HeaderInfoHandler<IrCall, D> {
-    val matcher: IrCallMatcher
-
-    override fun matchIterable(expression: IrCall) = matcher(expression)
-}
-
-internal typealias ProgressionHandler = HeaderInfoFromCallHandler<ProgressionType>
-
 internal abstract class HeaderInfoBuilder(
     context: CommonBackendContext,
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
-) :
-    IrElementVisitor<HeaderInfo?, IrCall?> {
-
+) : IrElementVisitor<HeaderInfo?, IrCall?> {
     private val symbols = context.ir.symbols
 
     protected open val progressionHandlers = listOf(
@@ -291,8 +273,8 @@ internal abstract class HeaderInfoBuilder(
         StepHandler(context, this)
     )
 
-    protected abstract val callHandlers: List<HeaderInfoFromCallHandler<Nothing?>>
-    protected abstract val expressionHandlers: List<ExpressionHandler>
+    protected abstract val callHandlers: List<HeaderInfoHandler<IrCall, Nothing?>>
+    protected abstract val expressionHandlers: List<HeaderInfoHandler<IrExpression, Nothing?>>
 
     override fun visitElement(element: IrElement, data: IrCall?): HeaderInfo? = null
 
