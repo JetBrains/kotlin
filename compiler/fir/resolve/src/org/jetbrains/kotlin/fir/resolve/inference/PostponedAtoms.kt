@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -60,7 +60,7 @@ class ResolvedLambdaAtom(
     override var expectedType = expectedType
         private set
 
-    lateinit var returnStatements: Collection<FirStatement>
+    lateinit var returnStatements: Collection<FirExpression>
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {

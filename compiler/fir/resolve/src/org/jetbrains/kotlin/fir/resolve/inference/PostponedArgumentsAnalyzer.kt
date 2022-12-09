@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePositi
 import org.jetbrains.kotlin.types.model.*
 
 data class ReturnArgumentsAnalysisResult(
-    val returnArguments: Collection<FirStatement>,
+    val returnArguments: Collection<FirExpression>,
     val inferenceSession: FirInferenceSession?
 )
 
@@ -178,7 +177,6 @@ class PostponedArgumentsAnalyzer(
         val lambdaReturnType = lambda.returnType.let(substitute)
         returnArguments.forEach {
             val haveSubsystem = c.addSubsystemFromExpression(it)
-            if (it !is FirExpression) return@forEach
             // If the lambda returns Unit, the last expression is not returned and should not be constrained.
             // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
             //    fun <T> foo(): T
