@@ -124,7 +124,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.c = c;
 
         classOrObject = classLikeInfo.getCorrespondingClassOrObject();
-        recordToTrace();
 
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
