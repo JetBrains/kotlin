@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import java.util.*
@@ -434,7 +436,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.property("kotlin.daemon.jvmargs")
 
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
-        get() = KotlinCompilerExecutionStrategy.fromProperty(this.property("kotlin.compiler.execution.strategy")?.toLowerCase())
+        get() = KotlinCompilerExecutionStrategy.fromProperty(
+            this.property("kotlin.compiler.execution.strategy")?.toLowerCaseAsciiOnly()
+        )
 
     val kotlinDaemonUseFallbackStrategy: Boolean
         get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
@@ -460,7 +464,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
         defaultValue: T
-    ): T = this.property(propName)?.let { enumValueOf<T>(it.toUpperCase()) } ?: defaultValue
+    ): T = this.property(propName)?.let { enumValueOf<T>(it.toUpperCaseAsciiOnly()) } ?: defaultValue
 
     /**
      * Looks up the property in the following sources with decreasing priority:

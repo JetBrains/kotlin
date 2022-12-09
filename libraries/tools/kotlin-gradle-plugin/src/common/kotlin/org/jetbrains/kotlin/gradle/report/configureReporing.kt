@@ -9,11 +9,12 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 internal fun reportingSettings(rootProject: Project): ReportingSettings {
     val properties = PropertiesProvider(rootProject)
     val buildReportOutputTypes = properties.buildReportOutputs.map {
-        BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCase() }
+        BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
             ?: throw IllegalStateException("Unknown output type: $it")
     }.toMutableList() //temporary solution. support old property
     val buildReportMode =

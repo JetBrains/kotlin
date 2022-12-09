@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublicati
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromPublicationDelegateAndProject
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class ExternalKotlinTargetComponent(
     val targetProvider: TargetProvider
@@ -45,7 +46,7 @@ internal class ExternalKotlinTargetComponent(
         get() = true
 
     override val defaultArtifactId: String
-        get() = dashSeparatedName(target.project.name, target.name.toLowerCase())
+        get() = dashSeparatedName(target.project.name, target.name.toLowerCaseAsciiOnly())
 
     @Deprecated(
         message = "Sources artifacts are now published as separate variant " +

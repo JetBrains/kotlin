@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 @CacheableTask
@@ -107,9 +108,9 @@ abstract class KotlinJsIrLink @Inject constructor(
             it.report(
                 StringMetrics.JS_OUTPUT_GRANULARITY,
                 if (newArgs.irPerModule)
-                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCase()
+                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
                 else
-                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCase()
+                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
             )
         }
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Compan
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
@@ -129,7 +130,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         { task.args.add(0, "serve") },
                         { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
                     )()
-                    task.description = "start ${mode.name.toLowerCase()} webpack dev server"
+                    task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
 
                     webpackMajorVersion.choose(
                         {
@@ -210,7 +211,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                             .resolve(link.compilerOptions.moduleName.get() + ".js")
                     }
 
-                    task.description = "build webpack ${mode.name.toLowerCase()} bundle"
+                    task.description = "build webpack ${mode.name.toLowerCaseAsciiOnly()} bundle"
                     task._destinationDirectory = binary.distribution.directory
 
                     BuildMetricsService.registerIfAbsent(project)?.let {

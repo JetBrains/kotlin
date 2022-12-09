@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+
 /**
  * Provides platform and architecture names that is used to download Binaryen.
  */
@@ -12,7 +14,7 @@ internal object BinaryenPlatform {
     const val DARWIN = "macos"
 
     val name: String = run {
-        val name = property("os.name").toLowerCase()
+        val name = property("os.name").toLowerCaseAsciiOnly()
         when {
             name.contains("windows") -> WIN
             name.contains("mac") -> DARWIN

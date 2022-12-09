@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
 import java.io.File
 
@@ -106,7 +107,7 @@ class KotlinKarma(
         val propValue = project.kotlinPropertiesProvider.jsKarmaBrowsers(compilation.target)
         val propBrowsers = propValue?.split(",")
         propBrowsers?.map(String::trim)?.forEach {
-            when (it.toLowerCase()) {
+            when (it.toLowerCaseAsciiOnly()) {
                 "chrome" -> useChrome()
                 "chrome-canary" -> useChromeCanary()
                 "chrome-canary-headless" -> useChromeCanaryHeadless()
@@ -503,7 +504,7 @@ class KotlinKarma(
 
                         val actualText = if (launcherMessage != null) {
                             val (logLevel, message) = launcherMessage.destructured
-                            actualType = LogType.byValueOrNull(logLevel.toLowerCase())
+                            actualType = LogType.byValueOrNull(logLevel.toLowerCaseAsciiOnly())
                             if (actualType?.isErrorLike() == true) {
                                 processFailedBrowsers(text)
                             }

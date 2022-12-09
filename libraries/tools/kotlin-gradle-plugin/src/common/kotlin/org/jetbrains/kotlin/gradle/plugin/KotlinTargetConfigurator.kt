@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
@@ -289,7 +290,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
         target.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
             if (compilation.isMain()) {
-                sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCase())
+                sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCaseAsciiOnly())
             }
         }
     }
@@ -315,7 +316,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         target.disambiguationClassifier?.let { classifier ->
             task.configure { taskInstance ->
-                taskInstance.archiveAppendix.set(classifier.toLowerCase())
+                taskInstance.archiveAppendix.set(classifier.toLowerCaseAsciiOnly())
             }
         }
 

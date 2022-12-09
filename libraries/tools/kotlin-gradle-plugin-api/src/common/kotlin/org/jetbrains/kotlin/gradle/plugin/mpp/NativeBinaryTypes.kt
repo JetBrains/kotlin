@@ -10,6 +10,7 @@ import org.gradle.api.Named
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.util.*
 
 enum class NativeBuildType(
     val optimized: Boolean,
@@ -18,7 +19,7 @@ enum class NativeBuildType(
     RELEASE(true, false),
     DEBUG(false, true);
 
-    override fun getName(): String = name.toLowerCase()
+    override fun getName(): String = name.toLowerCase(Locale.ENGLISH)
 
     @Suppress("UNUSED_PARAMETER")
     @Deprecated(

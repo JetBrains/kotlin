@@ -72,7 +72,11 @@ abstract class AbstractKotlinTarget(
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
 
-        val sourcesArtifact = configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
+        val sourcesArtifact = configureSourcesJarArtifact(
+            mainCompilation,
+            componentName,
+            dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+        )
         if (sourcesArtifact != null) {
             usageContexts += DefaultKotlinUsageContext(
                 compilation = mainCompilation,

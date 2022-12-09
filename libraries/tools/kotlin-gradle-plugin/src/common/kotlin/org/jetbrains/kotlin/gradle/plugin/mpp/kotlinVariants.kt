@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
     // This property is declared in the separate parent type to allow the usages to reference it without forcing the subtypes to load,
@@ -88,7 +89,7 @@ open class KotlinVariant(
     internal var defaultArtifactIdSuffix: String? = null
 
     override val defaultArtifactId: String
-        get() = dashSeparatedName(target.project.name, artifactTargetName.toLowerCase(), defaultArtifactIdSuffix)
+        get() = dashSeparatedName(target.project.name, artifactTargetName.toLowerCaseAsciiOnly(), defaultArtifactIdSuffix)
 
     override var publicationDelegate: MavenPublication? = null
 }
@@ -126,8 +127,8 @@ class JointAndroidKotlinTargetComponent(
     override val defaultArtifactId: String =
         dashSeparatedName(
             target.project.name,
-            target.targetName.toLowerCase(),
-            *flavorNames.map { it.toLowerCase() }.toTypedArray()
+            target.targetName.toLowerCaseAsciiOnly(),
+            *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray()
         )
 
     override var publicationDelegate: MavenPublication? = null

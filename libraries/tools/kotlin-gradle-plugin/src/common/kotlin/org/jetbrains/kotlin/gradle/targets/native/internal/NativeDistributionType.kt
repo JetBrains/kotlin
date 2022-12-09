@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTyp
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal enum class NativeDistributionType(val suffix: String?, val mustGeneratePlatformLibs: Boolean) {
     LIGHT(null, true),
@@ -32,7 +33,7 @@ internal class NativeDistributionTypeProvider(private val project: Project) {
         lightType: NativeDistributionType,
         defaultType: NativeDistributionType
     ): NativeDistributionType {
-        val requestedByUser = propertiesProvider.nativeDistributionType?.toLowerCase()
+        val requestedByUser = propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()
         val deprecatedRestricted = propertiesProvider.nativeDeprecatedRestricted
 
         // A case when a deprecated property (kotlin.native.restrictedDistribution) is used to choose the restricted distribution.

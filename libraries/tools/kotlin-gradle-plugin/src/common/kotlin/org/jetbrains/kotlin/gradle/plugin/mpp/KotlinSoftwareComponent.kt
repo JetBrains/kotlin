@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGU
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class KotlinSoftwareComponent(
     private val project: Project,
@@ -107,7 +108,7 @@ abstract class KotlinSoftwareComponent(
             name,
             project,
             lazy { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
-            name.toLowerCase()
+            name.toLowerCaseAsciiOnly()
         )
 
     private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {

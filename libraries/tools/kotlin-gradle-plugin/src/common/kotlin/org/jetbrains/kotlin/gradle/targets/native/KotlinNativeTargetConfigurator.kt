@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
@@ -144,7 +145,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
 
         fun configureFatFramework() {
-            val fatFrameworkConfigurationName = lowerCamelCaseName(binary.name, binary.target.konanTarget.family.name.toLowerCase(), "fat")
+            val fatFrameworkConfigurationName = lowerCamelCaseName(
+                binary.name,
+                binary.target.konanTarget.family.name.toLowerCaseAsciiOnly(),
+                "fat"
+            )
             val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalizeAsciiOnly()}"
 
             val fatFrameworkTask = if (fatFrameworkTaskName in tasks.names) {
@@ -152,7 +157,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             } else {
                 tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
                     it.baseName = binary.baseName
-                    it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCase())
+                    it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCaseAsciiOnly())
                 }
             }
 

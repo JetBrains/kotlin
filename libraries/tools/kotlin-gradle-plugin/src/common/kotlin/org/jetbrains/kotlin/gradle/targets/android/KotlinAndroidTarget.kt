@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 abstract class KotlinAndroidTarget @Inject constructor(
@@ -138,7 +139,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                         defaultArtifactIdSuffix =
                             dashSeparatedName(
                                 (getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
-                                    .map { it?.toLowerCase() }
+                                    .map { it?.toLowerCaseAsciiOnly() }
                             ).takeIf { it.isNotEmpty() }
                     }
                 }
@@ -191,9 +192,9 @@ abstract class KotlinAndroidTarget @Inject constructor(
             compilation,
             compilation.disambiguateName(""),
             dashSeparatedName(
-                compilation.target.name.toLowerCase(),
-                *flavorNames.map { it.toLowerCase() }.toTypedArray(),
-                buildTypeName.takeIf { it != "release" }?.toLowerCase()
+                compilation.target.name.toLowerCaseAsciiOnly(),
+                *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray(),
+                buildTypeName.takeIf { it != "release" }?.toLowerCaseAsciiOnly()
             ),
             classifierPrefix = artifactClassifier,
             sourcesElementsConfigurationName = sourcesElementsConfigurationName

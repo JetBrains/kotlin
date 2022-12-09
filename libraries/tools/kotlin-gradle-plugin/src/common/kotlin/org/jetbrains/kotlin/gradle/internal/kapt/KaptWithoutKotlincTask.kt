@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -157,7 +158,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         // as user may set JDK with same major Java version, but from different vendor
         val isRunningOnGradleJvm = gradleJvm.javaVersion == toolchainProvider.javaVersion.get() &&
                 gradleJvm.javaExecutable.absolutePath == toolchainProvider.javaExecutable.get().asFile.absolutePath
-        val isolationModeStr = getValue("kapt.workers.isolation")?.toLowerCase()
+        val isolationModeStr = getValue("kapt.workers.isolation")?.toLowerCaseAsciiOnly()
         return when {
             (isolationModeStr == null || isolationModeStr == "none") && isRunningOnGradleJvm -> IsolationMode.NONE
             else -> {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 internal fun lowerCamelCaseName(vararg nameParts: String?): String {
@@ -28,14 +29,14 @@ internal fun dashSeparatedLowercaseName(nameParts: Iterable<String?>) =
     dashSeparatedLowercaseName(*nameParts.toList().toTypedArray())
 
 internal fun dashSeparatedLowercaseName(vararg nameParts: String?): String {
-    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty)?.toLowerCase(Locale.ENGLISH) }
+    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty)?.toLowerCaseAsciiOnly() }
     return nonEmptyParts.joinToString(separator = "-")
 }
 
 internal fun String.decamelize(): String {
     return replace(upperCaseRegex) {
         val (first) = it.destructured
-        "-${first.toLowerCase()}"
+        "-${first.toLowerCaseAsciiOnly()}"
     }
 }
 

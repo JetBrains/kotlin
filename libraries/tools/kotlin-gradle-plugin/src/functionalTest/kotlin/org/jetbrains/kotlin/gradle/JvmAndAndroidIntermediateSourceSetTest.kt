@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
 class JvmAndAndroidIntermediateSourceSetTest {
@@ -117,7 +118,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
         assertTrue(kotlinComponents.isNotEmpty(), "Expected at least one KotlinComponent to be present")
 
         kotlinComponents.forEach { component ->
-            val isReleaseComponent = "release" in component.name.toLowerCase()
+            val isReleaseComponent = "release" in component.name.toLowerCaseAsciiOnly()
             if (isReleaseComponent) {
                 assertTrue(component.publishable, "Expected release component to be marked as publishable")
             } else {

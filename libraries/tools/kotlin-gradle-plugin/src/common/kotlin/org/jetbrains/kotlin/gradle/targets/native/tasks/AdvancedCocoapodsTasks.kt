@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.io.IOException
 import java.io.Reader
@@ -491,11 +492,11 @@ private object CocoapodsErrorHandlingUtil {
         ) {
             message += """
                 |
-                |        Possible reason: ${family.name.toLowerCase()} deployment target is not configured
+                |        Possible reason: ${family.name.toLowerCaseAsciiOnly()} deployment target is not configured
                 |        Configure deployment_target for ALL targets as follows:
                 |        cocoapods {
                 |           ...
-                |           ${family.name.toLowerCase()}.deploymentTarget = "..."
+                |           ${family.name.toLowerCaseAsciiOnly()}.deploymentTarget = "..."
                 |           ...
                 |        }
                 |       

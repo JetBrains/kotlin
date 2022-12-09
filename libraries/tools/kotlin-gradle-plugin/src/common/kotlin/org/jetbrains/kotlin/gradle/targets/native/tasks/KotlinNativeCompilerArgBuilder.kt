@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 internal class CompilerPluginData(
@@ -138,7 +139,7 @@ private fun buildKotlinNativeMainArgs(
     addKey("-g", debuggable)
     addKey("-ea", debuggable)
     addArg("-target", target.name)
-    addArg("-p", outputKind.name.toLowerCase())
+    addArg("-p", outputKind.name.toLowerCaseAsciiOnly())
     addArg("-o", outFile.absolutePath)
     libraries.forEach { addArg("-l", it.absolutePath) }
 }

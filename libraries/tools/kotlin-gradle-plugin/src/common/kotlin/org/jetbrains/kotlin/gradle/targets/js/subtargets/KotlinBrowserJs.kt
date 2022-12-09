@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce as KotlinJsDceTask
@@ -153,7 +154,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
                     )()
 
-                    task.description = "start ${type.name.toLowerCase()} webpack dev server"
+                    task.description = "start ${type.name.toLowerCaseAsciiOnly()} webpack dev server"
 
                     webpackMajorVersion.choose(
                         {
@@ -235,7 +236,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         distributeResourcesTask
                     )
 
-                    task.description = "build webpack ${type.name.toLowerCase()} bundle"
+                    task.description = "build webpack ${type.name.toLowerCaseAsciiOnly()} bundle"
                     task._destinationDirectory = distribution.directory
 
                     BuildMetricsService.registerIfAbsent(project)?.let {

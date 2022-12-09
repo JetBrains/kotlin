@@ -13,6 +13,7 @@ import org.gradle.api.reflect.TypeOf
 import org.jetbrains.kotlin.gradle.plugin.warnNpmGenerateExternals
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 interface BaseNpmDependencyExtension {
@@ -100,7 +101,7 @@ internal fun Project.addNpmDependencyExtension() {
 private fun scopePrefix(scope: NpmDependency.Scope): String {
     val scopePrefix = scope.name
         .removePrefix(NORMAL.name)
-        .toLowerCase()
+        .toLowerCaseAsciiOnly()
 
     return lowerCamelCaseName(scopePrefix, "npm")
 }
@@ -182,7 +183,7 @@ private abstract class NpmDependencyExtensionDelegate(
     protected fun npmDeclarationException(args: Array<out Any?>): Nothing {
         throw IllegalArgumentException(
             """
-            |Unable to add NPM dependency with scope '${scope.name.toLowerCase()}' by ${args.joinToString { "'$it'" }}
+            |Unable to add NPM dependency with scope '${scope.name.toLowerCaseAsciiOnly()}' by ${args.joinToString { "'$it'" }}
             |Possible variants:
             |${possibleVariants().joinToString("\n") { "- ${it.first} -> ${it.second}" }}
             """.trimMargin()
