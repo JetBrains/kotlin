@@ -23,15 +23,10 @@ import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
-@RequiresOptIn
-private annotation class CfgBuilderInternals
-
 @OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
-    @CfgBuilderInternals
     private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph(null, "<TOP_LEVEL_GRAPH>", ControlFlowGraph.Kind.TopLevel))
 
-    @get:OptIn(CfgBuilderInternals::class)
     val currentGraph: ControlFlowGraph
         get() = graphs.top()
 
@@ -43,13 +38,6 @@ class ControlFlowGraphBuilder {
         get() = lastNodes.topOrNull()
 
     var levelCounter: Int = 0
-
-    private val modes: Stack<Mode> = stackOf(Mode.TopLevel)
-    private val mode: Mode get() = modes.top()
-
-    private enum class Mode {
-        Function, TopLevel, Body, ClassInitializer, PropertyInitializer, FieldInitializer
-    }
 
     // ----------------------------------- Node caches -----------------------------------
 
@@ -122,22 +110,17 @@ class ControlFlowGraphBuilder {
         return nonDirectJumps[exitNode].mapNotNullTo(returnValues) { it.returnExpression() }
     }
 
-    @OptIn(CfgBuilderInternals::class)
     fun isTopLevel(): Boolean = graphs.size == 1
 
     // ----------------------------------- Utils -----------------------------------
 
-    @OptIn(CfgBuilderInternals::class)
-    private fun pushGraph(graph: ControlFlowGraph, mode: Mode) {
+    private fun pushGraph(graph: ControlFlowGraph) {
         graphs.push(graph)
-        modes.push(mode)
         levelCounter++
     }
 
-    @OptIn(CfgBuilderInternals::class)
     private fun popGraph(): ControlFlowGraph {
         levelCounter--
-        modes.pop()
         return graphs.pop().also { it.complete() }
     }
 
@@ -153,32 +136,24 @@ class ControlFlowGraphBuilder {
         }
         val graph = ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function)
         // function is local
-        val localFunctionNode = runIf(mode == Mode.Body) {
-            assert(currentGraph.kind.withBody)
+        val localFunctionNode = runIf(function.symbol.callableId.isLocal && currentGraph.kind.withBody) {
             currentGraph.addSubGraph(graph)
-
             createLocalFunctionDeclarationNode(function).also {
                 addNewSimpleNode(it)
             }
         }
 
-        pushGraph(
-            graph = graph,
-            mode = Mode.Body
-        )
-
-        val previousNode = enterToLocalClassesMembers[function.symbol]
-            ?: (function as? FirSimpleFunction)?.takeIf { it.isLocal }?.let { lastNode }
+        pushGraph(graph)
 
         val enterNode = createFunctionEnterNode(function).also {
             lastNodes.push(it)
         }
 
-        if (previousNode != null) {
-            if (localFunctionNode == previousNode) {
-                addEdge(localFunctionNode, enterNode, preferredKind = EdgeKind.Forward)
-            } else {
-                addEdge(previousNode, enterNode, preferredKind = EdgeKind.DfgForward)
+        if (localFunctionNode != null) {
+            addEdge(localFunctionNode, enterNode)
+        } else {
+            enterToLocalClassesMembers[function.symbol]?.let {
+                addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward)
             }
         }
 
@@ -264,7 +239,7 @@ class ControlFlowGraphBuilder {
     fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): FunctionEnterNode {
         val symbol = anonymousFunction.symbol
         val flowSourceNode = postponedAnonymousFunctionNodes.getValue(symbol).first
-        pushGraph(ControlFlowGraph(anonymousFunction, "<anonymous>", ControlFlowGraph.Kind.AnonymousFunction), Mode.Function)
+        pushGraph(ControlFlowGraph(anonymousFunction, "<anonymous>", ControlFlowGraph.Kind.AnonymousFunction))
         val enterNode = createFunctionEnterNode(anonymousFunction)
         val exitNode = createFunctionExitNode(anonymousFunction)
         exitTargetsForReturn.push(exitNode)
@@ -401,10 +376,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Classes -----------------------------------
 
     fun enterClass() {
-        pushGraph(
-            ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.Stub),
-            mode = Mode.ClassInitializer
-        )
+        pushGraph(ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.Stub))
     }
 
     fun exitClass() {
@@ -433,8 +405,7 @@ class ControlFlowGraphBuilder {
             }
         }
 
-        val classGraph = ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer)
-        pushGraph(classGraph, Mode.ClassInitializer)
+        pushGraph(ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer))
         val exitNode = createClassExitNode(klass)
         var node: CFGNode<*> = createClassEnterNode(klass)
         var prevInitPartNode: CFGNode<*>? = null
@@ -529,10 +500,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterScript(script: FirScript): ScriptEnterNode {
-        pushGraph(
-            ControlFlowGraph(null, "SCRIPT_GRAPH", ControlFlowGraph.Kind.Function),
-            mode = Mode.Body
-        )
+        pushGraph(ControlFlowGraph(null, "SCRIPT_GRAPH", ControlFlowGraph.Kind.Function))
         val enterNode = createScriptEnterNode(script)
         lastNodes.push(enterNode)
         return enterNode
@@ -550,8 +518,7 @@ class ControlFlowGraphBuilder {
         if (valueParameter.defaultValue == null) return null
 
         val outerEnterNode = createEnterValueParameterNode(valueParameter)
-        val graph = ControlFlowGraph(valueParameter, "default value of ${valueParameter.name}", ControlFlowGraph.Kind.DefaultArgument)
-        pushGraph(graph, Mode.Body)
+        pushGraph(ControlFlowGraph(valueParameter, "default value of ${valueParameter.name}", ControlFlowGraph.Kind.DefaultArgument))
         val innerExitNode = createExitDefaultArgumentsNode(valueParameter)
         val innerEnterNode = createEnterDefaultArgumentsNode(valueParameter)
         addNewSimpleNode(outerEnterNode)
@@ -599,8 +566,7 @@ class ControlFlowGraphBuilder {
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
         if (!property.hasInitialization) return null
 
-        val graph = ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer)
-        pushGraph(graph, Mode.PropertyInitializer)
+        pushGraph(ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer))
 
         val enterNode = createPropertyInitializerEnterNode(property)
         val exitNode = createPropertyInitializerExitNode(property)
@@ -628,8 +594,7 @@ class ControlFlowGraphBuilder {
     fun enterField(field: FirField): FieldInitializerEnterNode? {
         if (field.initializer == null) return null
 
-        val graph = ControlFlowGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer)
-        pushGraph(graph, Mode.FieldInitializer)
+        pushGraph(ControlFlowGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer))
 
         val enterNode = createFieldInitializerEnterNode(field)
         val exitNode = createFieldInitializerExitNode(field)
@@ -1235,8 +1200,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Annotations -----------------------------------
 
     fun enterAnnotation(annotation: FirAnnotation): AnnotationEnterNode {
-        val graph = ControlFlowGraph(null, "STUB_GRAPH_FOR_ANNOTATION_CALL", ControlFlowGraph.Kind.AnnotationCall)
-        pushGraph(graph, Mode.Body)
+        pushGraph(ControlFlowGraph(null, "STUB_GRAPH_FOR_ANNOTATION_CALL", ControlFlowGraph.Kind.AnnotationCall))
         return createAnnotationEnterNode(annotation).also {
             lastNodes.push(it)
         }
@@ -1264,8 +1228,7 @@ class ControlFlowGraphBuilder {
     fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
         // TODO: questionable moment that we should pass data flow from init to init
 
-        val graph = ControlFlowGraph(initBlock, "init block", ControlFlowGraph.Kind.Function)
-        pushGraph(graph, Mode.Body)
+        pushGraph(ControlFlowGraph(initBlock, "init block", ControlFlowGraph.Kind.Function))
         val enterNode = createInitBlockEnterNode(initBlock).also {
             lastNodes.push(it)
         }
@@ -1377,7 +1340,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Contract description -----------------------------------
 
     fun enterContractDescription(): CFGNode<*> {
-        pushGraph(ControlFlowGraph(null, "contract description", ControlFlowGraph.Kind.TopLevel), Mode.Body)
+        pushGraph(ControlFlowGraph(null, "contract description", ControlFlowGraph.Kind.AnonymousFunction))
 
         return createContractDescriptionEnterNode().also {
             lastNodes.push(it)

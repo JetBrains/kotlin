@@ -73,13 +73,13 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     enum class Kind(val withBody: Boolean) {
         Function(withBody = true),
         AnonymousFunction(withBody = true),
-        ClassInitializer(withBody = true),
+        ClassInitializer(withBody = false),
         PropertyInitializer(withBody = true),
         FieldInitializer(withBody = true),
         TopLevel(withBody = false),
         AnnotationCall(withBody = true),
-        DefaultArgument(withBody = false),
-        Stub(withBody = true)
+        DefaultArgument(withBody = true),
+        Stub(withBody = false)
     }
 }
 
