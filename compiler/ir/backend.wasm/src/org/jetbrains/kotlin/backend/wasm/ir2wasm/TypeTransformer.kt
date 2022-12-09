@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmTypeTransformer(
-    val context: WasmBaseCodegenContext,
+    val context: WasmModuleCodegenContextImpl,
     val builtIns: IrBuiltIns
 ) {
     val symbols = context.backendContext.wasmSymbols

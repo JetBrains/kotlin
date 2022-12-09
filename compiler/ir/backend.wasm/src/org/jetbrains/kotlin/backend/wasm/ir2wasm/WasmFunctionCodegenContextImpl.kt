@@ -14,17 +14,19 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.wasm.ir.*
 
+enum class LoopLabelType { BREAK, CONTINUE }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
+
 class WasmFunctionCodegenContextImpl(
-    override val irFunction: IrFunction,
+    val irFunction: IrFunction,
     private val wasmFunction: WasmFunction.Defined,
-    override val backendContext: WasmBackendContext,
-    private val referencing: WasmBaseCodegenContext
-) : WasmBaseCodegenContext by referencing,
-    WasmFunctionCodegenContext {
-    override val bodyGen: WasmExpressionBuilder =
+    val backendContext: WasmBackendContext,
+    val context: WasmModuleCodegenContextImpl,
+) {
+    val bodyGen: WasmExpressionBuilder =
         WasmIrExpressionBuilder(wasmFunction.instructions)
 
-    override val tagIdx: Int
+    val tagIdx: Int
         get() = 0
 
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
@@ -32,14 +34,14 @@ class WasmFunctionCodegenContextImpl(
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
-    override fun defineLocal(irValueDeclaration: IrValueSymbol) {
+    fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
         val wasmLocal = WasmLocal(
             wasmFunction.locals.size,
             owner.name.asString(),
-            if (owner is IrValueParameter) transformValueParameterType(owner) else transformType(owner.type),
+            if (owner is IrValueParameter) context.transformValueParameterType(owner) else context.transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )
 
@@ -47,21 +49,22 @@ class WasmFunctionCodegenContextImpl(
         wasmFunction.locals += wasmLocal
     }
 
-    override fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal {
+    fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal {
         return wasmLocals.getValue(irValueDeclaration)
     }
 
-    override fun referenceLocal(index: Int): WasmLocal {
+    fun referenceLocal(index: Int): WasmLocal {
         return wasmFunction.locals[index]
     }
 
     private val SyntheticLocalType.wasmType
         get() = when (this) {
-            SyntheticLocalType.IS_INTERFACE_PARAMETER -> WasmRefNullType(WasmHeapType.Type(referenceGcType(backendContext.irBuiltIns.anyClass)))
+            SyntheticLocalType.IS_INTERFACE_PARAMETER ->
+                WasmRefNullType(WasmHeapType.Type(context.referenceGcType(backendContext.irBuiltIns.anyClass)))
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
         }
 
-    override fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
+    fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
         WasmLocal(
             wasmFunction.locals.size,
             type.name,
@@ -72,21 +75,21 @@ class WasmFunctionCodegenContextImpl(
         }
     }
 
-    override fun defineNonLocalReturnLevel(block: IrReturnableBlockSymbol, level: Int) {
+    fun defineNonLocalReturnLevel(block: IrReturnableBlockSymbol, level: Int) {
         nonLocalReturnLevels[block] = level
     }
 
-    override fun referenceNonLocalReturnLevel(block: IrReturnableBlockSymbol): Int {
+    fun referenceNonLocalReturnLevel(block: IrReturnableBlockSymbol): Int {
         return nonLocalReturnLevels.getValue(block)
     }
 
-    override fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int) {
+    fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int) {
         val loopKey = Pair(irLoop, labelType)
         assert(loopKey !in loopLevels) { "Redefinition of loop" }
         loopLevels[loopKey] = level
     }
 
-    override fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int {
+    fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int {
         return loopLevels.getValue(Pair(irLoop, labelType))
     }
 }

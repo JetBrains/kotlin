@@ -57,7 +57,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     val minValue = intBranches.minOf { branch -> branch.conditions.minOf { it.const.value } }
     if (minValue == maxValue) return false
 
-    val selectorLocal = context.referenceLocal(SyntheticLocalType.TABLE_SWITCH_SELECTOR)
+    val selectorLocal = functionContext.referenceLocal(SyntheticLocalType.TABLE_SWITCH_SELECTOR)
     generateExpression(subject)
     body.buildSetLocal(selectorLocal)
 

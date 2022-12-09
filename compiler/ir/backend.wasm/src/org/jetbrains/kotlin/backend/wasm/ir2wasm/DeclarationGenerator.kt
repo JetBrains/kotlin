@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 
 class DeclarationGenerator(
-    val context: WasmModuleCodegenContext,
+    val context: WasmModuleCodegenContextImpl,
     private val allowIncompleteImplementations: Boolean,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
 ) : IrElementVisitorVoid {
@@ -128,7 +128,8 @@ class DeclarationGenerator(
 
         val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(
-            context = functionCodegenContext,
+            context = context,
+            functionContext = functionCodegenContext,
             hierarchyDisjointUnions = hierarchyDisjointUnions,
             isGetUnitFunction = declaration == unitGetInstanceFunction
         )
@@ -476,7 +477,7 @@ fun IrFunction.isExported(): Boolean =
     isJsExport()
 
 
-fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
+fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmModuleCodegenContextImpl) {
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
