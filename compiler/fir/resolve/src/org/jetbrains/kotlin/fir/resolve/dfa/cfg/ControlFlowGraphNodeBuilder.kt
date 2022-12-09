@@ -256,11 +256,17 @@ fun ControlFlowGraphBuilder.createClassExitNode(fir: FirClass): ClassExitNode =
 fun ControlFlowGraphBuilder.createLocalClassExitNode(fir: FirRegularClass): LocalClassExitNode =
     LocalClassExitNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createEnterValueParameterNode(fir: FirValueParameter): EnterValueParameterNode =
+    EnterValueParameterNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createEnterDefaultArgumentsNode(fir: FirValueParameter): EnterDefaultArgumentsNode =
     EnterDefaultArgumentsNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createExitDefaultArgumentsNode(fir: FirValueParameter): ExitDefaultArgumentsNode =
     ExitDefaultArgumentsNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createExitValueParameterNode(fir: FirValueParameter): ExitValueParameterNode =
+    ExitValueParameterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createComparisonExpressionNode(fir: FirComparisonExpression): ComparisonExpressionNode =
     ComparisonExpressionNode(currentGraph, fir, levelCounter, createId())

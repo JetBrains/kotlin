@@ -27,59 +27,69 @@ digraph defaultArguments_kt {
     subgraph cluster_2 {
         color=red
         7 [label="Enter function test" style="filled" fillcolor=red];
+        8 [label="Enter default value of y"];
         subgraph cluster_3 {
             color=blue
-            16 [label="Enter default value of z" style="filled" fillcolor=red];
-            17 [label="Postponed enter to lambda"];
-            subgraph cluster_4 {
-                color=blue
-                21 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_5 {
-                    color=blue
-                    22 [label="Enter block"];
-                    23 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-                    24 [label="Exit block"];
-                }
-                25 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
-            }
-            18 [label="Postponed exit from lambda"];
-            19 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
-            20 [label="Exit default value of z" style="filled" fillcolor=red];
+            16 [label="Enter default value of y" style="filled" fillcolor=red];
+            17 [label="Access variable R|<local>/x|"];
+            18 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
+            19 [label="Exit default value of y" style="filled" fillcolor=red];
         }
-        subgraph cluster_6 {
+        9 [label="Exit default value of y"];
+        10 [label="Enter default value of z"];
+        subgraph cluster_4 {
             color=blue
-            12 [label="Enter default value of y" style="filled" fillcolor=red];
-            13 [label="Access variable R|<local>/x|"];
-            14 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
-            15 [label="Exit default value of y" style="filled" fillcolor=red];
+            20 [label="Enter default value of z" style="filled" fillcolor=red];
+            21 [label="Postponed enter to lambda"];
+            subgraph cluster_5 {
+                color=blue
+                25 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_6 {
+                    color=blue
+                    26 [label="Enter block"];
+                    27 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
+                    28 [label="Exit block"];
+                }
+                29 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            22 [label="Postponed exit from lambda"];
+            23 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
+            24 [label="Exit default value of z" style="filled" fillcolor=red];
         }
+        11 [label="Exit default value of z"];
         subgraph cluster_7 {
             color=blue
-            8 [label="Enter block"];
-            9 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-            10 [label="Exit block"];
+            12 [label="Enter block"];
+            13 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
+            14 [label="Exit block"];
         }
-        11 [label="Exit function test" style="filled" fillcolor=red];
+        15 [label="Exit function test" style="filled" fillcolor=red];
     }
-    7 -> {8 12 16};
-    8 -> {9};
+    7 -> {8};
+    8 -> {9 16};
+    8 -> {16 16} [style=dashed];
     9 -> {10};
-    10 -> {11};
+    10 -> {11 20};
+    10 -> {20 20} [style=dashed];
+    11 -> {12};
     12 -> {13};
-    12 -> {12} [style=dashed];
     13 -> {14};
     14 -> {15};
     16 -> {17};
-    16 -> {16} [style=dashed];
-    17 -> {19 21};
-    17 -> {18} [style=dotted];
-    17 -> {21} [style=dashed];
+    17 -> {18};
     18 -> {19};
-    19 -> {20};
-    21 -> {22};
+    19 -> {9};
+    20 -> {21};
+    21 -> {23 25};
+    21 -> {22} [style=dotted];
+    21 -> {25} [style=dashed];
     22 -> {23};
     23 -> {24};
-    24 -> {25};
-    25 -> {18};
+    24 -> {11};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {22};
 
 }

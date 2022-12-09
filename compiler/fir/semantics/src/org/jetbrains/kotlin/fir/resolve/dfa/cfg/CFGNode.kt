@@ -182,8 +182,14 @@ class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: Fi
 
 // ----------------------------------- Default arguments -----------------------------------
 
+class EnterValueParameterNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNodeWithCfgOwner<FirValueParameter>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitEnterValueParameterNode(this, data)
+    }
+}
+
 @OptIn(CfgInternals::class)
-class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNodeWithCfgOwner<FirValueParameter>(owner, level, id),
+class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNode<FirValueParameter>(owner, level, id),
     EnterNodeMarker {
     init {
         owner.enterNode = this
@@ -203,6 +209,12 @@ class ExitDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirVal
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitExitDefaultArgumentsNode(this, data)
+    }
+}
+
+class ExitValueParameterNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNode<FirValueParameter>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitExitValueParameterNode(this, data)
     }
 }
 
