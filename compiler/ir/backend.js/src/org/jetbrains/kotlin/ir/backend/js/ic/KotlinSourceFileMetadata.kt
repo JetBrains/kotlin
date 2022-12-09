@@ -136,11 +136,13 @@ internal class DirtyFileMetadata(
         }
 }
 
+internal enum class ImportedSignaturesState { UNKNOWN, MODIFIED, NON_MODIFIED }
+
 internal class UpdatedDependenciesMetadata(oldMetadata: KotlinSourceFileMetadata) : KotlinSourceFileMetadata() {
     private val oldInverseDependencies = oldMetadata.inverseDependencies
     private val newExportedSignatures: Set<IdSignature> by lazy { inverseDependencies.flatSignatures() }
 
-    var importedSignaturesModified = false
+    var importedSignaturesState = ImportedSignaturesState.UNKNOWN
 
     override val inverseDependencies = oldMetadata.inverseDependencies.toMutable()
     override val directDependencies = oldMetadata.directDependencies.toMutable()
