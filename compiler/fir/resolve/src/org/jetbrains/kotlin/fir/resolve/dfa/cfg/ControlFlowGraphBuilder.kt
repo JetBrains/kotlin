@@ -50,7 +50,7 @@ class ControlFlowGraphBuilder {
 
     private val argumentListSplitNodes: Stack<SplitPostponedLambdasNode?> = stackOf()
     private val postponedAnonymousFunctionNodes =
-        mutableMapOf<FirFunctionSymbol<*>, Pair<CFGNodeWithSubgraphs<*>, PostponedLambdaExitNode?>>()
+        mutableMapOf<FirFunctionSymbol<*>, Pair<CFGNode<*>, PostponedLambdaExitNode?>>()
     private val postponedLambdaExits: Stack<MutableList<Pair<CFGNode<*>, EdgeKind>>> = stackOf()
 
     private val loopConditionEnterNodes: NodeStorage<FirElement, LoopConditionEnterNode> = NodeStorage()
@@ -134,16 +134,12 @@ class ControlFlowGraphBuilder {
             is FirConstructor -> "<init>"
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
-        val graph = ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function)
-        // function is local
+
         val localFunctionNode = runIf(function.symbol.callableId.isLocal && currentGraph.kind.withBody) {
-            currentGraph.addSubGraph(graph)
-            createLocalFunctionDeclarationNode(function).also {
-                addNewSimpleNode(it)
-            }
+            createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
 
-        pushGraph(graph)
+        pushGraph(ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function))
 
         val enterNode = createFunctionEnterNode(function).also {
             lastNodes.push(it)
@@ -266,10 +262,6 @@ class ControlFlowGraphBuilder {
         assert(graph.exitNode == exitNode)
 
         val (splitNode, postponedExitNode) = postponedAnonymousFunctionNodes.remove(symbol)!!
-        splitNode.addSubGraph(graph)
-        // May not be the current graph: `select(run { run { generic() } }, 1)`
-        splitNode.owner.addSubGraph(graph)
-
         val invocationKind = anonymousFunction.invocationKind
         if (postponedExitNode == null) {
             // Postponed exit node was needed so we could create lambda->call edges without having the subgraph ready. If it
@@ -411,7 +403,6 @@ class ControlFlowGraphBuilder {
         var prevInitPartNode: CFGNode<*>? = null
         for (graph in calledInPlace) {
             createPartOfClassInitializationNode(graph.declaration as FirControlFlowGraphOwner).also {
-                currentGraph.addSubGraph(graph)
                 addEdge(node, it, preferredKind = EdgeKind.CfgForward)
                 addEdge(it, graph.enterNode, preferredKind = EdgeKind.CfgForward)
                 node = graph.exitNode
@@ -435,10 +426,9 @@ class ControlFlowGraphBuilder {
         //     println(x)
         for (graph in calledLater) {
             addEdge(exitNode, graph.enterNode, preferredKind = EdgeKind.CfgForward)
-            exitNode.addSubGraph(graph)
-            currentGraph.addSubGraph(graph)
         }
 
+        exitNode.subGraphs = calledLater
         return popGraph()
     }
 
@@ -455,9 +445,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitLocalClass(klass: FirRegularClass): Pair<LocalClassExitNode, ControlFlowGraph> {
-        val graph = exitClass(klass).also {
-            currentGraph.addSubGraph(it)
-        }
+        val graph = exitClass(klass)
         val node = createLocalClassExitNode(klass).also {
             addNewSimpleNodeIfPossible(it)
         }
@@ -475,9 +463,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitAnonymousObject(anonymousObject: FirAnonymousObject): Pair<AnonymousObjectExitNode, ControlFlowGraph> {
-        val graph = exitClass(anonymousObject).also {
-            currentGraph.addSubGraph(it)
-        }
+        val graph = exitClass(anonymousObject)
         val enterNode = lastNodes.popOrNull()
         if (enterNode !is AnonymousObjectEnterNode) {
             throw AssertionError("anonymous object exit should be preceded by anonymous object enter, but got $enterNode")
@@ -535,12 +521,9 @@ class ControlFlowGraphBuilder {
         popAndAddEdge(exitNode)
         val graph = popGraph()
         require(exitNode == graph.exitNode)
-        val outerEnterNode = lastNode as EnterValueParameterNode
         val outerExitNode = createExitValueParameterNode(valueParameter)
         addNewSimpleNode(outerExitNode)
         addEdge(exitNode, outerExitNode, propagateDeadness = false)
-        outerEnterNode.addSubGraph(graph)
-        currentGraph.addSubGraph(graph)
         return Triple(exitNode, outerExitNode, graph)
     }
 

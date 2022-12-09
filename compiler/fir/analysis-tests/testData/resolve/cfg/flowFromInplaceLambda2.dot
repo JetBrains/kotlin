@@ -426,14 +426,14 @@ digraph flowFromInplaceLambda2_kt {
                             153 [label="Postponed enter to lambda"];
                             subgraph cluster_40 {
                                 color=blue
-                                187 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                180 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                                 subgraph cluster_41 {
                                     color=blue
-                                    188 [label="Enter block"];
-                                    189 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
-                                    190 [label="Exit block"];
+                                    181 [label="Enter block"];
+                                    182 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
+                                    183 [label="Exit block"];
                                 }
-                                191 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                184 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                             }
                             154 [label="Postponed exit from lambda"];
                             155 [label="Function call: R|kotlin/run|<R|kotlin/Nothing?|>(...)" style="filled" fillcolor=yellow];
@@ -447,16 +447,16 @@ digraph flowFromInplaceLambda2_kt {
                             160 [label="Postponed enter to lambda"];
                             subgraph cluster_43 {
                                 color=blue
-                                180 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                185 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                                 subgraph cluster_44 {
                                     color=blue
-                                    181 [label="Enter block"];
-                                    182 [label="Const: Null(null)"];
-                                    183 [label="Assignment: R|<local>/p|"];
-                                    184 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
-                                    185 [label="Exit block"];
+                                    186 [label="Enter block"];
+                                    187 [label="Const: Null(null)"];
+                                    188 [label="Assignment: R|<local>/p|"];
+                                    189 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
+                                    190 [label="Exit block"];
                                 }
-                                186 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                191 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                             }
                             161 [label="Postponed exit from lambda"];
                             162 [label="Function call: R|kotlin/run|<R|kotlin/Nothing?|>(...)" style="filled" fillcolor=yellow];
@@ -518,9 +518,9 @@ digraph flowFromInplaceLambda2_kt {
     150 -> {151};
     151 -> {152};
     152 -> {153};
-    153 -> {155 187};
+    153 -> {155 180};
     153 -> {154} [style=dotted];
-    153 -> {187} [style=dashed];
+    153 -> {180} [style=dashed];
     154 -> {155} [color=green];
     154 -> {171} [color=red];
     155 -> {156};
@@ -528,9 +528,9 @@ digraph flowFromInplaceLambda2_kt {
     157 -> {165};
     158 -> {159};
     159 -> {160};
-    160 -> {162 180};
+    160 -> {162 185};
     160 -> {161} [style=dotted];
-    160 -> {180} [style=dashed];
+    160 -> {185} [style=dashed];
     161 -> {162} [color=green];
     161 -> {171} [color=red];
     162 -> {163};
@@ -557,14 +557,14 @@ digraph flowFromInplaceLambda2_kt {
     181 -> {182};
     182 -> {183};
     183 -> {184};
-    184 -> {185};
+    184 -> {154};
     185 -> {186};
-    186 -> {161};
+    186 -> {187};
     187 -> {188};
     188 -> {189};
     189 -> {190};
     190 -> {191};
-    191 -> {154};
+    191 -> {161};
     192 -> {193};
     193 -> {194};
     194 -> {195};
@@ -685,16 +685,16 @@ digraph flowFromInplaceLambda2_kt {
                     240 [label="Postponed enter to lambda"];
                     subgraph cluster_59 {
                         color=blue
-                        271 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        264 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_60 {
                             color=blue
-                            272 [label="Enter block"];
-                            273 [label="Access variable R|<local>/x|"];
-                            274 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
-                            275 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
-                            276 [label="Exit block"];
+                            265 [label="Enter block"];
+                            266 [label="Access variable R|<local>/x|"];
+                            267 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
+                            268 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
+                            269 [label="Exit block"];
                         }
-                        277 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        270 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     241 [label="Postponed exit from lambda"];
                     242 [label="Function call: R|kotlin/run|<R|kotlin/Nothing?|>(...)" style="filled" fillcolor=yellow];
@@ -708,16 +708,16 @@ digraph flowFromInplaceLambda2_kt {
                     247 [label="Postponed enter to lambda"];
                     subgraph cluster_62 {
                         color=blue
-                        264 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        271 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_63 {
                             color=blue
-                            265 [label="Enter block"];
-                            266 [label="Access variable R|<local>/x|"];
-                            267 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
-                            268 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
-                            269 [label="Exit block"];
+                            272 [label="Enter block"];
+                            273 [label="Access variable R|<local>/x|"];
+                            274 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
+                            275 [label="Function call: R|/n|<R|kotlin/Nothing?|>()" style="filled" fillcolor=yellow];
+                            276 [label="Exit block"];
                         }
-                        270 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        277 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     248 [label="Postponed exit from lambda"];
                     249 [label="Function call: R|kotlin/run|<R|kotlin/Nothing?|>(...)" style="filled" fillcolor=yellow];
@@ -762,9 +762,9 @@ digraph flowFromInplaceLambda2_kt {
     237 -> {238};
     238 -> {239};
     239 -> {240};
-    240 -> {242 271};
+    240 -> {242 264};
     240 -> {241} [style=dotted];
-    240 -> {271} [style=dashed];
+    240 -> {264} [style=dashed];
     241 -> {242} [color=green];
     241 -> {258} [color=red];
     242 -> {243};
@@ -772,9 +772,9 @@ digraph flowFromInplaceLambda2_kt {
     244 -> {252};
     245 -> {246};
     246 -> {247};
-    247 -> {249 264};
+    247 -> {249 271};
     247 -> {248} [style=dotted];
-    247 -> {264} [style=dashed];
+    247 -> {271} [style=dashed];
     248 -> {249} [color=green];
     248 -> {258} [color=red];
     249 -> {250};
@@ -800,14 +800,14 @@ digraph flowFromInplaceLambda2_kt {
     267 -> {268};
     268 -> {269};
     269 -> {270};
-    270 -> {248};
+    270 -> {241};
     271 -> {272};
     272 -> {273};
     273 -> {274};
     274 -> {275};
     275 -> {276};
     276 -> {277};
-    277 -> {241};
+    277 -> {248};
     278 -> {279};
     279 -> {280};
     280 -> {281};

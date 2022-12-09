@@ -67,10 +67,10 @@ digraph defaultArguments_kt {
     }
     7 -> {8};
     8 -> {9 16};
-    8 -> {16 16} [style=dashed];
+    8 -> {16} [style=dashed];
     9 -> {10};
     10 -> {11 20};
-    10 -> {20 20} [style=dashed];
+    10 -> {20} [style=dashed];
     11 -> {12};
     12 -> {13};
     13 -> {14};

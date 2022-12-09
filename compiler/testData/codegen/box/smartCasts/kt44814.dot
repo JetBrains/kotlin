@@ -235,7 +235,7 @@ digraph kt44814_kt {
     71 -> {75} [color=green];
     50 -> {51};
     51 -> {52 55};
-    51 -> {55 55} [style=dashed];
+    51 -> {55} [style=dashed];
     52 -> {53};
     53 -> {54};
     55 -> {56};
@@ -576,20 +576,20 @@ digraph kt44814_kt {
                     193 [label="Postponed enter to lambda [8]"];
                     subgraph cluster_62 {
                         color=blue
-                        240 [label="Enter function anonymousFunction [9]" style="filled" fillcolor=red];
+                        234 [label="Enter function anonymousFunction [9]" style="filled" fillcolor=red];
                         subgraph cluster_63 {
                             color=blue
-                            241 [label="Enter block [9]"];
-                            242 [label="Access variable R|<local>/it| [9]"];
-                            243 [label="Enter safe call [9]"];
-                            244 [label="Access variable R|/LighterASTNode.tokenType| [9]"];
-                            245 [label="Exit safe call [9]"];
-                            246 [label="Access qualifier /TokenType [9]"];
-                            247 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [9]"];
-                            248 [label="Equality operator == [9]"];
-                            249 [label="Exit block [9]"];
+                            235 [label="Enter block [9]"];
+                            236 [label="Access variable R|<local>/it| [9]"];
+                            237 [label="Enter safe call [9]"];
+                            238 [label="Access variable R|/LighterASTNode.tokenType| [9]"];
+                            239 [label="Exit safe call [9]"];
+                            240 [label="Access qualifier /TokenType [9]"];
+                            241 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [9]"];
+                            242 [label="Equality operator == [9]"];
+                            243 [label="Exit block [9]"];
                         }
-                        250 [label="Exit function anonymousFunction [9]" style="filled" fillcolor=red];
+                        244 [label="Exit function anonymousFunction [9]" style="filled" fillcolor=red];
                     }
                     194 [label="Postponed exit from lambda [8]"];
                     195 [label="Function call: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...).R|kotlin/collections/find|<R|LighterASTNode?|>(...) [7]" style="filled" fillcolor=yellow];
@@ -619,15 +619,15 @@ digraph kt44814_kt {
                     216 [label="Postponed enter to lambda [7]"];
                     subgraph cluster_65 {
                         color=blue
-                        234 [label="Enter function anonymousFunction [8]" style="filled" fillcolor=red];
+                        245 [label="Enter function anonymousFunction [8]" style="filled" fillcolor=red];
                         subgraph cluster_66 {
                             color=blue
-                            235 [label="Enter block [8]"];
-                            236 [label="Access variable R|<local>/it| [9]"];
-                            237 [label="Function call: R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(...) [8]" style="filled" fillcolor=yellow];
-                            238 [label="Exit block [8]"];
+                            246 [label="Enter block [8]"];
+                            247 [label="Access variable R|<local>/it| [9]"];
+                            248 [label="Function call: R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(...) [8]" style="filled" fillcolor=yellow];
+                            249 [label="Exit block [8]"];
                         }
-                        239 [label="Exit function anonymousFunction [8]" style="filled" fillcolor=red];
+                        250 [label="Exit function anonymousFunction [8]" style="filled" fillcolor=red];
                     }
                     217 [label="Postponed exit from lambda [7]"];
                     218 [label="Function call: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [6]" style="filled" fillcolor=yellow];
@@ -792,8 +792,8 @@ digraph kt44814_kt {
     190 -> {191};
     191 -> {192};
     192 -> {193};
-    193 -> {194 195 240};
-    193 -> {240} [style=dashed];
+    193 -> {194 195 234};
+    193 -> {234} [style=dashed];
     194 -> {195};
     194 -> {193} [color=green style=dashed];
     195 -> {196};
@@ -818,9 +818,9 @@ digraph kt44814_kt {
     213 -> {214};
     214 -> {215 219};
     215 -> {216};
-    216 -> {218 234};
+    216 -> {218 245};
     216 -> {217} [style=dotted];
-    216 -> {234} [style=dashed];
+    216 -> {245} [style=dashed];
     217 -> {218} [color=green];
     217 -> {223} [color=red];
     218 -> {220};
@@ -841,21 +841,21 @@ digraph kt44814_kt {
     232 -> {233} [style=dotted];
     234 -> {235};
     235 -> {236};
-    236 -> {237};
+    236 -> {237 239};
     237 -> {238};
     238 -> {239};
-    239 -> {217};
+    239 -> {240};
     240 -> {241};
     241 -> {242};
-    242 -> {243 245};
+    242 -> {243};
     243 -> {244};
-    244 -> {245};
+    244 -> {194};
     245 -> {246};
     246 -> {247};
     247 -> {248};
     248 -> {249};
     249 -> {250};
-    250 -> {194};
+    250 -> {217};
     251 -> {252};
     252 -> {253};
     253 -> {254};
