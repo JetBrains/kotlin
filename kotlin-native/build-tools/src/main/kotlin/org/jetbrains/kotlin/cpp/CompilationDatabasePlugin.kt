@@ -33,9 +33,7 @@ import javax.inject.Inject
  *    target(someTarget1) {
  *        entry { ... }
  *    }
- *    allTargets {
- *        mergeFrom(compilationDatabase)
- *    }
+ *    allTargets {}
  * }
  * ```
  * Adds an entry for target `someTarget1`, and for each known target merges in databases from `:some:other:project`.
@@ -50,12 +48,40 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
         }
     }
 
-    private val outgoingConfiguration = project.configurations.create("generateCompilationDatabase") {
-        description = "Generate Compilation Database"
+    /**
+     * Bucket of dependencies with compilation databases to merge in.
+     */
+    val compilationDatabase: Configuration by project.configurations.creating {
+        description = "Compilation Database dependencies"
+        isCanBeConsumed = false
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
+        }
+    }
+
+    /**
+     * Internal resolvable configuration of compilation database dependencies.
+     */
+    private val compilationDatabaseJSON by project.configurations.creating {
+        description = "Compilation Database dependencies (internal)"
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
+        }
+        extendsFrom(compilationDatabase)
+    }
+
+    /**
+     * Contains produced compilation database.
+     */
+    val compilationDatabaseElements: Configuration by project.configurations.creating {
+        description = "Compilation Database"
         isCanBeConsumed = true
         isCanBeResolved = false
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, USAGE))
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
         }
     }
 
@@ -143,38 +169,24 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
             })
         }
 
-        protected abstract val mergeFrom: ListProperty<Configuration>
-
-        /**
-         * Merge compilation database entries from given [configuration].
-         *
-         * @param configuration provider of additional compilation database entries
-         */
-        fun mergeFrom(configuration: Configuration) {
-            mergeFrom.add(configuration)
-        }
-
         /**
          * Gradle task that generates compilation database for [target] with optional [sanitizer].
          */
         val task = project.tasks.register<GenerateCompilationDatabase>("compilationDatabase${_target.name.capitalized}") {
             description = "Generate compilation database for $_target"
             group = TASK_GROUP
-            mergeFiles.from(mergeFrom.map { configurations ->
-                configurations.map {
-                    it.incoming.artifactView {
+            mergeFiles.from(
+                    owner.compilationDatabaseJSON.incoming.artifactView {
                         attributes {
                             attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
                         }
-                    }.files
-                }
-            })
+                    }.files)
             entries.set(this@Target.entries)
             outputFile.set(project.layout.buildDirectory.file("$_target/compile_commands.json"))
         }
 
         init {
-            owner.outgoingConfiguration.outgoing {
+            owner.compilationDatabaseElements.outgoing {
                 variants {
                     create("$_target") {
                         attributes {
@@ -200,23 +212,18 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
  * Generating [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html).
  *
  * Creates [CompilationDatabaseExtension] extension named `compilationDatabase`.
- * Creates [Configuration][org.gradle.api.artifacts.Configuration] named `compilationDatabase`.
+ *
+ * Creates the following [configurations][org.gradle.api.artifacts.Configuration]:
+ * * `compilationDatabase` - like `implementation` from java or C++ plugin. Bucket of dependencies to get other compilation databases from.
+ * * `compilationDatabaseElements` - like `apiElements` (sort of) from java plugin or `{variant}LinkElements` from C++ plugin. Contains produced compilation database.
  *
  * @see CompilationDatabaseExtension extension that this plugin creates.
  */
 open class CompilationDatabasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.create<CompilationDatabaseExtension>("compilationDatabase", project)
         project.dependencies.attributesSchema {
             attribute(TargetWithSanitizer.TARGET_ATTRIBUTE)
         }
-        project.configurations.create("compilationDatabase") {
-            description = "Compilation Database"
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(CompilationDatabaseExtension.USAGE))
-            }
-        }
+        project.extensions.create<CompilationDatabaseExtension>("compilationDatabase", project)
     }
 }

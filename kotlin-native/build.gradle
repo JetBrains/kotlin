@@ -740,11 +740,11 @@ task pusher(type: KotlinBuildPusher){
 }
 
 compilationDatabase {
-    allTargets {
-        mergeFrom(configurations.compilationDatabase)
-    }
+    allTargets {}
 }
 
+// TODO: Replace with a more convenient user-facing task that can build for a specific target.
+//       like compilationDatabase with optional argument --target.
 tasks.register("compdb", Copy) {
     from compilationDatabase.hostTarget.task
     into layout.projectDirectory
