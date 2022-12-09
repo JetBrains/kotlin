@@ -3432,6 +3432,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("javaClassWithEmptyAnnotationName.kt")
+            public void testJavaClassWithEmptyAnnotationName() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaClassWithEmptyAnnotationName.kt");
+            }
+
+            @Test
             @TestMetadata("javaQualifier.kt")
             public void testJavaQualifier() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaQualifier.kt");

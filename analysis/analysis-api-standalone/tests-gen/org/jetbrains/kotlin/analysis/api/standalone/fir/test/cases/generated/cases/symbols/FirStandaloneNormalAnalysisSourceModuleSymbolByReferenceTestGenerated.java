@@ -95,6 +95,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
+    @TestMetadata("javaClassWithEmptyAnnotationName.kt")
+    public void testJavaClassWithEmptyAnnotationName() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaClassWithEmptyAnnotationName.kt");
+    }
+
+    @Test
     @TestMetadata("javaField.kt")
     public void testJavaField() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField.kt");

@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -247,7 +249,9 @@ private fun JavaAnnotation.toFirAnnotationCall(
                         "Deprecated in Java".createConstantOrError(session)
                 }
                 else -> {
-                    fillAnnotationArgumentMapping(session, javaTypeParameterStack, lookupTag!!, arguments, mapping)
+                    if (lookupTag != null) {
+                        fillAnnotationArgumentMapping(session, javaTypeParameterStack, lookupTag, arguments, mapping)
+                    }
                 }
             }
         }
