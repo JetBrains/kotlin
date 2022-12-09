@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
@@ -64,21 +64,25 @@ internal class KtFirCompletionCandidateChecker(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
                 callableSymbol = candidateSymbol.symbol,
                 implicitReceiver = implicitReceiverValue,
-                explicitReceiver = explicitReceiverExpression
+                explicitReceiver = explicitReceiverExpression,
+                allowUnsafeCall = true,
+                allowUnstableSmartCast = true,
             )
-            resolver.resolveSingleCandidate(resolutionParameters)?.let {
-                val substitutor = it.createSubstitutorFromTypeArguments() ?: return@let null
+            resolver.resolveSingleCandidate(resolutionParameters)?.let { call ->
+                val substitutor = call.createSubstitutorFromTypeArguments() ?: return@let null
+                val receiverCastRequired = call.calleeReference is FirErrorReferenceWithCandidate
+
                 return when {
                     candidateSymbol is FirVariable && candidateSymbol.returnTypeRef.coneType.receiverType(rootModuleSession) != null -> {
-                        KtExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall(substitutor, token)
+                        KtExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, token)
                     }
                     else -> {
-                        KtExtensionApplicabilityResult.ApplicableAsExtensionCallable(substitutor, token)
+                        KtExtensionApplicabilityResult.ApplicableAsExtensionCallable(substitutor, receiverCastRequired, token)
                     }
                 }
             }
         }
-        return KtExtensionApplicabilityResult.NonApplicable(KtSubstitutor.Empty(token), token)
+        return KtExtensionApplicabilityResult.NonApplicable(token)
     }
 
     private fun getImplicitReceivers(
