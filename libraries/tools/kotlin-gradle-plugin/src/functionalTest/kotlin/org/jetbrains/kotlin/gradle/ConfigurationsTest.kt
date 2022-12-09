@@ -396,6 +396,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             val project = buildProjectWithMPP {
                 kotlin {
                     jvm()
+                    js().nodejs()
                     ios()
                 }
             }
@@ -409,6 +410,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     extensions.asMap.keys,
                     kotlin.sourceSets.names,
                     kotlin.targets.names,
+                    kotlin.presets.names,
                 ).flatten()
             }
 
