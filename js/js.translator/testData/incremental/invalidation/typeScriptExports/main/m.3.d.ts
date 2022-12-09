@@ -1,10 +1,8 @@
-declare namespace kotlin_main {
-    type Nullable<T> = T | null | undefined
-    function bar(): number;
-    class MyClass {
-        constructor(stepId: number);
-        get stepId(): number;
-        qux(): number;
-    }
-    function box(stepId: number): string;
+type Nullable<T> = T | null | undefined
+export declare function bar(): number;
+export declare class MyClass {
+    constructor(stepId: number);
+    get stepId(): number;
+    qux(): number;
 }
+export declare function box(stepId: number): string;

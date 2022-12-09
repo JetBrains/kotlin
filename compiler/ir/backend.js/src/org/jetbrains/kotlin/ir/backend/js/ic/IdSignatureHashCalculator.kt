@@ -25,13 +25,23 @@ internal class IdSignatureHashCalculator {
     private val inlineFunctionCallGraph = hashMapOf<IrFunction, Set<IrFunction>>()
     private val processingFunctions = hashSetOf<IrFunction>()
     private val functionTransitiveHashes = hashMapOf<IrFunction, ICHash>()
+    private val fileAnnotationHashes = hashMapOf<IrFile, ICHash>()
 
     private val allIdSignatureHashes = hashMapOf<IdSignature, ICHash>()
 
+    private val IrFile.annotationsHash: ICHash
+        get() = fileAnnotationHashes.getOrPut(this, ::irAnnotationContainerHashForIC)
 
     private inner class FlatHashCalculator : IrElementVisitorVoid {
+        private var fileAnnotationsHash = ICHash()
+
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
+        }
+
+        override fun visitFile(declaration: IrFile, data: Nothing?) {
+            fileAnnotationsHash = declaration.annotationsHash
+            declaration.acceptChildrenVoid(this)
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
@@ -40,12 +50,14 @@ internal class IdSignatureHashCalculator {
                     return
                 }
 
-                flatHashes[declaration] = if (declaration.isFakeOverride) {
+                val inlineFunctionFlatHash = if (declaration.isFakeOverride) {
                     declaration.resolveFakeOverride()?.irSimpleFunctionHashForIC()
                         ?: icError("can not resolve fake override for ${declaration.render()}")
                 } else {
                     declaration.irSimpleFunctionHashForIC()
                 }
+
+                flatHashes[declaration] = fileAnnotationsHash.combineWith(inlineFunctionFlatHash)
             }
             // go deeper since local inline special declarations (like a reference adaptor) may appear
             declaration.acceptChildrenVoid(this)
@@ -120,7 +132,8 @@ internal class IdSignatureHashCalculator {
     fun addAllSignatureSymbols(idSignatureToFile: Map<IdSignature, IdSignatureSource>) {
         for ((signature, signatureSrc) in idSignatureToFile) {
             if (signature !in allIdSignatureHashes) {
-                allIdSignatureHashes[signature] = signatureSrc.symbol.irSymbolHashForIC()
+                val fileAnnotationsHash = signatureSrc.srcIrFile.annotationsHash
+                allIdSignatureHashes[signature] = fileAnnotationsHash.combineWith(signatureSrc.symbol.irSymbolHashForIC())
             }
         }
     }

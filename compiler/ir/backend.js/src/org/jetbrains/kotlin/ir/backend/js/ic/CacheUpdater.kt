@@ -255,7 +255,7 @@ class CacheUpdater(
                         symbolCanBeExported = true
                     }
                     if (symbolCanBeExported) {
-                        idSignatureToFile[signature] = IdSignatureSource(libFile, KotlinSourceFile(fileDeserializer.file), symbol)
+                        idSignatureToFile[signature] = IdSignatureSource(libFile, fileDeserializer.file, symbol)
                     }
                 }
 
@@ -276,12 +276,12 @@ class CacheUpdater(
         ) {
             val allImportedSignatures = addParentSignatures(maybeImportedSignatures, idSignatureToFile, libFile, srcFile)
             for (importedSignature in allImportedSignatures) {
-                val (dependencyLib, dependencyFile) = idSignatureToFile[importedSignature] ?: continue
+                val dependency = idSignatureToFile[importedSignature] ?: continue
                 signatureHashCalculator[importedSignature]?.also { signatureHash ->
-                    addDirectDependency(dependencyLib, dependencyFile, importedSignature, signatureHash)
-                } ?: notFoundIcError("signature $importedSignature hash", dependencyLib, dependencyFile)
+                    addDirectDependency(dependency.lib, dependency.src, importedSignature, signatureHash)
+                } ?: notFoundIcError("signature $importedSignature hash", dependency.lib, dependency.src)
 
-                updatedMetadata[dependencyLib, dependencyFile]?.also { dependencyMetadata ->
+                updatedMetadata[dependency.lib, dependency.src]?.also { dependencyMetadata ->
                     dependencyMetadata.addInverseDependency(libFile, srcFile, importedSignature)
                 }
             }

@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
+import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -49,9 +51,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private const val BOX_FUNCTION_NAME = "box"
         private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
 
-        private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
+        private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
 
-        private val JS_MODULE_KIND = ModuleKind.PLAIN
+        private val JS_MODULE_KIND = ModuleKind.COMMON_JS
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
@@ -65,6 +67,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
         return ModuleInfoParser(infoFile).parse(moduleName)
     }
+
+    private val File.filesInDir
+        get() = listFiles() ?: error("cannot retrieve the file list for $absolutePath directory")
 
     protected fun doTest(testPath: String) {
         val testDirectory = File(testPath)
@@ -84,10 +89,11 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val workingDir = testWorkingDir(projectInfo.name)
         val sourceDir = File(workingDir, "sources").also { it.invalidateDir() }
         val buildDir = File(workingDir, "build").also { it.invalidateDir() }
+        val jsDir = File(workingDir, "js").also { it.invalidateDir() }
 
         initializeWorkingDir(projectInfo, testDirectory, sourceDir, buildDir)
 
-        ProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir).execute()
+        ProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir, jsDir).execute()
     }
 
     private fun resolveModuleArtifact(moduleName: String, buildDir: File): File {
@@ -121,7 +127,8 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private val moduleInfos: Map<String, ModuleInfo>,
         private val testDir: File,
         private val sourceDir: File,
-        private val buildDir: File
+        private val buildDir: File,
+        private val jsDir: File
     ) {
         private inner class TestStepInfo(
             val moduleName: String,
@@ -214,26 +221,46 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        fun writeJsFile(name: String, text: String): String {
-            val file = File(buildDir, "$name.js")
+        private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
+            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, JS_MODULE_KIND, moduleName))
+        }
+
+        private fun writeJsFile(name: String, text: String): String {
+            val moduleFileName = "./$name.js"
+            val file = File(jsDir, moduleFileName)
             if (file.exists()) {
                 file.delete()
             }
-            file.writeText(text)
+            file.writeAsJsModule(text, moduleFileName)
             return file.canonicalPath
         }
 
+        private fun prepareExternalJsFiles(): MutableList<String> {
+            jsDir.invalidateDir()
+            return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
+                file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
+                    val externalModule = jsDir.resolve(file.name)
+                    externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)
+                    externalModule.canonicalPath
+                }
+            }
+        }
+
+
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
-            val files = jsOutput.dependencies.map { writeJsFile(it.first, it.second.jsCode) } + writeJsFile(mainModuleName, jsOutput.jsCode)
+            val files = prepareExternalJsFiles()
+            jsOutput.dependencies.mapTo(files) { writeJsFile(it.first, it.second.jsCode) }
+            files += writeJsFile(mainModuleName, jsOutput.jsCode)
+
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
                     files = files,
-                    testModuleName = mainModuleName,
+                    testModuleName = "./$mainModuleName.js",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
                     testFunctionArgs = "$stepId",
                     expectedResult = "OK",
-                    withModuleSystem = false
+                    withModuleSystem = true
                 )
             } catch (e: ComparisonFailure) {
                 throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
@@ -298,7 +325,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         }
     }
 
-    private fun String.isAllowedKtFile() = endsWith(".kt") && !KT_FILE_IGNORE_PATTERN.matches(this)
+    private fun String.isAllowedKtFile() = endsWith(".kt") && !TEST_FILE_IGNORE_PATTERN.matches(this)
+
+    private fun String.isAllowedJsFile() = endsWith(".js") && !TEST_FILE_IGNORE_PATTERN.matches(this)
 
     private fun File.filteredKtFiles(): Collection<File> {
         assert(isDirectory && exists())
@@ -377,11 +406,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             File(buildDir, module).invalidateDir()
             val testModuleDir = File(testDir, module)
 
-            testModuleDir.listFiles { _, fileName -> fileName.isAllowedKtFile() }!!.forEach { file ->
-                assert(!file.isDirectory)
-                val fileName = file.name
-                val workingFile = File(moduleSourceDir, fileName)
-                file.copyTo(workingFile)
+            testModuleDir.filesInDir.forEach { file ->
+                if (file.name.isAllowedKtFile()) {
+                    file.copyTo(moduleSourceDir.resolve(file.name))
+                }
             }
         }
     }

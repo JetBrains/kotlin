@@ -1,4 +1,2 @@
-declare namespace kotlin_main {
-    type Nullable<T> = T | null | undefined
-    function box(stepId: number): string;
-}
+type Nullable<T> = T | null | undefined
+export declare function box(stepId: number): string;
