@@ -61,6 +61,33 @@ internal fun produceObjCExportInterface(
     return headerGenerator.buildInterface()
 }
 
+/**
+ * Populate framework directory with headers, module and info.plist.
+ */
+internal fun createObjCFramework(
+        config: KonanConfig,
+        moduleDescriptor: ModuleDescriptor,
+        exportedInterface: ObjCExportedInterface,
+        frameworkDirectory: File
+) {
+    val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
+    val frameworkBuilder = FrameworkBuilder(
+            config,
+            infoPListBuilder = InfoPListBuilder(config),
+            moduleMapBuilder = ModuleMapBuilder(),
+            objCHeaderWriter = ObjCHeaderWriter(),
+            mainPackageGuesser = MainPackageGuesser(),
+    )
+    frameworkBuilder.build(
+            moduleDescriptor,
+            frameworkDirectory,
+            frameworkName,
+            exportedInterface.headerLines,
+            moduleDependencies = emptySet()
+    )
+}
+
+// TODO: No need for such class in dynamic driver.
 internal class ObjCExport(
         private val generationState: NativeGenerationState,
         private val moduleDescriptor: ModuleDescriptor,
@@ -93,7 +120,7 @@ internal class ObjCExport(
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
-        exportedInterface?.generateWorkaroundForSwiftSR10177()
+        exportedInterface?.generateWorkaroundForSwiftSR10177(generationState)
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
@@ -104,68 +131,49 @@ internal class ObjCExport(
      */
     fun produceFrameworkInterface() {
         if (exportedInterface != null) {
-            produceFrameworkSpecific(exportedInterface.headerLines)
+            createObjCFramework(generationState.config, moduleDescriptor, exportedInterface, File(generationState.outputFile))
         }
     }
+}
 
-    private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val frameworkDirectory = File(generationState.outputFile)
-        val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
-        val frameworkBuilder = FrameworkBuilder(
-                config,
-                infoPListBuilder = InfoPListBuilder(config),
-                moduleMapBuilder = ModuleMapBuilder(),
-                objCHeaderWriter = ObjCHeaderWriter(),
-                mainPackageGuesser = MainPackageGuesser(),
-        )
-        frameworkBuilder.build(
-                moduleDescriptor,
-                frameworkDirectory,
-                frameworkName,
-                headerLines,
-                moduleDependencies = emptySet()
-        )
-    }
+// See https://bugs.swift.org/browse/SR-10177
+private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationState: NativeGenerationState) {
+    // Code for all protocols from the header should get into the binary.
+    // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
+    // so the easiest way to achieve this (quickly) is to compile a stub by clang.
 
-    // See https://bugs.swift.org/browse/SR-10177
-    private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177() {
-        // Code for all protocols from the header should get into the binary.
-        // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
-        // so the easiest way to achieve this (quickly) is to compile a stub by clang.
-
-        val protocolsStub = listOf(
-                "__attribute__((used)) static void __workaroundSwiftSR10177() {",
-                buildString {
-                    append("    ")
-                    generatedClasses.forEach {
-                        if (it.isInterface) {
-                            val protocolName = namer.getClassOrProtocolName(it).objCName
-                            append("@protocol($protocolName); ")
-                        }
+    val protocolsStub = listOf(
+            "__attribute__((used)) static void __workaroundSwiftSR10177() {",
+            buildString {
+                append("    ")
+                generatedClasses.forEach {
+                    if (it.isInterface) {
+                        val protocolName = namer.getClassOrProtocolName(it).objCName
+                        append("@protocol($protocolName); ")
                     }
-                },
-                "}"
-        )
+                }
+            },
+            "}"
+    )
 
-        val source = createTempFile("protocols", ".m").deleteOnExit()
-        source.writeLines(headerLines + protocolsStub)
+    val source = createTempFile("protocols", ".m").deleteOnExit()
+    source.writeLines(headerLines + protocolsStub)
 
-        val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
+    val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
 
-        val clangCommand = config.clang.clangC(
-                source.absolutePath,
-                "-O2",
-                "-emit-llvm",
-                "-c", "-o", bitcode.absolutePath
-        )
+    val clangCommand = generationState.config.clang.clangC(
+            source.absolutePath,
+            "-O2",
+            "-emit-llvm",
+            "-c", "-o", bitcode.absolutePath
+    )
 
-        val result = Command(clangCommand).getResult(withErrors = true)
+    val result = Command(clangCommand).getResult(withErrors = true)
 
-        if (result.exitCode == 0) {
-            generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
-        } else {
-            // Note: ignoring compile errors intentionally.
-            // In this case resulting framework will likely be unusable due to compile errors when importing it.
-        }
+    if (result.exitCode == 0) {
+        generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+    } else {
+        // Note: ignoring compile errors intentionally.
+        // In this case resulting framework will likely be unusable due to compile errors when importing it.
     }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
+import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -202,6 +203,7 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState) {
 
 }
 
+// TODO: Remove this function after dynamic driver is complete.
 internal fun produceOutput(generationState: NativeGenerationState) {
     val context = generationState.context
     val config = context.config
