@@ -59,6 +59,10 @@ private class HashCalculatorForIC {
         )
     }
 
+    fun updateAnnotationContainer(annotationContainer: IrAnnotationContainer) {
+        updateForEach(annotationContainer.annotations, ::update)
+    }
+
     inline fun <T> updateForEach(collection: Collection<T>, f: (T) -> Unit) {
         update(collection.size)
         collection.forEach { f(it) }
@@ -108,6 +112,10 @@ internal fun IrSimpleFunction.irSimpleFunctionHashForIC() = HashCalculatorForIC(
     it.update(this)
 }.finalize()
 
+internal fun IrAnnotationContainer.irAnnotationContainerHashForIC() = HashCalculatorForIC().also {
+    it.updateAnnotationContainer(this)
+}.finalize()
+
 internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
     it.update(toString())
     // symbol rendering prints very little information about type parameters
@@ -124,11 +132,7 @@ internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
             it.update(functionParam.defaultValue?.let { "1" } ?: "0")
         }
     }
-    (owner as? IrAnnotationContainer)?.let { annotationContainer ->
-        it.updateForEach(annotationContainer.annotations) { annotation ->
-            it.update(annotation)
-        }
-    }
+    (owner as? IrAnnotationContainer)?.let(it::updateAnnotationContainer)
 }.finalize()
 
 internal fun String.stringHashForIC() = HashCalculatorForIC().also { it.update(this) }.finalize()

@@ -11,7 +11,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
-internal data class IdSignatureSource(val lib: KotlinLibraryFile, val src: KotlinSourceFile, val symbol: IrSymbol)
+internal class IdSignatureSource(
+    val lib: KotlinLibraryFile,
+    val srcIrFile: IrFile,
+    val symbol: IrSymbol
+) {
+    val src: KotlinSourceFile
+        get() = KotlinSourceFile(srcIrFile)
+}
 
 internal fun addParentSignatures(
     signatures: Collection<IdSignature>,
