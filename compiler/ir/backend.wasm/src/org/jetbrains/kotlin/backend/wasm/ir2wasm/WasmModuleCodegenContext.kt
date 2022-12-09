@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.wasm.ir.*
 
-class WasmModuleCodegenContextImpl(
+class WasmModuleCodegenContext(
     val backendContext: WasmBackendContext,
     private val wasmFragment: WasmCompiledModuleFragment
 ) {

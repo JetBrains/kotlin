@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
 
 class BodyGenerator(
-    val context: WasmModuleCodegenContextImpl,
-    val functionContext: WasmFunctionCodegenContextImpl,
+    val context: WasmModuleCodegenContext,
+    val functionContext: WasmFunctionCodegenContext,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
     private val isGetUnitFunction: Boolean,
 ) : IrElementVisitorVoid {
