@@ -5,19 +5,20 @@ digraph delegateWithAnonymousObject_kt {
 
     subgraph cluster_0 {
         color=red
+        3 [label="Enter class DelegateProvider" style="filled" fillcolor=red];
+        4 [label="Exit class DelegateProvider" style="filled" fillcolor=red];
+    }
+    subgraph cluster_1 {
+        color=blue
         0 [label="Enter function <init>" style="filled" fillcolor=red];
         1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
+    3 -> {4} [color=green];
+    4 -> {0} [color=green];
+    4 -> {0} [style=dashed];
     0 -> {1};
     1 -> {2};
-
-    subgraph cluster_1 {
-        color=red
-        3 [label="Enter class DelegateProvider" style="filled" fillcolor=red];
-        4 [label="Exit class DelegateProvider" style="filled" fillcolor=red];
-    }
-    3 -> {4} [color=green];
 
     subgraph cluster_2 {
         color=red
@@ -45,15 +46,11 @@ digraph delegateWithAnonymousObject_kt {
 
     subgraph cluster_4 {
         color=red
-        14 [label="Enter function <init>" style="filled" fillcolor=red];
-        15 [label="Delegated constructor call: super<R|DelegateProvider<IssueListView>|>()" style="filled" fillcolor=yellow];
-        16 [label="Exit function <init>" style="filled" fillcolor=red];
+        21 [label="Enter class IssueListView" style="filled" fillcolor=red];
+        22 [label="Exit class IssueListView" style="filled" fillcolor=red];
     }
-    14 -> {15};
-    15 -> {16};
-
     subgraph cluster_5 {
-        color=red
+        color=blue
         17 [label="Enter function updateFrom" style="filled" fillcolor=red];
         subgraph cluster_6 {
             color=blue
@@ -62,30 +59,25 @@ digraph delegateWithAnonymousObject_kt {
         }
         20 [label="Exit function updateFrom" style="filled" fillcolor=red];
     }
+    subgraph cluster_7 {
+        color=blue
+        14 [label="Enter function <init>" style="filled" fillcolor=red];
+        15 [label="Delegated constructor call: super<R|DelegateProvider<IssueListView>|>()" style="filled" fillcolor=yellow];
+        16 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    21 -> {22} [color=green];
+    22 -> {14 17} [color=green];
+    22 -> {14 17} [style=dashed];
+    14 -> {15};
+    15 -> {16};
     17 -> {18};
     18 -> {19};
     19 -> {20};
 
-    subgraph cluster_7 {
-        color=red
-        21 [label="Enter class IssueListView" style="filled" fillcolor=red];
-        22 [label="Exit class IssueListView" style="filled" fillcolor=red];
-    }
-    21 -> {22} [color=green];
-
     subgraph cluster_8 {
         color=red
-        23 [label="Enter function <init>" style="filled" fillcolor=red];
-        24 [label="Delegated constructor call: super<R|DelegateProvider<IssuesListUserProfile>|>()" style="filled" fillcolor=yellow];
-        25 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    23 -> {24};
-    24 -> {25};
-
-    subgraph cluster_9 {
-        color=red
         54 [label="Enter function getter" style="filled" fillcolor=red];
-        subgraph cluster_10 {
+        subgraph cluster_9 {
             color=blue
             55 [label="Enter block"];
             56 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
@@ -107,10 +99,10 @@ digraph delegateWithAnonymousObject_kt {
     60 -> {61} [style=dotted];
     61 -> {62} [style=dotted];
 
-    subgraph cluster_11 {
+    subgraph cluster_10 {
         color=red
         63 [label="Enter function setter" style="filled" fillcolor=red];
-        subgraph cluster_12 {
+        subgraph cluster_11 {
             color=blue
             64 [label="Enter block"];
             65 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
@@ -129,22 +121,22 @@ digraph delegateWithAnonymousObject_kt {
     68 -> {69};
     69 -> {70};
 
-    subgraph cluster_13 {
+    subgraph cluster_12 {
         color=red
         79 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
         80 [label="Part of class initialization"];
-        subgraph cluster_14 {
+        subgraph cluster_13 {
             color=blue
             71 [label="Enter property" style="filled" fillcolor=red];
             72 [label="Postponed enter to lambda"];
-            subgraph cluster_15 {
+            subgraph cluster_14 {
                 color=blue
                 26 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_16 {
+                subgraph cluster_15 {
                     color=blue
                     27 [label="Enter block"];
                     28 [label="Enter anonymous object"];
-                    subgraph cluster_17 {
+                    subgraph cluster_16 {
                         color=blue
                         33 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
                         34 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
@@ -155,10 +147,10 @@ digraph delegateWithAnonymousObject_kt {
                 }
                 32 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            subgraph cluster_18 {
+            subgraph cluster_17 {
                 color=blue
                 45 [label="Enter function setValue" style="filled" fillcolor=red];
-                subgraph cluster_19 {
+                subgraph cluster_18 {
                     color=blue
                     46 [label="Enter block"];
                     47 [label="Function call: R|/IssueListView.IssueListView|()" style="filled" fillcolor=yellow];
@@ -170,10 +162,10 @@ digraph delegateWithAnonymousObject_kt {
                 }
                 53 [label="Exit function setValue" style="filled" fillcolor=red];
             }
-            subgraph cluster_20 {
+            subgraph cluster_19 {
                 color=blue
                 38 [label="Enter function getValue" style="filled" fillcolor=red];
-                subgraph cluster_21 {
+                subgraph cluster_20 {
                     color=blue
                     39 [label="Enter block"];
                     40 [label="Function call: R|/IssueListView.IssueListView|()" style="filled" fillcolor=yellow];
@@ -183,7 +175,7 @@ digraph delegateWithAnonymousObject_kt {
                 }
                 44 [label="Exit function getValue" style="filled" fillcolor=red];
             }
-            subgraph cluster_22 {
+            subgraph cluster_21 {
                 color=blue
                 35 [label="Enter function <init>" style="filled" fillcolor=red];
                 36 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
@@ -198,10 +190,18 @@ digraph delegateWithAnonymousObject_kt {
         }
         81 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
     }
+    subgraph cluster_22 {
+        color=blue
+        23 [label="Enter function <init>" style="filled" fillcolor=red];
+        24 [label="Delegated constructor call: super<R|DelegateProvider<IssuesListUserProfile>|>()" style="filled" fillcolor=yellow];
+        25 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
     79 -> {80} [color=green];
     80 -> {71} [color=green];
     80 -> {81} [style=dotted];
     80 -> {71} [style=dashed];
+    81 -> {23} [color=green];
+    81 -> {23} [style=dashed];
     71 -> {72};
     72 -> {26 73 74};
     72 -> {26} [style=dashed];
@@ -219,12 +219,11 @@ digraph delegateWithAnonymousObject_kt {
     28 -> {29} [color=red];
     28 -> {33} [style=dashed];
     29 -> {30};
-    29 -> {35 38 45} [color=green];
-    29 -> {35 38 45} [style=dashed];
     30 -> {31};
     31 -> {32};
     33 -> {34} [color=green];
-    34 -> {29} [color=green];
+    34 -> {29 35 38 45} [color=green];
+    34 -> {35 38 45} [style=dashed];
     35 -> {36};
     36 -> {37};
     38 -> {39};
@@ -243,5 +242,7 @@ digraph delegateWithAnonymousObject_kt {
     50 -> {51} [style=dotted];
     51 -> {52} [style=dotted];
     52 -> {53} [style=dotted];
+    23 -> {24};
+    24 -> {25};
 
 }

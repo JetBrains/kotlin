@@ -5,15 +5,11 @@ digraph implicitReceivers_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        2 [label="Exit function <init>" style="filled" fillcolor=red];
+        7 [label="Enter class A" style="filled" fillcolor=red];
+        8 [label="Exit class A" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
-
     subgraph cluster_1 {
-        color=red
+        color=blue
         3 [label="Enter function foo" style="filled" fillcolor=red];
         subgraph cluster_2 {
             color=blue
@@ -22,28 +18,28 @@ digraph implicitReceivers_kt {
         }
         6 [label="Exit function foo" style="filled" fillcolor=red];
     }
+    subgraph cluster_3 {
+        color=blue
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    7 -> {8} [color=green];
+    8 -> {0 3} [color=green];
+    8 -> {0 3} [style=dashed];
+    0 -> {1};
+    1 -> {2};
     3 -> {4};
     4 -> {5};
     5 -> {6};
 
-    subgraph cluster_3 {
-        color=red
-        7 [label="Enter class A" style="filled" fillcolor=red];
-        8 [label="Exit class A" style="filled" fillcolor=red];
-    }
-    7 -> {8} [color=green];
-
     subgraph cluster_4 {
         color=red
-        9 [label="Enter function <init>" style="filled" fillcolor=red];
-        10 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        11 [label="Exit function <init>" style="filled" fillcolor=red];
+        16 [label="Enter class B" style="filled" fillcolor=red];
+        17 [label="Exit class B" style="filled" fillcolor=red];
     }
-    9 -> {10};
-    10 -> {11};
-
     subgraph cluster_5 {
-        color=red
+        color=blue
         12 [label="Enter function bar" style="filled" fillcolor=red];
         subgraph cluster_6 {
             color=blue
@@ -52,16 +48,20 @@ digraph implicitReceivers_kt {
         }
         15 [label="Exit function bar" style="filled" fillcolor=red];
     }
+    subgraph cluster_7 {
+        color=blue
+        9 [label="Enter function <init>" style="filled" fillcolor=red];
+        10 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        11 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    16 -> {17} [color=green];
+    17 -> {9 12} [color=green];
+    17 -> {9 12} [style=dashed];
+    9 -> {10};
+    10 -> {11};
     12 -> {13};
     13 -> {14};
     14 -> {15};
-
-    subgraph cluster_7 {
-        color=red
-        16 [label="Enter class B" style="filled" fillcolor=red];
-        17 [label="Exit class B" style="filled" fillcolor=red];
-    }
-    16 -> {17} [color=green];
 
     subgraph cluster_8 {
         color=red

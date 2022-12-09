@@ -5,18 +5,9 @@ digraph overridenOpenVal_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        2 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    0 -> {1};
-    1 -> {2};
-
-    subgraph cluster_1 {
-        color=red
         6 [label="Enter class A" style="filled" fillcolor=red];
         7 [label="Part of class initialization"];
-        subgraph cluster_2 {
+        subgraph cluster_1 {
             color=blue
             3 [label="Enter property" style="filled" fillcolor=red];
             4 [label="Access variable R|<local>/x|"];
@@ -24,27 +15,31 @@ digraph overridenOpenVal_kt {
         }
         8 [label="Exit class A" style="filled" fillcolor=red];
     }
+    subgraph cluster_2 {
+        color=blue
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
     6 -> {7} [color=green];
     7 -> {3} [color=green];
     7 -> {8} [style=dotted];
     7 -> {3} [style=dashed];
+    8 -> {0} [color=green];
+    8 -> {0} [style=dashed];
     3 -> {4};
     4 -> {5};
     5 -> {8} [color=green];
+    0 -> {1};
+    1 -> {2};
 
     subgraph cluster_3 {
         color=red
-        9 [label="Enter function <init>" style="filled" fillcolor=red];
-        10 [label="Access variable R|<local>/x|"];
-        11 [label="Delegated constructor call: super<R|A|>(...)" style="filled" fillcolor=yellow];
-        12 [label="Exit function <init>" style="filled" fillcolor=red];
+        31 [label="Enter class B" style="filled" fillcolor=red];
+        32 [label="Exit class B" style="filled" fillcolor=red];
     }
-    9 -> {10};
-    10 -> {11};
-    11 -> {12};
-
     subgraph cluster_4 {
-        color=red
+        color=blue
         13 [label="Enter function test_1" style="filled" fillcolor=red];
         subgraph cluster_5 {
             color=blue
@@ -76,6 +71,19 @@ digraph overridenOpenVal_kt {
         }
         30 [label="Exit function test_1" style="filled" fillcolor=red];
     }
+    subgraph cluster_9 {
+        color=blue
+        9 [label="Enter function <init>" style="filled" fillcolor=red];
+        10 [label="Access variable R|<local>/x|"];
+        11 [label="Delegated constructor call: super<R|A|>(...)" style="filled" fillcolor=yellow];
+        12 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    31 -> {32} [color=green];
+    32 -> {9 13} [color=green];
+    32 -> {9 13} [style=dashed];
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
     13 -> {14};
     14 -> {15};
     15 -> {16};
@@ -93,13 +101,6 @@ digraph overridenOpenVal_kt {
     27 -> {28};
     28 -> {29};
     29 -> {30};
-
-    subgraph cluster_9 {
-        color=red
-        31 [label="Enter class B" style="filled" fillcolor=red];
-        32 [label="Exit class B" style="filled" fillcolor=red];
-    }
-    31 -> {32} [color=green];
 
     subgraph cluster_10 {
         color=red

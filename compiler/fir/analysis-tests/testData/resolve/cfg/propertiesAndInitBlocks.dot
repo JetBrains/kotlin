@@ -136,7 +136,7 @@ digraph propertiesAndInitBlocks_kt {
     }
     subgraph cluster_15 {
         color=blue
-        72 [label="Enter function <init>" style="filled" fillcolor=red];
+        72 [label="Enter function <init>" style="filled" fillcolor=red style="filled" fillcolor=gray];
         73 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         74 [label="Exit function <init>" style="filled" fillcolor=red];
     }
@@ -144,13 +144,15 @@ digraph propertiesAndInitBlocks_kt {
     58 -> {59};
     58 -> {65 72} [color=red];
     59 -> {60};
-    59 -> {62 72} [color=green];
-    59 -> {62 72} [style=dashed];
+    59 -> {62} [color=green];
+    59 -> {62} [style=dashed];
     60 -> {61};
     62 -> {63} [color=green];
     63 -> {65} [color=green];
     63 -> {64} [style=dotted];
     63 -> {65} [style=dashed];
+    64 -> {72} [style=dotted];
+    64 -> {72} [style=dashed];
     65 -> {66};
     66 -> {67};
     67 -> {68};
@@ -201,7 +203,7 @@ digraph propertiesAndInitBlocks_kt {
         }
         subgraph cluster_22 {
             color=blue
-            43 [label="Enter function <init>" style="filled" fillcolor=red];
+            43 [label="Enter function <init>" style="filled" fillcolor=red style="filled" fillcolor=gray];
             44 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
             45 [label="Exit function <init>" style="filled" fillcolor=red];
         }
@@ -219,8 +221,8 @@ digraph propertiesAndInitBlocks_kt {
     25 -> {26};
     25 -> {35 43 46} [color=red];
     26 -> {27};
-    26 -> {32 43} [color=green];
-    26 -> {32 43} [style=dashed];
+    26 -> {32} [color=green];
+    26 -> {32} [style=dashed];
     27 -> {28};
     28 -> {29} [style=dotted];
     29 -> {30} [style=dotted];
@@ -230,6 +232,8 @@ digraph propertiesAndInitBlocks_kt {
     33 -> {35} [color=green];
     33 -> {34} [style=dotted];
     33 -> {35} [style=dashed];
+    34 -> {43} [style=dotted];
+    34 -> {43} [style=dashed];
     35 -> {36};
     36 -> {37};
     37 -> {38};
