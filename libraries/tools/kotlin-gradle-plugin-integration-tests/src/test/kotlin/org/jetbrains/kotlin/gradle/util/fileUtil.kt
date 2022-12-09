@@ -97,3 +97,11 @@ private fun normalizeTail(prefixEnd: Int, path: String, separator: Boolean): Str
 
     return result.toString()
 }
+
+fun File.replaceText(oldValue: String, newValue: String) {
+    writeText(readText().replace(oldValue, newValue))
+}
+
+fun File.replaceText(regex: Regex, replacement: String) {
+    writeText(readText().replace(regex, replacement))
+}

@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
+import org.gradle.api.artifacts.component.BuildIdentifier
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.build.BuildState
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 
@@ -22,14 +25,16 @@ fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependency
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, project: Project, sourceSetName: String): IdeaKotlinDependencyMatcher {
-    return IdeaKotlinSourceDependencyMatcher(type, project.path, sourceSetName)
+    return IdeaKotlinSourceDependencyMatcher(type, project.currentBuildId().name, project.path, sourceSetName)
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, path: String): IdeaKotlinDependencyMatcher {
     val segments = path.split("/")
-    val projectPath = segments.dropLast(1).joinToString("/")
+    val buildAndProjectPath = segments.dropLast(1).joinToString(":").split("::", limit = 2)
+    val buildId = if (buildAndProjectPath.size == 2) buildAndProjectPath.first() else ":"
+    val projectPath = if (buildAndProjectPath.size == 2) ":" + buildAndProjectPath.last() else buildAndProjectPath.last()
     val sourceSetName = segments.last()
-    return IdeaKotlinSourceDependencyMatcher(type, projectPath, sourceSetName)
+    return IdeaKotlinSourceDependencyMatcher(type, buildId, projectPath, sourceSetName)
 }
 
 fun regularSourceDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.Regular, path)
@@ -42,12 +47,20 @@ fun dependsOnDependency(project: Project, sourceSetName: String) =
 fun dependsOnDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.DependsOn, path)
 
 fun projectArtifactDependency(
-    type: IdeaKotlinSourceDependency.Type = IdeaKotlinSourceDependency.Type.Regular, projectPath: String, artifactFilePath: FilePathRegex
-): IdeaKotlinDependencyMatcher = IdeaKotlinProjectArtifactDependencyMatcher(
-    type = type,
-    projectPath = projectPath,
-    artifactFilePath = artifactFilePath
-)
+    type: IdeaKotlinSourceDependency.Type = IdeaKotlinSourceDependency.Type.Regular,
+    buildIdAndProjectPath: String, artifactFilePath: FilePathRegex
+): IdeaKotlinDependencyMatcher {
+    val slicedProjectPath = buildIdAndProjectPath.split("::", limit = 2)
+    val buildId = if (slicedProjectPath.size == 2) slicedProjectPath.first() else ":"
+    val projectPath = if (slicedProjectPath.size == 2) ":" + slicedProjectPath.last() else slicedProjectPath.last()
+
+    return IdeaKotlinProjectArtifactDependencyMatcher(
+        type = type,
+        buildId = buildId,
+        projectPath = projectPath,
+        artifactFilePath = artifactFilePath
+    )
+}
 
 fun binaryCoordinates(regex: Regex): IdeaKotlinDependencyMatcher {
     return IdeaBinaryCoordinatesMatcher(regex)
@@ -61,3 +74,7 @@ fun anyDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependency
     override val description: String get() = "any"
     override fun matches(dependency: IdeaKotlinDependency): Boolean = true
 }
+
+/* Duplicated: Aks Gradle for public API? */
+private fun Project.currentBuildId(): BuildIdentifier =
+    (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier

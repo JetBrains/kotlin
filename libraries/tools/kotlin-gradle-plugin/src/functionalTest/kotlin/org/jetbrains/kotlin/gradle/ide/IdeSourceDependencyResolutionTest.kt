@@ -171,8 +171,8 @@ class IdeSourceDependencyResolutionTest {
         consumer.resolveDependencies("jvmAndAndroidMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/jvmAndAndroidMain"),
-            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/producer/build/libs/producer-jvm.jar")),
-            dependsOnDependency(":consumer/commonMain")
+            dependsOnDependency(":consumer/commonMain"),
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer-jvm.jar"))
         )
     }
 
