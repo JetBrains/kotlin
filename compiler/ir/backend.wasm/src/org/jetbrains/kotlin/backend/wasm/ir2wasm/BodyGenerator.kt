@@ -31,11 +31,12 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
 
 class BodyGenerator(
-    val context: WasmFunctionCodegenContext,
+    val context: WasmModuleCodegenContextImpl,
+    val functionContext: WasmFunctionCodegenContextImpl,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
     private val isGetUnitFunction: Boolean,
 ) : IrElementVisitorVoid {
-    val body: WasmExpressionBuilder = context.bodyGen
+    val body: WasmExpressionBuilder = functionContext.bodyGen
 
     // Shortcuts
     private val backendContext: WasmBackendContext = context.backendContext
@@ -131,7 +132,7 @@ class BodyGenerator(
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
-        body.buildThrow(context.tagIdx)
+        body.buildThrow(functionContext.tagIdx)
     }
 
     override fun visitTry(aTry: IrTry) {
@@ -141,12 +142,12 @@ class BodyGenerator(
         body.buildTry(null, resultType)
         generateExpression(aTry.tryResult)
 
-        body.buildCatch(context.tagIdx)
+        body.buildCatch(functionContext.tagIdx)
 
         // Exception object is on top of the stack, store it into the local
         aTry.catches.single().catchParameter.symbol.let {
-            context.defineLocal(it)
-            body.buildSetLocal(context.referenceLocal(it))
+            functionContext.defineLocal(it)
+            body.buildSetLocal(functionContext.referenceLocal(it))
         }
         generateExpression(aTry.catches.single().result)
 
@@ -229,15 +230,15 @@ class BodyGenerator(
             // Handle cases when IrClass::thisReceiver is referenced instead
             // of the value parameter of current function
             if (valueDeclaration.isDispatchReceiver)
-                context.referenceLocal(0)
+                functionContext.referenceLocal(0)
             else
-                context.referenceLocal(valueSymbol)
+                functionContext.referenceLocal(valueSymbol)
         )
     }
 
     override fun visitSetValue(expression: IrSetValue) {
         generateExpression(expression.value)
-        body.buildSetLocal(context.referenceLocal(expression.symbol))
+        body.buildSetLocal(functionContext.referenceLocal(expression.symbol))
         body.buildGetUnit()
     }
 
@@ -295,7 +296,7 @@ class BodyGenerator(
         val parentClass = constructor.parentAsClass
         if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
         if (parentClass.isAbstractOrSealed) return
-        val thisParameter = context.referenceLocal(parentClass.thisReceiver!!.symbol)
+        val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
         body.buildGetLocal(thisParameter)
         body.buildInstr(WasmOp.REF_IS_NULL)
         body.buildIf("this_init")
@@ -312,7 +313,7 @@ class BodyGenerator(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-        val klass = context.irFunction.parentAsClass
+        val klass = functionContext.irFunction.parentAsClass
 
         // Don't delegate constructors of Any to Any.
         if (klass.defaultType.isAny()) {
@@ -320,7 +321,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildGetLocal(context.referenceLocal(0))  // this parameter
+        body.buildGetLocal(functionContext.referenceLocal(0))  // this parameter
         generateCall(expression)
     }
 
@@ -490,7 +491,7 @@ class BodyGenerator(
                 assert(irInterface.isInterface)
                 if (irInterface.symbol in hierarchyDisjointUnions) {
                     val classITable = context.referenceClassITableGcType(irInterface.symbol)
-                    val parameterLocal = context.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
+                    val parameterLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
                     body.buildSetLocal(parameterLocal)
                     body.buildBlock("isInterface", WasmI32) { outerLabel ->
                         body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
@@ -598,7 +599,7 @@ class BodyGenerator(
         }
 
         if (expression is IrReturnableBlock) {
-            context.defineNonLocalReturnLevel(
+            functionContext.defineNonLocalReturnLevel(
                 expression.symbol,
                 body.buildBlock(context.transformBlockResultType(expression.type))
             )
@@ -626,12 +627,12 @@ class BodyGenerator(
 
     override fun visitBreak(jump: IrBreak) {
         assert(jump.type == irBuiltIns.nothingType)
-        body.buildBr(context.referenceLoopLevel(jump.loop, LoopLabelType.BREAK))
+        body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.BREAK))
     }
 
     override fun visitContinue(jump: IrContinue) {
         assert(jump.type == irBuiltIns.nothingType)
-        body.buildBr(context.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE))
+        body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE))
     }
 
     private fun visitFunctionReturn(expression: IrReturn) {
@@ -646,8 +647,8 @@ class BodyGenerator(
             }
         }
 
-        if (context.irFunction is IrConstructor) {
-            body.buildGetLocal(context.referenceLocal(0))
+        if (functionContext.irFunction is IrConstructor) {
+            body.buildGetLocal(functionContext.referenceLocal(0))
         }
 
         body.buildInstr(WasmOp.RETURN, expression.getSourceLocation())
@@ -734,7 +735,7 @@ class BodyGenerator(
         val nonLocalReturnSymbol = expression.returnTargetSymbol as? IrReturnableBlockSymbol
         if (nonLocalReturnSymbol != null) {
             generateWithExpectedType(expression.value, nonLocalReturnSymbol.owner.type)
-            body.buildBr(context.referenceNonLocalReturnLevel(nonLocalReturnSymbol))
+            body.buildBr(functionContext.referenceNonLocalReturnLevel(nonLocalReturnSymbol))
             body.buildUnreachable()
         } else {
             visitFunctionReturn(expression)
@@ -793,8 +794,8 @@ class BodyGenerator(
         body.buildLoop(label) { wasmLoop ->
             body.buildBlock("BREAK_$label") { wasmBreakBlock ->
                 body.buildBlock("CONTINUE_$label") { wasmContinueBlock ->
-                    context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
-                    context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
+                    functionContext.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
+                    functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
                     loop.body?.let { generateStatement(it) }
                 }
                 generateExpression(loop.condition)
@@ -816,8 +817,8 @@ class BodyGenerator(
 
         body.buildLoop(label) { wasmLoop ->
             body.buildBlock("BREAK_$label") { wasmBreakBlock ->
-                context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
-                context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
+                functionContext.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
+                functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
 
                 generateExpression(loop.condition)
                 body.buildInstr(WasmOp.I32_EQZ)
@@ -833,13 +834,13 @@ class BodyGenerator(
     }
 
     override fun visitVariable(declaration: IrVariable) {
-        context.defineLocal(declaration.symbol)
+        functionContext.defineLocal(declaration.symbol)
         if (declaration.initializer == null) {
             return
         }
         val init = declaration.initializer!!
         generateExpression(init)
-        val varName = context.referenceLocal(declaration.symbol)
+        val varName = functionContext.referenceLocal(declaration.symbol)
         body.buildSetLocal(varName)
     }
 
@@ -889,7 +890,7 @@ class BodyGenerator(
     }
 
     private fun IrExpression.getSourceLocation(): SourceLocation {
-        val fileEntry = context.irFunction.fileEntry
+        val fileEntry = functionContext.irFunction.fileEntry
         val path = fileEntry.name
         val startLine = fileEntry.getLineNumber(startOffset)
         val startColumn = fileEntry.getColumnNumber(startOffset)
