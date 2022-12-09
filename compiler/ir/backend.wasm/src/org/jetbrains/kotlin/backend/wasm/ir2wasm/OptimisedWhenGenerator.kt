@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -225,9 +226,10 @@ private fun BodyGenerator.createBinaryTable(
             // default else block
             if (resultType != null) {
                 if (expectedType.isUnit()) {
+                    // UnitToVoidLowering may optimize "a code" that execution didn't come here.
                     body.buildGetUnit()
                 } else {
-                    body.buildUnreachable()
+                    error("'When' without else branch and non Unit type: ${expectedType.dumpKotlinLike()}")
                 }
             }
         }

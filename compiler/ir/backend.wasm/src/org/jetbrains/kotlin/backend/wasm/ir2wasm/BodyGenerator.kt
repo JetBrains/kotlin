@@ -59,7 +59,8 @@ class BodyGenerator(
         elem.acceptVoid(this)
 
         if (elem is IrExpression && elem.type.isNothing()) {
-            body.buildUnreachable()
+            // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
+            body.buildUnreachableAfterNothingType()
         }
     }
 
@@ -437,7 +438,10 @@ class BodyGenerator(
                     body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                     body.commentGroupEnd()
                 } else {
-                    body.buildUnreachable()
+                    // We came here for a call to an interface method which interface is not implemented anywhere, 
+                    // so we don't have a slot in the itable and can't generate a correct call, 
+                    // and, anyway, the call effectively is unreachable.
+                    body.buildUnreachableForVerifier()
                 }
             }
 
@@ -552,14 +556,8 @@ class BodyGenerator(
                     val fromType = call.getTypeArgument(0)!!
 
                     if (fromType.isNothing()) {
-                        body.buildUnreachable()
+                        body.buildUnreachableAfterNothingType()
                         // TODO: Investigate why?
-                        return true
-                    }
-
-                    // Workaround test codegen/box/elvis/nullNullOk.kt
-                    if (fromType.makeNotNull().isNothing()) {
-                        body.buildUnreachable()
                         return true
                     }
 
@@ -694,7 +692,7 @@ class BodyGenerator(
     private fun recoverToExpectedType(actualType: IrType, expectedType: IrType) {
         // TYPE -> NOTHING -> FALSE
         if (expectedType.isNothing()) {
-            body.buildUnreachable()
+            body.buildUnreachableAfterNothingType()
             return
         }
 
@@ -724,11 +722,12 @@ class BodyGenerator(
 
         // NOT_NOTHING_TYPE -> NOTHING -> FALSE
         if (expectedTypeErased.isNothing() && !actualTypeErased.isNothing()) {
-            body.buildUnreachable()
+            body.buildUnreachableAfterNothingType()
             return
         }
 
         // TYPE -> BASE -> TRUE
+        // TODO Shouldn't we keep nullability for subtype check?
         if (actualClassErased.isSubclassOf(expectedClassErased)) {
             return
         }
@@ -739,7 +738,8 @@ class BodyGenerator(
         // PRIMITIVE -> REF -> FALSE
         // REF -> PRIMITIVE -> FALSE
         if (expectedIsPrimitive != actualIsPrimitive) {
-            body.buildUnreachable()
+            // TODO Shouldn't we throw ICE instead? 
+            body.buildUnreachableForVerifier()
             return
         }
 
@@ -748,7 +748,7 @@ class BodyGenerator(
             if (expectedClassErased.isSubclassOf(actualClassErased)) {
                 generateRefNullCast(actualTypeErased, expectedTypeErased)
             } else {
-                body.buildUnreachable()
+                body.buildUnreachableForVerifier()
             }
         }
     }
@@ -758,7 +758,6 @@ class BodyGenerator(
         if (nonLocalReturnSymbol != null) {
             generateWithExpectedType(expression.value, nonLocalReturnSymbol.owner.type)
             body.buildBr(functionContext.referenceNonLocalReturnLevel(nonLocalReturnSymbol))
-            body.buildUnreachable()
         } else {
             visitFunctionReturn(expression)
         }
@@ -798,7 +797,7 @@ class BodyGenerator(
                     body.buildGetUnit()
                 }
             } else {
-                body.buildUnreachable()
+                error("'When' without else branch and non Unit type: ${expression.type.dumpKotlinLike()}")
             }
         }
 

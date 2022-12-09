@@ -171,7 +171,7 @@ class DeclarationGenerator(
         // Add unreachable if function returns something but not as a last instruction.
         // We can do a separate lowering which adds explicit returns everywhere instead.
         if (wasmFunctionType.resultTypes.isNotEmpty()) {
-            exprGen.buildUnreachable()
+            exprGen.buildUnreachableForVerifier()
         }
 
         context.defineFunction(declaration.symbol, function)
