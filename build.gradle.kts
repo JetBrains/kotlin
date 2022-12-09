@@ -926,4 +926,7 @@ afterEvaluate {
 
 afterEvaluate {
     checkExpectedGradlePropertyValues()
+
+    println("SYSTEM ENV:")
+    System.getenv().forEach { println("${it.key}=${it.value}") }
 }
