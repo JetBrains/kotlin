@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -209,7 +208,7 @@ class ClassCodegen private constructor(
             }
         }
 
-        addReifiedParametersFromSignature()
+        reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 
         generateInnerAndOuterClasses()
 
@@ -231,26 +230,6 @@ class ClassCodegen private constructor(
         val classVisitor = visitor.visitor
         for (sealedSubclassSymbol in sealedSubclasses) {
             classVisitor.visitPermittedSubclass(typeMapper.mapClass(sealedSubclassSymbol.owner).internalName)
-        }
-    }
-
-    private fun addReifiedParametersFromSignature() {
-        for (type in irClass.superTypes) {
-            processTypeParameters(type)
-        }
-    }
-
-    private fun processTypeParameters(type: IrType) {
-        for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
-            if (supertypeArgument is IrTypeProjection) {
-                val typeArgument = supertypeArgument.type
-                if (typeArgument.isReifiedTypeParameter) {
-                    val typeParameter = typeArgument.classifierOrFail as IrTypeParameterSymbol
-                    reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
-                } else {
-                    processTypeParameters(typeArgument)
-                }
-            }
         }
     }
 
