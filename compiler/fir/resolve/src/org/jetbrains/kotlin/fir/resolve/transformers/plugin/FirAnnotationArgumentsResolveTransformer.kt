@@ -143,9 +143,9 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
 ) : FirExpressionsResolveTransformer(transformer) {
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
-        dataFlowAnalyzer.enterAnnotation(annotation)
+        dataFlowAnalyzer.enterAnnotation()
         annotation.transformChildren(transformer, ResolutionMode.ContextDependent)
-        dataFlowAnalyzer.exitAnnotation(annotation)
+        dataFlowAnalyzer.exitAnnotation()
         return annotation
     }
 

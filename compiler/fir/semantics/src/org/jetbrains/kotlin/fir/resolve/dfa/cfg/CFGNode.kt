@@ -747,18 +747,6 @@ class StubNode(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<FirStub>(
     }
 }
 
-@OptIn(CfgInternals::class)
-class ContractDescriptionEnterNode(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<FirStub>(owner, level, id) {
-    init {
-        owner.enterNode = this
-    }
-
-    override val fir: FirStub = FirStub
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitContractDescriptionEnterNode(this, data)
-    }
-}
-
 class VariableDeclarationNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNode<FirProperty>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitVariableDeclarationNode(this, data)
@@ -813,32 +801,6 @@ class WhenSubjectExpressionExitNode(owner: ControlFlowGraph, override val fir: F
     }
 }
 
-// ----------------------------------- Other -----------------------------------
-
-@OptIn(CfgInternals::class)
-class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotation, level: Int, id: Int) : CFGNode<FirAnnotation>(owner, level, id),
-    EnterNodeMarker {
-    init {
-        owner.enterNode = this
-    }
-
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitAnnotationEnterNode(this, data)
-    }
-}
-
-@OptIn(CfgInternals::class)
-class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotation, level: Int, id: Int) : CFGNode<FirAnnotation>(owner, level, id),
-    ExitNodeMarker {
-    init {
-        owner.exitNode = this
-    }
-
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitAnnotationExitNode(this, data)
-    }
-}
-
 // ----------------------------------- Stub -----------------------------------
 
 object FirStub : FirExpression() {
@@ -851,6 +813,16 @@ object FirStub : FirExpression() {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) { assert(newAnnotations.isEmpty()) }
     override fun replaceTypeRef(newTypeRef: FirTypeRef) { assert(newTypeRef.isNothing) }
+}
+
+class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<FirStub>(owner, level, id) {
+    init { isDead = true }
+
+    override val fir: FirStub = FirStub
+
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        throw IllegalStateException("fake expressions should not appear in graphs")
+    }
 }
 
 // ----------------------------------- Smart-cast node -----------------------------------

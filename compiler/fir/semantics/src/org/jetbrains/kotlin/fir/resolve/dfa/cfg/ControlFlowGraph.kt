@@ -68,7 +68,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         PropertyInitializer(withBody = true),
         FieldInitializer(withBody = true),
         TopLevel(withBody = false),
-        AnnotationCall(withBody = true),
+        FakeCall(withBody = true),
         DefaultArgument(withBody = true),
         Stub(withBody = false)
     }

@@ -90,8 +90,6 @@ fun CFGNode<*>.render(): String =
                 is FieldInitializerExitNode -> "Exit field"
                 is InitBlockEnterNode -> "Enter init block"
                 is InitBlockExitNode -> "Exit init block"
-                is AnnotationEnterNode -> "Enter annotation"
-                is AnnotationExitNode -> "Exit annotation"
 
                 is EnterSafeCallNode -> "Enter safe call"
                 is ExitSafeCallNode -> "Exit safe call"
@@ -113,7 +111,7 @@ fun CFGNode<*>.render(): String =
                 is ScriptEnterNode -> "Enter class ${fir.name}"
                 is ScriptExitNode -> "Exit class ${fir.name}"
 
-                is ContractDescriptionEnterNode -> "Enter contract description"
+                is FakeExpressionEnterNode -> "Enter fake expression"
 
                 is EnterValueParameterNode -> "Enter default value of ${fir.name}"
                 is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"

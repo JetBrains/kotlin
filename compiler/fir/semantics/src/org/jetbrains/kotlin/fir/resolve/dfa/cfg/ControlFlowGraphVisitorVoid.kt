@@ -291,16 +291,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    // ----------------------------------- Other -----------------------------------
-
-    open fun visitAnnotationEnterNode(node: AnnotationEnterNode) {
-        visitNode(node)
-    }
-
-    open fun visitAnnotationExitNode(node: AnnotationExitNode) {
-        visitNode(node)
-    }
-
     // ---------------------------------------------------------------------------------------------------------------------
 
     final override fun visitNode(node: CFGNode<*>, data: Nothing?) {
@@ -590,15 +580,5 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitExitSafeCallNode(node: ExitSafeCallNode, data: Nothing?) {
         visitExitSafeCallNode(node)
-    }
-
-    // ----------------------------------- Other -----------------------------------
-
-    final override fun visitAnnotationEnterNode(node: AnnotationEnterNode, data: Nothing?) {
-        visitAnnotationEnterNode(node)
-    }
-
-    final override fun visitAnnotationExitNode(node: AnnotationExitNode, data: Nothing?) {
-        visitAnnotationExitNode(node)
     }
 }
