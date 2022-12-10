@@ -4086,6 +4086,12 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/reified/singletonLambda.kt");
         }
 
+        @Test
+        @TestMetadata("kt55398.kt")
+        public void testKt55398() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt55398.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
         @TestDataPath("$PROJECT_ROOT")
