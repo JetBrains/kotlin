@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 
 fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(currentGraph, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createContractDescriptionEnterNode(): ContractDescriptionEnterNode =
-    ContractDescriptionEnterNode(currentGraph, levelCounter, createId())
+fun ControlFlowGraphBuilder.createFakeExpressionEnterNode(): FakeExpressionEnterNode =
+    FakeExpressionEnterNode(currentGraph, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopExitNode(fir: FirLoop): LoopExitNode = LoopExitNode(currentGraph, fir, levelCounter, createId())
 
@@ -144,12 +144,6 @@ fun ControlFlowGraphBuilder.createStringConcatenationCallNode(fir: FirStringConc
 
 fun ControlFlowGraphBuilder.createVariableAssignmentNode(fir: FirVariableAssignment): VariableAssignmentNode =
     VariableAssignmentNode(currentGraph, fir, levelCounter, createId())
-
-fun ControlFlowGraphBuilder.createAnnotationExitNode(fir: FirAnnotation): AnnotationExitNode =
-    AnnotationExitNode(currentGraph, fir, levelCounter, createId())
-
-fun ControlFlowGraphBuilder.createAnnotationEnterNode(fir: FirAnnotation): AnnotationEnterNode =
-    AnnotationEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createElvisLhsIsNotNullNode(fir: FirElvisExpression): ElvisLhsIsNotNullNode =
     ElvisLhsIsNotNullNode(currentGraph, fir, levelCounter, createId())

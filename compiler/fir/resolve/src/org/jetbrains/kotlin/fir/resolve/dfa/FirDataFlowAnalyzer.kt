@@ -1030,12 +1030,12 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Annotations -----------------------------------
 
-    fun enterAnnotation(annotation: FirAnnotation) {
-        graphBuilder.enterAnnotation(annotation).mergeIncomingFlow()
+    fun enterAnnotation() {
+        graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
 
-    fun exitAnnotation(annotation: FirAnnotation) {
-        graphBuilder.exitAnnotation(annotation).mergeIncomingFlow()
+    fun exitAnnotation() {
+        graphBuilder.exitFakeExpression()
     }
 
     // ----------------------------------- Init block -----------------------------------
@@ -1053,11 +1053,11 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Contract description -----------------------------------
 
     fun enterContractDescription() {
-        graphBuilder.enterContractDescription().mergeIncomingFlow()
+        graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
 
     fun exitContractDescription() {
-        graphBuilder.exitContractDescription()
+        graphBuilder.exitFakeExpression()
     }
 
     // ----------------------------------- Elvis -----------------------------------

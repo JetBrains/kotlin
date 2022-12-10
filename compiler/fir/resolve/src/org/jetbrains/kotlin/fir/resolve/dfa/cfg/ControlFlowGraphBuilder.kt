@@ -1186,20 +1186,23 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    // ----------------------------------- Annotations -----------------------------------
+    // ----------------------------------- Fake expressions -----------------------------------
 
-    fun enterAnnotation(annotation: FirAnnotation): AnnotationEnterNode {
-        pushGraph(ControlFlowGraph(null, "STUB_GRAPH_FOR_ANNOTATION_CALL", ControlFlowGraph.Kind.AnnotationCall))
-        return createAnnotationEnterNode(annotation).also {
+    fun enterFakeExpression(): FakeExpressionEnterNode {
+        // Things like annotations and `contract { ... }` use normal call resolution, but aren't real expressions
+        // and are never evaluated. We'll push all nodes created in the process into a stub graph, then throw it away.
+        // TODO: don't waste time creating the nodes in the first place
+        pushGraph(ControlFlowGraph(null, "STUB_GRAPH_FOR_FAKE_EXPRESSION", ControlFlowGraph.Kind.FakeCall))
+        return createFakeExpressionEnterNode().also {
             lastNodes.push(it)
+            exitTargetsForTry.push(it) // technically might create CFG loops, but the graph will never be visited anyway...
         }
     }
 
-    fun exitAnnotation(annotation: FirAnnotation): AnnotationExitNode {
-        val node = createAnnotationExitNode(annotation)
-        popAndAddEdge(node)
+    fun exitFakeExpression() {
+        lastNodes.pop()
+        exitTargetsForTry.pop()
         popGraph()
-        return node
     }
 
     // ----------------------------------- Callable references -----------------------------------
@@ -1317,23 +1320,6 @@ class ControlFlowGraphBuilder {
         mergeDataFlowFromPostponedLambdas(exitNode, callCompleted)
         exitNode.updateDeadStatus()
         return exitNode
-    }
-
-    // ----------------------------------- Contract description -----------------------------------
-
-    fun enterContractDescription(): CFGNode<*> {
-        pushGraph(ControlFlowGraph(null, "contract description", ControlFlowGraph.Kind.AnonymousFunction))
-
-        return createContractDescriptionEnterNode().also {
-            lastNodes.push(it)
-            exitTargetsForTry.push(it)
-        }
-    }
-
-    fun exitContractDescription() {
-        lastNodes.pop()
-        exitTargetsForTry.pop()
-        popGraph()
     }
 
     // -------------------------------------------------------------------------------------------------------------------------
