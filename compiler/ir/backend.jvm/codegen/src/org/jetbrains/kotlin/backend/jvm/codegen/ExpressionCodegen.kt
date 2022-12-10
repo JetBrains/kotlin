@@ -866,7 +866,8 @@ class ExpressionCodegen(
     }
 
     private fun putNeedClassReificationMarker(declaration: IrClass) {
-        val reifiedTypeParameters = closureReifiedMarkers[declaration] ?: return
+        // Fix KT-55398, try to get nested irclass type parameters reified info
+        val reifiedTypeParameters = closureReifiedMarkers.getOrPut(declaration) { declaration.reifiedTypeParameters }
         if (reifiedTypeParameters.wereUsedReifiedParameters()) {
             putNeedClassReificationMarker(mv)
             propagateChildReifiedTypeParametersUsages(reifiedTypeParameters)
@@ -1500,9 +1501,6 @@ class ExpressionCodegen(
 
     val isFinallyMarkerRequired: Boolean
         get() = irFunction.isInline || irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
-
-    val IrType.isReifiedTypeParameter: Boolean
-        get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {
