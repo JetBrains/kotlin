@@ -14642,6 +14642,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("ControlFlowInfoSelfTypes.kt")
+            public void testControlFlowInfoSelfTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
+            }
+
+            @Test
             @TestMetadata("falsePositiveBoundSmartcast.kt")
             public void testFalsePositiveBoundSmartcast() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");

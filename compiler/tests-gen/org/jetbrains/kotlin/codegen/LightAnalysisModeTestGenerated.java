@@ -14488,6 +14488,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/ConstValAccess.kt");
         }
 
+        @TestMetadata("ControlFlowInfoSelfTypes.kt")
+        public void testControlFlowInfoSelfTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
+        }
+
         @TestMetadata("differentSinceKotlin.kt")
         public void testDifferentSinceKotlin() throws Exception {
             runTest("compiler/testData/codegen/box/fir/differentSinceKotlin.kt");

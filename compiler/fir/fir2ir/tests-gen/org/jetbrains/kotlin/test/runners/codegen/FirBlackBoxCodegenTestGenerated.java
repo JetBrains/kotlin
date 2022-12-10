@@ -18224,6 +18224,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("ControlFlowInfoSelfTypes.kt")
+        public void testControlFlowInfoSelfTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
+        }
+
+        @Test
         @TestMetadata("CustomHashSetSize.kt")
         public void testCustomHashSetSize() throws Exception {
             runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");

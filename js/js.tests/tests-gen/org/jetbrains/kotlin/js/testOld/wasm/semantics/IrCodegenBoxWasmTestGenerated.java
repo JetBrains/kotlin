@@ -12083,6 +12083,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
         }
 
+        @TestMetadata("ControlFlowInfoSelfTypes.kt")
+        public void testControlFlowInfoSelfTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
+        }
+
         @TestMetadata("falsePositiveBoundSmartcast.kt")
         public void testFalsePositiveBoundSmartcast() throws Exception {
             runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
