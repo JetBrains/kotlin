@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
 import org.jetbrains.kotlin.backend.jvm.codegen.materializedAt
+import org.jetbrains.kotlin.backend.jvm.ir.isReifiedTypeParameter
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FrameMapBase
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -28,9 +29,8 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
@@ -322,3 +322,27 @@ private fun IrFunction.isAccessorForDeprecatedJvmStaticProperty(context: JvmBack
     val property = callee.correspondingPropertySymbol?.owner ?: return false
     return property.isDeprecatedCallable(context)
 }
+
+val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
+    get() {
+        val tempReifiedTypeParametersUsages = ReifiedTypeParametersUsages()
+        fun processTypeParameters(type: IrType) {
+            for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
+                if (supertypeArgument is IrTypeProjection) {
+                    val typeArgument = supertypeArgument.type
+                    if (typeArgument.isReifiedTypeParameter) {
+                        val typeParameter = typeArgument.classifierOrFail as IrTypeParameterSymbol
+                        tempReifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
+                    } else {
+                        processTypeParameters(typeArgument)
+                    }
+                }
+            }
+        }
+
+        for (type in superTypes) {
+            processTypeParameters(type)
+        }
+
+        return tempReifiedTypeParametersUsages
+    }
