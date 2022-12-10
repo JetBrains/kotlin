@@ -67,17 +67,11 @@ fun ControlFlowGraphBuilder.createFieldInitializerExitNode(fir: FirField): Field
 fun ControlFlowGraphBuilder.createFieldInitializerEnterNode(fir: FirField): FieldInitializerEnterNode =
     FieldInitializerEnterNode(currentGraph, fir, levelCounter, createId())
 
-@OptIn(CfgInternals::class)
 fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction): FunctionEnterNode =
-    FunctionEnterNode(currentGraph, fir, levelCounter, createId()).also {
-        currentGraph.enterNode = it
-    }
+    FunctionEnterNode(currentGraph, fir, levelCounter, createId())
 
-@OptIn(CfgInternals::class)
 fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction): FunctionExitNode =
-    FunctionExitNode(currentGraph, fir, levelCounter, createId()).also {
-        currentGraph.exitNode = it
-    }
+    FunctionExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction): LocalFunctionDeclarationNode =
     LocalFunctionDeclarationNode(currentGraph, fir, levelCounter, createId())

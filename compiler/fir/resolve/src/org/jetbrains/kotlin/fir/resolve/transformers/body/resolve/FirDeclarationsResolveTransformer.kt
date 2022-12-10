@@ -513,9 +513,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val result = context.withScopesForScript(script, components) {
             transformDeclarationContent(script, data) as FirScript
         }
-
-        dataFlowAnalyzer.exitScript(script)
-
+        dataFlowAnalyzer.exitScript() // TODO: FirScript should be a FirControlFlowGraphOwner
         return result
     }
 

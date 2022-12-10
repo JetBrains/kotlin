@@ -231,12 +231,13 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Scripts ------------------------------------------
 
     fun enterScript(script: FirScript) {
-        val res = graphBuilder.enterScript(script)
-        res.mergeIncomingFlow()
+        graphBuilder.enterScript(script).mergeIncomingFlow()
     }
 
-    fun exitScript(script: FirScript) {
-        graphBuilder.exitScript(script)
+    fun exitScript(): ControlFlowGraph {
+        val (node, graph) = graphBuilder.exitScript()
+        node.mergeIncomingFlow()
+        return graph
     }
 
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
