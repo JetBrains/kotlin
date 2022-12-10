@@ -74,15 +74,14 @@ digraph inLocalClass_kt {
     1 -> {2};
     2 -> {3};
     3 -> {4};
-    3 -> {14 17 23 29} [color=red];
-    4 -> {5};
-    4 -> {10} [color=green];
+    4 -> {5 10};
     4 -> {10} [style=dashed];
     5 -> {6};
     6 -> {7};
     7 -> {8};
     8 -> {9};
     10 -> {11} [color=green];
+    10 -> {14 17 23 29} [color=red];
     11 -> {14} [color=green];
     11 -> {12} [style=dotted];
     11 -> {14} [style=dashed];

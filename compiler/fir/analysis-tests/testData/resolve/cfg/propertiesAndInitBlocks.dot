@@ -114,12 +114,11 @@ digraph propertiesAndInitBlocks_kt {
     }
     58 -> {59};
     59 -> {60};
-    59 -> {66 73} [color=red];
-    60 -> {61};
-    60 -> {63} [color=green];
+    60 -> {61 63};
     60 -> {63} [style=dashed];
     61 -> {62};
     63 -> {64} [color=green];
+    63 -> {66 73} [color=red];
     64 -> {66} [color=green];
     64 -> {65} [style=dotted];
     64 -> {66} [style=dashed];
@@ -210,10 +209,8 @@ digraph propertiesAndInitBlocks_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27 33};
-    26 -> {47 55} [color=red];
     26 -> {33} [style=dashed];
-    27 -> {28};
-    27 -> {44} [color=green];
+    27 -> {28 44};
     27 -> {44} [style=dashed];
     28 -> {29};
     29 -> {30} [style=dotted];
@@ -231,6 +228,7 @@ digraph propertiesAndInitBlocks_kt {
     41 -> {42} [style=dotted];
     42 -> {43} [style=dotted];
     44 -> {45} [color=green];
+    44 -> {47 55} [color=red];
     45 -> {47} [color=green];
     45 -> {46} [style=dotted];
     45 -> {47} [style=dashed];
