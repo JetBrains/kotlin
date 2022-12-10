@@ -102,14 +102,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         outerBodyResolveContext = newContext,
         firTowerDataContextCollector = firTowerDataContextCollector
     )
-
-    val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
-    val members = localClassesNavigationInfo.allMembers
-    graphBuilder.prepareForLocalClassMembers(members)
-
-    return this.transform<F, ResolutionMode>(transformer, resolutionMode).also {
-        graphBuilder.cleanAfterForLocalClassMembers(members)
-    }
+    return this.transform(transformer, resolutionMode)
 }
 
 private fun ReturnTypeCalculator.getTransformerCreator() = when (this) {

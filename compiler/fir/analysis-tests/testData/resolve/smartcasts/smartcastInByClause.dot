@@ -192,8 +192,7 @@ digraph smartcastInByClause_kt {
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    41 -> {53 59 64 67} [color=red];
-    42 -> {49} [color=green];
+    42 -> {49};
     42 -> {43} [color=red];
     42 -> {49} [style=dashed];
     43 -> {44};
@@ -203,6 +202,7 @@ digraph smartcastInByClause_kt {
     46 -> {47} [style=dotted];
     47 -> {48} [style=dotted];
     49 -> {50} [color=green];
+    49 -> {53 59 64 67} [color=red];
     50 -> {53} [color=green];
     50 -> {51} [style=dotted];
     50 -> {53} [style=dashed];

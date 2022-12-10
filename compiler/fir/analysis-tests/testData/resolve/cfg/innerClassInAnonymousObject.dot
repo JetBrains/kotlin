@@ -44,18 +44,19 @@ digraph innerClassInAnonymousObject_kt {
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     14 -> {15};
-    14 -> {0 3 6} [color=red];
-    15 -> {12} [color=green];
+    15 -> {12};
     15 -> {16} [color=red];
     15 -> {12} [style=dashed];
     16 -> {17};
     17 -> {18};
     12 -> {13} [color=green];
+    12 -> {0 10} [color=red];
     13 -> {0 10 16} [color=green];
     13 -> {0 10} [style=dashed];
     0 -> {1};
     1 -> {2};
     10 -> {11} [color=green];
+    10 -> {3 6} [color=red];
     11 -> {3 6} [color=green];
     11 -> {3 6} [style=dashed];
     3 -> {4};

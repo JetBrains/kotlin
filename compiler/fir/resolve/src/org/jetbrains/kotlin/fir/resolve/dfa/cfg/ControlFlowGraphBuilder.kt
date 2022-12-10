@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
@@ -43,7 +44,7 @@ class ControlFlowGraphBuilder {
 
     private val exitTargetsForReturn: SymbolBasedNodeStorage<FirFunction, FunctionExitNode> = SymbolBasedNodeStorage()
     private val exitTargetsForTry: Stack<CFGNode<*>> = stackOf()
-    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, CFGNode<*>?> = mutableMapOf()
+    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, CFGNode<*>> = mutableMapOf()
 
     //return jumps via finally blocks, target -> jumps
     private val nonDirectJumps: ListMultimap<CFGNode<*>, CFGNode<*>> = listMultimapOf()
@@ -361,19 +362,20 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Classes -----------------------------------
 
-    fun enterClass(klass: FirClass, buildGraph: Boolean): CFGNode<*>? {
+    fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode>? {
         if (!buildGraph) {
             pushGraph(ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.Stub))
             return null
         }
 
         val enterNode = when {
-            klass is FirAnonymousObject -> createAnonymousObjectEnterNode(klass)
+            // TODO: enum classes cannot be local so this is mostly fine, but it looks hacky. Maybe handle FirEnumEntry?
+            klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY -> createAnonymousObjectEnterNode(klass)
             // Local classes are only initialized on first use, so they look pretty much like named functions:
             // control flow enters here and never leaves, and assignments invalidate smart casts.
             klass is FirRegularClass && klass.isLocal && currentGraph.kind.withBody -> createLocalClassExitNode(klass)
             else -> null
-        }
+        }?.also { addNewSimpleNode(it) }
 
         val name = when (klass) {
             is FirAnonymousObject -> "<anonymous object>"
@@ -383,14 +385,25 @@ class ControlFlowGraphBuilder {
         pushGraph(ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer))
 
         val graphEnterNode = createClassEnterNode(klass)
+        lastNodes.push(graphEnterNode)
         if (enterNode != null) {
-            // TODO: anonymous objects are used to represent enum entries - check what happens there
-            //  (likely `exitClass` leaves a node on the stack that will never be consumed)
-            lastNodes.popOrNull()?.let { addEdge(it, enterNode) }
-            lastNodes.push(enterNode)
-            addEdge(enterNode, graphEnterNode, preferredKind = EdgeKind.CfgForward)
+            addEdge(enterNode, graphEnterNode)
+        } else {
+            enterToLocalClassesMembers.remove(klass.symbol)?.let { addEdge(it, graphEnterNode, preferredKind = EdgeKind.DfgForward) }
         }
-        return enterNode
+
+        if (graphEnterNode.previousNodes.isNotEmpty()) {
+            for (member in klass.declarations) {
+                if (member is FirFunction || member is FirAnonymousInitializer || member is FirField || member is FirClass || member is FirProperty) {
+                    enterToLocalClassesMembers[member.symbol] = graphEnterNode
+                }
+                if (member is FirProperty) {
+                    member.getter?.let { enterToLocalClassesMembers[it.symbol] = graphEnterNode }
+                    member.setter?.let { enterToLocalClassesMembers[it.symbol] = graphEnterNode }
+                }
+            }
+        }
+        return enterNode to graphEnterNode
     }
 
     fun exitClass(): Pair<AnonymousObjectExitNode?, ControlFlowGraph>? {
@@ -400,13 +413,14 @@ class ControlFlowGraphBuilder {
         }
 
         val graph = popClassGraph()
-        if (graph.declaration !is FirAnonymousObject) {
+        val anonymousObject = graph.declaration as? FirAnonymousObject
+        if (anonymousObject == null || anonymousObject.classKind == ClassKind.ENUM_ENTRY) {
             return null to graph
         }
 
         val lastNode = lastNodes.pop() as AnonymousObjectEnterNode
         val exitNode = createAnonymousObjectExitNode(lastNode.fir).also { lastNodes.push(it) }
-        // TODO: should merge data flow from members into the exit node.
+        // TODO: should merge data flow from initializer parts into the exit node.
         // TODO: the reason for this liveness trickery is that if control flow is dead, the CFG-only edge from
         //  `graph.exitNode` gets magically transformed into a CFG+DFG dead edge, and `graph.exitNode` has no data
         //  flow information attached to it. This should be fixed as soon as data flow is made to go through the object.
@@ -439,7 +453,7 @@ class ControlFlowGraphBuilder {
             }
         }
 
-        var node: CFGNode<*> = currentGraph.enterNode as ClassEnterNode
+        var node: CFGNode<*> = lastNodes.pop() as ClassEnterNode
         var prevInitPartNode: CFGNode<*>? = null
         for (graph in calledInPlace) {
             val partNode = createPartOfClassInitializationNode(graph.declaration as FirControlFlowGraphOwner)
@@ -476,22 +490,9 @@ class ControlFlowGraphBuilder {
         return popGraph()
     }
 
-    fun prepareForLocalClassMembers(members: Collection<FirDeclaration>) {
-        // TODO: this is called before `enterClass` so the data flow source for objects and local classes
-        //  is not the enter node, but whichever node happens to be before it. This technically works,
-        //  but is ugly.
-        members.forEachMember {
-            enterToLocalClassesMembers[it.symbol] = lastNodes.topOrNull()
-        }
-    }
+    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode? {
+        if (anonymousObjectExpression.anonymousObject.classKind == ClassKind.ENUM_ENTRY) return null
 
-    fun cleanAfterForLocalClassMembers(members: Collection<FirDeclaration>) {
-        members.forEachMember {
-            enterToLocalClassesMembers.remove(it.symbol)
-        }
-    }
-
-    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode {
         // TODO: what's AnonymousObjectExitNode for then?
         return createAnonymousObjectExpressionExitNode(anonymousObjectExpression).also {
             addNewSimpleNodeIfPossible(it)
@@ -1401,21 +1402,6 @@ class ControlFlowGraphBuilder {
     }
 
     // ----------------------------------- Utils -----------------------------------
-
-    private inline fun Collection<FirDeclaration>.forEachMember(block: (FirDeclaration) -> Unit) {
-        for (member in this) {
-            for (callableDeclaration in member.unwrap()) {
-                block(callableDeclaration)
-            }
-        }
-    }
-
-    private fun FirDeclaration.unwrap(): List<FirDeclaration> =
-        when (this) {
-            is FirFunction, is FirAnonymousInitializer, is FirField -> listOf(this)
-            is FirProperty -> listOfNotNull(this.getter, this.setter, this)
-            else -> emptyList()
-        }
 
     private fun <R> withLevelOfNode(node: CFGNode<*>, f: () -> R): R {
         val last = levelCounter

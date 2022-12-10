@@ -71,8 +71,7 @@ digraph inAnonymousObject_kt {
     1 -> {2};
     2 -> {3};
     3 -> {4};
-    3 -> {17 20 26 29} [color=red];
-    4 -> {13} [color=green];
+    4 -> {13};
     4 -> {5} [color=red];
     4 -> {13} [style=dashed];
     5 -> {6};
@@ -83,6 +82,7 @@ digraph inAnonymousObject_kt {
     10 -> {11};
     11 -> {12};
     13 -> {14} [color=green];
+    13 -> {17 20 26 29} [color=red];
     14 -> {17} [color=green];
     14 -> {15} [style=dotted];
     14 -> {17} [style=dashed];

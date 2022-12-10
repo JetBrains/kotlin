@@ -204,7 +204,9 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Classes -----------------------------------
 
     fun enterClass(klass: FirClass, buildGraph: Boolean) {
-        graphBuilder.enterClass(klass, buildGraph)?.mergeIncomingFlow()
+        val (outerNode, enterNode) = graphBuilder.enterClass(klass, buildGraph) ?: return
+        outerNode?.mergeIncomingFlow()
+        enterNode.mergeIncomingFlow()
     }
 
     fun exitClass(): ControlFlowGraph? {
@@ -223,7 +225,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
-        graphBuilder.exitAnonymousObjectExpression(anonymousObjectExpression).mergeIncomingFlow()
+        graphBuilder.exitAnonymousObjectExpression(anonymousObjectExpression)?.mergeIncomingFlow()
     }
 
     // ----------------------------------- Scripts ------------------------------------------
