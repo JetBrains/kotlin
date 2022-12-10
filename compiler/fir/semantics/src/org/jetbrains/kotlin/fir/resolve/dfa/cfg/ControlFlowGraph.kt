@@ -10,15 +10,8 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
-    private var _nodes: MutableList<CFGNode<*>> = mutableListOf()
-
-    val nodes: List<CFGNode<*>>
-        get() = _nodes
-
-    internal fun addNode(node: CFGNode<*>) {
-        assertState(State.Building)
-        _nodes.add(node)
-    }
+    lateinit var nodes: List<CFGNode<*>>
+        private set
 
     @set:CfgInternals
     lateinit var enterNode: CFGNode<*>
@@ -29,36 +22,12 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val isSubGraph: Boolean
         get() = enterNode.previousNodes.isNotEmpty()
 
-    var state: State = State.Building
-        private set
-
     val subGraphs: List<ControlFlowGraph>
-        get() = _nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
+        get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
     @CfgInternals
     fun complete() {
-        assertState(State.Building)
-        state = State.Completed
-        if (kind == Kind.Stub) return
-        val sortedNodes = orderNodes()
-        // TODO Fix this
-//        assert(sortedNodes.size == _nodes.size)
-//        for (node in _nodes) {
-//            assert(node in sortedNodes)
-//        }
-        _nodes.clear()
-        _nodes.addAll(sortedNodes)
-    }
-
-    private fun assertState(state: State) {
-        assert(this.state == state) {
-            "This action can not be performed at $this state"
-        }
-    }
-
-    enum class State {
-        Building,
-        Completed;
+        nodes = orderNodes()
     }
 
     enum class Kind(val withBody: Boolean) {
@@ -70,7 +39,6 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         TopLevel(withBody = false),
         FakeCall(withBody = true),
         DefaultArgument(withBody = true),
-        Stub(withBody = false)
     }
 }
 
@@ -146,7 +114,7 @@ enum class EdgeKind(
     DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
-private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
+private fun ControlFlowGraph.orderNodes(): List<CFGNode<*>> {
     val visitedNodes = linkedSetOf<CFGNode<*>>()
     /*
      * [delayedNodes] is needed to accomplish next order contract:
@@ -173,5 +141,5 @@ private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
             }
         }
     }
-    return visitedNodes
+    return visitedNodes.toList()
 }

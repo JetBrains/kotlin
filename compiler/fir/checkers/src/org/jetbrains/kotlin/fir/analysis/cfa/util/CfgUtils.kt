@@ -19,11 +19,6 @@ fun ControlFlowGraph.getNodesInOrder(direction: TraverseDirection): List<CFGNode
     TraverseDirection.Backward -> nodes.asReversed()
 }
 
-fun CFGNode<*>.isEnterNode(direction: TraverseDirection): Boolean = when (direction) {
-    TraverseDirection.Forward -> owner.enterNode == this
-    TraverseDirection.Backward -> owner.exitNode == this
-}
-
 val CFGNode<*>.previousCfgNodes: List<CFGNode<*>>
     get() = previousNodes.filter {
         val kind = edgeFrom(it).kind

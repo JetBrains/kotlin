@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.GraphEnterNodeMarker
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.GraphExitNodeMarker
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.Assertions
 
@@ -19,7 +21,8 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
 
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
         val graph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        assertions.assertEquals(ControlFlowGraph.State.Completed, graph.state)
+        assertions.assertEquals(graph.nodes.single { it is GraphEnterNodeMarker }, graph.enterNode)
+        assertions.assertEquals(graph.nodes.single { it is GraphExitNodeMarker }, graph.exitNode)
         checkConsistency(graph)
         checkOrder(graph)
     }

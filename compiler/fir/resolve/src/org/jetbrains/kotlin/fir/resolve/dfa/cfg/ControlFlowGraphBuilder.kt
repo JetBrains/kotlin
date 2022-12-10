@@ -113,13 +113,24 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Utils -----------------------------------
 
-    private fun pushGraph(graph: ControlFlowGraph) {
-        graphs.push(graph)
+    private inline fun <T, E : T, EnterNode, ExitNode> enterGraph(
+        fir: E,
+        name: String,
+        kind: ControlFlowGraph.Kind,
+        nodes: (E) -> Pair<EnterNode, ExitNode>
+    ): Pair<EnterNode, ExitNode> where EnterNode : CFGNode<T>, EnterNode : GraphEnterNodeMarker, ExitNode : CFGNode<T>, ExitNode : GraphExitNodeMarker {
+        graphs.push(ControlFlowGraph(fir as? FirDeclaration, name, kind))
         levelCounter++
+        return nodes(fir).also { (enterNode, exitNode) ->
+            currentGraph.enterNode = enterNode
+            currentGraph.exitNode = exitNode
+            lastNodes.push(enterNode)
+        }
     }
 
     private fun popGraph(): ControlFlowGraph {
         levelCounter--
+        // TODO: count nodes per graph, validate the list after sorting
         return graphs.pop().also { it.complete() }
     }
 
@@ -137,24 +148,16 @@ class ControlFlowGraphBuilder {
         val localFunctionNode = runIf(function.symbol.callableId.isLocal && currentGraph.kind.withBody) {
             createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
-
-        pushGraph(ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function))
-
-        val enterNode = createFunctionEnterNode(function).also {
-            lastNodes.push(it)
+        val (enterNode, exitNode) = enterGraph(function, name, ControlFlowGraph.Kind.Function) {
+            createFunctionEnterNode(it) to createFunctionExitNode(it)
         }
-
         if (localFunctionNode != null) {
             addEdge(localFunctionNode, enterNode)
         } else {
             enterToLocalClassesMembers.remove(function.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
         }
-
-        createFunctionExitNode(function).also {
-            exitTargetsForReturn.push(it)
-            exitTargetsForTry.push(it)
-        }
-
+        exitTargetsForReturn.push(exitNode)
+        exitTargetsForTry.push(exitNode)
         return Pair(localFunctionNode, enterNode)
     }
 
@@ -230,15 +233,14 @@ class ControlFlowGraphBuilder {
     fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): FunctionEnterNode {
         val symbol = anonymousFunction.symbol
         val flowSourceNode = postponedAnonymousFunctionNodes.getValue(symbol).first
-        pushGraph(ControlFlowGraph(anonymousFunction, "<anonymous>", ControlFlowGraph.Kind.AnonymousFunction))
-        val enterNode = createFunctionEnterNode(anonymousFunction)
-        val exitNode = createFunctionExitNode(anonymousFunction)
+        val (enterNode, exitNode) = enterGraph(anonymousFunction, "<anonymous>", ControlFlowGraph.Kind.AnonymousFunction) {
+            createFunctionEnterNode(it) to createFunctionExitNode(it)
+        }
         exitTargetsForReturn.push(exitNode)
         if (!anonymousFunction.invocationKind.isInPlace) {
             exitTargetsForTry.push(exitNode)
         }
         addEdge(flowSourceNode, enterNode)
-        lastNodes.push(enterNode)
         return enterNode
     }
 
@@ -364,11 +366,12 @@ class ControlFlowGraphBuilder {
 
     fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode>? {
         if (!buildGraph) {
-            pushGraph(ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.Stub))
+            graphs.push(ControlFlowGraph(null, "<discarded class graph>", ControlFlowGraph.Kind.ClassInitializer))
+            levelCounter++
             return null
         }
 
-        val enterNode = when {
+        val localClassEnterNode = when {
             // TODO: enum classes cannot be local so this is mostly fine, but it looks hacky. Maybe handle FirEnumEntry?
             klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY -> createAnonymousObjectEnterNode(klass)
             // Local classes are only initialized on first use, so they look pretty much like named functions:
@@ -382,33 +385,34 @@ class ControlFlowGraphBuilder {
             is FirRegularClass -> klass.name.asString()
             else -> throw IllegalArgumentException("Unknown class kind: ${klass::class}")
         }
-        pushGraph(ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer))
 
-        val graphEnterNode = createClassEnterNode(klass)
-        lastNodes.push(graphEnterNode)
-        if (enterNode != null) {
-            addEdge(enterNode, graphEnterNode)
+        val (enterNode, _) = enterGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer) {
+            createClassEnterNode(it) to createClassExitNode(it)
+        }
+        if (localClassEnterNode != null) {
+            addEdge(localClassEnterNode, enterNode)
         } else {
-            enterToLocalClassesMembers.remove(klass.symbol)?.let { addEdge(it, graphEnterNode, preferredKind = EdgeKind.DfgForward) }
+            enterToLocalClassesMembers.remove(klass.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
         }
 
-        if (graphEnterNode.previousNodes.isNotEmpty()) {
+        if (enterNode.previousNodes.isNotEmpty()) {
             for (member in klass.declarations) {
                 if (member is FirFunction || member is FirAnonymousInitializer || member is FirField || member is FirClass || member is FirProperty) {
-                    enterToLocalClassesMembers[member.symbol] = graphEnterNode
+                    enterToLocalClassesMembers[member.symbol] = enterNode
                 }
                 if (member is FirProperty) {
-                    member.getter?.let { enterToLocalClassesMembers[it.symbol] = graphEnterNode }
-                    member.setter?.let { enterToLocalClassesMembers[it.symbol] = graphEnterNode }
+                    member.getter?.let { enterToLocalClassesMembers[it.symbol] = enterNode }
+                    member.setter?.let { enterToLocalClassesMembers[it.symbol] = enterNode }
                 }
             }
         }
-        return enterNode to graphEnterNode
+        return localClassEnterNode to enterNode
     }
 
     fun exitClass(): Pair<AnonymousObjectExitNode?, ControlFlowGraph>? {
-        if (currentGraph.kind == ControlFlowGraph.Kind.Stub) {
-            popGraph()
+        if (currentGraph.declaration == null) {
+            levelCounter--
+            graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.ClassInitializer) }
             return null
         }
 
@@ -468,7 +472,7 @@ class ControlFlowGraphBuilder {
             prevInitPartNode = partNode
         }
 
-        val exitNode = createClassExitNode(klass)
+        val exitNode = currentGraph.exitNode as ClassExitNode
         addEdge(node, exitNode, preferredKind = EdgeKind.CfgForward)
         if (prevInitPartNode != null) {
             addEdge(prevInitPartNode, exitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
@@ -500,16 +504,19 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterScript(script: FirScript): ScriptEnterNode {
-        pushGraph(ControlFlowGraph(null, "SCRIPT_GRAPH", ControlFlowGraph.Kind.Function))
-        val enterNode = createScriptEnterNode(script)
-        lastNodes.push(enterNode)
+        val (enterNode, exitNode) = enterGraph(script, "SCRIPT_GRAPH", ControlFlowGraph.Kind.Function) {
+            createScriptEnterNode(it) to createScriptExitNode(it)
+        }
+        exitTargetsForTry.push(exitNode)
         return enterNode
     }
 
-    fun exitScript(script: FirScript): ScriptExitNode {
-        return createScriptExitNode(script).also {
-            addNewSimpleNodeIfPossible(it)
-        }
+    fun exitScript(): Pair<ScriptExitNode, ControlFlowGraph> {
+        val exitNode = exitTargetsForTry.pop() as ScriptExitNode
+        addNewSimpleNode(exitNode)
+        val graph = popGraph()
+        assert(graph.exitNode == exitNode)
+        return exitNode to graph
     }
 
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
@@ -518,14 +525,14 @@ class ControlFlowGraphBuilder {
         if (valueParameter.defaultValue == null) return null
 
         val outerEnterNode = createEnterValueParameterNode(valueParameter)
-        pushGraph(ControlFlowGraph(valueParameter, "default value of ${valueParameter.name}", ControlFlowGraph.Kind.DefaultArgument))
-        val innerExitNode = createExitDefaultArgumentsNode(valueParameter)
-        val innerEnterNode = createEnterDefaultArgumentsNode(valueParameter)
         addNewSimpleNode(outerEnterNode)
-        addEdge(outerEnterNode, innerEnterNode)
-        lastNodes.push(innerEnterNode)
-        exitTargetsForTry.push(innerExitNode)
-        return outerEnterNode to innerEnterNode
+        val name = "default value of ${valueParameter.name}"
+        val (enterNode, exitNode) = enterGraph(valueParameter, name, ControlFlowGraph.Kind.DefaultArgument) {
+            createEnterDefaultArgumentsNode(it) to createExitDefaultArgumentsNode(it)
+        }
+        addEdge(outerEnterNode, enterNode)
+        exitTargetsForTry.push(exitNode)
+        return outerEnterNode to enterNode
     }
 
     fun exitValueParameter(valueParameter: FirValueParameter): Triple<ExitDefaultArgumentsNode, ExitValueParameterNode, ControlFlowGraph>? {
@@ -563,13 +570,11 @@ class ControlFlowGraphBuilder {
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
         if (!property.hasInitialization) return null
 
-        pushGraph(ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer))
-
-        val enterNode = createPropertyInitializerEnterNode(property)
-        val exitNode = createPropertyInitializerExitNode(property)
+        val (enterNode, exitNode) = enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
+            createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
+        }
         exitTargetsForTry.push(exitNode)
         enterToLocalClassesMembers.remove(property.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
-        lastNodes.push(enterNode)
         return enterNode
     }
 
@@ -587,13 +592,11 @@ class ControlFlowGraphBuilder {
     fun enterField(field: FirField): FieldInitializerEnterNode? {
         if (field.initializer == null) return null
 
-        pushGraph(ControlFlowGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer))
-
-        val enterNode = createFieldInitializerEnterNode(field)
-        val exitNode = createFieldInitializerExitNode(field)
+        val (enterNode, exitNode) = enterGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer) {
+            createFieldInitializerEnterNode(it) to createFieldInitializerExitNode(it)
+        }
         exitTargetsForTry.push(exitNode)
         enterToLocalClassesMembers.remove(field.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
-        lastNodes.push(enterNode)
         return enterNode
     }
 
@@ -1192,7 +1195,8 @@ class ControlFlowGraphBuilder {
         // Things like annotations and `contract { ... }` use normal call resolution, but aren't real expressions
         // and are never evaluated. We'll push all nodes created in the process into a stub graph, then throw it away.
         // TODO: don't waste time creating the nodes in the first place
-        pushGraph(ControlFlowGraph(null, "STUB_GRAPH_FOR_FAKE_EXPRESSION", ControlFlowGraph.Kind.FakeCall))
+        graphs.push(ControlFlowGraph(null, "<compile-time expression graph>", ControlFlowGraph.Kind.FakeCall))
+        levelCounter++
         return createFakeExpressionEnterNode().also {
             lastNodes.push(it)
             exitTargetsForTry.push(it) // technically might create CFG loops, but the graph will never be visited anyway...
@@ -1200,9 +1204,10 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitFakeExpression() {
+        levelCounter--
         lastNodes.pop()
         exitTargetsForTry.pop()
-        popGraph()
+        graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.FakeCall) }
     }
 
     // ----------------------------------- Callable references -----------------------------------
@@ -1219,13 +1224,11 @@ class ControlFlowGraphBuilder {
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
         // TODO: questionable moment that we should pass data flow from init to init
-        pushGraph(ControlFlowGraph(initBlock, "init block", ControlFlowGraph.Kind.Function))
-
-        val enterNode = createInitBlockEnterNode(initBlock)
-        val exitNode = createInitBlockExitNode(initBlock)
+        val (enterNode, exitNode) = enterGraph(initBlock, "init block", ControlFlowGraph.Kind.Function) {
+            createInitBlockEnterNode(it) to createInitBlockExitNode(it)
+        }
         exitTargetsForTry.push(exitNode)
         enterToLocalClassesMembers.remove(initBlock.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
-        lastNodes.push(enterNode)
         return enterNode
     }
 

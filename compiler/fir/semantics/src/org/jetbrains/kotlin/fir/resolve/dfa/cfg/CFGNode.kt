@@ -65,11 +65,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         }
     }
 
-    init {
-        @Suppress("LeakingThis")
-        owner.addNode(this)
-    }
-
     private val _previousNodes: MutableList<CFGNode<*>> = SmartList()
     private val _followingNodes: MutableList<CFGNode<*>> = SmartList()
 
@@ -132,6 +127,8 @@ val CFGNode<*>.lastPreviousNode: CFGNode<*> get() = previousNodes.last()
 
 interface EnterNodeMarker
 interface ExitNodeMarker
+interface GraphEnterNodeMarker : EnterNodeMarker
+interface GraphExitNodeMarker : ExitNodeMarker
 
 //   a ---> b ---> d
 //      \-> c -/
@@ -153,23 +150,24 @@ sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: Contro
 // ----------------------------------- Named function -----------------------------------
 
 class FunctionEnterNode(owner: ControlFlowGraph, override val fir: FirFunction, level: Int, id: Int) : CFGNode<FirFunction>(owner, level, id),
-    EnterNodeMarker {
+    GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionEnterNode(this, data)
     }
 }
+
 class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction, level: Int, id: Int) : CFGNode<FirFunction>(owner, level, id),
-    ExitNodeMarker {
+    GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionExitNode(this, data)
     }
 }
+
 class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: FirFunction, level: Int, id: Int) : CFGNodeWithCfgOwner<FirFunction>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLocalFunctionDeclarationNode(this, data)
     }
 }
-
 
 // ----------------------------------- Default arguments -----------------------------------
 
@@ -179,25 +177,15 @@ class EnterValueParameterNode(owner: ControlFlowGraph, override val fir: FirValu
     }
 }
 
-@OptIn(CfgInternals::class)
 class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNode<FirValueParameter>(owner, level, id),
-    EnterNodeMarker {
-    init {
-        owner.enterNode = this
-    }
-
+    GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitEnterDefaultArgumentsNode(this, data)
     }
 }
 
-@OptIn(CfgInternals::class)
 class ExitDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNode<FirValueParameter>(owner, level, id),
-    ExitNodeMarker {
-    init {
-        owner.exitNode = this
-    }
-
+    GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitExitDefaultArgumentsNode(this, data)
     }
@@ -245,24 +233,15 @@ class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir:
 
 // ----------------------------------- Classes -----------------------------------
 
-@OptIn(CfgInternals::class)
 class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int, id: Int) : CFGNode<FirClass>(owner, level, id),
-    EnterNodeMarker {
-    init {
-        owner.enterNode = this
-    }
-
+    GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitClassEnterNode(this, data)
     }
 }
 
-@OptIn(CfgInternals::class)
 class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int, id: Int) : CFGNodeWithSubgraphs<FirClass>(owner, level, id),
-    ExitNodeMarker {
-    init {
-        owner.exitNode = this
-    }
+    GraphExitNodeMarker {
 
     lateinit override var subGraphs: List<ControlFlowGraph>
 
@@ -297,13 +276,13 @@ class AnonymousObjectExpressionExitNode(owner: ControlFlowGraph, override val fi
 
 // ----------------------------------- Scripts ------------------------------------------
 
-class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id) {
+class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id), GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitScriptEnterNode(this, data)
     }
 }
 
-class ScriptExitNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id) {
+class ScriptExitNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id), GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitScriptExitNode(this, data)
     }
@@ -319,25 +298,15 @@ class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: F
 
 // ----------------------------------- Property -----------------------------------
 
-@OptIn(CfgInternals::class)
 class PropertyInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNode<FirProperty>(owner, level, id),
-    EnterNodeMarker {
-    init {
-        owner.enterNode = this
-    }
-
+    GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPropertyInitializerEnterNode(this, data)
     }
 }
 
-@OptIn(CfgInternals::class)
 class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNode<FirProperty>(owner, level, id),
-    ExitNodeMarker {
-    init {
-        owner.exitNode = this
-    }
-
+    GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPropertyInitializerExitNode(this, data)
     }
@@ -353,25 +322,15 @@ class DelegateExpressionExitNode(owner: ControlFlowGraph, override val fir: FirE
 
 // ----------------------------------- Field -----------------------------------
 
-@OptIn(CfgInternals::class)
 class FieldInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirField, level: Int, id: Int) : CFGNode<FirField>(owner, level, id),
-    EnterNodeMarker {
-    init {
-        owner.enterNode = this
-    }
-
+    GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFieldInitializerEnterNode(this, data)
     }
 }
 
-@OptIn(CfgInternals::class)
 class FieldInitializerExitNode(owner: ControlFlowGraph, override val fir: FirField, level: Int, id: Int) : CFGNode<FirField>(owner, level, id),
-    ExitNodeMarker {
-    init {
-        owner.exitNode = this
-    }
-
+    GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFieldInitializerExitNode(this, data)
     }
@@ -379,25 +338,15 @@ class FieldInitializerExitNode(owner: ControlFlowGraph, override val fir: FirFie
 
 // ----------------------------------- Init -----------------------------------
 
-@OptIn(CfgInternals::class)
 class InitBlockEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNode<FirAnonymousInitializer>(owner, level, id),
-    EnterNodeMarker {
-    init {
-        owner.enterNode = this
-    }
-
+    GraphEnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitInitBlockEnterNode(this, data)
     }
 }
 
-@OptIn(CfgInternals::class)
 class InitBlockExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNode<FirAnonymousInitializer>(owner, level, id),
-    ExitNodeMarker {
-    init {
-        owner.exitNode = this
-    }
-
+    GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitInitBlockExitNode(this, data)
     }
