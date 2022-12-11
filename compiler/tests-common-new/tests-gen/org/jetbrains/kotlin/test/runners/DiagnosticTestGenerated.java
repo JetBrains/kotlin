@@ -36036,6 +36036,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt39868.kt")
+                public void testKt39868() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/kt39868.kt");
+                }
+
+                @Test
                 @TestMetadata("localFun.kt")
                 public void testLocalFun() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/localFun.kt");
