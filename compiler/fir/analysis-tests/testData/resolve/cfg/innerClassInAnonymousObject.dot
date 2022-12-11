@@ -10,58 +10,64 @@ digraph innerClassInAnonymousObject_kt {
         subgraph cluster_1 {
             color=blue
             2 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
-            3 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+            subgraph cluster_2 {
+                color=blue
+                3 [label="Enter function <init>" style="filled" fillcolor=red];
+                4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                5 [label="Exit function <init>" style="filled" fillcolor=red];
+            }
+            6 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
         }
-        4 [label="Exit anonymous object"];
-        5 [label="Exit anonymous object expression"];
-        6 [label="Exit property" style="filled" fillcolor=red];
-    }
-    subgraph cluster_2 {
-        color=blue
-        7 [label="Enter class Nested" style="filled" fillcolor=red];
-        8 [label="Exit class Nested" style="filled" fillcolor=red];
+        7 [label="Exit anonymous object"];
+        8 [label="Exit anonymous object expression"];
+        9 [label="Exit property" style="filled" fillcolor=red];
     }
     subgraph cluster_3 {
         color=blue
-        9 [label="Enter function foo" style="filled" fillcolor=red];
+        10 [label="Enter class Nested" style="filled" fillcolor=red];
         subgraph cluster_4 {
             color=blue
-            10 [label="Enter block"];
-            11 [label="Exit block"];
+            11 [label="Enter function <init>" style="filled" fillcolor=red];
+            12 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            13 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        12 [label="Exit function foo" style="filled" fillcolor=red];
+        14 [label="Exit class Nested" style="filled" fillcolor=red];
     }
     subgraph cluster_5 {
         color=blue
-        13 [label="Enter function <init>" style="filled" fillcolor=red];
-        14 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        15 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    subgraph cluster_6 {
-        color=blue
-        16 [label="Enter function <init>" style="filled" fillcolor=red];
-        17 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        18 [label="Exit function <init>" style="filled" fillcolor=red];
+        15 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            16 [label="Enter block"];
+            17 [label="Exit block"];
+        }
+        18 [label="Exit function foo" style="filled" fillcolor=red];
     }
     0 -> {1};
     1 -> {2};
-    1 -> {4} [color=red];
+    1 -> {7} [color=red];
     1 -> {2} [style=dashed];
-    2 -> {3} [color=green];
-    2 -> {7 16} [color=red];
-    3 -> {4 7 16} [color=green];
-    3 -> {7 16} [style=dashed];
+    2 -> {3};
+    2 -> {10} [color=red];
+    2 -> {6} [style=dotted];
+    2 -> {3} [style=dashed];
+    3 -> {4};
     4 -> {5};
-    5 -> {6};
-    7 -> {8} [color=green];
-    7 -> {9 13} [color=red];
-    8 -> {9 13} [color=green];
-    8 -> {9 13} [style=dashed];
-    9 -> {10};
+    5 -> {6} [color=green];
+    6 -> {7 10} [color=green];
+    6 -> {10} [style=dashed];
+    7 -> {8};
+    8 -> {9};
     10 -> {11};
+    10 -> {15} [color=red];
+    10 -> {14} [style=dotted];
+    10 -> {11} [style=dashed];
     11 -> {12};
-    13 -> {14};
-    14 -> {15};
+    12 -> {13};
+    13 -> {14} [color=green];
+    14 -> {15} [color=green];
+    14 -> {15} [style=dashed];
+    15 -> {16};
     16 -> {17};
     17 -> {18};
 

@@ -365,14 +365,14 @@ class ControlFlowGraphBuilder {
         }
 
     private inline fun FirClass.forEachGraphOwner(block: (FirControlFlowGraphOwner, isInPlace: Boolean) -> Unit) {
-        for (declaration in declarations) {
-            // TODO: constructors are also called-in-place, but after everything else, and only one of them is chosen.
-            if (declaration is FirControlFlowGraphOwner && declaration.memberShouldHaveGraph) {
-                block(declaration, declaration !is FirFunction && declaration !is FirClass)
+        for (member in declarations) {
+            if (member is FirControlFlowGraphOwner && member.memberShouldHaveGraph) {
+                // TODO: class secondary constructors are called-in-place after everything else, and at most one is chosen.
+                block(member, (member is FirConstructor && member.isPrimary) || (member !is FirFunction && member !is FirClass))
             }
-            if (declaration is FirProperty) {
-                declaration.getter?.let { block(it, false) }
-                declaration.setter?.let { block(it, false) }
+            if (member is FirProperty) {
+                member.getter?.let { block(it, false) }
+                member.setter?.let { block(it, false) }
             }
         }
     }
@@ -417,6 +417,9 @@ class ControlFlowGraphBuilder {
         if (enterNode.previousNodes.isNotEmpty()) {
             klass.forEachGraphOwner { member, isInPlace ->
                 val kind = if (!isInPlace || foundInPlace) {
+                    assert(member !is FirConstructor || !member.isPrimary) {
+                        "primary constructor of $name not first called-in-place member, CFG will be wrong"
+                    }
                     EdgeKind.DfgForward
                 } else {
                     EdgeKind.Forward.also { foundInPlace = true }

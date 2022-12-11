@@ -13,36 +13,38 @@ digraph returnValuesFromLambda_kt {
     subgraph cluster_1 {
         color=red
         2 [label="Enter class B" style="filled" fillcolor=red];
-        3 [label="Exit class B" style="filled" fillcolor=red];
-    }
-    subgraph cluster_2 {
-        color=blue
-        4 [label="Enter function <init>" style="filled" fillcolor=red];
-        5 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        6 [label="Exit function <init>" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter function <init>" style="filled" fillcolor=red];
+            4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            5 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        6 [label="Exit class B" style="filled" fillcolor=red];
     }
     2 -> {3} [color=green];
-    3 -> {4} [color=green];
-    3 -> {4} [style=dashed];
+    2 -> {6} [style=dotted];
+    2 -> {3} [style=dashed];
+    3 -> {4};
     4 -> {5};
-    5 -> {6};
+    5 -> {6} [color=green];
 
     subgraph cluster_3 {
         color=red
         7 [label="Enter class C" style="filled" fillcolor=red];
-        8 [label="Exit class C" style="filled" fillcolor=red];
-    }
-    subgraph cluster_4 {
-        color=blue
-        9 [label="Enter function <init>" style="filled" fillcolor=red];
-        10 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        11 [label="Exit function <init>" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            8 [label="Enter function <init>" style="filled" fillcolor=red];
+            9 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            10 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        11 [label="Exit class C" style="filled" fillcolor=red];
     }
     7 -> {8} [color=green];
-    8 -> {9} [color=green];
-    8 -> {9} [style=dashed];
+    7 -> {11} [style=dotted];
+    7 -> {8} [style=dashed];
+    8 -> {9};
     9 -> {10};
-    10 -> {11};
+    10 -> {11} [color=green];
 
     subgraph cluster_5 {
         color=red
