@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.StartParameter
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.service.ServiceRegistry
@@ -57,6 +58,7 @@ abstract class YarnBasics internal constructor(
             dir = dir,
             description = description,
             args = args,
+            isOffline = services.get(StartParameter::class.java).isOffline
         )
     }
 
@@ -67,12 +69,14 @@ abstract class YarnBasics internal constructor(
         dir: File,
         description: String,
         args: List<String>,
+        isOffline: Boolean = false,
     ) {
         val progressLogger = objects.newBuildOpLogger()
         execWithProgress(progressLogger, description, execOps) { exec ->
             val arguments = mutableListOf<String>().apply {
                 addAll(args)
                 if (logger.isDebugEnabled) add("--verbose")
+                if (isOffline) add("--offline")
                 if (yarn.ignoreScripts) add("--ignore-scripts")
             }.filter { it.isNotEmpty() }
 
