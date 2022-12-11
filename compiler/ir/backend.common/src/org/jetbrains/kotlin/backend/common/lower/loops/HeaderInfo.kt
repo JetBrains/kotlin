@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -242,14 +241,13 @@ internal interface HeaderInfoHandler<E : IrExpression, D> {
      * Matches the `iterator()` call that produced the iterable; if the call matches (or the matcher is null),
      * the handler can build a [HeaderInfo] from the iterable.
      */
-    val iteratorCallMatcher: IrCallMatcher?
-        get() = null
+    fun matchIteratorCall(call: IrCall): Boolean = true
 
     /** Builds a [HeaderInfo] from the expression. */
     fun build(expression: E, data: D, scopeOwner: IrSymbol): HeaderInfo?
 
-    fun handle(expression: E, iteratorCall: IrCall?, data: D, scopeOwner: IrSymbol) =
-        if ((iteratorCall == null || iteratorCallMatcher == null || iteratorCallMatcher!!(iteratorCall)) && matchIterable(expression)) {
+    fun handle(expression: E, iteratorCall: IrCall?, data: D, scopeOwner: IrSymbol): HeaderInfo? =
+        if ((iteratorCall == null || matchIteratorCall(iteratorCall)) && matchIterable(expression)) {
             build(expression, data, scopeOwner)
         } else {
             null

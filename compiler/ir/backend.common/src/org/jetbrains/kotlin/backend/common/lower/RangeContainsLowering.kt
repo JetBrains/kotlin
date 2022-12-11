@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -29,10 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.shallowCopy
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -60,14 +56,14 @@ private class Transformer(
     val context: CommonBackendContext,
     val container: IrSymbolOwner
 ) : IrElementTransformerVoidWithContext() {
-
     private val headerInfoBuilder = RangeHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
     fun getScopeOwnerSymbol() = currentScope?.scope?.scopeOwnerSymbol ?: container.symbol
 
-    val stdlibExtensionContainsCallMatcher = SimpleCalleeMatcher {
-        extensionReceiver { it != null && it.type.isSubtypeOfClass(context.ir.symbols.closedRange) }
-        fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.CONTAINS}") }
-        parameterCount { it == 1 }
+    private fun matchStdlibExtensionContainsCall(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.size == 1 &&
+                callee.extensionReceiverParameter?.type?.isSubtypeOfClass(context.ir.symbols.closedRange) == true &&
+                callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.CONTAINS}")
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -89,7 +85,7 @@ private class Transformer(
             return super.visitCall(expression)  // Preserve the call to not().
         }
 
-        if (expression.extensionReceiver != null && !stdlibExtensionContainsCallMatcher(expression)) {
+        if (expression.extensionReceiver != null && !matchStdlibExtensionContainsCall(expression)) {
             // We can only optimize calls to the stdlib extension functions and not a user-defined extension.
             // TODO: This breaks the optimization for *Range.reversed().contains(). The function called there is the extension function
             // Iterable.contains(). Figure out if we can safely match on that as well.
@@ -412,14 +408,12 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
 
 /** Builds a [HeaderInfo] for closed floating-point ranges built using the `rangeTo` function. */
 internal object FloatingPointRangeToHandler : HeaderInfoHandler<IrCall, Nothing?> {
-    private val matcher = SimpleCalleeMatcher {
-        fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}") }
-        extensionReceiver { it != null && it.type.run { isFloat() || isDouble() } }
-        parameterCount { it == 1 }
-        parameter(0) { it.type.run { isFloat() || isDouble() } }
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.singleOrNull()?.type?.let { it.isFloat() || it.isDouble() } == true &&
+                callee.extensionReceiverParameter?.type?.let { it.isFloat() || it.isDouble() } == true &&
+                callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}")
     }
-
-    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         FloatingPointRangeHeaderInfo(
@@ -429,14 +423,13 @@ internal object FloatingPointRangeToHandler : HeaderInfoHandler<IrCall, Nothing?
 }
 
 /** Builds a [HeaderInfo] for ranges of Comparables built using the `rangeTo` extension function. */
-internal class ComparableRangeToHandler(context: CommonBackendContext) : HeaderInfoHandler<IrCall, Nothing?> {
-    private val matcher = SimpleCalleeMatcher {
-        fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}") }
-        extensionReceiver { it != null && it.type.isSubtypeOfClass(context.ir.symbols.comparable) }
-        parameterCount { it == 1 }
+internal class ComparableRangeToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, Nothing?> {
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.size == 1 &&
+                callee.extensionReceiverParameter?.type?.isSubtypeOfClass(context.ir.symbols.comparable) == true &&
+                callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}")
     }
-
-    override fun matchIterable(expression: IrCall): Boolean = matcher(expression)
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         ComparableRangeInfo(
