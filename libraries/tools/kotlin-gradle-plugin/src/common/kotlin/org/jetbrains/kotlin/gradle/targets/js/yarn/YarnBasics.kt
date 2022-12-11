@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.StartParameter
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
@@ -27,6 +28,9 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
             val arguments = args
                 .plus(
                     if (logger.isDebugEnabled) "--verbose" else ""
+                )
+                .plus(
+                    if (services.get(StartParameter::class.java).isOffline) "--offline" else ""
                 )
                 .plus(
                     if (yarn.ignoreScripts) "--ignore-scripts" else ""
