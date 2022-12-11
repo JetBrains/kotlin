@@ -73,11 +73,6 @@ class ControlFlowGraphBuilder {
 
     private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallNode>> = stackOf()
 
-    // ----------------------------------- API for node builders -----------------------------------
-
-    private var idCounter: Int = Random.nextInt()
-    fun createId(): Int = idCounter++
-
     // ----------------------------------- Public API -----------------------------------
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirExpression>? {
@@ -130,7 +125,6 @@ class ControlFlowGraphBuilder {
 
     private fun popGraph(): ControlFlowGraph {
         levelCounter--
-        // TODO: count nodes per graph, validate the list after sorting
         return graphs.pop().also { it.complete() }
     }
 

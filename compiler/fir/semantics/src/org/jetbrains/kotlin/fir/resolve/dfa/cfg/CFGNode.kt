@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @RequiresOptIn
 annotation class CfgInternals
 
-sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, private val id: Int) {
+sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, val id: Int) {
     companion object {
         @CfgInternals
         fun addEdge(
@@ -110,15 +110,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
     fun accept(visitor: ControlFlowGraphVisitorVoid) {
         accept(visitor, null)
-    }
-
-    final override fun equals(other: Any?): Boolean {
-        if (other !is CFGNode<*>) return false
-        return this === other
-    }
-
-    final override fun hashCode(): Int {
-        return id
     }
 }
 
