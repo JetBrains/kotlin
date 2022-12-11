@@ -24,11 +24,8 @@ internal class DefaultProgressionHandler(
     private val symbols = context.ir.symbols
     private val rangeClassesTypes = symbols.rangeClasses.map { it.defaultType }.toSet()
 
-    override fun matchIterable(expression: IrExpression) = ProgressionType.fromIrType(
-        expression.type,
-        symbols,
-        allowUnsignedBounds
-    ) != null
+    override fun matchIterable(expression: IrExpression): Boolean =
+        ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds) != null
 
     override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
