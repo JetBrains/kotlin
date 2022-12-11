@@ -85,18 +85,14 @@ class FirControlFlowGraphRenderVisitor(
             }
             attributes += "label=\"$label\""
 
-            fun fillColor(color: String) {
+            when {
+                node.isDead -> "gray"
+                node == node.owner.enterNode || node == node.owner.exitNode -> "red"
+                node is UnionNodeMarker -> "yellow"
+                else -> null
+            }?.let {
                 attributes += "style=\"filled\""
-                attributes += "fillcolor=$color"
-            }
-
-            if (node == node.owner.enterNode || node == node.owner.exitNode) {
-                fillColor("red")
-            }
-            if (node.isDead) {
-                fillColor("gray")
-            } else if (node is UnionNodeMarker) {
-                fillColor("yellow")
+                attributes += "fillcolor=$it"
             }
             println(indices.getValue(node), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
             if (node is ExitNodeMarker) {

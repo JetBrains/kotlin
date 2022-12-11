@@ -202,7 +202,7 @@ digraph lambdas_kt {
                     75 [label="Stub" style="filled" fillcolor=gray];
                     76 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                77 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                77 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
             }
             65 [label="Postponed exit from lambda"];
             66 [label="Function call: R|/getInt|(...)" style="filled" fillcolor=yellow];
@@ -253,7 +253,7 @@ digraph lambdas_kt {
                     91 [label="Stub" style="filled" fillcolor=gray];
                     92 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                93 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                93 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
             }
             81 [label="Postponed exit from lambda"];
             82 [label="Function call: R|/getInt|(...)" style="filled" fillcolor=yellow];

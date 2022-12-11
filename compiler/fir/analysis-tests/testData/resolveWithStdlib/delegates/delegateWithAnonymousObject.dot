@@ -33,7 +33,7 @@ digraph delegateWithAnonymousObject_kt {
             11 [label="Stub" style="filled" fillcolor=gray];
             12 [label="Exit block" style="filled" fillcolor=gray];
         }
-        13 [label="Exit function delegate" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        13 [label="Exit function delegate" style="filled" fillcolor=gray];
     }
     5 -> {6};
     6 -> {7};

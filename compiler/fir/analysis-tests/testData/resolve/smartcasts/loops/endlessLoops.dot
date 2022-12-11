@@ -623,7 +623,7 @@ digraph endlessLoops_kt {
             212 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=gray];
             213 [label="Exit block" style="filled" fillcolor=gray];
         }
-        214 [label="Exit function test_7" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        214 [label="Exit function test_7" style="filled" fillcolor=gray];
     }
     197 -> {198};
     198 -> {199};

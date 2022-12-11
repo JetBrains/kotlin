@@ -17,20 +17,20 @@ digraph plusAssignWithLambdaInRhs_kt {
             7 [label="Postponed enter to lambda" style="filled" fillcolor=gray];
             subgraph cluster_2 {
                 color=blue
-                12 [label="Enter function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                12 [label="Enter function anonymousFunction" style="filled" fillcolor=gray];
                 subgraph cluster_3 {
                     color=blue
                     13 [label="Enter block" style="filled" fillcolor=gray];
                     14 [label="Access variable R|<local>/it|" style="filled" fillcolor=gray];
                     15 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                16 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                16 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
             }
             8 [label="Postponed exit from lambda" style="filled" fillcolor=gray];
             9 [label="Function call: R|<local>/list|.R|kotlin/collections/plusAssign|<R|(kotlin/String) -> kotlin/String|>(...)" style="filled" fillcolor=gray];
             10 [label="Exit block" style="filled" fillcolor=gray];
         }
-        11 [label="Exit function test" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        11 [label="Exit function test" style="filled" fillcolor=gray];
     }
     0 -> {1};
     1 -> {2};

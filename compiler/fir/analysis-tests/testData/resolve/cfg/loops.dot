@@ -222,7 +222,7 @@ digraph loops_kt {
             77 [label="Const: Int(1)" style="filled" fillcolor=gray];
             78 [label="Exit block" style="filled" fillcolor=gray];
         }
-        79 [label="Exit function testWhileTrue" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        79 [label="Exit function testWhileTrue" style="filled" fillcolor=gray];
     }
     65 -> {66};
     66 -> {67};
@@ -401,7 +401,7 @@ digraph loops_kt {
             133 [label="Const: Int(1)" style="filled" fillcolor=gray];
             134 [label="Exit block" style="filled" fillcolor=gray];
         }
-        135 [label="Exit function testDoWhileTrue" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        135 [label="Exit function testDoWhileTrue" style="filled" fillcolor=gray];
     }
     121 -> {122};
     122 -> {123};

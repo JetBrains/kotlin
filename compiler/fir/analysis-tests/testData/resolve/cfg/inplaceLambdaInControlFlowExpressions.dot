@@ -16,7 +16,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
             6 [label="Stub" style="filled" fillcolor=gray];
             7 [label="Exit block" style="filled" fillcolor=gray];
         }
-        8 [label="Exit function materialize" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        8 [label="Exit function materialize" style="filled" fillcolor=gray];
     }
     0 -> {1};
     1 -> {2};
