@@ -25,15 +25,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
-    private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph(null, "<TOP_LEVEL_GRAPH>", ControlFlowGraph.Kind.TopLevel))
+    private val graphs: Stack<ControlFlowGraph> = stackOf()
+
+    val isTopLevel: Boolean
+        get() = graphs.isEmpty
 
     val currentGraph: ControlFlowGraph
         get() = graphs.top()
 
+    private val bodyBuildingMode: Boolean
+        get() = graphs.isNotEmpty && currentGraph.kind != ControlFlowGraph.Kind.Class
+
     val levelCounter: Int
         // `try` expressions aren't subgraphs, but they increase the level in order to tell which nodes
         // are inside the try and which aren't
-        get() = graphs.size + tryExitNodes.size - 1 /* top-level graph */
+        get() = graphs.size + tryExitNodes.size
 
     private val lastNodes: Stack<CFGNode<*>> = stackOf()
     val lastNode: CFGNode<*>
@@ -106,8 +112,6 @@ class ControlFlowGraphBuilder {
         return nonDirectJumps[exitNode].mapNotNullTo(returnValues) { it.returnExpression() }
     }
 
-    fun isTopLevel(): Boolean = graphs.size == 1
-
     // ----------------------------------- Utils -----------------------------------
 
     private inline fun <T, E : T, EnterNode, ExitNode> enterGraph(
@@ -116,10 +120,10 @@ class ControlFlowGraphBuilder {
         kind: ControlFlowGraph.Kind,
         nodes: (E) -> Pair<EnterNode, ExitNode>
     ): Pair<EnterNode, ExitNode> where EnterNode : CFGNode<T>, EnterNode : GraphEnterNodeMarker, ExitNode : CFGNode<T>, ExitNode : GraphExitNodeMarker {
-        graphs.push(ControlFlowGraph(fir as? FirDeclaration, name, kind))
+        val graph = ControlFlowGraph(fir as? FirDeclaration, name, kind).also { graphs.push(it) }
         return nodes(fir).also { (enterNode, exitNode) ->
-            currentGraph.enterNode = enterNode
-            currentGraph.exitNode = exitNode
+            graph.enterNode = enterNode
+            graph.exitNode = exitNode
             lastNodes.push(enterNode)
         }
     }
@@ -139,7 +143,7 @@ class ControlFlowGraphBuilder {
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
 
-        val localFunctionNode = runIf(function.symbol.callableId.isLocal && currentGraph.kind.withBody) {
+        val localFunctionNode = runIf(function.symbol.callableId.isLocal && bodyBuildingMode) {
             createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
         val (enterNode, exitNode) = enterGraph(function, name, ControlFlowGraph.Kind.Function) {
@@ -215,9 +219,8 @@ class ControlFlowGraphBuilder {
             }
         val exitNode = createPostponedLambdaExitNode(anonymousFunctionExpression)
         // Ideally we'd only add this edge in `exitAnonymousFunction`, but unfortunately it's possible
-        // that the function won't be visited for so long, we'll exit `currentGraph` before that.
-        // When exiting a graph, all nodes in it are topologically sorted, so unless we add some edge
-        // here, `exitNode` will be dropped from the node list. Oops. TODO: fix `orderNodes` someday.
+        // that the function won't be visited for so long, we'll exit the current graph before that.
+        // So we need an edge right now to enforce ordering, and mark it as dead later if needed.
         addEdge(enterNode, exitNode)
         postponedAnonymousFunctionNodes[symbol] = enterNode to exitNode
         postponedLambdaExits.top().add(exitNode to EdgeKind.Forward)
@@ -266,7 +269,7 @@ class ControlFlowGraphBuilder {
         // for all variables that they reassign. That second part is handled by `FirDataFlowAnalyzer`.
         val isDefinitelyVisited = invocationKind?.isDefinitelyVisited() == true
         if (isDefinitelyVisited || splitNode.isDead) {
-            // The edge that was added as a hack to enforce ordering of nodes needs to be marked as dead if this lambda is never
+            // The edge that was added to enforce ordering of nodes needs to be marked as dead if this lambda is never
             // skipped. Or if the entry node is dead, because at the time we added the hack-edge we didn't know that.
             CFGNode.killEdge(splitNode, postponedExitNode, propagateDeadness = !isDefinitelyVisited)
         }
@@ -385,7 +388,7 @@ class ControlFlowGraphBuilder {
 
     fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode>? {
         if (!buildGraph || klass !is FirControlFlowGraphOwner) {
-            graphs.push(ControlFlowGraph(null, "<discarded class graph>", ControlFlowGraph.Kind.ClassInitializer))
+            graphs.push(ControlFlowGraph(null, "<discarded class graph>", ControlFlowGraph.Kind.Class))
             return null
         }
 
@@ -394,7 +397,7 @@ class ControlFlowGraphBuilder {
             klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY -> createAnonymousObjectEnterNode(klass)
             // Local classes are only initialized on first use, so they look pretty much like named functions:
             // control flow enters here and never leaves, and assignments invalidate smart casts.
-            klass is FirRegularClass && klass.isLocal && currentGraph.kind.withBody -> createLocalClassExitNode(klass)
+            klass is FirRegularClass && klass.isLocal && bodyBuildingMode -> createLocalClassExitNode(klass)
             else -> null
         }?.also { addNewSimpleNode(it) }
 
@@ -404,7 +407,7 @@ class ControlFlowGraphBuilder {
             else -> throw IllegalArgumentException("Unknown class kind: ${klass::class}")
         }
 
-        val (enterNode, _) = enterGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer) {
+        val (enterNode, _) = enterGraph(klass, name, ControlFlowGraph.Kind.Class) {
             createClassEnterNode(it) to createClassExitNode(it)
         }
         if (localClassEnterNode != null) {
@@ -432,13 +435,13 @@ class ControlFlowGraphBuilder {
 
     fun exitClass(): Pair<ClassExitNode?, ControlFlowGraph>? {
         if (currentGraph.declaration == null) {
-            graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.ClassInitializer) }
+            graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.Class) }
             return null
         }
 
         // Members of a class can be visited in any order, so data flow between them is unordered,
         // and we have to recreate the control flow after the fact.
-        assert(currentGraph.kind == ControlFlowGraph.Kind.ClassInitializer)
+        assert(currentGraph.kind == ControlFlowGraph.Kind.Class)
         val klass = currentGraph.declaration as FirClass
         val calledInPlace = mutableListOf<ControlFlowGraph>()
         val calledLater = mutableListOf<ControlFlowGraph>()
@@ -1025,7 +1028,7 @@ class ControlFlowGraphBuilder {
     // it would be much easier if we could build calls after full completion only, at least for Nothing calls
     private fun completeFunctionCall(node: FunctionCallNode) {
         if (!node.fir.resultType.isNothing) return
-        val stub = StubNode(currentGraph, node.level, currentGraph.nodeCount++)
+        val stub = StubNode(node.owner, node.level, node.owner.nodeCount++)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
         CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
