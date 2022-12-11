@@ -119,37 +119,36 @@ digraph smartcastToNothing_kt {
         39 [label="Enter class A" style="filled" fillcolor=red];
         subgraph cluster_11 {
             color=blue
-            40 [label="Enter property" style="filled" fillcolor=red];
-            41 [label="Const: Int(1)"];
-            42 [label="Exit property" style="filled" fillcolor=red];
+            40 [label="Enter function <init>" style="filled" fillcolor=red];
+            41 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            42 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         subgraph cluster_12 {
             color=blue
             43 [label="Enter property" style="filled" fillcolor=red];
-            44 [label="Const: Boolean(true)"];
+            44 [label="Const: Int(1)"];
             45 [label="Exit property" style="filled" fillcolor=red];
         }
-        46 [label="Exit class A" style="filled" fillcolor=red];
-    }
-    subgraph cluster_13 {
-        color=blue
-        47 [label="Enter function <init>" style="filled" fillcolor=red];
-        48 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        49 [label="Exit function <init>" style="filled" fillcolor=red];
+        subgraph cluster_13 {
+            color=blue
+            46 [label="Enter property" style="filled" fillcolor=red];
+            47 [label="Const: Boolean(true)"];
+            48 [label="Exit property" style="filled" fillcolor=red];
+        }
+        49 [label="Exit class A" style="filled" fillcolor=red];
     }
     39 -> {40} [color=green];
-    39 -> {46} [style=dotted];
-    39 -> {40 43} [style=dashed];
+    39 -> {49} [style=dotted];
+    39 -> {40 43 46} [style=dashed];
     40 -> {41};
     41 -> {42};
     42 -> {43} [color=green];
     43 -> {44};
     44 -> {45};
     45 -> {46} [color=green];
-    46 -> {47} [color=green];
-    46 -> {47} [style=dashed];
+    46 -> {47};
     47 -> {48};
-    48 -> {49};
+    48 -> {49} [color=green];
 
     subgraph cluster_14 {
         color=red

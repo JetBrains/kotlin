@@ -341,28 +341,27 @@ digraph boundSmartcasts_kt {
         125 [label="Enter class D" style="filled" fillcolor=red];
         subgraph cluster_28 {
             color=blue
-            126 [label="Enter property" style="filled" fillcolor=red];
-            127 [label="Access variable R|<local>/any|"];
-            128 [label="Exit property" style="filled" fillcolor=red];
+            126 [label="Enter function <init>" style="filled" fillcolor=red];
+            127 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            128 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        129 [label="Exit class D" style="filled" fillcolor=red];
-    }
-    subgraph cluster_29 {
-        color=blue
-        130 [label="Enter function <init>" style="filled" fillcolor=red];
-        131 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        132 [label="Exit function <init>" style="filled" fillcolor=red];
+        subgraph cluster_29 {
+            color=blue
+            129 [label="Enter property" style="filled" fillcolor=red];
+            130 [label="Access variable R|<local>/any|"];
+            131 [label="Exit property" style="filled" fillcolor=red];
+        }
+        132 [label="Exit class D" style="filled" fillcolor=red];
     }
     125 -> {126} [color=green];
-    125 -> {129} [style=dotted];
-    125 -> {126} [style=dashed];
+    125 -> {132} [style=dotted];
+    125 -> {126 129} [style=dashed];
     126 -> {127};
     127 -> {128};
     128 -> {129} [color=green];
-    129 -> {130} [color=green];
-    129 -> {130} [style=dashed];
+    129 -> {130};
     130 -> {131};
-    131 -> {132};
+    131 -> {132} [color=green];
 
     subgraph cluster_30 {
         color=red
