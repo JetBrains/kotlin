@@ -116,46 +116,46 @@ digraph smartcastToNothing_kt {
 
     subgraph cluster_10 {
         color=red
-        48 [label="Enter class A" style="filled" fillcolor=red];
-        49 [label="Part of class initialization"];
+        39 [label="Enter class A" style="filled" fillcolor=red];
+        40 [label="Part of class initialization"];
         subgraph cluster_11 {
             color=blue
-            42 [label="Enter property" style="filled" fillcolor=red];
-            43 [label="Const: Int(1)"];
-            44 [label="Exit property" style="filled" fillcolor=red];
+            41 [label="Enter property" style="filled" fillcolor=red];
+            42 [label="Const: Int(1)"];
+            43 [label="Exit property" style="filled" fillcolor=red];
         }
-        50 [label="Part of class initialization"];
+        44 [label="Part of class initialization"];
         subgraph cluster_12 {
             color=blue
             45 [label="Enter property" style="filled" fillcolor=red];
             46 [label="Const: Boolean(true)"];
             47 [label="Exit property" style="filled" fillcolor=red];
         }
-        51 [label="Exit class A" style="filled" fillcolor=red];
+        48 [label="Exit class A" style="filled" fillcolor=red];
     }
     subgraph cluster_13 {
         color=blue
-        39 [label="Enter function <init>" style="filled" fillcolor=red];
-        40 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        41 [label="Exit function <init>" style="filled" fillcolor=red];
+        49 [label="Enter function <init>" style="filled" fillcolor=red];
+        50 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        51 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    48 -> {49} [color=green];
-    49 -> {42} [color=green];
-    49 -> {50} [style=dotted];
-    49 -> {42} [style=dashed];
-    50 -> {45} [color=green];
-    50 -> {51} [style=dotted];
-    50 -> {45} [style=dashed];
-    51 -> {39} [color=green];
-    51 -> {39} [style=dashed];
+    39 -> {40} [color=green];
+    40 -> {41} [color=green];
+    40 -> {44} [style=dotted];
+    40 -> {41} [style=dashed];
+    41 -> {42};
     42 -> {43};
-    43 -> {44};
-    44 -> {50} [color=green];
+    43 -> {44} [color=green];
+    44 -> {45} [color=green];
+    44 -> {48} [style=dotted];
+    44 -> {45} [style=dashed];
     45 -> {46};
     46 -> {47};
-    47 -> {51} [color=green];
-    39 -> {40};
-    40 -> {41};
+    47 -> {48} [color=green];
+    48 -> {49} [color=green];
+    48 -> {49} [style=dashed];
+    49 -> {50};
+    50 -> {51};
 
     subgraph cluster_14 {
         color=red
@@ -211,41 +211,41 @@ digraph smartcastToNothing_kt {
                                     color=blue
                                     82 [label="Enter block" style="filled" fillcolor=gray];
                                     83 [label="Jump: break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()] " style="filled" fillcolor=gray];
-                                    94 [label="Stub" style="filled" fillcolor=gray];
-                                    95 [label="Exit block" style="filled" fillcolor=gray];
+                                    84 [label="Stub" style="filled" fillcolor=gray];
+                                    85 [label="Exit block" style="filled" fillcolor=gray];
                                 }
-                                96 [label="Exit when branch result" style="filled" fillcolor=gray];
-                                97 [label="Exit when" style="filled" fillcolor=gray];
+                                86 [label="Exit when branch result" style="filled" fillcolor=gray];
+                                87 [label="Exit when" style="filled" fillcolor=gray];
                             }
-                            98 [label="Exit block" style="filled" fillcolor=gray];
+                            88 [label="Exit block" style="filled" fillcolor=gray];
                         }
-                        99 [label="Exit loop block" style="filled" fillcolor=gray];
+                        89 [label="Exit loop block" style="filled" fillcolor=gray];
                     }
-                    84 [label="Exit whileloop"];
+                    90 [label="Exit whileloop"];
                 }
-                85 [label="Exit block"];
+                91 [label="Exit block"];
             }
-            86 [label="Access variable R|<local>/s|"];
-            87 [label="Enter safe call"];
-            88 [label="Postponed enter to lambda"];
+            92 [label="Access variable R|<local>/s|"];
+            93 [label="Enter safe call"];
+            94 [label="Postponed enter to lambda"];
             subgraph cluster_24 {
                 color=blue
-                100 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                95 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_25 {
                     color=blue
-                    101 [label="Enter block"];
-                    102 [label="Access variable R|<local>/it|"];
-                    103 [label="Access variable R|/A.a|"];
-                    104 [label="Exit block"];
+                    96 [label="Enter block"];
+                    97 [label="Access variable R|<local>/it|"];
+                    98 [label="Access variable R|/A.a|"];
+                    99 [label="Exit block"];
                 }
-                105 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                100 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            89 [label="Postponed exit from lambda"];
-            90 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
-            91 [label="Exit safe call"];
-            92 [label="Exit block"];
+            101 [label="Postponed exit from lambda"];
+            102 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
+            103 [label="Exit safe call"];
+            104 [label="Exit block"];
         }
-        93 [label="Exit function test_0" style="filled" fillcolor=red];
+        105 [label="Exit function test_0" style="filled" fillcolor=red];
     }
     52 -> {53};
     53 -> {54};
@@ -259,7 +259,7 @@ digraph smartcastToNothing_kt {
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {65 84};
+    64 -> {65 90};
     65 -> {66};
     66 -> {67};
     67 -> {68};
@@ -275,33 +275,33 @@ digraph smartcastToNothing_kt {
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
     79 -> {80 81} [style=dotted];
-    80 -> {97} [style=dotted];
+    80 -> {87} [style=dotted];
     81 -> {82} [style=dotted];
     82 -> {83} [style=dotted];
-    83 -> {84 94} [style=dotted];
-    84 -> {85};
-    85 -> {86};
-    86 -> {87 91};
-    87 -> {88};
-    88 -> {90 100};
+    83 -> {84 90} [style=dotted];
+    84 -> {85} [style=dotted];
+    85 -> {86} [style=dotted];
+    86 -> {87} [style=dotted];
+    87 -> {88} [style=dotted];
     88 -> {89} [style=dotted];
-    88 -> {100} [style=dashed];
-    89 -> {90};
+    89 -> {61} [color=green style=dotted];
     90 -> {91};
     91 -> {92};
-    92 -> {93};
-    94 -> {95} [style=dotted];
-    95 -> {96} [style=dotted];
-    96 -> {97} [style=dotted];
-    97 -> {98} [style=dotted];
-    98 -> {99} [style=dotted];
-    99 -> {61} [color=green style=dotted];
+    92 -> {93 103};
+    93 -> {94};
+    94 -> {95 102};
+    94 -> {101} [style=dotted];
+    94 -> {95} [style=dashed];
+    95 -> {96};
+    96 -> {97};
+    97 -> {98};
+    98 -> {99};
+    99 -> {100};
     100 -> {101};
     101 -> {102};
     102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {89};
 
     subgraph cluster_26 {
         color=red

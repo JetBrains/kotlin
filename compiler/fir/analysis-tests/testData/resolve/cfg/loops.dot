@@ -276,22 +276,22 @@ digraph loops_kt {
                                 color=blue
                                 94 [label="Enter block"];
                                 95 [label="Jump: break@@@[Boolean(true)] "];
-                                100 [label="Stub" style="filled" fillcolor=gray];
-                                101 [label="Exit block" style="filled" fillcolor=gray];
+                                96 [label="Stub" style="filled" fillcolor=gray];
+                                97 [label="Exit block" style="filled" fillcolor=gray];
                             }
-                            102 [label="Exit when branch result" style="filled" fillcolor=gray];
-                            103 [label="Exit when"];
+                            98 [label="Exit when branch result" style="filled" fillcolor=gray];
+                            99 [label="Exit when"];
                         }
-                        104 [label="Exit block"];
+                        100 [label="Exit block"];
                     }
-                    105 [label="Exit loop block"];
+                    101 [label="Exit loop block"];
                 }
-                96 [label="Exit whileloop"];
+                102 [label="Exit whileloop"];
             }
-            97 [label="Const: Int(1)"];
-            98 [label="Exit block"];
+            103 [label="Const: Int(1)"];
+            104 [label="Exit block"];
         }
-        99 [label="Exit function testWhileTrueWithBreak" style="filled" fillcolor=red];
+        105 [label="Exit function testWhileTrueWithBreak" style="filled" fillcolor=red];
     }
     80 -> {81};
     81 -> {82};
@@ -299,27 +299,27 @@ digraph loops_kt {
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    85 -> {96} [style=dotted];
+    85 -> {102} [style=dotted];
     86 -> {87};
     87 -> {88};
     88 -> {89};
     89 -> {90};
     90 -> {91};
     91 -> {92 93};
-    92 -> {103};
+    92 -> {99};
     93 -> {94};
     94 -> {95};
-    95 -> {96};
-    95 -> {100} [style=dotted];
-    96 -> {97};
-    97 -> {98};
-    98 -> {99};
-    100 -> {101} [style=dotted];
-    101 -> {102} [style=dotted];
-    102 -> {103} [style=dotted];
+    95 -> {102};
+    95 -> {96} [style=dotted];
+    96 -> {97} [style=dotted];
+    97 -> {98} [style=dotted];
+    98 -> {99} [style=dotted];
+    99 -> {100};
+    100 -> {101};
+    101 -> {83} [color=green style=dashed];
+    102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {83} [color=green style=dashed];
 
     subgraph cluster_34 {
         color=red

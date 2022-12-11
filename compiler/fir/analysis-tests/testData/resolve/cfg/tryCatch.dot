@@ -239,26 +239,26 @@ digraph tryCatch_kt {
                                     color=blue
                                     93 [label="Enter block"];
                                     94 [label="Jump: break@@@[Boolean(true)] "];
-                                    100 [label="Stub" style="filled" fillcolor=gray];
-                                    101 [label="Exit block" style="filled" fillcolor=gray];
+                                    95 [label="Stub" style="filled" fillcolor=gray];
+                                    96 [label="Exit block" style="filled" fillcolor=gray];
                                 }
-                                102 [label="Catch exit" style="filled" fillcolor=gray];
+                                97 [label="Catch exit" style="filled" fillcolor=gray];
                             }
-                            103 [label="Try expression exit"];
+                            98 [label="Try expression exit"];
                         }
-                        104 [label="Const: Int(2)"];
-                        105 [label="Variable declaration: lval y: R|kotlin/Int|"];
-                        106 [label="Exit block"];
+                        99 [label="Const: Int(2)"];
+                        100 [label="Variable declaration: lval y: R|kotlin/Int|"];
+                        101 [label="Exit block"];
                     }
-                    107 [label="Exit loop block"];
+                    102 [label="Exit loop block"];
                 }
-                95 [label="Exit whileloop"];
+                103 [label="Exit whileloop"];
             }
-            96 [label="Const: Int(3)"];
-            97 [label="Variable declaration: lval z: R|kotlin/Int|"];
-            98 [label="Exit block"];
+            104 [label="Const: Int(3)"];
+            105 [label="Variable declaration: lval z: R|kotlin/Int|"];
+            106 [label="Exit block"];
         }
-        99 [label="Exit function test_3" style="filled" fillcolor=red];
+        107 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     44 -> {45};
     45 -> {46};
@@ -266,7 +266,7 @@ digraph tryCatch_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    49 -> {95} [style=dotted];
+    49 -> {103} [style=dotted];
     50 -> {51};
     51 -> {52};
     52 -> {53 84 91};
@@ -279,7 +279,7 @@ digraph tryCatch_kt {
     59 -> {66};
     60 -> {61};
     61 -> {62};
-    62 -> {99};
+    62 -> {107};
     62 -> {63} [style=dotted];
     63 -> {64} [style=dotted];
     64 -> {65} [style=dotted];
@@ -295,14 +295,14 @@ digraph tryCatch_kt {
     74 -> {81};
     75 -> {76};
     76 -> {77};
-    77 -> {95};
+    77 -> {103};
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
     79 -> {80} [style=dotted];
     80 -> {81} [style=dotted];
     81 -> {82};
     82 -> {83};
-    83 -> {84 91 103};
+    83 -> {84 91 98};
     84 -> {85};
     85 -> {86};
     86 -> {87};
@@ -310,23 +310,23 @@ digraph tryCatch_kt {
     87 -> {88} [style=dotted];
     88 -> {89} [style=dotted];
     89 -> {90} [style=dotted];
-    90 -> {103} [style=dotted];
+    90 -> {98} [style=dotted];
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {95};
-    94 -> {100} [style=dotted];
-    95 -> {96};
-    96 -> {97};
-    97 -> {98};
+    94 -> {103};
+    94 -> {95} [style=dotted];
+    95 -> {96} [style=dotted];
+    96 -> {97} [style=dotted];
+    97 -> {98} [style=dotted];
     98 -> {99};
-    100 -> {101} [style=dotted];
-    101 -> {102} [style=dotted];
-    102 -> {103} [style=dotted];
+    99 -> {100};
+    100 -> {101};
+    101 -> {102};
+    102 -> {47} [color=green style=dashed];
     103 -> {104};
     104 -> {105};
     105 -> {106};
     106 -> {107};
-    107 -> {47} [color=green style=dashed];
 
 }

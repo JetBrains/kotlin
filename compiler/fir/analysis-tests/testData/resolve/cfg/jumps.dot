@@ -189,19 +189,19 @@ digraph jumps_kt {
                         68 [label="Access variable R|<local>/x|"];
                         69 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
                         70 [label="Jump: break@@@[Boolean(true)] "];
-                        77 [label="Stub" style="filled" fillcolor=gray];
-                        78 [label="Exit block" style="filled" fillcolor=gray];
+                        71 [label="Stub" style="filled" fillcolor=gray];
+                        72 [label="Exit block" style="filled" fillcolor=gray];
                     }
-                    79 [label="Exit loop block" style="filled" fillcolor=gray];
+                    73 [label="Exit loop block" style="filled" fillcolor=gray];
                 }
-                71 [label="Exit whileloop"];
+                74 [label="Exit whileloop"];
             }
-            72 [label="Access variable R|<local>/x|"];
-            73 [label="Smart cast: R|<local>/x|"];
-            74 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
-            75 [label="Exit block"];
+            75 [label="Access variable R|<local>/x|"];
+            76 [label="Smart cast: R|<local>/x|"];
+            77 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
+            78 [label="Exit block"];
         }
-        76 [label="Exit function test_3" style="filled" fillcolor=red];
+        79 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     60 -> {61};
     61 -> {62};
@@ -209,21 +209,21 @@ digraph jumps_kt {
     63 -> {64};
     64 -> {65};
     65 -> {66};
-    65 -> {71} [style=dotted];
+    65 -> {74} [style=dotted];
     66 -> {67};
     67 -> {68};
     68 -> {69};
     69 -> {70};
-    70 -> {71};
-    70 -> {77} [style=dotted];
-    71 -> {72};
-    72 -> {73};
-    73 -> {74};
+    70 -> {74};
+    70 -> {71} [style=dotted];
+    71 -> {72} [style=dotted];
+    72 -> {73} [style=dotted];
+    73 -> {63} [color=green style=dotted];
     74 -> {75};
     75 -> {76};
-    77 -> {78} [style=dotted];
-    78 -> {79} [style=dotted];
-    79 -> {63} [color=green style=dotted];
+    76 -> {77};
+    77 -> {78};
+    78 -> {79};
 
     subgraph cluster_20 {
         color=red
@@ -388,36 +388,36 @@ digraph jumps_kt {
             132 [label="Postponed enter to lambda"];
             subgraph cluster_39 {
                 color=blue
-                137 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                133 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_40 {
                     color=blue
-                    138 [label="Enter block"];
-                    139 [label="Jump: ^@run Unit"];
-                    140 [label="Stub" style="filled" fillcolor=gray];
-                    141 [label="Exit block" style="filled" fillcolor=gray];
+                    134 [label="Enter block"];
+                    135 [label="Jump: ^@run Unit"];
+                    136 [label="Stub" style="filled" fillcolor=gray];
+                    137 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                142 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                138 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            133 [label="Postponed exit from lambda"];
-            134 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];
-            135 [label="Exit block"];
+            139 [label="Postponed exit from lambda"];
+            140 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];
+            141 [label="Exit block"];
         }
-        136 [label="Exit function test_6" style="filled" fillcolor=red];
+        142 [label="Exit function test_6" style="filled" fillcolor=red];
     }
     130 -> {131};
     131 -> {132};
-    132 -> {133 134 137};
-    132 -> {137} [style=dashed];
+    132 -> {133 139 140};
+    132 -> {133} [style=dashed];
     133 -> {134};
-    133 -> {132} [color=green style=dashed];
     134 -> {135};
-    135 -> {136};
-    137 -> {138};
+    135 -> {138};
+    135 -> {136} [style=dotted];
+    136 -> {137} [style=dotted];
+    137 -> {138} [style=dotted];
     138 -> {139};
-    139 -> {142};
-    139 -> {140} [style=dotted];
-    140 -> {141} [style=dotted];
-    141 -> {142} [style=dotted];
-    142 -> {133};
+    139 -> {140};
+    139 -> {132} [color=green style=dashed];
+    140 -> {141};
+    141 -> {142};
 
 }
