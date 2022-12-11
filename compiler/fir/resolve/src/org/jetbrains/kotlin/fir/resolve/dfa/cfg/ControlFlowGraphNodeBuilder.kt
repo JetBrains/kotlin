@@ -223,9 +223,6 @@ fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionNode(fir: FirAnonym
 fun ControlFlowGraphBuilder.createAnonymousObjectEnterNode(fir: FirAnonymousObject): AnonymousObjectEnterNode =
     AnonymousObjectEnterNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObject): AnonymousObjectExitNode =
-    AnonymousObjectExitNode(currentGraph, fir, levelCounter, createId())
-
 fun ControlFlowGraphBuilder.createAnonymousObjectExpressionExitNode(fir: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode =
     AnonymousObjectExpressionExitNode(currentGraph, fir, levelCounter, createId())
 
