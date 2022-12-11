@@ -108,7 +108,8 @@ class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
                 val expectedToCompileSources = sourceFilesRelativeToProject(
                     listOf(
                         "foo/JavaClassChild.kt",
-                        "foo/useJavaClass.kt"
+                        "foo/useJavaClass.kt",
+                        "foo/useJavaClassFooMethodUsage.kt"
                     ),
                     subProjectName = "app"
                 )

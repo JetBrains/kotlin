@@ -636,8 +636,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             build("build") {
                 assertTasksExecuted(
-                    ":example:kaptKotlin",
-                    ":example:kaptGenerateStubsKotlin"
+                    ":example:kaptKotlin"
                 )
 
                 assertOutputContains("Additional warning message from AP")
@@ -738,9 +737,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             libClassKt.modify { it.checkedReplace(original, replacement1) }
 
             build("assemble") {
+                assertTasksUpToDate(":app:kaptGenerateStubsKotlin")
                 assertTasksExecuted(
                     ":lib:compileKotlin",
-                    ":app:kaptGenerateStubsKotlin",
                     ":app:kaptKotlin"
                 )
             }
@@ -762,8 +761,8 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             libClassKt.modify { it.checkedReplace(replacement1, replacement2) }
             build("assemble") {
-                assertTasksExecuted(":lib:compileKotlin", ":app:kaptGenerateStubsKotlin")
-                assertTasksUpToDate(":app:kaptKotlin")
+                assertTasksExecuted(":lib:compileKotlin")
+                assertTasksUpToDate(":app:kaptKotlin", ":app:kaptGenerateStubsKotlin")
             }
         }
     }
