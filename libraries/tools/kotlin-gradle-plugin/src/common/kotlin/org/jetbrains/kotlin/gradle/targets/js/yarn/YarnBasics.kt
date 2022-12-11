@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.StartParameter
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -59,6 +60,7 @@ abstract class YarnBasics internal constructor(
             dir = objects.property<File>().value(dir),
             description = description,
             args = args,
+            isOffline = services.get(StartParameter::class.java).isOffline
         )
     }
 
@@ -69,12 +71,25 @@ abstract class YarnBasics internal constructor(
         dir: Provider<File>,
         description: String,
         args: List<String>,
+    ) = packageManagerExec(logger, nodeJs, environment, dir, description, args, isOffline = false)
+
+    fun packageManagerExec(
+        logger: Logger,
+        nodeJs: NodeJsEnvironment,
+        environment: YarnEnvironment,
+        dir: Provider<File>,
+        description: String,
+        args: List<String>,
+        isOffline: Boolean,
     ) {
         val progressLogger = objects.newBuildOpLogger()
         execWithProgress(progressLogger, description, execOps) { exec ->
             val arguments = args
                 .plus(
                     if (logger.isDebugEnabled) "--verbose" else ""
+                )
+                .plus(
+                    if (isOffline) "--offline" else ""
                 )
                 .plus(
                     if (environment.ignoreScripts) "--ignore-scripts" else ""

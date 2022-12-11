@@ -4721,6 +4721,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnBasics : o
 	public fun <init> ()V
 	public synthetic fun packageManagerExec (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Lorg/gradle/api/provider/Provider;Ljava/lang/String;Ljava/util/List;)V
 	public fun packageManagerExec (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Lorg/gradle/api/provider/Provider;Ljava/lang/String;Ljava/util/List;)V
+	public final fun packageManagerExec (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Lorg/gradle/api/provider/Provider;Ljava/lang/String;Ljava/util/List;Z)V
 	public fun prepareTooling (Ljava/io/File;)V
 	public final fun yarnExec (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/io/File;Ljava/lang/String;Ljava/util/List;)V
 }
