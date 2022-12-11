@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
+    @set:CfgInternals
+    var nodeCount = 0
+
     lateinit var nodes: List<CFGNode<*>>
         private set
 
@@ -114,32 +117,39 @@ enum class EdgeKind(
     DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
-private fun ControlFlowGraph.orderNodes(): List<CFGNode<*>> {
-    val visitedNodes = linkedSetOf<CFGNode<*>>()
-    /*
-     * [delayedNodes] is needed to accomplish next order contract:
-     *   for each node all previous node lays before it
-     */
-    val stack = ArrayDeque<CFGNode<*>>()
-    stack.addFirst(enterNode)
-    while (stack.isNotEmpty()) {
-        val node = stack.removeFirst()
-        val previousNodes = node.previousNodes
-        if (previousNodes.any { it !in visitedNodes && it.owner == this && !node.edgeFrom(it).kind.isBack }) {
-            stack.addLast(node)
-            continue
-        }
-        if (!visitedNodes.add(node)) continue
+private val CFGNode<*>.previousNodeCount
+    get() = previousNodes.count { it.owner == owner && !edgeFrom(it).kind.isBack }
 
-        // NOTE: this intentionally does not walk through subgraphs. If the only path from A to B
-        //  is through a subgraph, add a dead edge between them to enforce ordering.
-        for (followingNode in node.followingNodes) {
-            if (followingNode.owner == this) {
-                if (followingNode !in visitedNodes) {
-                    stack.addFirst(followingNode)
+private fun ControlFlowGraph.orderNodes(): List<CFGNode<*>> {
+    // NOTE: this produces a BFS order. If desired, a DFS order can be created instead by using a linked list,
+    // iterating over `followingNodes` in reverse order, and inserting new nodes at the current iteration point.
+    val result = ArrayList<CFGNode<*>>(nodeCount).apply { add(enterNode) }
+    val countdowns = IntArray(nodeCount)
+    var i = 0
+    while (i < result.size) {
+        val node = result[i++]
+        for (next in node.followingNodes) {
+            if (next.owner != this) {
+                // Assume nodes in this graph can be ordered in isolation. If necessary, dead edges
+                // should be used to go around subgraphs that always execute.
+            } else if (next.previousNodes.size == 1) {
+                // Fast path: assume `next.previousNodes` is `listOf(node)`, and the edge is forward.
+                // In tests, the consistency checker will validate this assumption.
+                result.add(next)
+            } else if (!node.edgeTo(next).kind.isBack) {
+                // Can only read a 0 if never seen this node before.
+                val remaining = countdowns[next.id].let { if (it == 0) next.previousNodeCount else it } - 1
+                if (remaining == 0) {
+                    result.add(next)
                 }
+                countdowns[next.id] = remaining
             }
         }
     }
-    return visitedNodes.toList()
+    assert(result.size == nodeCount) {
+        // TODO: can theoretically dump loop nodes into the output in some order so that `ControlFlowGraphRenderer`
+        //  could show them for debugging purposes.
+        "some nodes ${if (countdowns.all { it == 0 }) "are not reachable" else "form loops"} in control flow graph $name"
+    }
+    return result
 }

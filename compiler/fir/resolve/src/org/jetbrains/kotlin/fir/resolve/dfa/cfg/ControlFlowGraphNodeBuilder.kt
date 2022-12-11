@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 
+@OptIn(CfgInternals::class)
+private fun ControlFlowGraphBuilder.createId(): Int = currentGraph.nodeCount++
+
 fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(currentGraph, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFakeExpressionEnterNode(): FakeExpressionEnterNode =
