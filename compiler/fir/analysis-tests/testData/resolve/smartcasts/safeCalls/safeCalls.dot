@@ -76,30 +76,30 @@ digraph safeCalls_kt {
 
     subgraph cluster_6 {
         color=red
-        32 [label="Enter class A" style="filled" fillcolor=red];
-        33 [label="Exit class A" style="filled" fillcolor=red];
+        26 [label="Enter class A" style="filled" fillcolor=red];
+        27 [label="Exit class A" style="filled" fillcolor=red];
     }
     subgraph cluster_7 {
         color=blue
-        30 [label="Enter function id" style="filled" fillcolor=red];
-        31 [label="Exit function id" style="filled" fillcolor=red];
+        28 [label="Enter function id" style="filled" fillcolor=red];
+        29 [label="Exit function id" style="filled" fillcolor=red];
     }
     subgraph cluster_8 {
         color=blue
-        28 [label="Enter function bool" style="filled" fillcolor=red];
-        29 [label="Exit function bool" style="filled" fillcolor=red];
+        30 [label="Enter function bool" style="filled" fillcolor=red];
+        31 [label="Exit function bool" style="filled" fillcolor=red];
     }
     subgraph cluster_9 {
         color=blue
-        26 [label="Enter function bar" style="filled" fillcolor=red];
-        27 [label="Exit function bar" style="filled" fillcolor=red];
+        32 [label="Enter function bar" style="filled" fillcolor=red];
+        33 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    32 -> {33} [color=green];
-    33 -> {26 28 30} [color=green];
-    33 -> {26 28 30} [style=dashed];
-    26 -> {27};
+    26 -> {27} [color=green];
+    27 -> {28 30 32} [color=green];
+    27 -> {28 30 32} [style=dashed];
     28 -> {29};
     30 -> {31};
+    32 -> {33};
 
     subgraph cluster_10 {
         color=red
@@ -150,52 +150,52 @@ digraph safeCalls_kt {
             59 [label="Postponed enter to lambda"];
             subgraph cluster_14 {
                 color=blue
-                69 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                60 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_15 {
                     color=blue
-                    70 [label="Enter block"];
-                    71 [label="Access variable R|<local>/x|"];
-                    72 [label="Smart cast: R|<local>/x|"];
-                    73 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=yellow];
-                    74 [label="Exit block"];
+                    61 [label="Enter block"];
+                    62 [label="Access variable R|<local>/x|"];
+                    63 [label="Smart cast: R|<local>/x|"];
+                    64 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=yellow];
+                    65 [label="Exit block"];
                 }
-                75 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                66 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            60 [label="Postponed exit from lambda"];
-            61 [label="Function call: $subj$.R|/let|(...)" style="filled" fillcolor=yellow];
-            62 [label="Exit safe call"];
-            63 [label="Exit safe call"];
-            64 [label="Exit safe call"];
-            65 [label="Access variable R|<local>/x|"];
-            66 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()" style="filled" fillcolor=yellow];
-            67 [label="Exit block"];
+            67 [label="Postponed exit from lambda"];
+            68 [label="Function call: $subj$.R|/let|(...)" style="filled" fillcolor=yellow];
+            69 [label="Exit safe call"];
+            70 [label="Exit safe call"];
+            71 [label="Exit safe call"];
+            72 [label="Access variable R|<local>/x|"];
+            73 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()" style="filled" fillcolor=yellow];
+            74 [label="Exit block"];
         }
-        68 [label="Exit function test_3" style="filled" fillcolor=red];
+        75 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {49 62};
+    48 -> {49 69};
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {53 62};
+    52 -> {53 69};
     53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58 63};
+    57 -> {58 70};
     58 -> {59};
-    59 -> {60 61 69};
-    59 -> {69} [style=dashed];
+    59 -> {60 67 68};
+    59 -> {60} [style=dashed];
     60 -> {61};
-    61 -> {64};
+    61 -> {62};
     62 -> {63};
     63 -> {64};
     64 -> {65};
     65 -> {66};
-    66 -> {67};
     67 -> {68};
+    68 -> {71};
     69 -> {70};
     70 -> {71};
     71 -> {72};
@@ -260,58 +260,58 @@ digraph safeCalls_kt {
             97 [label="Postponed enter to lambda"];
             subgraph cluster_22 {
                 color=blue
-                112 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                98 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_23 {
                     color=blue
-                    113 [label="Enter block"];
-                    114 [label="Jump: ^test_5 Unit"];
-                    115 [label="Stub" style="filled" fillcolor=gray];
-                    116 [label="Exit block" style="filled" fillcolor=gray];
+                    99 [label="Enter block"];
+                    100 [label="Jump: ^test_5 Unit"];
+                    101 [label="Stub" style="filled" fillcolor=gray];
+                    102 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                117 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
+                103 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
             }
-            98 [label="Postponed exit from lambda" style="filled" fillcolor=gray];
-            99 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];
-            100 [label="Stub" style="filled" fillcolor=gray];
-            101 [label="Enter safe call" style="filled" fillcolor=gray];
-            102 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
-            103 [label="Smart cast: R|<local>/x|" style="filled" fillcolor=gray];
-            104 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=gray];
-            105 [label="Function call: $subj$.R|/boo|(...)" style="filled" fillcolor=gray];
-            106 [label="Exit safe call"];
-            107 [label="Exit safe call"];
-            108 [label="Access variable R|<local>/x|"];
-            109 [label="Function call: R|<local>/x|.R|/A.id<Inapplicable(UNSAFE_CALL): /A.id>#|()" style="filled" fillcolor=yellow];
-            110 [label="Exit block"];
+            104 [label="Postponed exit from lambda" style="filled" fillcolor=gray];
+            105 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];
+            106 [label="Stub" style="filled" fillcolor=gray];
+            107 [label="Enter safe call" style="filled" fillcolor=gray];
+            108 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
+            109 [label="Smart cast: R|<local>/x|" style="filled" fillcolor=gray];
+            110 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=gray];
+            111 [label="Function call: $subj$.R|/boo|(...)" style="filled" fillcolor=gray];
+            112 [label="Exit safe call"];
+            113 [label="Exit safe call"];
+            114 [label="Access variable R|<local>/x|"];
+            115 [label="Function call: R|<local>/x|.R|/A.id<Inapplicable(UNSAFE_CALL): /A.id>#|()" style="filled" fillcolor=yellow];
+            116 [label="Exit block"];
         }
-        111 [label="Exit function test_5" style="filled" fillcolor=red];
+        117 [label="Exit function test_5" style="filled" fillcolor=red];
     }
     93 -> {94};
     94 -> {95};
-    95 -> {96 106};
+    95 -> {96 112};
     96 -> {97};
-    97 -> {112};
-    97 -> {98 99} [style=dotted];
-    97 -> {112} [style=dashed];
-    98 -> {99} [style=dotted];
-    99 -> {100} [style=dotted];
-    100 -> {101 106} [style=dotted];
+    97 -> {98};
+    97 -> {104 105} [style=dotted];
+    97 -> {98} [style=dashed];
+    98 -> {99};
+    99 -> {100};
+    100 -> {117};
+    100 -> {101} [style=dotted];
     101 -> {102} [style=dotted];
     102 -> {103} [style=dotted];
     103 -> {104} [style=dotted];
     104 -> {105} [style=dotted];
-    105 -> {107} [style=dotted];
-    106 -> {107};
-    107 -> {108};
-    108 -> {109};
-    109 -> {110};
-    110 -> {111};
+    105 -> {106} [style=dotted];
+    106 -> {107 112} [style=dotted];
+    107 -> {108} [style=dotted];
+    108 -> {109} [style=dotted];
+    109 -> {110} [style=dotted];
+    110 -> {111} [style=dotted];
+    111 -> {113} [style=dotted];
     112 -> {113};
     113 -> {114};
-    114 -> {111};
-    114 -> {115} [style=dotted];
-    115 -> {116} [style=dotted];
-    116 -> {117} [style=dotted];
-    117 -> {98} [style=dotted];
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
 
 }

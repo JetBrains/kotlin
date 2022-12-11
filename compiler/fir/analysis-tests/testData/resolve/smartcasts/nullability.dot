@@ -5,8 +5,8 @@ digraph nullability_kt {
 
     subgraph cluster_0 {
         color=red
-        4 [label="Enter class A" style="filled" fillcolor=red];
-        5 [label="Exit class A" style="filled" fillcolor=red];
+        0 [label="Enter class A" style="filled" fillcolor=red];
+        1 [label="Exit class A" style="filled" fillcolor=red];
     }
     subgraph cluster_1 {
         color=blue
@@ -15,56 +15,56 @@ digraph nullability_kt {
     }
     subgraph cluster_2 {
         color=blue
-        0 [label="Enter function foo" style="filled" fillcolor=red];
-        1 [label="Exit function foo" style="filled" fillcolor=red];
+        4 [label="Enter function foo" style="filled" fillcolor=red];
+        5 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    4 -> {5} [color=green];
-    5 -> {0 2} [color=green];
-    5 -> {0 2} [style=dashed];
-    0 -> {1};
+    0 -> {1} [color=green];
+    1 -> {2 4} [color=green];
+    1 -> {2 4} [style=dashed];
     2 -> {3};
+    4 -> {5};
 
     subgraph cluster_3 {
         color=red
-        8 [label="Enter class MyData" style="filled" fillcolor=red];
-        9 [label="Exit class MyData" style="filled" fillcolor=red];
+        6 [label="Enter class MyData" style="filled" fillcolor=red];
+        7 [label="Exit class MyData" style="filled" fillcolor=red];
     }
     subgraph cluster_4 {
         color=blue
-        6 [label="Enter function fs" style="filled" fillcolor=red];
-        7 [label="Exit function fs" style="filled" fillcolor=red];
+        8 [label="Enter function fs" style="filled" fillcolor=red];
+        9 [label="Exit function fs" style="filled" fillcolor=red];
     }
-    8 -> {9} [color=green];
-    9 -> {6} [color=green];
-    9 -> {6} [style=dashed];
-    6 -> {7};
+    6 -> {7} [color=green];
+    7 -> {8} [color=green];
+    7 -> {8} [style=dashed];
+    8 -> {9};
 
     subgraph cluster_5 {
         color=red
-        12 [label="Enter class Q" style="filled" fillcolor=red];
-        13 [label="Exit class Q" style="filled" fillcolor=red];
+        10 [label="Enter class Q" style="filled" fillcolor=red];
+        11 [label="Exit class Q" style="filled" fillcolor=red];
     }
     subgraph cluster_6 {
         color=blue
-        10 [label="Enter function fdata" style="filled" fillcolor=red];
-        11 [label="Exit function fdata" style="filled" fillcolor=red];
+        12 [label="Enter function fdata" style="filled" fillcolor=red];
+        13 [label="Exit function fdata" style="filled" fillcolor=red];
     }
-    12 -> {13} [color=green];
-    13 -> {10} [color=green];
-    13 -> {10} [style=dashed];
-    10 -> {11};
+    10 -> {11} [color=green];
+    11 -> {12} [color=green];
+    11 -> {12} [style=dashed];
+    12 -> {13};
 
     subgraph cluster_7 {
         color=red
-        27 [label="Enter class QImpl" style="filled" fillcolor=red];
-        28 [label="Part of class initialization"];
+        14 [label="Enter class QImpl" style="filled" fillcolor=red];
+        15 [label="Part of class initialization"];
         subgraph cluster_8 {
             color=blue
-            17 [label="Enter property" style="filled" fillcolor=red];
-            18 [label="Access variable R|<local>/data|"];
-            19 [label="Exit property" style="filled" fillcolor=red];
+            16 [label="Enter property" style="filled" fillcolor=red];
+            17 [label="Access variable R|<local>/data|"];
+            18 [label="Exit property" style="filled" fillcolor=red];
         }
-        29 [label="Exit class QImpl" style="filled" fillcolor=red];
+        19 [label="Exit class QImpl" style="filled" fillcolor=red];
     }
     subgraph cluster_9 {
         color=blue
@@ -81,21 +81,19 @@ digraph nullability_kt {
     }
     subgraph cluster_11 {
         color=blue
-        14 [label="Enter function <init>" style="filled" fillcolor=red];
-        15 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        16 [label="Exit function <init>" style="filled" fillcolor=red];
+        27 [label="Enter function <init>" style="filled" fillcolor=red];
+        28 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        29 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    27 -> {28} [color=green];
-    28 -> {17} [color=green];
-    28 -> {29} [style=dotted];
-    28 -> {17} [style=dashed];
-    29 -> {14 20} [color=green];
-    29 -> {14 20} [style=dashed];
+    14 -> {15} [color=green];
+    15 -> {16} [color=green];
+    15 -> {19} [style=dotted];
+    15 -> {16} [style=dashed];
+    16 -> {17};
     17 -> {18};
-    18 -> {19};
-    19 -> {29} [color=green];
-    14 -> {15};
-    15 -> {16};
+    18 -> {19} [color=green];
+    19 -> {20 27} [color=green];
+    19 -> {20 27} [style=dashed];
     20 -> {21};
     21 -> {22};
     22 -> {23};
@@ -103,18 +101,20 @@ digraph nullability_kt {
     23 -> {24} [style=dotted];
     24 -> {25} [style=dotted];
     25 -> {26} [style=dotted];
+    27 -> {28};
+    28 -> {29};
 
     subgraph cluster_12 {
         color=red
-        43 [label="Enter class QImplMutable" style="filled" fillcolor=red];
-        44 [label="Part of class initialization"];
+        30 [label="Enter class QImplMutable" style="filled" fillcolor=red];
+        31 [label="Part of class initialization"];
         subgraph cluster_13 {
             color=blue
-            33 [label="Enter property" style="filled" fillcolor=red];
-            34 [label="Access variable R|<local>/data|"];
-            35 [label="Exit property" style="filled" fillcolor=red];
+            32 [label="Enter property" style="filled" fillcolor=red];
+            33 [label="Access variable R|<local>/data|"];
+            34 [label="Exit property" style="filled" fillcolor=red];
         }
-        45 [label="Exit class QImplMutable" style="filled" fillcolor=red];
+        35 [label="Exit class QImplMutable" style="filled" fillcolor=red];
     }
     subgraph cluster_14 {
         color=blue
@@ -131,21 +131,19 @@ digraph nullability_kt {
     }
     subgraph cluster_16 {
         color=blue
-        30 [label="Enter function <init>" style="filled" fillcolor=red];
-        31 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        32 [label="Exit function <init>" style="filled" fillcolor=red];
+        43 [label="Enter function <init>" style="filled" fillcolor=red];
+        44 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        45 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    43 -> {44} [color=green];
-    44 -> {33} [color=green];
-    44 -> {45} [style=dotted];
-    44 -> {33} [style=dashed];
-    45 -> {30 36} [color=green];
-    45 -> {30 36} [style=dashed];
+    30 -> {31} [color=green];
+    31 -> {32} [color=green];
+    31 -> {35} [style=dotted];
+    31 -> {32} [style=dashed];
+    32 -> {33};
     33 -> {34};
-    34 -> {35};
-    35 -> {45} [color=green];
-    30 -> {31};
-    31 -> {32};
+    34 -> {35} [color=green];
+    35 -> {36 43} [color=green];
+    35 -> {36 43} [style=dashed];
     36 -> {37};
     37 -> {38};
     38 -> {39};
@@ -153,63 +151,65 @@ digraph nullability_kt {
     39 -> {40} [style=dotted];
     40 -> {41} [style=dotted];
     41 -> {42} [style=dotted];
+    43 -> {44};
+    44 -> {45};
 
     subgraph cluster_17 {
         color=red
-        63 [label="Enter class QImplWithCustomGetter" style="filled" fillcolor=red];
-        64 [label="Exit class QImplWithCustomGetter" style="filled" fillcolor=red];
+        46 [label="Enter class QImplWithCustomGetter" style="filled" fillcolor=red];
+        47 [label="Exit class QImplWithCustomGetter" style="filled" fillcolor=red];
     }
     subgraph cluster_18 {
         color=blue
-        56 [label="Enter function fdata" style="filled" fillcolor=red];
+        48 [label="Enter function fdata" style="filled" fillcolor=red];
         subgraph cluster_19 {
             color=blue
-            57 [label="Enter block"];
-            58 [label="Const: Null(null)"];
-            59 [label="Jump: ^fdata Null(null)"];
-            60 [label="Stub" style="filled" fillcolor=gray];
-            61 [label="Exit block" style="filled" fillcolor=gray];
+            49 [label="Enter block"];
+            50 [label="Const: Null(null)"];
+            51 [label="Jump: ^fdata Null(null)"];
+            52 [label="Stub" style="filled" fillcolor=gray];
+            53 [label="Exit block" style="filled" fillcolor=gray];
         }
-        62 [label="Exit function fdata" style="filled" fillcolor=red];
+        54 [label="Exit function fdata" style="filled" fillcolor=red];
     }
     subgraph cluster_20 {
         color=blue
-        49 [label="Enter function getter" style="filled" fillcolor=red];
+        55 [label="Enter function getter" style="filled" fillcolor=red];
         subgraph cluster_21 {
             color=blue
-            50 [label="Enter block"];
-            51 [label="Const: Null(null)"];
-            52 [label="Jump: ^ Null(null)"];
-            53 [label="Stub" style="filled" fillcolor=gray];
-            54 [label="Exit block" style="filled" fillcolor=gray];
+            56 [label="Enter block"];
+            57 [label="Const: Null(null)"];
+            58 [label="Jump: ^ Null(null)"];
+            59 [label="Stub" style="filled" fillcolor=gray];
+            60 [label="Exit block" style="filled" fillcolor=gray];
         }
-        55 [label="Exit function getter" style="filled" fillcolor=red];
+        61 [label="Exit function getter" style="filled" fillcolor=red];
     }
     subgraph cluster_22 {
         color=blue
-        46 [label="Enter function <init>" style="filled" fillcolor=red];
-        47 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-        48 [label="Exit function <init>" style="filled" fillcolor=red];
+        62 [label="Enter function <init>" style="filled" fillcolor=red];
+        63 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+        64 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    63 -> {64} [color=green];
-    64 -> {46 49 56} [color=green];
-    64 -> {46 49 56} [style=dashed];
-    46 -> {47};
-    47 -> {48};
+    46 -> {47} [color=green];
+    47 -> {48 55 62} [color=green];
+    47 -> {48 55 62} [style=dashed];
+    48 -> {49};
     49 -> {50};
     50 -> {51};
-    51 -> {52};
-    52 -> {55};
+    51 -> {54};
+    51 -> {52} [style=dotted];
     52 -> {53} [style=dotted];
     53 -> {54} [style=dotted];
-    54 -> {55} [style=dotted];
+    55 -> {56};
     56 -> {57};
     57 -> {58};
-    58 -> {59};
-    59 -> {62};
+    58 -> {61};
+    58 -> {59} [style=dotted];
     59 -> {60} [style=dotted];
     60 -> {61} [style=dotted];
-    61 -> {62} [style=dotted];
+    62 -> {63};
+    63 -> {64};
 
     subgraph cluster_23 {
         color=red
