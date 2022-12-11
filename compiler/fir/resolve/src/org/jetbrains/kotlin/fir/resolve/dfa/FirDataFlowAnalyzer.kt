@@ -965,8 +965,8 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    fun exitBinaryLogicExpression() {
-        graphBuilder.exitBinaryLogicExpression().mergeBinaryLogicOperatorFlow()
+    fun exitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
+        graphBuilder.exitBinaryLogicExpression(binaryLogicExpression).mergeBinaryLogicOperatorFlow()
     }
 
     private fun AbstractBinaryExitNode<FirBinaryLogicExpression>.mergeBinaryLogicOperatorFlow() = mergeIncomingFlow { flow ->
@@ -1045,8 +1045,8 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterInitBlock(initBlock).mergeIncomingFlow()
     }
 
-    fun exitInitBlock(initBlock: FirAnonymousInitializer): ControlFlowGraph {
-        val (node, controlFlowGraph) = graphBuilder.exitInitBlock(initBlock)
+    fun exitInitBlock(): ControlFlowGraph {
+        val (node, controlFlowGraph) = graphBuilder.exitInitBlock()
         node.mergeIncomingFlow()
         return controlFlowGraph
     }

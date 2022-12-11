@@ -704,7 +704,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return context.withAnonymousInitializer(anonymousInitializer, session) {
             val result =
                 transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent) as FirAnonymousInitializer
-            val graph = dataFlowAnalyzer.exitInitBlock(result)
+            val graph = dataFlowAnalyzer.exitInitBlock()
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
             result
         }

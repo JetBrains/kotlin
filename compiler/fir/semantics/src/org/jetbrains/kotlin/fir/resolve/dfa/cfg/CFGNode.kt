@@ -746,7 +746,7 @@ object FirStub : FirExpression() {
     override fun replaceTypeRef(newTypeRef: FirTypeRef) { assert(newTypeRef.isNothing) }
 }
 
-class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level) {
+class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level), GraphEnterNodeMarker, GraphExitNodeMarker {
     init { isDead = true }
 
     override val fir: FirStub = FirStub
