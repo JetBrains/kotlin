@@ -181,13 +181,13 @@ abstract class FirDataFlowAnalyzer(
 
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
-        if (!graphBuilder.isTopLevel()) {
+        if (!graphBuilder.isTopLevel) {
             for (valueParameter in function.valueParameters) {
                 variableStorage.removeRealVariable(valueParameter.symbol)
             }
         }
         val info = DataFlowInfo(variableStorage)
-        if (graphBuilder.isTopLevel()) {
+        if (graphBuilder.isTopLevel) {
             context.reset()
         } else {
             resetReceivers()
