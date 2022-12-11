@@ -434,24 +434,31 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitClass(): Pair<ClassExitNode?, ControlFlowGraph>? {
+        assert(currentGraph.kind == ControlFlowGraph.Kind.Class)
         if (currentGraph.declaration == null) {
-            graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.Class) }
+            graphs.pop()
             return null
         }
 
         // Members of a class can be visited in any order, so data flow between them is unordered,
         // and we have to recreate the control flow after the fact.
-        assert(currentGraph.kind == ControlFlowGraph.Kind.Class)
-        val klass = currentGraph.declaration as FirClass
+        val enterNode = lastNodes.pop() as ClassEnterNode
+        val exitNode = currentGraph.exitNode as ClassExitNode
+        val klass = enterNode.fir
+        if ((klass as FirControlFlowGraphOwner).controlFlowGraphReference != null) {
+            // TODO: IDE LL API sometimes attempts to analyze a enum class while already analyzing it, causing
+            //  this graph to be built twice (or more). Not sure what this means. Nothing good, probably.
+            //  In any case, attempting to add more edges to subgraphs will be fatal.
+            graphs.pop()
+            return null
+        }
+
         val calledInPlace = mutableListOf<ControlFlowGraph>()
         val calledLater = mutableListOf<ControlFlowGraph>()
         klass.forEachGraphOwner { member, isInPlace ->
             val graph = member.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
             if (isInPlace) calledInPlace.add(graph) else calledLater.add(graph)
         }
-
-        val enterNode = lastNodes.pop() as ClassEnterNode
-        val exitNode = currentGraph.exitNode as ClassExitNode
 
         // Classes are not initialized in place so no point in merging data flow - it will not be used.
         val mergeDataFlow = klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY
