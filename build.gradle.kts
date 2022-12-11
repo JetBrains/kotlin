@@ -607,6 +607,14 @@ tasks {
         dependsOn(":js:js.tests:runMocha")
     }
 
+    register("jsFirCompilerTest") {
+        dependsOn(":js:js.tests:jsFirTest")
+    }
+
+    register("jsIrCompilerTest") {
+        dependsOn(":js:js.tests:jsIrTest")
+    }
+
     register("wasmCompilerTest") {
         dependsOn(":js:js.tests:wasmTest")
         // Windows WABT release requires Visual C++ Redistributable
