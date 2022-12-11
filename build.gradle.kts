@@ -761,6 +761,10 @@ tasks {
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
+    register("parcelizeTests") {
+        dependsOn(":plugins:parcelize:parcelize-compiler:test")
+    }
+
     register("codebaseTests") {
         dependsOn(":repo:codebase-tests:test")
     }
