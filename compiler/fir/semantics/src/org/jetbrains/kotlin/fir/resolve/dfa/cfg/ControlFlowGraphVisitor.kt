@@ -96,12 +96,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    // ----------------------------------- Initialization -----------------------------------
-
-    open fun visitPartOfClassInitializationNode(node: PartOfClassInitializationNode, data: D): R {
-        return visitNode(node, data)
-    }
-
     // ----------------------------------- Property -----------------------------------
 
     open fun visitPropertyInitializerEnterNode(node: PropertyInitializerEnterNode, data: D): R {
