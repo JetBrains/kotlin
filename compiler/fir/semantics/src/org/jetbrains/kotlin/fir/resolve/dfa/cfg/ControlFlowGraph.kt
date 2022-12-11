@@ -37,6 +37,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         Class,
         Function,
         AnonymousFunction,
+        AnonymousFunctionCalledInPlace,
         PropertyInitializer,
         FieldInitializer,
         FakeCall,
