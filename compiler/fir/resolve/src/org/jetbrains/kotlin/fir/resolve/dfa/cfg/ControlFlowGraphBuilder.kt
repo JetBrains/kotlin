@@ -1035,7 +1035,7 @@ class ControlFlowGraphBuilder {
     // it would be much easier if we could build calls after full completion only, at least for Nothing calls
     private fun completeFunctionCall(node: FunctionCallNode) {
         if (!node.fir.resultType.isNothing) return
-        val stub = StubNode(node.owner, node.level, node.owner.nodeCount++)
+        val stub = StubNode(node.owner, node.level)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
         CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
