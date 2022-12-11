@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import kotlin.random.Random
 
 @OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
@@ -44,7 +43,7 @@ class ControlFlowGraphBuilder {
 
     private val exitTargetsForReturn: SymbolBasedNodeStorage<FirFunction, FunctionExitNode> = SymbolBasedNodeStorage()
     private val exitTargetsForTry: Stack<CFGNode<*>> = stackOf()
-    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, CFGNode<*>> = mutableMapOf()
+    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, Pair<CFGNode<*>, EdgeKind>> = mutableMapOf()
 
     //return jumps via finally blocks, target -> jumps
     private val nonDirectJumps: ListMultimap<CFGNode<*>, CFGNode<*>> = listMultimapOf()
@@ -148,7 +147,7 @@ class ControlFlowGraphBuilder {
         if (localFunctionNode != null) {
             addEdge(localFunctionNode, enterNode)
         } else {
-            enterToLocalClassesMembers.remove(function.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
+            addEdgeIfLocalClassMember(function, enterNode)
         }
         exitTargetsForReturn.push(exitNode)
         exitTargetsForTry.push(exitNode)
@@ -358,8 +357,33 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Classes -----------------------------------
 
+    private val FirControlFlowGraphOwner.memberShouldHaveGraph: Boolean
+        get() = when (this) {
+            is FirProperty -> initializer != null || delegate != null || hasExplicitBackingField
+            is FirField -> initializer != null
+            else -> true
+        }
+
+    private inline fun FirClass.forEachGraphOwner(block: (FirControlFlowGraphOwner, isInPlace: Boolean) -> Unit) {
+        for (declaration in declarations) {
+            // TODO: constructors are also called-in-place, but after everything else, and only one of them is chosen.
+            if (declaration is FirControlFlowGraphOwner && declaration.memberShouldHaveGraph) {
+                block(declaration, declaration !is FirFunction && declaration !is FirClass)
+            }
+            if (declaration is FirProperty) {
+                declaration.getter?.let { block(it, false) }
+                declaration.setter?.let { block(it, false) }
+            }
+        }
+    }
+
+    private fun <E> addEdgeIfLocalClassMember(member: E, enterNode: CFGNode<*>) where E : FirControlFlowGraphOwner, E : FirDeclaration {
+        val (source, kind) = enterToLocalClassesMembers.remove(member.symbol) ?: return
+        addEdge(source, enterNode, preferredKind = kind)
+    }
+
     fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode>? {
-        if (!buildGraph) {
+        if (!buildGraph || klass !is FirControlFlowGraphOwner) {
             graphs.push(ControlFlowGraph(null, "<discarded class graph>", ControlFlowGraph.Kind.ClassInitializer))
             levelCounter++
             return null
@@ -386,18 +410,18 @@ class ControlFlowGraphBuilder {
         if (localClassEnterNode != null) {
             addEdge(localClassEnterNode, enterNode)
         } else {
-            enterToLocalClassesMembers.remove(klass.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
+            addEdgeIfLocalClassMember(klass, enterNode)
         }
 
+        var foundInPlace = false
         if (enterNode.previousNodes.isNotEmpty()) {
-            for (member in klass.declarations) {
-                if (member is FirFunction || member is FirAnonymousInitializer || member is FirField || member is FirClass || member is FirProperty) {
-                    enterToLocalClassesMembers[member.symbol] = enterNode
+            klass.forEachGraphOwner { member, isInPlace ->
+                val kind = if (!isInPlace || foundInPlace) {
+                    EdgeKind.DfgForward
+                } else {
+                    EdgeKind.Forward.also { foundInPlace = true }
                 }
-                if (member is FirProperty) {
-                    member.getter?.let { enterToLocalClassesMembers[it.symbol] = enterNode }
-                    member.setter?.let { enterToLocalClassesMembers[it.symbol] = enterNode }
-                }
+                enterToLocalClassesMembers[(member as FirDeclaration).symbol] = enterNode to kind
             }
         }
         return localClassEnterNode to enterNode
@@ -439,39 +463,29 @@ class ControlFlowGraphBuilder {
         val klass = currentGraph.declaration as FirClass
         val calledInPlace = mutableListOf<ControlFlowGraph>()
         val calledLater = mutableListOf<ControlFlowGraph>()
-        for (declaration in klass.declarations) {
-            if (declaration is FirControlFlowGraphOwner) {
-                // TODO: constructors are also called-in-place, but after everything else, and only one of them is chosen.
-                val target = if (declaration is FirFunction || declaration is FirClass) calledLater else calledInPlace
-                declaration.controlFlowGraphReference?.controlFlowGraph?.let(target::add)
-            }
-            if (declaration is FirProperty) {
-                declaration.getter?.controlFlowGraphReference?.controlFlowGraph?.let(calledLater::add)
-                declaration.setter?.controlFlowGraphReference?.controlFlowGraph?.let(calledLater::add)
-            }
+        klass.forEachGraphOwner { member, isInPlace ->
+            val graph = member.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
+            if (isInPlace) calledInPlace.add(graph) else calledLater.add(graph)
         }
 
-        var node: CFGNode<*> = lastNodes.pop() as ClassEnterNode
-        var prevInitPartNode: CFGNode<*>? = null
-        for (graph in calledInPlace) {
-            val partNode = createPartOfClassInitializationNode(graph.declaration as FirControlFlowGraphOwner)
-            // TODO: if one initializer part does not terminate, deadness becomes funky here
-            addEdge(node, partNode, preferredKind = EdgeKind.CfgForward)
-            addEdge(partNode, graph.enterNode, preferredKind = EdgeKind.CfgForward)
-            if (prevInitPartNode != null) {
-                // Fake edge to make the nodes in this graph orderable without looking at subgraphs.
-                addEdge(prevInitPartNode, partNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
-            }
-            node = graph.exitNode
-            prevInitPartNode = partNode
-        }
-
+        val enterNode = lastNodes.pop() as ClassEnterNode
         val exitNode = currentGraph.exitNode as ClassExitNode
-        addEdge(node, exitNode, preferredKind = EdgeKind.CfgForward)
-        if (prevInitPartNode != null) {
-            addEdge(prevInitPartNode, exitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
-        }
 
+        if (calledInPlace.isEmpty()) {
+            addEdge(enterNode, exitNode, preferredKind = EdgeKind.CfgForward)
+        } else {
+            if (enterNode.previousNodes.isEmpty()) {
+                // Control flow edge to first initializer was only added for local classes.
+                addEdge(enterNode, calledInPlace[0].enterNode, preferredKind = EdgeKind.CfgForward)
+            }
+            val lastInPlace = calledInPlace.reduce { a, b ->
+                addEdgeToSubGraph(a.exitNode, b.enterNode)
+                b
+            }
+            addEdge(lastInPlace.exitNode, exitNode, preferredKind = EdgeKind.CfgForward)
+            // Fake edge to enforce ordering.
+            addEdge(enterNode, exitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
+        }
         // TODO: Here we're assuming that the methods are called after the object is constructed, which is really not true
         //   (init blocks can call them). But FE1.0 did so too, hence the following code compiles and prints 0:
         //     val x: Int
@@ -481,9 +495,10 @@ class ControlFlowGraphBuilder {
         //     }
         //     println(x)
         for (graph in calledLater) {
-            addEdge(exitNode, graph.enterNode, preferredKind = EdgeKind.CfgForward)
+            addEdgeToSubGraph(exitNode, graph.enterNode)
         }
 
+        enterNode.subGraphs = calledInPlace
         exitNode.subGraphs = calledLater
         return popGraph()
     }
@@ -558,22 +573,18 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Property -----------------------------------
 
-    private val FirProperty.hasInitialization: Boolean
-        get() = initializer != null || delegate != null || hasExplicitBackingField
-
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
-        if (!property.hasInitialization) return null
-
+        if (!property.memberShouldHaveGraph) return null
         val (enterNode, exitNode) = enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
             createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
         }
         exitTargetsForTry.push(exitNode)
-        enterToLocalClassesMembers.remove(property.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
+        addEdgeIfLocalClassMember(property, enterNode)
         return enterNode
     }
 
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
-        if (!property.hasInitialization) return null
+        if (!property.memberShouldHaveGraph) return null
         val exitNode = exitTargetsForTry.pop() as PropertyInitializerExitNode
         popAndAddEdge(exitNode)
         val graph = popGraph()
@@ -584,18 +595,18 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Field -----------------------------------
 
     fun enterField(field: FirField): FieldInitializerEnterNode? {
-        if (field.initializer == null) return null
+        if (!field.memberShouldHaveGraph) return null
 
         val (enterNode, exitNode) = enterGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer) {
             createFieldInitializerEnterNode(it) to createFieldInitializerExitNode(it)
         }
         exitTargetsForTry.push(exitNode)
-        enterToLocalClassesMembers.remove(field.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
+        addEdgeIfLocalClassMember(field, enterNode)
         return enterNode
     }
 
     fun exitField(field: FirField): Pair<FieldInitializerExitNode, ControlFlowGraph>? {
-        if (field.initializer == null) return null
+        if (!field.memberShouldHaveGraph) return null
         val exitNode = exitTargetsForTry.pop() as FieldInitializerExitNode
         popAndAddEdge(exitNode)
         val graph = popGraph()
@@ -1222,7 +1233,7 @@ class ControlFlowGraphBuilder {
             createInitBlockEnterNode(it) to createInitBlockExitNode(it)
         }
         exitTargetsForTry.push(exitNode)
-        enterToLocalClassesMembers.remove(initBlock.symbol)?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
+        addEdgeIfLocalClassMember(initBlock, enterNode)
         return enterNode
     }
 
@@ -1322,6 +1333,7 @@ class ControlFlowGraphBuilder {
     // -------------------------------------------------------------------------------------------------------------------------
 
     fun reset() {
+        enterToLocalClassesMembers.clear()
         postponedLambdaExits.reset()
         lastNodes.reset()
     }
@@ -1366,6 +1378,16 @@ class ControlFlowGraphBuilder {
             if (preferredKind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
         } else preferredKind
         CFGNode.addEdge(from, to, kind, propagateDeadness, label)
+    }
+
+    private fun addEdgeToSubGraph(from: CFGNode<*>, to: CFGNode<*>) {
+        val wasDead = to.isDead
+        val isDead = wasDead || from.isDead
+        // Can only add control flow since data flow for every node that follows `to` has already been computed.
+        CFGNode.addEdge(from, to, if (isDead) EdgeKind.DeadForward else EdgeKind.CfgForward, propagateDeadness = true)
+        if (isDead && !wasDead) {
+            propagateDeadnessForward(to)
+        }
     }
 
     private fun addBackEdge(from: CFGNode<*>, to: CFGNode<*>, isDead: Boolean = false, label: EdgeLabel = LoopBackPath) {

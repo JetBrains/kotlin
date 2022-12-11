@@ -23,101 +23,99 @@ digraph functionCallBound_kt {
     subgraph cluster_2 {
         color=red
         5 [label="Enter class Sub" style="filled" fillcolor=red];
-        6 [label="Part of class initialization"];
         subgraph cluster_3 {
             color=blue
-            7 [label="Enter property" style="filled" fillcolor=red];
-            8 [label="Access variable R|<local>/data|"];
-            9 [label="Exit property" style="filled" fillcolor=red];
+            6 [label="Enter property" style="filled" fillcolor=red];
+            7 [label="Access variable R|<local>/data|"];
+            8 [label="Exit property" style="filled" fillcolor=red];
         }
-        10 [label="Exit class Sub" style="filled" fillcolor=red];
+        9 [label="Exit class Sub" style="filled" fillcolor=red];
     }
     subgraph cluster_4 {
         color=blue
-        11 [label="Enter function <init>" style="filled" fillcolor=red];
-        12 [label="Delegated constructor call: super<R|Base|>()" style="filled" fillcolor=yellow];
-        13 [label="Exit function <init>" style="filled" fillcolor=red];
+        10 [label="Enter function <init>" style="filled" fillcolor=red];
+        11 [label="Delegated constructor call: super<R|Base|>()" style="filled" fillcolor=yellow];
+        12 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     5 -> {6} [color=green];
-    6 -> {7} [color=green];
-    6 -> {10} [style=dotted];
-    6 -> {7} [style=dashed];
+    5 -> {9} [style=dotted];
+    5 -> {6} [style=dashed];
+    6 -> {7};
     7 -> {8};
-    8 -> {9};
+    8 -> {9} [color=green];
     9 -> {10} [color=green];
-    10 -> {11} [color=green];
-    10 -> {11} [style=dashed];
+    9 -> {10} [style=dashed];
+    10 -> {11};
     11 -> {12};
-    12 -> {13};
 
     subgraph cluster_5 {
         color=red
-        14 [label="Enter function isOk" style="filled" fillcolor=red];
+        13 [label="Enter function isOk" style="filled" fillcolor=red];
         subgraph cluster_6 {
             color=blue
-            15 [label="Enter block"];
-            16 [label="Const: Boolean(true)"];
-            17 [label="Jump: ^isOk Boolean(true)"];
-            18 [label="Stub" style="filled" fillcolor=gray];
-            19 [label="Exit block" style="filled" fillcolor=gray];
+            14 [label="Enter block"];
+            15 [label="Const: Boolean(true)"];
+            16 [label="Jump: ^isOk Boolean(true)"];
+            17 [label="Stub" style="filled" fillcolor=gray];
+            18 [label="Exit block" style="filled" fillcolor=gray];
         }
-        20 [label="Exit function isOk" style="filled" fillcolor=red];
+        19 [label="Exit function isOk" style="filled" fillcolor=red];
     }
+    13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {17};
-    17 -> {20};
+    16 -> {19};
+    16 -> {17} [style=dotted];
     17 -> {18} [style=dotted];
     18 -> {19} [style=dotted];
-    19 -> {20} [style=dotted];
 
     subgraph cluster_7 {
         color=red
-        21 [label="Enter function check" style="filled" fillcolor=red];
+        20 [label="Enter function check" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            22 [label="Enter block"];
+            21 [label="Enter block"];
             subgraph cluster_9 {
                 color=blue
-                23 [label="Enter when"];
+                22 [label="Enter when"];
                 subgraph cluster_10 {
                     color=blue
-                    24 [label="Enter when branch condition "];
-                    25 [label="Access variable R|<local>/base|"];
-                    26 [label="Type operator: (R|<local>/base| as? R|Sub|)"];
-                    27 [label="Enter safe call"];
-                    28 [label="Function call: $subj$.R|/isOk|()" style="filled" fillcolor=yellow];
-                    29 [label="Exit safe call"];
-                    30 [label="Const: Boolean(true)"];
-                    31 [label="Equality operator =="];
-                    32 [label="Exit when branch condition"];
+                    23 [label="Enter when branch condition "];
+                    24 [label="Access variable R|<local>/base|"];
+                    25 [label="Type operator: (R|<local>/base| as? R|Sub|)"];
+                    26 [label="Enter safe call"];
+                    27 [label="Function call: $subj$.R|/isOk|()" style="filled" fillcolor=yellow];
+                    28 [label="Exit safe call"];
+                    29 [label="Const: Boolean(true)"];
+                    30 [label="Equality operator =="];
+                    31 [label="Exit when branch condition"];
                 }
                 subgraph cluster_11 {
                     color=blue
-                    33 [label="Enter when branch condition else"];
-                    34 [label="Exit when branch condition"];
+                    32 [label="Enter when branch condition else"];
+                    33 [label="Exit when branch condition"];
                 }
-                35 [label="Enter when branch result"];
+                34 [label="Enter when branch result"];
                 subgraph cluster_12 {
                     color=blue
-                    36 [label="Enter block"];
-                    37 [label="Access variable R|<local>/base|"];
-                    38 [label="Exit block"];
+                    35 [label="Enter block"];
+                    36 [label="Access variable R|<local>/base|"];
+                    37 [label="Exit block"];
                 }
-                39 [label="Exit when branch result"];
-                40 [label="Enter when branch result"];
+                38 [label="Exit when branch result"];
+                39 [label="Enter when branch result"];
                 subgraph cluster_13 {
                     color=blue
-                    41 [label="Enter block"];
-                    42 [label="Access variable R|<local>/base|"];
-                    43 [label="Smart cast: R|<local>/base|"];
-                    44 [label="Access variable R|/Sub.data|"];
-                    45 [label="Exit block"];
+                    40 [label="Enter block"];
+                    41 [label="Access variable R|<local>/base|"];
+                    42 [label="Smart cast: R|<local>/base|"];
+                    43 [label="Access variable R|/Sub.data|"];
+                    44 [label="Exit block"];
                 }
-                46 [label="Exit when branch result"];
-                47 [label="Exit when"];
+                45 [label="Exit when branch result"];
+                46 [label="Exit when"];
             }
-            48 [label="Jump: ^check when () {
+            47 [label="Jump: ^check when () {
     ==((R|<local>/base| as? R|Sub|)?.{ $subj$.R|/isOk|() }, Boolean(true)) ->  {
         R|<local>/base|.R|/Sub.data|
     }
@@ -126,30 +124,31 @@ digraph functionCallBound_kt {
     }
 }
 "];
-            49 [label="Stub" style="filled" fillcolor=gray];
-            50 [label="Exit block" style="filled" fillcolor=gray];
+            48 [label="Stub" style="filled" fillcolor=gray];
+            49 [label="Exit block" style="filled" fillcolor=gray];
         }
-        51 [label="Exit function check" style="filled" fillcolor=red];
+        50 [label="Exit function check" style="filled" fillcolor=red];
     }
+    20 -> {21};
     21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {26};
-    26 -> {27 29};
+    25 -> {26 28};
+    26 -> {27};
     27 -> {28};
     28 -> {29};
     29 -> {30};
     30 -> {31};
-    31 -> {32};
-    32 -> {33 40};
+    31 -> {32 39};
+    32 -> {33};
     33 -> {34};
     34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};
-    38 -> {39};
-    39 -> {47};
+    38 -> {46};
+    39 -> {40};
     40 -> {41};
     41 -> {42};
     42 -> {43};
@@ -157,10 +156,9 @@ digraph functionCallBound_kt {
     44 -> {45};
     45 -> {46};
     46 -> {47};
-    47 -> {48};
-    48 -> {51};
+    47 -> {50};
+    47 -> {48} [style=dotted];
     48 -> {49} [style=dotted];
     49 -> {50} [style=dotted];
-    50 -> {51} [style=dotted];
 
 }

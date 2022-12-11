@@ -224,8 +224,10 @@ class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir:
 
 // ----------------------------------- Classes -----------------------------------
 
-class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int, id: Int) : CFGNode<FirClass>(owner, level, id),
+class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int, id: Int) : CFGNodeWithSubgraphs<FirClass>(owner, level, id),
     GraphEnterNodeMarker {
+    override lateinit var subGraphs: List<ControlFlowGraph>
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitClassEnterNode(this, data)
     }
@@ -276,14 +278,6 @@ class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, leve
 class ScriptExitNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id), GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitScriptExitNode(this, data)
-    }
-}
-
-// ----------------------------------- Initialization -----------------------------------
-
-class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id) {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitPartOfClassInitializationNode(this, data)
     }
 }
 
