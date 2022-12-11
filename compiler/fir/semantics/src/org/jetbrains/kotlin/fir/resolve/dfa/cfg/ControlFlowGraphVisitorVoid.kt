@@ -42,12 +42,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    // ----------------------------------- Anonymous object -----------------------------------
-
-    open fun visitAnonymousObjectExitNode(node: AnonymousObjectExitNode) {
-        visitNode(node)
-    }
-
     // ----------------------------------- Property -----------------------------------
 
     open fun visitPropertyInitializerEnterNode(node: PropertyInitializerEnterNode) {
@@ -331,12 +325,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: Nothing?) {
         visitAnonymousFunctionExpressionNode(node)
-    }
-
-    // ----------------------------------- Anonymous object -----------------------------------
-
-    final override fun visitAnonymousObjectExitNode(node: AnonymousObjectExitNode, data: Nothing?) {
-        visitAnonymousObjectExitNode(node)
     }
 
     // ----------------------------------- Property -----------------------------------

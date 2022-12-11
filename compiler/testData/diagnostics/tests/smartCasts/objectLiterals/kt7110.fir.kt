@@ -7,5 +7,5 @@ abstract class A(val s: String) {
 fun foo(o: String?): Int {
     val a = object : A(o!!){}
     a.bar()
-    return o<!UNSAFE_CALL!>.<!>length
+    return o.length
 }

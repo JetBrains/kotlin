@@ -430,38 +430,15 @@ class ControlFlowGraphBuilder {
         return localClassEnterNode to enterNode
     }
 
-    fun exitClass(): Pair<AnonymousObjectExitNode?, ControlFlowGraph>? {
+    fun exitClass(): Pair<ClassExitNode?, ControlFlowGraph>? {
         if (currentGraph.declaration == null) {
             levelCounter--
             graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.ClassInitializer) }
             return null
         }
 
-        val graph = popClassGraph()
-        val anonymousObject = graph.declaration as? FirAnonymousObject
-        if (anonymousObject == null || anonymousObject.classKind == ClassKind.ENUM_ENTRY) {
-            return null to graph
-        }
-
-        val lastNode = lastNodes.pop() as AnonymousObjectEnterNode
-        val exitNode = createAnonymousObjectExitNode(lastNode.fir).also { lastNodes.push(it) }
-        // TODO: should merge data flow from initializer parts into the exit node.
-        // TODO: the reason for this liveness trickery is that if control flow is dead, the CFG-only edge from
-        //  `graph.exitNode` gets magically transformed into a CFG+DFG dead edge, and `graph.exitNode` has no data
-        //  flow information attached to it. This should be fixed as soon as data flow is made to go through the object.
-        if (!graph.exitNode.isDead) {
-            // This implies that `lastNode` is not dead either.
-            addEdge(graph.exitNode, exitNode, preferredKind = EdgeKind.CfgForward)
-            addEdge(lastNode, exitNode, preferredKind = EdgeKind.DfgForward)
-        } else {
-            addEdge(lastNode, exitNode, isDead = true)
-        }
-        return exitNode to graph
-    }
-
-    // Members of a class can be visited in any order, so data flow between them is unordered
-    // and we have to recreate the control flow after the fact.
-    private fun popClassGraph(): ControlFlowGraph {
+        // Members of a class can be visited in any order, so data flow between them is unordered,
+        // and we have to recreate the control flow after the fact.
         assert(currentGraph.kind == ControlFlowGraph.Kind.ClassInitializer)
         val klass = currentGraph.declaration as FirClass
         val calledInPlace = mutableListOf<ControlFlowGraph>()
@@ -474,18 +451,24 @@ class ControlFlowGraphBuilder {
         val enterNode = lastNodes.pop() as ClassEnterNode
         val exitNode = currentGraph.exitNode as ClassExitNode
 
+        // Classes are not initialized in place so no point in merging data flow - it will not be used.
+        val mergeDataFlow = klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY
+        val exitKind = if (mergeDataFlow) EdgeKind.Forward else EdgeKind.CfgForward
         if (calledInPlace.isEmpty()) {
-            addEdge(enterNode, exitNode, preferredKind = EdgeKind.CfgForward)
+            addEdge(enterNode, exitNode, preferredKind = exitKind)
         } else {
             if (enterNode.previousNodes.isEmpty()) {
                 // Control flow edge to first initializer was only added for local classes.
                 addEdge(enterNode, calledInPlace[0].enterNode, preferredKind = EdgeKind.CfgForward)
             }
             val lastInPlace = calledInPlace.reduce { a, b ->
+                if (mergeDataFlow) {
+                    addEdge(a.exitNode, exitNode, preferredKind = EdgeKind.DfgForward)
+                }
                 addEdgeToSubGraph(a.exitNode, b.enterNode)
                 b
             }
-            addEdge(lastInPlace.exitNode, exitNode, preferredKind = EdgeKind.CfgForward)
+            addEdge(lastInPlace.exitNode, exitNode, preferredKind = exitKind)
             // Fake edge to enforce ordering.
             addEdge(enterNode, exitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
         }
@@ -503,15 +486,24 @@ class ControlFlowGraphBuilder {
 
         enterNode.subGraphs = calledInPlace
         exitNode.subGraphs = calledLater
-        return popGraph()
+        return exitNode.takeIf { mergeDataFlow } to popGraph()
     }
 
     fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode? {
-        if (anonymousObjectExpression.anonymousObject.classKind == ClassKind.ENUM_ENTRY) return null
+        val klass = anonymousObjectExpression.anonymousObject
+        if (klass.classKind == ClassKind.ENUM_ENTRY) return null
 
-        // TODO: what's AnonymousObjectExitNode for then?
         return createAnonymousObjectExpressionExitNode(anonymousObjectExpression).also {
-            addNewSimpleNodeIfPossible(it)
+            val exitNode = klass.controlFlowGraphReference?.controlFlowGraph?.exitNode
+            // TODO: `lastNode` should be `AnonymousObjectEnterNode`, but delegate properties are somewhat broken.
+            if (exitNode != null && lastNode is AnonymousObjectEnterNode) {
+                addEdge(exitNode, it)
+                // Fake edge to enforce ordering.
+                addEdge(lastNodes.pop(), it, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
+                lastNodes.push(it)
+            } else {
+                addNewSimpleNode(it)
+            }
         }
     }
 
@@ -1346,11 +1338,6 @@ class ControlFlowGraphBuilder {
     private fun addNewSimpleNode(node: CFGNode<*>, isDead: Boolean = false) {
         addEdge(lastNodes.pop(), node, preferredKind = if (isDead) EdgeKind.DeadForward else EdgeKind.Forward)
         lastNodes.push(node)
-    }
-
-    private fun addNewSimpleNodeIfPossible(newNode: CFGNode<*>) {
-        if (lastNodes.isEmpty) return
-        addNewSimpleNode(newNode)
     }
 
     private fun addNonTerminatingNode(node: CFGNode<*>) {

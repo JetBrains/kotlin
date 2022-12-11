@@ -234,7 +234,7 @@ class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level:
 }
 
 class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int, id: Int) : CFGNodeWithSubgraphs<FirClass>(owner, level, id),
-    GraphExitNodeMarker {
+    GraphExitNodeMarker, UnionNodeMarker {
 
     lateinit override var subGraphs: List<ControlFlowGraph>
 
@@ -252,12 +252,6 @@ class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularCl
 class AnonymousObjectEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousObject>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousObjectEnterNode(this, data)
-    }
-}
-
-class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNode<FirAnonymousObject>(owner, level, id) {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitAnonymousObjectExitNode(this, data)
     }
 }
 
