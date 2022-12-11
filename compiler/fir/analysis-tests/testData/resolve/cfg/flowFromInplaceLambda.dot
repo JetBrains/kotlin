@@ -195,7 +195,7 @@ digraph flowFromInplaceLambda_kt {
             97 [label="Stub" style="filled" fillcolor=gray];
             98 [label="Exit block" style="filled" fillcolor=gray];
         }
-        99 [label="Exit function materialize" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        99 [label="Exit function materialize" style="filled" fillcolor=gray];
     }
     91 -> {92};
     92 -> {93};

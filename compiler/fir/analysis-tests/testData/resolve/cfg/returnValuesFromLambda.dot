@@ -182,7 +182,7 @@ digraph returnValuesFromLambda_kt {
                     65 [label="Stub" style="filled" fillcolor=gray];
                     66 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                67 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                67 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
             }
             56 [label="Postponed exit from lambda" style="filled" fillcolor=gray];
             57 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];

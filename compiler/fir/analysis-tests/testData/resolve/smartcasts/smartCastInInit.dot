@@ -37,7 +37,7 @@ digraph smartCastInInit_kt {
             11 [label="Stub" style="filled" fillcolor=gray];
             12 [label="Exit block" style="filled" fillcolor=gray];
         }
-        13 [label="Exit function s" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        13 [label="Exit function s" style="filled" fillcolor=gray];
     }
     6 -> {7};
     7 -> {8};

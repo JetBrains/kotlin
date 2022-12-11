@@ -268,7 +268,7 @@ digraph safeCalls_kt {
                     115 [label="Stub" style="filled" fillcolor=gray];
                     116 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                117 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                117 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
             }
             98 [label="Postponed exit from lambda" style="filled" fillcolor=gray];
             99 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];

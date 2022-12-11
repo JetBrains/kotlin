@@ -102,13 +102,13 @@ digraph propertiesAndInitBlocks_kt {
                 70 [label="Stub" style="filled" fillcolor=gray];
                 71 [label="Exit block" style="filled" fillcolor=gray];
             }
-            72 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            72 [label="Exit init block" style="filled" fillcolor=gray];
         }
-        65 [label="Exit class GetterLocalClass" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        65 [label="Exit class GetterLocalClass" style="filled" fillcolor=gray];
     }
     subgraph cluster_13 {
         color=blue
-        73 [label="Enter function <init>" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        73 [label="Enter function <init>" style="filled" fillcolor=gray];
         74 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         75 [label="Exit function <init>" style="filled" fillcolor=red];
     }
@@ -151,7 +151,7 @@ digraph propertiesAndInitBlocks_kt {
                 30 [label="Stub" style="filled" fillcolor=gray];
                 31 [label="Exit block" style="filled" fillcolor=gray];
             }
-            32 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            32 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
         }
         subgraph cluster_17 {
             color=blue
@@ -169,13 +169,13 @@ digraph propertiesAndInitBlocks_kt {
                     52 [label="Const: Int(1)" style="filled" fillcolor=gray];
                     53 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                54 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
+                54 [label="Exit init block" style="filled" fillcolor=gray];
             }
-            46 [label="Exit class InitializerLocalClass" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            46 [label="Exit class InitializerLocalClass" style="filled" fillcolor=gray];
         }
         subgraph cluster_20 {
             color=blue
-            55 [label="Enter function <init>" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            55 [label="Enter function <init>" style="filled" fillcolor=gray];
             56 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
             57 [label="Exit function <init>" style="filled" fillcolor=red];
         }
@@ -194,7 +194,7 @@ digraph propertiesAndInitBlocks_kt {
                 41 [label="Stub" style="filled" fillcolor=gray];
                 42 [label="Exit block" style="filled" fillcolor=gray];
             }
-            43 [label="Exit function foo" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            43 [label="Exit function foo" style="filled" fillcolor=gray];
         }
         78 [label="Postponed exit from lambda"];
         79 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];

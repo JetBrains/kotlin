@@ -61,13 +61,13 @@ digraph initBlock_kt {
                 23 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
                 24 [label="Exit block" style="filled" fillcolor=gray];
             }
-            25 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            25 [label="Exit init block" style="filled" fillcolor=gray];
         }
-        28 [label="Exit class Bar" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        28 [label="Exit class Bar" style="filled" fillcolor=gray];
     }
     subgraph cluster_7 {
         color=blue
-        12 [label="Enter function <init>" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        12 [label="Enter function <init>" style="filled" fillcolor=gray];
         13 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         14 [label="Exit function <init>" style="filled" fillcolor=red];
     }

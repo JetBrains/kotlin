@@ -16,7 +16,7 @@ digraph smartcastToNothing_kt {
             6 [label="Stub" style="filled" fillcolor=gray];
             7 [label="Exit block" style="filled" fillcolor=gray];
         }
-        8 [label="Exit function getNothing" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        8 [label="Exit function getNothing" style="filled" fillcolor=gray];
     }
     0 -> {1};
     1 -> {2};
@@ -103,7 +103,7 @@ digraph smartcastToNothing_kt {
             36 [label="Stub" style="filled" fillcolor=gray];
             37 [label="Exit block" style="filled" fillcolor=gray];
         }
-        38 [label="Exit function myListOf" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        38 [label="Exit function myListOf" style="filled" fillcolor=gray];
     }
     30 -> {31};
     31 -> {32};

@@ -60,7 +60,7 @@ digraph lambdaReturningObject_kt {
             18 [label="Stub" style="filled" fillcolor=gray];
             19 [label="Exit block" style="filled" fillcolor=gray];
         }
-        20 [label="Exit function MyOut" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        20 [label="Exit function MyOut" style="filled" fillcolor=gray];
     }
     13 -> {14};
     14 -> {15};
