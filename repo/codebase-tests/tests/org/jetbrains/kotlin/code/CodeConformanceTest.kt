@@ -53,6 +53,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/build",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "libraries/tools/kotlin-maven-plugin/target",
