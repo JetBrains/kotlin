@@ -32,17 +32,16 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -57,9 +56,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -1073,6 +1070,7 @@ class CompileServiceImpl(
         ZipHandler.clearFileAccessorCache()
         KotlinCoreEnvironment.applicationEnvironment?.apply {
             (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+            (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
             idleCleanup()
         }
     }
