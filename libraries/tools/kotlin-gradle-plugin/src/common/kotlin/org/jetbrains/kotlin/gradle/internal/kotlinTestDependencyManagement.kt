@@ -43,7 +43,7 @@ private val Dependency.isKotlinTestRootDependency: Boolean
 
 private val kotlin150Version = SemVer(1.toBigInteger(), 5.toBigInteger(), 0.toBigInteger())
 
-private fun isAtLeast1_5(version: String) = SemVer.from(version) >= kotlin150Version
+private fun isAtLeast1_5(version: String) = SemVer.fromGradleRichVersion(version) >= kotlin150Version
 
 private val jvmPlatforms = setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 
