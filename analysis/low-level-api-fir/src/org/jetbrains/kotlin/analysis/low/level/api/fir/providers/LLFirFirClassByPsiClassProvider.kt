@@ -79,8 +79,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
     }
 }
 
-private val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
-
+internal val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 
 val LLFirSession.firClassByPsiClassProvider: LLFirFirClassByPsiClassProvider by FirSession.sessionComponentAccessor()
 
