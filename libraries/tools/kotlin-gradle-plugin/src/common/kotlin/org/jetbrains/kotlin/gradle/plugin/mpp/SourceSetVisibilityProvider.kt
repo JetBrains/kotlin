@@ -49,15 +49,13 @@ internal class SourceSetVisibilityProvider(
      */
     fun getVisibleSourceSets(
         visibleFrom: KotlinSourceSet,
-        resolvedRootMppDependency: ResolvedComponentResult?,
-        resolvedMetadataDependency: ResolvedComponentResult,
+        resolvedRootMppDependency: ResolvedComponentResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean
     ): SourceSetVisibilityResult {
         val compilations = visibleFrom.internal.compilations
 
-        val component = resolvedRootMppDependency ?: resolvedMetadataDependency
-        val mppModuleIdentifier = component.toSingleKpmModuleIdentifier()
+        val mppModuleIdentifier = resolvedRootMppDependency.toSingleKpmModuleIdentifier()
 
         val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
 
