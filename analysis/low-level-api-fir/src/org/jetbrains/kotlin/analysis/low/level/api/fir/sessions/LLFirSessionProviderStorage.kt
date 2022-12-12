@@ -48,7 +48,7 @@ class LLFirSessionProviderStorage(val project: Project) {
             is KtNotUnderContentRootModule -> {
                 val session = LLFirNonUnderContentRootSessionFactory.getInstance(project)
                     .getNonUnderContentRootSession(useSiteKtModule)
-                LLFirSessionProvider(project, session, mapOf(useSiteKtModule to session))
+                LLFirSessionProvider(project, session, KtModuleToSessionMappingByMapImpl(mapOf(useSiteKtModule to session)))
             }
 
             else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
@@ -72,7 +72,7 @@ class LLFirSessionProviderStorage(val project: Project) {
             )
             sessions to session
         }
-        return LLFirSessionProvider(project, session, sessions)
+        return LLFirSessionProvider(project, session, KtModuleToSessionMappingByWeakValueMapImpl(sessions))
     }
 
 
@@ -93,7 +93,7 @@ class LLFirSessionProviderStorage(val project: Project) {
             )
             sessions to session
         }
-        return LLFirSessionProvider(project, session, sessions)
+        return LLFirSessionProvider(project, session, KtModuleToSessionMappingByWeakValueMapImpl(sessions))
     }
 }
 
