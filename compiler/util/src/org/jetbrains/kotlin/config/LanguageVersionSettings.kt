@@ -278,7 +278,6 @@ enum class LanguageFeature(
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
     EnhanceNullabilityOfPrimitiveArrays(KOTLIN_1_9, kind = BUG_FIX), // KT-54521
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
-    InlineLateinit(KOTLIN_1_9, kind = OTHER), // KT-23814
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
     ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
 
@@ -319,6 +318,8 @@ enum class LanguageFeature(
     UnitConversionsOnArbitraryExpressions(sinceVersion = null),
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = UNSTABLE_FEATURE),
     CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
+    InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
+
     ;
 
     init {
