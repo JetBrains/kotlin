@@ -51,28 +51,25 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, module: IrModuleFragment) {
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
-        backendEngine.processModuleFragments(module) { generationState, fragment ->
+        backendEngine.splitIntoFragments(module).forEach { (generationState, fragment) ->
             backendEngine.useContext(generationState) { generationStateEngine ->
-                // TODO: We can run compile part in parallel if we get rid of context.generationState.
                 println("Compiling fragment with files ${fragment.files.joinToString { it.name }}")
                 generationStateEngine.runLowerings(fragment)
-                val bitcodeFileName = generationStateEngine.runCodegen(fragment)
+                val bitcodeFileName = generationStateEngine../runCodegen(fragment)
                 generationStateEngine.produceBinary(bitcodeFileName)
             }
         }
     }
 }
 
-internal fun PhaseEngine<out Context>.processModuleFragments(
+internal fun PhaseEngine<out Context>.splitIntoFragments(
         input: IrModuleFragment,
-        action: (NativeGenerationState, IrModuleFragment) -> Unit
-): Unit = if (context.config.producePerFileCache) {
+): Sequence<Pair<NativeGenerationState, IrModuleFragment>> = if (context.config.producePerFileCache) {
     val module = input
     val files = module.files.toList()
     val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
 
-    for (file in files) {
-        if (file.isFunctionInterfaceFile) continue
+    files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
         val generationState = NativeGenerationState(
                 context.config,
                 context,
@@ -84,11 +81,11 @@ internal fun PhaseEngine<out Context>.processModuleFragments(
         m1.files.filterIsInstance<IrFileImpl>().forEach {
             it.module = m1
         }
-        action(generationState, m1)
+        generationState to m1
     }
 } else {
     val nativeGenerationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
-    action(nativeGenerationState, input)
+    sequenceOf(nativeGenerationState to input)
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(module: IrModuleFragment) {
@@ -117,7 +114,7 @@ internal fun PhaseEngine<NativeGenerationState>.produceBinary(bitcodeFileName: S
     val objectFiles = runPhase(ObjectFilesPhase, bitcodeFileName)
     runPhase(LinkerPhase, objectFiles)
     if (context.config.produce.isCache) {
-        runPhase(SaveAdditionalCacheInfoPhase)
+        runPhase(FinalizeCachePhase)
     }
 }
 
