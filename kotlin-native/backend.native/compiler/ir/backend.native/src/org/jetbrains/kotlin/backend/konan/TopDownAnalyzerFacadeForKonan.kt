@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
@@ -38,14 +39,20 @@ internal object TopDownAnalyzerFacadeForKonan {
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
         val module = nativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
-                moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
+                moduleName,
+                projectContext.storageManager,
+                origin = CurrentKlibModuleOrigin,
+                platform = NativePlatforms.unspecifiedNativePlatform
+        )
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
                 config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
                 config.friendModuleFiles, config.refinesModuleFiles,
                 config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
-                isForMetadataCompilation = config.metadataKlib)
+                isForMetadataCompilation = config.metadataKlib,
+                platform = NativePlatforms.unspecifiedNativePlatform,
+        )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
         if (!module.isNativeStdlib()) {

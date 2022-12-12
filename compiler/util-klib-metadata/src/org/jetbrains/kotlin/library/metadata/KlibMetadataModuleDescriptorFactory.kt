@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTra
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
@@ -29,23 +30,32 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
-        packageAccessHandler: PackageAccessHandler?
+        packageAccessHandler: PackageAccessHandler?,
+        platform: TargetPlatform?,
     ) = createDescriptorOptionalBuiltIns(
         library,
         languageVersionSettings,
         storageManager,
         builtIns,
         packageAccessHandler,
-        LookupTracker.DO_NOTHING
+        LookupTracker.DO_NOTHING,
+        platform
     )
 
     fun createDescriptorAndNewBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
-        packageAccessHandler: PackageAccessHandler?
+        packageAccessHandler: PackageAccessHandler?,
+        platform: TargetPlatform?,
     ) = createDescriptorOptionalBuiltIns(
-        library, languageVersionSettings, storageManager, null, packageAccessHandler, LookupTracker.DO_NOTHING
+        library,
+        languageVersionSettings,
+        storageManager,
+        null,
+        packageAccessHandler,
+        LookupTracker.DO_NOTHING,
+        platform
     )
 
     fun createDescriptorOptionalBuiltIns(
@@ -54,7 +64,8 @@ interface KlibMetadataModuleDescriptorFactory {
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         packageAccessHandler: PackageAccessHandler?,
-        lookupTracker: LookupTracker
+        lookupTracker: LookupTracker,
+        platform: TargetPlatform?,
     ): ModuleDescriptorImpl
 
     fun createPackageFragmentProvider(

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -87,7 +88,8 @@ class FirJsKlibBackendFacade(
             LockBasedStorageManager("ModulesStructure"),
             inputArtifact.irModuleFragment.descriptor.builtIns,
             packageAccessHandler = null,
-            lookupTracker = LookupTracker.DO_NOTHING
+            lookupTracker = LookupTracker.DO_NOTHING,
+            platform = JsPlatforms.defaultJsPlatform,
         )
         // TODO: find out why it must be so weird
         moduleDescriptor.safeAs<ModuleDescriptorImpl>()?.let {

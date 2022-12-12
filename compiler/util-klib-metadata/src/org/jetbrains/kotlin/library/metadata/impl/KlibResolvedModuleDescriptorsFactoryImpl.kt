@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
@@ -43,6 +44,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
+        platform: TargetPlatform?,
     ): KotlinResolvedModuleDescriptors {
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
@@ -60,7 +62,12 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
-                    library, languageVersionSettings, storageManager, builtIns, packageAccessHandler
+                    library,
+                    languageVersionSettings,
+                    storageManager,
+                    builtIns,
+                    packageAccessHandler,
+                    platform
                 )
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
@@ -87,6 +94,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
             // forward declarations (to prevent getting non-actualized expects into the backend,
             // and to prevent related klib signature changes).
             isExpect = isForMetadataCompilation,
+            platform = platform,
         )
 
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
@@ -115,10 +123,12 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
     fun createForwardDeclarationsModule(
         builtIns: KotlinBuiltIns?,
         storageManager: StorageManager,
-        isExpect: Boolean
+        isExpect: Boolean,
+        platform: TargetPlatform?,
     ): ModuleDescriptorImpl {
 
-        val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
+        val module =
+            createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin, platform)
 
         fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind) =
             ForwardDeclarationsPackageFragmentDescriptor(
@@ -148,22 +158,30 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         name: Name,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        moduleOrigin: KlibModuleOrigin
+        moduleOrigin: KlibModuleOrigin,
+        platform: TargetPlatform?,
     ) = if (builtIns != null)
-        moduleDescriptorFactory.descriptorFactory.createDescriptor(name, storageManager, builtIns, moduleOrigin)
+        moduleDescriptorFactory.descriptorFactory.createDescriptor(name, storageManager, builtIns, moduleOrigin, platform)
     else
-        moduleDescriptorFactory.descriptorFactory.createDescriptorAndNewBuiltIns(name, storageManager, moduleOrigin)
+        moduleDescriptorFactory.descriptorFactory.createDescriptorAndNewBuiltIns(name, storageManager, moduleOrigin, platform)
 
     private fun createDescriptorOptionalBuiltsIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessHandler: PackageAccessHandler?
+        packageAccessHandler: PackageAccessHandler?,
+        platform: TargetPlatform?,
     ) = if (builtIns != null)
-        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler)
+        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler, platform)
     else
-        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, packageAccessHandler)
+        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
+            library,
+            languageVersionSettings,
+            storageManager,
+            packageAccessHandler,
+            platform
+        )
 
     companion object {
         val FORWARD_DECLARATIONS_MODULE_NAME = Name.special("<forward declarations>")

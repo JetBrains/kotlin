@@ -544,6 +544,7 @@ class GenerateIrRuntime {
         writer.writeIr(serializedIrModule)
     }
 
+    // TODO: Factor out
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun doDeserializeIrModule(moduleDescriptor: ModuleDescriptorImpl): DeserializedModuleInfo {
         val mangler = JsManglerDesc

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.containsErrorCode
 
-class KlibDumpIrLinker(currentModule: ModuleDescriptor, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable) :
+class KlibDumpIrLinker(currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable) :
     KotlinIrLinker(
         currentModule = currentModule,
         messageLogger = messageLogger,
@@ -54,7 +54,8 @@ class KlibDumpIrLinker(currentModule: ModuleDescriptor, messageLogger: IrMessage
         return Deserializer(moduleDescriptor, klib, strategyResolver, libraryAbiVersion, klib.containsErrorCode)
     }
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = false
+    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
+        moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
 
     private inner class Deserializer(
         moduleDescriptor: ModuleDescriptor,

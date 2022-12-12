@@ -56,13 +56,13 @@ import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -449,7 +449,8 @@ fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, Mo
         LockBasedStorageManager.NO_LOCKS,
         null,
         packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
-        lookupTracker = LookupTracker.DO_NOTHING
+        lookupTracker = LookupTracker.DO_NOTHING,
+        platform = JsPlatforms.defaultJsPlatform,
     )
 //    if (isBuiltIns) runtimeModule = md
 
@@ -561,7 +562,8 @@ class ModulesStructure(
             storageManager,
             runtimeModule?.builtIns,
             packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
-            lookupTracker = lookupTracker
+            lookupTracker = lookupTracker,
+            platform = JsPlatforms.defaultJsPlatform,
         )
         if (isBuiltIns) runtimeModule = md
 

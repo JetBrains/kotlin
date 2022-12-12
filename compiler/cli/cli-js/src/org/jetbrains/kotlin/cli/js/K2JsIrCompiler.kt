@@ -575,7 +575,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 storageManager,
                 builtInsModule,
                 packageAccessHandler = null,
-                lookupTracker = LookupTracker.DO_NOTHING
+                lookupTracker = LookupTracker.DO_NOTHING,
+                platform = JsPlatforms.defaultJsPlatform,
             )
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))

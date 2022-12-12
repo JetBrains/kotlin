@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 
 interface KlibResolvedModuleDescriptorsFactory {
@@ -33,6 +34,7 @@ interface KlibResolvedModuleDescriptorsFactory {
         includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
+        platform: TargetPlatform?,
     ): KotlinResolvedModuleDescriptors
 }
 

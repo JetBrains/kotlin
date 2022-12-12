@@ -36,6 +36,7 @@ abstract class AbstractJsManglerIr : IrBasedKotlinManglerImpl() {
 
 object JsManglerIr : AbstractJsManglerIr()
 
+// TODO: There is nothing JS-specific about this mangler. Move to a different package and rename.
 abstract class AbstractJsDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
 
     companion object {

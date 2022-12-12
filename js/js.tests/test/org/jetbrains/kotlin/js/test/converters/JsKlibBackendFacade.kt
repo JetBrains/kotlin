@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -81,7 +82,8 @@ class JsKlibBackendFacade(
             LockBasedStorageManager("ModulesStructure"),
             testServices.moduleDescriptorProvider.getModuleDescriptor(module).builtIns,
             packageAccessHandler = null,
-            lookupTracker = LookupTracker.DO_NOTHING
+            lookupTracker = LookupTracker.DO_NOTHING,
+            platform = JsPlatforms.defaultJsPlatform,
         )
         moduleDescriptor.setDependencies(dependencies + moduleDescriptor)
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)

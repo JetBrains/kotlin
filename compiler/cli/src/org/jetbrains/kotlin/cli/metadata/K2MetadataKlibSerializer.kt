@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -151,7 +152,7 @@ private class KlibMetadataDependencyContainer(
             val moduleName = Name.special(moduleHeader.moduleName)
             val moduleOrigin = DeserializedKlibModuleOrigin(library)
             MetadataFactories.DefaultDescriptorFactory.createDescriptor(
-                moduleName, storageManager, builtIns, moduleOrigin
+                moduleName, storageManager, builtIns, moduleOrigin, NativePlatforms.unspecifiedNativePlatform
             )
         }.also { result ->
             val resultValues = result.values

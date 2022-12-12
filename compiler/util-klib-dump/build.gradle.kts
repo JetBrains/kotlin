@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
+    implementation(kotlinBuiltins())
+    implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:frontend"))
@@ -21,3 +23,9 @@ sourceSets {
 publish()
 
 standardPublicJars()
+
+val dumpKlib by task<JavaExec> {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.jetbrains.kotlin.library.klibdump.KlibDump")
+}
+

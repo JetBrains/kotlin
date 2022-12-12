@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -80,7 +81,8 @@ internal class JsIrLinkerLoader(
                 LockBasedStorageManager.NO_LOCKS,
                 runtimeModule?.builtIns,
                 packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
-                lookupTracker = lookupTracker
+                lookupTracker = lookupTracker,
+                platform = JsPlatforms.defaultJsPlatform,
             )
             if (isBuiltIns) runtimeModule = md
 

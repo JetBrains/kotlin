@@ -7,18 +7,28 @@
 package org.jetbrains.kotlin.library.klibdump
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import kotlin.system.exitProcess
 
 private fun exitWithError(message: String, exitCode: Int = 1): Nothing {
@@ -47,25 +57,49 @@ private object StderrMessageLogger : IrMessageLogger {
     }
 }
 
-private fun deserializeModule(klib: KotlinLibrary): IrModuleFragment {
-    val libraryProto = parseModuleHeader(klib.moduleHeaderData)
-    val moduleName = Name.special(libraryProto.moduleName)
-    val signatureComposer = IdSignatureDescriptor(KlibDumpDescriptorMangler)
-    val linker = KlibDumpIrLinker(
-        DummyModuleDescriptor(moduleName),
-        StderrMessageLogger,
-        KlibDumpBuiltins(LanguageVersionSettingsImpl.DEFAULT), // TODO: Are these settings right?
-        SymbolTable(signatureComposer, IrFactoryImpl)
+private fun deserializeMetadata(klib: KotlinLibrary): ModuleDescriptor {
+    val metadataFactories =
+        KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer, PlatformDependentTypeTransformer.None)
+
+    val module = metadataFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
+        library = klib,
+        languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        storageManager = LockBasedStorageManager.NO_LOCKS,
+        builtIns = DefaultBuiltIns.Instance,
+        packageAccessHandler = null,
+        platform = null,
     )
-    val moduleFragment = linker.deserializeFullModule(DummyModuleDescriptor(moduleName), klib)
+    module.setDependencies(listOf(DefaultBuiltIns.Instance.builtInsModule, module))
+
+    return module
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun deserializeModule(klib: KotlinLibrary, languageVersionSettings: LanguageVersionSettingsImpl): IrModuleFragment {
+    val moduleDescriptor = deserializeMetadata(klib)
+    val signatureComposer = IdSignatureDescriptor(KlibDumpDescriptorMangler)
+    val symbolTable = SymbolTable(signatureComposer, IrFactoryImpl)
+    val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
+    val linker = KlibDumpIrLinker(
+        currentModule = null,
+        messageLogger = StderrMessageLogger,
+        builtIns = IrBuiltInsOverDescriptors(DefaultBuiltIns.Instance, typeTranslator, symbolTable),
+        symbolTable = symbolTable
+    )
+
+    val moduleFragment = linker.deserializeFullModule(moduleDescriptor, klib)
     linker.init(null, emptyList())
+    ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies() // TODO: Is this needed?
     linker.postProcess()
     return moduleFragment
 }
 
+// NOTE: Running this function from IDEA is not supported. Please use the :kotlin-util-klib-dump:dumpKlib Gradle task.
+// Example:
+//     ./gradlew :kotlin-util-klib-dump:dumpKlib --args="/path/to/module.klib"
 fun main(args: Array<String>) {
     val klibPath = args.getOrNull(0) ?: exitWithError("Please specify a path to the klib")
     val kotlinLibrary = resolveSingleFileKlib(File(klibPath), strategy = ToolingSingleFileKlibResolveStrategy)
-    val irModule = deserializeModule(kotlinLibrary)
+    val irModule = deserializeModule(kotlinLibrary, LanguageVersionSettingsImpl.DEFAULT)
     println(irModule.dump())
 }

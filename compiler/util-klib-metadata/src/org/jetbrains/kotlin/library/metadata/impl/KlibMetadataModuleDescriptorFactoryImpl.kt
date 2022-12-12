@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -42,7 +43,8 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         packageAccessHandler: PackageAccessHandler?,
-        lookupTracker: LookupTracker
+        lookupTracker: LookupTracker,
+        platform: TargetPlatform?,
     ): ModuleDescriptorImpl {
 
         val libraryProto = parseModuleHeader(library.moduleHeaderData)
@@ -50,10 +52,10 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         val moduleName = Name.special(libraryProto.moduleName)
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
 
-        val moduleDescriptor = if (builtIns != null )
-            descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
+        val moduleDescriptor = if (builtIns != null)
+            descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin, platform)
         else
-            descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+            descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin, platform)
 
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 

@@ -123,7 +123,8 @@ object KlibTestUtil {
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             storageManager = LockBasedStorageManager.NO_LOCKS,
             builtIns = DefaultBuiltIns.Instance,
-            packageAccessHandler = null
+            packageAccessHandler = null,
+            platform = null,
         )
         module.setDependencies(listOf(DefaultBuiltIns.Instance.builtInsModule, module))
 

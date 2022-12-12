@@ -351,7 +351,8 @@ private fun getModuleDescriptorByLibrary(
         LockBasedStorageManager.NO_LOCKS,
         null,
         packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
-        lookupTracker = LookupTracker.DO_NOTHING
+        lookupTracker = LookupTracker.DO_NOTHING,
+        platform = JvmPlatforms.defaultJvmPlatform,
     )
 
     val dependencies = current.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).mapNotNull {

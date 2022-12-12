@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -152,7 +153,8 @@ private fun loadResolvedLibraries(
                 storageManager,
                 builtInsModule,
                 packageAccessHandler = null,
-                lookupTracker = LookupTracker.DO_NOTHING
+                lookupTracker = LookupTracker.DO_NOTHING,
+                platform = JsPlatforms.defaultJsPlatform,
             )
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))
