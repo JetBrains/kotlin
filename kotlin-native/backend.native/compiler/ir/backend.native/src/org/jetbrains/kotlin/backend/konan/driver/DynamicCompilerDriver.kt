@@ -9,6 +9,7 @@ import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -17,12 +18,6 @@ import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
  * Dynamic driver does not "know" upfront which phases will be executed.
  */
 internal class DynamicCompilerDriver : CompilerDriver() {
-
-    companion object {
-        fun supportsConfig(): Boolean =
-                true
-    }
-
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
@@ -63,7 +58,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
         }
-        engine.runBackend(backendContext)
+        engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -74,7 +69,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
-        engine.runBackend(backendContext)
+        engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -95,7 +90,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext)
+        val module = if (config.produce.isCache) {
+            psiToIrOutput.irModules[config.libraryToCache!!.klib.libraryName]
+                    ?: error("No module for the library being cached: ${config.libraryToCache!!.klib.libraryName}")
+        } else {
+            psiToIrOutput.irModule
+        }
+        engine.runBackend(backendContext, module)
     }
 
     private fun createBackendContext(
@@ -105,10 +106,9 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,
-            frontendOutput.environment,
-            frontendOutput.frontendServices,
-            frontendOutput.bindingContext,
-            frontendOutput.moduleDescriptor
+            psiToIrOutput.irModule.irBuiltins,
+            frontendOutput.moduleDescriptor,
+            psiToIrOutput.irModules,
     ).also {
         it.populateAfterPsiToIr(psiToIrOutput)
         additionalDataSetter(it)

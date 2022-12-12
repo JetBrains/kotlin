@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDA
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -83,8 +84,8 @@ internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
 internal fun IrField.shouldBeFrozen(context: Context): Boolean =
         this.storageKind(context) == FieldStorageKind.SHARED_FROZEN
 
-internal class RTTIGeneratorVisitor(generationState: NativeGenerationState) : IrElementVisitorVoid {
-    val generator = RTTIGenerator(generationState)
+internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>) : IrElementVisitorVoid {
+    val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)
 
@@ -193,7 +194,11 @@ private interface CodeContext {
 
 //-------------------------------------------------------------------------//
 
-internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, val lifetimes: Map<IrElement, Lifetime>) : IrElementVisitorVoid {
+internal class CodeGeneratorVisitor(
+        val generationState: NativeGenerationState,
+        val irBuiltins: IrBuiltIns,
+        val lifetimes: Map<IrElement, Lifetime>
+) : IrElementVisitorVoid {
     private val context = generationState.context
     private val llvm = generationState.llvm
     private val debugInfo: DebugInfo
@@ -2512,7 +2517,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateOperatorCall           : origin:${ir2string(callee)}"}
         val function = callee.symbol.owner
-        val ib = context.irModule!!.irBuiltins
+        val ib = irBuiltins
 
         with(functionGenerationContext) {
             val functionSymbol = function.symbol

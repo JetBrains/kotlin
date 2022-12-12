@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.driver.runPhaseInParentContext
-import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
-import org.jetbrains.kotlin.backend.konan.llvm.printBitcodePhase
-import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
+import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
@@ -45,13 +48,16 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput to additionalOutput
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context) {
+internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, module: IrModuleFragment) {
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
-        backendEngine.processModuleFragments(backendEngine.context.irModule!!) { generationState, fragment ->
+        backendEngine.processModuleFragments(module) { generationState, fragment ->
             backendEngine.useContext(generationState) { generationStateEngine ->
                 // TODO: We can run compile part in parallel if we get rid of context.generationState.
-                generationStateEngine.runLowerAndCompile(fragment)
+                println("Compiling fragment with files ${fragment.files.joinToString { it.name }}")
+                generationStateEngine.runLowerings(fragment)
+                val bitcodeFileName = generationStateEngine.runCodegen(fragment)
+                generationStateEngine.produceBinary(bitcodeFileName)
             }
         }
     }
@@ -61,76 +67,137 @@ internal fun PhaseEngine<out Context>.processModuleFragments(
         input: IrModuleFragment,
         action: (NativeGenerationState, IrModuleFragment) -> Unit
 ): Unit = if (context.config.producePerFileCache) {
-    val module = context.irModules[context.config.libraryToCache!!.klib.libraryName]
-            ?: error("No module for the library being cached: ${context.config.libraryToCache!!.klib.libraryName}")
-
+    val module = input
     val files = module.files.toList()
-    module.files.clear()
     val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
 
     for (file in files) {
         if (file.isFunctionInterfaceFile) continue
-
-        context.generationState = NativeGenerationState(
+        val generationState = NativeGenerationState(
                 context.config,
                 context,
                 CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
         )
-
-        module.files += file
-        if (context.generationState.shouldDefineFunctionClasses)
-            module.files += functionInterfaceFiles
-
-        action(context.generationState, input)
-
-        module.files.clear()
-        context.irModule!!.files.clear() // [dependenciesLowerPhase] puts all files to [context.irModule] for codegen.
+        val m1 = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
+        if (generationState.shouldDefineFunctionClasses)
+            m1.files += functionInterfaceFiles
+        m1.files.filterIsInstance<IrFileImpl>().forEach {
+            it.module = m1
+        }
+        action(generationState, m1)
     }
-
-    module.files += files
 } else {
-    context.generationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
-    action(context.generationState, input)
+    val nativeGenerationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
+    action(nativeGenerationState, input)
 }
 
-/**
- * Performs all the hard work:
- * 1. Runs IR lowerings
- * 2. Runs LTO.
- * 3. Translates IR to LLVM IR.
- * 4. Optimizes it.
- * 5. Serializes it to a bitcode file.
- * 6. Compiles bitcode to an object file.
- * 7. Performs binary linkage.
- * ... And stores additional cache info.
- *
- * TODO: Split into more granular phases with explicit inputs and outputs.
- */
-internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.runLowerings(module: IrModuleFragment) {
     if (context.config.produce.isCache) {
-        runPhaseInParentContext(buildAdditionalCacheInfoPhase)
+        runPhase(BuildAdditionalCacheInfoPhase, module)
     }
     if (context.config.produce == CompilerOutputKind.PROGRAM) {
-        runPhaseInParentContext(entryPointPhase, module)
+        runPhase(EntryPointPhase, module)
     }
+    runAllLowerings(module)
+    if (!context.config.produce.isCache) {
+        lowerDependencies(module)
+    }
+}
+
+internal fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment): String {
     runBackendCodegen(module)
+    runBitcodePostProcessing()
     if (context.config.produce.isCache) {
-        runPhaseInParentContext(saveAdditionalCacheInfoPhase)
+        runPhase(SaveAdditionalCacheInfoPhase)
     }
-    runPhase(WriteBitcodeFilePhase)
-    runPhaseInParentContext(objectFilesPhase)
-    runPhaseInParentContext(linkerPhase)
+    return runPhase(WriteBitcodeFilePhase, context.llvm.module)
+}
+
+internal fun PhaseEngine<NativeGenerationState>.produceBinary(bitcodeFileName: String) {
+    val objectFiles = runPhase(ObjectFilesPhase, bitcodeFileName)
+    runPhase(LinkerPhase, objectFiles)
     if (context.config.produce.isCache) {
-        runPhaseInParentContext(finalizeCachePhase)
+        runPhase(SaveAdditionalCacheInfoPhase)
     }
+}
+
+
+internal val PropertyAccessorInlinePhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "PropertyAccessorInline",
+        description = "Property accessor inline lowering"
+) { context, irFile ->
+    PropertyAccessorInlineLowering(context.context).lower(irFile)
+}
+
+internal val UnboxInlinePhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "UnboxInline",
+        description = "Unbox functions inline lowering"
+) { context, irFile ->
+    UnboxInlineLowering(context.context).lower(irFile)
+}
+
+internal fun PhaseEngine<NativeGenerationState>.runBitcodePhases(module: IrModuleFragment) {
+    val optimize = context.shouldOptimize()
+    module.files.forEach {
+        runPhase(ReturnsInsertionPhase, it)
+    }
+    val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
+    val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
+    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
+    runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
+    runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizationAnalysisResults), disable = !optimize)
+    // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
+    // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
+    module.files.forEach {
+        runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
+        runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
+        runPhase(RedundantCoercionsCleaningPhase, it)
+        // depends on redundantCoercionsCleaningPhase
+        runPhase(UnboxInlinePhase, it, disable = !optimize)
+
+    }
+    runPhase(CreateLLVMDeclarationsPhase, module)
+    runPhase(GHAPhase, module, disable = !optimize)
+    runPhase(RTTIPhase, RTTIInput(module, dceResult))
+    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
+    runPhase(CodegenPhase, CodegenInput(module, lifetimes))
+}
+
+internal fun PhaseEngine<NativeGenerationState>.lowerDependencies(input: IrModuleFragment) {
+    val parent = context.context
+    val files = mutableListOf<IrFile>()
+    files += input.files
+    input.files.clear()
+
+    // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+    context.config.librariesWithDependencies(input.descriptor)
+            .reversed()
+            .forEach {
+                val libModule = parent.irModules[it.libraryName]
+                if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
+                    return@forEach
+                runAllLowerings(libModule)
+            }
+
+    // Save all files for codegen in reverse topological order.
+    // This guarantees that libraries initializers are emitted in correct order.
+    context.config.librariesWithDependencies(input.descriptor)
+            .forEach {
+                val libModule = parent.irModules[it.libraryName]
+                if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
+                    return@forEach
+                input.files += libModule.files
+            }
+
+    input.files += files
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
-    runPhaseInParentContext(allLoweringsPhase, module)
-    runPhaseInParentContext(dependenciesLowerPhase, module)
-    runPhaseInParentContext(bitcodePhase, module)
-    runPhaseInParentContext(verifyBitcodePhase, module)
-    runPhaseInParentContext(printBitcodePhase, module)
-    runPhaseInParentContext(linkBitcodeDependenciesPhase, module)
-    runPhaseInParentContext(bitcodePostprocessingPhase, module)
+    runBitcodePhases(module)
+    runPhase(CStubsPhase)
+    if (context.config.needCompilerVerification || context.config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)) {
+        runPhase(VerifyBitcodePhase)
+    }
+    runPhase(PrintBitcodePhase)
+    runPhase(LinkBitcodeDependenciesPhase)
 }

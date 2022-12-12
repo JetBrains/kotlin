@@ -10,42 +10,31 @@ import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
-import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
-import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
-import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
@@ -67,30 +56,22 @@ internal class NativeMapping : DefaultMapping() {
 
 internal class Context(
         config: KonanConfig,
-        val environment: KotlinCoreEnvironment,
-        val frontendServices: FrontendServices,
-        override var bindingContext: BindingContext,
+        override val irBuiltIns: IrBuiltIns,
         val moduleDescriptor: ModuleDescriptor,
-) : KonanBackendContext(config), PsiToIrContext {
+        val irModules: Map<String, IrModuleFragment>,
+) : KonanBackendContext(config), PhaseContext {
 
     fun populateAfterPsiToIr(
             psiToIrOutput: PsiToIrOutput
     ) {
-        irModules = psiToIrOutput.irModules
-        irModule = psiToIrOutput.irModule
-        expectDescriptorToSymbol = psiToIrOutput.expectDescriptorToSymbol
-        ir = KonanIr(this, psiToIrOutput.irModule)
+        ir = KonanIr(this)
         ir.symbols = psiToIrOutput.symbols
         if (psiToIrOutput.irLinker is KonanIrLinker) {
             irLinker = psiToIrOutput.irLinker
         }
     }
 
-    override var symbolTable: SymbolTable? = null
-
     lateinit var cAdapterExportedElements: CAdapterExportedElements
-
-    lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
@@ -102,23 +83,11 @@ internal class Context(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    // TODO: Drop it to reduce code coupling and make it possible to have multiple
-    //  generationStates at the same time.
-    lateinit var generationState: NativeGenerationState
-
-    fun disposeGenerationState() {
-        if (::generationState.isInitialized) generationState.dispose()
-    }
-
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
-
-    override val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
-        KonanReflectionTypes(moduleDescriptor)
-    }
 
     // TODO: Remove after adding special <userData> property to IrDeclaration.
     private val layoutBuilders = mutableMapOf<IrClass, ClassLayoutBuilder>()
@@ -138,13 +107,6 @@ internal class Context(
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
 
-    // We serialize untouched descriptor tree and IR.
-    // But we have to wait until the code generation phase,
-    // to dump this information into generated file.
-    var serializedMetadata: SerializedMetadata? = null
-    var serializedIr: SerializedIrModule? = null
-    var dataFlowGraph: ByteArray? = null
-
     val librariesWithDependencies by lazy {
         config.librariesWithDependencies(moduleDescriptor)
     }
@@ -156,27 +118,12 @@ internal class Context(
         return true
     }
 
-    lateinit var irModules: Map<String, IrModuleFragment>
-
-    // TODO: make lateinit?
-    var irModule: IrModuleFragment? = null
-        set(module) {
-            if (field != null) {
-                throw Error("Another IrModule in the context.")
-            }
-            field = module!!
-            ir = KonanIr(this, module)
-        }
-
     override lateinit var ir: KonanIr
-
-    override val irBuiltIns
-        get() = ir.irModule.irBuiltins
 
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
-    override val interopBuiltIns by lazy {
+    val interopBuiltIns by lazy {
         InteropBuiltIns(this.builtIns)
     }
 
@@ -184,20 +131,6 @@ internal class Context(
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
     lateinit var library: KonanLibraryLayout
-
-    fun separator(title: String) {
-        println("\n\n--- ${title} ----------------------\n")
-    }
-
-    fun verifyBitCode() {
-        if (::generationState.isInitialized)
-            generationState.verifyBitCode()
-    }
-
-    fun printBitCode() {
-        if (::generationState.isInitialized)
-            generationState.printBitCode()
-    }
 
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
@@ -210,13 +143,7 @@ internal class Context(
         }
     }
 
-    var moduleDFG: ModuleDFG? = null
-    val lifetimes = mutableMapOf<IrElement, Lifetime>()
-    var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
-
-    var referencedFunctions: Set<IrFunction>? = null
-
-    override val stdlibModule
+    val stdlibModule
         get() = this.builtIns.any.module
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()

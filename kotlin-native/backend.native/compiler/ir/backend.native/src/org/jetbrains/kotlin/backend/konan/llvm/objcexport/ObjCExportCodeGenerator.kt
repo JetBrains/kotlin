@@ -221,7 +221,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
 
-    val rttiGenerator = RTTIGenerator(generationState)
+    val rttiGenerator = RTTIGenerator(generationState, emptySet())
 
     private val objcTerminate: LlvmCallable by lazy {
         llvm.externalFunction(LlvmFunctionProto(

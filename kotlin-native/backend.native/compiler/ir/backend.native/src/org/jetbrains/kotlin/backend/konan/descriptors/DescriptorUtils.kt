@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
-import org.jetbrains.kotlin.backend.konan.llvm.longName
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -284,6 +283,9 @@ inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String):
     val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
     return parameter?.let { getValueArgument(it.index)?.let { (it as IrConst<*>).value as T } }
 }
+
+private val IrFunction.longName: String
+    get() = "${(parent as? IrClass)?.name?.asString() ?: "<root>"}.${(this as? IrSimpleFunction)?.name ?: "<init>"}"
 
 fun IrFunction.externalSymbolOrThrow(): String? {
     annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationStringValue() }

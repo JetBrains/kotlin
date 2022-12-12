@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpect
  * This pass removes all declarations with `isExpect == true`.
  * Note: org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationsRemoving is copy of this lower.
  */
-internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPass {
+internal class ExpectDeclarationsRemoving : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
         irFile.declarations.removeAll {

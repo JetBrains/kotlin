@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -30,9 +31,10 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
  */
-internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
-
-    private val irBuiltins = context.irModule!!.irBuiltins
+internal class BuiltinOperatorLowering(
+        val context: Context,
+        private val irBuiltins: IrBuiltIns,
+) : FileLoweringPass, IrBuildingTransformer(context) {
     private val symbols = context.ir.symbols
 
     override fun lower(irFile: IrFile) {

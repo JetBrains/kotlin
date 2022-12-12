@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
 class CompilerResult(
@@ -127,7 +126,6 @@ fun compileIr(
         moduleDescriptor,
         irBuiltIns,
         symbolTable,
-        allModules.first(),
         exportedDeclarations,
         keep,
         configuration,

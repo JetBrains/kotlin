@@ -55,7 +55,7 @@ internal object DevirtualizationAnalysis {
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    fun computeRootSet(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
+    fun computeRootSet(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
             : List<DataFlowIR.FunctionSymbol> {
 
         fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
@@ -97,7 +97,7 @@ internal object DevirtualizationAnalysis {
         // At this point all function references are lowered except those leaking to the native world.
         // Conservatively assume them belonging of the root set.
         val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
-        context.irModule!!.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -128,6 +128,7 @@ internal object DevirtualizationAnalysis {
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
 
     internal class DevirtualizationAnalysisImpl(val context: Context,
+                                                val irModule: IrModuleFragment,
                                                 val moduleDFG: ModuleDFG,
                                                 val externalModulesDFG: ExternalModulesDFG) {
 
@@ -234,7 +235,21 @@ internal object DevirtualizationAnalysis {
         private fun IntArray.getEdge(v: Int, id: Int) = this[this[v] + id]
         private fun IntArray.edgeCount(v: Int) = this[v + 1] - this[v]
 
-        inner class TypeHierarchy(val allTypes: Array<DataFlowIR.Type.Declared>) {
+        interface TH {
+            val allTypes: Array<DataFlowIR.Type.Declared>
+
+            fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet
+        }
+
+        object EmptyTH : TH {
+            override val allTypes: Array<DataFlowIR.Type.Declared> = emptyArray()
+
+            override fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
+                return BitSet()
+            }
+        }
+
+        inner class TypeHierarchy(override val allTypes: Array<DataFlowIR.Type.Declared>) : TH {
             private val typesSubTypes = Array(allTypes.size) { mutableListOf<DataFlowIR.Type.Declared>() }
             private val allInheritors = Array(allTypes.size) { BitSet() }
 
@@ -256,7 +271,7 @@ internal object DevirtualizationAnalysis {
                 allTypes.forEach { processType(it) }
             }
 
-            fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
+            override fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
                 val typeId = type.index
                 val inheritors = allInheritors[typeId]
                 if (!inheritors.isEmpty || type == DataFlowIR.Type.Virtual) return inheritors
@@ -433,7 +448,7 @@ internal object DevirtualizationAnalysis {
             for (type in allDeclaredTypes)
                 allTypes[type.index] = type
             val typeHierarchy = TypeHierarchy(allTypes)
-            val rootSet = computeRootSet(context, moduleDFG, externalModulesDFG)
+            val rootSet = computeRootSet(context, irModule, moduleDFG, externalModulesDFG)
 
             val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
 
@@ -1306,10 +1321,10 @@ internal object DevirtualizationAnalysis {
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
     class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
-                         val typeHierarchy: DevirtualizationAnalysisImpl.TypeHierarchy)
+                         val typeHierarchy: DevirtualizationAnalysisImpl.TH)
 
-    fun run(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
-            DevirtualizationAnalysisImpl(context, moduleDFG, externalModulesDFG).analyze()
+    fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
+            DevirtualizationAnalysisImpl(context, irModule, moduleDFG, externalModulesDFG).analyze()
 
     fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                      devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
