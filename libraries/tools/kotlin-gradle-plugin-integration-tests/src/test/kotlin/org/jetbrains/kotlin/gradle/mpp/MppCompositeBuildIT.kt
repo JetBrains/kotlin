@@ -131,4 +131,24 @@ class MppCompositeBuildIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `test - sample1 - assemble and execute - included build using older version of Kotlin`(gradleVersion: GradleVersion) {
+        project("mpp-composite-build/sample1", gradleVersion) {
+            projectPath.resolve("included-build").addDefaultBuildFiles()
+            buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
+            projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
+
+            build("assemble") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":compileKotlinJvm")
+                assertTasksExecuted(":compileKotlinJs")
+            }
+
+            build("check") {
+                assertTasksExecuted(":jvmTest")
+                assertTasksExecuted(":jsTest")
+            }
+        }
+    }
 }
