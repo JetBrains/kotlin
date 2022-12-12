@@ -48,8 +48,13 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun isAnnotationType(): Boolean = false
     override fun isEnum(): Boolean = false
     override fun hasTypeParameters(): Boolean = false
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = false
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
+        baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
+
+    override fun getExtendsListTypes(): Array<PsiClassType?> = PsiClassType.EMPTY_ARRAY
     override fun getExtendsList(): PsiReferenceList? = null
+    override fun getImplementsListTypes(): Array<PsiClassType?> = PsiClassType.EMPTY_ARRAY
+    override fun getImplementsList(): PsiReferenceList? = null
 
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement {

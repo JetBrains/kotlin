@@ -1,2 +1,2 @@
-one.two.MyInterface.DefaultImpls|java.lang.Object|false| -> false
-one.two.MyInterface.DefaultImpls|java.lang.Object|true| -> false
+one.two.MyInterface.DefaultImpls|java.lang.Object|false| -> true
+one.two.MyInterface.DefaultImpls|java.lang.Object|true| -> true
