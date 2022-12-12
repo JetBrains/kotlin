@@ -24,7 +24,7 @@ internal fun TestProject.resolveIdeDependencies(
     assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit
 ) {
     build("${subproject.orEmpty()}:resolveIdeDependencies") {
-        val subprojectPathPrefix = subproject?.removePrefix(":")?.replace(":", "/")?.plus("/") ?: ""
+        val subprojectPathPrefix = subproject?.removePrefix(":")?.takeIf { it.isNotEmpty() }?.replace(":", "/")?.plus("/") ?: ""
         val output = projectPath.resolve("${subprojectPathPrefix}build/ide/dependencies/proto").toFile()
         if (!output.isDirectory) fail("Missing output directory: $output")
 

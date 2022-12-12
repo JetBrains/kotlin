@@ -1,8 +1,14 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("1.7.21")
+    id("org.jetbrains.kotlin.multiplatform").version("<kgp_version>")
 }
 
 repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+repositories {
+    mavenLocal()
     mavenCentral()
 }
 

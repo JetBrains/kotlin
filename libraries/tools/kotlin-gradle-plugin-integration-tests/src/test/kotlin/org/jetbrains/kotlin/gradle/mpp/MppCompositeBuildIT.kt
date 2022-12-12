@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.kotilnNativeDistributionDependencies
-import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
-import org.jetbrains.kotlin.gradle.util.replaceText
-import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.absolutePathString
 
@@ -77,6 +75,59 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
                 assertTasksUpToDate(":consumerA:compileKotlinLinuxX64")
                 assertTasksUpToDate(":consumerA:compileKotlinJvm")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
+        project("mpp-composite-build/sample1", gradleVersion) {
+            projectPath.resolve("included-build").addDefaultBuildFiles()
+            buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
+            projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
+
+            resolveIdeDependencies(":") { dependencies ->
+                dependencies["commonMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    regularSourceDependency("included-build::included/commonMain")
+                )
+
+                dependencies["jvmMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    jetbrainsAnnotationDependencies,
+
+                    dependsOnDependency(":/commonMain"),
+                    projectArtifactDependency(
+                        Regular, "included-build::included",
+                        FilePathRegex(".*/included-build/included/build/libs/included-jvm.jar")
+                    )
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
+        project("mpp-composite-build/sample1", gradleVersion) {
+            projectPath.resolve("included-build").addDefaultBuildFiles()
+            buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
+            projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
+
+            build("assemble") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":compileKotlinJvm")
+                assertTasksExecuted(":compileKotlinJs")
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileCommonMainKotlinMetadata")
+                assertTasksUpToDate(":compileKotlinJvm")
+                assertTasksUpToDate(":compileKotlinJs")
+            }
+
+            build("check") {
+                assertTasksExecuted(":jvmTest")
+                assertTasksExecuted(":jsTest")
             }
         }
     }
