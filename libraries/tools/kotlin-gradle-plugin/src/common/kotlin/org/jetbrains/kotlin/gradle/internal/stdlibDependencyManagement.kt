@@ -62,7 +62,7 @@ internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { co
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     (dependency.name == "kotlin-stdlib" || dependency.name == "kotlin-stdlib-jdk7") &&
                     dependency.version != null &&
-                    SemVer.from(dependency.version!!) >= kotlin180Version
+                    SemVer.fromGradleRichVersion(dependency.version!!) >= kotlin180Version
                 ) {
                     if (configuration.isCanBeResolved) configuration.alignStdlibJvmVariantVersions(dependency)
 
