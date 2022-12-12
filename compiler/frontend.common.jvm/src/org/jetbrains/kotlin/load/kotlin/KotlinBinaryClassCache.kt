@@ -12,9 +12,10 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
+
 
 class KotlinBinaryClassCache : Disposable {
     private val requestCaches = CopyOnWriteArrayList<WeakReference<RequestCache>>()
@@ -24,15 +25,27 @@ class KotlinBinaryClassCache : Disposable {
         var modificationStamp: Long = 0
         var result: KotlinClassFinder.Result? = null
 
+        // this makes cached ReusableByteArray instances to be clearly visible in debugger
+        private val cachedRefDelta = 1000
+
         fun cache(
             file: VirtualFile,
             result: KotlinClassFinder.Result?
         ): KotlinClassFinder.Result? {
+            check(virtualFile == null)
+            result?.contentRef?.addRef(cachedRefDelta)
             virtualFile = file
-            this.result = result
             modificationStamp = file.modificationStamp
-
+            this.result = result
             return result
+        }
+
+        fun clear() {
+            if (virtualFile == null) return
+            virtualFile = null
+            modificationStamp = 0
+            result?.contentRef?.release(cachedRefDelta)
+            result = null
         }
     }
 
@@ -46,10 +59,7 @@ class KotlinBinaryClassCache : Disposable {
 
     override fun dispose() {
         for (cache in requestCaches) {
-            cache.get()?.run {
-                result = null
-                virtualFile = null
-            }
+            cache.get()?.clear()
         }
         requestCaches.clear()
         // This is only relevant for tests. We create a new instance of Application for each test, and so a new instance of this service is
@@ -59,8 +69,11 @@ class KotlinBinaryClassCache : Disposable {
     }
 
     companion object {
+        /**
+         * **Resource ref counting**: Returns result with a contentRef reference that must be released after use.
+         */
         fun getKotlinBinaryClassOrClassFileContent(
-            file: VirtualFile, fileContent: ByteArray? = null
+            file: VirtualFile, fileContent: ReusableByteArray? = null
         ): KotlinClassFinder.Result? {
             if (file.extension != JavaClassFileType.INSTANCE.defaultExtension &&
                 file.fileType !== JavaClassFileType.INSTANCE
@@ -68,12 +81,15 @@ class KotlinBinaryClassCache : Disposable {
 
             if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
 
-            val service = ServiceManager.getService(KotlinBinaryClassCache::class.java)
-            val requestCache = service.cache.get()
+            val service: KotlinBinaryClassCache = ServiceManager.getService(KotlinBinaryClassCache::class.java)
+            val requestCache: RequestCache = service.cache.get()
 
             if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
-                return requestCache.result
+                return requestCache.result!!.also { it.contentRef?.addRef() }
             }
+
+            // Clear cache first, so that the previous byte array can be reused
+            requestCache.clear()
 
             val aClass = ApplicationManager.getApplication().runReadAction(Computable {
                 VirtualFileKotlinClass.create(file, fileContent)

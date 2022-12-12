@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
+import org.jetbrains.kotlin.utils.ReusableByteArray
 
-interface KotlinJvmBinaryClass {
+interface KotlinJvmBinaryClass : JvmMemberAnnotationsSource {
     val classId: ClassId
 
     /**
@@ -22,9 +23,18 @@ interface KotlinJvmBinaryClass {
     val containingLibrary: String?
         get() = null
 
-    fun loadClassAnnotations(visitor: AnnotationVisitor, cachedContents: ByteArray?)
+    fun visitClassAnnotations(traceName: String, annotationVisitor: AnnotationVisitor, cachedContents: ReusableByteArray?)
 
-    fun visitMembers(visitor: MemberVisitor, cachedContents: ByteArray?)
+    fun visitMemberAndClassAnnotations(
+        traceName: String,
+        annotationVisitor: AnnotationVisitor?,
+        memberVisitor: MemberVisitor,
+        cachedContents: ReusableByteArray?
+    )
+
+    override fun visitMemberAnnotations(traceName: String, memberVisitor: MemberVisitor, cachedContents: ReusableByteArray?) {
+        visitMemberAndClassAnnotations(traceName, null, memberVisitor, cachedContents)
+    }
 
     val classHeader: KotlinClassHeader
 
@@ -73,4 +83,17 @@ interface KotlinJvmBinaryClass {
 
         fun visitEnd()
     }
+}
+
+/**
+ * This interface provides ability to visit member annotation both from class bytes, via [KotlinJvmBinaryClass] as well as from
+ * the previously parsed in-memory representation that does not involve keeping an array of bytes around, via
+ * [org.jetbrains.kotlin.fir.java.deserialization.JvmMemberAnnotations].
+ */
+interface JvmMemberAnnotationsSource {
+    fun visitMemberAnnotations(
+        traceName: String,
+        memberVisitor: KotlinJvmBinaryClass.MemberVisitor,
+        cachedContents: ReusableByteArray?
+    )
 }

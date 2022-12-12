@@ -399,11 +399,16 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                     processEnumWhenTracker(enumWhenTracker, sourceFile, output, callback)
                 }
 
+                val fileContentsRef = output.outputClass.fileContentsRef
                 callback.associate(
                     FileUtil.toSystemIndependentName(output.outputFile.normalize().absolutePath),
                     sourceFiles.map { FileUtil.toSystemIndependentName(it.normalize().absolutePath) },
-                    ClassReader(output.outputClass.fileContents)
+                    ClassReader(fileContentsRef.bytes, 0, fileContentsRef.size)
                 )
+                // It is Ok to release the reference here, even though fileContentsRef got leaked into the callback, because
+                // outputClass is of type LocalFileKotlinClass that stores a permanent reference to ReusableByteArray
+                // that never gets released anyway
+                fileContentsRef.release()
             }
         }
 

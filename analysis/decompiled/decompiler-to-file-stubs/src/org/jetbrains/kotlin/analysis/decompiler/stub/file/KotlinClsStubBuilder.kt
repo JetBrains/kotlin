@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.asReusableByteArray
 
 open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
@@ -188,7 +188,7 @@ private class AnnotationLoaderForClassFileStubBuilder(
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsClassIdContainer {
         val memberAnnotations = HashMap<MemberSignature, MutableList<ClassId>>()
 
-        kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+        kotlinClass.visitMemberAnnotations("loadAnnotationsAndInitializers", object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
                 return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
             }
@@ -231,7 +231,7 @@ private class AnnotationLoaderForClassFileStubBuilder(
                     }
                 }
             }
-        }, getCachedFileContent(kotlinClass))
+        }, getCachedFileContent(kotlinClass)?.asReusableByteArray())
 
         return AnnotationsClassIdContainer(memberAnnotations)
     }

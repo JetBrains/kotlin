@@ -4,18 +4,16 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.utils.asInputStream
 import java.io.File
-import java.io.FileNotFoundException
+import java.io.InputStream
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
 
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
     private val myRoot: VirtualFile?
     internal val file = File(path)
-
-    private val cachedManifest: ByteArray?
 
     init {
         val entries: List<ZipEntryDescription>
@@ -27,9 +25,6 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
                 } catch (e: Exception) {
                     throw IllegalStateException("Error while reading '${file.path}': $e", e)
                 }
-                cachedManifest =
-                    entries.singleOrNull { StringUtil.equals(MANIFEST_PATH, it.relativePath) }
-                        ?.let(mappedByteBuffer::contentsToByteArray)
             } finally {
                 with(fileSystem) {
                     mappedByteBuffer.unmapBuffer()
@@ -98,14 +93,17 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
     }
 
     fun contentsToByteArray(zipEntryDescription: ZipEntryDescription): ByteArray {
-        val relativePath = zipEntryDescription.relativePath
-        if (StringUtil.equals(relativePath, MANIFEST_PATH)) return cachedManifest ?: throw FileNotFoundException("$file!/$relativePath")
         return fileSystem.cachedOpenFileHandles[file].use {
-            synchronized(it) {
-                it.get().second.contentsToByteArray(zipEntryDescription)
-            }
+            it.get().second.contentsToByteArraySync(zipEntryDescription)
+        }
+    }
+
+    fun contentsToInputStream(zipEntryDescription: ZipEntryDescription): InputStream {
+        fileSystem.lastAccessCache.getReusableByteArraySync(file, zipEntryDescription)?.let { return it.asInputStream() }
+        return fileSystem.cachedOpenFileHandles[file].use {
+            val contents = it.get().second.contentsToReusableByteArraySync(zipEntryDescription)
+            fileSystem.lastAccessCache.putReusableByteArraySync(file, zipEntryDescription, contents)
+            contents.asInputStream()
         }
     }
 }
-
-private const val MANIFEST_PATH = "META-INF/MANIFEST.MF"

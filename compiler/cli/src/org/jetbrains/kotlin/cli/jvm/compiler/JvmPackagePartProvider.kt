@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.utils.ReusableByteArray
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.PrintStream
@@ -52,7 +54,7 @@ class JvmPackagePartProvider(
                 if (!moduleFile.name.endsWith(ModuleMapping.MAPPING_FILE_EXT)) continue
 
                 tryLoadModuleMapping(
-                    { moduleFile.contentsToByteArray() }, moduleFile.toString(), moduleFile.path,
+                    moduleFile.inputStream.readToReusableByteArrayRef(moduleFile.length), moduleFile.toString(), moduleFile.path,
                     deserializationConfiguration, messageCollector
                 )?.let {
                     loadedModules.add(ModuleMappingInfo(root, it, moduleFile.nameWithoutExtension))
@@ -63,13 +65,13 @@ class JvmPackagePartProvider(
 }
 
 fun tryLoadModuleMapping(
-    getModuleBytes: () -> ByteArray,
+    moduleBytes: ReusableByteArray,
     debugName: String,
     modulePath: String,
     deserializationConfiguration: CompilerDeserializationConfiguration,
     messageCollector: MessageCollector
 ): ModuleMapping? = try {
-    ModuleMapping.loadModuleMapping(getModuleBytes(), debugName, deserializationConfiguration) { incompatibleVersion ->
+    ModuleMapping.loadModuleMapping(moduleBytes, debugName, deserializationConfiguration) { incompatibleVersion ->
         messageCollector.report(
             ERROR,
             "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is " +

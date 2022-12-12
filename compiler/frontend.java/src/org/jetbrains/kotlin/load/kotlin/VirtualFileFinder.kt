@@ -32,11 +32,17 @@ abstract class VirtualFileFinder : KotlinClassFinder {
 
     abstract fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile?
 
+    /**
+     * **Resource ref counting**: Returns result with a contentRef reference that must be released after use.
+     */
     override fun findKotlinClassOrContent(classId: ClassId): KotlinClassFinder.Result? {
         val file = findVirtualFileWithHeader(classId) ?: return null
         return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file)
     }
 
+    /**
+     * **Resource ref counting**: Returns result with a contentRef reference that must be released after use.
+     */
     override fun findKotlinClassOrContent(javaClass: JavaClass): KotlinClassFinder.Result? {
         var file = (javaClass as? VirtualFileBoundJavaClass)?.virtualFile ?: return null
 

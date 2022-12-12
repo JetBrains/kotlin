@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.asReusableByteArray
 
 fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
     return asList().filterClassFiles()
@@ -86,7 +87,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
 
 private fun GenerationState.loadCompiledModule(): ModuleMapping? {
     val moduleMappingData = incrementalCacheForThisTarget?.getModuleMappingData() ?: return null
-    return ModuleMapping.loadModuleMapping(moduleMappingData, "<incremental>", deserializationConfiguration) { version ->
+    return ModuleMapping.loadModuleMapping(moduleMappingData.asReusableByteArray(), "<incremental>", deserializationConfiguration) { version ->
         throw IllegalStateException("Version of the generated module cannot be incompatible: $version")
     }
 }

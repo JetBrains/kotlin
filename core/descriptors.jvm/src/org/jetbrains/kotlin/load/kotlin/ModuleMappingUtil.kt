@@ -8,17 +8,23 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.utils.ReusableByteArray
+import org.jetbrains.kotlin.utils.asInputStream
 
 fun ModuleMapping.Companion.loadModuleMapping(
-    bytes: ByteArray?,
+    bytes: ReusableByteArray?, // Note: it gets consumed and released by this method!
     debugName: String,
     configuration: DeserializationConfiguration,
     reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
-): ModuleMapping =
-    loadModuleMapping(
-        bytes,
-        debugName,
-        configuration.skipMetadataVersionCheck,
-        configuration.isJvmPackageNameSupported,
-        reportIncompatibleVersionError
-    )
+): ModuleMapping {
+    if (bytes == null) return EMPTY
+    return bytes.traceOperation("loadModuleMapping") {
+        loadModuleMapping(
+            bytes.asInputStream(),
+            debugName,
+            configuration.skipMetadataVersionCheck,
+            configuration.isJvmPackageNameSupported,
+            reportIncompatibleVersionError
+        )
+    }
+}

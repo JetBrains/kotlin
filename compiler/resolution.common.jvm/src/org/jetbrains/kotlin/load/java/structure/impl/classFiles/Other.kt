@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -87,30 +88,30 @@ class BinaryJavaRecordComponent(
         get() = emptyMap()
 }
 
-fun isNotTopLevelClass(classContent: ByteArray): Boolean {
+fun isNotTopLevelClass(classContent: ReusableByteArray): Boolean {
     var isNotTopLevelClass = false
-    ClassReader(classContent).accept(
-        object : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
-            private var internalName: String? = null
-            override fun visit(
-                version: Int,
-                access: Int,
-                name: String?,
-                signature: String?,
-                superName: String?,
-                interfaces: Array<out String>?
-            ) {
-                internalName = name
-            }
+    val visitor = object : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
+        private var internalName: String? = null
+        override fun visit(
+            version: Int,
+            access: Int,
+            name: String?,
+            signature: String?,
+            superName: String?,
+            interfaces: Array<out String>?
+        ) {
+            internalName = name
+        }
 
-            override fun visitInnerClass(name: String?, outerName: String?, innerName: String?, access: Int) {
-                // Do not read InnerClasses attribute values where full name != outer + $ + inner; treat those classes as top level instead.
-                if (name == internalName && (innerName == null || name == "$outerName$$innerName")) {
-                    isNotTopLevelClass = true
-                }
+        override fun visitInnerClass(name: String?, outerName: String?, innerName: String?, access: Int) {
+            // Do not read InnerClasses attribute values where full name != outer + $ + inner; treat those classes as top level instead.
+            if (name == internalName && (innerName == null || name == "$outerName$$innerName")) {
+                isNotTopLevelClass = true
             }
-        },
-        ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
-    )
+        }
+    }
+    classContent.traceOperation("isNotTopLevelClass", { ClassReader(it.bytes, 0, it.size) }) {
+        it.accept(visitor, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+    }
     return isNotTopLevelClass
 }

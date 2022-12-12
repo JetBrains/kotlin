@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationLoader
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.utils.asReusableByteArray
 
 abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>>(
     protected val kotlinClassFinder: KotlinClassFinder
@@ -55,14 +56,14 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
 
         val result = ArrayList<A>(1)
 
-        kotlinClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
+        kotlinClass.visitClassAnnotations("loadClassAnnotations", object : KotlinJvmBinaryClass.AnnotationVisitor {
             override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                 return loadAnnotationIfNotSpecial(classId, source, result)
             }
 
             override fun visitEnd() {
             }
-        }, getCachedFileContent(kotlinClass))
+        }, getCachedFileContent(kotlinClass)?.asReusableByteArray())
 
         return result
     }

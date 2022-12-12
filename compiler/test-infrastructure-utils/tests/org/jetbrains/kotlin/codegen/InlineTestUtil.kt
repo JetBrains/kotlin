@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -212,18 +213,19 @@ object InlineTestUtil {
                 || klass.classHeader.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
     }
 
-    private fun loadBinaryClass(file: OutputFile): KotlinJvmBinaryClass =
-        FileBasedKotlinClass.create<FileBasedKotlinClass>(file.asByteArray()) { className, classVersion, classHeader, innerClasses ->
+    private fun loadBinaryClass(file: OutputFile): KotlinJvmBinaryClass {
+        return FileBasedKotlinClass.create<FileBasedKotlinClass>(file.asByteArray()) { className, classVersion, classHeader, innerClasses ->
             object : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
                 override val location: String
                     get() = throw UnsupportedOperationException()
 
-                override fun getFileContents(): ByteArray = throw UnsupportedOperationException()
+                override fun getFileContentsRef(): ReusableByteArray = throw UnsupportedOperationException()
                 override fun hashCode(): Int = throw UnsupportedOperationException()
                 override fun equals(other: Any?): Boolean = throw UnsupportedOperationException()
                 override fun toString(): String = throw UnsupportedOperationException()
             }
         }!!
+    }
 
     private class InlineInfo(val inlineMethods: Set<MethodInfo>, val binaryClasses: Map<String, KotlinJvmBinaryClass>)
 

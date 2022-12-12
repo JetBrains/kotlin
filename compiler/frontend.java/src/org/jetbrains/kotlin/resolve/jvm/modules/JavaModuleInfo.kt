@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.kotlin.utils.compact
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
 import java.io.IOException
 
@@ -63,8 +64,8 @@ class JavaModuleInfo(
         )
 
         fun read(file: VirtualFile, javaFileManager: KotlinCliJavaFileManager, searchScope: GlobalSearchScope): JavaModuleInfo? {
-            val contents = try {
-                file.contentsToByteArray()
+            val contentsRef = try {
+                file.inputStream.readToReusableByteArrayRef(file.length)
             } catch (e: IOException) {
                 return null
             }
@@ -74,7 +75,7 @@ class JavaModuleInfo(
             val annotations = arrayListOf<JavaAnnotation>()
 
             try {
-                ClassReader(contents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                val visitor = object : ClassVisitor(Opcodes.API_VERSION) {
                     override fun visitModule(name: String, access: Int, version: String?): ModuleVisitor {
                         moduleName = name
 
@@ -104,7 +105,13 @@ class JavaModuleInfo(
 
                         return visitor
                     }
-                }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
+                }
+                contentsRef.traceOperation("JavaModuleInfo", { ClassReader(it.bytes, 0, it.size) }) {
+                    it.accept(
+                        visitor, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
+                    )
+                }
+                contentsRef.release()
             } catch (e: Exception) {
                 throw IllegalStateException(
                     "Could not load module definition from: $file. The file might be broken " +

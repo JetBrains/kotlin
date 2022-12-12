@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.ReusableByteArray
 
 interface JavaClassFinder {
     data class Request(
         val classId: ClassId,
         @Suppress("ArrayInDataClass")
-        val previouslyFoundClassFileContent: ByteArray? = null,
+        val previouslyFoundClassFileContent: ReusableByteArray? = null,
         val outerClass: JavaClass? = null
     )
 

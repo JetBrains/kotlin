@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.StringTableImpl;
+import org.jetbrains.kotlin.utils.ReusableByteArray;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
@@ -203,7 +204,7 @@ public class ClassFileFactory implements OutputFileCollection {
                 case "kotlin_module": {
                     try {
                         ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
-                                ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
+                                ModuleMapping.Companion, new ReusableByteArray(file.asByteArray()), relativePath.getPath(),
                                 CompilerDeserializationConfiguration.Default.INSTANCE,
                                 version -> {
                                     throw new ModuleMappingException("Generated module has incompatible JVM metadata version: " + version);

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
+import java.io.*
 
 /**
  * Represents the parsed metadata of a Kotlin JVM module file.
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  */
 class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
     @get:IgnoreInApiDump internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
-        bytes, javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
+        ByteArrayInputStream(bytes), javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
     ) {
         // TODO: report incorrect versions of modules
     }

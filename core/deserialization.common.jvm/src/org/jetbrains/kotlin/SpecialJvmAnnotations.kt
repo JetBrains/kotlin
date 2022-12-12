@@ -25,7 +25,7 @@ object SpecialJvmAnnotations {
 
     fun isAnnotatedWithContainerMetaAnnotation(klass: KotlinJvmBinaryClass): Boolean {
         var result = false
-        klass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
+        klass.visitClassAnnotations("isAnnotatedWithContainerMetaAnnotation", object : KotlinJvmBinaryClass.AnnotationVisitor {
             override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                 if (classId == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_META_ANNOTATION) {
                     result = true

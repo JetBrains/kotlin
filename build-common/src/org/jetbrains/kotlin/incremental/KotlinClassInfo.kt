@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import org.jetbrains.org.objectweb.asm.*
 
 /**
@@ -80,10 +81,11 @@ class KotlinClassInfo constructor(
     companion object {
 
         fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
-            return createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
+            val classContentsRef = kotlinClass.fileContentsRef
+            return createFrom(kotlinClass.classId, kotlinClass.classHeader, classContentsRef).also { classContentsRef.release() }
         }
 
-        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
+        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ReusableByteArray): KotlinClassInfo {
             val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classHeader, classContents)
 
             return KotlinClassInfo(
@@ -105,24 +107,28 @@ class KotlinClassInfo constructor(
  */
 private fun getConstantsAndInlineFunctionsOrAccessors(
     classHeader: KotlinClassHeader,
-    classContents: ByteArray
+    classContents: ReusableByteArray
 ): Pair<Map<JvmMemberSignature.Field, Any>, Map<InlineFunctionOrAccessor, Long>> {
     val constantsClassVisitor = ConstantsClassVisitor()
     val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true)
 
     return if (inlineFunctionsAndAccessors.isEmpty()) {
-        // Handle this case differently to improve performance
-        // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important for constants
-        ClassReader(classContents).accept(constantsClassVisitor, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
+        classContents.traceOperation("KotlinClassInfo[SKIP]", { ClassReader(it.bytes, 0, it.size) }) {
+            // Handle this case differently to improve performance
+            // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important for constants
+            it.accept(constantsClassVisitor, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
+        }
         Pair(constantsClassVisitor.getResult(), emptyMap())
     } else {
         val inlineFunctionsAndAccessorsClassVisitor = InlineFunctionsAndAccessorsClassVisitor(
             inlineFunctionsAndAccessors.map { it.jvmMethodSignature }.toSet(),
             constantsClassVisitor
         )
-        // parsingOptions must not include (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info (e.g., line numbers) are important for
-        // inline functions/accessors
-        ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, 0)
+        classContents.traceOperation("KotlinClassInfo[FULL]", { ClassReader(it.bytes, 0, it.size) }) {
+            // parsingOptions must not include (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info (e.g., line numbers) are important for
+            // inline functions/accessors
+            it.accept(inlineFunctionsAndAccessorsClassVisitor, 0)
+        }
         val constantsMap = constantsClassVisitor.getResult()
         val methodHashesMap = inlineFunctionsAndAccessorsClassVisitor.getResult()
         val inlineFunctionsAndAccessorsMap = inlineFunctionsAndAccessors.mapNotNull { inline ->

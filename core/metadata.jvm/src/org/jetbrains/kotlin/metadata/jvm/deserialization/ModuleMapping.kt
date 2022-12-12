@@ -49,87 +49,87 @@ class ModuleMapping private constructor(
             }
 
         fun loadModuleMapping(
-            bytes: ByteArray?,
+            input: InputStream?,
             debugName: String,
             skipMetadataVersionCheck: Boolean,
             isJvmPackageNameSupported: Boolean,
             reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit,
         ): ModuleMapping {
-            if (bytes == null) {
+            if (input == null) {
                 return EMPTY
             }
 
-            val stream = DataInputStream(ByteArrayInputStream(bytes))
-
-            val versionNumber = readVersionNumber(stream) ?: return CORRUPTED
-            val preVersion = JvmMetadataVersion(*versionNumber)
-            if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
-                reportIncompatibleVersionError(preVersion)
-                return EMPTY
-            }
-
-            // Since Kotlin 1.4, we write integer flags between the version and the proto
-            val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
-
-            val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
-            if (!skipMetadataVersionCheck && !version.isCompatible()) {
-                reportIncompatibleVersionError(version)
-                return EMPTY
-            }
-
-            // "Builtin" extension registry is needed in order to deserialize annotations on optional annotation classes and their members.
-            val extensions = ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
-            val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream, extensions) ?: return EMPTY
-            val result = linkedMapOf<String, PackageParts>()
-
-            for (proto in moduleProto.packagePartsList) {
-                val packageFqName = proto.packageFqName
-                val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
-
-                for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
-                    packageParts.addPart(
-                        internalNameOf(packageFqName, partShortName),
-                        loadMultiFileFacadeInternalName(
-                            proto.multifileFacadeShortNameIdList, proto.multifileFacadeShortNameList, index, packageFqName
-                        )
-                    )
+            DataInputStream(input).use { stream ->
+                val versionNumber = readVersionNumber(stream) ?: return CORRUPTED
+                val preVersion = JvmMetadataVersion(*versionNumber)
+                if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
+                    reportIncompatibleVersionError(preVersion)
+                    return EMPTY
                 }
 
-                if (isJvmPackageNameSupported) {
-                    for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
-                        val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
-                            ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
-                            ?: continue
-                        val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
+                // Since Kotlin 1.4, we write integer flags between the version and the proto
+                val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
 
+                val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
+                if (!skipMetadataVersionCheck && !version.isCompatible()) {
+                    reportIncompatibleVersionError(version)
+                    return EMPTY
+                }
+
+                // "Builtin" extension registry is needed in order to deserialize annotations on optional annotation classes and their members.
+                val extensions = ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
+                val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream, extensions) ?: return EMPTY
+                val result = linkedMapOf<String, PackageParts>()
+
+                for (proto in moduleProto.packagePartsList) {
+                    val packageFqName = proto.packageFqName
+                    val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
+
+                    for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
                         packageParts.addPart(
-                            internalNameOf(jvmPackageName, partShortName),
+                            internalNameOf(packageFqName, partShortName),
                             loadMultiFileFacadeInternalName(
-                                proto.classWithJvmPackageNameMultifileFacadeShortNameIdList,
-                                proto.multifileFacadeShortNameList,
-                                index,
-                                jvmPackageName
+                                proto.multifileFacadeShortNameIdList, proto.multifileFacadeShortNameList, index, packageFqName
                             )
                         )
                     }
+
+                    if (isJvmPackageNameSupported) {
+                        for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
+                            val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
+                                ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
+                                ?: continue
+                            val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
+
+                            packageParts.addPart(
+                                internalNameOf(jvmPackageName, partShortName),
+                                loadMultiFileFacadeInternalName(
+                                    proto.classWithJvmPackageNameMultifileFacadeShortNameIdList,
+                                    proto.multifileFacadeShortNameList,
+                                    index,
+                                    jvmPackageName
+                                )
+                            )
+                        }
+                    }
                 }
+
+                for (proto in moduleProto.metadataPartsList) {
+                    val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
+                    proto.shortClassNameList.forEach(packageParts::addMetadataPart)
+                }
+
+                // TODO: read arguments of module annotations
+                val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
+                val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
+
+                return ModuleMapping(
+                    version,
+                    result,
+                    BinaryModuleData(annotations, moduleProto.optionalAnnotationClassList, nameResolver),
+                    debugName
+                )
             }
-
-            for (proto in moduleProto.metadataPartsList) {
-                val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
-                proto.shortClassNameList.forEach(packageParts::addMetadataPart)
-            }
-
-            // TODO: read arguments of module annotations
-            val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
-            val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
-
-            return ModuleMapping(
-                version,
-                result,
-                BinaryModuleData(annotations, moduleProto.optionalAnnotationClassList, nameResolver),
-                debugName
-            )
         }
 
         private fun loadMultiFileFacadeInternalName(

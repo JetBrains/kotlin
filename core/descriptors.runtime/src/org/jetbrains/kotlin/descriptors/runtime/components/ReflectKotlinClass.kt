@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -53,7 +54,7 @@ class ReflectKotlinClass private constructor(
     companion object Factory {
         fun create(klass: Class<*>): ReflectKotlinClass? {
             val headerReader = ReadKotlinClassHeaderAnnotationVisitor()
-            ReflectClassStructure.loadClassAnnotations(klass, headerReader)
+            ReflectClassStructure.visitClassAnnotations(klass, headerReader)
             return ReflectKotlinClass(klass, headerReader.createHeader() ?: return null)
         }
     }
@@ -64,12 +65,22 @@ class ReflectKotlinClass private constructor(
     override val classId: ClassId
         get() = klass.classId
 
-    override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor, cachedContents: ByteArray?) {
-        ReflectClassStructure.loadClassAnnotations(klass, visitor)
+    override fun visitClassAnnotations(
+        traceName: String,
+        annotationVisitor: KotlinJvmBinaryClass.AnnotationVisitor,
+        cachedContents: ReusableByteArray?
+    ) {
+        ReflectClassStructure.visitClassAnnotations(klass, annotationVisitor)
     }
 
-    override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor, cachedContents: ByteArray?) {
-        ReflectClassStructure.visitMembers(klass, visitor)
+    override fun visitMemberAndClassAnnotations(
+        traceName: String,
+        annotationVisitor: KotlinJvmBinaryClass.AnnotationVisitor?,
+        memberVisitor: KotlinJvmBinaryClass.MemberVisitor,
+        cachedContents: ReusableByteArray?
+    ) {
+        if (annotationVisitor != null) ReflectClassStructure.visitClassAnnotations(klass, annotationVisitor)
+        ReflectClassStructure.visitMembers(klass, memberVisitor)
     }
 
     override fun equals(other: Any?) = other is ReflectKotlinClass && klass == other.klass
@@ -80,7 +91,7 @@ class ReflectKotlinClass private constructor(
 }
 
 private object ReflectClassStructure {
-    fun loadClassAnnotations(klass: Class<*>, visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
+    fun visitClassAnnotations(klass: Class<*>, visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
         for (annotation in klass.declaredAnnotations) {
             processAnnotation(visitor, annotation)
         }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import kotlin.script.experimental.jvm.util.forAllMatchingFiles
 
 class PackagePartFromClassLoaderProvider(
@@ -25,8 +26,7 @@ class PackagePartFromClassLoaderProvider(
 
     init {
         classLoader.forAllMatchingFiles("META-INF/*.${ModuleMapping.MAPPING_FILE_EXT}") { name, stream ->
-            tryLoadModuleMapping(
-                { stream.readBytes() }, name, name, deserializationConfiguration, messageCollector
+            tryLoadModuleMapping(stream.readToReusableByteArrayRef(), name, name, deserializationConfiguration, messageCollector
             )?.let {
                 val moduleName = name.removePrefix("META-INF/").removeSuffix(".${ModuleMapping.MAPPING_FILE_EXT}")
                 loadedModules.add(ModuleMappingInfo(name, it, moduleName))

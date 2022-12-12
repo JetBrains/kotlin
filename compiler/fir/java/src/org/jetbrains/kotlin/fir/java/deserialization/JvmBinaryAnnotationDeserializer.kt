@@ -23,23 +23,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmBinaryAnnotationDeserializer(
     val session: FirSession,
     kotlinBinaryClass: KotlinJvmBinaryClass,
     kotlinClassFinder: KotlinClassFinder,
-    byteContent: ByteArray?
+    memberAnnotationsSource: JvmMemberAnnotationsSource
 ) : AbstractAnnotationDeserializer(session, BuiltInSerializerProtocol) {
-    private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        session.loadMemberAnnotations(kotlinBinaryClass, byteContent, kotlinClassFinder)
+    private val annotationInfo: MemberAnnotations by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        // We don't need cachedContents here, since memberAnnotationsSource is already preloaded
+        // when called from extractClassMetadata
+        session.loadMemberAnnotations(memberAnnotationsSource, kotlinClassFinder, cachedContents = null)
     }
 
     private val annotationInfoForDefaultImpls by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val defaultImplsClassId = kotlinBinaryClass.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
         val (defaultImplsClass, defaultImplsByteContent) = kotlinClassFinder.findKotlinClassOrContent(defaultImplsClassId) as? KotlinClassFinder.Result.KotlinClass
             ?: return@lazy null
-        session.loadMemberAnnotations(defaultImplsClass, defaultImplsByteContent, kotlinClassFinder)
+        session.loadMemberAnnotations(defaultImplsClass, kotlinClassFinder, defaultImplsByteContent).also {
+            defaultImplsByteContent?.release()
+        }
     }
 
     override fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
@@ -269,14 +274,14 @@ private data class MemberAnnotations(val memberAnnotations: MutableMap<MemberSig
 
 // TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
 private fun FirSession.loadMemberAnnotations(
-    kotlinBinaryClass: KotlinJvmBinaryClass,
-    byteContent: ByteArray?,
+    source: JvmMemberAnnotationsSource,
     kotlinClassFinder: KotlinClassFinder,
+    cachedContents: ReusableByteArray?
 ): MemberAnnotations {
     val memberAnnotations = hashMapOf<MemberSignature, MutableList<FirAnnotation>>()
     val annotationsLoader = AnnotationsLoader(this, kotlinClassFinder)
 
-    kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+    val visitor = object : KotlinJvmBinaryClass.MemberVisitor {
         override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
             return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
         }
@@ -325,7 +330,7 @@ private fun FirSession.loadMemberAnnotations(
                 }
             }
         }
-    }, byteContent)
-
+    }
+    source.visitMemberAnnotations("loadMemberAnnotations", visitor, cachedContents)
     return MemberAnnotations(memberAnnotations)
 }

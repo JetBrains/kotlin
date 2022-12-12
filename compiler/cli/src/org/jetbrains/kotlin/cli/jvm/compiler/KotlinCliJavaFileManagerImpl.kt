@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import java.util.*
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
@@ -124,15 +125,20 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 }
 
                 // Here, we assume the class is top-level
-                val classContent = classFileContentFromRequest ?: virtualFile.contentsToByteArray()
-                if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) return@getOrPut null
+                val classContentRef = classFileContentFromRequest?.also { it.addRef() }
+                    ?: virtualFile.inputStream.readToReusableByteArrayRef(virtualFile.length)
+                try {
+                    if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContentRef)) return@getOrPut null
 
-                val resolver = ClassifierResolutionContext { findClass(it, allScope) }
+                    val resolver = ClassifierResolutionContext { findClass(it, allScope) }
 
-                BinaryJavaClass(
-                    virtualFile, classId.asSingleFqName(), resolver, signatureParsingComponent,
-                    outerClass = null, classContent = classContent
-                )
+                    BinaryJavaClass(
+                        virtualFile, classId.asSingleFqName(), resolver, signatureParsingComponent,
+                        outerClass = null, classContent = classContentRef
+                    )
+                } finally {
+                    classContentRef.release()
+                }
             }
         }
 

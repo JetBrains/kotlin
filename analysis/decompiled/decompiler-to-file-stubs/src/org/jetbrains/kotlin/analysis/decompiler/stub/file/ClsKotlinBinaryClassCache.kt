@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.asReusableByteArray
 
 class ClsKotlinBinaryClassCache {
     class KotlinBinaryClassHeaderData(
@@ -62,14 +63,15 @@ class ClsKotlinBinaryClassCache {
         fileContent: ByteArray?
     ): KotlinJvmBinaryClass? {
         if (ModelBranch.getFileBranch(file) != null) return null
-        val classFileContent = try {
-            KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, fileContent)
+        val classFileContentRef = try {
+            KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, fileContent?.asReusableByteArray())
         } catch (e: Exception) {
             if (e is ControlFlowException) throw e
             return null
         }
 
-        val kotlinBinaryClass = classFileContent?.toKotlinJvmBinaryClass()
+        val kotlinBinaryClass = classFileContentRef?.toKotlinJvmBinaryClass()
+        classFileContentRef?.contentRef?.release()
 
         val isKotlinBinaryClass = kotlinBinaryClass != null
         if (file is VirtualFileWithId) {

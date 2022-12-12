@@ -59,43 +59,46 @@ class LazyJavaPackageScope(
                     c.components.kotlinClassFinder.findKotlinClassOrContent(request.javaClass)
                 else
                     c.components.kotlinClassFinder.findKotlinClassOrContent(requestClassId)
+            try {
+                val kotlinBinaryClass = kotlinClassOrClassFileContent?.toKotlinJvmBinaryClass()
 
-            val kotlinBinaryClass = kotlinClassOrClassFileContent?.toKotlinJvmBinaryClass()
+                val classId = kotlinBinaryClass?.classId
+                // Nested/local classes can be found when running in CLI in case when request.name looks like 'Outer$Inner'
+                // It happens because KotlinClassFinder searches through a file-based index that does not differ classes containing $-sign and nested ones
+                if (classId != null && (classId.isNestedClass || classId.isLocal)) return@classByRequest null
 
-            val classId = kotlinBinaryClass?.classId
-            // Nested/local classes can be found when running in CLI in case when request.name looks like 'Outer$Inner'
-            // It happens because KotlinClassFinder searches through a file-based index that does not differ classes containing $-sign and nested ones
-            if (classId != null && (classId.isNestedClass || classId.isLocal)) return@classByRequest null
-
-            when (val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)) {
-                is KotlinClassLookupResult.Found -> kotlinResult.descriptor
-                is KotlinClassLookupResult.SyntheticClass -> null
-                is KotlinClassLookupResult.NotFound -> {
-                    val javaClass =
-                        request.javaClass ?: c.components.finder.findClass(
-                            JavaClassFinder.Request(
-                                requestClassId,
-                                (kotlinClassOrClassFileContent as? KotlinClassFinder.Result.ClassFileContent)?.content
+                when (val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)) {
+                    is KotlinClassLookupResult.Found -> kotlinResult.descriptor
+                    is KotlinClassLookupResult.SyntheticClass -> null
+                    is KotlinClassLookupResult.NotFound -> {
+                        val javaClass =
+                            request.javaClass ?: c.components.finder.findClass(
+                                JavaClassFinder.Request(
+                                    requestClassId,
+                                    (kotlinClassOrClassFileContent as? KotlinClassFinder.Result.ClassFileContent)?.contentRef
+                                )
                             )
-                        )
 
-                    if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
-                        throw IllegalStateException(
-                            "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
-                                    "JavaClass: $javaClass\n" +
-                                    "ClassId: $requestClassId\n" +
-                                    "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
-                                    "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId)}\n"
-                        )
+                        if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
+                            throw IllegalStateException(
+                                "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
+                                        "JavaClass: $javaClass\n" +
+                                        "ClassId: $requestClassId\n" +
+                                        "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
+                                        "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId)}\n"
+                            )
+                        }
+
+                        val actualFqName = javaClass?.fqName
+                        if (actualFqName == null || actualFqName.isRoot || actualFqName.parent() != ownerDescriptor.fqName)
+                            null
+                        else
+                            LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
+                                .also(c.components.javaClassesTracker::reportClass)
                     }
-
-                    val actualFqName = javaClass?.fqName
-                    if (actualFqName == null || actualFqName.isRoot || actualFqName.parent() != ownerDescriptor.fqName)
-                        null
-                    else
-                        LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
-                            .also(c.components.javaClassesTracker::reportClass)
                 }
+            } finally {
+                kotlinClassOrClassFileContent?.contentRef?.release()
             }
         }
 

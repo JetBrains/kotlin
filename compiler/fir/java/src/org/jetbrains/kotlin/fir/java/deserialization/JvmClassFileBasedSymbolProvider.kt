@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java.deserialization
 
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -61,8 +60,11 @@ class JvmClassFileBasedSymbolProvider(
             if (partName in kotlinBuiltins) return@mapNotNull null
             val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
             if (!javaFacade.hasTopLevelClassOf(classId)) return@mapNotNull null
-            val (kotlinJvmBinaryClass, byteContent) =
+
+            val (kotlinJvmBinaryClass, byteContentRef) =
                 kotlinClassFinder.findKotlinClassOrContent(classId) as? KotlinClassFinder.Result.KotlinClass ?: return@mapNotNull null
+            // We will not use byte contents, since it is not needed anymore for most of the package part load requests
+            byteContentRef?.release()
 
             val facadeName = kotlinJvmBinaryClass.classHeader.multifileClassName?.takeIf { it.isNotEmpty() }
             val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
@@ -84,7 +86,9 @@ class JvmClassFileBasedSymbolProvider(
                 packageProto,
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, moduleData,
-                    JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
+                    // In most cases package parts annotations are never getting loaded, so we don't eagerly read them,
+                    // but will load them on demand from the disk only if needed.
+                    JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, kotlinJvmBinaryClass),
                     FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass, BuiltInSerializerProtocol),
                     source
                 ),
@@ -116,32 +120,44 @@ class JvmClassFileBasedSymbolProvider(
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
 
         val result = kotlinClassFinder.findKotlinClassOrContent(classId)
-        if (result !is KotlinClassFinder.Result.KotlinClass) {
-            if (parentContext != null || (classId.isNestedClass && getClass(classId.outermostClassId)?.fir !is FirJavaClass)) {
-                // Nested class of Kotlin class should have been a Kotlin class.
-                return null
+        try {
+            if (result !is KotlinClassFinder.Result.KotlinClass) {
+                if (parentContext != null || (classId.isNestedClass && getClass(classId.outermostClassId)?.fir !is FirJavaClass)) {
+                    // Nested class of Kotlin class should have been a Kotlin class.
+                    return null
+                }
+                val knownContent = (result as? KotlinClassFinder.Result.ClassFileContent)?.contentRef
+                val javaClass = javaFacade.findClass(classId, knownContent) ?: return null
+                return ClassMetadataFindResult.NoMetadata { symbol ->
+                    javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+                }
             }
-            val knownContent = (result as? KotlinClassFinder.Result.ClassFileContent)?.content
-            val javaClass = javaFacade.findClass(classId, knownContent) ?: return null
-            return ClassMetadataFindResult.NoMetadata { symbol ->
-                javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
-            }
+
+            val kotlinClass = result.kotlinJvmBinaryClass
+            if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
+            val data = kotlinClass.classHeader.data ?: return null
+            val strings = kotlinClass.classHeader.strings ?: return null
+            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+
+            // In most cases, the results of extractClassMetadata get its member annotations used, so we
+            // eagerly load oll of the annotations into the intermediate data structure, so that the
+            // underlying byte array contents can be released
+            val (memberAnnotations, classAnnotations) =
+                readMemberAndClassAnnotations("classMetadata", kotlinClass, result.contentRef)
+
+            return ClassMetadataFindResult.Metadata(
+                nameResolver,
+                classProto,
+                JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, JvmMemberAnnotations(memberAnnotations)),
+                moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
+                KotlinJvmBinarySourceElement(kotlinClass),
+                classPostProcessor = {
+                    loadAnnotationsFromClassFile(classAnnotations, it)
+                }
+            )
+        } finally {
+            result?.contentRef?.release()
         }
-
-        val kotlinClass = result.kotlinJvmBinaryClass
-        if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
-        val data = kotlinClass.classHeader.data ?: return null
-        val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
-
-        return ClassMetadataFindResult.Metadata(
-            nameResolver,
-            classProto,
-            JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
-            moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
-            KotlinJvmBinarySourceElement(kotlinClass),
-            classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
-        )
     }
 
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
@@ -151,21 +167,13 @@ class JvmClassFileBasedSymbolProvider(
         javaFacade.getPackage(fqName)
 
     private fun loadAnnotationsFromClassFile(
-        kotlinClass: KotlinClassFinder.Result.KotlinClass,
+        classAnnotations: List<JvmAnnotationNode>,
         symbol: FirRegularClassSymbol
     ) {
         val annotations = symbol.fir.annotations as MutableList<FirAnnotation>
-        kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
-            object : KotlinJvmBinaryClass.AnnotationVisitor {
-                override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    return annotationsLoader.loadAnnotationIfNotSpecial(classId, annotations)
-                }
-
-                override fun visitEnd() {
-                }
-            },
-            kotlinClass.byteContent,
-        )
+        for (a in classAnnotations) {
+            a.accept(annotationsLoader.loadAnnotationIfNotSpecial(a.classId, annotations))
+        }
         symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session.firCachesFactory))
     }
 

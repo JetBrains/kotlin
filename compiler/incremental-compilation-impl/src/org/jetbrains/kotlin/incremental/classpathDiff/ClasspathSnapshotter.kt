@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.asReusableByteArray
 import java.io.File
 import java.util.zip.ZipInputStream
 
@@ -83,7 +84,7 @@ object ClassSnapshotter {
     /** Creates [KotlinClassSnapshot] of the given Kotlin class (the caller must ensure that the given class is a Kotlin class). */
     private fun snapshotKotlinClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): KotlinClassSnapshot {
         val kotlinClassInfo =
-            KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
+            KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents.asReusableByteArray())
         val classId = kotlinClassInfo.classId
         val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).hashToLong()
         val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.utils.asReusableByteArray
 
 class IncrementalPackagePartProvider(
     private val parent: PackagePartProvider,
@@ -40,7 +41,7 @@ class IncrementalPackagePartProvider(
 
     private val moduleMappings by lazy {
         incrementalCaches.map { cache ->
-            ModuleMapping.loadModuleMapping(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration) { version ->
+            ModuleMapping.loadModuleMapping(cache.getModuleMappingData()?.asReusableByteArray(), "<incremental>", deserializationConfiguration) { version ->
                 // Incremental compilation should fall back to full rebuild if the minor component of the metadata version has changed
                 throw IllegalStateException("Version of the generated module should not be incompatible: $version")
             }

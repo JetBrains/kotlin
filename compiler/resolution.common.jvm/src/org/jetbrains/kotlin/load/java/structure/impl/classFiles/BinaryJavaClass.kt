@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.computeTypeParameterBound
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import org.jetbrains.org.objectweb.asm.*
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -38,7 +40,7 @@ class BinaryJavaClass(
     private val signatureParser: BinaryClassSignatureParser,
     override var access: Int = 0,
     override val outerClass: JavaClass?,
-    classContent: ByteArray? = null
+    classContent: ReusableByteArray? = null // this constructor does not retail reference to classContent, it only reads it once
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
 
@@ -114,10 +116,15 @@ class BinaryJavaClass(
 
     init {
         try {
-            ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
-                this,
-                ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
-            )
+            val contentRef = classContent?.also { it.addRef() }
+                ?: virtualFile.inputStream.readToReusableByteArrayRef(virtualFile.length)
+            contentRef.traceOperation("BinaryJavaClass", { ClassReader(it.bytes, 0, it.size) }) {
+                it.accept(
+                    this,
+                    ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
+                )
+            }
+            contentRef.release()
         } catch (e: Throwable) {
             throw IllegalStateException("Could not read class: $virtualFile", e)
         }
@@ -246,7 +253,7 @@ class BinaryJavaClass(
 
     override fun findInnerClass(name: Name): JavaClass? = findInnerClass(name, classFileContent = null)
 
-    fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
+    fun findInnerClass(name: Name, classFileContent: ReusableByteArray?): JavaClass? {
         val access = ownInnerClassNameToAccess[name] ?: return null
 
         return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.${virtualFile.extension}")?.let {

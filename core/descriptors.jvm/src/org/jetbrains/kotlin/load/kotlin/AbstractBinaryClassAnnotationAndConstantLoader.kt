@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantL
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.asReusableByteArray
 
 abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     storageManager: StorageManager,
@@ -95,12 +96,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         val propertyConstants = HashMap<MemberSignature, C>()
         val annotationParametersDefaultValues = HashMap<MemberSignature, C>()
 
-        kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+        val visitor = object : KotlinJvmBinaryClass.MemberVisitor {
+            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
                 return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
             }
 
-            override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
+            override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor {
                 val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
 
                 if (initializer != null) {
@@ -147,8 +148,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
                     }
                 }
             }
-        }, getCachedFileContent(kotlinClass))
-
+        }
+        kotlinClass.visitMemberAnnotations("loadAnnotationsAndInitializersForStub", visitor, getCachedFileContent(kotlinClass)?.asReusableByteArray())
         return AnnotationsContainerWithConstants(memberAnnotations, propertyConstants, annotationParametersDefaultValues)
     }
 

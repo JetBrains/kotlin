@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.ReusableByteArray
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import java.io.FileNotFoundException
 import java.io.IOException
 
@@ -30,9 +32,9 @@ class VirtualFileKotlinClass private constructor(
     override val containingLibrary: String?
         get() = file.path.split("!/").firstOrNull()
 
-    override fun getFileContents(): ByteArray {
+    override fun getFileContentsRef(): ReusableByteArray {
         try {
-            return file.contentsToByteArray()
+            return file.inputStream.readToReusableByteArrayRef(file.length)
         } catch (e: IOException) {
             throw logFileReadingErrorMessage(e, file)
         }
@@ -46,19 +48,26 @@ class VirtualFileKotlinClass private constructor(
         private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)
         private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
-        internal fun create(file: VirtualFile, fileContent: ByteArray?): KotlinClassFinder.Result? {
+        /**
+         * Creates kotlin class. Calls [ReusableByteArray.addRef] is the content was stored inside the result.
+         * So, result's reference must be released when done working with it.
+         */
+        internal fun create(file: VirtualFile, fileContent: ReusableByteArray?): KotlinClassFinder.Result? {
             return perfCounter.time {
                 assert(file.extension == JavaClassFileType.INSTANCE.defaultExtension || file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
-                    val byteContent = fileContent ?: file.contentsToByteArray(false)
-                    if (byteContent.isNotEmpty()) {
-                        val kotlinJvmBinaryClass = create(byteContent) { name, classVersion, header, innerClasses ->
+                    val byteContentRef = fileContent?.also { it.addRef() }
+                        ?: file.inputStream.readToReusableByteArrayRef(file.length)
+                    if (byteContentRef.isNotEmpty()) {
+                        val kotlinJvmBinaryClass = create(byteContentRef) { name, classVersion, header, innerClasses ->
                             VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
                         }
 
-                        return@time kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
-                            ?: KotlinClassFinder.Result.ClassFileContent(byteContent)
+                        return@time kotlinJvmBinaryClass?.let { KotlinClass(it, byteContentRef) }
+                            ?: KotlinClassFinder.Result.ClassFileContent(byteContentRef)
+                    } else {
+                        byteContentRef.release()
                     }
                 } catch (e: FileNotFoundException) {
                     // Valid situation. User can delete jar file.

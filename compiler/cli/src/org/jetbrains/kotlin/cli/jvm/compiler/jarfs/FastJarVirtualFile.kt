@@ -97,7 +97,8 @@ internal class FastJarVirtualFile(
 
     @Throws(IOException::class)
     override fun getInputStream(): InputStream {
-        return BufferExposingByteArrayInputStream(contentsToByteArray())
+        if (entryDescription == null) return EMPTY_INPUT_STREAM
+        return handler.contentsToInputStream(entryDescription)
     }
 
     override fun getModificationStamp(): Long {
@@ -106,3 +107,4 @@ internal class FastJarVirtualFile(
 }
 
 private val EMPTY_BYTE_ARRAY = ByteArray(0)
+private val EMPTY_INPUT_STREAM = BufferExposingByteArrayInputStream(EMPTY_BYTE_ARRAY)

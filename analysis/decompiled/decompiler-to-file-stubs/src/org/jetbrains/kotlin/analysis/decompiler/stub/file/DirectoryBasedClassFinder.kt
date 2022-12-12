@@ -18,8 +18,15 @@ class DirectoryBasedClassFinder(
     val packageDirectory: VirtualFile,
     val directoryPackageFqName: FqName
 ) : KotlinClassFinder {
-    override fun findKotlinClassOrContent(javaClass: JavaClass): KotlinClassFinder.Result? = findKotlinClassOrContent(javaClass.classId!!)
+    /**
+     * **Resource ref counting**: Returns result with a contentRef reference that must be released after use.
+     */
+    override fun findKotlinClassOrContent(javaClass: JavaClass): KotlinClassFinder.Result? =
+        findKotlinClassOrContent(javaClass.classId!!)
 
+    /**
+     * **Resource ref counting**: Returns result with a contentRef reference that must be released after use.
+     */
     override fun findKotlinClassOrContent(classId: ClassId): KotlinClassFinder.Result? {
         if (classId.packageFqName != directoryPackageFqName) {
             return null

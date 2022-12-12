@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
+// TODO: It shall be merged into the same class reading pass with "visitMembersAndClassAnnotations"
 class FirJvmConstDeserializer(
     session: FirSession,
     private val binaryClass: KotlinJvmBinaryClass,
@@ -24,7 +25,7 @@ class FirJvmConstDeserializer(
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
         constantCache[callableId]?.let { return it }
 
-        binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+        binaryClass.visitMemberAnnotations("loadConstant", object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {

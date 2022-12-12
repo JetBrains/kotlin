@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.load.kotlin;
 
 import com.intellij.openapi.util.Ref;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
+import org.jetbrains.kotlin.utils.ReusableByteArray;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.util.*;
@@ -69,20 +72,32 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         }
     }
 
+    /**
+     * Returns file contents with refCount = 1, shall call ReusableByteArray.release() when done working with it.
+     */
     @NotNull
-    protected abstract byte[] getFileContents();
+    protected abstract ReusableByteArray getFileContentsRef();
 
-    // TODO public to be accessible in companion object of subclass, workaround for KT-3974
-    @Nullable
     public static <T> T create(
             @NotNull byte[] fileContents,
+            @NotNull Function4<ClassId, Integer, KotlinClassHeader, InnerClassesInfo, T> factory
+    ) {
+        return create(new ReusableByteArray(fileContents), factory);
+    }
+
+    private static final Function1<ReusableByteArray, ClassReader> CLASS_READER_FACTORY = (ReusableByteArray fileContents) ->
+            new ClassReader(fileContents.getBytes(), 0, fileContents.getSize());
+
+    // TODO public to be accessible in companion object of subclass, workaround for KT-3974
+    public static <T> T create(
+            @NotNull ReusableByteArray fileContents,
             @NotNull Function4<ClassId, Integer, KotlinClassHeader, InnerClassesInfo, T> factory
     ) {
         ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
         Ref<String> classNameRef = Ref.create();
         Ref<Integer> classVersion = Ref.create();
         InnerClassesInfo innerClasses = new InnerClassesInfo();
-        new ClassReader(fileContents).accept(new ClassVisitor(API_VERSION) {
+        ClassVisitor visitor = new ClassVisitor(API_VERSION) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 classNameRef.set(name);
@@ -103,7 +118,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             public void visitEnd() {
                 readHeaderVisitor.visitEnd();
             }
-        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+        };
+        Function1<ClassReader, Unit> operation = (ClassReader reader) -> {
+            reader.accept(visitor, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+            return Unit.INSTANCE;
+        };
+        fileContents.traceOperation("FileBasedKotlinClass", ClassReader.class, CLASS_READER_FACTORY, operation);
 
         String className = classNameRef.get();
         if (className == null) return null;
@@ -132,9 +152,19 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Override
-    public void loadClassAnnotations(@NotNull AnnotationVisitor annotationVisitor, @Nullable byte[] cachedContents) {
-        byte[] fileContents = cachedContents != null ? cachedContents : getFileContents();
-        new ClassReader(fileContents).accept(new ClassVisitor(API_VERSION) {
+    public void visitClassAnnotations(
+            @NotNull String traceName,
+            @NotNull AnnotationVisitor annotationVisitor,
+            @Nullable ReusableByteArray cachedContents
+    ) {
+        ReusableByteArray fileContentsRef;
+        if (cachedContents != null) {
+            fileContentsRef = cachedContents;
+            cachedContents.addRef();
+        } else {
+            fileContentsRef = getFileContentsRef();
+        }
+        ClassVisitor visitor = new ClassVisitor(API_VERSION) {
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
                 return convertAnnotationVisitor(annotationVisitor, desc, innerClasses);
@@ -144,7 +174,13 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             public void visitEnd() {
                 annotationVisitor.visitEnd();
             }
-        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+        };
+        Function1<ClassReader, Unit> operation = (ClassReader reader) -> {
+            reader.accept(visitor, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+            return Unit.INSTANCE;
+        };
+        fileContentsRef.traceOperation(traceName, ClassReader.class, CLASS_READER_FACTORY, operation);
+        fileContentsRef.release();
     }
 
     @Nullable
@@ -223,9 +259,35 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Override
-    public void visitMembers(@NotNull MemberVisitor memberVisitor, @Nullable byte[] cachedContents) {
-        byte[] fileContents = cachedContents != null ? cachedContents : getFileContents();
-        new ClassReader(fileContents).accept(new ClassVisitor(API_VERSION) {
+    public void visitMemberAndClassAnnotations(
+            @NotNull String traceName,
+            AnnotationVisitor annotationVisitor,
+            @NotNull MemberVisitor memberVisitor,
+            @Nullable ReusableByteArray cachedContents
+    ) {
+        ReusableByteArray fileContentsRef;
+        if (cachedContents != null) {
+            cachedContents.addRef();
+            fileContentsRef = cachedContents;
+        } else {
+            fileContentsRef = getFileContentsRef();
+        }
+        ClassVisitor visitor = new ClassVisitor(API_VERSION) {
+            @Override
+            public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
+                if (annotationVisitor != null) {
+                    return convertAnnotationVisitor(annotationVisitor, desc, innerClasses);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void visitEnd() {
+                if (annotationVisitor != null)
+                    annotationVisitor.visitEnd();
+            }
+
             @Override
             public FieldVisitor visitField(int access, @NotNull String name, @NotNull String desc, String signature, Object value) {
                 AnnotationVisitor v = memberVisitor.visitField(Name.identifier(name), desc, value);
@@ -273,6 +335,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
                         return av == null ? null : convertAnnotationVisitor(av, innerClasses);
                     }
 
+                    @Override
                     public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
                         if (visible)
                             visibleAnnotableParameterCount = parameterCount;
@@ -287,7 +350,13 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
                     }
                 };
             }
-        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+        };
+        Function1<ClassReader, Unit> operation = (ClassReader reader) -> {
+            reader.accept(visitor, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+            return Unit.INSTANCE;
+        };
+        fileContentsRef.traceOperation(traceName, ClassReader.class, CLASS_READER_FACTORY, operation);
+        fileContentsRef.release();
     }
 
     @NotNull

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.ReusableByteArray
 
 class FirJavaFacadeForSource(
     session: FirSession,
@@ -80,7 +81,7 @@ abstract class FirJavaFacade(
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
 
-    fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
+    fun findClass(classId: ClassId, knownContent: ReusableByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))
             ?.takeIf { it.classId == classId && !it.hasMetadataAnnotation() }
 

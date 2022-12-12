@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.intellij.util.io.FileAccessorCache
+import org.jetbrains.kotlin.utils.ReusableByteArray
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
@@ -17,24 +18,29 @@ import java.nio.ByteBuffer
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
-private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, MappedByteBuffer>
+private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, ZipByteBuffer>
 
 class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByteBuffer.() -> Unit) : DeprecatedVirtualFileSystem() {
     private val myHandlers: MutableMap<String, FastJarHandler> =
         ConcurrentFactoryMap.createMap { key: String -> FastJarHandler(this@FastJarFileSystem, key) }
+
+    internal val lastAccessCache = LastAccessCache()
 
     internal val cachedOpenFileHandles: FileAccessorCache<File, RandomAccessFileAndBuffer> =
         object : FileAccessorCache<File, RandomAccessFileAndBuffer>(20, 10) {
             @Throws(IOException::class)
             override fun createAccessor(file: File): RandomAccessFileAndBuffer {
                 val randomAccessFile = RandomAccessFile(file, "r")
-                return Pair(randomAccessFile, randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length()))
+                return Pair(
+                    randomAccessFile,
+                    ZipByteBuffer(randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length()))
+                )
             }
 
             @Throws(IOException::class)
             override fun disposeAccessor(fileAccessor: RandomAccessFileAndBuffer) {
                 fileAccessor.first.close()
-                fileAccessor.second.unmapBuffer()
+                fileAccessor.second.disposeSync { unmapBuffer() }
             }
 
             override fun isEqual(val1: File, val2: File): Boolean {
@@ -58,11 +64,8 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
 
     fun clearHandlersCache() {
         myHandlers.clear()
-        cleanOpenFilesCache()
-    }
-
-    fun cleanOpenFilesCache() {
         cachedOpenFileHandles.clear()
+        lastAccessCache.clearSync()
     }
 
     companion object {
@@ -115,5 +118,36 @@ private fun prepareCleanerCallback(): ((ByteBuffer) -> Unit)? {
         }
     } catch (ex: Exception) {
         null
+    }
+}
+
+internal class LastAccessCache {
+    private var lastFile: File? = null
+    private var lastZipEntryDescription: ZipEntryDescription? = null
+    private var lastContents: ReusableByteArray? = null
+
+    private fun clearImpl() {
+        lastContents?.release(100) ?: return
+        lastFile = null
+        lastZipEntryDescription = null
+        lastContents = null
+    }
+
+    @Synchronized
+    fun clearSync() {
+        clearImpl()
+    }
+
+    @Synchronized
+    fun getReusableByteArraySync(file: File, zipEntryDescription: ZipEntryDescription): ReusableByteArray? =
+        if (file === lastFile && zipEntryDescription === lastZipEntryDescription) lastContents!!.also { it.addRef() } else null
+
+    @Synchronized
+    fun putReusableByteArraySync(file: File, zipEntryDescription: ZipEntryDescription, contents: ReusableByteArray) {
+        clearImpl()
+        contents.addRef(100)
+        lastFile = file
+        lastZipEntryDescription = zipEntryDescription
+        lastContents = contents
     }
 }

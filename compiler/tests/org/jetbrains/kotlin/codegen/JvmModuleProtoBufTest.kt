@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.asReusableByteArray
 import java.io.File
 
 class JvmModuleProtoBufTest : KtUsefulTestCase() {
@@ -50,7 +51,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         )
 
         val mapping = ModuleMapping.loadModuleMapping(
-            File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
+            File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes().asReusableByteArray(), "test",
             CompilerDeserializationConfiguration(LanguageVersionSettingsImpl(loadWith, ApiVersion.createByLanguageVersion(loadWith))),
             ::error
         )

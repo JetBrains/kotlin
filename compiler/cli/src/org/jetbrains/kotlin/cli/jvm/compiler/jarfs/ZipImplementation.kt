@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
+import org.jetbrains.kotlin.utils.ReusableByteArray
+import org.jetbrains.kotlin.utils.takeReusableByteArrayRef
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.util.zip.Inflater
-
 
 class ZipEntryDescription(
     val relativePath: CharSequence,
@@ -32,32 +33,68 @@ private const val END_OF_CENTRAL_DIR_ZIP64_SIZE = 56
 private const val LOCAL_FILE_HEADER_EXTRA_OFFSET = 28
 private const val LOCAL_FILE_HEADER_SIZE = LOCAL_FILE_HEADER_EXTRA_OFFSET + 2
 
-fun MappedByteBuffer.contentsToByteArray(
-    zipEntryDescription: ZipEntryDescription
-): ByteArray {
+class ZipByteBuffer(private val buf: MappedByteBuffer) {
+    @Synchronized
+    fun disposeSync(unmapBuffer: MappedByteBuffer.() -> Unit) {
+        buf.unmapBuffer()
+    }
+
+    @Synchronized
+    fun contentsToByteArraySync(zipEntryDescription: ZipEntryDescription): ByteArray =
+        buf.contentsToByteArray(zipEntryDescription)
+
+    @Synchronized
+    fun contentsToReusableByteArraySync(zipEntryDescription: ZipEntryDescription): ReusableByteArray =
+        buf.contentsToReusableByteArray(zipEntryDescription)
+}
+
+private fun MappedByteBuffer.getCompressed(zipEntryDescription: ZipEntryDescription): ReusableByteArray {
     order(ByteOrder.LITTLE_ENDIAN)
-    val extraSize =
-        getUnsignedShort(zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_EXTRA_OFFSET)
+    val extraSize = getUnsignedShort(zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_EXTRA_OFFSET)
+    position(zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_SIZE + zipEntryDescription.fileNameSize + extraSize)
+    // Inflater needs an extra byte to avoid copying the array, we create it as Inflater(nowrap = true)
+    val compressed = takeReusableByteArrayRef(zipEntryDescription.compressedSize, zipEntryDescription.compressedSize + 1)
+    get(compressed.bytes, 0, zipEntryDescription.compressedSize)
+    return compressed
+}
 
-    position(
-        zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_SIZE + zipEntryDescription.fileNameSize + extraSize
-    )
-    val compressed = ByteArray(zipEntryDescription.compressedSize + 1)
-    get(compressed, 0, zipEntryDescription.compressedSize)
-
+fun MappedByteBuffer.contentsToByteArray(zipEntryDescription: ZipEntryDescription): ByteArray {
+    val compressed = getCompressed(zipEntryDescription)
     return when (zipEntryDescription.compressionKind) {
         ZipEntryDescription.CompressionKind.DEFLATE -> {
-            val inflater = Inflater(true)
-            inflater.setInput(compressed, 0, zipEntryDescription.compressedSize)
-
-            val result = ByteArray(zipEntryDescription.uncompressedSize)
-
-            inflater.inflate(result)
-
-            result
+            compressed.traceOperation("inflateToByteArray") {
+                val inflater = Inflater(true)
+                inflater.setInput(compressed.bytes, 0, zipEntryDescription.compressedSize)
+                val result = ByteArray(zipEntryDescription.uncompressedSize)
+                inflater.inflate(result)
+                result
+            }
         }
 
-        ZipEntryDescription.CompressionKind.PLAIN -> compressed.copyOf(zipEntryDescription.compressedSize)
+        ZipEntryDescription.CompressionKind.PLAIN -> compressed.traceOperation("copyToByteArray") {
+            compressed.bytes.copyOf(zipEntryDescription.compressedSize)
+        }
+    }.also {
+        compressed.release()
+    }
+}
+
+private fun MappedByteBuffer.contentsToReusableByteArray(zipEntryDescription: ZipEntryDescription): ReusableByteArray {
+    val compressed = getCompressed(zipEntryDescription)
+    return when (zipEntryDescription.compressionKind) {
+        ZipEntryDescription.CompressionKind.DEFLATE -> {
+            compressed.traceOperation("inflate") {
+                val inflater = Inflater(true)
+                inflater.setInput(compressed.bytes, 0, zipEntryDescription.compressedSize)
+                val result = takeReusableByteArrayRef(zipEntryDescription.uncompressedSize)
+                inflater.inflate(result.bytes, 0, zipEntryDescription.uncompressedSize)
+                result
+            }.also {
+                compressed.release()
+            }
+        }
+
+        ZipEntryDescription.CompressionKind.PLAIN -> compressed
     }
 }
 

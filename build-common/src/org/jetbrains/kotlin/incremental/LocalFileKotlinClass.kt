@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.ReusableByteArray
+import org.jetbrains.kotlin.utils.readToReusableByteArrayRef
 import java.io.File
 
 class LocalFileKotlinClass private constructor(
     private val file: File,
-    private val fileContents: ByteArray,
+    private val fileContentsRef: ReusableByteArray, // permanently counter as a reference (release never called)
     className: ClassId,
     classVersion: Int,
     classHeader: KotlinClassHeader,
@@ -33,10 +35,10 @@ class LocalFileKotlinClass private constructor(
 
     companion object {
         fun create(file: File): LocalFileKotlinClass? {
-            val fileContents = file.readBytes()
-            return FileBasedKotlinClass.create(fileContents) {
-                className, classVersion, classHeader, innerClasses ->
-                LocalFileKotlinClass(file, fileContents, className, classVersion, classHeader, innerClasses)
+            // FileContentsRef will be permanently stored inside LocalFileKotlinClass
+            val fileContentsRef = file.inputStream().readToReusableByteArrayRef(file.length())
+            return create(fileContentsRef) { className, classVersion, classHeader, innerClasses ->
+                LocalFileKotlinClass(file, fileContentsRef, className, classVersion, classHeader, innerClasses)
             }
         }
     }
@@ -46,7 +48,7 @@ class LocalFileKotlinClass private constructor(
     override val location: String
         get() = file.absolutePath
 
-    public override fun getFileContents(): ByteArray = fileContents
+    public override fun getFileContentsRef(): ReusableByteArray = fileContentsRef.also { fileContentsRef.addRef() }
 
     override fun hashCode(): Int = file.hashCode()
     override fun equals(other: Any?): Boolean = other is LocalFileKotlinClass && file == other.file
