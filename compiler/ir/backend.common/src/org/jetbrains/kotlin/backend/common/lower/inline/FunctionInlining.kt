@@ -570,7 +570,7 @@ class FunctionInlining(
                                 substitutor,
                                 data = null
                             ),
-                            nameHint = callee.symbol.owner.name.toString(),
+                            nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
                             isMutable = false
                         )
 
@@ -634,7 +634,7 @@ class FunctionInlining(
                 ).apply {
                     statements.add(variableInitializer)
                 },
-                nameHint = callee.symbol.owner.name.toString(),
+                nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
                 isMutable = false,
                 origin = if (parameter == callee.extensionReceiverParameter) {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
