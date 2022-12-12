@@ -115,8 +115,10 @@ class SubstituteDecoyCallsTransformer(
         }
 
         val newOverriddenSymbols = declaration.overriddenSymbols.map {
-            if (it.owner.isDecoy()) {
-                it.owner.getComposableForDecoy() as IrSimpleFunctionSymbol
+            // It can be an overridden symbol from another module, so access it via `decoyOwner`
+            val maybeDecoy = it.decoyOwner
+            if (maybeDecoy.isDecoy()) {
+                maybeDecoy.getComposableForDecoy() as IrSimpleFunctionSymbol
             } else {
                 it
             }
