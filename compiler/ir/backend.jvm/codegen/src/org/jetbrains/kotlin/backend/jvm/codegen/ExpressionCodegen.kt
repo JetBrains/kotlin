@@ -1359,7 +1359,7 @@ class ExpressionCodegen(
             val clauseStart = markNewLabel()
             val parameter = clause.catchParameter
             val descriptorType = parameter.asmType
-            val index = frameMap.enter(clause.catchParameter, descriptorType)
+            val index = frameMap.enter(parameter, descriptorType)
             clause.markLineNumber(true)
             mv.store(index, descriptorType)
             val afterStore = markNewLabel()
