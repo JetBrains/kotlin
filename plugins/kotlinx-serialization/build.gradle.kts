@@ -29,8 +29,8 @@ dependencies {
     testImplementation(project(":kotlinx-serialization-compiler-plugin.backend"))
     testImplementation(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0-RC")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
