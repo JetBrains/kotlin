@@ -154,9 +154,8 @@ abstract class FirDataFlowAnalyzer(
         }
         localFunctionNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow {
-            // TODO: ||?
-            if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
-                enterCapturingStatement(it, function)
+            if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() == true) {
+                enterRepeatableStatement(it, function)
             }
         }
         context.variableAssignmentAnalyzer.enterFunction(function)
@@ -166,9 +165,8 @@ abstract class FirDataFlowAnalyzer(
         if (function is FirDefaultPropertyAccessor) return null
 
         context.variableAssignmentAnalyzer.exitFunction()
-        // TODO: ||?
-        if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
-            exitCapturingStatement(function)
+        if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() == true) {
+            exitRepeatableStatement(function)
         }
 
         if (function is FirAnonymousFunction) {
@@ -596,7 +594,7 @@ abstract class FirDataFlowAnalyzer(
     fun enterWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopConditionEnterNode) = graphBuilder.enterWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
-        loopConditionEnterNode.mergeIncomingFlow { flow -> enterCapturingStatement(flow, loop) }
+        loopConditionEnterNode.mergeIncomingFlow { flow -> enterRepeatableStatement(flow, loop) }
     }
 
     fun exitWhileLoopCondition(loop: FirLoop) {
@@ -620,7 +618,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun processWhileLoopExit(flow: MutableFlow, node: LoopExitNode, conditionEnterNode: LoopConditionEnterNode) {
-        val possiblyChangedVariables = exitCapturingStatement(node.fir)
+        val possiblyChangedVariables = exitRepeatableStatement(node.fir)
         if (possiblyChangedVariables.isNullOrEmpty()) return
         // While analyzing the loop we might have added some backwards jumps to `conditionEnterNode` which weren't
         // there at the time its flow was computed - which is why we erased all information about `possiblyChangedVariables`
@@ -653,7 +651,7 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun enterCapturingStatement(flow: MutableFlow, statement: FirStatement) {
+    private fun enterRepeatableStatement(flow: MutableFlow, statement: FirStatement) {
         val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
         if (reassignedNames.isEmpty()) return
         // TODO: only choose the innermost variable for each name
@@ -670,7 +668,7 @@ abstract class FirDataFlowAnalyzer(
         context.variablesClearedBeforeLoop.push(possiblyChangedVariables)
     }
 
-    private fun exitCapturingStatement(statement: FirStatement): List<RealVariable>? {
+    private fun exitRepeatableStatement(statement: FirStatement): List<RealVariable>? {
         if (context.preliminaryLoopVisitor.exitCapturingStatement(statement).isEmpty()) return null
         return context.variablesClearedBeforeLoop.pop()
     }
@@ -679,7 +677,7 @@ abstract class FirDataFlowAnalyzer(
 
     fun enterDoWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopBlockEnterNode) = graphBuilder.enterDoWhileLoop(loop)
-        loopEnterNode.mergeIncomingFlow { flow -> enterCapturingStatement(flow, loop) }
+        loopEnterNode.mergeIncomingFlow { flow -> enterRepeatableStatement(flow, loop) }
         loopBlockEnterNode.mergeIncomingFlow()
     }
 
@@ -693,7 +691,7 @@ abstract class FirDataFlowAnalyzer(
         val (loopConditionExitNode, loopExitNode) = graphBuilder.exitDoWhileLoop(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopExitNode.mergeIncomingFlow { processLoopExit(it, loopExitNode, loopConditionExitNode) }
-        exitCapturingStatement(loop)
+        exitRepeatableStatement(loop)
     }
 
     // ----------------------------------- Try-catch-finally -----------------------------------
