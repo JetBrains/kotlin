@@ -197,7 +197,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
     }
 
     private fun shouldReplaceWithStaticCall(callee: IrSimpleFunction) =
-        callee.isJvmStaticInCompanion() &&
+        callee.isJvmStaticInCompanion() && callee.shouldReplaceDeclaration() ||
                 callee.visibility == DescriptorVisibilities.PROTECTED &&
                 !callee.isInlineFunctionCall(context)
 }

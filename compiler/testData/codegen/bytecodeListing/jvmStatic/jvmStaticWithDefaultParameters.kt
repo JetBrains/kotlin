@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 
 class WithCompanion {

@@ -30992,6 +30992,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("privateAccessWithDeclarationRewrite.kt")
+        public void testPrivateAccessWithDeclarationRewrite() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/privateAccessWithDeclarationRewrite.kt");
+        }
+
+        @Test
         @TestMetadata("privateMethod.kt")
         public void testPrivateMethod() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/privateMethod.kt");

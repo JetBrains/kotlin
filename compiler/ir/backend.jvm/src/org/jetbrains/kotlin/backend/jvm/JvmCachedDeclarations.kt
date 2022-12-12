@@ -189,7 +189,7 @@ class JvmCachedDeclarations(
     fun getStaticCompanionReplacementDeclaration(jvmStaticFunction: IrSimpleFunction): IrSimpleFunction =
         staticCompanionReplacementDeclarations.getOrPut(jvmStaticFunction) {
             val companion = jvmStaticFunction.parentAsClass
-            assert(companion.isCompanion)
+            assert(companion.isCompanion) { "Expected JvmStatic function parent to be a companion object!" }
             companion.parentAsClass.makeStaticCopyFunction(jvmStaticFunction)
         }
 
@@ -198,7 +198,7 @@ class JvmCachedDeclarations(
         name = Name.identifier(context.defaultMethodSignatureMapper.mapFunctionName(target))
         returnType = target.returnType
         origin = JvmLoweredDeclarationOrigin.JVM_STATIC_REPLACEMENT_METHOD
-    }.apply proxy@{
+    }.apply {
         parent = this@makeStaticCopyFunction
         copyAttributes(target)
         copyTypeParametersFrom(target)
