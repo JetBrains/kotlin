@@ -476,6 +476,9 @@ internal abstract class FunctionGenerationContext(
     // TODO: remove if exactly unused.
     //private var arenaSlot: LLVMValueRef? = null
     private val slotToVariableLocation = mutableMapOf<Int, VariableDebugLocation>()
+    private val valueToSlot = mutableMapOf<LLVMValueRef, Int>()
+
+    val inlineFunctionDebugInfo = InlineFunctionDebugInfo()
 
     private val prologueBb = basicBlockInFunction("prologue", null)
     private val localsInitBb = basicBlockInFunction("locals_init", null)
@@ -560,6 +563,7 @@ internal abstract class FunctionGenerationContext(
                 val slotAddress = gep(slotsPhi!!, llvm.int32(slotCount), name)
                 variableLocation?.let {
                     slotToVariableLocation[slotCount] = it
+                    valueToSlot[slotAddress] = slotCount
                 }
                 slotCount++
                 return slotAddress
@@ -1383,17 +1387,22 @@ internal abstract class FunctionGenerationContext(
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
-                slotToVariableLocation.forEach { (slot, variable) ->
-                    val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
+                fun expr(slot: Int): CValues<LongVar> {
+                    return longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
                             runtime.pointerSize * slot.toLong()).toCValues()
-                    DIInsertDeclaration(
-                            builder       = generationState.debugInfo.builder,
-                            value         = slots,
-                            localVariable = variable.localVariable,
-                            location      = variable.location,
-                            bb            = prologueBb,
-                            expr          = expr,
-                            exprCount     = 2)
+                }
+
+                for ((slot, variableLocation) in slotToVariableLocation) {
+                    insertDIDeclaration(slots, variableLocation, expr(slot), exprCount = 2)
+                }
+
+                for ((value, variableLocation) in inlineFunctionDebugInfo.refSlotParameters) {
+                    val slot = valueToSlot[value] ?: continue
+                    insertDIDeclaration(slots, variableLocation, expr(slot), exprCount = 2)
+                }
+
+                for ((value, variableLocation) in inlineFunctionDebugInfo.slotParameters) {
+                    insertDIDeclaration(value, variableLocation, expr = null, exprCount = 0)
                 }
             }
             br(localsInitBb)
@@ -1463,6 +1472,18 @@ internal abstract class FunctionGenerationContext(
         vars.clear()
         returnSlot = null
         slotsPhi = null
+    }
+
+    private fun insertDIDeclaration(value: LLVMValueRef, variable: VariableDebugLocation, expr: CValues<LongVar>?, exprCount: uint64_t) {
+        DIInsertDeclaration(
+                builder       = generationState.debugInfo.builder,
+                value         = value,
+                localVariable = variable.localVariable,
+                location      = variable.location,
+                bb            = prologueBb,
+                expr          = expr,
+                exprCount     = exprCount
+        )
     }
 
     protected abstract fun processReturns()
