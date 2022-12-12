@@ -8,11 +8,11 @@ fun objectInit() {
     x.length // ok
     y.length // ok
     val o = object {
-        init { x.length } // ?
+        init { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // ?
         init { x = null }
-        init { x.length } // bad
+        init { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // bad
         init { y.length } // ok
-        fun foo() = x.length // bad
+        fun foo() = <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
     }
     y = null
     x<!UNSAFE_CALL!>.<!>length // bad
@@ -24,7 +24,7 @@ fun objectMethod() {
     x = ""
     x.length // ok
     val o = object {
-        init { x.length } // sort of bad
+        init { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // sort of bad
         fun foo() = <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
         fun bar() { x = null }
         fun baz() = <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
@@ -45,24 +45,24 @@ fun classInit() {
     y.length // ok
     val ctor = run {
         class C {
-            init { x.length } // ?
+            init { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // ?
             init { x = null }
-            init { x.length } // bad
-            init { y.length } // bad
+            init { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // bad
+            init { <!SMARTCAST_IMPOSSIBLE!>y<!>.length } // bad
             fun foo() = <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
         }
-        x.length // bad
-        if (<!SENSELESS_COMPARISON!>x != null<!>) {
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
+        if (x != null) {
             y = null
             C() // read y & assign x here
-            x.length // bad
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
         }
         ::C
     }
-    x.length // bad
-    if (<!SENSELESS_COMPARISON!>x != null<!>) {
+    <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
+    if (x != null) {
         ctor() // read y & assign x here
-        x.length // bad
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
     }
 }
 
@@ -75,8 +75,8 @@ fun classMethod() {
     y.length // ok
     val ctor = run {
         class C {
-            init { x.length } // sort of bad
-            init { y.length } // bad
+            init { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // sort of bad
+            init { <!SMARTCAST_IMPOSSIBLE!>y<!>.length } // bad
             fun foo() = <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
             fun bar() { x = null }
             fun baz() = <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
