@@ -86,9 +86,6 @@ internal class Context(
         }
     }
 
-    /**
-     * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
-     */
     override var symbolTable: SymbolTable? = null
 
     lateinit var cAdapterExportedElements: CAdapterExportedElements
@@ -112,8 +109,6 @@ internal class Context(
     fun disposeGenerationState() {
         if (::generationState.isInitialized) generationState.dispose()
     }
-
-    val phaseConfig = config.phaseConfig
 
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
