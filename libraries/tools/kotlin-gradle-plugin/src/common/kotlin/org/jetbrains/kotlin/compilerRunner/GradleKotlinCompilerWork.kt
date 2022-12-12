@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.slf4j.LoggerFactory
 import java.io.*
-import java.net.URLClassLoader
 import java.rmi.RemoteException
 import java.util.*
 import java.util.concurrent.Callable
@@ -83,7 +82,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
      * which are useful when there are many arguments with the same type
      * (to protect against parameters reordering bugs)
      */
-    config: GradleKotlinCompilerWorkArguments
+    config: GradleKotlinCompilerWorkArguments,
+    private val compilerCache: KotlinCompilerCacheService
 ) : Runnable {
 
     private val projectRootFile = config.projectFiles.projectRootFile
@@ -188,18 +188,16 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     }
 
     private fun compileWithDaemon(messageCollector: MessageCollector): ExitCode {
-        val isDebugEnabled = log.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBoolean() ?: true
-        val daemonMessageCollector =
-            if (isDebugEnabled) messageCollector else MessageCollector.NONE
         val connection =
             metrics.measure(BuildTime.CONNECT_TO_DAEMON) {
-                GradleCompilerRunner.getDaemonConnectionImpl(
-                    clientIsAliveFlagFile,
-                    sessionFlagFile,
-                    compilerFullClasspath,
-                    daemonMessageCollector,
+                val isDebugEnabled = log.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBoolean() ?: true
+                compilerCache.getDaemonConnection(
+                    compilerClasspath = compilerFullClasspath,
+                    clientAliveFlagFile = clientIsAliveFlagFile,
+                    sessionAliveFlagFile = sessionFlagFile,
+                    messageCollector = messageCollector,
                     isDebugEnabled = isDebugEnabled,
-                    daemonJvmArgs = compilerExecutionSettings.daemonJvmArgs
+                    additionalJvmArgs = compilerExecutionSettings.daemonJvmArgs,
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
@@ -343,8 +341,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private fun compileInProcessImpl(messageCollector: MessageCollector): ExitCode {
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
-        // todo: cache classloader?
-        val classLoader = URLClassLoader(compilerFullClasspath.map { it.toURI().toURL() }.toTypedArray())
+        val classLoader = compilerCache.getClassloader(compilerFullClasspath)
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
         val compiler = Class.forName(compilerClassName, true, classLoader)

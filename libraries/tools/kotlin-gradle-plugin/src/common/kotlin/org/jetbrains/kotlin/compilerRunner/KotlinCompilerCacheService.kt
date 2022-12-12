@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.utils.registerSharedService
 import java.io.File
+import java.net.URLClassLoader
 
-internal abstract class KotlinDaemonService : BuildService<BuildServiceParameters.None>, AutoCloseable {
+internal abstract class KotlinCompilerCacheService : BuildService<BuildServiceParameters.None>, AutoCloseable {
     private data class DaemonConnectionKey(
         val compilerId: CompilerId,
         val clientAliveFlagFile: File,
@@ -25,7 +26,26 @@ internal abstract class KotlinDaemonService : BuildService<BuildServiceParameter
         val daemonJVMOptions: DaemonJVMOptions
     )
 
-    private val connections = HashMap<DaemonConnectionKey, CompileServiceSession?>()
+    private val daemonConnections = HashMap<DaemonConnectionKey, CompileServiceSession?>()
+    private val classloaders = HashMap<CompilerId, URLClassLoader>()
+
+    @Synchronized
+    override fun close() {
+        daemonConnections.clear()
+        for (classloader in classloaders.values) {
+            classloader.close()
+        }
+        classloaders.clear()
+    }
+
+    @Synchronized
+    fun getClassloader(compilerClasspath: List<File>): ClassLoader {
+        val compilerId = CompilerId.makeCompilerId(compilerClasspath)
+        return classloaders.getOrPut(compilerId) {
+            val urls = compilerClasspath.map { it.toURI().toURL() }.toTypedArray()
+            URLClassLoader(urls)
+        }
+    }
 
     @Synchronized
     fun getDaemonConnection(
@@ -57,12 +77,12 @@ internal abstract class KotlinDaemonService : BuildService<BuildServiceParameter
             daemonOptions = daemonOptions,
             daemonJVMOptions = daemonJvmOptions
         )
-        val existingConnection = connections[key]
+        val existingConnection = daemonConnections[key]
         if (existingConnection != null) {
             if (existingConnection.compileService.isAlive().isGood) {
                 return existingConnection
             } else {
-                connections.remove(existingConnection)
+                daemonConnections.remove(existingConnection)
             }
         }
 
@@ -75,17 +95,12 @@ internal abstract class KotlinDaemonService : BuildService<BuildServiceParameter
             daemonJVMOptions = daemonJvmOptions,
             messageCollector = if (isDebugEnabled) messageCollector else MessageCollector.NONE
         )
-        connections[key] = newConnection
+        daemonConnections[key] = newConnection
         return newConnection
     }
 
-    @Synchronized
-    override fun close() {
-        connections.clear()
-    }
-
     companion object {
-        fun registerIfAbsent(gradle: Gradle): Provider<KotlinDaemonService> =
-            gradle.registerSharedService()
+        fun registerIfAbsent(project: Project): Provider<KotlinCompilerCacheService> =
+            project.gradle.registerSharedService()
     }
 }

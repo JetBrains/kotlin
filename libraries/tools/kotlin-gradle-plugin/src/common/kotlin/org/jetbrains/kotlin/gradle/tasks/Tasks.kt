@@ -297,6 +297,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal abstract val buildReportsService: Property<BuildReportsService?>
 
     @get:Internal
+    internal abstract val compilerCache: Property<KotlinCompilerCacheService>
+
+    @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
 
     @get:Internal
@@ -372,7 +375,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                         useDaemonFallbackStrategy.get()
                                     ),
                                     params.first,
-                                    workerExecutor
+                                    workerExecutor,
+                                    compilerCache
                                 )
                             }
                     }

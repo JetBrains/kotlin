@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.gradle.utils.fullServiceName
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -125,7 +126,7 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
 
     companion object {
         private val serviceClass = BuildMetricsService::class.java
-        private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
+        private val serviceName = fullServiceName<BuildMetricsService>()
 
         fun registerIfAbsent(project: Project): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.utils.projectCacheDir
+import org.jetbrains.kotlin.gradle.utils.registerSharedService
 import java.io.File
 
 internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBuildServices.Parameters>, AutoCloseable {
@@ -76,13 +77,9 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
         private val DISPOSE_MESSAGE = "Disposed $CLASS_NAME"
 
         fun registerIfAbsent(gradle: Gradle): Provider<KotlinGradleBuildServices> =
-            gradle.sharedServices.registerIfAbsent(
-                "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
-                KotlinGradleBuildServices::class.java
-            ) { service ->
-                service.parameters.projectCacheDir = gradle.projectCacheDir
+            gradle.registerSharedService {
+                parameters.projectCacheDir = gradle.projectCacheDir
             }
-
     }
 }
 

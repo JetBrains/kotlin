@@ -12,6 +12,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerCacheService
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -64,6 +65,10 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 BuildReportsService.registerIfAbsent(project, it)?.also {
                     task.buildReportsService.value(it)
                 }
+            }
+            KotlinCompilerCacheService.registerIfAbsent(project).also {
+                task.usesService(it)
+                task.compilerCache.value(it)
             }
 
             propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
