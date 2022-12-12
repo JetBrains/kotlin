@@ -379,6 +379,16 @@ object KotlinCompilerClient {
         processBuilder.redirectErrorStream(true)
         val workingDir = File(daemonOptions.runFilesPath).apply { mkdirs() }
         processBuilder.directory(workingDir)
+        processBuilder.environment().set("DYLD_LIBRARY_PATH", "/usr/local/opt/zlib/lib")
+        processBuilder.environment().set("DYLD_PRINT_LIBRARIES", "true")
+        processBuilder.environment().set("DYLD_PRINT_SEARCHING", "true")
+        reportingTargets.report(DaemonReportCategory.DEBUG, "starting the daemon with env: " +
+                processBuilder.environment()
+                    .filter { it.key.startsWith("DYLD") }
+                    .map { it.toString() }
+                    .joinToString("\n")
+        )
+
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
         val daemon = launchProcessWithFallback(processBuilder, reportingTargets, "daemon client")
 

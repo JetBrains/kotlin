@@ -188,6 +188,7 @@ object KotlinCompileDaemon : KotlinCompileDaemonBase() {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        System.getenv().forEach { println(it) }
         mainImpl(args)
     }
 
