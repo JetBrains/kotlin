@@ -216,7 +216,7 @@ internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
 }
 
 internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
-    val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
+    val property = this.properties.single { it.name.asString() == name }
     return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner
 }
 

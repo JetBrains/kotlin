@@ -114,7 +114,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             return objectNamer.getName(parent, declaration)
         }
 
-        return declaration.nameForIrSerialization
+        return declaration.getNameWithAssert()
     }
 
     private fun getFqName(declaration: IrDeclaration): FqName {
