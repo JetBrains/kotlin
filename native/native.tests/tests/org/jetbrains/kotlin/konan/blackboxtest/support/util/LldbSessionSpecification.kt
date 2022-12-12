@@ -101,10 +101,11 @@ class LldbSessionSpecification private constructor(
     companion object {
         val lldbOutputCommand = """(?=\(lldb\))""".toRegex()
         val wildcard = """\s*\[\.\.]\s*""".toRegex()
+        val separator = "(?=^>)".toRegex(RegexOption.MULTILINE)
 
         fun parse(spec: String): LldbSessionSpecification {
             val blocks = spec.trimIndent()
-                .split("(?=^>)".toRegex(RegexOption.MULTILINE))
+                .split(separator)
                 .filterNot(String::isEmpty)
             for (cmd in blocks) {
                 check(cmd.startsWith(">")) { "Invalid lldb session specification: $cmd" }

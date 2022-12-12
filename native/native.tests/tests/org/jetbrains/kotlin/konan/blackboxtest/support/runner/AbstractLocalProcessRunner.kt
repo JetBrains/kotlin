@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.Execu
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.UnfilteredProcessOutput.Companion.launchReader
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
+import org.junit.jupiter.api.Assertions.fail
 import java.io.ByteArrayOutputStream
 import kotlin.time.*
 
@@ -112,10 +113,12 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
                             }
                         } catch (t: Throwable) {
                             if (t is Exception || t is AssertionError) {
-                                org.junit.jupiter.api.Assertions.fail<Nothing>(
+                                fail<Nothing>(
                                     getLoggedRun().withErrorMessage("Tested process output has not passed validation:\n\n" + t.message),
                                     t
                                 )
+                            } else {
+                                throw t
                             }
                         }
                     }
