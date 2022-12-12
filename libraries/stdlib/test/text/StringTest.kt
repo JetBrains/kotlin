@@ -750,6 +750,24 @@ class StringTest {
         assertEquals(-1, string.lastIndexOfAny(substrings, startIndex = 1, ignoreCase = true))
     }
 
+    @Test fun lastIndexOfEmptyString() {
+        assertEquals(0, "".lastIndexOf(""))
+        assertEquals(1, " ".lastIndexOf(""))
+        assertEquals(11, "abracadabra".lastIndexOf(""))
+    }
+
+    @Test fun lastIndexOfAnyWithEmpty() {
+        assertEquals(0, "".lastIndexOfAny(listOf("")))
+        assertEquals(0, "".lastIndexOfAny(listOf("", "a")))
+        assertEquals(0, "".lastIndexOfAny(listOf("a", "")))
+        assertEquals(1, "a".lastIndexOfAny(listOf("")))
+        assertEquals(1, "a".lastIndexOfAny(listOf("", "a")))
+        assertEquals(1, "a".lastIndexOfAny(listOf("a", "")))
+        assertEquals(11, "abracadabra".lastIndexOfAny(listOf("")))
+        assertEquals(11, "abracadabra".lastIndexOfAny(listOf("", "a")))
+        assertEquals(11, "abracadabra".lastIndexOfAny(listOf("a", "")))
+    }
+
     @Test fun findAnyOfStrings() = withOneCharSequenceArg("abracadabra") { string ->
         val substrings = listOf("rac", "ra")
         assertEquals(2 to "rac", string.findAnyOf(substrings))
