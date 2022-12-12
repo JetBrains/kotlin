@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 
 
 internal class IdeMultiplatformImportImpl(
-    private val extension: KotlinProjectExtension,
-    val statistics: IdeMultiplatformImportStatistics = IdeMultiplatformImportStatistics()
+    private val extension: KotlinProjectExtension
 ) : IdeMultiplatformImport {
 
     override fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency> {
@@ -61,7 +60,7 @@ internal class IdeMultiplatformImportImpl(
         level: DependencyResolutionLevel
     ) {
         registeredDependencyResolvers.add(
-            RegisteredDependencyResolver(statistics, resolver, constraint, phase, level)
+            RegisteredDependencyResolver(extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, level)
         )
 
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {

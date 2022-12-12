@@ -59,7 +59,7 @@ internal open class IdeResolveDependenciesTask : DefaultTask() {
             }
         }
 
-        (project.kotlinIdeMultiplatformImport as? IdeMultiplatformImportImpl)?.statistics?.let { statistics ->
+        project.kotlinIdeMultiplatformImportStatistics.let { statistics ->
             val timeStatisticsFile = outputDirectory.resolve("times.txt")
             timeStatisticsFile.writeText(buildString {
                 statistics.getExecutionTimes().forEach { (clazz, time) ->
