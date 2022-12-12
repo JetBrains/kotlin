@@ -371,10 +371,10 @@ class ControlFlowGraphBuilder {
         addEdge(source, enterNode, preferredKind = kind)
     }
 
-    fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode>? {
+    fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode?> {
         if (!buildGraph || klass !is FirControlFlowGraphOwner) {
             graphs.push(ControlFlowGraph(null, "<discarded class graph>", ControlFlowGraph.Kind.Class))
-            return null
+            return null to null
         }
 
         val localClassEnterNode = when {
@@ -418,11 +418,11 @@ class ControlFlowGraphBuilder {
         return localClassEnterNode to enterNode
     }
 
-    fun exitClass(): Pair<ClassExitNode?, ControlFlowGraph>? {
+    fun exitClass(): Pair<ClassExitNode?, ControlFlowGraph?> {
         assert(currentGraph.kind == ControlFlowGraph.Kind.Class)
         if (currentGraph.declaration == null) {
             graphs.pop()
-            return null
+            return null to null
         }
 
         // Members of a class can be visited in any order, so data flow between them is unordered,
@@ -435,7 +435,7 @@ class ControlFlowGraphBuilder {
             //  this graph to be built twice (or more). Not sure what this means. Nothing good, probably.
             //  In any case, attempting to add more edges to subgraphs will be fatal.
             graphs.pop()
-            return null
+            return null to null
         }
 
         val calledInPlace = mutableListOf<ControlFlowGraph>()

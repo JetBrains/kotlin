@@ -202,18 +202,15 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Classes -----------------------------------
 
     fun enterClass(klass: FirClass, buildGraph: Boolean) {
-        val (outerNode, enterNode) = graphBuilder.enterClass(klass, buildGraph) ?: return
+        val (outerNode, enterNode) = graphBuilder.enterClass(klass, buildGraph)
         outerNode?.mergeIncomingFlow()
-        enterNode.mergeIncomingFlow()
+        enterNode?.mergeIncomingFlow()
+        context.variableAssignmentAnalyzer.enterClass(klass)
     }
 
     fun exitClass(): ControlFlowGraph? {
-        // TODO: support capturing of mutable properties
-        //   var x: String?
-        //   x = ""
-        //   class C { init { x = maybeNull() } }
-        //   // C will be initialized at first use - x is no longer safe to smart cast
-        val (node, graph) = graphBuilder.exitClass() ?: return null
+        context.variableAssignmentAnalyzer.exitClass()
+        val (node, graph) = graphBuilder.exitClass()
         if (node != null) {
             node.mergeIncomingFlow()
         } else {
