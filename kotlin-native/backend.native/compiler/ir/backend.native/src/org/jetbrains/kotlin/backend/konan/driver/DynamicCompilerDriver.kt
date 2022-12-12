@@ -19,14 +19,8 @@ import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 internal class DynamicCompilerDriver : CompilerDriver() {
 
     companion object {
-        fun supportsConfig(config: KonanConfig): Boolean =
-                config.produce in setOf(
-                        CompilerOutputKind.PROGRAM,
-                        CompilerOutputKind.LIBRARY,
-                        CompilerOutputKind.DYNAMIC_CACHE,
-                        CompilerOutputKind.STATIC_CACHE,
-                        CompilerOutputKind.FRAMEWORK,
-                )
+        fun supportsConfig(): Boolean =
+                true
     }
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -35,8 +29,8 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                 PhaseEngine.startTopLevel(config) { engine ->
                     when (config.produce) {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.DYNAMIC -> error("Dynamic compiler driver does not support `dynamic` output yet.")
-                        CompilerOutputKind.STATIC -> error("Dynamic compiler driver does not support `static` output yet.")
+                        CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment)
+                        CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
                         CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
                         CompilerOutputKind.BITCODE -> error("Dynamic compiler driver does not support `bitcode` output yet.")
@@ -68,6 +62,17 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
+        }
+        engine.runBackend(backendContext)
+    }
+
+    private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        val (psiToIrOutput, cAdapterElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            it.runPhase(BuildCExports, frontendOutput)
+        }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+            it.cAdapterExportedElements = cAdapterElements
         }
         engine.runBackend(backendContext)
     }
