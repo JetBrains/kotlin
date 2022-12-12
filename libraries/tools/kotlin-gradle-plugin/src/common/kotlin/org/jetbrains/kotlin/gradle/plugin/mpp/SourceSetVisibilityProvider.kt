@@ -52,7 +52,7 @@ internal class SourceSetVisibilityProvider(
         resolvedRootMppDependency: ResolvedComponentResult?,
         resolvedMetadataDependency: ResolvedComponentResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
-        resolvedToOtherProject: Project?
+        resolvedToOtherProject: Boolean
     ): SourceSetVisibilityResult {
         val compilations = visibleFrom.internal.compilations
 
@@ -83,7 +83,7 @@ internal class SourceSetVisibilityProvider(
             .values.let { if (it.isEmpty()) emptySet() else it.reduce { acc, item -> acc intersect item } }
 
         val hostSpecificArtifactBySourceSet: Map<String, File> =
-            if (resolvedToOtherProject != null) {
+            if (resolvedToOtherProject) {
                 /**
                  * When a dependency resolves to a project, we don't need any artifacts from it, we can
                  * instead use the compilation outputs directly:

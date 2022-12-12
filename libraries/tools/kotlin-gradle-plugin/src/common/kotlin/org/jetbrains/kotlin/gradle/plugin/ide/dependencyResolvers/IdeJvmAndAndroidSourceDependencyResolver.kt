@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.projectDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
@@ -29,7 +30,8 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .flatMap { chooseVisibleSourceSets ->
-                val projectDependency = chooseVisibleSourceSets.projectDependency ?: return@flatMap emptyList<IdeaKotlinDependency>()
+                val projectDependency = chooseVisibleSourceSets.projectDependency(sourceSet.project)
+                    ?: return@flatMap emptyList<IdeaKotlinDependency>()
                 val kotlin = projectDependency.multiplatformExtensionOrNull ?: return@flatMap emptyList<IdeaKotlinDependency>()
                 kotlin.sourceSets
                     .filter { sourceSet -> isJvmAndAndroidMain(sourceSet) }

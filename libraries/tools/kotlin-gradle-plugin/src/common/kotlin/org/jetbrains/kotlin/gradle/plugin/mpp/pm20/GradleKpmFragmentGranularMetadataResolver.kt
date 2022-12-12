@@ -74,10 +74,9 @@ internal class GradleKpmFragmentGranularMetadataResolver(
             fragmentResolutionQueue.addAll(visibleTransitiveDependencies.filter { it !in visited })
 
             val resolvedComponentResult = dependencyNode.selectedComponent
-            val isResolvedAsProject = resolvedComponentResult.toProjectOrNull(project)
             val result = when (dependencyModule) {
                 is GradleKpmExternalPlainModule -> {
-                    MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult, isResolvedAsProject)
+                    MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult)
                 }
 
                 else -> run {
@@ -124,7 +123,6 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 
                     MetadataDependencyResolution.ChooseVisibleSourceSets(
                         dependency = metadataSourceComponent,
-                        projectDependency = isResolvedAsProject,
                         projectStructureMetadata = projectStructureMetadata,
                         allVisibleSourceSetNames = visibleFragmentNames,
                         visibleSourceSetNamesExcludingDependsOn = visibleFragmentNamesExcludingVisibleByParents,
@@ -140,7 +138,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
         // FIXME this code is based on whole components; use module IDs with classifiers instead
         val resultSourceComponents = results.mapTo(mutableSetOf()) { it.dependency }
         resolvedComponentsByModuleId.values.minus(resultSourceComponents).forEach {
-            results.add(MetadataDependencyResolution.Exclude.Unrequested(it, it.toProjectOrNull(project)))
+            results.add(MetadataDependencyResolution.Exclude.Unrequested(it))
         }
 
         return results
