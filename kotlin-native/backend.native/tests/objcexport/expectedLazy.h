@@ -1293,7 +1293,7 @@ __attribute__((swift_name("MySwiftArray")))
 __attribute__((swift_name("ObjCNameI1")))
 @protocol KtObjCNameI1
 @required
-- (int32_t)someOtherFunction:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(_:otherParam:)")));
+- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
 @property (readonly) int32_t someOtherValue __attribute__((swift_name("someOtherValue")));
 @end
 
@@ -1302,7 +1302,7 @@ __attribute__((swift_name("SwiftNameC2")))
 @interface KtObjCNameC2 : KtBase <KtObjCNameI1>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)someOtherFunction:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(_:otherParam:)")));
+- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
 @property int32_t someOtherValue __attribute__((swift_name("someOtherValue")));
 @end
 
@@ -1342,7 +1342,7 @@ __attribute__((swift_name("ObjCNameC4")))
 @interface KtObjCNameC4 : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)foo:(int32_t)receiver objCParam:(int32_t)param __attribute__((swift_name("foo(_:objCParam:)")));
+- (int32_t)fooObjCReceiver:(int32_t)receiver objCParam:(int32_t)param __attribute__((swift_name("foo(objCReceiver:objCParam:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1379,7 +1379,7 @@ __attribute__((swift_name("ObjCNameSwiftEnum.Companion")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ObjCNameBKt")))
 @interface KtObjCNameBKt : KtBase
-+ (int32_t)getSomeValue:(id<KtObjCNameI1>)receiver __attribute__((swift_name("getSomeValue(_:)")));
++ (int32_t)getSomeValueOf:(id<KtObjCNameI1>)receiver __attribute__((swift_name("getSomeValue(of:)")));
 @end
 
 __attribute__((swift_name("OverrideKotlinMethods2")))

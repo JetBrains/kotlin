@@ -543,6 +543,15 @@ open class ProtoCompareGenerated(
             }
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, i), new.getExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, i))) return false
+            }
+        }
+
         return true
     }
 
@@ -715,6 +724,33 @@ open class ProtoCompareGenerated(
         else {
             for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertySetterAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertySetterAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertySetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.propertyBackingFieldAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.propertyBackingFieldAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertyBackingFieldAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertyBackingFieldAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertyBackingFieldAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation, i))) return false
             }
         }
 
@@ -2053,6 +2089,10 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.functionAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     return hashCode
 }
 
@@ -2175,6 +2215,18 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertySetterAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertyBackingFieldAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyBackingFieldAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasExtension(KlibMetadataProtoBuf.compileTimeValue)) {
