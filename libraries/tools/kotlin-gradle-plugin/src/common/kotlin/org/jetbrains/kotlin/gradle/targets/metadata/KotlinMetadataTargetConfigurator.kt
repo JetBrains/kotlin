@@ -345,7 +345,7 @@ class KotlinMetadataTargetConfigurator :
         }
 
         compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
-            project.configurations.getByName(compilation.defaultSourceSet.metadataLibrariesConfigurationName),
+            project.configurations.getByName(sourceSet.metadataLibrariesConfigurationName),
             compilation
         )
 
@@ -411,7 +411,7 @@ class KotlinMetadataTargetConfigurator :
                 .partition { it is MetadataDependencyResolution.Exclude }
 
             unrequested.forEach {
-                val (group, name) = it.projectDependency?.run {
+                val (group, name) = it.projectDependency(project)?.run {
                     /** Note: the project dependency notation here should be exactly this, group:name,
                      * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
                     ModuleDependencyIdentifier(group.toString(), name)
@@ -419,7 +419,7 @@ class KotlinMetadataTargetConfigurator :
                 configuration.exclude(mapOf("group" to group, "module" to name))
             }
 
-            requested.filter { it.projectDependency == null }.forEach {
+            requested.filter { it.dependency.projectIdOrNull == null }.forEach {
                 val (group, name) = ModuleIds.fromComponent(project, it.dependency)
                 val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
                 configuration.resolutionStrategy.force(notation)

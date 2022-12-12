@@ -48,6 +48,7 @@ open class MetadataDependencyTransformationTask
         project.kotlinTransformedMetadataLibraryDirectoryForBuild(kotlinSourceSet.name)
     }
 
+    // TODO: Repalce with sourceSet metadata
     @Suppress("unused") // Gradle input
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
@@ -83,9 +84,7 @@ open class MetadataDependencyTransformationTask
         }
     }
 
-    @get:Internal
-    @delegate:Transient
-    internal val transformation: GranularMetadataTransformation by lazy {
+    private val transformation: GranularMetadataTransformation by lazy {
         GranularMetadataTransformation(
             project,
             kotlinSourceSet,
