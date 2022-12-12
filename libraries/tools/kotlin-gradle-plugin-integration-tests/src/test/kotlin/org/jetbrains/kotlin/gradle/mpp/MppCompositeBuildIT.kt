@@ -20,10 +20,10 @@ import kotlin.io.path.absolutePathString
 @DisplayName("Tests for multiplatform with composite builds")
 class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
-    fun `test - simple composite build - ide dependencies`(gradleVersion: GradleVersion) {
-        val producer = project("mpp-composite-build/simple/producerBuild", gradleVersion)
+    fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
-        project("mpp-composite-build/simple/consumerBuild", gradleVersion) {
+        project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.absolutePathString())
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
@@ -56,10 +56,10 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `test - simple composite build - assemble`(gradleVersion: GradleVersion) {
-        val producer = project("mpp-composite-build/simple/producerBuild", gradleVersion)
+    fun `test - sample0 - assemble`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
-        project("mpp-composite-build/simple/consumerBuild", gradleVersion) {
+        project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.absolutePathString())
             build("cleanNativeDistributionCommonization")
 
