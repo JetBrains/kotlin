@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 /**
- * Transform designation into STATUS phase. Affects only for designation, target declaration, it's children and dependents
+ * Transform designation into STATUS phase. Affects only for designation, members of designation classes, target declaration, it's children and dependents
  */
 internal class LLFirDesignatedStatusResolveTransformer(
     private val designation: FirDesignationWithFile,
@@ -29,11 +29,10 @@ internal class LLFirDesignatedStatusResolveTransformer(
     private val scopeSession: ScopeSession,
 ) : LLFirLazyTransformer {
     private inner class FirDesignatedStatusResolveTransformerForIDE(
-        private val designationIterator: Iterator<FirElementWithResolvePhase>
+        private val designationIterator: Iterator<FirRegularClass>,
     ) : FirStatusResolveTransformer(session, scopeSession, StatusComputationSession()) {
 
         private var isInsideTargetDeclaration = false
-
 
         override fun transformClass(klass: FirClass, data: FirResolvedDeclarationStatus?): FirStatement {
             return storeClass(klass) {
@@ -71,14 +70,8 @@ internal class LLFirDesignatedStatusResolveTransformer(
                 designation.target.transform<FirDeclaration, _>(this, data = null)
                 return
             }
-            when (val nextElement = designationIterator.next()) {
-                is FirClass -> {
-                    transformClassContent(nextElement, data = null)
-                }
-                else -> {
-                    error("Unexpected declaration in designation: ${nextElement::class.qualifiedName}")
-                }
-            }
+            val nextClass = designationIterator.next()
+            transformClassContent(nextClass, data = null)
         }
     }
 
@@ -87,7 +80,7 @@ internal class LLFirDesignatedStatusResolveTransformer(
         if (designation.target.resolvePhase >= FirResolvePhase.STATUS) return
         designation.target.checkPhase(FirResolvePhase.TYPES)
 
-        val designationIterator = designation.toSequence(includeTarget = false).iterator()
+        val designationIterator = designation.path.iterator()
         val transformer = FirDesignatedStatusResolveTransformerForIDE(designationIterator)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
             transformer.moveNextDeclaration()

@@ -58,7 +58,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
     }
 
     private class DesignationBuilder(private val elementToBuild: KtDeclaration) : FirVisitorVoid() {
-        private val path = mutableListOf<FirDeclaration>()
+        private val path = mutableListOf<FirRegularClass>()
         var resultDesignation: FirDesignation? = null
             private set
 
