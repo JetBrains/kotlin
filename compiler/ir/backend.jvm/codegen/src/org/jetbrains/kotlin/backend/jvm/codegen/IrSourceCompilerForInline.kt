@@ -98,7 +98,7 @@ class IrSourceCompilerForInline(
     override fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?) {
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.smap, codegen.reifiedTypeParametersUsages
+            sourceMapper, codegen.reifiedTypeParametersUsages
         ).also {
             it.finallyDepth = curFinallyDepth
         }.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
