@@ -30902,6 +30902,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("objectMembers.kt")
+                public void testObjectMembers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/objectMembers.kt");
+                }
+
+                @Test
                 @TestMetadata("property.kt")
                 public void testProperty() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/property.kt");
