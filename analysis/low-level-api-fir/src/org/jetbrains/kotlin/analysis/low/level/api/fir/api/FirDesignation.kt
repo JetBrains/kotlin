@@ -43,6 +43,9 @@ open class FirDesignation(
     val path: List<FirDeclaration>,
     val target: FirElementWithResolvePhase,
 ) {
+    val firstNonFileDeclaration: FirElementWithResolvePhase
+        get() = path.firstOrNull() ?: target
+
     fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolvePhase> = sequence {
         yieldAll(path)
         if (includeTarget) yield(target)

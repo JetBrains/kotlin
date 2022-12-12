@@ -225,7 +225,7 @@ abstract class AbstractFirStatusResolveTransformer(
         return (data ?: declarationStatus)
     }
 
-    private inline fun storeClass(
+    protected inline fun storeClass(
         klass: FirClass,
         computeResult: () -> FirDeclaration
     ): FirDeclaration {
