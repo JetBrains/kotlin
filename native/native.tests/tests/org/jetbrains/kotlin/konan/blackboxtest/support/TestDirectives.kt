@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.OutputDataFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.LldbSessionSpecification
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
+import org.junit.jupiter.api.Assertions
 import java.io.File
 
 internal object TestDirectives : SimpleDirectivesContainer() {
@@ -214,10 +215,14 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(baseDir:File, registeredDirectives: RegisteredDirectives, location: Location): LldbSessionSpecification {
+internal fun parseLLDBSpec(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): LLDBSessionSpec {
     val specFile = parseFileBasedDirective(baseDir, LLDB_TRACE, registeredDirectives, location)
-        ?: fail { "$location: A lldb session specification must be provided" }
-    return LldbSessionSpecification.parse(specFile.readText())
+        ?: fail { "$location: An LLDB session specification must be provided" }
+    return try {
+        LLDBSessionSpec.parse(specFile.readText())
+    } catch (e: Exception) {
+        Assertions.fail<Nothing>("$location: Cannot parse LLDB session specification: " + e.message, e)
+    }
 }
 
 internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {

@@ -98,7 +98,12 @@ fun main() {
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
-private fun debugOnly() = annotation(EnforcedProperty::class.java, Pair("property", ClassLevelProperty.OPTIMIZATION_MODE), Pair("propertyValue", "DEBUG"))
+private fun debugOnly() = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.OPTIMIZATION_MODE,
+    "propertyValue" to "DEBUG"
+)
+
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")

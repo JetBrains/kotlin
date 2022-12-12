@@ -80,7 +80,7 @@ private object NativeTestSupport {
                 nativeHome,
                 computeNativeClassLoader(),
                 computeBaseDirs(),
-                DebugUtils()
+                LLDB(nativeHome)
             )
         } as TestProcessSettings
 

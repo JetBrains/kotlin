@@ -48,9 +48,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
             val testCases = includedTestDataFiles.map { testDataFile -> createTestCase(testDataFile, settings) }
 
-            if (!settings.get<DebugUtils>().lldbIsAvailable) {
-                val lldbTests = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
-                lldbTests.mapTo(disabledTestCaseIds) { it.id }
+            val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
+            if (lldbTestCases.isNotEmpty() && !settings.get<LLDB>().isAvailable) {
+                lldbTestCases.mapTo(disabledTestCaseIds) { it.id }
             }
 
             TestCaseGroup.Default(disabledTestCaseIds, testCases)
@@ -205,11 +205,13 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
 
-        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB) parseLLDBSpec(
-            baseDir = testDataFile.parentFile,
-            registeredDirectives,
-            location
-        ) else null
+        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB)
+            parseLLDBSpec(
+                baseDir = testDataFile.parentFile,
+                registeredDirectives,
+                location
+            )
+        else null
 
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
@@ -221,7 +223,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
                 computeOutputDataFileCheck(testDataFile, registeredDirectives, location),
-                lldbSpec?.let { OutputMatcher(it::matchOutput) }
+                lldbSpec?.let { OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) } }
             ),
             extras = when (testKind) {
                 TestKind.STANDALONE_NO_TR -> {
@@ -236,7 +238,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 TestKind.STANDALONE_LLDB -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(registeredDirectives, location),
-                        arguments = lldbSpec!!.generateCLIArguments(settings.get<KotlinNativeHome>().lldbPrettyPrinters)
+                        arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
                     )
                 }
             }

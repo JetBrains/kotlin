@@ -114,7 +114,7 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
                         } catch (t: Throwable) {
                             if (t is Exception || t is AssertionError) {
                                 fail<Nothing>(
-                                    getLoggedRun().withErrorMessage("Tested process output has not passed validation:\n\n" + t.message),
+                                    getLoggedRun().withErrorMessage("Tested process output has not passed validation: " + t.message),
                                     t
                                 )
                             } else {

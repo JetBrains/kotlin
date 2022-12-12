@@ -30,14 +30,15 @@ internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: 
 internal class KotlinNativeHome(val dir: File) {
     val librariesDir: File = dir.resolve("klib")
     val stdlibFile: File = librariesDir.resolve("common/stdlib")
-    val lldbPrettyPrinters: File = dir.resolve("tools/konan_lldb.py")
     val properties: Properties by lazy {
         dir.resolve("konan/konan.properties").inputStream().use { Properties().apply { load(it) } }
     }
 }
 
-internal class DebugUtils {
-    val lldbIsAvailable: Boolean by lazy {
+internal class LLDB(nativeHome: KotlinNativeHome) {
+    val prettyPrinters: File = nativeHome.dir.resolve("tools/konan_lldb.py")
+
+    val isAvailable: Boolean by lazy {
         try {
             val exitCode = ProcessBuilder("lldb", "-version").start().waitFor()
             exitCode == 0
