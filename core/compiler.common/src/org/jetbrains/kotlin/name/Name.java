@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.name;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+
 public final class Name implements Comparable<Name> {
     @NotNull
     private final String name;
@@ -59,7 +61,7 @@ public final class Name implements Comparable<Name> {
 
     @NotNull
     public static Name identifier(@NotNull String name) {
-        return new Name(name, false);
+        return getNameWithInterning(name, false);
     }
 
     public static boolean isValidIdentifier(@NotNull String name) {
@@ -79,7 +81,20 @@ public final class Name implements Comparable<Name> {
         if (!name.startsWith("<")) {
             throw new IllegalArgumentException("special name must start with '<': " + name);
         }
-        return new Name(name, true);
+        return getNameWithInterning(name, true);
+    }
+
+    @NotNull
+    private static Name getNameWithInterning(@NotNull String name, boolean isSpecial) {
+        if (name.length() > 10) {
+            return new Name(name, isSpecial);
+        } else {
+            Name interned = internedNames.get(name);
+            if (interned != null) return interned;
+            Name newName = new Name(name, isSpecial);
+            internedNames.put(name, newName);
+            return newName;
+        }
     }
 
     @NotNull
@@ -122,4 +137,6 @@ public final class Name implements Comparable<Name> {
         result = 31 * result + (special ? 1 : 0);
         return result;
     }
+
+    private static final HashMap<String, Name> internedNames = new HashMap<>();
 }
