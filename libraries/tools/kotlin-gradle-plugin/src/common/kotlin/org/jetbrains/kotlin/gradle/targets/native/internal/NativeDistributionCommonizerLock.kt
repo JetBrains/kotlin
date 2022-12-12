@@ -16,9 +16,8 @@ internal class NativeDistributionCommonizerLock(
 ) {
     private companion object {
         val intraProcessLock: ReentrantLock = ReentrantLock()
+        val lockedOutputDirectories = hashSetOf<File>()
     }
-
-    private val lockedOutputDirectories = mutableSetOf<File>()
 
     fun <T> withLock(action: () -> T): T {
         /* Enter intra-process wide lock */
