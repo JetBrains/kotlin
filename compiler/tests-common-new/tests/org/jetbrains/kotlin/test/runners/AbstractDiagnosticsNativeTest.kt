@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -59,6 +60,12 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         forTestsMatching("testData/diagnostics/nativeTests/*") {
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+                +ConfigurationDirectives.WITH_STDLIB
+            }
+        }
+        forTestsMatching("testData/diagnostics/nativeTests/testsWithStdLib/*") {
+            defaultDirectives {
+                +ConfigurationDirectives.WITH_STDLIB
             }
         }
     }

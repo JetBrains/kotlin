@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
 import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
@@ -63,6 +64,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         EnumDeclaringClassDeprecationChecker,
         UpperBoundViolatedInTypealiasConstructorChecker,
         JvmSyntheticAssignmentChecker,
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = false)
     ),
 
     additionalTypeCheckers = listOf(

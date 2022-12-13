@@ -31,6 +31,18 @@ public class FirOldFrontendNativeDiagnosticsTestGenerated extends AbstractFirNat
     }
 
     @Test
+    @TestMetadata("isInitialized.kt")
+    public void testIsInitialized() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/isInitialized.kt");
+    }
+
+    @Test
+    @TestMetadata("isInitializedError.kt")
+    public void testIsInitializedError() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/isInitializedError.kt");
+    }
+
+    @Test
     @TestMetadata("objCName.kt")
     public void testObjCName() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");

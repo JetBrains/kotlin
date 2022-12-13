@@ -260,6 +260,10 @@ public class DefaultErrorMessages {
         MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a lateinit property");
         MAP.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration can not be used inside an inline function");
         MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point", COMPACT);
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING, "This declaration can only be called on a property literal (e.g. 'Foo::bar'). This warning will become an error in future releases.");
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING, "This declaration can only be called on a reference to a lateinit property. This warning will become an error in future releases.");
+        MAP.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING, "This declaration can not be used inside an inline function. This warning will become an error in future releases.");
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING, "Backing field of ''{0}'' is not accessible at this point. This warning will become an error in future releases.", COMPACT);
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, "Setter visibility must be the same or less permissive than property visibility");

@@ -679,6 +679,13 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, PropertyDescriptor> LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY =
             DiagnosticFactory1.create(ERROR);
 
+
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<PsiElement, PropertyDescriptor> LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING =
+            DiagnosticFactory1.create(WARNING);
+
     DiagnosticFactory2<KtModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS =
             DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 
