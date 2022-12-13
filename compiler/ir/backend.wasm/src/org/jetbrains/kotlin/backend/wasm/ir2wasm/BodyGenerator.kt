@@ -134,9 +134,10 @@ class BodyGenerator(
 
         check(wasmArrayType != null)
 
-        generateAnyParameters(arrayClass.symbol, expression.getSourceLocation())
+        val location = expression.getSourceLocation()
+        generateAnyParameters(arrayClass.symbol, location)
         if (!tryGenerateConstVarargArray(expression, wasmArrayType)) tryGenerateVarargArray(expression, wasmArrayType)
-        body.buildStructNew(context.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol))
+        body.buildStructNew(context.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
     }
 
     override fun visitThrow(expression: IrThrow) {
@@ -284,11 +285,12 @@ class BodyGenerator(
         }
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
-            generateAnyParameters(klassSymbol, expression.getSourceLocation())
+            val location = expression.getSourceLocation()
+            generateAnyParameters(klassSymbol, location)
             for (i in 0 until expression.valueArgumentsCount) {
                 generateExpression(expression.getValueArgument(i)!!)
             }
-            body.buildStructNew(wasmGcType)
+            body.buildStructNew(wasmGcType, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
             return
         }
@@ -329,7 +331,7 @@ class BodyGenerator(
                     generateDefaultInitializerForType(context.transformType(field.type), body)
                 }
             }
-            body.buildStructNew(context.referenceGcType(parentClass.symbol))
+            body.buildStructNew(context.referenceGcType(parentClass.symbol), location)
             body.buildSetLocal(thisParameter, location)
             body.buildEnd()
         }
@@ -351,9 +353,10 @@ class BodyGenerator(
 
     private fun generateBox(expression: IrExpression, type: IrType) {
         val klassSymbol = type.getRuntimeClass(irBuiltIns).symbol
-        generateAnyParameters(klassSymbol, expression.getSourceLocation())
+        val location = expression.getSourceLocation()
+        generateAnyParameters(klassSymbol, location)
         generateExpression(expression)
-        body.buildStructNew(context.referenceGcType(klassSymbol))
+        body.buildStructNew(context.referenceGcType(klassSymbol), location)
         body.commentPreviousInstr { "box" }
     }
 
