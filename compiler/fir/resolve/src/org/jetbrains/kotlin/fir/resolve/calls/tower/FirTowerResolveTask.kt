@@ -377,12 +377,14 @@ internal open class FirTowerResolveTask(
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
         emptyScopes: MutableSet<FirScope>
     ) {
-        processLevel(
-            receiver.toMemberScopeTowerLevel(), info, parentGroup.Member,
-            onEmptyLevel = {
-                implicitReceiverValuesWithEmptyScopes += receiver
-            }
-        )
+        if (receiver !in implicitReceiverValuesWithEmptyScopes || info.callKind == CallKind.VariableAccess) {
+            processLevel(
+                receiver.toMemberScopeTowerLevel(), info, parentGroup.Member,
+                onEmptyLevel = {
+                    implicitReceiverValuesWithEmptyScopes += receiver
+                }
+            )
+        }
 
         enumerateTowerLevels(
             parentGroup,
@@ -401,7 +403,10 @@ internal open class FirTowerResolveTask(
                 if (implicitReceiverValue in implicitReceiverValuesWithEmptyScopes) return@l
                 processLevel(
                     implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = receiver),
-                    info, group
+                    info, group,
+                    onEmptyLevel = {
+                        implicitReceiverValuesWithEmptyScopes += implicitReceiverValue
+                    }
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
