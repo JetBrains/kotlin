@@ -2,7 +2,7 @@ package
 
 public fun baz(/*0*/ j2: J2): kotlin.Any
 
-@org.jspecify.nullness.NullMarked public interface J1</*0*/ T : @org.jspecify.nullness.Nullable kotlin.Any!> {
+@org.jspecify.annotations.NullMarked public interface J1</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): T!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -10,7 +10,7 @@ public fun baz(/*0*/ j2: J2): kotlin.Any
 }
 
 public interface J2 {
-    public abstract fun bar(): J1<out @org.jspecify.nullness.Nullable kotlin.Any!>!
+    public abstract fun bar(): J1<out @org.jspecify.annotations.Nullable kotlin.Any!>!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

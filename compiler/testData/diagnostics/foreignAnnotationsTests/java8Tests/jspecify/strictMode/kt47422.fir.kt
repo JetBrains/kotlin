@@ -4,7 +4,7 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: Foo.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public interface Foo<T extends @Nullable Object> {}
 
@@ -16,7 +16,7 @@ public class Util {
 }
 
 // FILE: UtilNullMarked.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class UtilNullMarked {
@@ -26,7 +26,7 @@ public class UtilNullMarked {
 }
 
 // FILE: UtilNullMarkedGeneric.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class UtilNullMarkedGeneric {
@@ -36,7 +36,7 @@ public class UtilNullMarkedGeneric {
 }
 
 // FILE: UtilNullMarkedGenericNullableBound.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class UtilNullMarkedGenericNullableBound {
@@ -46,7 +46,7 @@ public class UtilNullMarkedGenericNullableBound {
 }
 
 // FILE: UtilGenericNullableBound.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class UtilGenericNullableBound {
     public static <K extends @Nullable Object> Foo<K> getFooOfK() {
@@ -55,7 +55,7 @@ public class UtilGenericNullableBound {
 }
 
 // FILE: UtilNullMarkedGenericNullnessUnspecifiedBound.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class UtilNullMarkedGenericNullnessUnspecifiedBound {
@@ -65,7 +65,7 @@ public class UtilNullMarkedGenericNullnessUnspecifiedBound {
 }
 
 // FILE: UtilGenericNullnessUnspecifiedBound.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class UtilGenericNullnessUnspecifiedBound {
     public static <K extends @NullnessUnspecified Object> Foo<K> getFooOfK() {

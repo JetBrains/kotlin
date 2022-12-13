@@ -1,7 +1,7 @@
 // JSPECIFY_STATE: strict
 
 // FILE: A.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class A<T> {
@@ -10,7 +10,7 @@ public class A<T> {
 }
 
 // FILE: B.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 @NullMarked
 public class B<T> {
     public void foo(T t) {}

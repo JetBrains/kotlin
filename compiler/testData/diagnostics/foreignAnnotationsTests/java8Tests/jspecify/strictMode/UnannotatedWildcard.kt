@@ -2,7 +2,7 @@
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: J1.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public interface J1<T extends @Nullable Object> {

@@ -3,7 +3,7 @@
 // JSPECIFY_STATE: strict
 
 // FILE: sandbox/test/module-info.java
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 module sandbox {
@@ -14,7 +14,7 @@ module sandbox {
 // FILE: sandbox/test/Test.java
 package test;
 
-import org.jspecify.nullness.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class Test {
     public void foo(@Nullable Integer x) {}

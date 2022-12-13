@@ -4,7 +4,7 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: Foo.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public interface Foo {
@@ -12,7 +12,7 @@ public interface Foo {
 }
 
 // FILE: Bar.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public interface Bar<E extends @Nullable Object> {}
