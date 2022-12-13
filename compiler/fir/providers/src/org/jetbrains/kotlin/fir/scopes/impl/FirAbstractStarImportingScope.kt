@@ -53,4 +53,8 @@ abstract class FirAbstractStarImportingScope(
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) =
         processPropertiesByName(name, starImports, processor)
+
+    override fun mayContainName(name: Name): Boolean {
+        return super.mayContainName(name)
+    }
 }
