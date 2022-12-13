@@ -24,7 +24,7 @@ import kotlin.io.path.*
 import kotlin.test.assertEquals
 
 @DisplayName("Kapt incremental tests with isolating apt")
-class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
+open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
@@ -427,6 +427,11 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             }
         }
     }
+}
+
+@DisplayName("Kapt incremental tests with isolating apt with precise compilation outputs backup")
+class KaptIncrementalWithIsolatingAptAndPreciseBackup : KaptIncrementalWithIsolatingApt() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"

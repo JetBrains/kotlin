@@ -14,7 +14,7 @@ import kotlin.io.path.exists
 
 @DisplayName("Compiler plugin incremental compilation")
 @OtherGradlePluginTests
-class CompilerPluginsIncrementalIT : KGPBaseTest() {
+open class CompilerPluginsIncrementalIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             incremental = true
@@ -67,4 +67,9 @@ class CompilerPluginsIncrementalIT : KGPBaseTest() {
     }
 
     private val String.prefix get() = "compilerPlugins/$this"
+}
+
+@DisplayName("Compiler plugin incremental compilation with precise compilation outputs backup")
+class CompilerPluginsIncrementalWithPreciseBackupIT : CompilerPluginsIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
 }

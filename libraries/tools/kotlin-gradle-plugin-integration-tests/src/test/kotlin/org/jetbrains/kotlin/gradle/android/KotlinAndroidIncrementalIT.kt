@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
 @DisplayName("kotlin-android incremental compilation tests")
 @AndroidGradlePluginTests
-class KotlinAndroidIncrementalIT : KGPBaseTest() {
+open class KotlinAndroidIncrementalIT : KGPBaseTest() {
     @DisplayName("incremental compilation works with single-module android projects")
     @GradleAndroidTest
     fun testIncrementalCompilation(
@@ -180,4 +177,8 @@ class KotlinAndroidIncrementalIT : KGPBaseTest() {
             }
         }
     }
+}
+
+class KotlinAndroidIncrementalWithPreciseBackupIT : KotlinAndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
 }

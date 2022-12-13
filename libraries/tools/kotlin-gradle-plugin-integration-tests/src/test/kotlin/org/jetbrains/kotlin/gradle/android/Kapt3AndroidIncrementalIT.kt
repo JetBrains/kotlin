@@ -18,7 +18,7 @@ import kotlin.io.path.writeText
 
 @DisplayName("android with kapt3 incremental build tests")
 @AndroidGradlePluginTests
-class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
+open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
     fun generateStubsTaskShouldRunIncrementallyOnChangesInAndroidVariantJavaSources(
@@ -202,4 +202,9 @@ class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
             modifyAndCheck(libJvmProject.kotlinSourcesDir().resolve("libJvmUtil.kt"), "useLibJvmUtil.kt")
         }
     }
+}
+
+@DisplayName("android with kapt3 incremental build tests with precise compilation outputs backup")
+class Kapt3AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
 }

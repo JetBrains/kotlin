@@ -38,6 +38,7 @@ data class BuildOptions(
     val usePreciseJavaTracking: Boolean? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
+    val usePreciseOutputsBackup: Boolean? = null,
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -142,6 +143,10 @@ data class BuildOptions(
 
         if (statisticsForceValidation) {
             arguments.add("-Pkotlin_performance_profile_force_validation=true")
+        }
+
+        if (usePreciseOutputsBackup != null) {
+            arguments.add("-Pkotlin.compiler.preciseCompilationResultsBackup=$usePreciseOutputsBackup")
         }
 
         arguments.addAll(freeArgs)

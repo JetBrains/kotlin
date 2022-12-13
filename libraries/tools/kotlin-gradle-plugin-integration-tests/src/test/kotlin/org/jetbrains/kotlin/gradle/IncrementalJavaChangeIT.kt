@@ -91,6 +91,11 @@ open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBas
     }
 }
 
+@DisplayName("Default incremental compilation with precise compilation outputs backup")
+open class IncrementalJavaChangePreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
+}
+
 @DisplayName("Incremental compilation via classpath snapshots with default precise java tracking")
 class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
 
