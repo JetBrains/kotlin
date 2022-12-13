@@ -52,6 +52,12 @@ class IncrementalPackagePartProvider(
                 parent.findPackageParts(packageFqName)).distinct()
     }
 
+    private val allPackageNames_ by lazy {
+        moduleMappings.flatMap { it.packageFqName2Parts.keys } + parent.allPackageNames()
+    }
+
+    override fun allPackageNames() = allPackageNames_
+
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
         return parent.getAnnotationsOnBinaryModule(moduleName)
     }
