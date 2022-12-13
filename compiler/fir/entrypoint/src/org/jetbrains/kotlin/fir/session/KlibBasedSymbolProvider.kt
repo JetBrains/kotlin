@@ -94,6 +94,11 @@ class KlibBasedSymbolProvider(
         }
     }
 
+    override fun computePackageSetWithNonClassDeclarations(): Set<String> = fragmentNamesInLibraries.keys
+
+    // Looks like it's expensive to compute the presence of a class properly for KLib
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean = true
+
     @OptIn(SymbolInternals::class)
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val packageStringName = classId.packageFqName.asString()

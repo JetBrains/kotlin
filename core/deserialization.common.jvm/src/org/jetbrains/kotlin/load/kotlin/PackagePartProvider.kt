@@ -18,6 +18,12 @@ interface PackagePartProvider {
      */
     fun findPackageParts(packageFqName: String): List<String>
 
+    /**
+     * This method is only for sake of optimization
+     * @return package names set for which that provider has package parts
+     */
+    fun computePackageSetWithNonClassDeclarations(): Set<String>
+
     fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId>
 
     fun getAllOptionalAnnotationClasses(): List<ClassData>
@@ -28,5 +34,7 @@ interface PackagePartProvider {
         override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
 
         override fun getAllOptionalAnnotationClasses(): List<ClassData> = emptyList()
+
+        override fun computePackageSetWithNonClassDeclarations(): Set<String> = emptySet()
     }
 }
