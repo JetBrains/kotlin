@@ -142,7 +142,7 @@ class BodyGenerator(
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
-        body.buildThrow(functionContext.tagIdx)
+        body.buildThrow(functionContext.tagIdx, expression.getSourceLocation())
     }
 
     override fun visitTry(aTry: IrTry) {

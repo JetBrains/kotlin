@@ -94,8 +94,8 @@ abstract class WasmExpressionBuilder {
         buildBrInstr(WasmOp.BR, absoluteBlockLevel, location)
     }
 
-    fun buildThrow(tagIdx: Int) {
-        buildInstr(WasmOp.THROW, WasmImmediate.TagIdx(tagIdx))
+    fun buildThrow(tagIdx: Int, location: SourceLocation) {
+        buildInstr(WasmOp.THROW, location, WasmImmediate.TagIdx(tagIdx))
     }
 
     @Suppress("UNUSED_PARAMETER")
