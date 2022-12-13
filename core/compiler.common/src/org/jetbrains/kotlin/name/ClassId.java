@@ -103,7 +103,7 @@ public final class ClassId {
     @NotNull
     public FqName asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
-        return new FqName(packageFqName.asString() + "." + relativeClassName.asString());
+        return packageFqName.child(relativeClassName);
     }
 
     public boolean startsWith(@NotNull Name segment) {

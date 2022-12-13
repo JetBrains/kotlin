@@ -89,7 +89,7 @@ abstract class FirJavaFacade(
 
     fun hasTopLevelClassOf(classId: ClassId): Boolean {
         val knownNames = knownClassNamesInPackage.getValue(classId.packageFqName) ?: return true
-        return classId.relativeClassName.topLevelName() in knownNames
+        return classId.relativeClassName.topLevelName().asString() in knownNames
     }
 
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData

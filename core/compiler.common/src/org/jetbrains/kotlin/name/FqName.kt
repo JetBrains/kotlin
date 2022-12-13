@@ -39,8 +39,9 @@ class FqName {
         this.parent = parent
     }
 
-    fun asString(): String {
-        return fqName.asString()
+    @JvmOverloads
+    fun asString(separator: CharSequence = "."): String {
+        return fqName.asString(separator)
     }
 
     fun toUnsafe(): FqNameUnsafe {
@@ -63,8 +64,16 @@ class FqName {
         return FqName(fqName.child(name), this)
     }
 
+    fun child(name: FqName): FqName {
+        return FqName(fqName.child(name.fqName))
+    }
+
     fun shortName(): Name {
         return fqName.shortName()
+    }
+
+    fun topLevelName(): Name {
+        return fqName.topLevelName()
     }
 
     fun shortNameOrSpecial(): Name {

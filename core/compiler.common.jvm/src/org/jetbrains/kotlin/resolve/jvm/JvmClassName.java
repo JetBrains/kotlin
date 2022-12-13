@@ -29,10 +29,10 @@ public class JvmClassName {
     @NotNull
     public static JvmClassName byClassId(@NotNull ClassId classId) {
         FqName packageFqName = classId.getPackageFqName();
-        String relativeClassName = classId.getRelativeClassName().asString().replace('.', '$');
+        String relativeClassName = classId.getRelativeClassName().asString("$");
         return packageFqName.isRoot()
                ? new JvmClassName(relativeClassName)
-               : new JvmClassName(packageFqName.asString().replace('.', '/') + "/" + relativeClassName);
+               : new JvmClassName(packageFqName.asString("/") + "/" + relativeClassName);
     }
 
     /**

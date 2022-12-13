@@ -41,7 +41,8 @@ class FqNameUnsafe(
     constructor(fqName: String, safe: FqName?) : this(computeNamesFromString(fqName), safe)
     constructor(fqName: String) : this(computeNamesFromString(fqName), null)
 
-    fun asString(): String = nameSegments.joinToString(".")
+    @JvmOverloads
+    fun asString(separator: CharSequence = "."): String = nameSegments.joinToString(separator)
 
     val isSafe: Boolean
         get() = safe != null || nameSegments.none { it.isSpecial }
@@ -61,7 +62,13 @@ class FqNameUnsafe(
 
     fun child(name: Name): FqNameUnsafe = FqNameUnsafe(nameSegments + name)
 
+    fun child(name: FqNameUnsafe): FqNameUnsafe = FqNameUnsafe(nameSegments + name.nameSegments)
+
     fun shortName(): Name = shortName!!
+
+    fun topLevelName(): Name =
+        if (isRoot) ROOT_NAME
+        else nameSegments[0]
 
     fun shortNameOrSpecial(): Name {
         return if (isRoot) {
