@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.withNoLocation
 
 class BodyGenerator(
     val context: WasmModuleCodegenContext,
@@ -244,7 +245,8 @@ class BodyGenerator(
             if (valueDeclaration.isDispatchReceiver)
                 functionContext.referenceLocal(0)
             else
-                functionContext.referenceLocal(valueSymbol)
+                functionContext.referenceLocal(valueSymbol),
+            expression.getSourceLocation()
         )
         body.commentPreviousInstr { "type: ${valueDeclaration.type.render()}" }
     }
@@ -316,19 +318,21 @@ class BodyGenerator(
         if (parentClass.isAbstractOrSealed) return
         val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
         body.commentGroupStart { "Object creation prefix" }
-        body.buildGetLocal(thisParameter)
-        body.buildInstr(WasmOp.REF_IS_NULL)
-        body.buildIf("this_init")
-        generateAnyParameters(parentClass.symbol, SourceLocation.NoLocation("Constructor preamble"))
-        val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
-        irFields.forEachIndexed { index, field ->
-            if (index > 1) {
-                generateDefaultInitializerForType(context.transformType(field.type), body)
+        withNoLocation("Constructor preamble") {
+            body.buildGetLocal(thisParameter, location)
+            body.buildInstr(WasmOp.REF_IS_NULL)
+            body.buildIf("this_init")
+            generateAnyParameters(parentClass.symbol, location)
+            val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
+            irFields.forEachIndexed { index, field ->
+                if (index > 1) {
+                    generateDefaultInitializerForType(context.transformType(field.type), body)
+                }
             }
+            body.buildStructNew(context.referenceGcType(parentClass.symbol))
+            body.buildSetLocal(thisParameter)
+            body.buildEnd()
         }
-        body.buildStructNew(context.referenceGcType(parentClass.symbol))
-        body.buildSetLocal(thisParameter)
-        body.buildEnd()
         body.commentGroupEnd()
     }
 
@@ -341,7 +345,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildGetLocal(functionContext.referenceLocal(0))  // this parameter
+        body.buildGetLocal(functionContext.referenceLocal(0), SourceLocation.NoLocation("Get implicit dispatch receiver")) // this parameter
         generateCall(expression)
     }
 
@@ -525,7 +529,7 @@ class BodyGenerator(
                         body.buildSetLocal(parameterLocal)
                         body.buildBlock("isInterface", WasmI32) { outerLabel ->
                             body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
-                                body.buildGetLocal(parameterLocal)
+                                body.buildGetLocal(parameterLocal, location)
                                 body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
                                 body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable)
                                 body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol))
@@ -669,7 +673,7 @@ class BodyGenerator(
         }
 
         if (functionContext.irFunction is IrConstructor) {
-            body.buildGetLocal(functionContext.referenceLocal(0))
+            body.buildGetLocal(functionContext.referenceLocal(0), SourceLocation.NoLocation("Get implicit dispatch receiver"))
         }
 
         body.buildInstr(WasmOp.RETURN, expression.getSourceLocation())

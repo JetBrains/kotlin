@@ -245,12 +245,13 @@ private fun <T> BodyGenerator.createBinaryTable(
     thenBody: (T) -> Unit,
     elseBody: () -> Unit
 ) {
+    // TODO test
     val location = SourceLocation.NoLocation("When's binary search infra")
 
     val size = toExcl - fromIncl
     if (size == 1) {
         val (case, result) = sortedCases[fromIncl]
-        body.buildGetLocal(selectorLocal)
+        body.buildGetLocal(selectorLocal, location)
         body.buildConstI32(case, location)
         body.buildInstr(WasmOp.I32_EQ)
         body.buildIf("binary_tree_branch", resultType)
@@ -263,7 +264,7 @@ private fun <T> BodyGenerator.createBinaryTable(
 
     val border = fromIncl + size / 2
 
-    body.buildGetLocal(selectorLocal)
+    body.buildGetLocal(selectorLocal, location)
     body.buildConstI32(sortedCases[border].first, location)
     body.buildInstr(WasmOp.I32_LT_S)
     body.buildIf("binary_tree_node", resultType)
@@ -315,7 +316,7 @@ private fun BodyGenerator.genTableIntSwitch(
     }
 
     resultType?.let { generateDefaultInitializerForType(it, body) } //stub value
-    body.buildGetLocal(selectorLocal)
+    body.buildGetLocal(selectorLocal, location)
     if (shift != 0) {
         body.buildConstI32(shift, location)
         body.buildInstr(WasmOp.I32_SUB)
