@@ -21,40 +21,34 @@ class FirTypeIntersectionScope private constructor(
     private val intersectionContext =
         FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType, forClassUseSiteScope = false)
 
-    private val absentFunctions: MutableSet<Name> = mutableSetOf()
-    private val absentProperties: MutableSet<Name> = mutableSetOf()
-    private val absentClassifiers: MutableSet<Name> = mutableSetOf()
-
     private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<FirCallableSymbol<*>>>> = mutableMapOf()
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
     }
 
+    private val classifiersNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
+    }
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getCallableNames()) return
+        processCallablesByName(name, processor, FirScope::processFunctionsByName)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        processCallablesByName(name, processor, absentProperties, FirScope::processPropertiesByName)
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getCallableNames()) return
+        processCallablesByName(name, processor, FirScope::processPropertiesByName)
     }
 
     private inline fun <D : FirCallableSymbol<*>> processCallablesByName(
         name: Name,
         noinline processor: (D) -> Unit,
-        absentNames: MutableSet<Name>,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ) {
-        if (name in absentNames) {
-            return
-        }
-
         val callablesWithOverridden = intersectionContext.collectIntersectionResultsForCallables(name, processCallables)
-
-        if (callablesWithOverridden.isEmpty()) {
-            absentNames.add(name)
-            return
-        }
 
         for (resultOfIntersection in callablesWithOverridden) {
             val symbol = resultOfIntersection.chosenSymbol
@@ -64,7 +58,9 @@ class FirTypeIntersectionScope private constructor(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        intersectionContext.processClassifiersByNameWithSubstitution(name, absentClassifiers, processor)
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getClassifierNames()) return
+        intersectionContext.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -112,9 +108,7 @@ class FirTypeIntersectionScope private constructor(
 
     override fun getCallableNames(): Set<Name> = callableNamesCached
 
-    override fun getClassifierNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
-    }
+    override fun getClassifierNames(): Set<Name> = classifiersNamesCached
 
     override fun toString(): String {
         return "Intersection of [${scopes.joinToString(", ")}]"

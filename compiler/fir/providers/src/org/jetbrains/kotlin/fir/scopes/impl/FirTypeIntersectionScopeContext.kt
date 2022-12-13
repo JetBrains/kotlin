@@ -76,16 +76,9 @@ class FirTypeIntersectionScopeContext(
 
     fun processClassifiersByNameWithSubstitution(
         name: Name,
-        absentClassifierNames: MutableSet<Name>,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
-        if (name in absentClassifierNames) return
-        val classifiers = collectClassifiers(name)
-        if (classifiers.isEmpty()) {
-            absentClassifierNames += name
-            return
-        }
-        for ((symbol, substitution) in classifiers) {
+        for ((symbol, substitution) in collectClassifiers(name)) {
             processor(symbol, substitution)
         }
     }
