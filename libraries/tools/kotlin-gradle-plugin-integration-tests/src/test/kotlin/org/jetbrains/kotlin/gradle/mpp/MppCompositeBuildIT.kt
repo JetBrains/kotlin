@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.absolutePathString
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
@@ -22,7 +21,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.absolutePathString())
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     regularSourceDependency("producerBuild::producerA/commonMain"),
@@ -58,7 +57,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.absolutePathString())
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             build("cleanNativeDistributionCommonization")
 
             build("assemble") {
