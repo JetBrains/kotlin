@@ -167,6 +167,11 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
     )
 
     @Test
+    fun testKeyboardOptionsWithLiteralsIsStatic() = assertStatic(
+        expression = "KeyboardOptions(autoCorrect = false)"
+    )
+
+    @Test
     fun testUnspecifiedColorIsStatic() = assertStatic(
         expression = "Color.Unspecified"
     )

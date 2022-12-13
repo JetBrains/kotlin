@@ -113,6 +113,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFalseConst
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -874,6 +875,12 @@ abstract class AbstractComposeLowering(
         if (type.isInlineClassType()) {
             return stabilityOf(type.unboxInlineClass()).knownStable() &&
                 getValueArgument(0)?.isStatic() == true
+        }
+
+        // If a type is immutable, then calls to its constructor are static if all of
+        // the provided arguments are static.
+        if (symbol.owner.parentAsClass.hasAnnotationSafe(ComposeFqNames.Immutable)) {
+            return areAllArgumentsStatic()
         }
         return false
     }
