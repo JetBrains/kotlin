@@ -26,6 +26,8 @@ internal class PackagePartProviderTestImpl(
                 return providers.flatMapTo(mutableSetOf()) { it.findPackageParts(packageFqName) }.toList()
             }
 
+            override fun allPackageNames(): List<String> = providers.flatMap { it.allPackageNames() }
+
             override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
                 return providers.flatMapTo(mutableSetOf()) { it.getAnnotationsOnBinaryModule(moduleName) }.toList()
             }
