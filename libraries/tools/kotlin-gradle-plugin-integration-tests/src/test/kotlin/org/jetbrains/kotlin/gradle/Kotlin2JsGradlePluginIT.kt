@@ -700,7 +700,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
                 val mapFilePath = subProject("app").projectPath
                     .resolve("build/kotlin2js/app.js.map")
-                assertFileContains(mapFilePath,"\"../../src/main/kotlin/main.kt\"")
+                assertFileContains(mapFilePath, "\"../../src/main/kotlin/main.kt\"")
                 if (irBackend) {
                     // The IR BE generates correct paths for dependencies
                     assertFileContains(mapFilePath, "\"../../../lib/src/main/kotlin/foo.kt\"")
@@ -1710,6 +1710,177 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
                         .resolve("puppeteer")
                         .resolve(".local-chromium")
                 )
+            }
+        }
+    }
+
+    @DisplayName("Kotlin/JS DOM API extracting automatically added as dependency")
+    @GradleTest
+    fun testKotlinJsBuiltins(gradleVersion: GradleVersion) {
+        project("kotlin-js-dom-api-compat", gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(":compileKotlinJs")
+            }
+
+            var added: String? = null
+
+            buildGradleKts.modify {
+                it + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced
+            }
+
+            gradleProperties.modify {
+                it + "\n" +
+                        """
+                        kotlin.stdlib.default.dependency=false
+                        """.trimIndent()
+            }
+
+            buildAndFail("assemble") {
+                assertTasksFailed(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                it + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            buildAndFail("assemble") {
+                assertTasksFailed(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced
+            }
+
+            gradleProperties.modify {
+                val replaced = it.replace(
+                    "kotlin.stdlib.default.dependency=false",
+                    "kotlin.js.stdlib.dom.api.included=false"
+                )
+                replaced
+            }
+
+            buildAndFail("assemble") {
+                assertTasksFailed(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                it + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            buildAndFail("assemble") {
+                assertTasksFailed(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
+            }
+
+            buildGradleKts.modify {
+                val replaced = it.replace(added!!, "")
+                replaced + "\n" +
+                        """
+                        dependencies {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                        """.trimIndent().also { added = it }
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
             }
         }
     }
