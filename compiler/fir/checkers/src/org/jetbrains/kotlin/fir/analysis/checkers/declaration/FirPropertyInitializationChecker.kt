@@ -7,76 +7,50 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.util.collectDataForNode
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 object FirPropertyInitializationChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val properties = mutableSetOf<FirPropertySymbol>()
-        val toReport = mutableSetOf<FirVariableAssignment>()
-        for (decl in declaration.declarations.asReversed()) {
-            when (decl) {
-                is FirProperty -> properties.add(decl.symbol)
-                is FirAnonymousInitializer ->
-                    if (properties.isNotEmpty()) {
-                        collectInitAssignments(decl, properties, toReport)
-                    }
-                else -> {
-                }
+        val interestingProperties = mutableSetOf<FirPropertySymbol>()
+        val visitor = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) = element.acceptChildren(this)
+
+            override fun visitConstructor(constructor: FirConstructor) {}
+
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {}
+
+            override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {}
+
+            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+                // TODO? if (anonymousFunction.invocationKind.isInPlace) visitElement(anonymousFunction)
+            }
+
+            override fun visitRegularClass(regularClass: FirRegularClass) {}
+
+            override fun visitEnumEntry(enumEntry: FirEnumEntry) {}
+
+            override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
+                variableAssignment.acceptChildren(this)
+                val propertySymbol = variableAssignment.lValue.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
+                if (propertySymbol !in interestingProperties) return
+                reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol, context)
             }
         }
-        toReport.forEach { exp ->
-            val propertySymbol = exp.lValue.toResolvedCallableSymbol() ?: return@forEach
-            reporter.reportOn(exp.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol, context)
-        }
-    }
 
-    private fun collectInitAssignments(
-        init: FirAnonymousInitializer,
-        properties: Properties,
-        assignments: MutableSet<FirVariableAssignment>
-    ) {
-        val graph = init.controlFlowGraphReference?.controlFlowGraph ?: return
-        val visitor = AssignmentVisitor(properties) { assignments.add(it) }
-        graph.collectDataForNode(TraverseDirection.Forward, emptySet(), visitor, visitSubGraphs = false)
-    }
-
-    private class AssignmentVisitor(private val interestingProperties: Properties, private val acceptor: (FirVariableAssignment) -> Unit) :
-        ControlFlowGraphVisitor<Properties, Collection<Pair<EdgeLabel, Properties>>>() {
-
-        override fun visitNode(node: CFGNode<*>, data: Collection<Pair<EdgeLabel, Properties>>): Properties {
-            if (data.isEmpty()) return emptySet()
-            return data.map { it.second }.reduce { l, r -> l.intersect(r) }
-        }
-
-        override fun <T> visitUnionNode(
-            node: T, data: Collection<Pair<EdgeLabel, Properties>>
-        ): Properties where T : CFGNode<*>, T : UnionNodeMarker {
-            if (data.isEmpty()) return emptySet()
-            return data.map { it.second }.reduce { l, r -> l + r }
-        }
-
-        override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Collection<Pair<EdgeLabel, Properties>>): Properties {
-            val input = visitNode(node, data)
-            val propertySymbol = node.fir.lValue.toResolvedCallableSymbol() as? FirPropertySymbol ?: return input
-            return if (propertySymbol in interestingProperties && propertySymbol !in input) {
-                acceptor(node.fir)
-                input + propertySymbol
-            } else {
-                input
+        for (member in declaration.declarations.asReversed()) {
+            if (interestingProperties.isNotEmpty()) {
+                member.accept(visitor)
+            }
+            if (member is FirProperty) {
+                interestingProperties.add(member.symbol)
             }
         }
     }
 }
-
-private typealias Properties = Set<FirPropertySymbol>
