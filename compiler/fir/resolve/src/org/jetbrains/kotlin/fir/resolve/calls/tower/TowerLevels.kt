@@ -76,6 +76,7 @@ class MemberScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiverValue: ReceiverValue,
     private val givenExtensionReceiverOptions: List<ReceiverValue>,
+    private val givenExtensionReceiverCameFromImplicitReceiver: Boolean = false,
 ) : TowerScopeLevel() {
     private val scopeSession: ScopeSession get() = bodyResolveComponents.scopeSession
     private val session: FirSession get() = bodyResolveComponents.session
@@ -108,28 +109,41 @@ class MemberScopeTowerLevel(
             }
         }
 
-        if (givenExtensionReceiverOptions.isEmpty()) {
-            val dispatchReceiverType = dispatchReceiverValue.type
+        val useSiteForSyntheticScope: FirTypeScope
+        val typeForSyntheticScope: ConeKotlinType?
 
-            val useSiteForSyntheticScope: FirTypeScope
-            val typeForSyntheticScope: ConeKotlinType
+        when {
+            givenExtensionReceiverOptions.isEmpty() -> {
+                val dispatchReceiverType = dispatchReceiverValue.type
 
-            // In K1, synthetic properties were working a bit differently
-            // - On first step they've been built on the per-class level
-            // - Then, they've been handled as regular extensions with specific receiver value
-            // In K2, we build those properties using specific use-site scope of given receiver
-            // And that gives us different results in case of raw types (since we've got special scopes for them)
-            // So, here we decide to preserve the K1 behavior just by converting the type to its non-raw version
-            if (dispatchReceiverType.isRaw()) {
-                typeForSyntheticScope = dispatchReceiverType.convertToNonRawVersion()
-                useSiteForSyntheticScope =
-                    typeForSyntheticScope.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
-                        ?: error("No scope for flexible type scope, while it's not null for $dispatchReceiverType")
-            } else {
-                typeForSyntheticScope = dispatchReceiverType
+                // In K1, synthetic properties were working a bit differently
+                // - On first step they've been built on the per-class level
+                // - Then, they've been handled as regular extensions with specific receiver value
+                // In K2, we build those properties using specific use-site scope of given receiver
+                // And that gives us different results in case of raw types (since we've got special scopes for them)
+                // So, here we decide to preserve the K1 behavior just by converting the type to its non-raw version
+                if (dispatchReceiverType.isRaw()) {
+                    typeForSyntheticScope = dispatchReceiverType.convertToNonRawVersion()
+                    useSiteForSyntheticScope =
+                        typeForSyntheticScope.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+                            ?: error("No scope for flexible type scope, while it's not null for $dispatchReceiverType")
+                } else {
+                    typeForSyntheticScope = dispatchReceiverType
+                    useSiteForSyntheticScope = scope
+                }
+            }
+            givenExtensionReceiverCameFromImplicitReceiver -> {
+                val receiverType = givenExtensionReceiverOptions.singleOrNull()?.type ?: error("Implicit receiver gave multiple options?")
+                typeForSyntheticScope = receiverType
                 useSiteForSyntheticScope = scope
             }
+            else -> {
+                typeForSyntheticScope = null
+                useSiteForSyntheticScope = scope
+            }
+        }
 
+        if (typeForSyntheticScope != null) {
             val withSynthetic = FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
                 session,
                 typeForSyntheticScope,
@@ -146,6 +160,7 @@ class MemberScopeTowerLevel(
                 )
             }
         }
+
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
@@ -289,7 +304,7 @@ class ContextReceiverGroupMemberScopeTowerLevel(
     givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
 ) : TowerScopeLevel() {
     private val memberScopeLevels = contextReceiverGroup.map {
-        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions)
+        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
     }
 
     override fun processFunctionsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult {

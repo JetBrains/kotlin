@@ -97,9 +97,11 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun ReceiverValue.toMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         contextReceiverGroup: ContextReceiverGroup? = null,
+        givenExtensionReceiverCameFromImplicitReceiver: Boolean = false,
     ) = MemberScopeTowerLevel(
         components, this,
         givenExtensionReceiverOptions = contextReceiverGroup ?: listOfNotNull(extensionReceiver),
+        givenExtensionReceiverCameFromImplicitReceiver,
     )
 
     protected fun ContextReceiverGroup.toMemberScopeTowerLevel(
@@ -377,7 +379,7 @@ internal open class FirTowerResolveTask(
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
         emptyScopes: MutableSet<FirScope>
     ) {
-        if (receiver !in implicitReceiverValuesWithEmptyScopes || info.callKind == CallKind.VariableAccess) {
+        if (receiver !in implicitReceiverValuesWithEmptyScopes) {
             processLevel(
                 receiver.toMemberScopeTowerLevel(), info, parentGroup.Member,
                 onEmptyLevel = {
@@ -402,7 +404,10 @@ internal open class FirTowerResolveTask(
             onImplicitReceiver = l@{ implicitReceiverValue, group ->
                 if (implicitReceiverValue in implicitReceiverValuesWithEmptyScopes) return@l
                 processLevel(
-                    implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = receiver),
+                    implicitReceiverValue.toMemberScopeTowerLevel(
+                        extensionReceiver = receiver,
+                        givenExtensionReceiverCameFromImplicitReceiver = true,
+                    ),
                     info, group,
                     onEmptyLevel = {
                         implicitReceiverValuesWithEmptyScopes += implicitReceiverValue
