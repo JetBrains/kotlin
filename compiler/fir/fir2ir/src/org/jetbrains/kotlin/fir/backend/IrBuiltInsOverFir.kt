@@ -196,7 +196,7 @@ class IrBuiltInsOverFir(
     override val stringType: IrType get() = string.type
 
     private val intrinsicConstAnnotationFqName = kotlinInternalPackage.child(Name.identifier("IntrinsicConstEvaluation"))
-    private val intrinsicConst = kotlinInternalIrPackage.createClass(intrinsicConstAnnotationFqName).apply {
+    internal val intrinsicConst = kotlinInternalIrPackage.createClass(intrinsicConstAnnotationFqName).apply {
         owner.createConstructor()
         owner.finalizeClassDefinition()
     }

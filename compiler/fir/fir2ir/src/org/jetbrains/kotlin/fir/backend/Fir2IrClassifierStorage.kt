@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrClassifierStorage(
@@ -355,20 +356,17 @@ class Fir2IrClassifierStorage(
     ): IrClass {
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
-        val signature = null
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            declareIrClass(signature) { symbol ->
-                irFactory.createClass(
-                    startOffset, endOffset, origin, symbol, name,
-                    // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
-                    anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
-                    components.visibilityConverter.convertToDescriptorVisibility(visibility), modality
-                ).apply {
-                    metadata = FirMetadataSource.Class(anonymousObject)
-                    setThisReceiver(anonymousObject.typeParameters)
-                    if (irParent != null) {
-                        this.parent = irParent
-                    }
+            irFactory.createClass(
+                startOffset, endOffset, origin, IrClassSymbolImpl(), name,
+                // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
+                anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
+                components.visibilityConverter.convertToDescriptorVisibility(visibility), modality
+            ).apply {
+                metadata = FirMetadataSource.Class(anonymousObject)
+                setThisReceiver(anonymousObject.typeParameters)
+                if (irParent != null) {
+                    this.parent = irParent
                 }
             }
         }.declareSupertypesAndTypeParameters(anonymousObject)
@@ -553,17 +551,6 @@ class Fir2IrClassifierStorage(
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
             return createLocalIrClassOnTheFly(firClass).symbol
         }
-        val signature = signatureComposer.composeSignature(firClass, forceTopLevelPrivate = forceTopLevelPrivate)!!
-        val symbol = symbolTable.referenceClass(signature)
-        if (symbol.isBound) {
-            val irClass = symbol.owner
-            classCache[firClass as FirRegularClass] = irClass
-            val mappedTypeParameters = firClass.typeParameters.filterIsInstance<FirTypeParameter>().zip(irClass.typeParameters)
-            for ((firTypeParameter, irTypeParameter) in mappedTypeParameters) {
-                typeParameterCache[firTypeParameter] = irTypeParameter
-            }
-            return symbol
-        }
         firClass as FirRegularClass
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
@@ -573,9 +560,12 @@ class Fir2IrClassifierStorage(
         // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
         getCachedIrClass(firClass)?.let { return it.symbol }
 
+        val signature = runIf(generateSignatures) {
+            signatureComposer.composeSignature(firClass, forceTopLevelPrivate = forceTopLevelPrivate)
+        }
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(signature, { symbol }) {
-                Fir2IrLazyClass(components, startOffset, endOffset, firClass.irOrigin(firProvider), firClass, symbol).apply {
+            declareIrClass(signature) { irClassSymbol ->
+                Fir2IrLazyClass(components, startOffset, endOffset, firClass.irOrigin(firProvider), firClass, irClassSymbol).apply {
                     parent = irParent
                 }
             }
@@ -584,7 +574,7 @@ class Fir2IrClassifierStorage(
         // NB: this is needed to prevent recursions in case of self bounds
         (irClass as Fir2IrLazyClass).prepareTypeParameters()
 
-        return symbol
+        return irClass.symbol
     }
 
     fun getIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
