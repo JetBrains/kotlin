@@ -1,0 +1,29 @@
+package
+
+public fun main(/*0*/ a: Simple, /*1*/ x: Derived): kotlin.Unit
+
+public open class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Derived : Base {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.nullness.NullMarked public open class Simple {
+    public constructor Simple()
+    @org.jspecify.nullness.Nullable public final var field: @org.jspecify.nullness.Nullable Derived?
+    public open fun bar(): Derived
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.jspecify.nullness.Nullable public open fun foo(/*0*/ x: Derived, /*1*/ @org.jspecify.nullness.NullnessUnspecified y: @org.jspecify.nullness.NullnessUnspecified Base!): @org.jspecify.nullness.Nullable Derived?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
