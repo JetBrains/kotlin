@@ -540,11 +540,11 @@ class BodyGenerator(
                             body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
                                 body.buildGetLocal(parameterLocal, location)
                                 body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
-                                body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable)
+                                body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable, location)
                                 body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol), location)
                                 body.buildInstr(WasmOp.REF_IS_NULL)
                                 body.buildInstr(WasmOp.I32_EQZ)
-                                body.buildBr(outerLabel)
+                                body.buildBr(outerLabel, location)
                             }
                             body.buildDrop(location)
                             body.buildConstI32(0, location)
@@ -661,12 +661,12 @@ class BodyGenerator(
 
     override fun visitBreak(jump: IrBreak) {
         assert(jump.type == irBuiltIns.nothingType)
-        body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.BREAK))
+        body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.BREAK), jump.getSourceLocation())
     }
 
     override fun visitContinue(jump: IrContinue) {
         assert(jump.type == irBuiltIns.nothingType)
-        body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE))
+        body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE), jump.getSourceLocation())
     }
 
     private fun visitFunctionReturn(expression: IrReturn) {
@@ -775,7 +775,7 @@ class BodyGenerator(
         val nonLocalReturnSymbol = expression.returnTargetSymbol as? IrReturnableBlockSymbol
         if (nonLocalReturnSymbol != null) {
             generateWithExpectedType(expression.value, nonLocalReturnSymbol.owner.type)
-            body.buildBr(functionContext.referenceNonLocalReturnLevel(nonLocalReturnSymbol))
+            body.buildBr(functionContext.referenceNonLocalReturnLevel(nonLocalReturnSymbol), expression.getSourceLocation())
         } else {
             visitFunctionReturn(expression)
         }
@@ -838,7 +838,7 @@ class BodyGenerator(
                     loop.body?.let { generateAsStatement(it) }
                 }
                 generateExpression(loop.condition)
-                body.buildBrIf(wasmLoop)
+                body.buildBrIf(wasmLoop, loop.condition.getSourceLocation())
             }
         }
 
@@ -860,12 +860,13 @@ class BodyGenerator(
                 functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
 
                 generateExpression(loop.condition)
-                body.buildInstr(WasmOp.I32_EQZ)
-                body.buildBrIf(wasmBreakBlock)
+                val location = loop.condition.getSourceLocation()
+                body.buildInstr(WasmOp.I32_EQZ, location)
+                body.buildBrIf(wasmBreakBlock, location)
                 loop.body?.let {
                     generateAsStatement(it)
                 }
-                body.buildBr(wasmLoop)
+                body.buildBr(wasmLoop, SourceLocation.NoLocation("Continue in the loop"))
             }
         }
 

@@ -211,7 +211,7 @@ private fun BodyGenerator.createBinaryTable(
     body.buildBlock("when_block", resultType) { currentBlock ->
         val thenBody = { result: IrExpression ->
             generateWithExpectedType(result, expectedType)
-            body.buildBr(currentBlock)
+            body.buildBr(currentBlock, SourceLocation.NoLocation("Break from a when"))
         }
         createBinaryTable(
             selectorLocal = selectorLocal,
@@ -337,7 +337,7 @@ private fun BodyGenerator.genTableIntSwitch(
         }
         generateWithExpectedType(expression.expression, expectedType)
 
-        body.buildBr(baseBlockIndex + 1)
+        body.buildBr(baseBlockIndex + 1, location)
         body.buildEnd()
     }
 
