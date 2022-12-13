@@ -231,7 +231,8 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isStaticValueClassReplacement ||
                         function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
                         function.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ||
+                        (function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION &&
+                                !(function is IrConstructor && function.constructedClass.isMultiFieldValueClass && !function.isPrimary)) ||
                         function.isMultiFieldValueClassFieldGetter -> null
 
                 (function.parent as? IrClass)?.isMultiFieldValueClass == true -> when {

@@ -92,6 +92,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("multiFieldValueClasses.kt")
+    public void testMultiFieldValueClasses() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/multiFieldValueClasses.kt");
+    }
+
+    @Test
     @TestMetadata("multimoduleInheritance.kt")
     public void testMultimoduleInheritance() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritance.kt");

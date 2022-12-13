@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.name.Name
@@ -102,7 +103,7 @@ class IrPreGenerator(
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
                 ?.findPluginGeneratedMethod(SerialEntityNames.LOAD, compilerContext.afterK2) == null
         ) return
-        if (irClass.isValue) return
+        if (irClass.isSingleFieldValueClass) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN
@@ -121,7 +122,7 @@ class IrPreGenerator(
             ctor.addValueParameter(prop.name, prop.type.makeNullableIfNotPrimitive(), SERIALIZATION_PLUGIN_ORIGIN)
         }
 
-        ctor.addValueParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType, SERIALIZATION_PLUGIN_ORIGIN)
+        ctor.addValueParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType.makeNullable(), SERIALIZATION_PLUGIN_ORIGIN)
     }
 
     private fun IrType.makeNullableIfNotPrimitive() =
