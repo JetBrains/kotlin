@@ -8,24 +8,25 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 /**
  * Keyed locks provider.
  */
 internal class LLFirLockProvider {
+
     //We temporarily disable multi-locks to fix deadlocks problem
     private val globalLock = ReentrantLock()
 
-    inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: FirFile, action: () -> R): R {
-        return globalLock.withLock { action() }
-    }
-
-
-    inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: FirFile, lockingIntervalMs: Long, action: () -> R): R {
+    inline fun <R> withLock(
+        @Suppress("UNUSED_PARAMETER") key: FirFile,
+        lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
+        action: () -> R
+    ): R {
         return globalLock.lockWithPCECheck(lockingIntervalMs) { action() }
     }
 }
+
+private const val DEFAULT_LOCKING_INTERVAL = 50L
 
 /**
  * Runs [resolve] function (which is considered to do some resolve on [firFile]) under a lock for [firFile]
@@ -34,5 +35,5 @@ internal inline fun <R> LLFirLockProvider.runCustomResolveUnderLock(
     firFile: FirFile,
     body: () -> R
 ): R {
-    return withWriteLockPCECheck(key = firFile, lockingIntervalMs = 50L, body)
+    return withLock(key = firFile, lockingIntervalMs = DEFAULT_LOCKING_INTERVAL, body)
 }

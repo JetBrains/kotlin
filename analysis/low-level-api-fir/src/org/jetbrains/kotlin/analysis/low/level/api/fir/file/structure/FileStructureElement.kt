@@ -115,7 +115,7 @@ internal class ReanalyzableFunctionStructureElement(
             rootNonLocalDeclaration = newKtDeclaration,
         ) as FirSimpleFunction
 
-        return moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
+        return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
             val upgradedPhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
 
             moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
@@ -162,7 +162,7 @@ internal class ReanalyzablePropertyStructureElement(
             rootNonLocalDeclaration = newKtDeclaration,
         ) as FirProperty
 
-        return moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
+        return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
             val getterPhase = originalProperty.getter?.resolvePhase ?: originalProperty.resolvePhase
             val setterPhase = originalProperty.setter?.resolvePhase ?: originalProperty.resolvePhase
             val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
