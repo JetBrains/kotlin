@@ -12,6 +12,7 @@ import java.io.File
 
 internal class IdeaKotlinProjectArtifactDependencyMatcher(
     val type: IdeaKotlinSourceDependency.Type,
+    val buildId: String,
     val projectPath: String,
     val artifactFilePath: FilePathRegex
 ) : IdeaKotlinDependencyMatcher {
@@ -21,6 +22,7 @@ internal class IdeaKotlinProjectArtifactDependencyMatcher(
     override fun matches(dependency: IdeaKotlinDependency): Boolean {
         if (dependency !is IdeaKotlinProjectArtifactDependency) return false
         return dependency.type == type &&
+                dependency.coordinates.project.buildId == buildId &&
                 dependency.coordinates.project.projectPath == projectPath &&
                 artifactFilePath.matches(dependency.coordinates.artifactFile)
 

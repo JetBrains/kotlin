@@ -138,7 +138,7 @@ open class PodspecTask : DefaultTask() {
         val xcConfig = if (publishing.get() || extraSpecAttributes.get().containsKey("pod_target_xcconfig")) "" else
             """ |
                 |    spec.pod_target_xcconfig = {
-                |        'KOTLIN_PROJECT_PATH' => '${project.path}',
+                |        'KOTLIN_PROJECT_PATH' => '${if (project.depth != 0) project.path else ""}',
                 |        'PRODUCT_MODULE_NAME' => '${frameworkName.get()}',
                 |    }
             """.trimMargin()

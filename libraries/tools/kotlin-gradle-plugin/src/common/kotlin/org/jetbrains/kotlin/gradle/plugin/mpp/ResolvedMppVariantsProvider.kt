@@ -106,13 +106,12 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         val result = mutableListOf<ResolvedComponentResult>()
 
         configuration.incoming.resolutionResult.allComponents { component ->
-            val isMpp =
-                component.dependents.isNotEmpty() && // filter out the root of the dependency graph, we are not interested in it
-                component.variants.any { variant -> variant.attributes.keySet().any { it.name == KotlinPlatformType.attribute.name } }
+            val isMpp = component.dependents.isNotEmpty() && // filter out the root of the dependency graph, we are not interested in it
+                    component.variants.any { variant -> variant.attributes.keySet().any { it.name == KotlinPlatformType.attribute.name } }
             if (isMpp) {
                 result.add(component)
                 component.dependents.forEach { dependent ->
-                    dependent.requested.toKpmModuleIdentifiers().forEach { moduleId ->
+                    dependent.selected.toKpmModuleIdentifiers().forEach { moduleId ->
                         val moduleEntry = getEntryForModule(moduleId)
                         moduleEntry.resolvedVariantsByConfiguration[configuration] = listOf(dependent.resolvedVariant)
 

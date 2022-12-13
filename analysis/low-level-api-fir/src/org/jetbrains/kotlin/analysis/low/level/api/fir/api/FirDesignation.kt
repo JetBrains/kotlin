@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 
 class FirDesignationWithFile(
-    path: List<FirDeclaration>,
+    path: List<FirRegularClass>,
     target: FirElementWithResolvePhase,
     val firFile: FirFile
 ) : FirDesignation(
@@ -40,29 +40,32 @@ class FirDesignationWithFile(
 }
 
 open class FirDesignation(
-    val path: List<FirDeclaration>,
+    val path: List<FirRegularClass>,
     val target: FirElementWithResolvePhase,
 ) {
+    val firstNonFileDeclaration: FirElementWithResolvePhase
+        get() = path.firstOrNull() ?: target
+
     fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolvePhase> = sequence {
         yieldAll(path)
         if (includeTarget) yield(target)
     }
 }
 
-private fun FirRegularClass.collectForNonLocal(): List<FirDeclaration> {
+private fun FirRegularClass.collectForNonLocal(): List<FirRegularClass> {
     require(!isLocal)
     val firProvider = moduleData.session.firProvider
     var containingClassId = classId.outerClassId
-    val designation = mutableListOf<FirDeclaration>(this)
+    val designation = mutableListOf<FirRegularClass>(this)
     while (containingClassId != null) {
-        val currentClass = firProvider.getFirClassifierByFqName(containingClassId) ?: break
+        val currentClass = firProvider.getFirClassifierByFqName(containingClassId) as? FirRegularClass ?: break
         designation.add(currentClass)
         containingClassId = containingClassId.outerClassId
     }
     return designation
 }
 
-private fun collectDesignationPath(target: FirElementWithResolvePhase): List<FirDeclaration>? {
+private fun collectDesignationPath(target: FirElementWithResolvePhase): List<FirRegularClass>? {
     val containingClass = when (target) {
         is FirCallableDeclaration -> {
             if (target !is FirConstructor && target.symbol.callableId.isLocal) return null

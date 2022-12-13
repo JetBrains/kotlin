@@ -255,13 +255,13 @@ FILE: annotationParameters.kt
 
     }
     public final [SUPER_TYPES] class B : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=B] constructor(): R|B| {
+        public [TYPES] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
         @R|Anno|(X#.A#) public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(X#.A#) public? final? [SUPER_TYPES] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|(X#.A#) public final [TYPES] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -404,8 +404,8 @@ FILE: annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
-            public? [SUPER_TYPES] [ContainingClassKey=Anno] get(): A.X
+        public final [TYPES] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
+            public [TYPES] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
 
     }
     public final [STATUS] class B : R|kotlin/Any| {
@@ -443,8 +443,8 @@ FILE: annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
-            public? [SUPER_TYPES] [ContainingClassKey=Anno] get(): A.X
+        public final [TYPES] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
+            public [TYPES] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
 
     }
     public final [STATUS] class B : R|kotlin/Any| {
@@ -482,8 +482,8 @@ FILE: annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
-            public? [SUPER_TYPES] [ContainingClassKey=Anno] get(): A.X
+        public final [TYPES] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
+            public [TYPES] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
 
     }
     public final [STATUS] class B : R|kotlin/Any| {

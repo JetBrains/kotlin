@@ -34,7 +34,7 @@ struct NeonTraits {
     ALWAYS_INLINE static VecType initVec() { return vdupq_n_u32(0); }
     ALWAYS_INLINE static Vec128Type initVec128() { return vdupq_n_u32(0); }
     ALWAYS_INLINE static int vec128toInt(Vec128Type x) { return vgetq_lane_u32(x, 0); }
-    ALWAYS_INLINE static VecType u16Load(U16VecType x) { return vmovl_u16(x); }
+    ALWAYS_INLINE static VecType u16Load(U16VecType const* x) { return vmovl_u16(*x); }
     ALWAYS_INLINE static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return vmulq_u32(x, y); }
     ALWAYS_INLINE static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return vaddq_u32(x, y); }
     ALWAYS_INLINE static VecType vecMul(VecType x, VecType y) { return vmulq_u32(x, y); }

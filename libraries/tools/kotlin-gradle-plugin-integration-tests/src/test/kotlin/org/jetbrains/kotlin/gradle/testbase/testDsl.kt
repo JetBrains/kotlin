@@ -406,7 +406,7 @@ private fun setupProjectFromTestResources(
 
 private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
 
-private fun Path.addDefaultBuildFiles() {
+internal fun Path.addDefaultBuildFiles() {
     addPluginManagementToSettings()
 
     val buildSrc = resolve("buildSrc")

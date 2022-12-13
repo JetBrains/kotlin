@@ -11,3 +11,9 @@ interface IdeaKotlinDependencyMatcher {
     val description: String
     fun matches(dependency: IdeaKotlinDependency): Boolean
 }
+
+fun IdeaKotlinDependencyMatcher(description: String, matches: (dependency: IdeaKotlinDependency) -> Boolean) =
+    object : IdeaKotlinDependencyMatcher {
+        override val description: String = description
+        override fun matches(dependency: IdeaKotlinDependency): Boolean = matches(dependency)
+    }

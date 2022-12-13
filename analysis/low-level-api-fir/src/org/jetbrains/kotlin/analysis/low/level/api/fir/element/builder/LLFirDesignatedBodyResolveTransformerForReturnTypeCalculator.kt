@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -17,8 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 
 fun LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
     designation: Iterator<FirElement>,
@@ -67,7 +67,10 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         if (returnTypeRef is FirImplicitTypeRef) {
             val declarationList = designation.filterIsInstance<FirDeclaration>()
             check(declarationList.isNotEmpty()) { "Invalid empty declaration designation" }
-            body(FirDesignation(declarationList.dropLast(1), this))
+            val designationPath = declarationList.dropLast(1)
+            check(designationPath.all { it is FirRegularClass })
+            @Suppress("UNCHECKED_CAST")
+            body(FirDesignation(designationPath as List<FirRegularClass>, this))
         }
     }
 

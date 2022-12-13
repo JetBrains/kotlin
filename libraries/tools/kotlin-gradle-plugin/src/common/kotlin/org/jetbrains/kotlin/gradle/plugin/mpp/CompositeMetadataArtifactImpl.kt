@@ -26,6 +26,10 @@ internal class CompositeMetadataArtifactImpl(
     private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>
 ) : CompositeMetadataArtifact {
 
+    override fun exists(): Boolean {
+        return primaryArtifactFile.exists() && hostSpecificArtifactFilesBySourceSetName.values.all { it.exists() }
+    }
+
     override fun open(): CompositeMetadataArtifactContent {
         return CompositeMetadataArtifactContentImpl()
     }

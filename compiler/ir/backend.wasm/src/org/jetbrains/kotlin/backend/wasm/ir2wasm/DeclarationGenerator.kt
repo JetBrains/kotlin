@@ -115,7 +115,7 @@ class DeclarationGenerator(
         }
 
         val function = WasmFunction.Defined(watName, functionTypeSymbol)
-        val functionCodegenContext = WasmFunctionCodegenContextImpl(
+        val functionCodegenContext = WasmFunctionCodegenContext(
             declaration,
             function,
             backendContext,
@@ -128,7 +128,8 @@ class DeclarationGenerator(
 
         val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(
-            context = functionCodegenContext,
+            context = context,
+            functionContext = functionCodegenContext,
             hierarchyDisjointUnions = hierarchyDisjointUnions,
             isGetUnitFunction = declaration == unitGetInstanceFunction
         )
@@ -476,7 +477,7 @@ fun IrFunction.isExported(): Boolean =
     isJsExport()
 
 
-fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
+fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmModuleCodegenContext) {
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType

@@ -32,7 +32,7 @@ struct SSETraits {
     static VecType initVec() { return _mm_setzero_si128(); }
     static Vec128Type initVec128() { return _mm_setzero_si128(); }
     static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
-    static VecType u16Load(U16VecType x) { return _mm_cvtepu16_epi32(x); }
+    static VecType u16Load(U16VecType const* x) { return _mm_cvtepu16_epi32(_mm_loadl_epi64(x)); }
     static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
     static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
     static VecType vecMul(VecType x, VecType y) { return _mm_mullo_epi32(x, y); }
@@ -80,7 +80,7 @@ struct AVX2Traits {
     static VecType initVec() { return _mm256_setzero_si256(); }
     static Vec128Type initVec128() { return _mm_setzero_si128(); }
     static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
-    static VecType u16Load(U16VecType x) { return _mm256_cvtepu16_epi32(x); }
+    static VecType u16Load(U16VecType const* x) { return _mm256_cvtepu16_epi32(*x); }
     static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
     static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
     static VecType vecMul(VecType x, VecType y) { return _mm256_mullo_epi32(x, y); }

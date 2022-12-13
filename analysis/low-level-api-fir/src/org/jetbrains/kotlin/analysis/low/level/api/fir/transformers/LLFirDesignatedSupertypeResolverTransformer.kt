@@ -137,7 +137,6 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
                 updatePhaseDeep(designation.target, FirResolvePhase.SUPER_TYPES)
                 return
             }
-            check(resolvableTarget is FirClassLikeDeclaration)
             val targetPath = designation.path.dropLast(1)
             FirDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation

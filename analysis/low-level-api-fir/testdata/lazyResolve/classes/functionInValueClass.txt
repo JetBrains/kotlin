@@ -86,12 +86,12 @@ FILE: functionInValueClass.kt
 STATUS:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-        public? [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        public [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
-            public? [SUPER_TYPES] [ContainingClassKey=Value] get(): Int
+        public final [TYPES] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [TYPES] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
         public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
