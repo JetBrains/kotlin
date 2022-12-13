@@ -90,7 +90,7 @@ fun SmartPrinter.printElement(element: Element) {
             println()
             println("@Suppress(\"UNCHECKED_CAST\")")
             override()
-            println("fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = ")
+            println("fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =")
             withIndent {
                 println("transformer.transform$name(this, data) as E")
             }

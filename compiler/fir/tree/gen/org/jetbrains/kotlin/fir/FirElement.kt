@@ -19,7 +19,7 @@ interface FirElement {
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformElement(this, data) as E
 
     fun accept(visitor: FirVisitorVoid) = accept(visitor, null)

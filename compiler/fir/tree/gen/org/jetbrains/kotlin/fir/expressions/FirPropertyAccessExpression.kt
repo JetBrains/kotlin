@@ -34,7 +34,7 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyAccessExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformPropertyAccessExpression(this, data) as E
 
     @FirImplementationDetail

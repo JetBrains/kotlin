@@ -25,7 +25,7 @@ abstract class FirContinueExpression : FirLoopJump() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContinueExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformContinueExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)

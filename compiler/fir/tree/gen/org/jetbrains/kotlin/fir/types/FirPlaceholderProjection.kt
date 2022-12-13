@@ -20,6 +20,6 @@ abstract class FirPlaceholderProjection : FirTypeProjection() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPlaceholderProjection(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformPlaceholderProjection(this, data) as E
 }

@@ -35,7 +35,7 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformFunctionCall(this, data) as E
 
     @FirImplementationDetail

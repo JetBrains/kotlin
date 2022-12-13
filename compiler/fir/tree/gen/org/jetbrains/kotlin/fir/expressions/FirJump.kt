@@ -26,7 +26,7 @@ sealed class FirJump<E : FirTargetElement> : FirExpression() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitJump(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformJump(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)

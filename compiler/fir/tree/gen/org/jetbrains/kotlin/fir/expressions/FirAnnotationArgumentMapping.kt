@@ -23,6 +23,6 @@ abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirEleme
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationArgumentMapping(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformAnnotationArgumentMapping(this, data) as E
 }

@@ -27,6 +27,6 @@ abstract class FirResolvedErrorReference : FirResolvedNamedReference(), FirDiagn
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedErrorReference(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedErrorReference(this, data) as E
 }

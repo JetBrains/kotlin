@@ -23,7 +23,7 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformWhenBranch(this, data) as E
 
     abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
