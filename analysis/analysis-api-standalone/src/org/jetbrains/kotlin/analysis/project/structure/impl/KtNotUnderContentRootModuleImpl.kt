@@ -19,12 +19,12 @@ internal class KtNotUnderContentRootModuleImpl(
     override val directRefinementDependencies: List<KtModule> = emptyList(),
     override val directFriendDependencies: List<KtModule> = emptyList(),
     override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
-    psiFile: PsiFile? = null,
+    override val file: PsiFile? = null,
     override val moduleDescription: String,
     override val project: Project,
 ) : KtNotUnderContentRootModule, KtModuleWithPlatform {
     override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 
     override val contentScope: GlobalSearchScope =
-        if (psiFile != null) GlobalSearchScope.fileScope(psiFile) else GlobalSearchScope.EMPTY_SCOPE
+        if (file != null) GlobalSearchScope.fileScope(file) else GlobalSearchScope.EMPTY_SCOPE
 }
