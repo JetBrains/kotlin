@@ -16,6 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.analysis
 
+import kotlin.coroutines.EmptyCoroutineContext
+
 /**
  * This is a registry of APIs that are defined outside of Compose that we know to be stable but
  * cannot annotate with `Stable` or `Immutable`.
@@ -59,6 +61,8 @@ object KnownStableConstructs {
         "kotlinx.collections.immutable.PersistentMap" to 0b11,
         // Dagger
         "dagger.Lazy" to 0b1,
+        // Coroutines
+        EmptyCoroutineContext::class.qualifiedName!! to 0,
     )
 
     // TODO: buildList, buildMap, buildSet, etc.

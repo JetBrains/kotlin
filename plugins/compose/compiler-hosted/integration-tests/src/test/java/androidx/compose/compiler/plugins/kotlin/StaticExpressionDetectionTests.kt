@@ -153,6 +153,11 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
         expression = "PaddingValues(all = 16.dp)"
     )
 
+    @Test
+    fun testEmptyCoroutineContextIsStatic() = assertStatic(
+        expression = "EmptyCoroutineContext"
+    )
+
     private fun assertStatic(
         expression: String,
         @Language("kotlin")
