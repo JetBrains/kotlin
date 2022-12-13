@@ -53,6 +53,7 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        if (name !in getCallableNames()) return
         functions.getOrPut(name) {
             collectFunctions(name)
         }.forEach {
@@ -102,6 +103,7 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        if (name !in getCallableNames()) return
         properties.getOrPut(name) {
             collectProperties(name)
         }.forEach {
