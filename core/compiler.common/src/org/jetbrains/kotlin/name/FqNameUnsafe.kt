@@ -13,185 +13,152 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.name
 
-package org.jetbrains.kotlin.name;
-
-import kotlin.collections.ArraysKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
+import kotlin.jvm.functions.Function1
 
 /**
- * Like {@link FqName} but allows '<' and '>' characters in name.
+ * Like [FqName] but allows '<' and '>' characters in name.
  */
-public final class FqNameUnsafe {
-    private static final Name ROOT_NAME = Name.special("<root>");
-    private static final Pattern SPLIT_BY_DOTS = Pattern.compile("\\.");
-
-    private static final Function1<String, Name> STRING_TO_NAME = new Function1<String, Name>() {
-        @Override
-        public Name invoke(String name) {
-            return Name.guessByFirstCharacter(name);
-        }
-    };
-
-    @NotNull
-    private final String fqName;
+class FqNameUnsafe {
+    private val fqName: String
 
     // cache
-    private transient FqName safe;
-    private transient FqNameUnsafe parent;
-    private transient Name shortName;
+    @Transient
+    private var safe: FqName? = null
 
-    FqNameUnsafe(@NotNull String fqName, @NotNull FqName safe) {
-        this.fqName = fqName;
-        this.safe = safe;
+    @Transient
+    private var parent: FqNameUnsafe? = null
+
+    @Transient
+    private var shortName: Name? = null
+
+    internal constructor(fqName: String, safe: FqName) {
+        this.fqName = fqName
+        this.safe = safe
     }
 
-    public FqNameUnsafe(@NotNull String fqName) {
-        this.fqName = fqName;
+    constructor(fqName: String) {
+        this.fqName = fqName
     }
 
-    private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent, Name shortName) {
-        this.fqName = fqName;
-        this.parent = parent;
-        this.shortName = shortName;
+    private constructor(fqName: String, parent: FqNameUnsafe, shortName: Name) {
+        this.fqName = fqName
+        this.parent = parent
+        this.shortName = shortName
     }
 
-    public static boolean isValid(@Nullable String qualifiedName) {
-        // TODO: There's a valid name with escape char ``
-        return qualifiedName != null && qualifiedName.indexOf('/') < 0 && qualifiedName.indexOf('*') < 0;
-    }
-
-    private void compute() {
-        int lastDot = fqName.lastIndexOf('.');
+    private fun compute() {
+        val lastDot = fqName.lastIndexOf('.')
         if (lastDot >= 0) {
-            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1));
-            parent = new FqNameUnsafe(fqName.substring(0, lastDot));
+            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1))
+            parent = FqNameUnsafe(fqName.substring(0, lastDot))
+        } else {
+            shortName = Name.guessByFirstCharacter(fqName)
+            parent = FqName.ROOT.toUnsafe()
         }
-        else {
-            shortName = Name.guessByFirstCharacter(fqName);
-            parent = FqName.ROOT.toUnsafe();
-        }
     }
 
-    @NotNull
-    public String asString() {
-        return fqName;
+    fun asString(): String {
+        return fqName
     }
 
-    public boolean isSafe() {
-        return safe != null || asString().indexOf('<') < 0;
-    }
+    val isSafe: Boolean
+        get() = safe != null || asString().indexOf('<') < 0
 
-    @NotNull
-    public FqName toSafe() {
+    fun toSafe(): FqName {
         if (safe != null) {
-            return safe;
+            return safe!!
         }
-        safe = new FqName(this);
-        return safe;
+        safe = FqName(this)
+        return safe!!
     }
 
-    public boolean isRoot() {
-        return fqName.isEmpty();
-    }
+    val isRoot: Boolean
+        get() = fqName.isEmpty()
 
-    @NotNull
-    public FqNameUnsafe parent() {
+    fun parent(): FqNameUnsafe {
         if (parent != null) {
-            return parent;
+            return parent!!
         }
-
-        if (isRoot()) {
-            throw new IllegalStateException("root");
-        }
-
-        compute();
-
-        return parent;
+        check(!isRoot) { "root" }
+        compute()
+        return parent!!
     }
 
-    @NotNull
-    public FqNameUnsafe child(@NotNull Name name) {
-        String childFqName;
-        if (isRoot()) {
-            childFqName = name.asString();
+    fun child(name: Name): FqNameUnsafe {
+        val childFqName: String
+        childFqName = if (isRoot) {
+            name.asString()
+        } else {
+            fqName + "." + name.asString()
         }
-        else {
-            childFqName = fqName + "." + name.asString();
-        }
-        return new FqNameUnsafe(childFqName, this, name);
+        return FqNameUnsafe(childFqName, this, name)
     }
 
-    @NotNull
-    public Name shortName() {
+    fun shortName(): Name {
         if (shortName != null) {
-            return shortName;
+            return shortName!!
         }
-
-        if (isRoot()) {
-            throw new IllegalStateException("root");
-        }
-
-        compute();
-
-        return shortName;
+        check(!isRoot) { "root" }
+        compute()
+        return shortName!!
     }
 
-    @NotNull
-    public Name shortNameOrSpecial() {
-        if (isRoot()) {
-            return ROOT_NAME;
-        }
-        else {
-            return shortName();
+    fun shortNameOrSpecial(): Name {
+        return if (isRoot) {
+            ROOT_NAME
+        } else {
+            shortName()
         }
     }
 
-    @NotNull
-    public List<Name> pathSegments() {
-        return isRoot() ? Collections.<Name>emptyList() : ArraysKt.map(SPLIT_BY_DOTS.split(fqName), STRING_TO_NAME);
+    fun pathSegments(): List<Name> {
+        return if (isRoot) emptyList()
+        else SPLIT_BY_DOTS.split(fqName).map {
+            Name.guessByFirstCharacter(it)
+        }
     }
 
-    public boolean startsWith(@NotNull Name segment) {
-        if (isRoot())
-            return false;
-
-        int firstDot = fqName.indexOf('.');
-        String segmentAsString = segment.asString();
-        return fqName.regionMatches(0, segmentAsString, 0, firstDot == -1 ? Math.max(fqName.length(), segmentAsString.length()) : firstDot);
+    fun startsWith(segment: Name): Boolean {
+        if (isRoot) return false
+        val firstDot = fqName.indexOf('.')
+        val segmentAsString = segment.asString()
+        return fqName.regionMatches(
+            0,
+            segmentAsString,
+            0,
+            if (firstDot == -1) Math.max(fqName.length, segmentAsString.length) else firstDot
+        )
     }
 
-    @NotNull
-    public static FqNameUnsafe topLevel(@NotNull Name shortName) {
-        return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName);
+    override fun toString(): String {
+        return if (isRoot) ROOT_NAME.asString() else fqName
     }
 
-    @Override
-    @NotNull
-    public String toString() {
-        return isRoot() ? ROOT_NAME.asString() : fqName;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o !is FqNameUnsafe) return false
+        return if (fqName != o.fqName) false else true
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FqNameUnsafe)) return false;
-
-        FqNameUnsafe that = (FqNameUnsafe) o;
-
-        if (!fqName.equals(that.fqName)) return false;
-
-        return true;
+    override fun hashCode(): Int {
+        return fqName.hashCode()
     }
 
-    @Override
-    public int hashCode() {
-        return fqName.hashCode();
+    companion object {
+        private val ROOT_NAME = Name.special("<root>")
+        private val SPLIT_BY_DOTS = Pattern.compile("\\.")
+
+        fun isValid(qualifiedName: String?): Boolean {
+            // TODO: There's a valid name with escape char ``
+            return qualifiedName != null && qualifiedName.indexOf('/') < 0 && qualifiedName.indexOf('*') < 0
+        }
+
+        @JvmStatic
+        fun topLevel(shortName: Name): FqNameUnsafe {
+            return FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName)
+        }
     }
 }
