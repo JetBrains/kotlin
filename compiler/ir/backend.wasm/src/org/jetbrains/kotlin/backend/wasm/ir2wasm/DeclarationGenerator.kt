@@ -258,6 +258,7 @@ class DeclarationGenerator(
         val vTableRefGcType = WasmRefType(WasmHeapType.Type(vTableTypeReference))
 
         val initVTableGlobal = buildWasmExpression {
+            val location = SourceLocation.NoLocation("Create instance of vtable struct")
             metadata.virtualMethods.forEachIndexed { i, method ->
                 if (method.function.modality != Modality.ABSTRACT) {
                     buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(context.referenceFunction(method.function.symbol)))
@@ -266,10 +267,10 @@ class DeclarationGenerator(
                         "Cannot find class implementation of method ${method.signature} in class ${klass.fqNameWhenAvailable}"
                     }
                     //This erased by DCE so abstract version appeared in non-abstract class
-                    buildRefNull(vtableStruct.fields[i].type.getHeapType())
+                    buildRefNull(vtableStruct.fields[i].type.getHeapType(), location)
                 }
             }
-            buildStructNew(vTableTypeReference, SourceLocation.NoLocation("Create instance of vtable struct"))
+            buildStructNew(vTableTypeReference, location)
         }
         context.defineGlobalVTable(
             irClass = symbol,
@@ -294,7 +295,7 @@ class DeclarationGenerator(
                 val iFaceVTableGcNullHeapType = WasmHeapType.Type(iFaceVTableGcType)
 
                 if (!metadata.interfaces.contains(iFace.owner)) {
-                    buildRefNull(iFaceVTableGcNullHeapType)
+                    buildRefNull(iFaceVTableGcNullHeapType, location)
                     continue
                 }
 
@@ -311,7 +312,7 @@ class DeclarationGenerator(
                         buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(functionTypeReference))
                     } else {
                         //This erased by DCE so abstract version appeared in non-abstract class
-                        buildRefNull(WasmHeapType.Type(context.referenceFunctionType(method.function.symbol)))
+                        buildRefNull(WasmHeapType.Type(context.referenceFunctionType(method.function.symbol)), location)
                     }
                 }
                 buildStructNew(iFaceVTableGcType, location)
@@ -482,11 +483,11 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             WasmI64 -> g.buildConstI64(0, location)
             WasmF32 -> g.buildConstF32(0f, location)
             WasmF64 -> g.buildConstF64(0.0, location)
-            is WasmRefNullType -> g.buildRefNull(type.heapType)
-            is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone)
-            is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern)
-            is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
-            is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
+            is WasmRefNullType -> g.buildRefNull(type.heapType, location)
+            is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone, location)
+            is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern, location)
+            is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
+            is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }

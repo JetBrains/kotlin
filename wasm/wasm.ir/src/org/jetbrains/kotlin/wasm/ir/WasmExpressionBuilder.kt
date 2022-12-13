@@ -175,8 +175,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.REF_TEST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
     }
 
-    fun buildRefNull(type: WasmHeapType) {
-        buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(WasmRefType(type)))
+    fun buildRefNull(type: WasmHeapType, location: SourceLocation) {
+        buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(WasmRefType(type)))
     }
 
     fun buildDrop() {

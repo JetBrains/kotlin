@@ -287,8 +287,9 @@ class BodyGenerator(
             return
         }
 
+        val location = expression.getSourceLocation()
+
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
-            val location = expression.getSourceLocation()
             generateAnyParameters(klassSymbol, location)
             for (i in 0 until expression.valueArgumentsCount) {
                 generateExpression(expression.getValueArgument(i)!!)
@@ -298,7 +299,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildRefNull(WasmHeapType.Simple.NullNone) // this = null
+        body.buildRefNull(WasmHeapType.Simple.NullNone, location) // this = null
         generateCall(expression)
     }
 
@@ -309,7 +310,7 @@ class BodyGenerator(
         if (klassSymbol.owner.hasInterfaceSuperClass()) {
             body.buildGetGlobal(context.referenceGlobalClassITable(klassSymbol), location)
         } else {
-            body.buildRefNull(WasmHeapType.Simple.Data)
+            body.buildRefNull(WasmHeapType.Simple.Data, location)
         }
 
         body.buildConstI32Symbol(context.referenceClassId(klassSymbol), location)
@@ -721,7 +722,7 @@ class BodyGenerator(
         if (actualType.isNullableNothing() && expectedType.isNullable()) {
             if (expectedType.getClass()?.isExternal == true) {
                 body.buildDrop()
-                body.buildRefNull(WasmHeapType.Simple.NullNoExtern)
+                body.buildRefNull(WasmHeapType.Simple.NullNoExtern, location)
             }
             return
         }
