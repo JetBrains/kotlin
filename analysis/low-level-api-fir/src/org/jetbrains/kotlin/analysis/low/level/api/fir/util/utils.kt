@@ -31,6 +31,7 @@ internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: (
         checkCanceled()
         if (tryLock(lockingIntervalMs, TimeUnit.MILLISECONDS)) {
             try {
+                checkCanceled()
                 needToRun = false
                 result = action()
             } finally {
