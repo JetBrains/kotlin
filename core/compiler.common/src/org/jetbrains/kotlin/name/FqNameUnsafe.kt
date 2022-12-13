@@ -81,10 +81,10 @@ class FqNameUnsafe(
 
     override fun toString(): String = if (isRoot) ROOT_NAME.asString() else asString()
 
-    override fun equals(o: Any?): Boolean = when {
-        this === o -> true
-        o !is FqNameUnsafe -> false
-        else -> nameSegments contentEquals o.nameSegments
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other !is FqNameUnsafe -> false
+        else -> nameSegments contentEquals other.nameSegments
     }
 
     override fun hashCode(): Int = nameSegments.fold(0) { a, s -> a + s.hashCode() }

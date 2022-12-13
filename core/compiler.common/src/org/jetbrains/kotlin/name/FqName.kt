@@ -83,10 +83,10 @@ class FqName {
         return fqName.toString()
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is FqName) return false
-        return fqName == o.fqName
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FqName) return false
+        return fqName == other.fqName
     }
 
     override fun hashCode(): Int {
