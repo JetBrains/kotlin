@@ -178,7 +178,7 @@ digraph nullability_kt {
     }
     subgraph cluster_21 {
         color=blue
-        56 [label="Enter function getter" style="filled" fillcolor=red];
+        56 [label="Enter function <getter>" style="filled" fillcolor=red];
         subgraph cluster_22 {
             color=blue
             57 [label="Enter block"];
@@ -187,7 +187,7 @@ digraph nullability_kt {
             60 [label="Stub" style="filled" fillcolor=gray];
             61 [label="Exit block" style="filled" fillcolor=gray];
         }
-        62 [label="Exit function getter" style="filled" fillcolor=red];
+        62 [label="Exit function <getter>" style="filled" fillcolor=red];
     }
     44 -> {45} [color=green];
     44 -> {48} [style=dotted];

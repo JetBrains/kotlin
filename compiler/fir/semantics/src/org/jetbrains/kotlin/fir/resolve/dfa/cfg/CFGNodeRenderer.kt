@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
@@ -18,9 +17,9 @@ fun CFGNode<*>.render(): String =
     buildString {
         append(
             when (this@render) {
-                is FunctionEnterNode -> "Enter function \"${fir.name()}\""
-                is FunctionExitNode -> "Exit function \"${fir.name()}\""
-                is LocalFunctionDeclarationNode -> "Local function declaration ${owner.name}"
+                is FunctionEnterNode -> "Enter function ${owner.name}"
+                is FunctionExitNode -> "Exit function ${owner.name}"
+                is LocalFunctionDeclarationNode -> "Local function declaration"
 
                 is BlockEnterNode -> "Enter block"
                 is BlockExitNode -> "Exit block"
@@ -38,7 +37,7 @@ fun CFGNode<*>.render(): String =
                 is LoopBlockExitNode -> "Exit loop block"
                 is LoopConditionEnterNode -> "Enter loop condition"
                 is LoopConditionExitNode -> "Exit loop condition"
-                is LoopExitNode -> "Exit ${fir.type()}loop"
+                is LoopExitNode -> "Exit ${fir.type()} loop"
 
                 is QualifiedAccessNode -> "Access variable ${CfgRenderer.renderElementAsString(fir.calleeReference)}"
                 is ResolvedQualifierNode -> "Access qualifier ${fir.classId}"
@@ -102,7 +101,7 @@ fun CFGNode<*>.render(): String =
 
                 is ClassEnterNode -> "Enter class ${owner.name}"
                 is ClassExitNode -> "Exit class ${owner.name}"
-                is LocalClassExitNode -> "Exit local class ${owner.name}"
+                is LocalClassExitNode -> "Local class declaration"
                 is AnonymousObjectEnterNode -> "Enter anonymous object"
                 is AnonymousObjectExpressionExitNode -> "Exit anonymous object expression"
 
@@ -132,15 +131,6 @@ fun CFGNode<*>.render(): String =
 // NB: renderer has a state, so we have to create it each time
 private val CfgRenderer
     get() = FirRenderer(annotationRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer())
-
-private fun FirFunction.name(): String = when (this) {
-    is FirSimpleFunction -> name.asString()
-    is FirAnonymousFunction -> "anonymousFunction"
-    is FirConstructor -> "<init>"
-    is FirPropertyAccessor -> if (isGetter) "getter" else "setter"
-    is FirErrorFunction -> "errorFunction"
-    else -> TODO(toString())
-}
 
 private fun FirLoop.type(): String = when (this) {
     is FirWhileLoop -> "while"

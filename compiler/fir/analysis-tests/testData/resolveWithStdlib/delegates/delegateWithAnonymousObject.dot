@@ -93,7 +93,7 @@ digraph delegateWithAnonymousObject_kt {
             28 [label="Postponed enter to lambda"];
             subgraph cluster_11 {
                 color=blue
-                29 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                29 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_12 {
                     color=blue
                     30 [label="Enter block"];
@@ -112,7 +112,7 @@ digraph delegateWithAnonymousObject_kt {
                     37 [label="Exit anonymous object expression"];
                     38 [label="Exit block"];
                 }
-                39 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                39 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             subgraph cluster_15 {
                 color=blue
@@ -153,7 +153,7 @@ digraph delegateWithAnonymousObject_kt {
     }
     subgraph cluster_19 {
         color=blue
-        63 [label="Enter function setter" style="filled" fillcolor=red];
+        63 [label="Enter function <setter>" style="filled" fillcolor=red];
         subgraph cluster_20 {
             color=blue
             64 [label="Enter block"];
@@ -163,11 +163,11 @@ digraph delegateWithAnonymousObject_kt {
             68 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)" style="filled" fillcolor=yellow];
             69 [label="Exit block"];
         }
-        70 [label="Exit function setter" style="filled" fillcolor=red];
+        70 [label="Exit function <setter>" style="filled" fillcolor=red];
     }
     subgraph cluster_21 {
         color=blue
-        71 [label="Enter function getter" style="filled" fillcolor=red];
+        71 [label="Enter function <getter>" style="filled" fillcolor=red];
         subgraph cluster_22 {
             color=blue
             72 [label="Enter block"];
@@ -178,7 +178,7 @@ digraph delegateWithAnonymousObject_kt {
             77 [label="Stub" style="filled" fillcolor=gray];
             78 [label="Exit block" style="filled" fillcolor=gray];
         }
-        79 [label="Exit function getter" style="filled" fillcolor=red];
+        79 [label="Exit function <getter>" style="filled" fillcolor=red];
     }
     23 -> {24} [color=green];
     23 -> {62} [style=dotted];

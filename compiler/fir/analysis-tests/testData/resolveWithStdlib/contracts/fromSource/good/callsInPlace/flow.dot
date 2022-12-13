@@ -173,7 +173,7 @@ digraph flow_kt {
                                 }
                                 80 [label="Exit loop block"];
                             }
-                            81 [label="Exit whileloop"];
+                            81 [label="Exit while loop"];
                         }
                         82 [label="Exit block"];
                     }
@@ -205,7 +205,7 @@ digraph flow_kt {
                     96 [label="Const: Boolean(true)"];
                     97 [label="Exit loop condition"];
                 }
-                98 [label="Exit do-whileloop" style="filled" fillcolor=gray];
+                98 [label="Exit do-while loop" style="filled" fillcolor=gray];
             }
             99 [label="Exit block" style="filled" fillcolor=gray];
         }

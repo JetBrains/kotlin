@@ -13,7 +13,7 @@ digraph callsInPlace_kt {
             3 [label="Postponed enter to lambda"];
             subgraph cluster_2 {
                 color=blue
-                4 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                4 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_3 {
                     color=blue
                     5 [label="Enter block"];
@@ -21,7 +21,7 @@ digraph callsInPlace_kt {
                     7 [label="Assignment: R|<local>/x|"];
                     8 [label="Exit block"];
                 }
-                9 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                9 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             10 [label="Postponed exit from lambda"];
             11 [label="Function call: R|kotlin/run|<R|kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
@@ -59,14 +59,14 @@ digraph callsInPlace_kt {
             19 [label="Postponed enter to lambda"];
             subgraph cluster_6 {
                 color=blue
-                20 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                20 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_7 {
                     color=blue
                     21 [label="Enter block"];
                     22 [label="Const: String(test_2)"];
                     23 [label="Exit block"];
                 }
-                24 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                24 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             25 [label="Postponed exit from lambda"];
             26 [label="Function call: R|kotlin/repeat|(...)" style="filled" fillcolor=yellow];
@@ -99,14 +99,14 @@ digraph callsInPlace_kt {
             32 [label="Postponed enter to lambda"];
             subgraph cluster_10 {
                 color=blue
-                33 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                33 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_11 {
                     color=blue
                     34 [label="Enter block"];
                     35 [label="Const: String(test_3)"];
                     36 [label="Exit block"];
                 }
-                37 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                37 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             38 [label="Postponed exit from lambda"];
             39 [label="Function call: R|kotlin/repeat|(...)" style="filled" fillcolor=yellow];
@@ -139,7 +139,7 @@ digraph callsInPlace_kt {
             45 [label="Postponed enter to lambda"];
             subgraph cluster_14 {
                 color=blue
-                46 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                46 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_15 {
                     color=blue
                     47 [label="Enter block"];
@@ -150,7 +150,7 @@ digraph callsInPlace_kt {
                     52 [label="Comparison >"];
                     53 [label="Exit block"];
                 }
-                54 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                54 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             55 [label="Postponed exit from lambda"];
             56 [label="Function call: Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
@@ -187,7 +187,7 @@ digraph callsInPlace_kt {
             62 [label="Postponed enter to lambda"];
             subgraph cluster_18 {
                 color=blue
-                63 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                63 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_19 {
                     color=blue
                     64 [label="Enter block"];
@@ -198,7 +198,7 @@ digraph callsInPlace_kt {
                     69 [label="Comparison >"];
                     70 [label="Exit block"];
                 }
-                71 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                71 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             72 [label="Postponed exit from lambda"];
             73 [label="Function call: Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
@@ -252,25 +252,25 @@ digraph callsInPlace_kt {
             84 [label="Postponed enter to lambda"];
             subgraph cluster_24 {
                 color=blue
-                85 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                85 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_25 {
                     color=blue
                     86 [label="Enter block"];
                     87 [label="Const: String(test_6_2)"];
                     88 [label="Exit block"];
                 }
-                89 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                89 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             subgraph cluster_26 {
                 color=blue
-                90 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                90 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_27 {
                     color=blue
                     91 [label="Enter block"];
                     92 [label="Const: String(test_6_1)"];
                     93 [label="Exit block"];
                 }
-                94 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                94 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             95 [label="Postponed exit from lambda"];
             96 [label="Postponed exit from lambda"];
@@ -309,25 +309,25 @@ digraph callsInPlace_kt {
             102 [label="Postponed enter to lambda"];
             subgraph cluster_30 {
                 color=blue
-                103 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                103 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_31 {
                     color=blue
                     104 [label="Enter block"];
                     105 [label="Const: String(test_7_1)"];
                     106 [label="Exit block"];
                 }
-                107 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                107 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             subgraph cluster_32 {
                 color=blue
-                108 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                108 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_33 {
                     color=blue
                     109 [label="Enter block"];
                     110 [label="Const: String(test_7_2)"];
                     111 [label="Exit block"];
                 }
-                112 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                112 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             113 [label="Postponed exit from lambda"];
             114 [label="Postponed exit from lambda"];
@@ -382,14 +382,14 @@ digraph callsInPlace_kt {
             125 [label="Postponed enter to lambda"];
             subgraph cluster_38 {
                 color=blue
-                126 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                126 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_39 {
                     color=blue
                     127 [label="Enter block"];
                     128 [label="Const: String(test_8)"];
                     129 [label="Exit block"];
                 }
-                130 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                130 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             131 [label="Postponed exit from lambda"];
             132 [label="Function call: R|/myDummyRun|(...)" style="filled" fillcolor=yellow];

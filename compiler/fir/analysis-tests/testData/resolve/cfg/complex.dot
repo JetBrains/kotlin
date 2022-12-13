@@ -234,7 +234,7 @@ digraph complex_kt {
                         }
                         85 [label="Exit loop block"];
                     }
-                    86 [label="Exit whileloop"];
+                    86 [label="Exit while loop"];
                 }
                 87 [label="Exit block"];
             }

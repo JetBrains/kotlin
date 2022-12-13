@@ -95,7 +95,7 @@ digraph boundSmartcastsInBranches_kt {
                         }
                         46 [label="Exit loop block"];
                     }
-                    47 [label="Exit whileloop"];
+                    47 [label="Exit while loop"];
                 }
                 48 [label="Exit block"];
             }
