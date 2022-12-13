@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirNonUnderCon
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -78,7 +77,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             val provider = LLFirProvider(
                 this,
                 components,
-                project.createDeclarationProvider(contentScope),
+                LLFirNonUnderContentRootDeclarationProvider(module),
                 project.createPackageProvider(contentScope),
                 canContainKotlinPackage = true,
             )
