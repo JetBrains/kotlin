@@ -1,3 +1,5 @@
+// KT-55469
+// IGNORE_BACKEND_K2: NATIVE
 // WITH_STDLIB
 fun foo(): Array<Boolean> {
     return arrayOf(

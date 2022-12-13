@@ -1,5 +1,7 @@
 // !LANGUAGE: -ForbidUsingExtensionPropertyTypeParameterInDelegate
 //For KT-6020
+// IGNORE_BACKEND_K2: NATIVE
+
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
