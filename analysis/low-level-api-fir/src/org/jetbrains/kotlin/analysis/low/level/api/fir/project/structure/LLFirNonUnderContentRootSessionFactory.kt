@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirNonUnderCon
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 internal class LLFirNonUnderContentRootSessionFactory(private val project: Project) {
@@ -75,10 +75,12 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             registerResolveComponents()
             registerJavaSpecificResolveComponents()
 
+            val ktFile = module.file as? KtFile
+
             val provider = LLFirProvider(
                 this,
                 components,
-                project.createDeclarationProvider(contentScope),
+                if (ktFile != null) FileBasedKotlinDeclarationProvider(ktFile) else EmptyKotlinDeclarationProvider,
                 project.createPackageProvider(contentScope),
                 canContainKotlinPackage = true,
             )
