@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -251,7 +253,7 @@ internal fun SymbolLightClassBase.createMethods(
 }
 
 context(KtAnalysisSession)
-private inline fun <T : KtFunctionLikeSymbol> SymbolLightClassBase.createJvmOverloadsIfNeeded(
+private inline fun <T : KtFunctionLikeSymbol> createJvmOverloadsIfNeeded(
     declaration: T,
     result: MutableList<KtLightMethod>,
     lightMethodCreator: (Int, BitSet) -> KtLightMethod
@@ -473,6 +475,14 @@ internal fun KtSymbolWithMembers.createInnerClasses(
         jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE
     ) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
+    }
+
+    if (containingClass is SymbolLightClassForAnnotationClass &&
+        this is KtNamedClassOrObjectSymbol &&
+        hasAnnotation(StandardNames.FqNames.repeatable, annotationUseSiteTarget = null) &&
+        !hasAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION, annotationUseSiteTarget = null)
+    ) {
+        result.add(SymbolLightClassForRepeatableAnnotationContainer(containingClass))
     }
 
     return result

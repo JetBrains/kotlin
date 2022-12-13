@@ -65,26 +65,28 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         manager = manager,
     )
 
-    private val _modifierList: PsiModifierList? by lazyPub {
-        SymbolLightClassModifierList(
-            containingDeclaration = this,
-            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
-            lazyModifiersComputer = ::computeModifiers
-        ) { modifierList ->
-            withClassOrObjectSymbol { classOrObjectSymbol ->
-                classOrObjectSymbol.computeAnnotations(
-                    modifierList = modifierList,
-                    nullability = NullabilityType.Unknown,
-                    annotationUseSiteTarget = null,
-                )
-            }
+    protected open fun computeModifierList(): PsiModifierList? = SymbolLightClassModifierList(
+        containingDeclaration = this,
+        initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
+        lazyModifiersComputer = ::computeModifiers
+    ) { modifierList ->
+        withClassOrObjectSymbol { classOrObjectSymbol ->
+            classOrObjectSymbol.computeAnnotations(
+                modifierList = modifierList,
+                nullability = NullabilityType.Unknown,
+                annotationUseSiteTarget = null,
+            )
         }
+    }
+
+    private val _modifierList: PsiModifierList? by lazyPub {
+        computeModifierList()
     }
 
     override fun isInterface(): Boolean = true
     override fun isEnum(): Boolean = false
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
+    final override fun getModifierList(): PsiModifierList? = _modifierList
 
     private val _ownFields: List<KtLightField> by lazyPub {
         withClassOrObjectSymbol { classOrObjectSymbol ->

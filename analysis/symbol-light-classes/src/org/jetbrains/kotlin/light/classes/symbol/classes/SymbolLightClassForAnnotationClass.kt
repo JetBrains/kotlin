@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
@@ -21,7 +19,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightClassForAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
+internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
@@ -40,7 +38,7 @@ internal class SymbolLightClassForAnnotationClass : SymbolLightClassForInterface
         require(classOrObject is KtClass && classOrObject.isAnnotation())
     }
 
-    private constructor(
+    constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
         ktModule: KtModule,
@@ -54,21 +52,27 @@ internal class SymbolLightClassForAnnotationClass : SymbolLightClassForInterface
 
     override fun isAnnotationType(): Boolean = true
 
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
-            val result = mutableListOf<KtLightMethod>()
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
-                .filterNot { it is KtConstructorSymbol }
+    protected open fun computeOwnMethods(): List<PsiMethod> = withClassOrObjectSymbol { classOrObjectSymbol ->
+        val result = mutableListOf<KtLightMethod>()
+        val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+            .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+            .filterNot { it is KtConstructorSymbol }
 
-            createMethods(visibleDeclarations, result)
-            result
-        }
+        createMethods(visibleDeclarations, result)
+        result
     }
 
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
+    private val _ownMethods: List<PsiMethod> by lazyPub {
+        computeOwnMethods()
+    }
 
+    final override fun getOwnMethods(): List<PsiMethod> = _ownMethods
     override fun getExtendsList(): PsiReferenceList? = null
+
+    final override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        val qualifiedName = baseClass.qualifiedName
+        return qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_ANNOTATION || qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
+    }
 
     override fun copy(): SymbolLightClassForAnnotationClass = SymbolLightClassForAnnotationClass(
         classOrObjectDeclaration = classOrObjectDeclaration,
