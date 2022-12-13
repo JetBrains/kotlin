@@ -390,7 +390,7 @@ class WasmIrToBinary(
         }
         appendType(c.type)
         b.writeVarUInt1(c.isMutable)
-        appendExpr(c.init, SourceLocation.TBDLocation)
+        appendExpr(c.init)
     }
 
     private fun appendTag(t: WasmTag) {
@@ -405,9 +405,9 @@ class WasmIrToBinary(
         b.writeVarUInt32(t.type.id!!)
     }
 
-    private fun appendExpr(expr: Iterable<WasmInstr>, location: SourceLocation) {
+    private fun appendExpr(expr: Iterable<WasmInstr>) {
         expr.forEach { appendInstr(it) }
-        appendInstr(WasmInstrWithLocation(WasmOp.END, location))
+        appendInstr(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
     }
 
     private fun appendExport(export: WasmExport<*>) {
@@ -433,7 +433,7 @@ class WasmIrToBinary(
                 funcIndices.forEach { b.writeVarUInt32(it) }
             } else {
                 element.values.forEach {
-                    appendExpr((it as WasmTable.Value.Expression).expr, SourceLocation.TBDLocation)
+                    appendExpr((it as WasmTable.Value.Expression).expr)
                 }
             }
         }
@@ -457,18 +457,18 @@ class WasmIrToBinary(
                 when {
                     tableId == 0 && isFuncIndices -> {
                         b.writeByte(0x0)
-                        appendExpr(mode.offset, SourceLocation.TBDLocation)
+                        appendExpr(mode.offset)
                     }
                     isFuncIndices -> {
                         b.writeByte(0x2)
                         appendModuleFieldReference(mode.table)
-                        appendExpr(mode.offset, SourceLocation.TBDLocation)
+                        appendExpr(mode.offset)
                         writeTypeOrKind()
                     }
                     else -> {
                         b.writeByte(0x6)
                         appendModuleFieldReference(mode.table)
-                        appendExpr(mode.offset, SourceLocation.TBDLocation)
+                        appendExpr(mode.offset)
                         writeTypeOrKind()
                     }
                 }
@@ -492,7 +492,7 @@ class WasmIrToBinary(
                 }
             }
 
-            appendExpr(function.instructions, SourceLocation.TBDLocation)
+            appendExpr(function.instructions)
         }
     }
 
@@ -505,7 +505,7 @@ class WasmIrToBinary(
                     b.writeByte(2)
                     b.writeVarUInt32(mode.memoryIdx)
                 }
-                appendExpr(mode.offset, SourceLocation.TBDLocation)
+                appendExpr(mode.offset)
             }
             WasmDataMode.Passive -> b.writeByte(1)
         }
