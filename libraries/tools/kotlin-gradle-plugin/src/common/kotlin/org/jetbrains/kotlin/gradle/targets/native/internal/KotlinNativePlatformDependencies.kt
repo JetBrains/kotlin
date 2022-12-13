@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
@@ -97,7 +98,7 @@ private fun Project.addDependencies(
     if (isIdeDependency && sourceSet is DefaultKotlinSourceSet) {
         val metadataConfigurationName =
             if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-            else sourceSet.implementationMetadataConfigurationName
+            else sourceSet.resolvableMetadataConfigurationName
         dependencies.add(metadataConfigurationName, libraries)
     }
 }

@@ -74,34 +74,21 @@ internal class DefaultKotlinSourceSetFactory(
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, "resources"))
 
-        val dependencyConfigurationWithMetadata = with(sourceSet) {
-            listOf(
-                apiConfigurationName to apiMetadataConfigurationName,
-                implementationConfigurationName to implementationMetadataConfigurationName,
-                compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
-                null to intransitiveMetadataConfigurationName
-            )
-        }
+        project.configurations.maybeCreate(sourceSet.intransitiveMetadataConfigurationName).apply {
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            isVisible = false
+            isCanBeConsumed = false
+            isCanBeResolved = true
 
-        dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
-            project.configurations.maybeCreate(metadataName).apply {
-                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                isVisible = false
-                isCanBeConsumed = false
 
-                if (configurationName != null) {
-                    extendsFrom(project.configurations.maybeCreate(configurationName))
-                }
+            if (project.isKotlinGranularMetadataEnabled) {
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            }
 
-                if (project.isKotlinGranularMetadataEnabled) {
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                }
-
-                project.afterEvaluate {
-                    setJsCompilerIfNecessary(sourceSet, this@apply)
-                }
+            project.afterEvaluate {
+                setJsCompilerIfNecessary(sourceSet, this@apply)
             }
         }
     }

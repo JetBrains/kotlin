@@ -45,12 +45,24 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
 
+    @Deprecated(
+        message = "KT-55312: scoped metadata configurations are deprecated",
+        replaceWith = ReplaceWith("resolvableMetadataConfigurationName")
+    )
     override val apiMetadataConfigurationName: String
         get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
+    @Deprecated(
+        message = "KT-55312: scoped metadata configurations are deprecated",
+        replaceWith = ReplaceWith("resolvableMetadataConfigurationName")
+    )
     override val implementationMetadataConfigurationName: String
         get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
+    @Deprecated(
+        message = "KT-55312: scoped metadata configurations are deprecated",
+        replaceWith = ReplaceWith("resolvableMetadataConfigurationName")
+    )
     override val compileOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
