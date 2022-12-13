@@ -18,6 +18,8 @@ interface PackagePartProvider {
      */
     fun findPackageParts(packageFqName: String): List<String>
 
+    fun allPackageNames(): List<String>
+
     fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId>
 
     fun getAllOptionalAnnotationClasses(): List<ClassData>
@@ -28,5 +30,7 @@ interface PackagePartProvider {
         override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
 
         override fun getAllOptionalAnnotationClasses(): List<ClassData> = emptyList()
+
+        override fun allPackageNames(): List<String> = emptyList()
     }
 }
