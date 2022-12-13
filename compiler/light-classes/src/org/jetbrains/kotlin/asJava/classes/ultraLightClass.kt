@@ -56,16 +56,14 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private class KtUltraLightClassModifierList(
         private val containingClass: KtLightClassForSourceDeclaration,
         support: KtUltraLightSupport,
-        private val computeModifiers: () -> Set<String>
+        private val lazyModifiers: Lazy<Set<String>>,
+        private val lazyIsFinal: Lazy<Boolean>,
     ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
-        private val modifiers by lazyPub { computeModifiers() }
-
         override fun hasModifierProperty(name: String): Boolean =
-            if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
+            if (name != PsiModifier.FINAL) name in lazyModifiers.value else owner.isFinal(lazyIsFinal.value)
 
-        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, support, computeModifiers)
+        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, support, lazyModifiers, lazyIsFinal)
     }
-
 
     private val membersBuilder by lazyPub {
         UltraLightMembersCreator(
@@ -73,7 +71,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             isNamedObject(),
             classOrObject.hasModifier(SEALED_KEYWORD),
             mangleInternalFunctions = true,
-            support = support
+            support = support,
         )
     }
 
@@ -82,7 +80,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun isFinal(isFinalByPsi: Boolean) = isFinalByPsi
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        KtUltraLightClassModifierList(this, support) { computeModifiers() }
+        KtUltraLightClassModifierList(
+            containingClass = this,
+            support = support,
+            lazyModifiers = lazyPub { computeModifiersByPsi() },
+            lazyIsFinal = lazyPub { computeIsFinal() },
+        )
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList

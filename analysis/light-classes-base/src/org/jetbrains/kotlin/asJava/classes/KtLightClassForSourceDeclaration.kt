@@ -104,7 +104,6 @@ abstract class KtLightClassForSourceDeclaration(
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
     abstract override fun getModifierList(): PsiModifierList?
-    protected abstract fun computeModifiers(): Set<String>
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
     abstract override fun isDeprecated(): Boolean
