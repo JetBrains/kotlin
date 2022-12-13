@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.name
 class FqName {
     private val fqName: FqNameUnsafe
 
+    // cache
+    @Transient
+    private var parent: FqName? = null
+
     constructor(fqName: String) {
         this.fqName = FqNameUnsafe(fqName, this)
     }
@@ -28,6 +32,11 @@ class FqName {
 
     constructor(fqName: FqNameUnsafe) {
         this.fqName = fqName
+    }
+
+    private constructor(fqName: FqNameUnsafe, parent: FqName) {
+        this.fqName = fqName
+        this.parent = parent
     }
 
     fun asString(): String {
@@ -41,10 +50,17 @@ class FqName {
     val isRoot: Boolean
         get() = fqName.isRoot
 
-    fun parent(): FqName = fqName.parent().toSafe()
+    fun parent(): FqName {
+        if (parent != null) {
+            return parent!!
+        }
+        check(!isRoot) { "root" }
+        parent = FqName(fqName.parent())
+        return parent!!
+    }
 
     fun child(name: Name): FqName {
-        return FqName(fqName.child(name, this))
+        return FqName(fqName.child(name), this)
     }
 
     fun shortName(): Name {

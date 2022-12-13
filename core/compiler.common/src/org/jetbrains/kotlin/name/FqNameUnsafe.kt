@@ -24,12 +24,19 @@ class FqNameUnsafe(
     private val nameSegments: Array<Name>,
     // cache
     @Transient
-    private var safe: FqName? = null,
-    private var parent: FqNameUnsafe? = null
+    private var safe: FqName? = null
 ) {
+    private val parent: FqNameUnsafe
+        get() =
+            when (nameSegments.size) {
+                0 -> error("root")
+                1 -> FqName.ROOT.toUnsafe()
+                else -> FqNameUnsafe(nameSegments.dropLast(1).toTypedArray())
+            }
 
     private val shortName: Name?
         get() = nameSegments.lastOrNull()
+
 
     constructor(fqName: String, safe: FqName?) : this(computeNamesFromString(fqName), safe)
     constructor(fqName: String) : this(computeNamesFromString(fqName), null)
@@ -50,19 +57,9 @@ class FqNameUnsafe(
     val isRoot: Boolean
         get() = nameSegments.isEmpty()
 
-    fun parent(): FqNameUnsafe {
-        return if (parent != null) parent!!
-        else when (nameSegments.size) {
-            0 -> error("root")
-            1 -> FqName.ROOT.toUnsafe()
-            else -> FqNameUnsafe(nameSegments.dropLast(1).toTypedArray())
-        }.also {
-            parent = it
-        }
-    }
+    fun parent(): FqNameUnsafe = parent
 
-    fun child(name: Name, safeParent: FqName? = null): FqNameUnsafe =
-        FqNameUnsafe(nameSegments + name, safe = safeParent, parent = this)
+    fun child(name: Name): FqNameUnsafe = FqNameUnsafe(nameSegments + name)
 
     fun shortName(): Name = shortName!!
 
