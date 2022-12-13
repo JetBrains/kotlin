@@ -229,7 +229,7 @@ class BodyGenerator(
             body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
         } else {
             generateExpression(expression.value)
-            body.buildSetGlobal(context.referenceGlobalField(expression.symbol))
+            body.buildSetGlobal(context.referenceGlobalField(expression.symbol), expression.getSourceLocation())
             body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
 
