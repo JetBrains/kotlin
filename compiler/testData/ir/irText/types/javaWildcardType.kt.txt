@@ -1,7 +1,7 @@
 interface K {
-  abstract fun kf1(): Collection<out CharSequence>
+  abstract fun kf1(): Collection<CharSequence>
   abstract fun kf2(): Collection<CharSequence>
-  abstract fun kg1(c: Collection<out CharSequence>)
+  abstract fun kg1(c: Collection<CharSequence>)
   abstract fun kg2(c: Collection<CharSequence>)
 
 }
@@ -31,7 +31,7 @@ class C : J, K {
   }
 
   private /* final field */ val $$delegate_1: K = k
-  override fun kf1(): Collection<out CharSequence> {
+  override fun kf1(): Collection<CharSequence> {
     return <this>.#$$delegate_1.kf1()
   }
 
@@ -39,7 +39,7 @@ class C : J, K {
     return <this>.#$$delegate_1.kf2()
   }
 
-  override fun kg1(c: Collection<out CharSequence>) {
+  override fun kg1(c: Collection<CharSequence>) {
     <this>.#$$delegate_1.kg1(c = c)
   }
 
@@ -48,3 +48,4 @@ class C : J, K {
   }
 
 }
+

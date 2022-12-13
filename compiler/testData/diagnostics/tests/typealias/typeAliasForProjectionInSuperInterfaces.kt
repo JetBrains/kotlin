@@ -22,11 +22,11 @@ class Test4 : InvT<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>*<!>>
 class Test5 : InvT<InvT<*>>
 
 class Test6 : <!EXPANDED_TYPE_CANNOT_BE_INHERITED!>OutStar<!>
-class Test7 : <!EXPANDED_TYPE_CANNOT_BE_INHERITED!>OutOut<!>
+class Test7 : OutOut
 class Test8 : OutT<Int>
 class Test9 : OutT<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>out<!> Int>
 
 class Test10 : <!EXPANDED_TYPE_CANNOT_BE_INHERITED!>InStar<!>
-class Test11 : <!EXPANDED_TYPE_CANNOT_BE_INHERITED!>InIn<!>
+class Test11 : InIn
 class Test12 : InT<Int>
 class Test13 : InT<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>in<!> Int>

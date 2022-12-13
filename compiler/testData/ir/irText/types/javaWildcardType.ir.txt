@@ -1,13 +1,13 @@
 FILE fqName:<root> fileName:/javaWildcardType.kt
   CLASS INTERFACE name:K modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
-    FUN name:kf1 visibility:public modality:ABSTRACT <> ($this:<root>.K) returnType:kotlin.collections.Collection<out kotlin.CharSequence>
+    FUN name:kf1 visibility:public modality:ABSTRACT <> ($this:<root>.K) returnType:kotlin.collections.Collection<kotlin.CharSequence>
       $this: VALUE_PARAMETER name:<this> type:<root>.K
     FUN name:kf2 visibility:public modality:ABSTRACT <> ($this:<root>.K) returnType:kotlin.collections.Collection<kotlin.CharSequence>
       $this: VALUE_PARAMETER name:<this> type:<root>.K
-    FUN name:kg1 visibility:public modality:ABSTRACT <> ($this:<root>.K, c:kotlin.collections.Collection<out kotlin.CharSequence>) returnType:kotlin.Unit
+    FUN name:kg1 visibility:public modality:ABSTRACT <> ($this:<root>.K, c:kotlin.collections.Collection<kotlin.CharSequence>) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.K
-      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<out kotlin.CharSequence>
+      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<kotlin.CharSequence>
     FUN name:kg2 visibility:public modality:ABSTRACT <> ($this:<root>.K, c:kotlin.collections.Collection<kotlin.CharSequence>) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.K
       VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<kotlin.CharSequence>
@@ -76,13 +76,13 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
     FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'k: <root>.K declared in <root>.C.<init>' type=<root>.K origin=null
-    FUN DELEGATED_MEMBER name:kf1 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<out kotlin.CharSequence>
+    FUN DELEGATED_MEMBER name:kf1 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<kotlin.CharSequence>
       overridden:
-        public abstract fun kf1 (): kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.K
+        public abstract fun kf1 (): kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.K
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun kf1 (): kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.C'
-          CALL 'public abstract fun kf1 (): kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.K' type=kotlin.collections.Collection<out kotlin.CharSequence> origin=null
+        RETURN type=kotlin.Nothing from='public open fun kf1 (): kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.C'
+          CALL 'public abstract fun kf1 (): kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.K' type=kotlin.collections.Collection<kotlin.CharSequence> origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kf1' type=<root>.C origin=null
     FUN DELEGATED_MEMBER name:kf2 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<kotlin.CharSequence>
@@ -94,16 +94,16 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
           CALL 'public abstract fun kf2 (): kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.K' type=kotlin.collections.Collection<kotlin.CharSequence> origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kf2' type=<root>.C origin=null
-    FUN DELEGATED_MEMBER name:kg1 visibility:public modality:OPEN <> ($this:<root>.C, c:kotlin.collections.Collection<out kotlin.CharSequence>) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:kg1 visibility:public modality:OPEN <> ($this:<root>.C, c:kotlin.collections.Collection<kotlin.CharSequence>) returnType:kotlin.Unit
       overridden:
-        public abstract fun kg1 (c: kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit declared in <root>.K
+        public abstract fun kg1 (c: kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit declared in <root>.K
       $this: VALUE_PARAMETER name:<this> type:<root>.C
-      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<out kotlin.CharSequence>
+      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<kotlin.CharSequence>
       BLOCK_BODY
-        CALL 'public abstract fun kg1 (c: kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
+        CALL 'public abstract fun kg1 (c: kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kg1' type=<root>.C origin=null
-          c: GET_VAR 'c: kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.C.kg1' type=kotlin.collections.Collection<out kotlin.CharSequence> origin=null
+          c: GET_VAR 'c: kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.C.kg1' type=kotlin.collections.Collection<kotlin.CharSequence> origin=null
     FUN DELEGATED_MEMBER name:kg2 visibility:public modality:OPEN <> ($this:<root>.C, c:kotlin.collections.Collection<kotlin.CharSequence>) returnType:kotlin.Unit
       overridden:
         public abstract fun kg2 (c: kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit declared in <root>.K
