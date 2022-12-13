@@ -171,8 +171,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.REF_CAST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
     }
 
-    fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.REF_TEST_DEPRECATED, WasmImmediate.TypeIdx(toType))
+    fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(WasmOp.REF_TEST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefNull(type: WasmHeapType) {

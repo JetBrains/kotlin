@@ -484,7 +484,8 @@ class BodyGenerator(
     private fun generateRefTest(fromType: IrType, toType: IrType, location: SourceLocation) {
         if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
             body.buildRefTestStatic(
-                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
+                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
+                location
             )
         } else {
             body.buildDrop()
