@@ -361,6 +361,8 @@ class BodyGenerator(
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
+        val location = call.getSourceLocation()
+
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
         if (call.symbol == wasmSymbols.boxIntrinsic) {
@@ -427,8 +429,8 @@ class BodyGenerator(
                 //TODO: check why it could be needed
                 generateRefNullCast(receiver.type, klass.defaultType)
 
-                body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0))
-                body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot))
+                body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0), location)
+                body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
                 body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                 body.commentGroupEnd()
             } else {
@@ -437,16 +439,16 @@ class BodyGenerator(
                     generateExpression(call.dispatchReceiver!!)
 
                     body.commentGroupStart { "interface call: ${function.fqNameWhenAvailable}" }
-                    body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
+                    body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
 
                     val classITableReference = context.referenceClassITableGcType(symbol)
                     body.buildRefCastNullStatic(classITableReference)
-                    body.buildStructGet(classITableReference, context.referenceClassITableInterfaceSlot(symbol))
+                    body.buildStructGet(classITableReference, context.referenceClassITableInterfaceSlot(symbol), location)
 
                     val vfSlot = context.getInterfaceMetadata(symbol).methods
                         .indexOfFirst { it.function == function }
 
-                    body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot))
+                    body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot), location)
                     body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                     body.commentGroupEnd()
                 } else {
@@ -459,9 +461,7 @@ class BodyGenerator(
 
         } else {
             // Static function call
-            withLocation(call.getSourceLocation()) {
-                body.buildCall(context.referenceFunction(function.symbol), location)
-            }
+            body.buildCall(context.referenceFunction(function.symbol), location)
         }
 
         // Unit types don't cross function boundaries
@@ -533,9 +533,9 @@ class BodyGenerator(
                         body.buildBlock("isInterface", WasmI32) { outerLabel ->
                             body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
                                 body.buildGetLocal(parameterLocal, location)
-                                body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
+                                body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
                                 body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable)
-                                body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol))
+                                body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol), location)
                                 body.buildInstr(WasmOp.REF_IS_NULL)
                                 body.buildInstr(WasmOp.I32_EQZ)
                                 body.buildBr(outerLabel)

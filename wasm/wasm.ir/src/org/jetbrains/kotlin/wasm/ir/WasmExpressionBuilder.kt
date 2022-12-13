@@ -145,9 +145,10 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.GLOBAL_SET, location, WasmImmediate.GlobalIdx(global))
     }
 
-    fun buildStructGet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>) {
+    fun buildStructGet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>, location: SourceLocation) {
         buildInstr(
             WasmOp.STRUCT_GET,
+            location,
             WasmImmediate.GcType(struct),
             WasmImmediate.StructFieldIdx(fieldId)
         )
