@@ -430,7 +430,7 @@ class BodyGenerator(
                 body.commentGroupStart { "virtual call: ${function.fqNameWhenAvailable}" }
 
                 //TODO: check why it could be needed
-                generateRefNullCast(receiver.type, klass.defaultType)
+                generateRefNullCast(receiver.type, klass.defaultType, location)
 
                 body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0), location)
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
@@ -445,7 +445,7 @@ class BodyGenerator(
                     body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
 
                     val classITableReference = context.referenceClassITableGcType(symbol)
-                    body.buildRefCastNullStatic(classITableReference)
+                    body.buildRefCastNullStatic(classITableReference, location)
                     body.buildStructGet(classITableReference, context.referenceClassITableInterfaceSlot(symbol), location)
 
                     val vfSlot = context.getInterfaceMetadata(symbol).methods
@@ -472,10 +472,11 @@ class BodyGenerator(
             body.buildGetUnit()
     }
 
-    private fun generateRefNullCast(fromType: IrType, toType: IrType) {
+    private fun generateRefNullCast(fromType: IrType, toType: IrType, location: SourceLocation) {
         if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
             body.buildRefCastNullStatic(
-                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
+                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol),
+                location
             )
         }
     }
@@ -555,7 +556,8 @@ class BodyGenerator(
                 wasmSymbols.refCastNull -> {
                     generateRefNullCast(
                         fromType = call.getValueArgument(0)!!.type,
-                        toType = call.getTypeArgument(0)!!
+                        toType = call.getTypeArgument(0)!!,
+                        location = location
                     )
                 }
 
@@ -580,7 +582,7 @@ class BodyGenerator(
                     val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
                     val field = getInlineClassBackingField(klass)
 
-                    generateRefNullCast(fromType, toType)
+                    generateRefNullCast(fromType, toType, location)
                     generateInstanceFieldAccess(field)
                 }
 
@@ -700,11 +702,11 @@ class BodyGenerator(
         }
 
         generateExpression(expression)
-        recoverToExpectedType(actualType = actualType, expectedType = expectedType)
+        recoverToExpectedType(actualType = actualType, expectedType = expectedType, location = expression.getSourceLocation())
     }
 
     //TODO: This method needed because of IR has type inconsistency. We need to discover why is it and fix
-    private fun recoverToExpectedType(actualType: IrType, expectedType: IrType) {
+    private fun recoverToExpectedType(actualType: IrType, expectedType: IrType, location: SourceLocation) {
         // TYPE -> NOTHING -> FALSE
         if (expectedType.isNothing()) {
             body.buildUnreachableAfterNothingType()
@@ -761,7 +763,7 @@ class BodyGenerator(
         // REF -> REF -> REF_CAST
         if (!expectedIsPrimitive) {
             if (expectedClassErased.isSubclassOf(actualClassErased)) {
-                generateRefNullCast(actualTypeErased, expectedTypeErased)
+                generateRefNullCast(actualTypeErased, expectedTypeErased, location)
             } else {
                 body.buildUnreachableForVerifier()
             }
