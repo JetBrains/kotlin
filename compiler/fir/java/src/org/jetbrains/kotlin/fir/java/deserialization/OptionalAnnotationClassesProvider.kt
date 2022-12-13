@@ -49,6 +49,10 @@ class OptionalAnnotationClassesProvider(
         return emptyList()
     }
 
+    override fun computePackageSet(): Set<String> = emptySet()
+
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean = true
+
     override fun extractClassMetadata(
         classId: ClassId,
         parentContext: FirDeserializationContext?
