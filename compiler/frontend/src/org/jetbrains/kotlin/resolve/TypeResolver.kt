@@ -1004,12 +1004,23 @@ class TypeResolver(
                 }
             } else {
                 val type = resolveType(c.noBareTypes(), argumentElement.typeReference!!)
-                val kind = resolveProjectionKind(projectionKind)
+                var kind = resolveProjectionKind(projectionKind)
                 if (constructor.parameters.size > i) {
                     val parameterDescriptor = constructor.parameters[i]
                     if (kind != INVARIANT && parameterDescriptor.variance != INVARIANT) {
                         if (kind == parameterDescriptor.variance) {
                             c.trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.declarationDescriptor!!))
+                            // Since the projection is redundant, we remove it. Otherwise, we can get mismatching signatures
+                            // for original declarations and fake overrides in klibs for cases such as:
+                            //
+                            // interface I<out T>
+                            //
+                            // open class Super<T> {
+                            //     fun foo(i: I<out T>) {}
+                            // }
+                            //
+                            // class Sub<T>: Super<T>()
+                            kind = INVARIANT
                         } else {
                             c.trace.report(CONFLICTING_PROJECTION.on(argumentElement, constructor.declarationDescriptor!!))
                         }
