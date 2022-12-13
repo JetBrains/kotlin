@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.FqName
 
-val JSPECIFY_NULLABLE = FqName("org.jspecify.nullness.Nullable")
-val JSPECIFY_NULLNESS_UNKNOWN = FqName("org.jspecify.nullness.NullnessUnspecified")
-val JSPECIFY_NULL_MARKED = FqName("org.jspecify.nullness.NullMarked")
+val JSPECIFY_OLD_NULLABLE = FqName("org.jspecify.nullness.Nullable")
+val JSPECIFY_OLD_NULLNESS_UNKNOWN = FqName("org.jspecify.nullness.NullnessUnspecified")
+val JSPECIFY_OLD_NULL_MARKED = FqName("org.jspecify.nullness.NullMarked")
+val JSPECIFY_NULLABLE = FqName("org.jspecify.annotations.Nullable")
+val JSPECIFY_NULLNESS_UNKNOWN = FqName("org.jspecify.annotations.NullnessUnspecified")
+val JSPECIFY_NULL_MARKED = FqName("org.jspecify.annotations.NullMarked")
 
 val NULLABLE_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
@@ -71,8 +74,9 @@ val NULLABILITY_ANNOTATIONS = mutableSetOf<FqName>() +
         COMPATQUAL_NONNULL_ANNOTATION +
         ANDROIDX_RECENTLY_NULLABLE_ANNOTATION +
         ANDROIDX_RECENTLY_NON_NULL_ANNOTATION +
+        JSPECIFY_OLD_NULLABLE +
+        JSPECIFY_OLD_NULL_MARKED +
         JSPECIFY_NULLABLE +
-        JSPECIFY_NULLNESS_UNKNOWN +
         JSPECIFY_NULL_MARKED
 
 val READ_ONLY_ANNOTATIONS = setOf(
