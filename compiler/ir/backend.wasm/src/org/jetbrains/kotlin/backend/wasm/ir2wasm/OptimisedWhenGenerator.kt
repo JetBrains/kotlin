@@ -333,7 +333,7 @@ private fun BodyGenerator.genTableIntSwitch(
 
     for (expression in branches) {
         if (resultType != null) {
-            body.buildDrop()
+            body.buildDrop(location)
         }
         generateWithExpectedType(expression.expression, expectedType)
 
@@ -343,7 +343,7 @@ private fun BodyGenerator.genTableIntSwitch(
 
     if (elseExpression != null) {
         if (resultType != null) {
-            body.buildDrop()
+            body.buildDrop(location)
         }
         generateWithExpectedType(elseExpression, expectedType)
     }

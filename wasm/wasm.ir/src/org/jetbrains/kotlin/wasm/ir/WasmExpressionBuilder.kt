@@ -179,8 +179,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(WasmRefType(type)))
     }
 
-    fun buildDrop() {
-        buildInstr(WasmOp.DROP)
+    fun buildDrop(location: SourceLocation) {
+        buildInstr(WasmOp.DROP, location)
     }
 
     inline fun commentPreviousInstr(text: () -> String) {
