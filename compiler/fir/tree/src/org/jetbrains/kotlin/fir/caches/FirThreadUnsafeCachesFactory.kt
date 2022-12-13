@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.caches
 
 object FirThreadUnsafeCachesFactory : FirCachesFactory() {
     override fun <K : Any, V, CONTEXT> createCache(createValue: (K, CONTEXT) -> V): FirCache<K, V, CONTEXT> =
-        FirThreadUnsafeCache(createValue)
+        OpenAddressLinearProbingHashTableNullable(createValue)
 
     override fun <K : Any, V, CONTEXT, DATA> createCacheWithPostCompute(
         createValue: (K, CONTEXT) -> Pair<V, DATA>,
@@ -16,22 +16,17 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
         FirThreadUnsafeCacheWithPostCompute(createValue, postCompute)
 }
 
-@Suppress("UNCHECKED_CAST")
-private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
-    private val createValue: (K, CONTEXT) -> V
-) : FirCache<K, V, CONTEXT>() {
-    private val map = NullableMap<K, V>()
-
-    override fun getValue(key: K, context: CONTEXT): V =
-        map.getOrElse(key) {
-            createValue(key, context).also { createdValue ->
-                map[key] = createdValue
-            }
-        }
-
-    override fun getValueIfComputed(key: K): V? =
-        map.getOrElse(key) { null as V }
-}
+//@Suppress("UNCHECKED_CAST")
+//private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
+//    private val createValue: (K, CONTEXT) -> V
+//) : FirCache<K, V, CONTEXT>() {
+//    private val map = OpenAddressLinearProbingHashTableNullable<K, V>()
+//
+//    override fun getValue(key: K, context: CONTEXT): V =
+//        map.getOrPut(key) { createValue(key, context) }
+//
+//    override fun getValueIfComputed(key: K): V? = map[key]
+//}
 
 
 private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
