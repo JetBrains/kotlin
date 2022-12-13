@@ -49,6 +49,7 @@ object StandardClassIds {
     val UInt = Int.unsignedId()
     val ULong = Long.unsignedId()
 
+    val CharSequence = "CharSequence".baseId()
     val String = "String".baseId()
     val Throwable = "Throwable".baseId()
 

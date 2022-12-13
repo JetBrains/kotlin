@@ -562,7 +562,6 @@ class Fir2IrClassifierStorage(
             for ((firTypeParameter, irTypeParameter) in mappedTypeParameters) {
                 typeParameterCache[firTypeParameter] = irTypeParameter
             }
-            declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
             return symbol
         }
         firClass as FirRegularClass
