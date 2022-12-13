@@ -21,6 +21,39 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
 
+interface DependenciesTracker {
+    sealed class DependencyKind {
+        object WholeModule : DependencyKind()
+        class CertainFiles(val files: List<String>) : DependencyKind()
+    }
+
+    data class UnresolvedDependency(val libName: String, val kind: DependencyKind) {
+        companion object {
+            fun wholeModule(libName: String) = UnresolvedDependency(libName, DependencyKind.WholeModule)
+            fun certainFiles(libName: String, files: List<String>) = UnresolvedDependency(libName, DependencyKind.CertainFiles(files))
+        }
+    }
+
+    data class ResolvedDependency(val library: KonanLibrary, val kind: DependencyKind) {
+        companion object {
+            fun wholeModule(library: KonanLibrary) = ResolvedDependency(library, DependencyKind.WholeModule)
+            fun certainFiles(library: KonanLibrary, files: List<String>) = ResolvedDependency(library, DependencyKind.CertainFiles(files))
+        }
+    }
+
+    fun add(irFile: IrFile, onlyBitcode: Boolean = false)
+    fun add(declaration: IrDeclaration, onlyBitcode: Boolean = false)
+    fun addNativeRuntime(onlyBitcode: Boolean = false)
+    fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean = false)
+
+    val immediateBitcodeDependencies: List<ResolvedDependency>
+    val allCachedBitcodeDependencies: List<ResolvedDependency>
+    val allBitcodeDependencies: List<ResolvedDependency>
+    val nativeDependenciesToLink: List<KonanLibrary>
+    val allNativeDependencies: List<KonanLibrary>
+    val bitcodeToLink: List<KonanLibrary>
+}
+
 private sealed class FileOrigin {
     object CurrentFile : FileOrigin() // No dependency should be added.
 
@@ -33,14 +66,8 @@ private sealed class FileOrigin {
     class CertainFile(val library: KotlinLibrary, val fqName: String, val filePath: String) : FileOrigin()
 }
 
-internal class DependenciesTracker(private val generationState: NativeGenerationState) {
-    data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
-
-    sealed class CachedBitcodeDependency(val library: KonanLibrary) {
-        class WholeModule(library: KonanLibrary) : CachedBitcodeDependency(library)
-
-        class CertainFiles(library: KonanLibrary, val files: List<String>) : CachedBitcodeDependency(library)
-    }
+internal class DependenciesTrackerImpl(private val generationState: NativeGenerationState) : DependenciesTracker {
+    private data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
 
     private val config = generationState.config
     private val context = generationState.context
@@ -66,20 +93,20 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
 
     private var sealed = false
 
-    fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean = false) = when (functionOrigin) {
+    override fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean) = when (functionOrigin) {
         FunctionOrigin.FromNativeRuntime -> addNativeRuntime(onlyBitcode)
         is FunctionOrigin.OwnedBy -> add(functionOrigin.declaration, onlyBitcode)
     }
 
-    fun add(irFile: IrFile, onlyBitcode: Boolean = false): Unit =
+    override fun add(irFile: IrFile, onlyBitcode: Boolean): Unit =
             add(computeFileOrigin(irFile) { irFile.path }, onlyBitcode)
 
-    fun add(declaration: IrDeclaration, onlyBitcode: Boolean = false): Unit =
+    override fun add(declaration: IrDeclaration, onlyBitcode: Boolean): Unit =
             add(computeFileOrigin(declaration.getPackageFragment()) {
                 context.irLinker.getExternalDeclarationFileName(declaration)
             }, onlyBitcode)
 
-    fun addNativeRuntime(onlyBitcode: Boolean = false) =
+    override fun addNativeRuntime(onlyBitcode: Boolean) =
             add(FileOrigin.StdlibRuntime, onlyBitcode)
 
     private fun computeFileOrigin(packageFragment: IrPackageFragment, filePathGetter: () -> String): FileOrigin {
@@ -123,9 +150,9 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
         require(!(sealed && isNewDependency)) { "The dependencies have been sealed off" }
     }
 
-    fun bitcodeIsUsed(library: KonanLibrary) = library in usedBitcode
+    private fun bitcodeIsUsed(library: KonanLibrary) = library in usedBitcode
 
-    fun usedBitcode(): List<LibraryFile> = usedBitcodeOfFile.toList()
+    private fun usedBitcode(): List<LibraryFile> = usedBitcodeOfFile.toList()
 
     private val topSortedLibraries by lazy {
         context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
@@ -138,7 +165,7 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
         private val moduleDependencies = mutableSetOf<KonanLibrary>()
         private val fileDependencies = mutableMapOf<KonanLibrary, MutableSet<String>>()
 
-        val allDependencies: List<CachedBitcodeDependency>
+        val allDependencies: List<DependenciesTracker.ResolvedDependency>
 
         init {
             val immediateBitcodeDependencies = topSortedLibraries
@@ -174,13 +201,20 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
                 }
             }
 
-            allDependencies = moduleDependencies.map { CachedBitcodeDependency.WholeModule(it) } +
+            allDependencies = moduleDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) } +
                     fileDependencies.filterNot { it.key in moduleDependencies }
-                            .map { (library, files) -> CachedBitcodeDependency.CertainFiles(library, files.toList()) }
+                            .map { (library, files) -> DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList()) }
         }
 
+        private fun resolveDependency(dependency: DependenciesTracker.UnresolvedDependency) =
+                DependenciesTracker.ResolvedDependency(
+                        allLibraries[dependency.libName] ?: error("Unknown library: ${dependency.libName}"),
+                        dependency.kind)
+
         private fun addAllDependencies(cachedLibrary: CachedLibraries.Cache) {
-            cachedLibrary.bitcodeDependencies.forEach { addDependency(it) }
+            cachedLibrary.bitcodeDependencies
+                    .map { resolveDependency(it) }
+                    .forEach { addDependency(it) }
         }
 
         private fun addDependencies(cachedLibrary: CachedLibraries.Cache, files: List<String>) = when (cachedLibrary) {
@@ -188,25 +222,26 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
 
             is CachedLibraries.Cache.PerFile ->
                 files.forEach { file ->
-                    cachedLibrary.getFileDependencies(file).forEach { addDependency(it) }
+                    cachedLibrary.getFileDependencies(file)
+                            .map { resolveDependency(it) }
+                            .forEach { addDependency(it) }
                 }
         }
 
-        private fun addDependency(dependency: CachedLibraries.BitcodeDependency) {
-            val dependencyLib = allLibraries[dependency.libName]
-                    ?: error("Bitcode dependency to an unknown library: ${dependency.libName}")
-            if (dependencyLib in moduleDependencies) return
-            val cachedDependency = context.config.cachedLibraries.getLibraryCache(dependencyLib)
-                    ?: error("Library ${dependency.libName} is expected to be cached")
+        private fun addDependency(dependency: DependenciesTracker.ResolvedDependency) {
+            val (library, kind) = dependency
+            if (library in moduleDependencies) return
+            val cachedDependency = context.config.cachedLibraries.getLibraryCache(library)
+                    ?: error("Library ${library.libraryName} is expected to be cached")
 
-            when (dependency) {
-                is CachedLibraries.BitcodeDependency.WholeModule -> {
-                    moduleDependencies.add(dependencyLib)
+            when (kind) {
+                is DependenciesTracker.DependencyKind.WholeModule -> {
+                    moduleDependencies.add(library)
                     addAllDependencies(cachedDependency)
                 }
-                is CachedLibraries.BitcodeDependency.CertainFiles -> {
-                    val handledFiles = fileDependencies.getOrPut(dependencyLib) { mutableSetOf() }
-                    val notHandledFiles = dependency.files.toMutableSet()
+                is DependenciesTracker.DependencyKind.CertainFiles -> {
+                    val handledFiles = fileDependencies.getOrPut(library) { mutableSetOf() }
+                    val notHandledFiles = kind.files.toMutableSet()
                     notHandledFiles.removeAll(handledFiles)
                     handledFiles.addAll(notHandledFiles)
                     if (notHandledFiles.isNotEmpty())
@@ -217,19 +252,33 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
     }
 
     private inner class Dependencies {
+        val immediateBitcodeDependencies = run {
+            val usedBitcode = usedBitcode().groupBy { it.library }
+            val bitcodeModuleDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
+            val bitcodeFileDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
+            val libraryToCache = config.cacheSupport.libraryToCache
+            val strategy = libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile
+            topSortedLibraries.forEach { library ->
+                val filesUsed = usedBitcode[library]
+                if (filesUsed == null && bitcodeIsUsed(library) && library != libraryToCache?.klib /* Skip loops */) {
+                    // Dependency on the entire library.
+                    bitcodeModuleDependencies.add(DependenciesTracker.ResolvedDependency.wholeModule(library))
+                }
+                filesUsed?.filter { library != libraryToCache?.klib || strategy?.filePath != it.filePath /* Skip loops */ }
+                        ?.map { CacheSupport.cacheFileId(it.fqName, it.filePath) }
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.let { bitcodeFileDependencies.add(DependenciesTracker.ResolvedDependency.certainFiles(library, it)) }
+            }
+            bitcodeModuleDependencies + bitcodeFileDependencies
+        }
+
         val allCachedBitcodeDependencies = CachedBitcodeDependenciesComputer().allDependencies
 
-        val nativeDependenciesToLink = topSortedLibraries.filter { (!it.isDefault && !context.config.purgeUserLibs) || it in usedNativeDependencies }
-
-        val allNativeDependencies = (nativeDependenciesToLink +
-                allCachedBitcodeDependencies.map { it.library } // Native dependencies are per library
-                ).distinct()
-
-        val allBitcodeDependencies: List<CachedBitcodeDependency> = run {
-            val allBitcodeDependencies = mutableMapOf<KonanLibrary, CachedBitcodeDependency>()
+        val allBitcodeDependencies: List<DependenciesTracker.ResolvedDependency> = run {
+            val allBitcodeDependencies = mutableMapOf<KonanLibrary, DependenciesTracker.ResolvedDependency>()
             for (library in context.librariesWithDependencies) {
                 if (context.config.cachedLibraries.getLibraryCache(library) == null || library == context.config.libraryToCache?.klib)
-                    allBitcodeDependencies[library] = CachedBitcodeDependency.WholeModule(library)
+                    allBitcodeDependencies[library] = DependenciesTracker.ResolvedDependency.wholeModule(library)
             }
             for (dependency in allCachedBitcodeDependencies)
                 allBitcodeDependencies[dependency.library] = dependency
@@ -238,6 +287,12 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
             // libraries list being returned is also toposorted.
             topSortedLibraries.mapNotNull { allBitcodeDependencies[it] }
         }
+
+        val nativeDependenciesToLink = topSortedLibraries.filter { (!it.isDefault && !context.config.purgeUserLibs) || it in usedNativeDependencies }
+
+        val allNativeDependencies = (nativeDependenciesToLink +
+                allCachedBitcodeDependencies.map { it.library } // Native dependencies are per library
+                ).distinct()
 
         val bitcodeToLink = topSortedLibraries.filter { shouldContainBitcode(it) }
 
@@ -261,9 +316,40 @@ internal class DependenciesTracker(private val generationState: NativeGeneration
         Dependencies()
     }
 
-    val allCachedBitcodeDependencies get() = dependencies.allCachedBitcodeDependencies
-    val nativeDependenciesToLink get() = dependencies.nativeDependenciesToLink
-    val allNativeDependencies get() = dependencies.allNativeDependencies
-    val allBitcodeDependencies get() = dependencies.allBitcodeDependencies
-    val bitcodeToLink get() = dependencies.bitcodeToLink
+    override val immediateBitcodeDependencies get() = dependencies.immediateBitcodeDependencies
+    override val allCachedBitcodeDependencies get() = dependencies.allCachedBitcodeDependencies
+    override val allBitcodeDependencies get() = dependencies.allBitcodeDependencies
+    override val nativeDependenciesToLink get() = dependencies.nativeDependenciesToLink
+    override val allNativeDependencies get() = dependencies.allNativeDependencies
+    override val bitcodeToLink get() = dependencies.bitcodeToLink
+}
+
+internal object DependenciesSerializer {
+    fun serialize(dependencies: List<DependenciesTracker.ResolvedDependency>) =
+            dependencies.flatMap { (library, kind) ->
+                val libName = library.uniqueName
+                when (kind) {
+                    DependenciesTracker.DependencyKind.WholeModule -> listOf("$libName$DEPENDENCIES_DELIMITER")
+                    is DependenciesTracker.DependencyKind.CertainFiles -> kind.files.map { "$libName$DEPENDENCIES_DELIMITER$it" }
+                }
+            }
+
+    fun deserialize(path: String, dependencies: List<String>): List<DependenciesTracker.UnresolvedDependency> {
+        val wholeModuleDependencies = mutableListOf<String>()
+        val fileDependencies = mutableMapOf<String, MutableList<String>>()
+        for (dependency in dependencies) {
+            val delimiterIndex = dependency.lastIndexOf(DEPENDENCIES_DELIMITER)
+            require(delimiterIndex >= 0) { "Invalid dependency $dependency at $path" }
+            val libName = dependency.substring(0, delimiterIndex)
+            val file = dependency.substring(delimiterIndex + 1, dependency.length)
+            if (file.isEmpty())
+                wholeModuleDependencies.add(libName)
+            else
+                fileDependencies.getOrPut(libName) { mutableListOf() }.add(file)
+        }
+        return wholeModuleDependencies.map { DependenciesTracker.UnresolvedDependency.wholeModule(it) } +
+                fileDependencies.map { (libName, files) -> DependenciesTracker.UnresolvedDependency.certainFiles(libName, files) }
+    }
+
+    private const val DEPENDENCIES_DELIMITER = '|'
 }

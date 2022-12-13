@@ -147,7 +147,7 @@ internal open class LlvmFunctionSignature(
     }
 }
 
-internal sealed class FunctionOrigin {
+sealed class FunctionOrigin {
     object FromNativeRuntime : FunctionOrigin()
 
     class OwnedBy(val declaration: IrDeclaration) : FunctionOrigin()

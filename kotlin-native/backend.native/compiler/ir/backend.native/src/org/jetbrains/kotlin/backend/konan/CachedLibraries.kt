@@ -25,12 +25,6 @@ class CachedLibraries(
 ) {
     enum class Kind { DYNAMIC, STATIC }
 
-    sealed class BitcodeDependency(val libName: String) {
-        class WholeModule(libName: String) : BitcodeDependency(libName)
-
-        class CertainFiles(libName: String, val files: List<String>) : BitcodeDependency(libName)
-    }
-
     sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String) {
         val bitcodeDependencies by lazy { computeBitcodeDependencies() }
         val binariesPaths by lazy { computeBinariesPaths() }
@@ -38,7 +32,7 @@ class CachedLibraries(
         val serializedClassFields by lazy { computeSerializedClassFields() }
         val serializedEagerInitializedFiles by lazy { computeSerializedEagerInitializedFiles() }
 
-        protected abstract fun computeBitcodeDependencies(): List<BitcodeDependency>
+        protected abstract fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency>
         protected abstract fun computeBinariesPaths(): List<String>
         protected abstract fun computeSerializedInlineFunctionBodies(): List<SerializedInlineFunctionReference>
         protected abstract fun computeSerializedClassFields(): List<SerializedClassFields>
@@ -49,26 +43,12 @@ class CachedLibraries(
             Kind.STATIC -> CompilerOutputKind.STATIC_CACHE
         }
 
-        protected fun parseDependencies(dependencies: List<String>): List<BitcodeDependency> {
-            val wholeModuleDependencies = mutableListOf<String>()
-            val fileDependencies = mutableMapOf<String, MutableList<String>>()
-            for (dependency in dependencies) {
-                val delimiterIndex = dependency.lastIndexOf(DEPENDENCIES_DELIMITER)
-                require(delimiterIndex >= 0) { "Invalid dependency $dependency of library $path" }
-                val libName = dependency.substring(0, delimiterIndex)
-                val file = dependency.substring(delimiterIndex + 1, dependency.length)
-                if (file.isEmpty())
-                    wholeModuleDependencies.add(libName)
-                else
-                    fileDependencies.getOrPut(libName) { mutableListOf() }.add(file)
-            }
-            return wholeModuleDependencies.map { BitcodeDependency.WholeModule(it) } +
-                    fileDependencies.map { (libName, files) -> BitcodeDependency.CertainFiles(libName, files) }
-        }
-
         class Monolithic(target: KonanTarget, kind: Kind, path: String) : Cache(target, kind, path) {
-            override fun computeBitcodeDependencies() =
-                    parseDependencies(File(path).parentFile.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings())
+            override fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency> {
+                val directory = File(path).absoluteFile.parentFile
+                val data = directory.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+                return DependenciesSerializer.deserialize(path, data)
+            }
 
             override fun computeBinariesPaths() = listOf(path)
 
@@ -96,7 +76,8 @@ class CachedLibraries(
 
             private val perFileBitcodeDependencies by lazy {
                 fileDirs.associate {
-                    it.name to parseDependencies(it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings())
+                    val data = it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+                    it.name to DependenciesSerializer.deserialize(it.absolutePath, data)
                 }
             }
 
@@ -212,7 +193,5 @@ class CachedLibraries(
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"
-
-        const val DEPENDENCIES_DELIMITER = '|'
     }
 }

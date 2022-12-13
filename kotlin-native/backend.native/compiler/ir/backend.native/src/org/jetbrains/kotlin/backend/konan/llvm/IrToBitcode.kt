@@ -2787,11 +2787,11 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 when (cache) {
                     is CachedLibraries.Cache.Monolithic -> listOf(addCtorFunction(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
-                        val files = when (dependency) {
-                            is DependenciesTracker.CachedBitcodeDependency.WholeModule ->
+                        val files = when (dependency.kind) {
+                            is DependenciesTracker.DependencyKind.WholeModule ->
                                 context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds
-                            is DependenciesTracker.CachedBitcodeDependency.CertainFiles ->
-                                dependency.files
+                            is DependenciesTracker.DependencyKind.CertainFiles ->
+                                dependency.kind.files
                         }
                         files.map { addCtorFunction(fileCtorName(library.uniqueName, it)) }
                     }

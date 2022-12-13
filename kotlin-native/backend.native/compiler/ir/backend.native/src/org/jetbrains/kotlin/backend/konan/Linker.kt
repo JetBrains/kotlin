@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.konan.target.presetName
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.library.uniqueName
 
 internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
         when (context.config.produce) {
@@ -60,29 +58,8 @@ internal class CacheStorage(val generationState: NativeGenerationState) {
     }
 
     private fun saveCacheBitcodeDependencies() {
-        val libraryToCache = config.cacheSupport.libraryToCache!!
-        val usedBitcode = generationState.dependenciesTracker.usedBitcode().groupBy { it.library }
-        val bitcodeModuleDependencies = mutableListOf<String>()
-        val bitcodeFileDependencies = mutableListOf<String>()
-        val strategy = libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile
-        config.resolvedLibraries
-                .getFullList(TopologicalLibraryOrder)
-                .forEach { library ->
-                    require(library is KonanLibrary)
-                    val filesUsed = usedBitcode[library]
-                    if (filesUsed == null && generationState.dependenciesTracker.bitcodeIsUsed(library)
-                            && library != libraryToCache.klib /* Skip loops */) {
-                        // Dependency on the entire library.
-                        bitcodeModuleDependencies.add("${library.uniqueName}${CachedLibraries.DEPENDENCIES_DELIMITER}")
-                    }
-                    filesUsed?.forEach { libraryFile ->
-                        if (library != libraryToCache.klib || strategy?.filePath != libraryFile.filePath /* Skip loops */) {
-                            val fileId = CacheSupport.cacheFileId(libraryFile.fqName, libraryFile.filePath)
-                            bitcodeFileDependencies.add("${library.uniqueName}${CachedLibraries.DEPENDENCIES_DELIMITER}$fileId")
-                        }
-                    }
-                }
-        outputFiles.bitcodeDependenciesFile!!.writeLines(bitcodeModuleDependencies + bitcodeFileDependencies)
+        outputFiles.bitcodeDependenciesFile!!.writeLines(
+                DependenciesSerializer.serialize(generationState.dependenciesTracker.immediateBitcodeDependencies))
     }
 
     private fun saveInlineFunctionBodies() {
@@ -276,8 +253,8 @@ private fun determineCachesToLink(generationState: NativeGenerationState): Cache
             CachedLibraries.Kind.STATIC -> staticCaches
         }
 
-        list += if (dependency is DependenciesTracker.CachedBitcodeDependency.CertainFiles && cache is CachedLibraries.Cache.PerFile)
-            dependency.files.map { cache.getFileBinaryPath(it) }
+        list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
+            dependency.kind.files.map { cache.getFileBinaryPath(it) }
         else cache.binariesPaths
     }
     return CachesToLink(static = staticCaches, dynamic = dynamicCaches)
