@@ -165,8 +165,8 @@ private sealed class FqNameInterpretation {
 
     companion object {
         fun create(packageParts: List<Name>, classParts: List<Name>, callable: Name?): FqNameInterpretation {
-            val packageName = FqName.fromSegments(packageParts.map { it.asString() })
-            val relativeClassName = FqName.fromSegments(classParts.map { it.asString() })
+            val packageName = FqName.fromSegments(packageParts)
+            val relativeClassName = FqName.fromSegments(classParts)
 
             return when {
                 classParts.isEmpty() && callable == null -> FqNameInterpretationAsPackage(packageName)

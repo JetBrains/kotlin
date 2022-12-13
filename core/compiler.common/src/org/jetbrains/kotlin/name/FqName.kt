@@ -15,8 +15,6 @@
  */
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.utils.join
-
 class FqName {
     private val fqName: FqNameUnsafe
 
@@ -26,6 +24,10 @@ class FqName {
 
     constructor(fqName: String) {
         this.fqName = FqNameUnsafe(fqName, this)
+    }
+
+    constructor(nameSegments: Array<Name>) {
+        this.fqName = FqNameUnsafe(nameSegments, this)
     }
 
     constructor(fqName: FqNameUnsafe) {
@@ -84,7 +86,7 @@ class FqName {
     override fun equals(o: Any?): Boolean {
         if (this === o) return true
         if (o !is FqName) return false
-        return if (!fqName.equals(o.fqName)) false else true
+        return fqName == o.fqName
     }
 
     override fun hashCode(): Int {
@@ -94,7 +96,13 @@ class FqName {
     companion object {
         @JvmStatic
         fun fromSegments(names: List<String>): FqName {
-            return FqName(join(names, "."))
+            return FqName(names.map { Name.guessByFirstCharacter(it) }.toTypedArray())
+        }
+
+        @JvmStatic
+        @JvmName("fromSegmentsNames")
+        fun fromSegments(names: List<Name>): FqName {
+            return FqName(names.toTypedArray())
         }
 
         @JvmField

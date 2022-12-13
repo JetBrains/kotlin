@@ -16,56 +16,35 @@
 package org.jetbrains.kotlin.name
 
 import java.util.regex.Pattern
-import kotlin.jvm.functions.Function1
 
 /**
  * Like [FqName] but allows '<' and '>' characters in name.
  */
-class FqNameUnsafe {
-    private val fqName: String
-
+class FqNameUnsafe(
+    private val nameSegments: Array<Name>,
     // cache
     @Transient
     private var safe: FqName? = null
+) {
+    private val parent: FqNameUnsafe
+        get() =
+            when (nameSegments.size) {
+                0 -> error("root")
+                1 -> FqName.ROOT.toUnsafe()
+                else -> FqNameUnsafe(nameSegments.dropLast(1).toTypedArray())
+            }
 
-    @Transient
-    private var parent: FqNameUnsafe? = null
+    private val shortName: Name?
+        get() = nameSegments.lastOrNull()
 
-    @Transient
-    private var shortName: Name? = null
 
-    internal constructor(fqName: String, safe: FqName) {
-        this.fqName = fqName
-        this.safe = safe
-    }
+    constructor(fqName: String, safe: FqName?) : this(computeNamesFromString(fqName), safe)
+    constructor(fqName: String) : this(computeNamesFromString(fqName), null)
 
-    constructor(fqName: String) {
-        this.fqName = fqName
-    }
-
-    private constructor(fqName: String, parent: FqNameUnsafe, shortName: Name) {
-        this.fqName = fqName
-        this.parent = parent
-        this.shortName = shortName
-    }
-
-    private fun compute() {
-        val lastDot = fqName.lastIndexOf('.')
-        if (lastDot >= 0) {
-            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1))
-            parent = FqNameUnsafe(fqName.substring(0, lastDot))
-        } else {
-            shortName = Name.guessByFirstCharacter(fqName)
-            parent = FqName.ROOT.toUnsafe()
-        }
-    }
-
-    fun asString(): String {
-        return fqName
-    }
+    fun asString(): String = nameSegments.joinToString(".")
 
     val isSafe: Boolean
-        get() = safe != null || asString().indexOf('<') < 0
+        get() = safe != null || nameSegments.none { it.isSpecial }
 
     fun toSafe(): FqName {
         if (safe != null) {
@@ -76,35 +55,13 @@ class FqNameUnsafe {
     }
 
     val isRoot: Boolean
-        get() = fqName.isEmpty()
+        get() = nameSegments.isEmpty()
 
-    fun parent(): FqNameUnsafe {
-        if (parent != null) {
-            return parent!!
-        }
-        check(!isRoot) { "root" }
-        compute()
-        return parent!!
-    }
+    fun parent(): FqNameUnsafe = parent
 
-    fun child(name: Name): FqNameUnsafe {
-        val childFqName: String
-        childFqName = if (isRoot) {
-            name.asString()
-        } else {
-            fqName + "." + name.asString()
-        }
-        return FqNameUnsafe(childFqName, this, name)
-    }
+    fun child(name: Name): FqNameUnsafe = FqNameUnsafe(nameSegments + name)
 
-    fun shortName(): Name {
-        if (shortName != null) {
-            return shortName!!
-        }
-        check(!isRoot) { "root" }
-        compute()
-        return shortName!!
-    }
+    fun shortName(): Name = shortName!!
 
     fun shortNameOrSpecial(): Name {
         return if (isRoot) {
@@ -114,38 +71,23 @@ class FqNameUnsafe {
         }
     }
 
-    fun pathSegments(): List<Name> {
-        return if (isRoot) emptyList()
-        else SPLIT_BY_DOTS.split(fqName).map {
-            Name.guessByFirstCharacter(it)
+    fun pathSegments(): List<Name> = nameSegments.asList()
+
+    fun startsWith(segment: Name): Boolean =
+        when (nameSegments.size) {
+            0 -> false
+            else -> segment == nameSegments[0]
         }
+
+    override fun toString(): String = if (isRoot) ROOT_NAME.asString() else asString()
+
+    override fun equals(o: Any?): Boolean = when {
+        this === o -> true
+        o !is FqNameUnsafe -> false
+        else -> nameSegments contentEquals o.nameSegments
     }
 
-    fun startsWith(segment: Name): Boolean {
-        if (isRoot) return false
-        val firstDot = fqName.indexOf('.')
-        val segmentAsString = segment.asString()
-        return fqName.regionMatches(
-            0,
-            segmentAsString,
-            0,
-            if (firstDot == -1) Math.max(fqName.length, segmentAsString.length) else firstDot
-        )
-    }
-
-    override fun toString(): String {
-        return if (isRoot) ROOT_NAME.asString() else fqName
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is FqNameUnsafe) return false
-        return if (fqName != o.fqName) false else true
-    }
-
-    override fun hashCode(): Int {
-        return fqName.hashCode()
-    }
+    override fun hashCode(): Int = nameSegments.fold(0) { a, s -> a + s.hashCode() }
 
     companion object {
         private val ROOT_NAME = Name.special("<root>")
@@ -157,8 +99,16 @@ class FqNameUnsafe {
         }
 
         @JvmStatic
-        fun topLevel(shortName: Name): FqNameUnsafe {
-            return FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName)
+        fun topLevel(shortName: Name): FqNameUnsafe = FqNameUnsafe(arrayOf(shortName))
+
+        @JvmStatic
+        private fun computeNamesFromString(fqNameString: String): Array<Name> {
+            return if (fqNameString.isBlank()) emptyArray()
+            else SPLIT_BY_DOTS.split(fqNameString).map {
+                Name.guessByFirstCharacter(it)
+            }.toTypedArray()
         }
     }
 }
+
+
