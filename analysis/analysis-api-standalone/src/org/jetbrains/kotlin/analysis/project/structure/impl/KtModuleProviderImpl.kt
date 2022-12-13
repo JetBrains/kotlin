@@ -45,7 +45,7 @@ internal class KtModuleProviderImpl(
             ?: return notUnderContentRootModuleCache.getOrPut(containingFileAsPsiFile) {
                 KtNotUnderContentRootModuleImpl(
                     moduleDescription = "Standalone-not-under-content-root-module-for-$containingFileAsPsiFile",
-                    psiFile = containingFileAsPsiFile,
+                    file = containingFileAsPsiFile,
                     project = project,
                 )
             }
