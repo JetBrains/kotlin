@@ -2,17 +2,17 @@ package
 
 public fun main(/*0*/ a: Defaults, /*1*/ x: Foo): kotlin.Unit
 
-@org.jspecify.nullness.NullMarked public open class Defaults {
+@org.jspecify.annotations.NullMarked public open class Defaults {
     public constructor Defaults()
     public final var defaultField: Foo
-    @org.jspecify.nullness.Nullable public final var field: @org.jspecify.nullness.Nullable Foo?
+    @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable Foo?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun everythingNotNullable(/*0*/ x: Foo): Foo
-    @org.jspecify.nullness.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.nullness.Nullable x: @org.jspecify.nullness.Nullable Foo?): @org.jspecify.nullness.Nullable Foo?
-    @org.jspecify.nullness.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.nullness.NullnessUnspecified x: @org.jspecify.nullness.NullnessUnspecified Foo!): @org.jspecify.nullness.NullnessUnspecified Foo!
-    public open fun explicitlyNullnessUnspecified(/*0*/ @org.jspecify.nullness.NullnessUnspecified x: @org.jspecify.nullness.NullnessUnspecified Foo!): Foo
+    @org.jspecify.annotations.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Foo?): @org.jspecify.annotations.Nullable Foo?
+    @org.jspecify.annotations.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): @org.jspecify.annotations.NullnessUnspecified Foo!
+    public open fun explicitlyNullnessUnspecified(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): Foo
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @org.jspecify.nullness.Nullable public open fun mixed(/*0*/ x: Foo): @org.jspecify.nullness.Nullable Foo?
+    @org.jspecify.annotations.Nullable public open fun mixed(/*0*/ x: Foo): @org.jspecify.annotations.Nullable Foo?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

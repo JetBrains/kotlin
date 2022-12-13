@@ -1,6 +1,6 @@
 package
 
-private fun J2<*>.bar(): @org.jspecify.nullness.Nullable kotlin.Any?
+private fun J2<*>.bar(): @org.jspecify.annotations.Nullable kotlin.Any?
 
 public interface J1</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

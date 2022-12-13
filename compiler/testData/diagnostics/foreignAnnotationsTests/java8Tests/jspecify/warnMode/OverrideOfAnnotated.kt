@@ -4,7 +4,7 @@
 public interface Foo {}
 // FILE: BaseClass.java
 
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class BaseClass {

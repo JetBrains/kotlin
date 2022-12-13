@@ -2,7 +2,7 @@
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: sandbox/module-info.java
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 module sandbox {

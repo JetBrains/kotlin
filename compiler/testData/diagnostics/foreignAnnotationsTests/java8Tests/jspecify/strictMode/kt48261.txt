@@ -2,7 +2,7 @@ package
 
 public fun go(/*0*/ myList: MyList<kotlin.String>, /*1*/ string: kotlin.String): kotlin.Boolean
 
-@org.jspecify.nullness.NullMarked public abstract class MyCollection</*0*/ E : kotlin.Any> : java.util.AbstractCollection<E> {
+@org.jspecify.annotations.NullMarked public abstract class MyCollection</*0*/ E : kotlin.Any> : java.util.AbstractCollection<E> {
     public constructor MyCollection</*0*/ E : kotlin.Any>()
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: E!): kotlin.Boolean
@@ -32,7 +32,7 @@ public fun go(/*0*/ myList: MyList<kotlin.String>, /*1*/ string: kotlin.String):
     invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
 }
 
-@org.jspecify.nullness.NullMarked public abstract class MyList</*0*/ E : kotlin.Any> : MyCollection<E>, kotlin.collections.MutableList<E> {
+@org.jspecify.annotations.NullMarked public abstract class MyList</*0*/ E : kotlin.Any> : MyCollection<E>, kotlin.collections.MutableList<E> {
     public constructor MyList</*0*/ E : kotlin.Any>()
     public abstract override /*2*/ /*fake_override*/ val size: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun add(/*0*/ element: E): kotlin.Boolean
