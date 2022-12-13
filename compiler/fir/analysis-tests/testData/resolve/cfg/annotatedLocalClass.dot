@@ -48,7 +48,7 @@ digraph annotatedLocalClass_kt {
                 17 [label="Exit when branch result" style="filled" fillcolor=gray];
                 18 [label="Exit when"];
             }
-            19 [label="Exit local class foo"];
+            19 [label="Local class declaration"];
             20 [label="Function call: R|/bar|()" style="filled" fillcolor=yellow];
             21 [label="Exit block"];
         }

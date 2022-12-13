@@ -252,7 +252,7 @@ digraph tryCatch_kt {
                     }
                     102 [label="Exit loop block"];
                 }
-                103 [label="Exit whileloop"];
+                103 [label="Exit while loop"];
             }
             104 [label="Const: Int(3)"];
             105 [label="Variable declaration: lval z: R|kotlin/Int|"];

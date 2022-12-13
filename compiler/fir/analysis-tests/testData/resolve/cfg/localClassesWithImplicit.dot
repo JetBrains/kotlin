@@ -52,7 +52,7 @@ digraph localClassesWithImplicit_kt {
                 20 [label="Exit when branch result" style="filled" fillcolor=gray];
                 21 [label="Exit when"];
             }
-            22 [label="Exit local class test"];
+            22 [label="Local class declaration"];
             23 [label="Enter anonymous object"];
             subgraph cluster_7 {
                 color=blue
@@ -93,7 +93,7 @@ digraph localClassesWithImplicit_kt {
             42 [label="Postponed enter to lambda"];
             subgraph cluster_13 {
                 color=blue
-                43 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                43 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_14 {
                     color=blue
                     44 [label="Enter block"];
@@ -105,7 +105,7 @@ digraph localClassesWithImplicit_kt {
                     50 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.baz|()" style="filled" fillcolor=yellow];
                     51 [label="Exit block"];
                 }
-                52 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                52 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             53 [label="Postponed exit from lambda"];
             54 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
@@ -129,7 +129,7 @@ digraph localClassesWithImplicit_kt {
             61 [label="Postponed enter to lambda"];
             subgraph cluster_17 {
                 color=blue
-                62 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                62 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_18 {
                     color=blue
                     63 [label="Enter block"];
@@ -174,7 +174,7 @@ digraph localClassesWithImplicit_kt {
                     }
                     88 [label="Exit block"];
                 }
-                89 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                89 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             90 [label="Postponed exit from lambda"];
             91 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
@@ -230,7 +230,7 @@ digraph localClassesWithImplicit_kt {
             110 [label="Postponed enter to lambda"];
             subgraph cluster_30 {
                 color=blue
-                111 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                111 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_31 {
                     color=blue
                     112 [label="Enter block"];
@@ -242,7 +242,7 @@ digraph localClassesWithImplicit_kt {
                     118 [label="Function call: this@R|/A|.R|<local>/baz|()" style="filled" fillcolor=yellow];
                     119 [label="Exit block"];
                 }
-                120 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                120 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             121 [label="Postponed exit from lambda"];
             122 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
@@ -266,7 +266,7 @@ digraph localClassesWithImplicit_kt {
             129 [label="Postponed enter to lambda"];
             subgraph cluster_34 {
                 color=blue
-                130 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                130 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_35 {
                     color=blue
                     131 [label="Enter block"];
@@ -311,7 +311,7 @@ digraph localClassesWithImplicit_kt {
                     }
                     156 [label="Exit block"];
                 }
-                157 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                157 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             158 [label="Postponed exit from lambda"];
             159 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];

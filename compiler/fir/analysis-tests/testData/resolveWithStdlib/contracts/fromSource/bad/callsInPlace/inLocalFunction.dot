@@ -14,7 +14,7 @@ digraph inLocalFunction_kt {
                 2 [label="Enter block"];
                 3 [label="Exit block"];
             }
-            4 [label="Local function declaration foo"];
+            4 [label="Local function declaration"];
             5 [label="Function call: R|<local>/localFun|()" style="filled" fillcolor=yellow];
             6 [label="Function call: R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             7 [label="Exit block"];

@@ -72,7 +72,7 @@ digraph dataFlowInfoFromWhileCondition_kt {
                     }
                     29 [label="Exit loop block"];
                 }
-                30 [label="Exit whileloop"];
+                30 [label="Exit while loop"];
             }
             31 [label="Exit block"];
         }

@@ -194,7 +194,7 @@ digraph jumps_kt {
                     }
                     73 [label="Exit loop block" style="filled" fillcolor=gray];
                 }
-                74 [label="Exit whileloop"];
+                74 [label="Exit while loop"];
             }
             75 [label="Access variable R|<local>/x|"];
             76 [label="Smart cast: R|<local>/x|"];
@@ -254,7 +254,7 @@ digraph jumps_kt {
                     92 [label="Const: Boolean(true)" style="filled" fillcolor=gray];
                     93 [label="Exit loop condition" style="filled" fillcolor=gray];
                 }
-                94 [label="Exit do-whileloop"];
+                94 [label="Exit do-while loop"];
             }
             95 [label="Access variable R|<local>/x|"];
             96 [label="Smart cast: R|<local>/x|"];
@@ -331,7 +331,7 @@ digraph jumps_kt {
                     }
                     121 [label="Exit loop block"];
                 }
-                122 [label="Exit whileloop"];
+                122 [label="Exit while loop"];
             }
             123 [label="Exit block"];
         }
@@ -388,7 +388,7 @@ digraph jumps_kt {
             132 [label="Postponed enter to lambda"];
             subgraph cluster_39 {
                 color=blue
-                133 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                133 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_40 {
                     color=blue
                     134 [label="Enter block"];
@@ -396,7 +396,7 @@ digraph jumps_kt {
                     136 [label="Stub" style="filled" fillcolor=gray];
                     137 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                138 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                138 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             139 [label="Postponed exit from lambda"];
             140 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];

@@ -31,7 +31,7 @@ digraph loops_kt {
                     }
                     12 [label="Exit loop block"];
                 }
-                13 [label="Exit whileloop"];
+                13 [label="Exit while loop"];
             }
             14 [label="Access variable R|<local>/x|"];
             15 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
@@ -85,7 +85,7 @@ digraph loops_kt {
                     29 [label="Access variable R|<local>/b|"];
                     30 [label="Exit loop condition"];
                 }
-                31 [label="Exit do-whileloop"];
+                31 [label="Exit do-while loop"];
             }
             32 [label="Access variable R|<local>/x|"];
             33 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
@@ -152,7 +152,7 @@ digraph loops_kt {
                         }
                         58 [label="Exit loop block"];
                     }
-                    59 [label="Exit whileloop"];
+                    59 [label="Exit while loop"];
                 }
                 60 [label="Exit block"];
             }
@@ -217,7 +217,7 @@ digraph loops_kt {
                     }
                     75 [label="Exit loop block"];
                 }
-                76 [label="Exit whileloop" style="filled" fillcolor=gray];
+                76 [label="Exit while loop" style="filled" fillcolor=gray];
             }
             77 [label="Const: Int(1)" style="filled" fillcolor=gray];
             78 [label="Exit block" style="filled" fillcolor=gray];
@@ -286,7 +286,7 @@ digraph loops_kt {
                     }
                     101 [label="Exit loop block"];
                 }
-                102 [label="Exit whileloop"];
+                102 [label="Exit while loop"];
             }
             103 [label="Const: Int(1)"];
             104 [label="Exit block"];
@@ -347,7 +347,7 @@ digraph loops_kt {
                     }
                     116 [label="Exit loop block" style="filled" fillcolor=gray];
                 }
-                117 [label="Exit whileloop"];
+                117 [label="Exit while loop"];
             }
             118 [label="Const: Int(1)"];
             119 [label="Exit block"];
@@ -396,7 +396,7 @@ digraph loops_kt {
                     130 [label="Const: Boolean(true)"];
                     131 [label="Exit loop condition"];
                 }
-                132 [label="Exit do-whileloop" style="filled" fillcolor=gray];
+                132 [label="Exit do-while loop" style="filled" fillcolor=gray];
             }
             133 [label="Const: Int(1)" style="filled" fillcolor=gray];
             134 [label="Exit block" style="filled" fillcolor=gray];
@@ -465,7 +465,7 @@ digraph loops_kt {
                     156 [label="Const: Boolean(true)"];
                     157 [label="Exit loop condition"];
                 }
-                158 [label="Exit do-whileloop"];
+                158 [label="Exit do-while loop"];
             }
             159 [label="Const: Int(1)"];
             160 [label="Exit block"];
@@ -526,7 +526,7 @@ digraph loops_kt {
                     171 [label="Const: Boolean(false)"];
                     172 [label="Exit loop condition"];
                 }
-                173 [label="Exit do-whileloop"];
+                173 [label="Exit do-while loop"];
             }
             174 [label="Const: Int(1)"];
             175 [label="Exit block"];

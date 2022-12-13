@@ -75,7 +75,7 @@ digraph postponedLambdaInReturn_kt {
             24 [label="Postponed enter to lambda"];
             subgraph cluster_8 {
                 color=blue
-                25 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                25 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_9 {
                     color=blue
                     26 [label="Enter block"];
@@ -110,7 +110,7 @@ digraph postponedLambdaInReturn_kt {
                             42 [label="Postponed enter to lambda"];
                             subgraph cluster_15 {
                                 color=blue
-                                43 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                43 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                                 subgraph cluster_16 {
                                     color=blue
                                     44 [label="Enter block"];
@@ -120,7 +120,7 @@ digraph postponedLambdaInReturn_kt {
                                     48 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
                                     49 [label="Exit block"];
                                 }
-                                50 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                50 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                             }
                             51 [label="Postponed exit from lambda"];
                             52 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
@@ -137,7 +137,7 @@ digraph postponedLambdaInReturn_kt {
                     }
                     58 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                59 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                59 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             60 [label="Postponed exit from lambda"];
             61 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
@@ -210,7 +210,7 @@ digraph postponedLambdaInReturn_kt {
             69 [label="Postponed enter to lambda"];
             subgraph cluster_19 {
                 color=blue
-                70 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                70 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_20 {
                     color=blue
                     71 [label="Enter block"];
@@ -241,7 +241,7 @@ digraph postponedLambdaInReturn_kt {
                                             81 [label="Postponed enter to lambda"];
                                             subgraph cluster_28 {
                                                 color=blue
-                                                82 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                                82 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                                                 subgraph cluster_29 {
                                                     color=blue
                                                     83 [label="Enter block"];
@@ -249,7 +249,7 @@ digraph postponedLambdaInReturn_kt {
                                                     85 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
                                                     86 [label="Exit block"];
                                                 }
-                                                87 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                                87 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                                             }
                                             88 [label="Postponed exit from lambda"];
                                             89 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
@@ -279,14 +279,14 @@ digraph postponedLambdaInReturn_kt {
                             }
                             101 [label="Exit loop block"];
                         }
-                        102 [label="Exit whileloop" style="filled" fillcolor=gray];
+                        102 [label="Exit while loop" style="filled" fillcolor=gray];
                     }
                     103 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
                     104 [label="Throw: throw R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
                     105 [label="Stub" style="filled" fillcolor=gray];
                     106 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                107 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                107 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             108 [label="Postponed exit from lambda"];
             109 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
@@ -363,7 +363,7 @@ digraph postponedLambdaInReturn_kt {
             120 [label="Postponed enter to lambda"];
             subgraph cluster_34 {
                 color=blue
-                121 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                121 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_35 {
                     color=blue
                     122 [label="Enter block"];
@@ -399,7 +399,7 @@ digraph postponedLambdaInReturn_kt {
                             139 [label="Postponed enter to lambda"];
                             subgraph cluster_41 {
                                 color=blue
-                                140 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                                140 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                                 subgraph cluster_42 {
                                     color=blue
                                     141 [label="Enter block"];
@@ -409,7 +409,7 @@ digraph postponedLambdaInReturn_kt {
                                     145 [label="Assignment: R|SubstitutionOverride</Lateinit.value: R|kotlin/String|>|"];
                                     146 [label="Exit block"];
                                 }
-                                147 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                                147 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                             }
                             148 [label="Postponed exit from lambda"];
                             149 [label="Function call: R|/build|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
@@ -426,7 +426,7 @@ digraph postponedLambdaInReturn_kt {
                     }
                     155 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                156 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                156 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             157 [label="Postponed exit from lambda"];
             158 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];

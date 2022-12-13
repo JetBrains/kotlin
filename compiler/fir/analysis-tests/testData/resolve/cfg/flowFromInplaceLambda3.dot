@@ -108,7 +108,7 @@ digraph flowFromInplaceLambda3_kt {
             35 [label="Postponed enter to lambda"];
             subgraph cluster_14 {
                 color=blue
-                36 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                36 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_15 {
                     color=blue
                     37 [label="Enter block"];
@@ -116,7 +116,7 @@ digraph flowFromInplaceLambda3_kt {
                     39 [label="Assignment: R|<local>/x|"];
                     40 [label="Exit block"];
                 }
-                41 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                41 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             42 [label="Postponed exit from lambda"];
             43 [label="Function call: R|/unknown|(...)" style="filled" fillcolor=yellow];
@@ -172,7 +172,7 @@ digraph flowFromInplaceLambda3_kt {
             60 [label="Postponed enter to lambda"];
             subgraph cluster_18 {
                 color=blue
-                61 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                61 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_19 {
                     color=blue
                     62 [label="Enter block"];
@@ -180,7 +180,7 @@ digraph flowFromInplaceLambda3_kt {
                     64 [label="Assignment: R|<local>/x|"];
                     65 [label="Exit block"];
                 }
-                66 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                66 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             67 [label="Postponed exit from lambda"];
             68 [label="Function call: R|/unknown|(...)" style="filled" fillcolor=yellow];
@@ -230,7 +230,7 @@ digraph flowFromInplaceLambda3_kt {
             82 [label="Postponed enter to lambda"];
             subgraph cluster_22 {
                 color=blue
-                83 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                83 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_23 {
                     color=blue
                     84 [label="Enter block"];
@@ -238,7 +238,7 @@ digraph flowFromInplaceLambda3_kt {
                     86 [label="Assignment: R|<local>/x|"];
                     87 [label="Exit block"];
                 }
-                88 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                88 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             89 [label="Postponed exit from lambda"];
             90 [label="Function call: R|/atLeastOnce|(...)" style="filled" fillcolor=yellow];
@@ -295,7 +295,7 @@ digraph flowFromInplaceLambda3_kt {
             107 [label="Postponed enter to lambda"];
             subgraph cluster_26 {
                 color=blue
-                108 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                108 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_27 {
                     color=blue
                     109 [label="Enter block"];
@@ -303,7 +303,7 @@ digraph flowFromInplaceLambda3_kt {
                     111 [label="Assignment: R|<local>/x|"];
                     112 [label="Exit block"];
                 }
-                113 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                113 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             114 [label="Postponed exit from lambda"];
             115 [label="Function call: R|/exactlyOnce|(...)" style="filled" fillcolor=yellow];
@@ -359,7 +359,7 @@ digraph flowFromInplaceLambda3_kt {
             132 [label="Postponed enter to lambda"];
             subgraph cluster_30 {
                 color=blue
-                133 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                133 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_31 {
                     color=blue
                     134 [label="Enter block"];
@@ -367,7 +367,7 @@ digraph flowFromInplaceLambda3_kt {
                     136 [label="Assignment: R|<local>/x|"];
                     137 [label="Exit block"];
                 }
-                138 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                138 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             139 [label="Postponed exit from lambda"];
             140 [label="Function call: R|/atMostOnce|(...)" style="filled" fillcolor=yellow];

@@ -560,7 +560,7 @@ digraph kt44814_kt {
                     196 [label="Postponed enter to lambda [3]"];
                     subgraph cluster_64 {
                         color=blue
-                        197 [label="Enter function anonymousFunction [4]" style="filled" fillcolor=red];
+                        197 [label="Enter function <anonymous> [4]" style="filled" fillcolor=red];
                         subgraph cluster_65 {
                             color=blue
                             198 [label="Enter block [4]"];
@@ -573,7 +573,7 @@ digraph kt44814_kt {
                             205 [label="Equality operator == [4]"];
                             206 [label="Exit block [4]"];
                         }
-                        207 [label="Exit function anonymousFunction [4]" style="filled" fillcolor=red];
+                        207 [label="Exit function <anonymous> [4]" style="filled" fillcolor=red];
                     }
                     208 [label="Postponed exit from lambda [3]"];
                     209 [label="Function call: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...).R|kotlin/collections/find|<R|LighterASTNode?|>(...) [3]" style="filled" fillcolor=yellow];
@@ -603,7 +603,7 @@ digraph kt44814_kt {
                     230 [label="Postponed enter to lambda [3]"];
                     subgraph cluster_67 {
                         color=blue
-                        231 [label="Enter function anonymousFunction [4]" style="filled" fillcolor=red];
+                        231 [label="Enter function <anonymous> [4]" style="filled" fillcolor=red];
                         subgraph cluster_68 {
                             color=blue
                             232 [label="Enter block [4]"];
@@ -611,7 +611,7 @@ digraph kt44814_kt {
                             234 [label="Function call: R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(...) [4]" style="filled" fillcolor=yellow];
                             235 [label="Exit block [4]"];
                         }
-                        236 [label="Exit function anonymousFunction [4]" style="filled" fillcolor=red];
+                        236 [label="Exit function <anonymous> [4]" style="filled" fillcolor=red];
                     }
                     237 [label="Postponed exit from lambda [3]"];
                     238 [label="Function call: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [3]" style="filled" fillcolor=yellow];

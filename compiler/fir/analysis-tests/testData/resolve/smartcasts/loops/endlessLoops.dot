@@ -66,7 +66,7 @@ digraph endlessLoops_kt {
                     }
                     27 [label="Exit loop block"];
                 }
-                28 [label="Exit whileloop"];
+                28 [label="Exit while loop"];
             }
             29 [label="Access variable R|<local>/x|"];
             30 [label="Smart cast: R|<local>/x|"];
@@ -155,7 +155,7 @@ digraph endlessLoops_kt {
                     }
                     57 [label="Exit loop block"];
                 }
-                58 [label="Exit whileloop"];
+                58 [label="Exit while loop"];
             }
             59 [label="Access variable R|<local>/x|"];
             60 [label="Smart cast: R|<local>/x|"];
@@ -265,7 +265,7 @@ digraph endlessLoops_kt {
                     }
                     99 [label="Exit loop block"];
                 }
-                100 [label="Exit whileloop"];
+                100 [label="Exit while loop"];
             }
             101 [label="Access variable R|<local>/x|"];
             102 [label="Smart cast: R|<local>/x|"];
@@ -369,7 +369,7 @@ digraph endlessLoops_kt {
                     }
                     131 [label="Exit loop block" style="filled" fillcolor=gray];
                 }
-                132 [label="Exit whileloop"];
+                132 [label="Exit while loop"];
             }
             133 [label="Access variable R|<local>/x|"];
             134 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
@@ -459,7 +459,7 @@ digraph endlessLoops_kt {
                     159 [label="Const: Boolean(true)"];
                     160 [label="Exit loop condition"];
                 }
-                161 [label="Exit do-whileloop"];
+                161 [label="Exit do-while loop"];
             }
             162 [label="Access variable R|<local>/x|"];
             163 [label="Smart cast: R|<local>/x|"];
@@ -548,7 +548,7 @@ digraph endlessLoops_kt {
                     189 [label="Const: Boolean(true)"];
                     190 [label="Exit loop condition"];
                 }
-                191 [label="Exit do-whileloop"];
+                191 [label="Exit do-while loop"];
             }
             192 [label="Access variable R|<local>/x|"];
             193 [label="Smart cast: R|<local>/x|"];
@@ -616,7 +616,7 @@ digraph endlessLoops_kt {
                     207 [label="Const: Boolean(true)"];
                     208 [label="Exit loop condition"];
                 }
-                209 [label="Exit do-whileloop" style="filled" fillcolor=gray];
+                209 [label="Exit do-while loop" style="filled" fillcolor=gray];
             }
             210 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
             211 [label="Smart cast: R|<local>/x|" style="filled" fillcolor=gray];

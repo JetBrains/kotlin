@@ -429,7 +429,7 @@ digraph returns_kt {
 
     subgraph cluster_38 {
         color=red
-        152 [label="Enter function getter" style="filled" fillcolor=red];
+        152 [label="Enter function <getter>" style="filled" fillcolor=red];
         subgraph cluster_39 {
             color=blue
             153 [label="Enter block"];
@@ -438,7 +438,7 @@ digraph returns_kt {
             156 [label="Stub" style="filled" fillcolor=gray];
             157 [label="Exit block" style="filled" fillcolor=gray];
         }
-        158 [label="Exit function getter" style="filled" fillcolor=red];
+        158 [label="Exit function <getter>" style="filled" fillcolor=red];
     }
     152 -> {153};
     153 -> {154};
@@ -471,7 +471,7 @@ digraph returns_kt {
             175 [label="Postponed enter to lambda"];
             subgraph cluster_42 {
                 color=blue
-                176 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                176 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                 subgraph cluster_43 {
                     color=blue
                     177 [label="Enter block"];
@@ -480,7 +480,7 @@ digraph returns_kt {
                     180 [label="Access variable R|kotlin/String.length|"];
                     181 [label="Exit block"];
                 }
-                182 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                182 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
             183 [label="Postponed exit from lambda"];
             184 [label="Function call: R|/runHigherOrder|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
