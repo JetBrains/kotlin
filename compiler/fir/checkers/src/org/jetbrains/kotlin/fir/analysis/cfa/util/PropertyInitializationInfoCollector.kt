@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -32,7 +31,7 @@ class PropertyInitializationInfoCollector(
 
     override fun visitVariableAssignmentNode(
         node: VariableAssignmentNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
         val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return dataForNode
@@ -45,7 +44,7 @@ class PropertyInitializationInfoCollector(
 
     override fun visitVariableDeclarationNode(
         node: VariableDeclarationNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
         return processVariableWithAssignment(
@@ -78,72 +77,35 @@ class PropertyInitializationInfoCollector(
     // Data flows of declared/assigned variables in loops
     // --------------------------------------------------
 
-    private fun enterCapturingStatement(statement: FirStatement): Set<FirPropertySymbol> =
-        declaredVariableCollector.enterCapturingStatement(statement)
-
-    private fun exitCapturingStatement(statement: FirStatement) {
-        declaredVariableCollector.exitCapturingStatement(statement)
-    }
-
-    // A merge point for a loop with `continue`
-    override fun visitLoopEnterNode(
-        node: LoopEnterNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+    override fun visitEdge(
+        from: CFGNode<*>,
+        to: CFGNode<*>,
+        metadata: Edge,
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
-        val declaredVariableSymbolsInLoop = enterCapturingStatement(node.fir)
-        if (declaredVariableSymbolsInLoop.isEmpty())
-            return visitNode(node, data)
-
-        return filterDeclaredVariableSymbolsInCapturedScope(node, declaredVariableSymbolsInLoop, data)
-    }
-
-    // A merge point for while loop
-    override fun visitLoopConditionEnterNode(
-        node: LoopConditionEnterNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        val declaredVariableSymbolsInLoop = declaredVariableCollector.declaredVariablesPerElement[node.loop]
-        if (declaredVariableSymbolsInLoop.isEmpty())
-            return visitNode(node, data)
-
-        return filterDeclaredVariableSymbolsInCapturedScope(node, declaredVariableSymbolsInLoop, data)
-    }
-
-    // A merge point for do-while loop
-    override fun visitLoopBlockEnterNode(
-        node: LoopBlockEnterNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        val declaredVariableSymbolsInLoop = declaredVariableCollector.declaredVariablesPerElement[node.fir]
-        if (declaredVariableSymbolsInLoop.isEmpty())
-            return visitNode(node, data)
-
-        return filterDeclaredVariableSymbolsInCapturedScope(node, declaredVariableSymbolsInLoop, data)
-    }
-
-    private fun filterDeclaredVariableSymbolsInCapturedScope(
-        node: CFGNode<*>,
-        declaredVariableSymbolsInCapturedScope: Collection<FirPropertySymbol>,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        var filteredData = data
-        for (variableSymbol in declaredVariableSymbolsInCapturedScope) {
-            filteredData = filteredData.map { (label, pathAwareInfo) ->
-                label to if (label is LoopBackPath) {
-                    removeRange(pathAwareInfo, variableSymbol, ::PathAwarePropertyInitializationInfo)
-                } else {
-                    pathAwareInfo
-                }
-            }
+        val result = super.visitEdge(from, to, metadata, data)
+        if (metadata.label != LoopBackPath) return result
+        val declaredVariableSymbolsInCapturedScope = when (to) {
+            is LoopEnterNode -> declaredVariableCollector.declaredVariablesPerElement[to.fir]
+            is LoopBlockEnterNode -> declaredVariableCollector.declaredVariablesPerElement[to.fir]
+            is LoopConditionEnterNode -> declaredVariableCollector.declaredVariablesPerElement[to.loop]
+            else -> return result
         }
-        return visitNode(node, filteredData)
+        return declaredVariableSymbolsInCapturedScope.fold(data) { filteredData, variableSymbol ->
+            removeRange(filteredData, variableSymbol, ::PathAwarePropertyInitializationInfo)
+        }
+    }
+
+    override fun visitLoopEnterNode(node: LoopEnterNode, data: PathAwarePropertyInitializationInfo): PathAwarePropertyInitializationInfo {
+        declaredVariableCollector.enterCapturingStatement(node.fir)
+        return visitNode(node, data)
     }
 
     override fun visitLoopExitNode(
         node: LoopExitNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
-        exitCapturingStatement(node.fir)
+        declaredVariableCollector.exitCapturingStatement(node.fir)
         return visitNode(node, data)
     }
 }

@@ -136,9 +136,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         override val constructor: (PersistentMap<FirPropertySymbol, VariableStatus>) -> VariableStatusInfo =
             ::VariableStatusInfo
 
-        override val empty: () -> VariableStatusInfo =
-            ::EMPTY
-
         override fun merge(other: VariableStatusInfo): VariableStatusInfo {
             var result = this
             for (symbol in keys.union(other.keys)) {
@@ -163,9 +160,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
         override val constructor: (PersistentMap<EdgeLabel, VariableStatusInfo>) -> PathAwareVariableStatusInfo =
             ::PathAwareVariableStatusInfo
-
-        override val empty: () -> PathAwareVariableStatusInfo =
-            ::EMPTY
     }
 
     private class ValueWritesWithoutReading(
@@ -184,19 +178,19 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitNode(
             node: CFGNode<*>,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo =
             super.visitNode(node, data).withAnnotationsFrom(node)
 
         override fun <T> visitUnionNode(
             node: T,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo where T : CFGNode<*>, T : UnionNodeMarker =
             super.visitUnionNode(node, data).withAnnotationsFrom(node)
 
         override fun visitVariableDeclarationNode(
             node: VariableDeclarationNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
             if (node.fir.source?.kind is KtFakeSourceElementKind) return dataForNode
@@ -228,7 +222,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitVariableAssignmentNode(
             node: VariableAssignmentNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
             val symbol = node.fir.lValue.toResolvedPropertySymbol() ?: return dataForNode
@@ -257,7 +251,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitQualifiedAccessNode(
             node: QualifiedAccessNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
             return visitQualifiedAccesses(dataForNode, node.fir)
@@ -293,7 +287,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitFunctionCallNode(
             node: FunctionCallNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitUnionNode(node, data)
             val reference = node.fir.calleeReference.resolved ?: return dataForNode

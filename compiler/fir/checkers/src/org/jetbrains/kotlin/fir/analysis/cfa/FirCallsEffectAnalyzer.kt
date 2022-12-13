@@ -222,9 +222,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange>) -> LambdaInvocationInfo =
             ::LambdaInvocationInfo
-
-        override val empty: () -> LambdaInvocationInfo =
-            ::EMPTY
     }
 
     class PathAwareLambdaInvocationInfo(
@@ -236,9 +233,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override val constructor: (PersistentMap<EdgeLabel, LambdaInvocationInfo>) -> PathAwareLambdaInvocationInfo =
             ::PathAwareLambdaInvocationInfo
-
-        override val empty: () -> PathAwareLambdaInvocationInfo =
-            ::EMPTY
     }
 
     private class InvocationDataCollector(
@@ -249,7 +243,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override fun visitFunctionCallNode(
             node: FunctionCallNode,
-            data: Collection<Pair<EdgeLabel, PathAwareLambdaInvocationInfo>>
+            data: PathAwareLambdaInvocationInfo
         ): PathAwareLambdaInvocationInfo {
             var dataForNode = visitUnionNode(node, data)
 
