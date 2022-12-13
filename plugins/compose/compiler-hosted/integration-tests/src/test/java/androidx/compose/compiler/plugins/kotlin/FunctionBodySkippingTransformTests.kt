@@ -2362,15 +2362,11 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
                   }
                   if (%default and 0b00010000 !== 0) {
                     e = emptyList()
-                    %dirty = %dirty and 0b1110000000000000.inv()
                   }
                 } else {
                   %composer.skipToGroupEnd()
                   if (%default and 0b1000 !== 0) {
                     %dirty = %dirty and 0b0001110000000000.inv()
-                  }
-                  if (%default and 0b00010000 !== 0) {
-                    %dirty = %dirty and 0b1110000000000000.inv()
                   }
                 }
                 %composer.endDefaults()
@@ -3922,7 +3918,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
                     %composer.skipToGroupEnd()
                   }
                   %composer.endReplaceableGroup()
-                }, %composer, 0)
+                }, %composer, 0b0110)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
@@ -4054,7 +4050,7 @@ class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransform
                     %composer.skipToGroupEnd()
                   }
                   %composer.endReplaceableGroup()
-                }, %composer, 0)
+                }, %composer, 0b0110)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }

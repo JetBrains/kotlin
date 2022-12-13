@@ -83,6 +83,34 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
     )
 
     @Test
+    fun testListOfWithStaticParametersIsStatic() = assertStatic(
+        expression = "listOf('a', 'b', 'c')"
+    )
+
+    @Test
+    fun testEmptyListIsStatic() = assertStatic(
+        expression = "emptyList<Any?>()"
+    )
+
+    @Test
+    fun testMapOfWithStaticParametersIsStatic() = assertStatic(
+        expression = "mapOf(pair)",
+        extraSrc = """
+            val pair = "answerToUltimateQuestion" to 42
+        """
+    )
+
+    @Test
+    fun testEmptyMapIsStatic() = assertStatic(
+        expression = "emptyMap<Any, Any?>()"
+    )
+
+    @Test
+    fun testPairsAreStatic() = assertStatic(
+        expression = "'a' to 1"
+    )
+
+    @Test
     fun testEnumReferencesAreStatic() = assertStatic(
         expression = "Foo.Bar",
         extraSrc = """
