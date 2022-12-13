@@ -39,6 +39,11 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, Me
         return result.toList()
     }
 
+    private val allPackageNames_ by lazy {
+        loadedModules.flatMap { it.mapping.packageFqName2Parts.keys }
+    }
+
+    override fun allPackageNames() = allPackageNames_
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
         getPackageParts(packageFqName).flatMap(PackageParts::metadataParts).distinct()
 

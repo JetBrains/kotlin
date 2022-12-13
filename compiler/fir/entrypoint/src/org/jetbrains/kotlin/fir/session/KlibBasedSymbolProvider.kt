@@ -97,6 +97,10 @@ class KlibBasedSymbolProvider(
         }
     }
 
+    override fun computePackageSet(): Set<String> = fragmentNamesInLibraries.keys
+
+    override fun mayHaveTopLevelClass(classId: ClassId) = true
+
     @OptIn(SymbolInternals::class)
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val packageStringName = classId.packageFqName.asString()
