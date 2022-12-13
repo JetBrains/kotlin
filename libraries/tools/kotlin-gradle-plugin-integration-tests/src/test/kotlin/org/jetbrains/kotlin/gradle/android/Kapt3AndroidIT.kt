@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 @DisplayName("android with kapt3 tests")
@@ -289,6 +290,41 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
                 ":Android:kaptFlavor1DebugKotlin", "--dry-run",
                 buildOptions = buildOptions.copy(kaptOptions = BuildOptions.KaptOptions(verbose = false))
             )
+        }
+    }
+
+    @DisplayName("KT-55334: Kapt generate stubs and related KotlinCompile tasks are using similar -module-name value")
+    @GradleAndroidTest
+    fun kaptGenerateStubsModuleName(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "kapt2/android-dagger",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build(":app:compileDebugAndroidTestKotlin") {
+                val stubsFile = subProject("app")
+                    .projectPath
+                    .resolve("build/tmp/kapt3/stubs/debugAndroidTest/com/example/dagger/kotlin/TestClass.java")
+                assertFileExists(stubsFile)
+                assertFileContains(
+                    stubsFile,
+                    "public final void bar${'$'}app_debugAndroidTest() {"
+                )
+
+                val compiledClassFile = subProject("app")
+                    .projectPath
+                    .resolve("build/tmp/kotlin-classes/debugAndroidTest/com/example/dagger/kotlin/TestClass.class")
+                assertFileExists(compiledClassFile)
+                checkBytecodeContains(
+                    compiledClassFile.toFile(),
+                    "public final bar${'$'}app_debugAndroidTest()V"
+                )
+            }
         }
     }
 }
