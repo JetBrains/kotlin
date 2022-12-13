@@ -24,7 +24,7 @@ import java.nio.file.Path
 import kotlin.io.path.forEachLine
 import kotlin.io.path.notExists
 
-private const val INHERITORS_EXTENSION = "inh.txt"
+private const val INHERITORS_EXTENSION = "inheritors.txt"
 
 abstract class AbstractSymbolLightClassesStructureTest(
     configurator: AnalysisApiTestConfigurator,
