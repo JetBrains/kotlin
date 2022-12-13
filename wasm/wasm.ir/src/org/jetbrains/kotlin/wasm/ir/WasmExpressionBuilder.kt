@@ -137,8 +137,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.LOCAL_SET, location, WasmImmediate.LocalIdx(local))
     }
 
-    fun buildGetGlobal(global: WasmSymbol<WasmGlobal>) {
-        buildInstr(WasmOp.GLOBAL_GET, WasmImmediate.GlobalIdx(global))
+    fun buildGetGlobal(global: WasmSymbol<WasmGlobal>, location: SourceLocation) {
+        buildInstr(WasmOp.GLOBAL_GET, location, WasmImmediate.GlobalIdx(global))
     }
 
     fun buildSetGlobal(global: WasmSymbol<WasmGlobal>) {
