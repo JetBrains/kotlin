@@ -538,7 +538,6 @@ abstract class KotlinCompile @Inject constructor(
     UsesKotlinJavaToolchain {
 
     init {
-        compilerOptions.moduleName.convention(moduleName)
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 

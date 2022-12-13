@@ -123,5 +123,9 @@ abstract class KaptGenerateStubsTask @Inject constructor(
         args.verbose = verbose.get()
         args.classpathAsList = this.libraries.filter { it.exists() }.toList()
         args.destinationAsFile = this.destinationDirectory.get().asFile
+        // Setting moduleName from task input if it has default complierOptions value
+        if (args.moduleName == null) {
+            args.moduleName = moduleName.get()
+        }
     }
 }

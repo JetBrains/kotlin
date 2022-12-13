@@ -10,6 +10,7 @@ import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertTrue
 
 open class Kapt3Android41IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
@@ -435,6 +436,34 @@ abstract class Kapt3AndroidIT : BaseGradleIT() {
                 assertNotContains(
                     "The input changes require a full rebuild for incremental task ':app:kaptGenerateStubsDebugKotlin'."
                 )
+            }
+        }
+    }
+
+    // KT-55334: Kapt generate stubs and related compile task use same -module-name value
+    @Test
+    fun kaptGenerateStubsModuleName() {
+        with(
+            Project(
+                "android-dagger",
+                directoryPrefix = "kapt2",
+                minLogLevel = LogLevel.DEBUG
+            )
+        ) {
+            build(":app:compileDebugAndroidTestKotlin") {
+                val stubsFile = projectDir
+                    .resolve("app/build/tmp/kapt3/stubs/debugAndroidTest/com/example/dagger/kotlin/TestClass.java")
+                assertTrue(stubsFile.exists(), "File does not exist: ${stubsFile.absolutePath}")
+                assertTrue(
+                    stubsFile.readText()
+                        .contains("public final void bar${'$'}app_debug() {"),
+                    "Actual generated stub content:\n${stubsFile.readText()}"
+                )
+
+                val compilerClassFile = projectDir
+                    .resolve("app/build/tmp/kotlin-classes/debugAndroidTest/com/example/dagger/kotlin/TestClass.class")
+                assertTrue(compilerClassFile.exists(), "File does not exist: ${compilerClassFile.absolutePath}")
+                checkBytecodeContains(compilerClassFile, "public final bar${'$'}app_debug()V")
             }
         }
     }

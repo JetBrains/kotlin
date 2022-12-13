@@ -98,5 +98,9 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         args.destinationAsFile = destinationDir
 
         compilerOptions.fillCompilerArguments(args)
+        // Restoring moduleName overwritten by fillCompilerArguments default value
+        if (args.moduleName == null) {
+            args.moduleName = moduleName
+        }
     }
 }
