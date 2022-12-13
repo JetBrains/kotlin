@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
-import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
+import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
@@ -21,69 +18,42 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.signaturer.irName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
-open class FirJvmMangleComputer(
-    private val builder: StringBuilder,
-    private val mode: MangleMode,
-    private val session: FirSession
-) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration> {
+class FirJvmMangleComputer(
+    builder: StringBuilder,
+    mode: MangleMode,
+    private val session: FirSession,
+) : BaseKotlinMangleComputer<
+        /*Declaration=*/FirDeclaration,
+        /*Type=*/ConeKotlinType,
+        /*TypeParameter=*/ConeTypeParameterLookupTag,
+        /*ValueParameter=*/FirValueParameter,
+        /*TypeParameterContainer=*/FirMemberDeclaration,
+        /*FunctionDeclaration=*/FirFunction,
+        >(builder, mode) {
 
-    private val typeParameterContainer = ArrayList<FirMemberDeclaration>(4)
+    override val typeSystemContext = object : ConeInferenceContext {
+        override val session: FirSession
+            get() = this@FirJvmMangleComputer.session
+    }
 
-    private var isRealExpect = false
-
-    open fun FirFunction.platformSpecificFunctionName(): String? = null
-
-    open fun FirFunction.platformSpecificSuffix(): String? =
+    override fun FirFunction.platformSpecificSuffix(): String? =
         if (this is FirSimpleFunction && name.asString() == "main")
             this@FirJvmMangleComputer.session.firProvider.getFirCallableContainerFile(symbol)?.name
         else null
 
-    open fun FirFunction.specialValueParamPrefix(param: FirValueParameter): String = ""
-
-    private fun addReturnType(): Boolean = true
+    override fun addReturnType(): Boolean = true
 
     override fun copy(newMode: MangleMode): FirJvmMangleComputer =
         FirJvmMangleComputer(builder, newMode, session)
 
-    private fun StringBuilder.appendName(s: String) {
-        if (mode.fqn) {
-            append(s)
-        }
-    }
-
-    private fun StringBuilder.appendName(c: Char) {
-        if (mode.fqn) {
-            append(c)
-        }
-    }
-
-    private fun StringBuilder.appendSignature(s: String) {
-        if (mode.signature) {
-            append(s)
-        }
-    }
-
-    private fun StringBuilder.appendSignature(c: Char) {
-        if (mode.signature) {
-            append(c)
-        }
-    }
-
-    private fun StringBuilder.appendSignature(i: Int) {
-        if (mode.signature) {
-            append(i)
-        }
-    }
-
-    private fun FirDeclaration.visitParent() {
+    override fun FirDeclaration.visitParent() {
         val (parentPackageFqName, parentClassId) = when (this) {
             is FirCallableDeclaration -> this.containingClassLookupTag()?.classId?.let { it.packageFqName to it } ?: return
             is FirClassLikeDeclaration -> this.symbol.classId.let { it.packageFqName to it.outerClassId }
@@ -93,7 +63,7 @@ open class FirJvmMangleComputer(
             val parentClassLike = this@FirJvmMangleComputer.session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir
                 ?: error("Attempt to find parent ($parentClassId) for probably-local declaration!")
             if (parentClassLike is FirRegularClass || parentClassLike is FirTypeAlias) {
-                parentClassLike.accept(this@FirJvmMangleComputer, false)
+                parentClassLike.visit()
             } else {
                 error("Strange class-like declaration: ${parentClassLike.render()}")
             }
@@ -102,15 +72,8 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirDeclaration.mangleSimpleDeclaration(name: String) {
-        val l = builder.length
-        visitParent()
-
-        if (builder.length != l) {
-            builder.appendName(MangleConstant.FQN_SEPARATOR)
-        }
-
-        builder.appendName(name)
+    override fun FirDeclaration.visit() {
+        accept(Visitor(), null)
     }
 
     private fun FirFunction.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration) {
@@ -118,7 +81,7 @@ open class FirJvmMangleComputer(
         isRealExpect = isRealExpect || (this as? FirMemberDeclaration)?.isExpect == true
 
         if (container is FirMemberDeclaration) {
-            typeParameterContainer.add(container)
+            typeParameterContainers.add(container)
         }
         visitParent()
 
@@ -166,7 +129,7 @@ open class FirJvmMangleComputer(
         }
         (container as? FirTypeParametersOwner)?.typeParameters?.withIndex()?.toList().orEmpty()
             .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
-                mangleTypeParameter(this, typeParameter, index)
+                mangleTypeParameter(this, typeParameter.symbol.toLookupTag(), index)
             }
 
         if (!isCtor && !returnTypeRef.isUnit && addReturnType()) {
@@ -174,8 +137,8 @@ open class FirJvmMangleComputer(
         }
     }
 
-    private fun FirTypeParameter.effectiveParent(): FirMemberDeclaration {
-        for (parent in typeParameterContainer) {
+    override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration = typeParameter.symbol.fir.run {
+        for (parent in typeParameterContainers) {
             if (this in parent.typeParameters) {
                 return parent
             }
@@ -189,33 +152,14 @@ open class FirJvmMangleComputer(
         throw IllegalStateException("Should not be here!")
     }
 
-    private fun mangleValueParameter(vpBuilder: StringBuilder, param: FirValueParameter) {
-        mangleType(vpBuilder, param.returnTypeRef.coneType)
+    override fun isVararg(valueParameter: FirValueParameter) = valueParameter.isVararg
 
-        if (param.isVararg) {
-            vpBuilder.appendSignature(MangleConstant.VAR_ARG_MARK)
-        }
-    }
+    override fun getValueParameterType(valueParameter: FirValueParameter) = valueParameter.returnTypeRef.coneType
 
-    private fun mangleTypeParameter(tpBuilder: StringBuilder, param: FirTypeParameter, index: Int) {
-        tpBuilder.appendSignature(index)
-        tpBuilder.appendSignature(MangleConstant.UPPER_BOUND_SEPARATOR)
+    override fun getIndexOfTypeParameter(typeParameter: ConeTypeParameterLookupTag, container: FirMemberDeclaration) =
+        container.typeParameters.indexOf(typeParameter.symbol.fir)
 
-        param.bounds.map { it.coneType }.collectForMangler(tpBuilder, MangleConstant.UPPER_BOUNDS) {
-            mangleType(this, it)
-        }
-    }
-
-    private fun StringBuilder.mangleTypeParameterReference(typeParameter: FirTypeParameter) {
-        val parent = typeParameter.effectiveParent()
-        val ci = typeParameterContainer.indexOf(parent)
-        require(ci >= 0) { "No type container found for ${typeParameter.render()}" }
-        appendSignature(ci)
-        appendSignature(MangleConstant.INDEX_SEPARATOR)
-        appendSignature(parent.typeParameters.indexOf(typeParameter))
-    }
-
-    private fun mangleType(tBuilder: StringBuilder, type: ConeKotlinType) {
+    override fun mangleType(tBuilder: StringBuilder, type: ConeKotlinType) {
         when (type) {
             is ConeLookupTagBasedType -> {
                 when (val symbol = type.lookupTag.toSymbol(session)) {
@@ -224,29 +168,15 @@ open class FirJvmMangleComputer(
                         return
                     }
 
-                    is FirClassSymbol -> symbol.fir.accept(copy(MangleMode.FQNAME), false)
-                    is FirTypeParameterSymbol -> tBuilder.mangleTypeParameterReference(symbol.fir)
+                    is FirClassSymbol -> with(copy(MangleMode.FQNAME)) { symbol.fir.visit() }
+                    is FirTypeParameterSymbol -> tBuilder.mangleTypeParameterReference(symbol.toLookupTag())
                     // This is performed for a case with invisible class-like symbol in fake override
                     null -> (type.lookupTag as? ConeClassLikeLookupTag)?.let {
                         tBuilder.append(it.classId)
                     }
                 }
 
-                type.typeArguments.asList().ifNotEmpty {
-                    collectForMangler(tBuilder, MangleConstant.TYPE_ARGUMENTS) { arg ->
-                        when (arg) {
-                            is ConeStarProjection -> appendSignature(MangleConstant.STAR_MARK)
-                            is ConeKotlinTypeProjection -> {
-                                if (arg.kind != ProjectionKind.INVARIANT) {
-                                    appendSignature(arg.kind.name.toLowerCaseAsciiOnly())
-                                    appendSignature(MangleConstant.VARIANCE_SEPARATOR)
-                                }
-
-                                mangleType(this, arg.type)
-                            }
-                        }
-                    }
-                }
+                mangleTypeArguments(tBuilder, type)
 
                 if (type.isMarkedNullable) {
                     tBuilder.appendSignature(MangleConstant.Q_MARK)
@@ -295,79 +225,78 @@ open class FirJvmMangleComputer(
         }
     }
 
-    override fun visitElement(element: FirElement, data: Boolean) = error("unexpected element ${element.render()}")
+    private inner class Visitor : FirVisitorVoid() {
 
-    override fun visitRegularClass(regularClass: FirRegularClass, data: Boolean) {
-        isRealExpect = isRealExpect or regularClass.isExpect
-        typeParameterContainer.add(regularClass)
-        regularClass.mangleSimpleDeclaration(regularClass.name.asString())
-    }
+        override fun visitElement(element: FirElement) = error("unexpected element ${element.render()}")
 
-    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Boolean) {
-        anonymousObject.mangleSimpleDeclaration("<anonymous>")
-    }
-
-    override fun visitVariable(variable: FirVariable, data: Boolean) {
-        isRealExpect = isRealExpect or variable.isExpect
-        typeParameterContainer.add(variable)
-        variable.visitParent()
-
-        val isStaticProperty = variable.isStatic
-        if (isStaticProperty) {
-            builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
+        override fun visitRegularClass(regularClass: FirRegularClass) {
+            isRealExpect = isRealExpect or regularClass.isExpect
+            typeParameterContainers.add(regularClass)
+            regularClass.mangleSimpleDeclaration(regularClass.name.asString())
         }
 
-        variable.receiverParameter?.typeRef?.let {
-            builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it.coneType)
+        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
+            anonymousObject.mangleSimpleDeclaration("<anonymous>")
         }
 
-        variable.typeParameters.withIndex().toList().collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
-            mangleTypeParameter(this, typeParameter.symbol.fir, index)
+        override fun visitVariable(variable: FirVariable) {
+            isRealExpect = isRealExpect or variable.isExpect
+            typeParameterContainers.add(variable)
+            variable.visitParent()
+
+            val isStaticProperty = variable.isStatic
+            if (isStaticProperty) {
+                builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
+            }
+
+            variable.receiverParameter?.typeRef?.let {
+                builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
+                mangleType(builder, it.coneType)
+            }
+
+            variable.typeParameters.withIndex().toList()
+                .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
+                    mangleTypeParameter(this, typeParameter.symbol.toLookupTag(), index)
+                }
+
+            builder.append(variable.name.asString())
         }
 
-        builder.append(variable.name.asString())
-    }
-
-    override fun visitProperty(property: FirProperty, data: Boolean) {
-        visitVariable(property, data)
-    }
-
-    override fun visitField(field: FirField, data: Boolean) {
-        if (field is FirJavaField) {
-            field.mangleSimpleDeclaration(field.name.asString())
-        } else {
-            visitVariable(field, data)
+        override fun visitProperty(property: FirProperty) {
+            visitVariable(property)
         }
-    }
 
-    override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Boolean) {
-        enumEntry.mangleSimpleDeclaration(enumEntry.name.asString())
-    }
-
-    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Boolean) =
-        typeAlias.mangleSimpleDeclaration(typeAlias.name.asString())
-
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Boolean) {
-        isRealExpect = isRealExpect || simpleFunction.isExpect
-        val isStatic = simpleFunction.isStatic
-        simpleFunction.mangleFunction(false, isStatic, simpleFunction)
-    }
-
-    override fun visitConstructor(constructor: FirConstructor, data: Boolean) =
-        constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
-
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Boolean) {
-        if (propertyAccessor is FirSyntheticPropertyAccessor) {
-            // No need to distinguish between the accessor and its delegate.
-            visitSimpleFunction(propertyAccessor.delegate, data)
-        } else {
-            propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol.fir)
+        override fun visitField(field: FirField) {
+            if (field is FirJavaField) {
+                field.mangleSimpleDeclaration(field.name.asString())
+            } else {
+                visitVariable(field)
+            }
         }
-    }
 
-    override fun computeMangle(declaration: FirDeclaration): String {
-        declaration.accept(this, true)
-        return builder.toString()
+        override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+            enumEntry.mangleSimpleDeclaration(enumEntry.name.asString())
+        }
+
+        override fun visitTypeAlias(typeAlias: FirTypeAlias) =
+            typeAlias.mangleSimpleDeclaration(typeAlias.name.asString())
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+            isRealExpect = isRealExpect || simpleFunction.isExpect
+            val isStatic = simpleFunction.isStatic
+            simpleFunction.mangleFunction(false, isStatic, simpleFunction)
+        }
+
+        override fun visitConstructor(constructor: FirConstructor) =
+            constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
+
+        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+            if (propertyAccessor is FirSyntheticPropertyAccessor) {
+                // No need to distinguish between the accessor and its delegate.
+                visitSimpleFunction(propertyAccessor.delegate)
+            } else {
+                propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol.fir)
+            }
+        }
     }
 }
