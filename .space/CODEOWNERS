@@ -383,7 +383,7 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin"
+*Generated.java "Kotlin" "Kotlin IDE"
 
 # Singular files
 /.bunch "Kotlin Build Infrastructure"
