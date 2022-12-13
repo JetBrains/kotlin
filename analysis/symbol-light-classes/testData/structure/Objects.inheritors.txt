@@ -20,3 +20,7 @@ subClass: two.ObjectWithClassAndJavaInterface, superClass: two.NonBaseInterface,
 subClass: two.ObjectWithClassAndJavaInterface, superClass: two.NonBaseInterface, deepSearch: true -> false
 subClass: two.ObjectWithClassAndJavaInterface, superClass: java.lang.Runnable, deepSearch: false -> true
 subClass: two.ObjectWithClassAndJavaInterface, superClass: java.lang.Runnable, deepSearch: true -> true
+subClass: two.ObjectsKt, superClass: java.lang.Runnable, deepSearch: false -> false
+subClass: two.ObjectsKt, superClass: java.lang.Runnable, deepSearch: true -> false
+subClass: two.ObjectsKt, superClass: java.lang.Object, deepSearch: false -> true
+subClass: two.ObjectsKt, superClass: java.lang.Object, deepSearch: true -> true
