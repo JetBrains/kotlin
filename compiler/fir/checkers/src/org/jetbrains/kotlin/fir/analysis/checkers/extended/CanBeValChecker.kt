@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -27,7 +27,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
-        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
+        data: PropertyInitializationInfoData,
         properties: Set<FirPropertySymbol>,
         capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
@@ -77,7 +77,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         value in canBeValOccurrenceRanges && symbol.isVar
 
     private class UninitializedPropertyReporter(
-        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
+        val data: PropertyInitializationInfoData,
         val localProperties: Set<FirPropertySymbol>,
         val unprocessedProperties: MutableSet<FirPropertySymbol>,
         val propertiesCharacteristics: MutableMap<FirPropertySymbol, EventOccurrencesRange>

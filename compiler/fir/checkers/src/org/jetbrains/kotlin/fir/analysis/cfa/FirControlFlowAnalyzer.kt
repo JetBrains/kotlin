@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 class FirControlFlowAnalyzer(
     session: FirSession,
@@ -65,7 +68,18 @@ class FirControlFlowAnalyzer(
     private fun runAssignmentCfaCheckers(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         val (properties, capturedWrites) = LocalPropertyAndCapturedWriteCollector.collect(graph)
         if (properties.isEmpty()) return
-        val data = PropertyInitializationInfoCollector(properties).getData(graph)
+        val data = PropertyInitializationInfoData(properties, graph)
         variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, capturedWrites, context) }
     }
 }
+
+class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, graph: ControlFlowGraph) {
+    private val data by lazy(LazyThreadSafetyMode.NONE) {
+        PropertyInitializationInfoCollector(properties).getData(graph)
+    }
+
+    fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
+        return data.getValue(node)
+    }
+}
+

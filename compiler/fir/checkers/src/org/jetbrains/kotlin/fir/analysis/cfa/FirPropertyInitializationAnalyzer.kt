@@ -30,7 +30,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     override fun analyze(
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
-        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
+        data: PropertyInitializationInfoData,
         properties: Set<FirPropertySymbol>,
         capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
@@ -47,7 +47,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     }
 
     private class PropertyReporter(
-        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
+        val data: PropertyInitializationInfoData,
         val localProperties: Set<FirPropertySymbol>,
         val capturedWrites: Set<FirVariableAssignment>,
         val reporter: DiagnosticReporter,
