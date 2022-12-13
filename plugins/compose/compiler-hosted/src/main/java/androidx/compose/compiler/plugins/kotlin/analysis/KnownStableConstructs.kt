@@ -74,6 +74,7 @@ object KnownStableConstructs {
         "kotlin.collections.emptyMap" to 0,
         "kotlin.collections.setOf" to 0b1,
         "kotlin.collections.emptySet" to 0,
+        "kotlin.to" to 0b11,
         // Kotlinx immutable
         "kotlinx.collections.immutable.immutableListOf" to 0b1,
         "kotlinx.collections.immutable.immutableSetOf" to 0b1,

@@ -148,7 +148,7 @@ class StabilityPropagationTransformTests : AbstractIrTransformTest() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                A(listOf("a"), %composer, 0)
+                A(listOf("a"), %composer, 0b0110)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
