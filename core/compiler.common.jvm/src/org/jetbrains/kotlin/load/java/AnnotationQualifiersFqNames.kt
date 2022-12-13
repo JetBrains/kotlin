@@ -30,6 +30,11 @@ val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
 )
 
 val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
+    JSPECIFY_OLD_NULL_MARKED to JavaDefaultQualifiers(
+        NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
+        DEFAULT_JSPECIFY_APPLICABILITY,
+        definitelyNotNull = false
+    ),
     JSPECIFY_NULL_MARKED to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
         DEFAULT_JSPECIFY_APPLICABILITY,
