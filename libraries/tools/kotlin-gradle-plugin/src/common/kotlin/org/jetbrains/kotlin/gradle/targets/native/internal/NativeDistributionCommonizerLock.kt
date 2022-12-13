@@ -19,29 +19,29 @@ internal class NativeDistributionCommonizerLock(
         val lockedOutputDirectories = hashSetOf<File>()
     }
 
-    fun <T> withLock(action: () -> T): T {
+    fun <T> withLock(action: (lockFile: File) -> T): T {
         /* Enter intra-process wide lock */
         intraProcessLock.withLock {
+            val lockFile = outputDirectory.resolve(".lock")
             if (outputDirectory in lockedOutputDirectories) {
                 /* Already acquired this directory and re-entered: We can just execute the action */
-                return action()
+                return action(lockFile)
             }
 
             /* Lock output directory inter-process wide */
             outputDirectory.mkdirs()
-            val lockfile = outputDirectory.resolve(".lock")
-            logInfo("Acquire lock: ${lockfile.path} ...")
+            logInfo("Acquire lock: ${lockFile.path} ...")
             FileOutputStream(outputDirectory.resolve(".lock")).use { stream ->
                 val lock = stream.channel.lock()
                 assert(lock.isValid)
                 return try {
-                    logInfo("Lock acquired: ${lockfile.path}")
+                    logInfo("Lock acquired: ${lockFile.path}")
                     lockedOutputDirectories.add(outputDirectory)
-                    action()
+                    action(lockFile)
                 } finally {
                     lockedOutputDirectories.remove(outputDirectory)
                     lock.release()
-                    logInfo("Lock released: ${lockfile.path}")
+                    logInfo("Lock released: ${lockFile.path}")
                 }
             }
         }

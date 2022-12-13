@@ -153,8 +153,9 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Default
                 outputs.dir(commonizerDirectory)
 
                 doFirst {
-                    NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock {
-                        delete(commonizerDirectory.get())
+                    NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock { lockFile ->
+                        val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile
+                        delete(*files.toTypedArray())
                     }
                 }
             }
