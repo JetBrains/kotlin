@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 @JvmInline
 value class NullableMap<K, V>(
     @property:PrivateForInline
-    val map: MutableMap<K, Any> = HashMap()
+    val map: MutableMap<K, Any> = HashMap(1000, 0.5f)
 ) {
 
     /**
