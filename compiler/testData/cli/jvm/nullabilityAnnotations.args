@@ -1,3 +1,4 @@
+-Xnullability-annotations=@org.jspecify.annotations\:strict
 -Xnullability-annotations=@org.jspecify.nullness\:strict
 -Xnullability-annotations=@org.checkerframework.checker.nullness.compatqual\:warn
 $TESTDATA_DIR$/severalAnnotations.kt
