@@ -36,8 +36,6 @@ abstract class AbstractFirUseSiteMemberScope(
     protected val propertiesFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirPropertySymbol>>> = mutableMapOf()
     protected val fieldsFromSupertypes: MutableMap<Name, List<FirFieldSymbol>> = mutableMapOf()
 
-    private val absentClassifiersFromSupertypes = mutableSetOf<Name>()
-
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {
             addAll(declaredMemberScope.getCallableNames())
@@ -53,6 +51,8 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getCallableNames()) return
         functions.getOrPut(name) {
             collectFunctions(name)
         }.forEach {
@@ -102,6 +102,8 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getCallableNames()) return
         properties.getOrPut(name) {
             collectProperties(name)
         }.forEach {
@@ -198,13 +200,16 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getClassifierNames()) return
+
         var shadowed = false
         declaredMemberScope.processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
             shadowed = true
             processor(classifier, substitutor)
         }
         if (!shadowed) {
-            supertypeScopeContext.processClassifiersByNameWithSubstitution(name, absentClassifiersFromSupertypes, processor)
+            supertypeScopeContext.processClassifiersByNameWithSubstitution(name, processor)
         }
     }
 
