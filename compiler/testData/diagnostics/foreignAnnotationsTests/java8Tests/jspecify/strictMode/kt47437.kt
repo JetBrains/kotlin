@@ -4,7 +4,7 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: Foo.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class Foo<T extends @Nullable Object> {

@@ -2,13 +2,13 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: TypeArgumentsFromParameterBounds.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class TypeArgumentsFromParameterBounds<T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> {}
 
 // FILE: A.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class A {
@@ -16,7 +16,7 @@ public class A {
 }
 
 // FILE: B.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class B {
     public void bar(TypeArgumentsFromParameterBounds<Test, Test, Test> a) {}

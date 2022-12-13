@@ -1,7 +1,7 @@
 // JSPECIFY_STATE: warn
 
 // FILE: Foo.java
-import org.jspecify.nullness.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class Foo {
     public static <T> void gauge(@Nullable T stateObject) {}

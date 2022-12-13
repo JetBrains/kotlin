@@ -3,7 +3,7 @@
 
 // MODULE: module1
 // FILE: module1/module-info.java
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 module module1 {

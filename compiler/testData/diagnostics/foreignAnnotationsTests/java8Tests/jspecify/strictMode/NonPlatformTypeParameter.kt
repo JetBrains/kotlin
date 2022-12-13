@@ -4,7 +4,7 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: NonPlatformTypeParameter.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class NonPlatformTypeParameter<T extends @Nullable Object> {
     public void foo(T t) {}

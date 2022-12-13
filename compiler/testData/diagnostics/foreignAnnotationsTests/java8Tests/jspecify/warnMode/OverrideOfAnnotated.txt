@@ -2,15 +2,15 @@ package
 
 private val FOO: FOO.`<no name provided>`
 
-@org.jspecify.nullness.NullMarked public open class BaseClass {
+@org.jspecify.annotations.NullMarked public open class BaseClass {
     public constructor BaseClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun everythingNotNullable(/*0*/ x: Foo!): Foo!
-    @org.jspecify.nullness.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.nullness.Nullable x: @org.jspecify.nullness.Nullable Foo!): @org.jspecify.nullness.Nullable Foo!
-    @org.jspecify.nullness.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.nullness.NullnessUnspecified x: @org.jspecify.nullness.NullnessUnspecified Foo!): @org.jspecify.nullness.NullnessUnspecified Foo!
-    public open fun explicitlyNullnessUnspecified(/*0*/ @org.jspecify.nullness.NullnessUnspecified x: @org.jspecify.nullness.NullnessUnspecified Foo!): Foo!
+    @org.jspecify.annotations.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Foo!): @org.jspecify.annotations.Nullable Foo!
+    @org.jspecify.annotations.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): @org.jspecify.annotations.NullnessUnspecified Foo!
+    public open fun explicitlyNullnessUnspecified(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): Foo!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @org.jspecify.nullness.Nullable public open fun mixed(/*0*/ x: Foo!): @org.jspecify.nullness.Nullable Foo!
+    @org.jspecify.annotations.Nullable public open fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -48,10 +48,10 @@ public final class WrongReturnTypes : BaseClass {
     public constructor WrongReturnTypes()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun everythingNotNullable(/*0*/ x: Foo): Foo?
-    @org.jspecify.nullness.Nullable public open override /*1*/ /*fake_override*/ fun everythingNullable(/*0*/ @org.jspecify.nullness.Nullable x: @org.jspecify.nullness.Nullable Foo!): @org.jspecify.nullness.Nullable Foo!
-    @org.jspecify.nullness.NullnessUnspecified public open override /*1*/ /*fake_override*/ fun everythingUnknown(/*0*/ @org.jspecify.nullness.NullnessUnspecified x: @org.jspecify.nullness.NullnessUnspecified Foo!): @org.jspecify.nullness.NullnessUnspecified Foo!
+    @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Foo!): @org.jspecify.annotations.Nullable Foo!
+    @org.jspecify.annotations.NullnessUnspecified public open override /*1*/ /*fake_override*/ fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): @org.jspecify.annotations.NullnessUnspecified Foo!
     public open override /*1*/ fun explicitlyNullnessUnspecified(/*0*/ x: Foo): Foo?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @org.jspecify.nullness.Nullable public open override /*1*/ /*fake_override*/ fun mixed(/*0*/ x: Foo!): @org.jspecify.nullness.Nullable Foo!
+    @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

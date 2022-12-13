@@ -2,9 +2,9 @@ package
 
 public fun </*0*/ T : Test> main(/*0*/ a1: NonPlatformTypeParameter<kotlin.Any?>, /*1*/ a2: NonPlatformTypeParameter<Test>, /*2*/ x: T): kotlin.Unit
 
-public open class NonPlatformTypeParameter</*0*/ T : @org.jspecify.nullness.Nullable kotlin.Any!> {
-    public constructor NonPlatformTypeParameter</*0*/ T : @org.jspecify.nullness.Nullable kotlin.Any!>()
-    public open fun </*0*/ E : @org.jspecify.nullness.Nullable kotlin.Any!> bar(/*0*/ e: E!): kotlin.Unit
+public open class NonPlatformTypeParameter</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!> {
+    public constructor NonPlatformTypeParameter</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!>()
+    public open fun </*0*/ E : @org.jspecify.annotations.Nullable kotlin.Any!> bar(/*0*/ e: E!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(/*0*/ t: T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
