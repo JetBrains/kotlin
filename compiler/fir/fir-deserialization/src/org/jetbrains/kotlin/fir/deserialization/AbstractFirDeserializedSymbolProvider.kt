@@ -75,6 +75,22 @@ abstract class AbstractFirDeserializedSymbolProvider(
 ) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
+    private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computePackageSetWithNonClassDeclarations()
+    }
+
+    private val typeAliasesNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
+        session.firCachesFactory.createCache { fqName: FqName ->
+            getPackageParts(fqName).flatMapTo(mutableSetOf()) { it.typeAliasNameIndex.keys }
+        }
+
+    private val allNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
+        session.firCachesFactory.createCache { fqName: FqName ->
+            getPackageParts(fqName).flatMapTo(mutableSetOf()) {
+                it.topLevelFunctionNameIndex.keys + it.topLevelPropertyNameIndex.keys
+            }
+        }
+
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, FirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
@@ -101,6 +117,14 @@ abstract class AbstractFirDeserializedSymbolProvider(
     // ------------------------ Abstract members ------------------------
 
     protected abstract fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData>
+
+    // Return full package names that might be not empty (have some non-class declarations) in this provider
+    // In JVM, it's expensive to compute all the packages that might contain a Java class among dependencies
+    // But, as we have all the metadata, we may be sure about top-level callables and type aliases
+    // This method should only be used for sake of optimization to avoid having too many empty-list/null values in our caches
+    protected abstract fun computePackageSetWithNonClassDeclarations(): Set<String>
+
+    protected abstract fun mayHaveTopLevelClass(classId: ClassId): Boolean
 
     protected abstract fun extractClassMetadata(
         classId: ClassId,
@@ -201,6 +225,11 @@ abstract class AbstractFirDeserializedSymbolProvider(
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {
         val parentClassId = classId.outerClassId
+
+        // Actually, the second "if" should be enough but the first one might work faster
+        if (parentClassId == null && !mayHaveTopLevelClass(classId)) return null
+        if (parentClassId != null && !mayHaveTopLevelClass(classId.outermostClassId)) return null
+
         if (parentContext == null && parentClassId != null) {
             val alreadyLoaded = classCache.getValueIfComputed(classId)
             if (alreadyLoaded != null) return alreadyLoaded
@@ -211,26 +240,43 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return classCache.getValue(classId, parentContext)
     }
 
-    private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? =
-        if (classId.relativeClassName.isOneSegmentFQN()) typeAliasCache.getValue(classId) else null
+    private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
+        if (!classId.relativeClassName.isOneSegmentFQN()) return null
+
+        // Don't actually query FirCache when we're sure there are no relevant value
+        // It helps to decrease the size of a cache thus leading to better query time
+        val packageFqName = classId.packageFqName
+        if (packageFqName.asString() !in packageNamesForNonClassDeclarations) return null
+        if (classId.shortClassName !in typeAliasesNamesByPackage.getValue(packageFqName)) return null
+
+        return typeAliasCache.getValue(classId)
+    }
 
     // ------------------------ SymbolProvider methods ------------------------
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         val callableId = CallableId(packageFqName, name)
-        destination += functionCache.getValue(callableId)
-        destination += propertyCache.getValue(callableId)
+        destination += functionCache.getCallables(callableId)
+        destination += propertyCache.getCallables(callableId)
+    }
+
+    private fun <C : FirCallableSymbol<*>> FirCache<CallableId, List<C>, Nothing?>.getCallables(id: CallableId): List<C> {
+        // Don't actually query FirCache when we're sure there are no relevant value
+        // It helps to decrease the size of a cache thus leading to better query time
+        if (id.packageName.asString() !in packageNamesForNonClassDeclarations) return emptyList()
+        if (id.callableName !in allNamesByPackage.getValue(id.packageName)) return emptyList()
+        return getValue(id)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        destination += functionCache.getValue(CallableId(packageFqName, name))
+        destination += functionCache.getCallables(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        destination += propertyCache.getValue(CallableId(packageFqName, name))
+        destination += propertyCache.getCallables(CallableId(packageFqName, name))
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
