@@ -47,7 +47,11 @@ class BodyGenerator(
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildInstr(WasmOp.GET_UNIT, WasmImmediate.FuncIdx(context.referenceFunction(unitGetInstance.symbol)))
+        buildInstr(
+            WasmOp.GET_UNIT,
+            SourceLocation.NoLocation("GET_UNIT"),
+            WasmImmediate.FuncIdx(context.referenceFunction(unitGetInstance.symbol))
+        )
     }
 
     private val anyConstructor by lazy {
@@ -107,7 +111,7 @@ class BodyGenerator(
         withLocation(irVararg.getSourceLocation()) {
             body.buildConstI32(0, location)
             body.buildConstI32(irVararg.elements.size, location)
-            body.buildInstr(WasmOp.ARRAY_NEW_DATA, wasmArrayType, WasmImmediate.DataIdx(constantArrayId))
+            body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, wasmArrayType, WasmImmediate.DataIdx(constantArrayId))
         }
         return true
     }
@@ -119,7 +123,7 @@ class BodyGenerator(
         }
 
         val length = WasmImmediate.ConstI32(irVararg.elements.size)
-        body.buildInstr(WasmOp.ARRAY_NEW_FIXED, wasmArrayType, length)
+        body.buildInstr(WasmOp.ARRAY_NEW_FIXED, irVararg.getSourceLocation(), wasmArrayType, length)
     }
 
     override fun visitVararg(expression: IrVararg) {
@@ -181,21 +185,22 @@ class BodyGenerator(
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
         val receiver: IrExpression? = expression.receiver
+        val location = expression.getSourceLocation()
         if (receiver != null) {
             generateExpression(receiver)
             if (backendContext.inlineClassesUtils.isClassInlineLike(field.parentAsClass)) {
                 // Unboxed inline class instance is already represented as backing field.
                 // Doing nothing.
             } else {
-                generateInstanceFieldAccess(field)
+                generateInstanceFieldAccess(field, location)
             }
         } else {
-            body.buildGetGlobal(context.referenceGlobalField(field.symbol), expression.getSourceLocation())
+            body.buildGetGlobal(context.referenceGlobalField(field.symbol), location)
             body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
     }
 
-    private fun generateInstanceFieldAccess(field: IrField) {
+    private fun generateInstanceFieldAccess(field: IrField, location: SourceLocation) {
         val opcode = when (field.type) {
             irBuiltIns.charType ->
                 WasmOp.STRUCT_GET_U
@@ -210,6 +215,7 @@ class BodyGenerator(
 
         body.buildInstr(
             opcode,
+            location,
             WasmImmediate.GcType(context.referenceGcType(field.parentAsClass.symbol)),
             WasmImmediate.StructFieldIdx(context.getStructFieldRef(field))
         )
@@ -275,19 +281,19 @@ class BodyGenerator(
         }
 
         val wasmGcType: WasmSymbol<WasmTypeDeclaration> = context.referenceGcType(klassSymbol)
+        val location = expression.getSourceLocation()
 
         if (klass.getWasmArrayAnnotation() != null) {
             require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
             generateExpression(expression.getValueArgument(0)!!)
             body.buildInstr(
                 WasmOp.ARRAY_NEW_DEFAULT,
+                location,
                 WasmImmediate.GcType(wasmGcType)
             )
             body.commentPreviousInstr { "@WasmArrayOf ctor call: ${klass.fqNameWhenAvailable}" }
             return
         }
-
-        val location = expression.getSourceLocation()
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
@@ -326,7 +332,7 @@ class BodyGenerator(
         body.commentGroupStart { "Object creation prefix" }
         withNoLocation("Constructor preamble") {
             body.buildGetLocal(thisParameter, location)
-            body.buildInstr(WasmOp.REF_IS_NULL)
+            body.buildInstr(WasmOp.REF_IS_NULL, location)
             body.buildIf("this_init")
             generateAnyParameters(parentClass.symbol, location)
             val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
@@ -435,7 +441,7 @@ class BodyGenerator(
 
                 body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0), location)
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
-                body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
+                body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                 body.commentGroupEnd()
             } else {
                 val symbol = klass.symbol
@@ -453,7 +459,7 @@ class BodyGenerator(
                         .indexOfFirst { it.function == function }
 
                     body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot), location)
-                    body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
+                    body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                     body.commentGroupEnd()
                 } else {
                     // We came here for a call to an interface method which interface is not implemented anywhere, 
@@ -542,8 +548,8 @@ class BodyGenerator(
                                 body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
                                 body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable, location)
                                 body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol), location)
-                                body.buildInstr(WasmOp.REF_IS_NULL)
-                                body.buildInstr(WasmOp.I32_EQZ)
+                                body.buildInstr(WasmOp.REF_IS_NULL, location)
+                                body.buildInstr(WasmOp.I32_EQZ, location)
                                 body.buildBr(outerLabel, location)
                             }
                             body.buildDrop(location)
@@ -585,7 +591,7 @@ class BodyGenerator(
                     val field = getInlineClassBackingField(klass)
 
                     generateRefNullCast(fromType, toType, location)
-                    generateInstanceFieldAccess(field)
+                    generateInstanceFieldAccess(field, location)
                 }
 
                 wasmSymbols.unsafeGetScratchRawMemory -> {
@@ -596,7 +602,7 @@ class BodyGenerator(
                     val immediate = WasmImmediate.GcType(
                         context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
                     )
-                    body.buildInstr(WasmOp.ARRAY_COPY, immediate, immediate)
+                    body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
                 }
 
                 wasmSymbols.stringGetPoolSize -> {
@@ -607,7 +613,7 @@ class BodyGenerator(
                     val arrayGcType = WasmImmediate.GcType(
                         context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
                     )
-                    body.buildInstr(WasmOp.ARRAY_NEW_DATA, arrayGcType, WasmImmediate.DataIdx(0))
+                    body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
                 }
 
                 else -> {
@@ -892,10 +898,11 @@ class BodyGenerator(
 
         val opString = function.getWasmOpAnnotation()
         if (opString != null) {
+            val location = call.getSourceLocation()
             val op = WasmOp.valueOf(opString)
             when (op.immediates.size) {
                 0 -> {
-                    body.buildInstr(op)
+                    body.buildInstr(op, location)
                 }
                 1 -> {
                     fun getReferenceGcType(): WasmSymbol<WasmTypeDeclaration> {
@@ -920,7 +927,7 @@ class BodyGenerator(
                                 error("Immediate $imm is unsupported")
                         }
                     )
-                    body.buildInstr(op, *immediates)
+                    body.buildInstr(op, location, *immediates)
                 }
                 else ->
                     error("Op $opString is unsupported")

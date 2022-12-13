@@ -256,7 +256,7 @@ private fun <T> BodyGenerator.createBinaryTable(
         val (case, result) = sortedCases[fromIncl]
         body.buildGetLocal(selectorLocal, location)
         body.buildConstI32(case, location)
-        body.buildInstr(WasmOp.I32_EQ)
+        body.buildInstr(WasmOp.I32_EQ, location)
         body.buildIf("binary_tree_branch", resultType)
         thenBody(result)
         body.buildElse()
@@ -269,7 +269,7 @@ private fun <T> BodyGenerator.createBinaryTable(
 
     body.buildGetLocal(selectorLocal, location)
     body.buildConstI32(sortedCases[border].first, location)
-    body.buildInstr(WasmOp.I32_LT_S)
+    body.buildInstr(WasmOp.I32_LT_S, location)
     body.buildIf("binary_tree_node", resultType)
     createBinaryTable(selectorLocal, resultType, sortedCases, fromIncl, border, thenBody, elseBody)
     body.buildElse()
@@ -322,10 +322,11 @@ private fun BodyGenerator.genTableIntSwitch(
     body.buildGetLocal(selectorLocal, location)
     if (shift != 0) {
         body.buildConstI32(shift, location)
-        body.buildInstr(WasmOp.I32_SUB)
+        body.buildInstr(WasmOp.I32_SUB, location)
     }
     body.buildInstr(
         WasmOp.BR_TABLE,
+        location,
         WasmImmediate.LabelIdxVector(brTable),
         WasmImmediate.LabelIdx(branches.size)
     )

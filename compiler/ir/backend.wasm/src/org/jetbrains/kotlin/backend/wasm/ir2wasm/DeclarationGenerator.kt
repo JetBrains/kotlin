@@ -166,7 +166,7 @@ class DeclarationGenerator(
         // TODO: Redesign construction scheme.
         if (declaration is IrConstructor) {
             exprGen.buildGetLocal(/*implicit this*/ function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
-            exprGen.buildInstr(WasmOp.RETURN)
+            exprGen.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Implicit return from constructor"))
         }
 
         // Add unreachable if function returns something but not as a last instruction.
@@ -261,7 +261,7 @@ class DeclarationGenerator(
             val location = SourceLocation.NoLocation("Create instance of vtable struct")
             metadata.virtualMethods.forEachIndexed { i, method ->
                 if (method.function.modality != Modality.ABSTRACT) {
-                    buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(context.referenceFunction(method.function.symbol)))
+                    buildInstr(WasmOp.REF_FUNC, location, WasmImmediate.FuncIdx(context.referenceFunction(method.function.symbol)))
                 } else {
                     check(allowIncompleteImplementations) {
                         "Cannot find class implementation of method ${method.signature} in class ${klass.fqNameWhenAvailable}"
@@ -309,7 +309,7 @@ class DeclarationGenerator(
 
                     if (classMethod != null) {
                         val functionTypeReference = context.referenceFunction(classMethod.function.symbol)
-                        buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(functionTypeReference))
+                        buildInstr(WasmOp.REF_FUNC, location, WasmImmediate.FuncIdx(functionTypeReference))
                     } else {
                         //This erased by DCE so abstract version appeared in non-abstract class
                         buildRefNull(WasmHeapType.Type(context.referenceFunctionType(method.function.symbol)), location)
@@ -507,7 +507,7 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
         when (val kind = expression.kind) {
             is IrConstKind.Null -> {
                 val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
-                body.buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(bottomType))
+                body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
             }
             is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0, location)
             is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt(), location)

@@ -10,10 +10,6 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 abstract class WasmExpressionBuilder {
     abstract fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate)
 
-    fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate) {
-        buildInstr(op, SourceLocation.TBDLocation, *immediates)
-    }
-
     abstract var numberOfNestedBlocks: Int
 
     fun buildConstI32(value: Int, location: SourceLocation) {
@@ -43,7 +39,7 @@ abstract class WasmExpressionBuilder {
     @Suppress("UNUSED_PARAMETER")
     inline fun buildBlock(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
         numberOfNestedBlocks++
-        buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+        buildInstr(WasmOp.BLOCK, SourceLocation.NoLocation("BLOCK"), WasmImmediate.BlockType.Value(resultType))
         body(numberOfNestedBlocks)
         buildEnd()
     }
@@ -51,30 +47,34 @@ abstract class WasmExpressionBuilder {
     @Suppress("UNUSED_PARAMETER")
     inline fun buildLoop(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
         numberOfNestedBlocks++
-        buildInstr(WasmOp.LOOP, WasmImmediate.BlockType.Value(resultType))
+        buildInstr(WasmOp.LOOP, SourceLocation.NoLocation("LOOP"), WasmImmediate.BlockType.Value(resultType))
         body(numberOfNestedBlocks)
         buildEnd()
+    }
+
+    private fun buildInstrWithNoLocation(op: WasmOp, vararg immediates: WasmImmediate) {
+        buildInstr(op, SourceLocation.NoLocation(op.mnemonic), *immediates)
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun buildIf(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
-        buildInstr(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
+        buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
     }
 
     fun buildElse() {
-        buildInstr(WasmOp.ELSE)
+        buildInstrWithNoLocation(WasmOp.ELSE)
     }
 
     fun buildBlock(resultType: WasmType? = null): Int {
         numberOfNestedBlocks++
-        buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+        buildInstrWithNoLocation(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
         return numberOfNestedBlocks
     }
 
     fun buildEnd() {
         numberOfNestedBlocks--
-        buildInstr(WasmOp.END)
+        buildInstrWithNoLocation(WasmOp.END)
     }
 
 
@@ -101,11 +101,11 @@ abstract class WasmExpressionBuilder {
     @Suppress("UNUSED_PARAMETER")
     fun buildTry(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
-        buildInstr(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
+        buildInstrWithNoLocation(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
     }
 
     fun buildCatch(tagIdx: Int) {
-        buildInstr(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+        buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
     }
 
     fun buildBrIf(absoluteBlockLevel: Int, location: SourceLocation) {
