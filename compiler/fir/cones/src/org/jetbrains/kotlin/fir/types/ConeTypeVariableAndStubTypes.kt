@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
@@ -47,6 +50,8 @@ class ConeTypeVariableTypeConstructor(
     fun recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter() {
         isContainedInInvariantOrContravariantPositions = true
     }
+
+    override fun toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? = null
 }
 
 // ----------------------------------- Stub types -----------------------------------

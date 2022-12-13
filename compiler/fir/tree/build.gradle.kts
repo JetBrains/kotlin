@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:frontend.common"))
-    api(project(":compiler:fir:cones"))
+    api(kotlinxCollectionsImmutable())
 
     // Necessary only to store bound PsiElement inside FirElement
     compileOnly(intellijCore())
@@ -16,6 +16,9 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
+        this.kotlin {
+            this.srcDir("../cones/src")
+        }
         generatedDir()
     }
 }

@@ -153,7 +153,6 @@ val commonCompilerModules = arrayOf(
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
-    ":compiler:fir:cones",
     ":compiler:fir:providers",
     ":compiler:fir:semantics",
     ":compiler:fir:resolve",

@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
@@ -477,12 +476,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeFlexibleType -> this.upperBound.isNullableType()
             is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullableOrUnresolved()
             is ConeTypeVariableType -> {
-                val symbol = lookupTag.toSymbol(session) ?: return false
-                when (symbol) {
-                    is FirClassSymbol -> false
-                    is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
-                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullableOrUnresolved()
-                }
+                return false
+//                val symbol = lookupTag.toSymbol(session) ?: return false
+//                when (symbol) {
+//                    is FirClassSymbol -> false
+//                    is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
+//                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullableOrUnresolved()
+//                }
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
             is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false

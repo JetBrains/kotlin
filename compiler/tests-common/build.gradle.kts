@@ -21,7 +21,6 @@ dependencies {
     testApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testApi(project(":compiler:fir:fir-serialization"))
     testApi(project(":compiler:fir:fir-deserialization"))
-    testApi(project(":compiler:fir:cones"))
     testApi(project(":compiler:fir:resolve"))
     testApi(project(":compiler:fir:providers"))
     testApi(project(":compiler:fir:semantics"))

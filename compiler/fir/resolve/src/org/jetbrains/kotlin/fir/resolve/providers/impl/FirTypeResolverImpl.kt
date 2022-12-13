@@ -358,7 +358,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         ).also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
-                lookupTag.bindSymbolToLookupTag(session, symbol)
+                lookupTag.bindTo(session, symbol)
             }
         }
     }
@@ -491,7 +491,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return ConeClassLikeTypeImpl(
             symbol.toLookupTag().also {
                 if (it is ConeClassLikeLookupTagImpl) {
-                    it.bindSymbolToLookupTag(session, symbol)
+                    it.bindTo(session, symbol)
                 }
             },
             parameters.toTypedArray(),

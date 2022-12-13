@@ -30,39 +30,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.WeakPair
 
-fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? =
-    when (this) {
-        is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
-        is ConeClassifierLookupTagWithFixedSymbol -> this.symbol
-        else -> null
-    }
-
-@OptIn(LookupTagInternals::class)
-fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
-    if (this is ConeClassLookupTagWithFixedSymbol) {
-        return this.symbol
-    }
-    val firSymbolProvider = useSiteSession.symbolProvider
-    (this as? ConeClassLikeLookupTagImpl)?.boundSymbol?.takeIf { it.first === useSiteSession }?.let { return it.second }
-
-    return firSymbolProvider.getClassLikeSymbolByClassId(classId).also {
-        (this as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(useSiteSession, it)
-    }
-}
-
-@OptIn(LookupTagInternals::class)
 fun ConeClassLikeLookupTag.toSymbolOrError(useSiteSession: FirSession): FirClassLikeSymbol<*> =
     toSymbol(useSiteSession)
         ?: error("Class symbol with classId $classId was not found")
 
-@OptIn(LookupTagInternals::class)
 fun ConeClassLikeLookupTag.toFirRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
     session.symbolProvider.getSymbolByLookupTag(this) as? FirRegularClassSymbol
-
-@OptIn(LookupTagInternals::class)
-fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {
-    boundSymbol = WeakPair(session, symbol)
-}
 
 @LookupTagInternals
 fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? =

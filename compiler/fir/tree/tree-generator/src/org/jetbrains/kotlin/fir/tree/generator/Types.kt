@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,8 +40,8 @@ val fqNameType = type(FqName::class)
 val classIdType = type(ClassId::class)
 val annotationUseSiteTargetType = type(AnnotationUseSiteTarget::class)
 val operationKindType = type("fir.expressions", "LogicOperationKind")
-val coneKotlinTypeType = type(ConeKotlinType::class)
-val coneSimpleKotlinTypeType = type(ConeSimpleKotlinType::class)
+val coneKotlinTypeType = type("fir.types", "ConeKotlinType")
+val coneSimpleKotlinTypeType = type("fir.types", "ConeSimpleKotlinType")
 
 val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
 val safeCallOriginalReceiverReferenceType = generatedType("", "FirExpressionRef<FirExpression>")

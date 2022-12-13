@@ -6,7 +6,6 @@ plugins {
 dependencies {
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":compiler:backend.common.jvm"))
-    compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:providers"))
     compileOnly(project(":compiler:fir:semantics"))

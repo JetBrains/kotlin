@@ -17,7 +17,6 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             is ConeStubType -> 3
             is ConeIntegerLiteralConstantType -> 2
             is ConeIntegerConstantOperatorType -> 1
-            else -> 0
         }
 
     private fun compare(a: ConeTypeProjection, b: ConeTypeProjection): Int {
@@ -114,7 +113,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                     return hasLowerTypeDiff
                 }
                 if (a.lowerType != null && b.lowerType != null) {
-                    val lowerTypeDiff = compare(a.lowerType!!, b.lowerType!!)
+                    val lowerTypeDiff = compare(a.lowerType, b.lowerType)
                     if (lowerTypeDiff != 0) {
                         return lowerTypeDiff
                     }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -194,7 +193,7 @@ private fun fillAnnotationArgumentMapping(
     if (annotationArguments.isEmpty()) return
 
     val annotationClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId).also {
-        lookupTag.bindSymbolToLookupTag(session, it)
+        lookupTag.bindTo(session, it)
     }
     val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)
         ?.declarations

@@ -11,7 +11,6 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:deserialization"))
-    implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:providers"))
     implementation(project(":compiler:fir:semantics"))

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -15,6 +18,8 @@ abstract class ConeClassifierLookupTag : TypeConstructorMarker {
     override fun toString(): String {
         return name.asString()
     }
+
+    abstract fun toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>?
 }
 
 abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
@@ -22,5 +27,7 @@ abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
 
     override val name: Name
         get() = classId.shortClassName
+
+    abstract override fun toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>?
 }
 

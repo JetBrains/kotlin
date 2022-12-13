@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 class ConeClassLookupTagWithFixedSymbol(
@@ -26,4 +28,6 @@ class ConeClassLookupTagWithFixedSymbol(
     override fun hashCode(): Int {
         return symbol.hashCode()
     }
+
+    override fun toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? = symbol
 }

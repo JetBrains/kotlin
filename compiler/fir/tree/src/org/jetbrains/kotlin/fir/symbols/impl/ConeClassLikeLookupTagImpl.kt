@@ -6,12 +6,46 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.name.ClassId
+import java.text.DecimalFormat
 
 @RequiresOptIn
 annotation class LookupTagInternals
+
+object LookupTagBoundSymbolTracker : CacheTracker("ConeClassLikeLookupTagImpl")
+
+abstract class CacheTracker(val name: String) {
+
+    private var hits: Long = 0
+    private var misses: Long = 0
+    fun hit() {
+        hits++
+    }
+
+    fun miss() {
+        misses++
+    }
+
+    fun print() {
+        val numberFormat = DecimalFormat()
+        numberFormat.maximumFractionDigits = 3
+        println("$name: hits = ${hits}, misses = ${misses}, ratio = ${numberFormat.format(misses.toDouble() / (misses + hits))}")
+    }
+
+    init {
+        allTrackers.add(this)
+    }
+
+    companion object {
+        val allTrackers = mutableListOf<CacheTracker>()
+        fun print() {
+            allTrackers.forEach { it.print() }
+        }
+    }
+}
 
 class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag() {
 
@@ -19,8 +53,11 @@ class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeL
         assert(!classId.isLocal) { "You should use ConeClassLookupTagWithFixedSymbol for local $classId!" }
     }
 
-    @LookupTagInternals
-    var boundSymbol: WeakPair<FirSession, FirClassLikeSymbol<*>?>? = null
+    private var boundSymbol: WeakPair<FirSession, FirClassLikeSymbol<*>?>? = null
+
+    fun bindTo(useSiteSession: FirSession, value: FirClassLikeSymbol<*>?) {
+        boundSymbol = WeakPair(useSiteSession, value)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -35,5 +72,19 @@ class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeL
 
     override fun hashCode(): Int {
         return classId.hashCode()
+    }
+
+    override fun toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
+        val bound = boundSymbol
+        if (bound == null || bound.first !== useSiteSession) {
+            return findTargetSymbol(useSiteSession)
+        }
+        return bound.second
+    }
+
+    private fun findTargetSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
+        val symbol = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+        boundSymbol = WeakPair(useSiteSession, symbol)
+        return symbol
     }
 }

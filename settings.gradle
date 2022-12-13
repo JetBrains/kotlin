@@ -306,7 +306,6 @@ include ":kotlinx-atomicfu-compiler-plugin",
         ":atomicfu"
 
 include ":compiler:fir",
-        ":compiler:fir:cones",
         ":compiler:fir:tree",
         ":compiler:fir:tree:tree-generator",
         ":compiler:fir:raw-fir:raw-fir.common",

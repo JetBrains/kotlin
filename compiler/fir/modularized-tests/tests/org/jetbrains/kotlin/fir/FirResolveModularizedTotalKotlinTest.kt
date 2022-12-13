@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.symbols.impl.CacheTracker
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import sun.management.ManagementFactoryHelper
 import java.io.File
@@ -207,6 +209,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val disposable = Disposer.newDisposable()
         val configuration = createDefaultConfiguration(moduleData)
+        configuration.put(CommonConfigurationKeys.USE_FIR, true)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         PsiElementFinder.EP.getPoint(environment.project)
@@ -229,6 +232,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun afterPass(pass: Int) {
 
         asyncProfilerControl.afterPass(pass, reportDateStr)
+
+        CacheTracker.print()
 
         val statistics = bench.getTotalStatistics()
         statistics.report(System.out, "Pass $pass")
@@ -282,6 +287,14 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     private fun beforeAllPasses() {
+        println("Version: " + System.getProperty("java.version"))
+        println("JDK at: " + System.getProperty("java.home"))
+        println("java.runtime.version: " + System.getProperty("java.runtime.version"))
+        System.getProperties().forEach { (name, value) ->
+            if (name !is String) return@forEach
+            if (!name.startsWith("java")) return@forEach
+            println("$name: $value")
+        }
         isolate()
 
         if (REPORT_PASS_EVENTS) {

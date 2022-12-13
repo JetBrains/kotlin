@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:checkers"))

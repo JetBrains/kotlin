@@ -26,6 +26,8 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     }
 
     fun testTotalKotlin() {
+        println("Version: " + System.getProperty("java.version"))
+        println("JDK at: " + System.getProperty("java.home"))
         isolate()
         for (i in 0 until PASSES) {
             println("Pass $i")
