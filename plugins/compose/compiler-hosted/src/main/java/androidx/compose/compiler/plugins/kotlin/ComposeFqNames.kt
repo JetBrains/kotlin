@@ -124,6 +124,7 @@ object ComposeFqNames {
     val key = fqNameFor("key")
     val StableMarker = fqNameFor("StableMarker")
     val Stable = fqNameFor("Stable")
+    val Immutable = fqNameFor("Immutable")
     val Composer = ComposeClassIds.Composer.asSingleFqName()
     val ComposeVersion = fqNameFor("ComposeVersion")
     val Package = FqName(root)
