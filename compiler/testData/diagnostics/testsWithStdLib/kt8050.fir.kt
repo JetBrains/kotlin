@@ -1,4 +1,4 @@
-private class X
+ class X
 
 private operator fun X?.plus(p: Int) = X()
 
