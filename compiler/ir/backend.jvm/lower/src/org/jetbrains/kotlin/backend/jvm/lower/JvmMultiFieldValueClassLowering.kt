@@ -105,10 +105,15 @@ internal class JvmMultiFieldValueClassLowering(
             return expressions.subList(0, expressions.size - repeatable.size) to repeatable
         }
 
+        private fun IrBuilderWithScope.castedToNotNull(expression: IrExpression) =
+            if (expression.type.isNullable()) irImplicitCast(expression, expression.type.makeNotNull()) else expression
+
         fun IrBlockBuilder.addReplacement(expression: IrSetValue, safe: Boolean): IrExpression? {
-            oldValueSymbol2NewValueSymbol[expression.symbol]?.let { return irSet(it.owner, expression.value) }
+            oldValueSymbol2NewValueSymbol[expression.symbol]?.let {
+                return irSet(it.owner, expression.value).also { irSet -> +irSet }
+            }
             val instance = oldSymbol2MfvcNodeInstance[expression.symbol] ?: return null
-            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(instance.node, safe, expression.value)
+            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(instance.node, safe, castedToNotNull(expression.value))
             val setterExpressions = instance.makeSetterExpressions(this, values)
             expression2MfvcNodeInstanceAccessor[setterExpressions] = MfvcNodeInstanceAccessor.Setter(instance, values)
             +setterExpressions
@@ -151,12 +156,17 @@ internal class JvmMultiFieldValueClassLowering(
 
         fun IrBlockBuilder.addReplacement(expression: IrSetField, safe: Boolean): IrExpression? {
             val field = expression.field
-            expression.receiver?.get(this, field.name)?.let { +it; return it }
             val node = replacements.getMfvcFieldNode(field) ?: return null
-            val typeArguments = makeTypeArgumentsFromField(expression)
-            val instance: ReceiverBasedMfvcNodeInstance =
-                node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
-            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(node, safe, expression.value)
+            val instance = expression.receiver?.get(this, field.name)?.let {
+                (expression2MfvcNodeInstanceAccessor[it] as MfvcNodeInstanceAccessor.Getter).instance
+            } ?: node.createInstanceFromBox(
+                scope = this,
+                typeArguments = makeTypeArgumentsFromField(expression),
+                receiver = expression.receiver,
+                accessType = AccessType.AlwaysPrivate,
+                saveVariable = ::variablesSaver
+            )
+            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(node, safe, castedToNotNull(expression.value))
             val setterExpressions = instance.makeSetterExpressions(this, values)
             expression2MfvcNodeInstanceAccessor[setterExpressions] = MfvcNodeInstanceAccessor.Setter(instance, values)
             +setterExpressions
@@ -415,6 +425,12 @@ internal class JvmMultiFieldValueClassLowering(
                     override fun visitClass(declaration: IrClass): IrStatement = declaration
 
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                        if (expression.symbol.owner.constructedClass != constructor.constructedClass) { // Delegating constructor to Object
+                            require(expression.symbol.owner.constructedClass == context.irBuiltIns.anyClass.owner) {
+                                "Expected delegating constructor to the MFVC primary constructor or Any constructor but got: ${expression.symbol.owner.render()}"
+                            }
+                            return irBlock { }
+                        }
                         val oldPrimaryConstructor = replacements.getRootMfvcNode(constructor.constructedClass).oldPrimaryConstructor
                         thisVar.initializer = irCall(oldPrimaryConstructor).apply {
                             copyTypeAndValueArgumentsFrom(expression)
@@ -1252,7 +1268,12 @@ internal class JvmMultiFieldValueClassLowering(
                 return
             }
         }
-        val transformedExpression = expression.transform(this@JvmMultiFieldValueClassLowering, null)
+        val nullableTransformedExpression = expression.transform(this@JvmMultiFieldValueClassLowering, null)
+        val transformedExpression =
+            if (nullableTransformedExpression.type.isNullable())
+                irImplicitCast(nullableTransformedExpression, nullableTransformedExpression.type.makeNotNull())
+            else
+                nullableTransformedExpression
         val addedSettersToFlattened = valueDeclarationsRemapper.handleFlattenedGetterExpressions(this, transformedExpression) {
             require(it.size == instance.size) { "Incompatible assignment sizes: ${it.size}, ${instance.size}" }
             instance.makeSetterExpressions(this, it)

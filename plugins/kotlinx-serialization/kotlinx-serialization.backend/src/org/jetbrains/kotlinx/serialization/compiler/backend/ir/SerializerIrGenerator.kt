@@ -634,7 +634,7 @@ open class SerializerIrGenerator(
                     irClass,
                     context
                 )
-                serializableDesc.isValue -> SerializerForInlineClassGenerator(irClass, context)
+                serializableDesc.isSingleFieldValueClass -> SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()
