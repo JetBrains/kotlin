@@ -7,22 +7,16 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitor
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.Edge
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.UnionNodeMarker
-import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
-abstract class PathAwareControlFlowGraphVisitor<P : PathAwareControlFlowInfo<P, *>>
-    : ControlFlowGraphVisitor<P, Collection<Pair<EdgeLabel, P>>>() {
+abstract class PathAwareControlFlowGraphVisitor<P : PathAwareControlFlowInfo<P, *>> : ControlFlowGraphVisitor<P, P>() {
+    abstract val emptyInfo: P
 
-    protected abstract val emptyInfo: P
+    open fun visitEdge(from: CFGNode<*>, to: CFGNode<*>, metadata: Edge, data: P): P =
+        data.applyLabel(to, metadata.label) ?: emptyInfo
 
-    override fun visitNode(node: CFGNode<*>, data: Collection<Pair<EdgeLabel, P>>): P {
-        if (data.isEmpty()) return emptyInfo
-        return data.foldMap({ (label, info) -> info.applyLabel(node, label) }) { a, b -> a.merge(b) }
-    }
+    override fun visitNode(node: CFGNode<*>, data: P): P = data
 
-    override fun <T> visitUnionNode(node: T, data: Collection<Pair<EdgeLabel, P>>): P where T : CFGNode<*>, T : UnionNodeMarker {
-        if (data.isEmpty()) return emptyInfo
-        return data.foldMap({ (label, info) -> info.applyLabel(node, label) }) { a, b -> a.plus(b) }
-    }
+    override fun <T> visitUnionNode(node: T, data: P): P where T : CFGNode<*>, T : UnionNodeMarker = data
 }

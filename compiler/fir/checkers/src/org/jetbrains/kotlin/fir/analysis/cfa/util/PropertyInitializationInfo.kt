@@ -49,9 +49,6 @@ class PropertyInitializationInfo(
 
     override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
         ::PropertyInitializationInfo
-
-    override val empty: () -> PropertyInitializationInfo =
-        ::EMPTY
 }
 
 class PathAwarePropertyInitializationInfo(
@@ -63,7 +60,4 @@ class PathAwarePropertyInitializationInfo(
 
     override val constructor: (PersistentMap<EdgeLabel, PropertyInitializationInfo>) -> PathAwarePropertyInitializationInfo =
         ::PathAwarePropertyInitializationInfo
-
-    override val empty: () -> PathAwarePropertyInitializationInfo =
-        ::EMPTY
 }

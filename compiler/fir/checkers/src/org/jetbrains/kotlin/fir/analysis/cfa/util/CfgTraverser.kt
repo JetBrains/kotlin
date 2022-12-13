@@ -33,10 +33,10 @@ fun ControlFlowGraph.traverse(
 
 // ---------------------- Path-sensitive data collection -----------------------
 
-fun <I> ControlFlowGraph.collectDataForNode(
+fun <I : PathAwareControlFlowInfo<I, *>> ControlFlowGraph.collectDataForNode(
     direction: TraverseDirection,
     initialInfo: I,
-    visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
+    visitor: PathAwareControlFlowGraphVisitor<I>,
     visitSubGraphs: Boolean = true
 ): Map<CFGNode<*>, I> {
     val nodeMap = LinkedHashMap<CFGNode<*>, I>()
@@ -51,10 +51,10 @@ fun <I> ControlFlowGraph.collectDataForNode(
     return nodeMap
 }
 
-private fun <I> ControlFlowGraph.collectDataForNodeInternal(
+private fun <I : PathAwareControlFlowInfo<I, *>> ControlFlowGraph.collectDataForNodeInternal(
     direction: TraverseDirection,
     initialInfo: I,
-    visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
+    visitor: PathAwareControlFlowGraphVisitor<I>,
     nodeMap: MutableMap<CFGNode<*>, I>,
     visitSubGraphs: Boolean = true
 ): Boolean {
@@ -68,18 +68,21 @@ private fun <I> ControlFlowGraph.collectDataForNodeInternal(
             TraverseDirection.Forward -> node.previousCfgNodes
             TraverseDirection.Backward -> node.followingCfgNodes
         }
-        // One noticeable different against the path-unaware version is, here, we pair the control-flow info with the label.
         val previousData =
             previousNodes.mapNotNull {
                 val k = when (direction) {
-                    TraverseDirection.Forward -> node.edgeFrom(it).label
-                    TraverseDirection.Backward -> node.edgeTo(it).label
+                    TraverseDirection.Forward -> node.edgeFrom(it)
+                    TraverseDirection.Backward -> node.edgeTo(it)
                 }
                 val v = nodeMap[it] ?: return@mapNotNull null
-                k to v
+                visitor.visitEdge(it, node, k, v)
             }
+        val reduced = if (node is UnionNodeMarker)
+            previousData.reduceOrNull { a, b -> a.plus(b) }
+        else
+            previousData.reduceOrNull { a, b -> a.merge(b) }
         val data = nodeMap[node]
-        val newData = node.accept(visitor, previousData)
+        val newData = node.accept(visitor, reduced ?: visitor.emptyInfo)
         val hasChanged = newData != data
         changed = changed or hasChanged
         if (hasChanged) {

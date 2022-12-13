@@ -16,7 +16,7 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
     internal val infoAtNormalPath: S
         get() = map.getValue(NormalPath)
 
-    fun applyLabel(node: CFGNode<*>, label: EdgeLabel): P {
+    fun applyLabel(node: CFGNode<*>, label: EdgeLabel): P? {
         if (label.isNormal) {
             // Special case: when we exit the try expression, null label means a normal path.
             // Filter out any info bound to non-null label
@@ -28,7 +28,7 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
                     constructor(persistentMapOf(NormalPath to infoAtNormalPath))
                 } else {
                     /* This means no info for normal path. */
-                    empty()
+                    null
                 }
             }
             // In general, null label means no additional path info, hence return `this` as-is.
@@ -58,7 +58,7 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
                 }
             } else {
                 /* This means no info for the specific label. */
-                empty()
+                null
             }
         } else {
             // { |-> ... }    // empty path info
