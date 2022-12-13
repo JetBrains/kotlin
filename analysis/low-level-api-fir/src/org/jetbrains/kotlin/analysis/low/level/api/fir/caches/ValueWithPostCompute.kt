@@ -26,7 +26,8 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
 ) {
     private var _calculate: ((KEY) -> Pair<VALUE, DATA>)? = calculate
     private var _postCompute: ((KEY, VALUE, DATA) -> Unit)? = postCompute
-    private val lock = ReentrantLock()
+    private var lock: ReentrantLock? = ReentrantLock()
+    private var guard: ThreadLocal<Boolean>? = ThreadLocal.withInitial { false }
 
     /**
      * can be in one of the following three states:
@@ -41,16 +42,15 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     @Volatile
     private var value: Any? = ValueIsNotComputed
 
-    private val guard = ThreadLocal.withInitial { false }
     private inline fun <T> recursiveGuarded(body: () -> T): T {
-        check(!guard.get()) {
+        check(!guard!!.get()) {
             "Should not be called recursively"
         }
-        guard.set(true)
+        guard!!.set(true)
         return try {
             body()
         } finally {
-            guard.set(false)
+            guard!!.set(false)
         }
     }
 
@@ -61,7 +61,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                 if (stateSnapshot.threadId == Thread.currentThread().id) {
                     return stateSnapshot.value as VALUE
                 } else {
-                    lock.lockWithPCECheck(LOCKING_INTERVAL_MS) { // wait until other thread which holds the lock now computes the value
+                    lock!!.lockWithPCECheck(LOCKING_INTERVAL_MS) { // wait until other thread which holds the lock now computes the value
                         when (val newStateSnapshot = value) {
                             ValueIsNotComputed -> {
                                 // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
@@ -80,7 +80,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     }
                 }
             }
-            ValueIsNotComputed -> lock.lockWithPCECheck(LOCKING_INTERVAL_MS) {
+            ValueIsNotComputed -> lock!!.lockWithPCECheck(LOCKING_INTERVAL_MS) {
                 return computeValueWithoutLock()
             }
             is ExceptionWasThrownDuringValueComputation -> {
@@ -95,7 +95,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     @Suppress("UNCHECKED_CAST")
     // should be called under a synchronized section
     private fun computeValueWithoutLock(): VALUE {
-        require(lock.isHeldByCurrentThread)
+        require(lock!!.isHeldByCurrentThread)
         // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
         // or the some other thread calculated the value while we were waiting to acquire the lock
 
@@ -130,6 +130,8 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         }
         _calculate = null
         _postCompute = null
+        lock = null
+        guard = null
         value = calculatedValue
         return calculatedValue
     }
