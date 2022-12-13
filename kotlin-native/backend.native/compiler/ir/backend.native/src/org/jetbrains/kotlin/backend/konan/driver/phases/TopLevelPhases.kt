@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
-import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
@@ -51,14 +50,21 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, module: IrModuleFragment) {
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
-        backendEngine.splitIntoFragments(module).forEach { (generationState, fragment) ->
-            backendEngine.useContext(generationState) { generationStateEngine ->
-                println("Compiling fragment with files ${fragment.files.joinToString { it.name }}")
-                generationStateEngine.runLowerings(fragment)
-                val bitcodeFileName = generationStateEngine../runCodegen(fragment)
-                generationStateEngine.produceBinary(bitcodeFileName)
-            }
-        }
+        val fragments = backendEngine.splitIntoFragments(module)
+        backendEngine.useContextsInParallel(
+                fragments,
+                nThreads = context.config.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1,
+                sequentialAction = { engine, module ->
+                    println("Running sequential action on thread ${Thread.currentThread().name}")
+                    engine.runLowerings(module)
+                    module
+                },
+                parallelAction = { engine, module ->
+                    println("Running parallel action on thread ${Thread.currentThread().name}")
+                    val bitcodeFileName = engine.runCodegen(module)
+                    engine.produceBinary(bitcodeFileName)
+                }
+        )
     }
 }
 

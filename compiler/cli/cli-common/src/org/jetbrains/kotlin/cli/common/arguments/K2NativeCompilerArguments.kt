@@ -394,6 +394,15 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xforce-compiler-driver", description = "Force compiler to use specific compiler driver: static or dynamic")
     var forceCompilerDriver: String? = null
 
+    @Argument(
+        value = "-Xbackend-threads",
+        valueDescription = "<N>",
+        description = "When using the IR backend, run lowerings by file in N parallel threads.\n" +
+                "0 means use a thread per processor core.\n" +
+                "Default value is 1"
+    )
+    var backendThreads: String by FreezableVar("1")
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>

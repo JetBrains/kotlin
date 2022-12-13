@@ -368,6 +368,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(PARTIAL_LINKAGE, arguments.partialLinkage)
                 put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
                 putIfNotNull(FORCE_COMPILER_DRIVER, arguments.forceCompilerDriver)
+
+                val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
+                val nThreads = if (nThreadsRaw == 0) Runtime.getRuntime().availableProcessors() else nThreadsRaw
+                if (nThreads > 1) {
+                    println("Running backend in parallel with $nThreads threads")
+                }
+                put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, nThreads)
             }
         }
     }
@@ -398,6 +405,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             }
         }
     }
+}
+
+private fun parseBackendThreads(stringValue: String): Int {
+    val value = stringValue.toIntOrNull()
+    if (value == null) {
+        throw KonanCompilationException("Cannot parse -Xbackend-threads value: \"$stringValue\". Please use an integer number")
+    }
+    if (value < 0) {
+        throw KonanCompilationException("-Xbackend-threads value cannot be negative")
+    }
+    return value
 }
 
 private fun selectFrameworkType(

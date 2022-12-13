@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Context is a set of resources that is shared between different phases. PhaseContext is a "minimal context",
@@ -117,6 +120,34 @@ internal class PhaseEngine<C : PhaseContext>(
             return action(newEngine)
         } finally {
             newContext.dispose()
+        }
+    }
+
+    inline fun <Ctx : PhaseContext, SequentialData, ParallelData, ResultData> useContextsInParallel(
+            contexts: Sequence<Pair<Ctx, SequentialData>>,
+            nThreads: Int = 1,
+            crossinline sequentialAction: (PhaseEngine<Ctx>, SequentialData) -> ParallelData,
+            crossinline parallelAction: (PhaseEngine<Ctx>, ParallelData) -> ResultData
+    ): List<ResultData> {
+        val engines = contexts.map {
+            PhaseEngine(phaseConfig, phaserState, it.first) to it.second
+        }
+        val executor = Executors.newFixedThreadPool(nThreads)
+        try {
+            println("Running in sequence")
+            val parallelData = engines.map { (engine, data) ->
+                engine to sequentialAction(engine, data)
+            }.toList()
+            println("Running in parallel")
+            val tasks = parallelData.map { (engine, data) ->
+                Callable { parallelAction(engine, data) }
+            }
+            // Aggregate results for the next sequential part of pipeline (e.g. Linker).
+            return executor.invokeAll(tasks).map { it.get() }
+        } finally {
+            executor.shutdown()
+            executor.awaitTermination(1, TimeUnit.DAYS)
+            contexts.forEach { it.first.dispose() }
         }
     }
 
