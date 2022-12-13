@@ -158,9 +158,10 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.STRUCT_NEW, location, WasmImmediate.GcType(struct))
     }
 
-    fun buildStructSet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>) {
+    fun buildStructSet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>, location: SourceLocation) {
         buildInstr(
             WasmOp.STRUCT_SET,
+            location,
             WasmImmediate.GcType(struct),
             WasmImmediate.StructFieldIdx(fieldId)
         )
