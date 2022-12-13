@@ -118,7 +118,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
             _postCompute!!(key, calculated, data)
             calculated
         } catch (e: Throwable) {
-            if (exceptionShouldBeSavedInCache(e)) {
+            if (e is Exception && exceptionShouldBeSavedInCache(e)) {
                 value = ExceptionWasThrownDuringValueComputation(e)
             } else {
                 value = ValueIsNotComputed
@@ -131,7 +131,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         return calculatedValue
     }
 
-    private fun exceptionShouldBeSavedInCache(exception: Throwable): Boolean =
+    private fun exceptionShouldBeSavedInCache(exception: Exception): Boolean =
         !shouldIjPlatformExceptionBeRethrown(exception)
 
 

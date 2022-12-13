@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.utils.errors
 
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.util.SourceCodeAnalysisException
+import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -59,13 +61,25 @@ public inline fun KotlinExceptionWithAttachments.buildAttachment(
 
 public inline fun buildErrorWithAttachment(
     message: String,
-    cause: Throwable? = null,
+    cause: Exception? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
 ): Nothing {
     val exception = KotlinExceptionWithAttachments(message, cause)
     exception.buildAttachment(attachmentName) { buildAttachment() }
     throw exception
+}
+
+public inline fun rethrowExceptionWithDetails(
+    message: String,
+    exception: Exception,
+    attachmentName: String = "info.txt",
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+): Nothing {
+    if (shouldIjPlatformExceptionBeRethrown(exception)) throw exception
+    val unwrappedException = if (exception is SourceCodeAnalysisException) exception.cause else exception
+    if (unwrappedException !is Exception) throw unwrappedException
+    buildErrorWithAttachment(message, unwrappedException, attachmentName, buildAttachment)
 }
 
 

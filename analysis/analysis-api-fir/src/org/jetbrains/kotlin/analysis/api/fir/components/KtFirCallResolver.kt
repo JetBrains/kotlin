@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.util.SourceCodeAnalysisException
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
@@ -30,11 +29,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -71,11 +75,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -1236,11 +1235,10 @@ internal class KtFirCallResolver(
     private inline fun <R> wrapError(element: KtElement, action: () -> R): R {
         return try {
             action()
-        } catch (e: Throwable) {
-            if (shouldIjPlatformExceptionBeRethrown(e)) throw e
-            buildErrorWithAttachment(
+        } catch (e: Exception) {
+            rethrowExceptionWithDetails(
                 "Error during resolving call ${element::class.java.name}",
-                cause = if (e is SourceCodeAnalysisException) e.cause else e,
+                exception = e,
             ) {
                 withPsiEntry("psi", element)
                 element.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }

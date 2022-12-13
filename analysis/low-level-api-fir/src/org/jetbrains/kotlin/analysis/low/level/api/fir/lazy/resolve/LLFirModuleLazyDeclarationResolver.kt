@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTra
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.declarations.*
@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.util.SourceCodeAnalysisException
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
 
@@ -87,8 +85,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                     scopeSession = scopeSession,
                 )
             }
-        } catch (e: Throwable) {
-            handleExceptionFromResolve(e,moduleComponents.sessionInvalidator, firFile, fromPhase, toPhase)
+        } catch (e: Exception) {
+            handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, firFile, fromPhase, toPhase)
         }
     }
 
@@ -184,7 +182,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         val fromPhase = target.resolvePhase
         try {
             doLazyResolve(target, scopeSession, toPhase)
-        } catch (e: Throwable) {
+        } catch (e: Exception) {
             handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, target, fromPhase, toPhase)
         }
     }
@@ -346,15 +344,14 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 }
 
 private fun handleExceptionFromResolve(
-    e: Throwable,
+    exception: Exception,
     sessionInvalidator: LLFirSessionInvalidator,
     firDeclarationToResolve: FirElementWithResolvePhase,
     fromPhase: FirResolvePhase,
     toPhase: FirResolvePhase?
 ): Nothing {
     sessionInvalidator.invalidate(firDeclarationToResolve.llFirSession)
-    if (shouldIjPlatformExceptionBeRethrown(e)) throw e
-    buildErrorWithAttachment(
+    rethrowExceptionWithDetails(
         buildString {
             val moduleData = firDeclarationToResolve.llFirModuleData
             appendLine("Error while resolving ${firDeclarationToResolve::class.java.name} ")
@@ -366,7 +363,7 @@ private fun handleExceptionFromResolve(
             appendLine("KtModule: ${moduleData.ktModule::class}")
             appendLine("platform: ${moduleData.ktModule.platform}")
         },
-        cause = if (e is SourceCodeAnalysisException) e.cause else e,
+        exception = exception,
     ) {
         withEntry("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
         withEntry("session", firDeclarationToResolve.llFirSession) { it.toString() }
