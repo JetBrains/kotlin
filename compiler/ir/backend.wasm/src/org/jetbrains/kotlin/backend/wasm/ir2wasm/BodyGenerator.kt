@@ -156,7 +156,7 @@ class BodyGenerator(
         // Exception object is on top of the stack, store it into the local
         aTry.catches.single().catchParameter.symbol.let {
             functionContext.defineLocal(it)
-            body.buildSetLocal(functionContext.referenceLocal(it))
+            body.buildSetLocal(functionContext.referenceLocal(it), it.owner.getSourceLocation())
         }
         generateExpression(aTry.catches.single().result)
 
@@ -253,7 +253,7 @@ class BodyGenerator(
 
     override fun visitSetValue(expression: IrSetValue) {
         generateExpression(expression.value)
-        body.buildSetLocal(functionContext.referenceLocal(expression.symbol))
+        body.buildSetLocal(functionContext.referenceLocal(expression.symbol), expression.getSourceLocation())
         body.commentPreviousInstr { "type: ${expression.symbol.owner.type.render()}" }
         body.buildGetUnit()
     }
@@ -330,7 +330,7 @@ class BodyGenerator(
                 }
             }
             body.buildStructNew(context.referenceGcType(parentClass.symbol))
-            body.buildSetLocal(thisParameter)
+            body.buildSetLocal(thisParameter, location)
             body.buildEnd()
         }
         body.commentGroupEnd()
@@ -526,7 +526,7 @@ class BodyGenerator(
                     if (irInterface.symbol in hierarchyDisjointUnions) {
                         val classITable = context.referenceClassITableGcType(irInterface.symbol)
                         val parameterLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
-                        body.buildSetLocal(parameterLocal)
+                        body.buildSetLocal(parameterLocal, location)
                         body.buildBlock("isInterface", WasmI32) { outerLabel ->
                             body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
                                 body.buildGetLocal(parameterLocal, location)
@@ -871,7 +871,7 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName)
+        body.buildSetLocal(varName, declaration.getSourceLocation())
     }
 
     // Return true if function is recognized as intrinsic.
@@ -921,5 +921,5 @@ class BodyGenerator(
         return false
     }
 
-    private fun IrExpression.getSourceLocation() = getSourceLocation(functionContext.irFunction.fileOrNull?.fileEntry)
+    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.irFunction.fileOrNull?.fileEntry)
 }

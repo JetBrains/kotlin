@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-fun IrExpression.getSourceLocation(fileEntry: IrFileEntry?): SourceLocation {
+fun IrElement.getSourceLocation(fileEntry: IrFileEntry?): SourceLocation {
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
 
     val path = fileEntry.name

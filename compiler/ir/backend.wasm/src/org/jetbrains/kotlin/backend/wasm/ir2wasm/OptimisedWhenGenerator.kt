@@ -61,7 +61,10 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
 
     val selectorLocal = functionContext.referenceLocal(SyntheticLocalType.TABLE_SWITCH_SELECTOR)
     generateExpression(subject)
-    body.buildSetLocal(selectorLocal)
+
+    // TODO test
+    val noLocation = SourceLocation.NoLocation("When's binary search infra")
+    body.buildSetLocal(selectorLocal, noLocation)
 
     val resultType = context.transformBlockResultType(expression.type)
     //int overflow or load is too small then make table switch
@@ -77,7 +80,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
             )
         } else {
             createBinaryTable(selectorLocal, intBranches)
-            body.buildSetLocal(selectorLocal)
+            body.buildSetLocal(selectorLocal, noLocation)
             genTableIntSwitch(
                 selectorLocal = selectorLocal,
                 resultType = resultType,
