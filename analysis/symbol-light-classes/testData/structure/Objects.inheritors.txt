@@ -1,22 +1,22 @@
-two.Object|java.lang.Object|false| -> true
-two.Object|java.lang.Object|true| -> true
-two.Object|two.BaseInterface|false| -> false
-two.Object|two.BaseInterface|true| -> false
-two.ObjectWithInterface|two.BaseInterface|false| -> true
-two.ObjectWithInterface|two.BaseInterface|true| -> true
-two.ObjectWithInterface|java.lang.Object|false| -> true
-two.ObjectWithInterface|java.lang.Object|true| -> true
-two.ObjectWithClassAndInterface|java.lang.Object|false| -> false
-two.ObjectWithClassAndInterface|java.lang.Object|true| -> true
-two.ObjectWithClassAndInterface|two.NonBaseClass|false| -> true
-two.ObjectWithClassAndInterface|two.NonBaseClass|true| -> true
-two.ObjectWithClassAndInterface|two.NonBaseInterface|false| -> true
-two.ObjectWithClassAndInterface|two.NonBaseInterface|true| -> true
-two.ObjectWithClassAndJavaInterface|java.lang.Object|false| -> false
-two.ObjectWithClassAndJavaInterface|java.lang.Object|true| -> true
-two.ObjectWithClassAndJavaInterface|two.NonBaseClass|false| -> true
-two.ObjectWithClassAndJavaInterface|two.NonBaseClass|true| -> true
-two.ObjectWithClassAndJavaInterface|two.NonBaseInterface|false| -> false
-two.ObjectWithClassAndJavaInterface|two.NonBaseInterface|true| -> false
-two.ObjectWithClassAndJavaInterface|java.lang.Runnable|false| -> true
-two.ObjectWithClassAndJavaInterface|java.lang.Runnable|true| -> true
+subClass: two.Object, superClass: java.lang.Object, deepSearch: false -> true
+subClass: two.Object, superClass: java.lang.Object, deepSearch: true -> true
+subClass: two.Object, superClass: two.BaseInterface, deepSearch: false -> false
+subClass: two.Object, superClass: two.BaseInterface, deepSearch: true -> false
+subClass: two.ObjectWithInterface, superClass: two.BaseInterface, deepSearch: false -> true
+subClass: two.ObjectWithInterface, superClass: two.BaseInterface, deepSearch: true -> true
+subClass: two.ObjectWithInterface, superClass: java.lang.Object, deepSearch: false -> true
+subClass: two.ObjectWithInterface, superClass: java.lang.Object, deepSearch: true -> true
+subClass: two.ObjectWithClassAndInterface, superClass: java.lang.Object, deepSearch: false -> false
+subClass: two.ObjectWithClassAndInterface, superClass: java.lang.Object, deepSearch: true -> true
+subClass: two.ObjectWithClassAndInterface, superClass: two.NonBaseClass, deepSearch: false -> true
+subClass: two.ObjectWithClassAndInterface, superClass: two.NonBaseClass, deepSearch: true -> true
+subClass: two.ObjectWithClassAndInterface, superClass: two.NonBaseInterface, deepSearch: false -> true
+subClass: two.ObjectWithClassAndInterface, superClass: two.NonBaseInterface, deepSearch: true -> true
+subClass: two.ObjectWithClassAndJavaInterface, superClass: java.lang.Object, deepSearch: false -> false
+subClass: two.ObjectWithClassAndJavaInterface, superClass: java.lang.Object, deepSearch: true -> true
+subClass: two.ObjectWithClassAndJavaInterface, superClass: two.NonBaseClass, deepSearch: false -> true
+subClass: two.ObjectWithClassAndJavaInterface, superClass: two.NonBaseClass, deepSearch: true -> true
+subClass: two.ObjectWithClassAndJavaInterface, superClass: two.NonBaseInterface, deepSearch: false -> false
+subClass: two.ObjectWithClassAndJavaInterface, superClass: two.NonBaseInterface, deepSearch: true -> false
+subClass: two.ObjectWithClassAndJavaInterface, superClass: java.lang.Runnable, deepSearch: false -> true
+subClass: two.ObjectWithClassAndJavaInterface, superClass: java.lang.Runnable, deepSearch: true -> true

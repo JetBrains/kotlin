@@ -25,6 +25,8 @@ import kotlin.io.path.forEachLine
 import kotlin.io.path.notExists
 
 private const val INHERITORS_EXTENSION = "inheritors.txt"
+private const val PAIRS_DELIMITER = ", "
+private const val VALUE_DELIMITER = ": "
 
 abstract class AbstractSymbolLightClassesStructureTest(
     configurator: AnalysisApiTestConfigurator,
@@ -60,12 +62,21 @@ abstract class AbstractSymbolLightClassesStructureTest(
         val queries = parseInheritorsFile(testData)
         val result = buildString {
             for (query in queries) {
+                append("subClass")
+                append(VALUE_DELIMITER)
                 append(query.fqNameToCheck)
-                append('|')
+                append(PAIRS_DELIMITER)
+
+                append("superClass")
+                append(VALUE_DELIMITER)
                 append(query.baseFqName)
-                append('|')
+                append(PAIRS_DELIMITER)
+
+                append("deepSearch")
+                append(VALUE_DELIMITER)
                 append(query.deep.toString())
-                append("| -> ")
+
+                append(" -> ")
                 appendLine(query.isInheritor(project).toString())
             }
         }
@@ -89,10 +100,21 @@ abstract class AbstractSymbolLightClassesStructureTest(
         path.forEachLine { line: String ->
             if (line.isBlank()) return@forEachLine
 
-            val arguments = line.split('|')
-            val fqNameToCheck = arguments.getOrNull(0) ?: wrongInheritorStructure(line)
-            val baseFqName = arguments.getOrNull(1) ?: wrongInheritorStructure(line)
-            val deep = arguments.getOrNull(2)?.toBoolean() ?: wrongInheritorStructure(line)
+            val arguments = line.split(PAIRS_DELIMITER)
+            val fqNameToCheck = arguments.getOrNull(0)
+                ?.substringAfter(VALUE_DELIMITER)
+                ?: wrongInheritorStructure(line)
+
+            val baseFqName = arguments.getOrNull(1)
+                ?.substringAfter(VALUE_DELIMITER)
+                ?: wrongInheritorStructure(line)
+
+            val deep = arguments.getOrNull(2)
+                ?.substringAfter(VALUE_DELIMITER)
+                ?.substringBefore(' ')
+                ?.toBoolean()
+                ?: wrongInheritorStructure(line)
+
             add(InheritorStructure(fqNameToCheck = fqNameToCheck, baseFqName = baseFqName, deep = deep))
         }
     }.toSet()

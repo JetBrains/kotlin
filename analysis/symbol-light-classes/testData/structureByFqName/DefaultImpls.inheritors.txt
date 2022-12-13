@@ -1,2 +1,2 @@
-one.two.MyInterface.DefaultImpls|java.lang.Object|false| -> true
-one.two.MyInterface.DefaultImpls|java.lang.Object|true| -> true
+subClass: one.two.MyInterface.DefaultImpls, superClass: java.lang.Object, deepSearch: false -> true
+subClass: one.two.MyInterface.DefaultImpls, superClass: java.lang.Object, deepSearch: true -> true

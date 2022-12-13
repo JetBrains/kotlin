@@ -1,12 +1,12 @@
-cba.ChildOfOpen|cba.OpenClassFromAbstractClass|false| -> true
-cba.ChildOfOpen|cba.OpenClassFromAbstractClass|true| -> true
-cba.ChildOfOpen|java.lang.Object|false| -> false
-cba.ChildOfOpen|java.lang.Object|true| -> true
-cba.ChildOfOpen|cba.AbstractClass|false| -> false
-cba.ChildOfOpen|cba.AbstractClass|true| -> true
-cba.OpenClassFromAbstractClass|cba.AbstractClass|false| -> true
-cba.OpenClassFromAbstractClass|cba.AbstractClass|true| -> true
-cba.OpenClassFromAbstractClass|cba.OpenClassFromAbstractClass|false| -> false
-cba.OpenClassFromAbstractClass|cba.OpenClassFromAbstractClass|true| -> false
-cba.OpenClassFromAbstractClass|cba.FinalClass|false| -> false
-cba.OpenClassFromAbstractClass|cba.FinalClass|true| -> false
+subClass: cba.ChildOfOpen, superClass: cba.OpenClassFromAbstractClass, deepSearch: false -> true
+subClass: cba.ChildOfOpen, superClass: cba.OpenClassFromAbstractClass, deepSearch: true -> true
+subClass: cba.ChildOfOpen, superClass: java.lang.Object, deepSearch: false -> false
+subClass: cba.ChildOfOpen, superClass: java.lang.Object, deepSearch: true -> true
+subClass: cba.ChildOfOpen, superClass: cba.AbstractClass, deepSearch: false -> false
+subClass: cba.ChildOfOpen, superClass: cba.AbstractClass, deepSearch: true -> true
+subClass: cba.OpenClassFromAbstractClass, superClass: cba.AbstractClass, deepSearch: false -> true
+subClass: cba.OpenClassFromAbstractClass, superClass: cba.AbstractClass, deepSearch: true -> true
+subClass: cba.OpenClassFromAbstractClass, superClass: cba.OpenClassFromAbstractClass, deepSearch: false -> false
+subClass: cba.OpenClassFromAbstractClass, superClass: cba.OpenClassFromAbstractClass, deepSearch: true -> false
+subClass: cba.OpenClassFromAbstractClass, superClass: cba.FinalClass, deepSearch: false -> false
+subClass: cba.OpenClassFromAbstractClass, superClass: cba.FinalClass, deepSearch: true -> false
