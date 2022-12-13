@@ -454,6 +454,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+
+    internal val multipleFrameworks: Boolean by lazy {
+        configuration.getBoolean(KonanConfigKeys.MULTIPLE_FRAMEWORKS)
+    }
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

@@ -26,7 +26,11 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
                         CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
-                        CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
+                        CompilerOutputKind.FRAMEWORK -> if (!config.multipleFrameworks) {
+                            produceObjCFramework(engine, config, environment)
+                        } else {
+                            produceMultipleObjCFrameworks(engine, config, environment)
+                        }
                         CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
                         CompilerOutputKind.BITCODE -> error("Dynamic compiler driver does not support `bitcode` output yet.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
@@ -36,6 +40,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                 }
             }
         }
+    }
+
+    // Experiment with producing framework per klib.
+    private fun produceMultipleObjCFrameworks(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
+        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
     }
 
     /**
