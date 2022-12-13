@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
@@ -108,7 +109,7 @@ class JsIrBackendContext(
 
     val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
-        FqName("kotlin")
+        StandardClassIds.BASE_KOTLIN_PACKAGE
     )
 
     val packageLevelJsModules = mutableSetOf<IrFile>()
@@ -133,8 +134,7 @@ class JsIrBackendContext(
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     companion object {
-        val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
-
+        val KOTLIN_PACKAGE_FQN = StandardClassIds.BASE_KOTLIN_PACKAGE
 
         // TODO: what is more clear way reference this getter?
         private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))

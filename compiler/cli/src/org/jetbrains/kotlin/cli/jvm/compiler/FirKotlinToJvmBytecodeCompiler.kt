@@ -435,9 +435,8 @@ fun findMainClass(fir: List<FirFile>): FqName? {
                 else -> return
             }
 
-            compatibleClasses += FqName.fromSegments(
-                file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt").capitalize()}Kt"
-            )
+            compatibleClasses +=
+                file.packageFqName.child(Name.identifier("${file.name.removeSuffix(".kt").capitalize()}Kt"))
         }
     }
     fir.forEach { it.accept(visitor) }

@@ -25,7 +25,7 @@ object KtFirArrayOfSymbolProvider {
         return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firSymbol)
     }
 
-    private val kotlinPackage = FqName("kotlin")
+    private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
     internal val arrayOf = Name.identifier("arrayOf")
     internal val arrayTypeToArrayOfCall = run {
         StandardClassIds.primitiveArrayTypeByElementType.values + StandardClassIds.unsignedArrayTypeByElementType.values

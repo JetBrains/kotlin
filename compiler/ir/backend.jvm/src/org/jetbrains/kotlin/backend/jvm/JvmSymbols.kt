@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -48,20 +49,20 @@ class JvmSymbols(
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val irFactory = context.irFactory
 
-    private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
-    private val kotlinCoroutinesPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines"))
+    private val kotlinPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_KOTLIN_PACKAGE)
+    private val kotlinCoroutinesPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_COROUTINES_PACKAGE)
     private val kotlinCoroutinesJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines.jvm.internal"))
-    private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
-    private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
+    private val kotlinJvmPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_JVM_PACKAGE)
+    private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_JVM_INTERNAL_PACKAGE)
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
-    private val kotlinEnumsPackage: IrPackageFragment = createPackage(FqName("kotlin.enums"))
-    private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
+    private val kotlinEnumsPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_ENUMS_PACKAGE)
+    private val kotlinReflectPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_REFLECT_PACKAGE)
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
     private val javaUtilPackage: IrPackageFragment = createPackage(FqName("java.util"))
 
 
-    private val kotlinInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.internal"))
+    private val kotlinInternalPackage: IrPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_PACKAGE)
 
     // Special package for functions representing dynamic symbols referenced by 'INVOKEDYNAMIC' instruction - e.g.,
     //  'get(Ljava/lang/String;)Ljava/util/function/Supplier;'

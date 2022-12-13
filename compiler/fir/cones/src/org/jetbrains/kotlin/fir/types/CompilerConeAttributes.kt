@@ -55,7 +55,7 @@ object CompilerConeAttributes {
     }
 
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
+        val ANNOTATION_CLASS_ID = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("ExtensionFunctionType"))
 
         override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
         override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType = this
@@ -95,7 +95,7 @@ object CompilerConeAttributes {
     }
 
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
+        val ANNOTATION_CLASS_ID = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("UnsafeVariance"))
 
         override fun union(other: UnsafeVariance?): UnsafeVariance? = null
         override fun intersect(other: UnsafeVariance?): UnsafeVariance? = null

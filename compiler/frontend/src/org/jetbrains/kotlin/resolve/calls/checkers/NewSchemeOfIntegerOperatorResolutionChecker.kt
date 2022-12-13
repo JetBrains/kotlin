@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -115,10 +117,13 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         return descriptor.fqNameSafe in literalOperatorsFqNames
     }
 
-    private val literalOperatorsFqNames: Set<FqName> = listOf(
-        "plus", "minus", "times", "div", "rem", "plus", "minus",
-        "times", "div", "rem", "shl", "shr", "ushr", "and", "or",
-        "xor", "unaryPlus", "unaryMinus", "inv",
-    ).mapTo(mutableSetOf()) { FqName.fromSegments(listOf("kotlin", "Int", it)) }
+    private val literalOperatorsFqNames: Set<FqName> = run {
+        val baseFqName = StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("Int"))
+        listOf(
+            "plus", "minus", "times", "div", "rem", "plus", "minus",
+            "times", "div", "rem", "shl", "shr", "ushr", "and", "or",
+            "xor", "unaryPlus", "unaryMinus", "inv",
+        ).mapTo(mutableSetOf()) { baseFqName.child(Name.identifier(it)) }
+    }
 }
 

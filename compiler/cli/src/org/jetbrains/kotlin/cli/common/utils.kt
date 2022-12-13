@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.Logger
@@ -46,7 +47,7 @@ fun checkKotlinPackageUsage(configuration: CompilerConfiguration, files: Collect
     if (configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
         return true
     }
-    val kotlinPackage = FqName("kotlin")
+    val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
     for (file in files) {
         if (file.packageFqName.isSubpackageOf(kotlinPackage)) {
             messageCollector.report(

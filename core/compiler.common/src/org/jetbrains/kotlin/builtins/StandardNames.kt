@@ -57,7 +57,10 @@ object StandardNames {
     @JvmField val PREFIXES = listOf(K_PROPERTY_PREFIX, K_MUTABLE_PROPERTY_PREFIX, K_FUNCTION_PREFIX, K_SUSPEND_FUNCTION_PREFIX)
 
     @JvmField
-    val BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin")
+    val KOTLIN_PACKAGE_NAME = Name.identifier("kotlin")
+
+    @JvmField
+    val BUILT_INS_PACKAGE_NAME = KOTLIN_PACKAGE_NAME
 
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME)

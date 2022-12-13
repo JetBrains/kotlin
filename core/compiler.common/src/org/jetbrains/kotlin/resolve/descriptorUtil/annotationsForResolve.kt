@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.internal.NoInfer")
 val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.Exact")
@@ -17,7 +18,7 @@ val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension")
 val BUILDER_INFERENCE_ANNOTATION_FQ_NAME = FqName("kotlin.BuilderInference")
 
-val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("OverloadResolutionByLambdaReturnType"))
+val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("OverloadResolutionByLambdaReturnType"))
 val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME = OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID.asSingleFqName()
 
 // @HidesMembers annotation only has effect for members with these names

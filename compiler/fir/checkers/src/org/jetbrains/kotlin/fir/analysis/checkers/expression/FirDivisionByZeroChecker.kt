@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirDivisionByZeroChecker : FirFunctionCallChecker() {
-    private val defaultPackageName = FqName("kotlin")
+    private val defaultPackageName = StandardClassIds.BASE_KOTLIN_PACKAGE
     private val defaultDivName = Name.identifier("div")
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {

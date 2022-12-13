@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.name
 
+import org.jetbrains.kotlin.builtins.StandardNames
+
 object StandardClassIds {
-    val BASE_KOTLIN_PACKAGE = FqName("kotlin")
+    val BASE_KOTLIN_PACKAGE = FqName(arrayOf(StandardNames.KOTLIN_PACKAGE_NAME))
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -34,17 +35,17 @@ class WasmSymbols(
 ) : Symbols(context.irBuiltIns, symbolTable) {
 
     private val kotlinTopLevelPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin"))
+        context.module.getPackage(StandardClassIds.BASE_KOTLIN_PACKAGE)
     private val enumsInternalPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.enums"))
+        context.module.getPackage(StandardClassIds.BASE_ENUMS_PACKAGE)
     private val wasmInternalPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.wasm.internal"))
+        context.module.getPackage(StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("wasm")).child(Name.identifier(("internal"))))
     private val collectionsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
     private val builtInsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
     private val kotlinTestPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.test"))
+        context.module.getPackage(StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("test")))
 
     internal inner class WasmReflectionSymbols : ReflectionSymbols {
         override val createKType: IrSimpleFunctionSymbol = getInternalFunction("createKType")

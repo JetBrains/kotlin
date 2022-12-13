@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker() {
-    private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
-    private val withLockCallableId = CallableId(FqName("kotlin.concurrent"), Name.identifier("withLock"))
+    private val synchronizedCallableId = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("synchronized"))
+    private val withLockCallableId = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("concurrent")), Name.identifier("withLock"))
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return

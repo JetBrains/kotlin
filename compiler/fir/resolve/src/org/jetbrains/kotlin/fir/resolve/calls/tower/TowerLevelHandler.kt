@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -95,6 +96,6 @@ private class TowerScopeLevelProcessor(
     }
 
     companion object {
-        val defaultPackage = Name.identifier("kotlin")
+        val defaultPackage = StandardNames.KOTLIN_PACKAGE_NAME
     }
 }
