@@ -31,8 +31,8 @@ class Name private constructor(private val name: String, val isSpecial: Boolean)
         return if (isSpecial) asString().substring(1, asString().length - 1) else asString()
     }
 
-    override fun compareTo(that: Name): Int {
-        return name.compareTo(that.name)
+    override fun compareTo(other: Name): Int {
+        return name.compareTo(other.name)
     }
 
     val identifierOrNullIfSpecial: String?
