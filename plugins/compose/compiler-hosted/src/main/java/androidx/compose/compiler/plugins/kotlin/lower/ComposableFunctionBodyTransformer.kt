@@ -3767,10 +3767,12 @@ class ComposableFunctionBodyTransformer(
                 else super.sourceLocationOf(call)
             }
 
-            private fun callInformation(): String =
-                if (!function.name.isSpecial)
-                    "C(${function.name.asString()})"
-                else "C"
+            private fun callInformation(): String {
+                val inlineMarker = if (function.isInline) "C" else ""
+                return if (!function.name.isSpecial)
+                    "${inlineMarker}C(${function.name.asString()})"
+                else "${inlineMarker}C"
+            }
 
             override fun calculateHasSourceInformation(sourceInformationEnabled: Boolean): Boolean {
                 return if (sourceInformationEnabled) {

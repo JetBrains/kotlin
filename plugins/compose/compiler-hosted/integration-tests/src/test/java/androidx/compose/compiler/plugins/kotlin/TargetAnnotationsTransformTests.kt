@@ -908,7 +908,7 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest() {
         @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
         fun LocalBox(modifier: Modifier?, content: @[ExtensionFunctionType] Function3<LocalBoxScope, Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
           %composer.startReplaceableGroup(<>)
-          sourceInformation(%composer, "C(LocalBox)P(1)<Layout...>:Test.kt")
+          sourceInformation(%composer, "CC(LocalBox)P(1)<Layout...>:Test.kt")
           if (%default and 0b0001 !== 0) {
             modifier = Companion
           }
