@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+/**
+ * A mangle computer that generates a mangled name for a Kotlin declaration represented by [IrDeclaration].
+ */
 abstract class IrMangleComputer(
     builder: StringBuilder,
     mode: MangleMode,
