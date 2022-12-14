@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENTRY_POINT
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
@@ -46,7 +47,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-internal class TestProcessor (val context: Context) {
+internal class TestProcessor(val context: Context) {
 
     object TEST_SUITE_CLASS: IrDeclarationOriginImpl("TEST_SUITE_CLASS")
     object TEST_SUITE_GENERATED_MEMBER: IrDeclarationOriginImpl("TEST_SUITE_GENERATED_MEMBER")
@@ -63,6 +64,8 @@ internal class TestProcessor (val context: Context) {
     private val baseClassSuite = symbols.baseClassSuite.owner
 
     private val topLevelSuiteNames = mutableSetOf<String>()
+
+    private val xcTestRunner = context.config.xcTestRunner
 
     // region Useful extensions.
     private var testSuiteCnt = 0
@@ -693,5 +696,20 @@ internal class TestProcessor (val context: Context) {
         irFile.acceptChildrenVoid(annotationCollector)
         createTestSuites(irFile, annotationCollector)
         recordTestFunctions(annotationCollector)
+//        if (xcTestRunner) generateEntryPoint()
+        // should check and get (require the native-xctest library)
     }
+
+//    private object DECLARATION_ORIGIN_SUITE : IrDeclarationOriginImpl("CREATE_TEST_SUITE")
+//
+//    private fun generateEntryPoint() {
+//        context.irFactory.buildFun {
+//            startOffset = SYNTHETIC_OFFSET
+//            endOffset = SYNTHETIC_OFFSET
+//            origin = DECLARATION_ORIGIN_SUITE
+//            name = Name.identifier("Konan_create_testSuite")
+//            visibility = DescriptorVisibilities.PRIVATE
+//            returnType = context.irBuiltIns.intType
+//        }
+//    }
 }

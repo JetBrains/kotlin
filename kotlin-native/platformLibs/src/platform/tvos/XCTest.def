@@ -1,0 +1,19 @@
+depends = CoreServices Foundation CoreFoundation CoreGraphics UIKit darwin posix
+language = Objective-C
+package = platform.XCTest
+modules = XCTest
+
+compilerOpts = -framework XCTest
+linkerOpts = -framework XCTest
+
+foreignExceptionMode = objc-wrap
+
+---
+#import <XCTest/XCTestCase.h>
+
+// These are from the XCTestCase extension and are not available by default in cinterop
+@protocol XCTestSuiteExtensions
+@property (class, readonly) XCTestSuite *defaultTestSuite;
++ (void)setUp;
++ (void)tearDown;
+@end

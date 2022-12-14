@@ -26,6 +26,9 @@ enum class CompilerOutputKind {
     BITCODE {
         override fun suffix(target: KonanTarget?) = ".bc"
     },
+    TEST_BUNDLE {
+        override fun suffix(target: KonanTarget?): String = ".xctest"
+    },
 
     DYNAMIC_CACHE {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"

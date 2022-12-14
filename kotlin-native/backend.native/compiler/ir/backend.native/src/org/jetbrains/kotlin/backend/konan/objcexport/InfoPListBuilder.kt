@@ -29,6 +29,7 @@ internal class InfoPListBuilder(
             name: String,
             mainPackageGuesser: MainPackageGuesser,
             moduleDescriptor: ModuleDescriptor,
+            additional: Map<String, String> = emptyMap()
     ): String {
         val bundleId = computeBundleID(name, mainPackageGuesser, moduleDescriptor)
 
@@ -79,6 +80,7 @@ internal class InfoPListBuilder(
 
                 """.trimMargin())
         }
+
         val target = config.target
         // UIDeviceFamily mapping:
         // 1 - iPhone
@@ -110,6 +112,15 @@ internal class InfoPListBuilder(
                 |        <string>armv7</string>
                 |    </array>
 
+                """.trimMargin()
+            )
+        }
+
+        additional.forEach { entry ->
+            contents.append("""
+                |    <key>${entry.key}</key>
+                |    <string>${entry.value}</string>
+              
                 """.trimMargin()
             )
         }

@@ -254,6 +254,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
+    val xcTestRunner = configuration.getBoolean(KonanConfigKeys.XCTEST_RUNNER)
+
+    internal val xcTestLauncherLibraries: List<String> = listOf(
+            File(distribution.defaultNatives(target)).child("xctest.bc").absolutePath
+    )
+
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
         add("common_gc.bc")

@@ -45,6 +45,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
+                        CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }
             }
@@ -152,6 +153,24 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             llvmModule?.let { LLVMDisposeModule(it) }
             LLVMContextDispose(llvmContext)
         }
+    }
+
+    /**
+     * Produce a bundle that is a directory with code and resources.
+     * It consists of
+     * - Info.plist
+     * - Binary without an entry point.
+     *
+     * See https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html
+     * Technically ObjC framework is also a bundle
+     */
+    private fun produceBundle(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        engine.runPhase(CreateTestBundlePhase, frontendOutput)
+        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        require(psiToIrOutput is PsiToIrOutput.ForBackend)
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
 
     private fun createBackendContext(

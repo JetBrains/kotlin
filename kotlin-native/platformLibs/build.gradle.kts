@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
+import java.io.ByteArrayOutputStream
 
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
 val distDir: File by project
@@ -50,6 +51,41 @@ val konanTargetList: List<KonanTarget> by project
 val targetList: List<String> by project
 val cacheableTargets: List<KonanTarget> by project
 
+fun targetPlatform(platform: String): String {
+    val out = ByteArrayOutputStream()
+    val err = ByteArrayOutputStream()
+    val result = project.exec {
+        executable = "/usr/bin/xcrun"
+        args = listOf("--sdk", platform, "--show-sdk-platform-path")
+        standardOutput = out
+        errorOutput = err
+    }
+
+    check(result.exitValue == 0) {
+        buildString {
+            append("/usr/bin/xcrun ended unsuccessfully. Exit code: ${result.exitValue}")
+            append(out)
+            append(err)
+        }
+    }
+
+    return out.toString().trim()
+}
+
+/**
+ * Double laziness: lazily create functions that execute xcrun and return
+ * path to the Developer frameworks.
+ */
+val developerFrameworks: Map<KonanTarget, () -> String> by lazy {
+    platformManager.targetValues
+            .filter { it.family.isAppleFamily }
+            .associateWith { target ->
+                val configurable = platformManager.platform(target).configurables as AppleConfigurables
+                val platform = configurable.platformName().toLowerCase()
+                fun(): String = "${targetPlatform(platform)}/Developer/Library/Frameworks/"
+            }
+}
+
 konanTargetList.forEach { target ->
     val targetName = target.visibleName
     val installTasks = mutableListOf<TaskProvider<out Task>>()
@@ -74,6 +110,12 @@ konanTargetList.forEach { target ->
                 }
                 extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name)
                 compilerOpts("-fmodules-cache-path=${project.buildDir}/clangModulesCache")
+
+                // FIXME: a hack to point compiler to the XCTest.framework
+                if (libName.contains("XCTest")) {
+                    val framework = developerFrameworks[target]?.let { it() } ?: error("Framework path wasn't found")
+                    compilerOpts("-iframework", framework)
+                }
             }
         }
 
