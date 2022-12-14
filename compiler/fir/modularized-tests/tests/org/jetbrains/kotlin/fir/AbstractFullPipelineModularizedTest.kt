@@ -29,13 +29,13 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
     private val asyncProfilerControl = AsyncProfilerControl()
 
-    data class ModuleStatus(val data: ModuleData, val targetInfo: String) {
+    protected data class ModuleStatus(val data: ModuleData, val targetInfo: String, val time: CumulativeTime) {
         var compilationError: String? = null
         var jvmInternalError: String? = null
         var exceptionMessage: String = "NO MESSAGE"
     }
 
-    private val totalModules = mutableListOf<ModuleStatus>()
+    protected val totalModules = mutableListOf<ModuleStatus>()
     private val okModules = mutableListOf<ModuleStatus>()
     private val errorModules = mutableListOf<ModuleStatus>()
     private val crashedModules = mutableListOf<ModuleStatus>()
@@ -176,9 +176,10 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         result: ExitCode,
         moduleData: ModuleData,
         collector: TestMessageCollector,
-        targetInfo: String
+        targetInfo: String,
+        time: CumulativeTime,
     ): ProcessorAction {
-        val status = ModuleStatus(moduleData, targetInfo)
+        val status = ModuleStatus(moduleData, targetInfo, time)
         totalModules += status
 
         return when (result) {
@@ -289,7 +290,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             totalPassResult += resultTime
         }
 
-        return handleResult(result, moduleData, collector, manager.getTargetInfo())
+        return handleResult(result, moduleData, collector, manager.getTargetInfo(), resultTime)
     }
 
     protected fun createReport(finalReport: Boolean) {
