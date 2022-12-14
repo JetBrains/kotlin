@@ -717,7 +717,6 @@ tasks {
         dependsOn(":kotlinx-serialization-compiler-plugin:test")
         dependsOn(":kotlin-lombok-compiler-plugin:test")
         dependsOn(":kotlin-noarg-compiler-plugin:test")
-        dependsOn(":plugins:parcelize:parcelize-compiler:test")
         dependsOn(":kotlin-sam-with-receiver-compiler-plugin:test")
     }
 
