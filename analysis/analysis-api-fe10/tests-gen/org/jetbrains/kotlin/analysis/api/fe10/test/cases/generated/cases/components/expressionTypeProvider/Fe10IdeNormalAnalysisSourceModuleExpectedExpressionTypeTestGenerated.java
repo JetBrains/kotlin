@@ -233,6 +233,24 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerate
     }
 
     @Test
+    @TestMetadata("samReferenceAsArgument.kt")
+    public void testSamReferenceAsArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceAsArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("samReferenceAsVararg.kt")
+    public void testSamReferenceAsVararg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceAsVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("samReferenceWithTypeCast.kt")
+    public void testSamReferenceWithTypeCast() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceWithTypeCast.kt");
+    }
+
+    @Test
     @TestMetadata("samWithExplicitTypeFromProperty.kt")
     public void testSamWithExplicitTypeFromProperty() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithExplicitTypeFromProperty.kt");

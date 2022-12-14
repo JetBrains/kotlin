@@ -1,0 +1,2 @@
+expression: ::dummy
+expected type: java/lang/Runnable
