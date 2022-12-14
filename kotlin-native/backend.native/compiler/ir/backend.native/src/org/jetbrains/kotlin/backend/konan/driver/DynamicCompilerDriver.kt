@@ -102,12 +102,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             is K2FrontendPhaseOutput.ShouldNotGenerateCode -> return
             is K2FrontendPhaseOutput.Full -> k2FrontendOutput.firFiles.forEach { println(it.render()) }
         }
-
-        val frontendOutput = engine.useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
-        if (frontendOutput == FrontendPhaseOutput.ShouldNotGenerateCode) {
-            return
-        }
-        require(frontendOutput is FrontendPhaseOutput.Full)
     }
 
     /**
