@@ -31,7 +31,7 @@ internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationStat
         description = "Data flow graph building",
         outputIfNotEnabled = { _, _, generationState, irModule ->
             val context = generationState.context
-            val symbolTable = DataFlowIR.SymbolTable(context, irModule, DataFlowIR.Module(irModule.descriptor))
+            val symbolTable = DataFlowIR.SymbolTable(context, DataFlowIR.Module(irModule.descriptor))
             ModuleDFG(emptyMap(), symbolTable)
         },
         op = { generationState, irModule ->
@@ -67,10 +67,10 @@ internal data class DCEInput(
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
 )
 
-internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DCEInput, Set<IrFunction>>(
+internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DCEInput, Set<IrFunction>?>(
         name = "DCEPhase",
         description = "Dead code elimination",
-        outputIfNotEnabled = { _, _, _, _ -> emptySet() },
+        outputIfNotEnabled = { _, _, _, _ -> null },
         op = { generationState, input ->
             val context = generationState.context
             dce(context, input.irModule, input.moduleDFG, input.devirtualizationAnalysisResult)
