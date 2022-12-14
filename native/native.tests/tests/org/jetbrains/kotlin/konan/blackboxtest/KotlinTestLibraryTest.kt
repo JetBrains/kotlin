@@ -63,3 +63,38 @@ class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
+
+@Tag("kotlin-test")
+@Tag("xctest")
+@PredefinedTestCases(
+    TC(
+        name = "defaultXCTest",
+        runnerType = TestRunnerType.DEFAULT,
+        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
+        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
+    )
+)
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+class KotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
+    @TestFactory
+    fun default() = dynamicTestCase(TestCaseId.Named("defaultXCTest"))
+}
+
+@Tag("kotlin-test")
+@Tag("frontend-fir")
+@Tag("xctest")
+@PredefinedTestCases(
+    TC(
+        name = "defaultXCTest",
+        runnerType = TestRunnerType.DEFAULT,
+        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
+        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
+    )
+)
+@FirPipeline
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+class FirKotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
+    @TestFactory
+    fun default() = dynamicTestCase(TestCaseId.Named("defaultXCTest"))
+}
+

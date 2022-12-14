@@ -69,7 +69,7 @@ internal enum class ClassLevelProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     COMPILER_OUTPUT_INTERCEPTOR("compilerOutputInterceptor"),
-
+    XCTEST_FRAMEWORK("xctest"),
     ;
 
     internal val propertyName = fullPropertyName(shortName)

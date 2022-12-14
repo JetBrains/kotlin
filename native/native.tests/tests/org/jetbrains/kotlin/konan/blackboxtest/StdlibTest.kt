@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
@@ -109,6 +111,63 @@ class FirStdlibTest : AbstractNativeBlackBoxTest() {
 
     @TestFactory
     fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
+}
+
+@Tag("stdlib")
+@Tag("xctest")
+@PredefinedTestCases(
+    TC(
+        name = "xctest",
+        runnerType = TestRunnerType.DEFAULT,
+        freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL],
+        sourceLocations = [
+            "libraries/stdlib/test/**.kt",
+            "libraries/stdlib/common/test/**.kt",
+            "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
+            "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
+            "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
+        ],
+        ignoredTests = [DISABLED_STDLIB_TEST]
+    )
+)
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
+    @TestFactory
+    fun xctest() = dynamicTestCase(TestCaseId.Named("xctest"))
+}
+
+@Tag("stdlib")
+@Tag("xctest")
+@Tag("frontend-fir")
+@PredefinedTestCases(
+    TC(
+        name = "xctest",
+        runnerType = TestRunnerType.DEFAULT,
+        freeCompilerArgs = [
+            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
+            "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
+            "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
+            "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
+            "-Xcommon-sources=libraries/stdlib/test/text/StringEncodingTest.kt",
+        ],
+        sourceLocations = [
+            "libraries/stdlib/test/**.kt",
+            "libraries/stdlib/common/test/**.kt",
+            "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
+            "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
+            "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
+        ],
+        ignoredFiles = [
+            DISABLED_K2_ARRAYS,
+        ],
+        ignoredTests = [DISABLED_STDLIB_TEST]
+    )
+)
+@FirPipeline
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+class FirStdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
+    @TestFactory
+    fun xctest() = dynamicTestCase(TestCaseId.Named("xctest"))
 }
 
 private const val ENABLE_MPP = "-Xmulti-platform"

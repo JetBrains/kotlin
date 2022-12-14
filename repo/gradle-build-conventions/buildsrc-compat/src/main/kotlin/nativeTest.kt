@@ -6,7 +6,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
-private enum class TestProperty(shortName: String) {
+enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
     // Don't use "kotlin.native.home" and similar properties for this purpose, as these properties may have undesired
     // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
@@ -26,7 +26,8 @@ private enum class TestProperty(shortName: String) {
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
-    TEAMCITY("teamcity");
+    TEAMCITY("teamcity"),
+    XCTEST_FRAMEWORK("xctest");
 
     val fullName = "kotlin.internal.native.test.$shortName"
 }
@@ -190,6 +191,7 @@ fun Project.nativeTest(
             compute(CACHE_MODE)
             compute(EXECUTION_TIMEOUT)
             compute(SANITIZER)
+            compute(XCTEST_FRAMEWORK)
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }

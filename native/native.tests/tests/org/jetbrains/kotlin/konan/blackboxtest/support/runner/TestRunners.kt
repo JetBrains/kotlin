@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.ForcedNoopTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
-import org.jetbrains.kotlin.native.executors.Executor
-import org.jetbrains.kotlin.native.executors.EmulatorExecutor
-import org.jetbrains.kotlin.native.executors.XcodeSimulatorExecutor
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.native.executors.RosettaExecutor
+import org.jetbrains.kotlin.native.executors.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,13 +22,26 @@ internal object TestRunners {
         if (get<ForcedNoopTestRunner>().value) {
             NoopTestRunner
         } else with(get<KotlinNativeTargets>()) {
-            if (testTarget == hostTarget) {
+            val nativeHome = get<KotlinNativeHome>()
+            val distribution = Distribution(nativeHome.dir.path)
+            val configurables = PlatformManager(distribution, true).platform(testTarget).configurables
+
+            if (get<XCTestRunner>().isEnabled) {
+                // Forcibly run tests with XCTest
+                check(configurables is AppleConfigurables) {
+                    "Running tests with XCTest is not supported on non-Apple $configurables"
+                }
+                val executor = cached(
+                    if (testTarget == hostTarget) {
+                        XCTestHostExecutor(configurables)
+                    } else {
+                        XCTestSimulatorExecutor(configurables)
+                    }
+                )
+                RunnerWithExecutor(executor, testRun)
+            } else if (testTarget == hostTarget) {
                 LocalTestRunner(testRun)
             } else {
-                val nativeHome = get<KotlinNativeHome>()
-                val distribution = Distribution(nativeHome.dir.path)
-                val configurables = PlatformManager(distribution, true).platform(testTarget).configurables
-
                 val executor = cached(
                     when {
                         configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)

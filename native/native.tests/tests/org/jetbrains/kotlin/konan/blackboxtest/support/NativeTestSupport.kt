@@ -199,6 +199,7 @@ private object NativeTestSupport {
         output += computePipelineType(testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
+        output += computeXCTestRunner(enforcedProperties)
 
         return nativeTargets
     }
@@ -251,7 +252,7 @@ private object NativeTestSupport {
         enforcedProperties: EnforcedProperties,
         distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
-        optimizationMode: OptimizationMode
+        optimizationMode: OptimizationMode,
     ): CacheMode {
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
@@ -322,6 +323,14 @@ private object NativeTestSupport {
         )
         return Timeouts(executionTimeout)
     }
+
+    private fun computeXCTestRunner(enforcedProperties: EnforcedProperties) = XCTestRunner(
+        ClassLevelProperty.XCTEST_FRAMEWORK.readValue(
+            enforcedProperties,
+            { File(it).absolutePath },
+            default = ""
+        )
+    )
 
     /*************** Test class settings (for black box tests only) ***************/
 
@@ -422,7 +431,7 @@ private object NativeTestSupport {
     private fun computeGeneratedSourceDirs(
         baseDirs: BaseDirs,
         targets: KotlinNativeTargets,
-        enclosingTestClass: Class<*>
+        enclosingTestClass: Class<*>,
     ): GeneratedSources {
         val testSourcesDir = baseDirs.testBuildDir
             .resolve("bb.src") // "bb" for black box
@@ -440,7 +449,7 @@ private object NativeTestSupport {
     private fun computeBinariesForBlackBoxTests(
         baseDirs: BaseDirs,
         targets: KotlinNativeTargets,
-        enclosingTestClass: Class<*>
+        enclosingTestClass: Class<*>,
     ): Binaries {
         val testBinariesDir = baseDirs.testBuildDir
             .resolve("bb.out") // "bb" for black box
