@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.referredVariableSymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -48,7 +48,7 @@ internal object FirCompileTimeConstantEvaluator {
     ): FirConstExpression<*>? =
         when (fir) {
             is FirPropertyAccessExpression -> {
-                when (val referredVariable = fir.referredVariableSymbol) {
+                when (val referredVariable = fir.calleeReference.toResolvedVariableSymbol()) {
                     is FirPropertySymbol -> {
                         if (referredVariable.callableId.isStringLength) {
                             evaluate(fir.explicitReceiver, mode)?.evaluateStringLength()

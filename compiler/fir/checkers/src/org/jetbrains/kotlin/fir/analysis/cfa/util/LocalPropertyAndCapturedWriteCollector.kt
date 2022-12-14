@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -56,7 +56,7 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
     }
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-        val symbol = node.fir.referredPropertySymbol ?: return
+        val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
         if (symbol is FirSyntheticPropertySymbol) {
             symbols[symbol] = true
             return

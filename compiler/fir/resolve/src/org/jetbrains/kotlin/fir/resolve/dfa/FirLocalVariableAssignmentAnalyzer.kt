@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
@@ -55,7 +55,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
         if (assignedLocalVariablesByFunction == null) return false
 
         val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
-        val property = realFir.referredPropertySymbol?.fir ?: return false
+        val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
         // Have data => have a root function => functionScopes is not empty.
         return property in functionScopes.top().second || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
