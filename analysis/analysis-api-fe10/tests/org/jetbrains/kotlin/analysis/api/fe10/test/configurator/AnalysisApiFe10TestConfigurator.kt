@@ -10,7 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtMainModuleFactoryForSourceModules
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -35,6 +36,9 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         get() = "descriptors"
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
+        builder.apply {
+            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
+        }
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
@@ -47,12 +51,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         testServices: TestServices,
         project: Project,
     ): KtModuleProjectStructure {
-        return TestModuleStructureFactory.createProjectStructureByTestStructure(
-            moduleStructure,
-            testServices,
-            project,
-            KtMainModuleFactoryForSourceModules,
-        )
+        return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
 
     override fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {
@@ -61,11 +60,6 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         val project = compilerConfigurationProvider.getProject(module)
         val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
         JvmResolveUtil.analyze(project, files.filterIsInstance<KtFile>(), compilerConfiguration, packageProviderFactory)
-    }
-
-
-    override fun doOutOfBlockModification(file: KtFile) {
-        // TODO not supported yet
     }
 
     override fun preprocessTestDataPath(path: Path): Path {

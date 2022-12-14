@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolvableResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -71,7 +70,7 @@ internal class LLFirResolveSessionService(project: Project) {
                 }
 
                 is KtNotUnderContentRootModule -> {
-                    LLFirNotUnderContentRootResolvableResolveSession(
+                    LLFirNotUnderContentRootResolveSession(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
                         useSiteKtModule,

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,10 +27,6 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
         get() = AnalysisApiFirLibraryBinaryTestConfigurator.serviceRegistrars +
                 AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar
-
-    override fun doOutOfBlockModification(file: KtFile) {
-        AnalysisApiFirLibraryBinaryTestConfigurator.doOutOfBlockModification(file)
-    }
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractDiagnosticTraversalCounterTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirContextCollectionTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractFileStructureTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractInnerDeclarationsResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootFileStructureTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
@@ -20,7 +21,11 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     testGroup("analysis/low-level-api-fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
-        testClass<AbstractFirLazyBodiesCalculatorTest> {
+        testClass<AbstractFirSourceLazyBodiesCalculatorTest> {
+            model("rawBuilder", testMethod = "doTest")
+        }
+
+        testClass<AbstractFirOutOfContentRootLazyBodiesCalculatorTest> {
             model("rawBuilder", testMethod = "doTest")
         }
     }
@@ -30,15 +35,27 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("onAirResolve")
         }
 
-        testClass<AbstractFirLazyDeclarationResolveTest> {
+        testClass<AbstractFirSourceLazyDeclarationResolveTest> {
             model("lazyResolve")
         }
 
-        testClass<AbstractFileStructureTest> {
+        testClass<AbstractFirOutOfContentRootLazyDeclarationResolveTest> {
+            model("lazyResolve")
+        }
+
+        testClass<AbstractSourceFileStructureTest> {
             model("fileStructure")
         }
 
-        testClass<AbstractFirContextCollectionTest> {
+        testClass<AbstractOutOfContentRootFileStructureTest> {
+            model("fileStructure")
+        }
+
+        testClass<AbstractFirSourceContextCollectionTest> {
+            model("fileStructure")
+        }
+
+        testClass<AbstractFirOutOfContentRootContextCollectionTest> {
             model("fileStructure")
         }
 
@@ -46,15 +63,27 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("diagnosticTraversalCounter")
         }
 
-        testClass<AbstractInnerDeclarationsResolvePhaseTest> {
+        testClass<AbstractSourceInnerDeclarationsResolvePhaseTest> {
             model("innerDeclarationsResolve")
         }
 
-        testClass<AbstractPartialRawFirBuilderTestCase> {
+        testClass<AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest> {
+            model("innerDeclarationsResolve")
+        }
+
+        testClass<AbstractSourcePartialRawFirBuilderTestCase> {
             model("partialRawBuilder", testMethod = "doRawFirTest")
         }
 
-        testClass<AbstractGetOrBuildFirTest> {
+        testClass<AbstractOutOfContentRootPartialRawFirBuilderTestCase> {
+            model("partialRawBuilder", testMethod = "doRawFirTest")
+        }
+
+        testClass<AbstractSourceGetOrBuildFirTest> {
+            model("getOrBuildFir")
+        }
+
+        testClass<AbstractOutOfContentRootGetOrBuildFirTest> {
             model("getOrBuildFir")
         }
     }

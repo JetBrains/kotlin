@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/partialRawBuilder")
 @TestDataPath("$PROJECT_ROOT")
-public class PartialRawFirBuilderTestCaseGenerated extends AbstractPartialRawFirBuilderTestCase {
+public class OutOfContentRootPartialRawFirBuilderTestCaseGenerated extends AbstractOutOfContentRootPartialRawFirBuilderTestCase {
     @Test
     public void testAllFilesPresentInPartialRawBuilder() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);

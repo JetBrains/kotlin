@@ -40,6 +40,7 @@ internal class LLFirResolveSessionDepended(
     override val project: Project get() = originalFirResolveSession.project
     override val useSiteKtModule: KtModule get() = originalFirResolveSession.useSiteKtModule
     override val useSiteFirSession get() = originalFirResolveSession.useSiteFirSession
+    override val isLibrarySession get() = false
 
     private val scopeSessionProviderCache = SoftCachedMap.create<FirSession, LLFirScopeSessionProvider>(
         project,

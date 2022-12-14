@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDeclarationResolveTest {
+public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSourceLazyDeclarationResolveTest {
     @Test
     public void testAllFilesPresentInLazyResolve() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);

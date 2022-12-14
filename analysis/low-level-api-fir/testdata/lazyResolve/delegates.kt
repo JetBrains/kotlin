@@ -1,3 +1,5 @@
+// SKIP_WHEN_OUT_OF_CONTENT_ROOT
+
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

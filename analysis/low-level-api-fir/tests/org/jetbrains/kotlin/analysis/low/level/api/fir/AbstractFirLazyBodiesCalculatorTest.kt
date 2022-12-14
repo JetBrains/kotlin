@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -55,4 +57,12 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             TestCase.assertEquals(laziedFirFileDump, fullFirFileDump)
         }
     }
+}
+
+abstract class AbstractFirSourceLazyBodiesCalculatorTest : AbstractFirLazyBodiesCalculatorTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractFirOutOfContentRootLazyBodiesCalculatorTest : AbstractFirLazyBodiesCalculatorTest() {
+    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
 }

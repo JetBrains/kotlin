@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionServic
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.KtCompilerPluginsProviderForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
@@ -49,6 +50,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(LLFirResolveSessionService::class.java)
             registerService(LLFirLibrarySessionFactory::class.java)
             registerService(LLFirBuiltinsSessionFactory::class.java)
+            registerService(LLFirNonUnderContentRootSessionFactory::class.java)
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
 
             registerService(KotlinAsJavaSupport::class.java, SymbolKotlinAsJavaSupport(project))
