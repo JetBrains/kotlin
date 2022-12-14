@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    private val scopes: List<FirTypeScope>,
+    val scopes: List<FirTypeScope>,
     dispatchReceiverType: ConeSimpleKotlinType,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
     private val intersectionContext =

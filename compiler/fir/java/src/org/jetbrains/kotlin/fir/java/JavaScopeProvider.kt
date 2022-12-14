@@ -32,22 +32,22 @@ object JavaScopeProvider : FirScopeProvider() {
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirTypeScope {
-        val symbol = klass.symbol as FirRegularClassSymbol
+        val symbol = (klass as FirRegularClass).symbol
         val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
         if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
-            return buildSyntheticScopeForAnnotations(useSiteSession, symbol, scopeSession, enhancementScope)
+            return buildSyntheticScopeForAnnotations(useSiteSession, klass, scopeSession, enhancementScope)
         }
         return enhancementScope
     }
 
     private fun buildSyntheticScopeForAnnotations(
         session: FirSession,
-        symbol: FirRegularClassSymbol,
+        klass: FirRegularClass,
         scopeSession: ScopeSession,
         enhancementScope: JavaClassMembersEnhancementScope
     ): FirTypeScope {
-        return scopeSession.getOrBuild(symbol, JAVA_SYNTHETIC_FOR_ANNOTATIONS) {
-            JavaAnnotationSyntheticPropertiesScope(session, symbol, enhancementScope)
+        return scopeSession.getOrBuild(klass.symbol, JAVA_SYNTHETIC_FOR_ANNOTATIONS) {
+            JavaAnnotationSyntheticPropertiesScope(session, klass, enhancementScope)
         }
     }
 
@@ -63,7 +63,7 @@ object JavaScopeProvider : FirScopeProvider() {
             }
             JavaClassMembersEnhancementScope(
                 useSiteSession,
-                symbol,
+                firJavaClass,
                 buildUseSiteMemberScopeWithJavaTypes(firJavaClass, useSiteSession, scopeSession)
             )
         }
@@ -138,12 +138,12 @@ object JavaScopeProvider : FirScopeProvider() {
 
             JavaClassStaticEnhancementScope(
                 useSiteSession,
-                klass.symbol,
+                klass,
                 JavaClassStaticUseSiteScope(
                     useSiteSession,
                     declaredMemberScope = declaredScope,
                     superClassScope, superTypesScopes,
-                    klass.javaTypeParameterStack
+                    klass,
                 )
             )
         }.also {

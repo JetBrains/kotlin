@@ -49,6 +49,7 @@ class FirSyntheticPropertiesScope private constructor(
             baseScope: FirTypeScope
         ): FirSyntheticPropertiesScope? {
             val syntheticNamesProvider = session.syntheticNamesProvider ?: return null
+            if (!syntheticNamesProvider.scopeMayContainSynthetics(baseScope, session)) return null
             return FirSyntheticPropertiesScope(
                 session,
                 baseScope,

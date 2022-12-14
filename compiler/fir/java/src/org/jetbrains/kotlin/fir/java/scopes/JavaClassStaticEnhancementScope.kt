@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -14,10 +15,10 @@ import org.jetbrains.kotlin.name.Name
 
 class JavaClassStaticEnhancementScope(
     session: FirSession,
-    owner: FirRegularClassSymbol,
+    internal val owner: FirJavaClass,
     private val useSiteStaticScope: JavaClassStaticUseSiteScope,
 ) : FirContainingNamesAwareScope() {
-    private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
+    private val signatureEnhancement = FirSignatureEnhancement(owner, session) {
         emptyList()
     }
 

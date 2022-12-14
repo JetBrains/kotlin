@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -21,13 +23,13 @@ import org.jetbrains.kotlin.name.Name
 
 class JavaClassMembersEnhancementScope(
     session: FirSession,
-    private val owner: FirRegularClassSymbol,
+    internal val owner: FirRegularClass,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirTypeScope() {
     private val enhancedToOriginalFunctions = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
     private val enhancedToOriginalProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
 
-    private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
+    private val signatureEnhancement = FirSignatureEnhancement(owner, session) {
         overriddenMembers()
     }
 

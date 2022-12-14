@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.nullableModuleData
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -23,11 +25,11 @@ import org.jetbrains.kotlin.name.Name
 
 class JavaAnnotationSyntheticPropertiesScope(
     private val session: FirSession,
-    owner: FirRegularClassSymbol,
+    internal val owner: FirRegularClass,
     private val delegateScope: JavaClassMembersEnhancementScope
 ) : FirTypeScope() {
     private val classId: ClassId = owner.classId
-    private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
+    private val names: Set<Name> = owner.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
     private val syntheticPropertiesCache = mutableMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {

@@ -134,7 +134,7 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
-    register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
+    register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider())
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
 }
 

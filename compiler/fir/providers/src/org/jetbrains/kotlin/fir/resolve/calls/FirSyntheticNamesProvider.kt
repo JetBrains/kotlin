@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirSyntheticNamesProvider : FirSessionComponent {
     abstract fun possibleGetterNamesByPropertyName(name: Name): List<Name>
     abstract fun setterNameByGetterName(name: Name): Name
     abstract fun possiblePropertyNamesByAccessorName(name: Name): List<Name>
+    abstract fun scopeMayContainSynthetics(scope: FirScope, session: FirSession): Boolean
 }
 
 val FirSession.syntheticNamesProvider: FirSyntheticNamesProvider? by FirSession.nullableSessionComponentAccessor()

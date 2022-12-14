@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirClassSubstitutionScope(
     private val session: FirSession,
-    private val useSiteMemberScope: FirTypeScope,
+    val useSiteMemberScope: FirTypeScope,
     key: ScopeSessionKey<*, *>,
     private val substitutor: ConeSubstitutor,
     private val dispatchReceiverTypeForSubstitutedMembers: ConeClassLikeType,

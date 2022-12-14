@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -19,8 +19,10 @@ class JavaClassStaticUseSiteScope internal constructor(
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val superClassScope: FirContainingNamesAwareScope,
     private val superTypesScopes: List<FirContainingNamesAwareScope>,
-    javaTypeParameterStack: JavaTypeParameterStack,
+    internal val klass: FirJavaClass,
 ) : FirContainingNamesAwareScope() {
+    val javaTypeParameterStack get() = klass.javaTypeParameterStack
+
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
     private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack, baseScopes = null, considerReturnTypeKinds = false)
