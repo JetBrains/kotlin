@@ -128,7 +128,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
     }
 
-    private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
+    protected fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
         args.reportPerf = true
         args.jvmTarget = JVM_TARGET
         args.allowKotlinPackage = true
@@ -172,7 +172,12 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)
 
-    protected open fun handleResult(result: ExitCode, moduleData: ModuleData, collector: TestMessageCollector, targetInfo: String): ProcessorAction {
+    protected open fun handleResult(
+        result: ExitCode,
+        moduleData: ModuleData,
+        collector: TestMessageCollector,
+        targetInfo: String
+    ): ProcessorAction {
         val status = ModuleStatus(moduleData, targetInfo)
         totalModules += status
 
@@ -303,7 +308,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     }
 
 
-    private inner class CompilerPerformanceManager : CommonCompilerPerformanceManager("Modularized test performance manager") {
+    protected inner class CompilerPerformanceManager : CommonCompilerPerformanceManager("Modularized test performance manager") {
 
         fun reportCumulativeTime(): CumulativeTime {
             val gcInfo = measurements.filterIsInstance<GarbageCollectionMeasurement>()

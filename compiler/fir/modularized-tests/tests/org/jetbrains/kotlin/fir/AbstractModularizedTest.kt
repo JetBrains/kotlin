@@ -188,6 +188,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     protected abstract fun afterPass(pass: Int)
     protected open fun afterAllPasses() {}
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
+    protected open fun processModules(modules: List<ModuleData>) {
+        for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
+            if (processModule(module).stop()) {
+                break
+            }
+        }
+    }
 
     protected fun runTestOnce(pass: Int) {
         beforePass(pass)
@@ -207,13 +214,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             .filter { (moduleName == null) || it.name == moduleName }
             .filter { !it.isCommon }
 
-
-        for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
-            if (processModule(module).stop()) {
-                break
-            }
-        }
-
+        processModules(modules)
         afterPass(pass)
     }
 }
