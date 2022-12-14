@@ -825,6 +825,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:Interop:Skia'
     include ':kotlin-native:utilities:basic-utils'
     include ':kotlin-native:utilities:cli-runner'
+    include ':kotlin-native:utilities:xctest-runner'
     include ':kotlin-native:klib'
     include ':kotlin-native:common'
     include ':kotlin-native:runtime'
