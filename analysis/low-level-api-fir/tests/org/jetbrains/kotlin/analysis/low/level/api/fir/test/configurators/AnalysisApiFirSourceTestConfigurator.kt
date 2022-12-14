@@ -6,57 +6,18 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtMainModuleFactoryForSourceModules
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-class AnalysisApiFirSourceTestConfigurator(override val analyseInDependentSession: Boolean) : AnalysisApiTestConfigurator() {
-    override val frontendKind: FrontendKind get() = FrontendKind.Fir
-
+class AnalysisApiFirSourceTestConfigurator(
+    analyseInDependentSession: Boolean
+) : AnalysisApiFirSourceLikeTestConfigurator(analyseInDependentSession) {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
+        super.configureTest(builder, disposable)
+
         builder.apply {
-            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
-            usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
-            configureOptionalTestCompilerPlugin()
-            useConfigurators(::JvmEnvironmentConfigurator)
+            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
         }
-    }
-
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
-        AnalysisApiBaseTestServiceRegistrar,
-        AnalysisApiFirTestServiceRegistrar,
-    )
-
-    override fun createModules(
-        moduleStructure: TestModuleStructure,
-        testServices: TestServices,
-        project: Project
-    ): KtModuleProjectStructure {
-        return TestModuleStructureFactory.createProjectStructureByTestStructure(
-            moduleStructure,
-            testServices,
-            project,
-            KtMainModuleFactoryForSourceModules,
-        )
-    }
-
-    override fun doOutOfBlockModification(file: KtFile) {
-        ServiceManager.getService(file.project, KotlinModificationTrackerFactory::class.java)
-            .incrementModificationsCount()
     }
 }

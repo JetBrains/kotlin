@@ -21,8 +21,6 @@ abstract class AnalysisApiKtModuleProvider : TestService {
 
     abstract fun registerProjectStructure(modules: KtModuleProjectStructure)
 
-    protected abstract fun getModuleName(ktModule: KtModule): String
-
     abstract fun getModuleStructure(): KtModuleProjectStructure
 }
 
@@ -43,20 +41,24 @@ class AnalysisApiKtModuleProviderImpl(
         require(!this::modulesByName.isInitialized)
 
         this.modulesStructure = modules
-        this.modulesByName = modulesStructure.mainModules.associateBy { getModuleName(it.ktModule) }
+        this.modulesByName = modulesStructure.mainModules.associateByName()
     }
-
-    override fun getModuleName(ktModule: KtModule): String = when (ktModule) {
-        is KtLibraryModule -> ktModule.libraryName
-        is KtSdkModule -> ktModule.sdkName
-        is KtLibrarySourceModule -> ktModule.libraryName
-        is KtSourceModule -> ktModule.moduleName
-        is KtNotUnderContentRootModule -> TODO()
-        is KtBuiltinsModule -> "Builtins for ${ktModule.platform}"
-    }
-
 
     override fun getModuleStructure(): KtModuleProjectStructure = modulesStructure
 }
 
 val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.testServiceAccessor()
+
+fun List<KtModuleWithFiles>.associateByName(): Map<String, KtModuleWithFiles> {
+    return associateBy { (ktModule, _) ->
+        when (ktModule) {
+            is KtSourceModule -> ktModule.moduleName
+            is KtLibraryModule -> ktModule.libraryName
+            is KtLibrarySourceModule -> ktModule.libraryName
+            is KtSdkModule -> ktModule.sdkName
+            is KtBuiltinsModule -> "Builtins for ${ktModule.platform}"
+            is KtNotUnderContentRootModuleForTest -> ktModule.moduleName
+            else -> error("Unsupported module type: " + ktModule.javaClass.name)
+        }
+    }
+}

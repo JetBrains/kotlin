@@ -9,10 +9,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.psi.KtElement
@@ -66,4 +67,12 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
     private object Directives : SimpleDirectivesContainer() {
         val LOOK_UP_FOR_ELEMENT_OF_TYPE by stringDirective("LOOK_UP_FOR_ELEMENT_OF_TYPE")
     }
+}
+
+abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractOutOfContentRootGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
+    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
 }
