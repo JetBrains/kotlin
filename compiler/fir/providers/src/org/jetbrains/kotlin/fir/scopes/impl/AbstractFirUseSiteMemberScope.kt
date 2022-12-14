@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
@@ -25,9 +28,9 @@ abstract class AbstractFirUseSiteMemberScope(
     protected val supertypeScopeContext =
         FirTypeIntersectionScopeContext(session, overrideChecker, superTypeScopes, dispatchReceiverType, forClassUseSiteScope = true)
 
-    private val functions: MutableMap<Name, Collection<FirNamedFunctionSymbol>> = hashMapOf()
+    private val functions = session.firCachesFactory.createCache(::collectFunctions)
+    private val properties = session.firCachesFactory.createCache(::collectProperties)
 
-    private val properties: MutableMap<Name, Collection<FirVariableSymbol<*>>> = hashMapOf()
     protected val directOverriddenFunctions: MutableMap<FirNamedFunctionSymbol, List<ResultOfIntersection<FirNamedFunctionSymbol>>> =
         hashMapOf()
     protected val directOverriddenProperties: MutableMap<FirPropertySymbol, List<ResultOfIntersection<FirPropertySymbol>>> = hashMapOf()
@@ -54,9 +57,7 @@ abstract class AbstractFirUseSiteMemberScope(
 
     final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name !in getCallableNames()) return
-        functions.getOrPut(name) {
-            collectFunctions(name)
-        }.forEach {
+        functions.getValue(name).forEach {
             processor(it)
         }
     }
@@ -104,9 +105,7 @@ abstract class AbstractFirUseSiteMemberScope(
 
     final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         if (name !in getCallableNames()) return
-        properties.getOrPut(name) {
-            collectProperties(name)
-        }.forEach {
+        properties.getValue(name).forEach {
             processor(it)
         }
     }
