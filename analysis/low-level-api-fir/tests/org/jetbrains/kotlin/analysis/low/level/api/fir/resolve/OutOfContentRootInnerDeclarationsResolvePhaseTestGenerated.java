@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/innerDeclarationsResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class InnerDeclarationsResolvePhaseTestGenerated extends AbstractInnerDeclarationsResolvePhaseTest {
+public class OutOfContentRootInnerDeclarationsResolvePhaseTestGenerated extends AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest {
     @Test
     public void testAllFilesPresentInInnerDeclarationsResolve() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/innerDeclarationsResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);

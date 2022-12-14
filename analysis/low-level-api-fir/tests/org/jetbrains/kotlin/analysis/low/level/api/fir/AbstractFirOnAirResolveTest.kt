@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 
 abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         fun fixUpAnnotations(element: KtElement): KtElement = when (element) {
             is KtAnnotated -> element.annotationEntries.firstOrNull() ?: element
@@ -38,6 +41,4 @@ abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest()
             testServices.assertions.assertEqualsToTestDataFileSibling(rendered)
         }
     }
-
-//    override val enableTestInDependedMode: Boolean get() = false
 }

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic;
+package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/fileStructure")
 @TestDataPath("$PROJECT_ROOT")
-public class FirContextCollectionTestGenerated extends AbstractFirContextCollectionTest {
+public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfContentRootFileStructureTest {
     @Test
     public void testAllFilesPresentInFileStructure() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileStructure"), Pattern.compile("^(.+)\\.kt$"), null, true);

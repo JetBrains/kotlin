@@ -9,10 +9,12 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -38,7 +40,10 @@ abstract class AnalysisApiTestConfigurator {
 
     open fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {}
 
-    abstract fun doOutOfBlockModification(file: KtFile)
+    open fun doOutOfBlockModification(file: KtFile) {
+        ServiceManager.getService(file.project, KotlinModificationTrackerFactory::class.java)
+            .incrementModificationsCount()
+    }
 
     open fun preprocessTestDataPath(path: Path): Path = path
 

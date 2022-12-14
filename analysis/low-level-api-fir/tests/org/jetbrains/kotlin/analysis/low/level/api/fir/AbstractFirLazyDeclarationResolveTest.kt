@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -64,7 +65,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
         )
         resolveWithClearCaches(ktFile) { firResolveSession ->
-            check(firResolveSession is LLFirSourceResolveSession)
+            check(!firResolveSession.isLibrarySession)
             val declarationToResolve = firResolveSession
                 .getOrBuildFirFile(ktFile)
                 .findResolveMe()
@@ -77,9 +78,9 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             }
         }
 
-        resolveWithClearCaches(ktFile) { firResolveSession ->
-            check(firResolveSession is LLFirSourceResolveSession)
-            val firFile = firResolveSession.getOrBuildFirFile(ktFile)
+        resolveWithClearCaches(ktFile) { llSession ->
+            check(!llSession.isLibrarySession)
+            val firFile = llSession.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             resultBuilder.append("\nFILE RAW TO BODY:\n")
             renderer.renderElementAsString(firFile)
@@ -96,4 +97,12 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             }
         }
     }
+}
+
+abstract class AbstractFirSourceLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractFirOutOfContentRootLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
 }

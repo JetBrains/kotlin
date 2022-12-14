@@ -15,16 +15,15 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceModuleImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
@@ -41,6 +40,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
     ) {
         builder.apply {
             useAdditionalServices(ServiceRegistrationData(CompiledLibraryProvider::class, ::CompiledLibraryProvider))
+            useAdditionalService<KtModuleFactory> { KtLibrarySourceModuleFactory() }
             useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
         }
@@ -51,37 +51,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         testServices: TestServices,
         project: Project
     ): KtModuleProjectStructure {
-        return TestModuleStructureFactory.createProjectStructureByTestStructure(
-            moduleStructure,
-            testServices,
-            project
-        ) { testModule: TestModule, _, _ ->
-            val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)
-
-            val libraryKtModule = KtLibraryModuleImpl(
-                testModule.name,
-                testModule.targetPlatform,
-                GlobalSearchScope.filesScope(project, LibraryUtils.getAllVirtualFilesFromJar(libraryJar)),
-                project,
-                binaryRoots = listOf(libraryJar),
-                librarySources = null,
-            )
-
-            val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromTheJar(librarySourcesJar, project)
-            val librarySourceKtModule = KtLibrarySourceModuleImpl(
-                testModule.name,
-                testModule.targetPlatform,
-                GlobalSearchScope.filesScope(project, decompiledPsiFilesFromSourceJar.map { it.virtualFile }),
-                project,
-                binaryLibrary = libraryKtModule,
-            )
-            libraryKtModule.librarySources = librarySourceKtModule
-
-            KtModuleWithFiles(
-                librarySourceKtModule,
-                decompiledPsiFilesFromSourceJar
-            )
-        }
+        return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> =
@@ -90,9 +60,31 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
             AnalysisApiFirTestServiceRegistrar,
             AnalysisApiLibraryBaseTestServiceRegistrar,
         )
+}
 
+private class KtLibrarySourceModuleFactory : KtModuleFactory {
+    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+        val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)
 
-    override fun doOutOfBlockModification(file: KtFile) {
-        AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).doOutOfBlockModification(file)
+        val libraryKtModule = KtLibraryModuleImpl(
+            testModule.name,
+            testModule.targetPlatform,
+            GlobalSearchScope.filesScope(project, LibraryUtils.getAllVirtualFilesFromJar(libraryJar)),
+            project,
+            binaryRoots = listOf(libraryJar),
+            librarySources = null,
+        )
+
+        val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromTheJar(librarySourcesJar, project)
+        val librarySourceKtModule = KtLibrarySourceModuleImpl(
+            testModule.name,
+            testModule.targetPlatform,
+            GlobalSearchScope.filesScope(project, decompiledPsiFilesFromSourceJar.map { it.virtualFile }),
+            project,
+            binaryLibrary = libraryKtModule,
+        )
+        libraryKtModule.librarySources = librarySourceKtModule
+
+        return KtModuleWithFiles(librarySourceKtModule, decompiledPsiFilesFromSourceJar)
     }
 }

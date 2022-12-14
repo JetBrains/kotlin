@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,4 +25,12 @@ abstract class AbstractInnerDeclarationsResolvePhaseTest : AbstractLowLevelApiSi
             testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".fir.txt")
         }
     }
+}
+
+abstract class AbstractSourceInnerDeclarationsResolvePhaseTest : AbstractInnerDeclarationsResolvePhaseTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest : AbstractInnerDeclarationsResolvePhaseTest() {
+    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
 }

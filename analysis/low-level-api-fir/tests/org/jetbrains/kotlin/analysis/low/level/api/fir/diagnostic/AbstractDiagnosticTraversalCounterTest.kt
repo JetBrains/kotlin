@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.Persisten
 import org.jetbrains.kotlin.analysis.low.level.api.fir.renderWithClassName
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
@@ -32,7 +33,9 @@ import org.jetbrains.kotlin.test.services.assertions
 /**
  * Check that every declaration is visited exactly one time during diagnostic collection
  */
-abstract class AbstractDiagnosticTraversalCounterTest  : AbstractLowLevelApiSingleFileTest() {
+abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingleFileTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val handler = BeforeElementTestDiagnosticCollectionHandler()
         resolveWithClearCaches(

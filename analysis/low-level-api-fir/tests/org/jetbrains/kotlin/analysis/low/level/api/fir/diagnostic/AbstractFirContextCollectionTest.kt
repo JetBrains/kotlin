@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.name
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-
 
 abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
@@ -43,7 +44,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
                 register(BeforeElementDiagnosticCollectionHandler::class, handler)
             }
         ) { firResolveSession ->
-            check(firResolveSession is LLFirSourceResolveSession)
+            check(!firResolveSession.isLibrarySession)
 
             val session = firResolveSession.getSessionFor(ktFile.getKtModule()) as LLFirResolvableModuleSession
             val fileStructureCache = session.moduleComponents.fileStructureCache
@@ -99,3 +100,10 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
     }
 }
 
+abstract class AbstractFirSourceContextCollectionTest : AbstractFirContextCollectionTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractFirOutOfContentRootContextCollectionTest : AbstractFirContextCollectionTest() {
+    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+}

@@ -9,6 +9,8 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -134,4 +136,12 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         private const val FUNCTION_DIRECTIVE = "// FUNCTION: "
         private const val PROPERTY_DIRECTIVE = "// PROPERTY: "
     }
+}
+
+abstract class AbstractSourcePartialRawFirBuilderTestCase : AbstractPartialRawFirBuilderTestCase() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractOutOfContentRootPartialRawFirBuilderTestCase : AbstractPartialRawFirBuilderTestCase() {
+    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
 }

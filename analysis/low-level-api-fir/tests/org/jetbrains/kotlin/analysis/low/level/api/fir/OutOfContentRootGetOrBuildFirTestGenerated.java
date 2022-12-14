@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir")
 @TestDataPath("$PROJECT_ROOT")
-public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
+public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfContentRootGetOrBuildFirTest {
     @Test
     public void testAllFilesPresentInGetOrBuildFir() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -61,12 +61,6 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("annotationApplicationWithArguments.kt")
         public void testAnnotationApplicationWithArguments() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationApplicationWithArgumentsOnCallSite.kt")
-        public void testAnnotationApplicationWithArgumentsOnCallSite() throws Exception {
-            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationApplicationWithArgumentsOnCallSite.kt");
         }
 
         @Test
