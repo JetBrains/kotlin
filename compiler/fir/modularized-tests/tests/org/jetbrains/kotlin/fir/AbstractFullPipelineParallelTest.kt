@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import java.io.PrintStream
 import java.nio.file.Files
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import kotlin.system.measureTimeMillis
 
 abstract class AbstractFullPipelineParallelTest : AbstractFullPipelineModularizedTest() {
 
-    private val executorService = Executors.newFixedThreadPool(2)
+    private val executorService = Executors.newFixedThreadPool(System.getProperty("fir.bench.threads", "2").toInt())
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         println("(${Thread.currentThread().name}) took ${moduleData.qualifiedName}")
@@ -48,23 +51,75 @@ abstract class AbstractFullPipelineParallelTest : AbstractFullPipelineModularize
                 totalPassResult += resultTime
             }
 
-            return handleResult(result, moduleData, collector, manager.getTargetInfo())
+            return handleResult(result, moduleData, collector, manager.getTargetInfo(), resultTime)
         }
     }
+
+    private val timePerModule = mutableMapOf<ModuleData, Long>()
 
     override fun processModules(modules: List<ModuleData>) {
         val resultSeq = modules
             .map { it to executorService.submit(Callable { processModule(it) }) }
             .progress(step = 0.0) { (module, _) -> "Analyzing ${module.qualifiedName}" }
             .asSequence()
-            .map { (_, future) -> future.get() }
-        for (result in resultSeq) {
-            if (result.stop()) {
+            .map { (module, future) -> module to measureTimeMillisWithResult { future.get() } }
+        for ((module, result) in resultSeq) {
+            timePerModule[module] = result.first
+            if (result.second.stop()) {
                 break
             }
         }
     }
 
+    override fun formatReport(stream: PrintStream, finalReport: Boolean) {
+        formatReportTableNew(stream)
+    }
+
+    protected fun formatReportTableNew(stream: PrintStream) {
+        val total = totalPassResult
+        var totalGcTimeMs = 0L
+        var totalGcCount = 0L
+        printTable(stream) {
+            row("Name", "Time", "Count")
+            separator()
+            fun gcRow(name: String, timeMs: Long, count: Long) {
+                row {
+                    cell(name, align = LEFT)
+                    timeCell(timeMs, inputUnit = TableTimeUnit.MS)
+                    cell(count.toString())
+                }
+            }
+            for (measurement in total.gcInfo.values) {
+                totalGcTimeMs += measurement.gcTime
+                totalGcCount += measurement.collections
+                gcRow(measurement.name, measurement.gcTime, measurement.collections)
+            }
+            separator()
+            gcRow("Total", totalGcTimeMs, totalGcCount)
+
+        }
+
+        printTable(stream) {
+            row("Module", "Time", "Files", "L/S")
+            separator()
+
+            fun module(name: String, timeMs: Long, files: Int, lines: Int) {
+                row {
+                    cell(name, align = LEFT)
+                    timeCell(timeMs, inputUnit = TableTimeUnit.MS)
+                    cell(files.toString())
+                    linePerSecondCell(lines, timeMs, timeUnit = TableTimeUnit.MS)
+                }
+            }
+
+            for (module in totalModules) {
+                module(module.data.qualifiedName, timePerModule[module.data]!!, module.time.files, module.time.lines)
+            }
+
+            separator()
+            module("Total", timePerModule.values.sum(), total.files, total.lines)
+        }
+    }
     override fun afterAllPasses() {
         super.afterAllPasses()
         executorService.shutdown()
