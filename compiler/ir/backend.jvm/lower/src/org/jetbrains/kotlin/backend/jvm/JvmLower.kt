@@ -120,7 +120,7 @@ internal val IrClass.isGeneratedLambdaClass: Boolean
             origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
             origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
-private class JvmVisibilityPolicy : VisibilityPolicy {
+internal class JvmVisibilityPolicy : VisibilityPolicy {
     // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
     // else it won't detect the class as local.
     override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
