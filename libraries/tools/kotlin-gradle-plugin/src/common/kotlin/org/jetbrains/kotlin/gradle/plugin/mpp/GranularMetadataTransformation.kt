@@ -95,10 +95,6 @@ internal class GranularMetadataTransformation(
 ) {
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    private val requestedDependencies: Iterable<Dependency> by lazy {
-        kotlinSourceSet.internal.resolvableMetadataConfiguration.incoming.dependencies
-    }
-
     internal val configurationToResolve: Configuration = kotlinSourceSet.internal.resolvableMetadataConfiguration
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
@@ -109,24 +105,19 @@ internal class GranularMetadataTransformation(
                 ModuleIds.fromComponent(project, it.dependency)
             }
 
-        val allRequestedDependencies = requestedDependencies
-
         val resolutionResult = configurationToResolve.incoming.resolutionResult
-        val allModuleDependencies =
-            configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
 
-        val resolvedDependencyQueue: Queue<ResolvedComponentResult> = ArrayDeque<ResolvedComponentResult>().apply {
-            val requestedModules: Set<ModuleDependencyIdentifier> = allRequestedDependencies.mapTo(mutableSetOf()) {
-                ModuleIds.fromDependency(it)
-            }
+        val directDependencies = resolutionResult
+            .root
+            .dependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            // Filter out constraints. They look like regular dependencies
+            // and only take effect on dependencies in the resolved graph.
+            // Keeping them can cause incorrect results for transitive dependencies transformation
+            .filterNot { it.isConstraint }
 
-            addAll(
-                resolutionResult.root.dependencies
-                    .filter { ModuleIds.fromComponentSelector(project, it.requested) in requestedModules }
-                    .filterIsInstance<ResolvedDependencyResult>()
-                    .map { it.selected }
-            )
-        }
+        val resolvedDependencyQueue: Queue<ResolvedComponentResult> = ArrayDeque<ResolvedComponentResult>()
+        resolvedDependencyQueue.addAll(directDependencies.map { it.selected })
 
         val visitedDependencies = mutableSetOf<ResolvedComponentResult>()
 
@@ -158,17 +149,6 @@ internal class GranularMetadataTransformation(
                 transitiveDependenciesToVisit.filter { it.selected !in visitedDependencies }
                     .map { it.selected }
             )
-        }
-
-        allModuleDependencies.forEach { resolvedDependency ->
-            if (resolvedDependency.selected !in visitedDependencies) {
-//                val files = resolvedDependency.moduleArtifacts.map { it.file }
-                result.add(
-                    MetadataDependencyResolution.Exclude.Unrequested(
-                        resolvedDependency.selected,
-                    )
-                )
-            }
         }
 
         return result
