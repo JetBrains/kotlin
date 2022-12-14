@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SingleSmartCast
@@ -210,9 +211,14 @@ class KtFe10ExpressionTypeProvider(
                     if (parameterDescriptor != null) {
                         val kotlinType = when (val originalCallableDescriptor = parameterDescriptor.containingDeclaration) {
                             is SamConstructorDescriptor -> originalCallableDescriptor.returnTypeOrNothing
-                            else -> parameterDescriptor.type
+                            else -> {
+                                if (parameterDescriptor.isVararg)
+                                    parameterDescriptor.varargElementType
+                                else
+                                    parameterDescriptor.type
+                            }
                         }
-                        return kotlinType.toKtType(analysisContext)
+                        return kotlinType?.toKtType(analysisContext)
                     }
                 }
             }
