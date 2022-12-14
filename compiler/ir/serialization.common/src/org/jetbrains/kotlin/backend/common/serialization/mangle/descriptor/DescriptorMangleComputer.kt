@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 /**
  * The descriptor-based mangle computer. Used to compute a mangled name for a declaration given its [DeclarationDescriptor].
  */
-abstract class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
+open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
     BaseKotlinMangleComputer<
             /*Declaration=*/DeclarationDescriptor,
             /*Type=*/KotlinType,
@@ -29,7 +29,7 @@ abstract class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode
     final override val typeSystemContext: TypeSystemContext
         get() = SimpleClassicTypeSystemContext
 
-    abstract override fun copy(newMode: MangleMode): DescriptorMangleComputer
+    override fun copy(newMode: MangleMode) = DescriptorMangleComputer(builder, newMode)
 
     final override fun DeclarationDescriptor.visitParent() {
         containingDeclaration?.visit()

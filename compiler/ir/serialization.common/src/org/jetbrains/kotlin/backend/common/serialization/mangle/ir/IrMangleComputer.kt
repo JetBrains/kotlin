@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 /**
  * A mangle computer that generates a mangled name for a Kotlin declaration represented by [IrDeclaration].
  */
-abstract class IrMangleComputer(
+open class IrMangleComputer(
     builder: StringBuilder,
     mode: MangleMode,
     protected val compatibleMode: Boolean
@@ -39,7 +39,7 @@ abstract class IrMangleComputer(
 
     open fun IrFunction.platformSpecificFunctionMarks(): List<String> = emptyList()
 
-    abstract override fun copy(newMode: MangleMode): IrMangleComputer
+    override fun copy(newMode: MangleMode) = IrMangleComputer(builder, newMode, compatibleMode)
 
     final override fun IrDeclaration.visitParent() {
         parent.acceptVoid(Visitor())
