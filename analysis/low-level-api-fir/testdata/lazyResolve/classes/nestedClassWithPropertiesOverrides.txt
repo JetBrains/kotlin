@@ -154,7 +154,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<<implicit>>()
             }
 
-            public final override [STATUS] val originalExpressions: R|A|
+            public open override [STATUS] val originalExpressions: R|A|
                 public [STATUS] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -178,7 +178,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<<implicit>>()
             }
 
-            public final override [ARGUMENTS_OF_ANNOTATIONS] val originalExpressions: R|A|
+            public open override [ARGUMENTS_OF_ANNOTATIONS] val originalExpressions: R|A|
                 public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -202,7 +202,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<<implicit>>()
             }
 
-            public final override [CONTRACTS] val originalExpressions: R|A|
+            public open override [CONTRACTS] val originalExpressions: R|A|
                 public [CONTRACTS] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -226,7 +226,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<<implicit>>()
             }
 
-            public final override [IMPLICIT_TYPES_BODY_RESOLVE] val originalExpressions: R|A|
+            public open override [IMPLICIT_TYPES_BODY_RESOLVE] val originalExpressions: R|A|
                 public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -250,7 +250,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<<implicit>>()
             }
 
-            public final override [ANNOTATIONS_ARGUMENTS_MAPPING] val originalExpressions: R|A|
+            public open override [ANNOTATIONS_ARGUMENTS_MAPPING] val originalExpressions: R|A|
                 public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -274,7 +274,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<<implicit>>()
             }
 
-            public final override [EXPECT_ACTUAL_MATCHING] val originalExpressions: R|A|
+            public open override [EXPECT_ACTUAL_MATCHING] val originalExpressions: R|A|
                 public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -298,7 +298,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override [BODY_RESOLVE] val originalExpressions: R|A|
+            public open override [BODY_RESOLVE] val originalExpressions: R|A|
                 public [BODY_RESOLVE] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
@@ -322,7 +322,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override [BODY_RESOLVE] val originalExpressions: R|A|
+            public open override [BODY_RESOLVE] val originalExpressions: R|A|
                 public [BODY_RESOLVE] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
