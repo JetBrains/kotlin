@@ -73,21 +73,23 @@ abstract class AbstractFirDeserializedSymbolProvider(
 ) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
-    private val packageNames by lazy {
+    protected val packageNames: Set<String> by lazy {
         computePackageSet()
     }
 
-    private val typeAliasesNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
+    protected val typeAliasesNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
         session.firCachesFactory.createCache { fqName: FqName ->
             getPackageParts(fqName).flatMapTo(mutableSetOf()) { it.typeAliasNameIndex.keys }
         }
 
     private val allNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
         session.firCachesFactory.createCache { fqName: FqName ->
-            getPackageParts(fqName).flatMapTo(mutableSetOf()) {
-                it.topLevelFunctionNameIndex.keys + it.topLevelPropertyNameIndex.keys
-            }
+            computeCallableNames(fqName)
         }
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> = getPackageParts(fqName).flatMapTo(mutableSetOf()) {
+        it.topLevelFunctionNameIndex.keys + it.topLevelPropertyNameIndex.keys
+    }
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
     private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
@@ -107,9 +109,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     // ------------------------ Abstract members ------------------------
 
     protected abstract fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData>
-    protected abstract fun computePackageSet(): Set<String>
 
-    protected abstract fun mayHaveTopLevelClass(classId: ClassId): Boolean
 
     protected abstract fun extractClassMetadata(
         classId: ClassId,

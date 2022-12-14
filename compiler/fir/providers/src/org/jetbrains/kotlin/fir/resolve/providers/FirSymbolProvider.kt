@@ -52,6 +52,13 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     @FirSymbolProviderInternals
     abstract fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name)
 
+    abstract fun computePackageSet(): Set<String>
+
+    abstract fun mayHaveTopLevelClass(classId: ClassId): Boolean
+
+    abstract fun knownTopLevelClassifiers(fqName: FqName): Set<String>
+    abstract fun computeCallableNames(fqName: FqName): Set<Name>?
+
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
 
