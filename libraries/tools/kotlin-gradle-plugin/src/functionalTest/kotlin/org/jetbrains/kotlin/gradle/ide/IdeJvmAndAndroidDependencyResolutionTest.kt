@@ -10,10 +10,7 @@ package org.jetbrains.kotlin.gradle.ide
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.regularSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
@@ -31,6 +28,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     private fun Project.configureAndroidAndMultiplatform() {
         enableDefaultStdlibDependency(false)
         enableDependencyVerification(false)
+        setMultiplatformAndroidSourceSetLayoutVersion(2)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.compileSdkVersion(33)
@@ -81,7 +79,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
     @Test
     fun `test - project to project dependency`() {
-        val root = buildProject()
+        val root = buildProject { setMultiplatformAndroidSourceSetLayoutVersion(2) }
         val producer = buildProject({ withParent(root).withName("producer") }) { configureAndroidAndMultiplatform() }
         val consumer = buildProject({ withParent(root).withName("consumer") }) { configureAndroidAndMultiplatform() }
 
@@ -95,6 +93,14 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("jvmAndAndroidMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/jvmAndAndroidMain"),
+        )
+
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("jvmAndAndroidTest").assertMatches(
+            dependsOnDependency(":consumer/commonTest"),
+            friendSourceDependency(":consumer/commonMain"),
+            friendSourceDependency(":consumer/jvmAndAndroidMain"),
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/jvmAndAndroidMain"),
         )
