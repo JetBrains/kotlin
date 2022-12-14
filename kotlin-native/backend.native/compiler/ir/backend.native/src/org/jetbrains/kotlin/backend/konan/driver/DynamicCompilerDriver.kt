@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
@@ -73,6 +75,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
+            produceKLibK2(engine, config, environment)
+        else
+            produceKlibK1(engine, config, environment)
+    }
+
+    private fun produceKlibK1(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = if (config.metadataKlib) {
             null
@@ -81,6 +90,24 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         engine.writeKlib(serializerOutput)
+    }
+
+    private fun produceKLibK2(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment
+    ) {
+        val k2FrontendOutput = engine.useContext(K2FrontendContextImpl(config)) { it.runFrontend(environment) }
+        when (k2FrontendOutput) {
+            is K2FrontendPhaseOutput.ShouldNotGenerateCode -> return
+            is K2FrontendPhaseOutput.Full -> k2FrontendOutput.firFiles.forEach { println(it.render()) }
+        }
+
+        val frontendOutput = engine.useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
+        if (frontendOutput == FrontendPhaseOutput.ShouldNotGenerateCode) {
+            return
+        }
+        require(frontendOutput is FrontendPhaseOutput.Full)
     }
 
     /**
