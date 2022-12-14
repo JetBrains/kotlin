@@ -41,9 +41,23 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+val writeClasspath by tasks.creating {
+    dependsOn(testSourceSet.runtimeClasspath)
+    dependsOn(testSourceSet.output)
+    doFirst {
+
+        val all = testSourceSet.output.classesDirs.files + testSourceSet.runtimeClasspath.files
+        project.rootProject.file("tmp/testClasspath.txt").writeText(
+            all.joinToString(":")
+        )
+    }
+}
+
 projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
+
+    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 
     run {
         val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
@@ -51,6 +65,10 @@ projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb 
             val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
             jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
         }
+    }
+
+    testLogging {
+        showStandardStreams = true
     }
 }
 
