@@ -57,14 +57,14 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             // It's hard to define label merging, hence overwritten with the latest one.
             // One day, if we allow multiple edges between nodes with different labels, we won't even need kind merging.
             if (kind != EdgeKind.Forward || label != NormalPath) {
-                val fromToKind = from._outgoingEdges[to]?.kind ?: runIf(edgeExists) { EdgeKind.Forward }
+                val fromToKind = from._outgoingEdges?.get(to)?.kind ?: runIf(edgeExists) { EdgeKind.Forward }
                 merge(kind, fromToKind)?.let {
-                    from._outgoingEdges[to] = Edge.create(label, it)
-                } ?: from._outgoingEdges.remove(to)
-                val toFromKind = to._incomingEdges[from]?.kind ?: runIf(edgeExists) { EdgeKind.Forward }
+                    from.insertOutgoingEdge(to, Edge.create(label, it))
+                } ?: from._outgoingEdges?.remove(to)
+                val toFromKind = to._incomingEdges?.get(from)?.kind ?: runIf(edgeExists) { EdgeKind.Forward }
                 merge(kind, toFromKind)?.let {
-                    to._incomingEdges[from] = Edge.create(label, it)
-                } ?: to._incomingEdges.remove(from)
+                    to.insertIncomingEdge(from, Edge.create(label, it))
+                } ?: to._incomingEdges?.remove(from)
             }
             if (propagateDeadness && kind == EdgeKind.DeadForward) {
                 to.isDead = true
@@ -87,8 +87,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         fun removeAllIncomingEdges(to: CFGNode<*>) {
             for (from in to._previousNodes) {
                 from._followingNodes.remove(to)
-                from._outgoingEdges.remove(to)
-                to._incomingEdges.remove(from)
+                from._outgoingEdges?.remove(to)
+                to._incomingEdges?.remove(from)
             }
             to._previousNodes.clear()
         }
@@ -97,11 +97,14 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         fun removeAllOutgoingEdges(from: CFGNode<*>) {
             for (to in from._followingNodes) {
                 to._previousNodes.remove(from)
-                from._outgoingEdges.remove(to)
-                to._incomingEdges.remove(from)
+                from._outgoingEdges?.remove(to)
+                to._incomingEdges?.remove(from)
             }
             from._followingNodes.clear()
         }
+
+        private fun createEmptyEdgeMapWithDefault(): MutableMap<CFGNode<*>, Edge> =
+            mutableMapOf<CFGNode<*>, Edge>().withDefault { Edge.Normal_Forward }
     }
 
     init {
@@ -115,11 +118,34 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     val previousNodes: List<CFGNode<*>> get() = _previousNodes
     val followingNodes: List<CFGNode<*>> get() = _followingNodes
 
-    private val _incomingEdges = mutableMapOf<CFGNode<*>, Edge>().withDefault { Edge.Normal_Forward }
-    private val _outgoingEdges = mutableMapOf<CFGNode<*>, Edge>().withDefault { Edge.Normal_Forward }
+    private var _incomingEdges: MutableMap<CFGNode<*>, Edge>? = null
+    private var _outgoingEdges: MutableMap<CFGNode<*>, Edge>? = null
 
-    val incomingEdges: Map<CFGNode<*>, Edge> get() = _incomingEdges
-    val outgoingEdges: Map<CFGNode<*>, Edge> get() = _outgoingEdges
+    private fun insertIncomingEdge(to: CFGNode<*>, edge: Edge) {
+        if (_incomingEdges == null) {
+            _incomingEdges = createEmptyEdgeMapWithDefault()
+        }
+        _incomingEdges?.put(to, edge)
+    }
+
+    private fun insertOutgoingEdge(to: CFGNode<*>, edge: Edge) {
+        if (_outgoingEdges == null) {
+            _outgoingEdges = createEmptyEdgeMapWithDefault()
+        }
+        _outgoingEdges?.put(to, edge)
+    }
+
+    // Note: may be it should be made MapWithImplicitDefault and override getOrImplicitDefault and not get
+    // However, it works even in the current form
+    private object EmptyEdgesMap : AbstractMap<CFGNode<*>, Edge>() {
+        override val entries: Set<Map.Entry<CFGNode<*>, Edge>>
+            get() = emptySet()
+
+        override fun get(key: CFGNode<*>): Edge = Edge.Normal_Forward
+    }
+
+    val incomingEdges: Map<CFGNode<*>, Edge> get() = _incomingEdges ?: EmptyEdgesMap
+    val outgoingEdges: Map<CFGNode<*>, Edge> get() = _outgoingEdges ?: EmptyEdgesMap
 
     abstract val fir: E
     var isDead: Boolean = false
