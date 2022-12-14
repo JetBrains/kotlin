@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolved
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol

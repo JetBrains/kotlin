@@ -75,9 +75,6 @@ val FirFile.packageFqName: FqName
 val FirElement.psi: PsiElement? get() = (source as? KtPsiSourceElement)?.psi
 val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?.psi
 
-val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolvedNamedReference
-val FirReference.resolvedSymbol: FirBasedSymbol<*>? get() = resolved?.resolvedSymbol
-
 val FirContextReceiver.labelName: Name? get() = customLabelName ?: labelNameFromTypeRef
 
 fun FirElement.renderWithType(): String =

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.resolved
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 object FirFunInterfaceConstructorReferenceChecker : FirQualifiedAccessExpressionChecker() {

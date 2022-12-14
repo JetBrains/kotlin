@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*

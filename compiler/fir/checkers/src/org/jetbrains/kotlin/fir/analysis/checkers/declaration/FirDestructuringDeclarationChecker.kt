@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol

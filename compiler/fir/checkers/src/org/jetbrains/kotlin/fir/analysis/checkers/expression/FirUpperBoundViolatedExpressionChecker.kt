@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.TypeArgumentWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol

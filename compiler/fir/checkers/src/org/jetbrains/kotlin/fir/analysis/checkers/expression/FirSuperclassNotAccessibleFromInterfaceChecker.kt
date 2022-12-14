@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessExpressionChecker() {

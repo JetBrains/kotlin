@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider

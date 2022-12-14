@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit

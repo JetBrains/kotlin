@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType

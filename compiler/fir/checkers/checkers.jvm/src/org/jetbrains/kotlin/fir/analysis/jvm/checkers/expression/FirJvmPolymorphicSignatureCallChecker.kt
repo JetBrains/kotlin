@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker() {

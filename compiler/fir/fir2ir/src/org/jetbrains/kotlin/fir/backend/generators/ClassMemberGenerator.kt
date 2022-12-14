@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.getOwnerLookupTag
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET

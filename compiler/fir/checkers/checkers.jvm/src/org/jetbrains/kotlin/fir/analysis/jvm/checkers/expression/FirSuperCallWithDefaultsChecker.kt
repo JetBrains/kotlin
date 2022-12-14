@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker() {

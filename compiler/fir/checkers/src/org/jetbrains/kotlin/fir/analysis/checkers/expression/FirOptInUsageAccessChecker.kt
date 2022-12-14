@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 

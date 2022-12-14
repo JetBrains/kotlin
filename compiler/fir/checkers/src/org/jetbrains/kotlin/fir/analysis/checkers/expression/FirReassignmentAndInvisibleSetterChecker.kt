@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol

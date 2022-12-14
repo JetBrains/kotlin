@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol

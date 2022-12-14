@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolved
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -75,10 +75,6 @@ fun FirExpression.toReference(): FirReference? {
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
     return toResolvedCallableReference()?.resolvedSymbol as? FirCallableSymbol<*>?
-}
-
-fun FirReference.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
-    return this.resolvedSymbol as? FirCallableSymbol<*>
 }
 
 fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {

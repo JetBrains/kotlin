@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol

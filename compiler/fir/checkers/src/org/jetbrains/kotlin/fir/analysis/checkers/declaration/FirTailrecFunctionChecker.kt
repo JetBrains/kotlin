@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol

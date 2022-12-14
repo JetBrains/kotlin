@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol

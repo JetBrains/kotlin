@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor

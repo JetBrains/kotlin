@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 

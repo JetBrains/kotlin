@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol

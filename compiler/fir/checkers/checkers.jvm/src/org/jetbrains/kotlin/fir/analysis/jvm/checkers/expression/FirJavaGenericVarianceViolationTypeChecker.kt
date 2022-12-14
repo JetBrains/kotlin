@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol

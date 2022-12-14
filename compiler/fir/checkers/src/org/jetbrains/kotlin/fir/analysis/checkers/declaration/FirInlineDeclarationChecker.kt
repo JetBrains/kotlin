@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.types.isFunctionalType
 import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
