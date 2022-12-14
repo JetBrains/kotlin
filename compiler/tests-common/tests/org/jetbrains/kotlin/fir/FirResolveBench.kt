@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
@@ -283,8 +284,8 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                             if (type is ConeErrorType) {
                                 errorFunctionCallTypes++
                                 val psi = callee.psi
-                                if ((callee is FirErrorNamedReference || callee is FirResolvedErrorReference) && psi != null) {
-                                    reportProblem((callee as FirDiagnosticHolder).diagnostic.reason, psi)
+                                if (callee.isError() && psi != null) {
+                                    reportProblem(callee.diagnostic.reason, psi)
                                 }
                             }
                         }
@@ -300,8 +301,8 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                             if (type is ConeErrorType) {
                                 errorQualifiedAccessTypes++
                                 val psi = callee.psi
-                                if ((callee is FirErrorNamedReference || callee is FirResolvedErrorReference) && psi != null) {
-                                    reportProblem((callee as FirDiagnosticHolder).diagnostic.reason, psi)
+                                if (callee.isError() && psi != null) {
+                                    reportProblem(callee.diagnostic.reason, psi)
                                 }
                             }
                         }

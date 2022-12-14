@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -84,14 +85,12 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                     }
 
                     override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: FirElement) {
-                        when (val calleeReference = qualifiedAccess.calleeReference) {
-                            is FirErrorNamedReference, is FirResolvedErrorReference -> {
-                                errorReferences++
-                                println((calleeReference as FirDiagnosticHolder).diagnostic.reason)
-                            }
-                            else -> {
-                                normalReferences++
-                            }
+                        val calleeReference = qualifiedAccess.calleeReference
+                        if (calleeReference.isError()) {
+                            errorReferences++
+                            println((calleeReference as FirDiagnosticHolder).diagnostic.reason)
+                        } else {
+                            normalReferences++
                         }
                         visitStatement(qualifiedAccess, data)
                     }

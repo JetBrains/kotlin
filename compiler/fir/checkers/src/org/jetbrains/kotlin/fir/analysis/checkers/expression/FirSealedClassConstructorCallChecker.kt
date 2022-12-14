@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -23,10 +24,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val constructorSymbol = (expression.calleeReference as? FirResolvedNamedReference)
-            ?.takeUnless { it is FirResolvedErrorReference }
-            ?.resolvedSymbol as? FirConstructorSymbol
-            ?: return
+        val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true) ?: return
 
         val typeSymbol = (constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(context.session) as? ConeClassLikeType)
             ?.lookupTag?.toSymbol(context.session) as? FirRegularClassSymbol

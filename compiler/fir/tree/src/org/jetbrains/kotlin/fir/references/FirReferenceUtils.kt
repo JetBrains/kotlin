@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.references
 
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolvedNamedReference
 
@@ -51,4 +54,15 @@ fun FirReference.toResolvedFunctionSymbol(discardErrorReference: Boolean = false
 
 fun FirReference.toResolvedConstructorSymbol(discardErrorReference: Boolean = false): FirConstructorSymbol? {
     return this.toResolvedSymbol<FirConstructorSymbol>(discardErrorReference)
+}
+
+@OptIn(ExperimentalContracts::class)
+fun FirReference.isError(): Boolean {
+    contract {
+        returns(true) implies (this@isError is FirDiagnosticHolder)
+    }
+    return when (this) {
+        is FirResolvedErrorReference, is FirErrorNamedReference -> true
+        else -> false
+    }
 }

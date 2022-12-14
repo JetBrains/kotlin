@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -71,11 +72,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 else -> null
             } ?: return
 
-        val diagnostic = when (val reference = componentCall.calleeReference) {
-            is FirErrorNamedReference -> reference.diagnostic
-            is FirResolvedErrorReference -> reference.diagnostic
-            else -> null
-        }
+        val reference = componentCall.calleeReference
+        val diagnostic = if (reference.isError()) reference.diagnostic else null
         if (diagnostic != null) {
             checkComponentCall(
                 originalDestructuringDeclarationOrInitializerSource,
@@ -88,7 +86,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 context
             )
         }
-
     }
 
     private fun checkInitializer(

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -65,11 +66,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
              */
             private fun checkFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
                 val reference = functionCall.calleeReference
-                val diagnostic = when (reference) {
-                    is FirErrorNamedReference -> reference.diagnostic
-                    is FirResolvedErrorReference -> reference.diagnostic
-                    else -> return false
-                }
+                val diagnostic = if (reference.isError()) reference.diagnostic else return false
                 if (reference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
                     (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.renderReadable() }})"

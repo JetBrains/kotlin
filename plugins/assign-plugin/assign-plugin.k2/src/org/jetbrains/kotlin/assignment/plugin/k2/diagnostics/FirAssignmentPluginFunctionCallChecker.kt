@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -33,8 +35,9 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!expression.isOverloadAssignCallCandidate()) return
 
-        if (expression.isFunctionResolveError()) {
-            if (expression.isOverloadedAssignCallError(context.session)) {
+        val calleeReference = expression.calleeReference
+        if (calleeReference.isError()) {
+            if (expression.isOverloadedAssignCallError(context.session, calleeReference.diagnostic)) {
                 reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD, context)
             }
         } else if (expression.isOverloadedAssignCall(context.session) && !expression.isReturnTypeUnit()) {
@@ -45,13 +48,8 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker() {
     private fun FirFunctionCall.isOverloadAssignCallCandidate() =
         arguments.size == 1 && source?.kind == KtFakeSourceElementKind.DesugaredCompoundAssignment
 
-    private fun FirFunctionCall.isFunctionResolveError() = when(calleeReference){
-        is FirErrorNamedReference, is FirResolvedErrorReference -> true
-        else -> false
-    }
-
-    private fun FirFunctionCall.isOverloadedAssignCallError(session: FirSession): Boolean {
-        val functionName = when (val diagnostic = (calleeReference as? FirDiagnosticHolder)?.diagnostic) {
+    private fun FirFunctionCall.isOverloadedAssignCallError(session: FirSession, diagnostic: ConeDiagnostic): Boolean {
+        val functionName = when (diagnostic) {
             is ConeAmbiguityError -> diagnostic.name
             is ConeDiagnosticWithSingleCandidate -> diagnostic.candidate.callInfo.name
             is ConeUnresolvedNameError -> diagnostic.name

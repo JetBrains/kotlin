@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -30,11 +31,8 @@ internal fun checkConstantArguments(
     expression: FirExpression,
     session: FirSession,
 ): ConstantArgumentKind? {
-    val expressionSymbol = expression.toResolvedCallableReference()
-        ?.takeUnless { it is FirResolvedErrorReference }
-        ?.resolvedSymbol as? FirCallableSymbol<*>
-    val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)
-        ?.classKind
+    val expressionSymbol = expression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
+    val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
 
     when {
         expression is FirNamedArgumentExpression -> {
