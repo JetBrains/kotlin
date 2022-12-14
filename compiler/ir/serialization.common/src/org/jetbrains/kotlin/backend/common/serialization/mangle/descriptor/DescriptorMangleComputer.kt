@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
+/**
+ * The descriptor-based mangle computer. Used to compute a mangled name for a declaration given its [DeclarationDescriptor].
+ */
 abstract class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
     BaseKotlinMangleComputer<
             /*Declaration=*/DeclarationDescriptor,

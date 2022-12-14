@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
+/**
+ * A mangle computer that generates a mangled name for a Kotlin declaration represented by [FirDeclaration].
+ */
 class FirJvmMangleComputer(
     builder: StringBuilder,
     mode: MangleMode,

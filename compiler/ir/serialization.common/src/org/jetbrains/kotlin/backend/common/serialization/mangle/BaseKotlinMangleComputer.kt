@@ -7,6 +7,18 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle
 
 import org.jetbrains.kotlin.types.model.*
 
+/**
+ * A base implementation of the [KotlinMangleComputer] interface containing routines that are common for all frontends and backends.
+ *
+ * @param Declaration A class representing a Kotlin declaration.
+ * @param Type A class representing a Kotlin type.
+ * @param TypeParameter A class representing a type parameter of a Kotlin class or function.
+ * @param ValueParameter A class representing a value parameter declaration of a Kotlin function.
+ * @param TypeParameterContainer A class representing something that can have type parameters, like a Kotlin function or class declaration.
+ * @param FunctionDeclaration A class representing a Kotlin function declaration.
+ * @property builder A string builder to write the mangled name into.
+ * @property mode The mangle mode.
+ */
 abstract class BaseKotlinMangleComputer<
         Declaration : Any,
         Type : KotlinTypeMarker,
@@ -16,6 +28,9 @@ abstract class BaseKotlinMangleComputer<
         FunctionDeclaration : Declaration,
         >(protected val builder: StringBuilder, protected val mode: MangleMode) : KotlinMangleComputer<Declaration> {
 
+    /**
+     * The type system to use to query properties of types, type parameters and type arguments.
+     */
     protected abstract val typeSystemContext: TypeSystemContext
 
     protected val typeParameterContainers = ArrayList<TypeParameterContainer>(4)
