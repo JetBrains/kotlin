@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCr
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTests
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
@@ -324,6 +325,8 @@ private object NativeTestSupport {
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
+                // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
+                this += computePipelineType(testClass.get())
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
@@ -426,6 +429,15 @@ private object NativeTestSupport {
             .ensureExistsAndIsEmptyDirectory()
 
         return Binaries(testBinariesDir, sharedBinariesDir, givenBinariesDir)
+    }
+
+    private fun computePipelineType(testClass: Class<*>): PipelineType {
+        testClass.annotations.forEach { annotation ->
+            when (annotation) {
+                is K2Pipeline -> return PipelineType.K2
+            }
+        }
+        return PipelineType.K1
     }
 
     /*************** Test class settings (simplified) ***************/

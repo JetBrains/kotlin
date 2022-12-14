@@ -122,6 +122,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val sanitizer: Sanitizer,
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
+    private val pipelineType: PipelineType,
     freeCompilerArgs: TestCompilerArgs,
     override val sourceModules: Collection<TestModule>,
     dependencies: CategorizedDependencies,
@@ -142,6 +143,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        pipelineType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -169,6 +171,7 @@ internal class LibraryCompilation(
     sanitizer = settings.get(),
     gcType = settings.get(),
     gcScheduler = settings.get(),
+    pipelineType = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
@@ -179,7 +182,6 @@ internal class LibraryCompilation(
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
             "-produce", "library",
-            "-Xuse-k2",  // TODO pass this option from Gradle files
             "-output", expectedArtifact.path
         )
         super.applySpecificArgs(argsBuilder)
@@ -253,6 +255,7 @@ internal class ExecutableCompilation(
     sanitizer = settings.get(),
     gcType = settings.get(),
     gcScheduler = settings.get(),
+    pipelineType = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),

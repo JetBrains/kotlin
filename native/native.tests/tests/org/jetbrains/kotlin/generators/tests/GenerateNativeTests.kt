@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -24,6 +25,16 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+        }
+
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "K2NativeCodegenBoxTestGenerated",
+                annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>(), provider<K2Pipeline>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)

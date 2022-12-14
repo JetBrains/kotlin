@@ -238,3 +238,10 @@ internal sealed interface CacheMode {
             "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
     }
 }
+
+internal enum class PipelineType(val compilerFlag: String?) {
+    K1(null),
+    K2("-Xuse-k2");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
