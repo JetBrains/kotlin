@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -26,12 +27,12 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
-import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
+import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
 sealed class K2FrontendPhaseOutput {
     object ShouldNotGenerateCode : K2FrontendPhaseOutput()
@@ -68,9 +69,9 @@ internal val K2FrontendPhase = createSimpleNamedCompilerPhase(
     val sessionProvider = FirProjectSessionProvider()
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-//        if (arguments.extendedCompilerChecks) {
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
             registerExtendedCommonCheckers()
-//        }
+        }
     }
 
     val mainModuleName = Name.special("<${configuration.get(KonanConfigKeys.OUTPUT)!!}>")
@@ -82,19 +83,19 @@ internal val K2FrontendPhase = createSimpleNamedCompilerPhase(
 
 //    val mainModule = MainModule.SourceFiles(input.getSourceFiles())
 
-    val dependencyList = DependencyListForCliModule.build(mainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices) {
+    val dependencyList = DependencyListForCliModule.build(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices) {
         dependencies(context.config.resolvedLibraries.getFullList().map { it.libraryFile.absolutePath })
         friendDependencies(context.config.friendModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }
-    val resolvedLibraries: List<KotlinResolvedLibrary> = context.config.resolvedLibraries.getFullResolvedList()  // do we need context.config.friendModuleFiles here as well?
+    val resolvedLibraries: List<KotlinResolvedLibrary> = context.config.resolvedLibraries.getFullResolvedList()
 
-    FirJsSessionFactory.createJsLibrarySession(
+    FirNativeSessionFactory.createLibrarySession(
             mainModuleName,
-            resolvedLibraries,
             sessionProvider,
-            dependencyList.moduleDataProvider,
-            configuration.languageVersionSettings
+            dependencyList,
+            resolvedLibraries,
+            configuration.languageVersionSettings,
     )
 
     val mainModuleData = FirModuleDataImpl(
@@ -106,12 +107,11 @@ internal val K2FrontendPhase = createSimpleNamedCompilerPhase(
             dependencyList.analyzerServices
     )
 
-    val session = FirJsSessionFactory.createJsModuleBasedSession(
+    val session = FirNativeSessionFactory.createModuleBasedSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,
             configuration.languageVersionSettings,
-            null,
             sessionConfigurator,
     )
 
