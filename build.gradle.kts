@@ -603,8 +603,8 @@ tasks {
     }
 
     register("jsCompilerTest") {
-        dependsOn(":js:js.tests:test")
-        dependsOn(":js:js.tests:runMocha")
+        dependsOn(":js:js.tests:jsTest")
+        dependsOn(":js:js.tests:mochaTest")
     }
 
     register("jsFirCompilerTest") {
