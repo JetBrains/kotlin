@@ -64,7 +64,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val project = environment.project
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
         if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(WARNING, "Support of new compiler pipeline K2 in Native is experimental, no compatibility guarantees are yet provided")
+            messageCollector.report(INFO, "Support of new compiler pipeline K2 in Native is experimental, no compatibility guarantees are yet provided")
         }
         configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(arguments))
 

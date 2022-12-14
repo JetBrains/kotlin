@@ -179,6 +179,7 @@ internal class LibraryCompilation(
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
             "-produce", "library",
+            "-Xuse-k2",  // TODO pass this option from Gradle files
             "-output", expectedArtifact.path
         )
         super.applySpecificArgs(argsBuilder)
