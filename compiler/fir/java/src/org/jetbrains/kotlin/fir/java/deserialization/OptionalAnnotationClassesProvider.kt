@@ -53,6 +53,8 @@ class OptionalAnnotationClassesProvider(
 
     override fun mayHaveTopLevelClass(classId: ClassId): Boolean = true
 
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> = emptySet()
+
     override fun extractClassMetadata(
         classId: ClassId,
         parentContext: FirDeserializationContext?

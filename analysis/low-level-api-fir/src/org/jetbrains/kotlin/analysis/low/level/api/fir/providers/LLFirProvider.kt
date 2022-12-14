@@ -116,5 +116,21 @@ internal class LLFirProvider(
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
             return getFirClassifierByFqName(classId)?.symbol
         }
+
+        override fun computePackageSet(): Set<String> {
+            TODO("Not yet implemented")
+        }
+
+        override fun mayHaveTopLevelClass(classId: ClassId): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override fun computeCallableNames(fqName: FqName): Set<Name>? {
+            TODO("Not yet implemented")
+        }
+
+        override fun knownTopLevelClassifiers(fqName: FqName): Set<String> {
+            TODO("Not yet implemented")
+        }
     }
 }
