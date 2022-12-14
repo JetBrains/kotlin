@@ -1,0 +1,111 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.backend.konan.driver.phases
+
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+
+data class Fir2IrOutput(
+        val session: FirSession,
+        val scopeSession: ScopeSession,
+        val firFiles: List<FirFile>,
+        val fir2irResult: Fir2IrResult,
+)
+
+internal fun <T : FirFrontendContext> PhaseEngine<T>.runFir2Ir(input: FirOutput.Full): Fir2IrOutput {
+    return this.runPhase(Fir2IrPhase, input)!!
+}
+
+internal val Fir2IrPhase = createSimpleNamedCompilerPhase(
+        "Fir2Ir", "Compiler Fir2Ir Frontend phase",
+        outputIfNotEnabled = { _, _, _, _ -> null }
+) { context: FirFrontendContext, input: FirOutput.Full ->
+    phaseBody(input, context)
+}
+
+internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer, PlatformDependentTypeTransformer.None)
+
+private fun phaseBody(
+        input: FirOutput.Full,
+        context: FirFrontendContext
+): Fir2IrOutput {
+    val fir2IrExtensions = Fir2IrExtensions.Default
+    val signaturer = IdSignatureDescriptor(KonanManglerDesc)
+    val commonFirFiles = input.session.moduleData.dependsOnDependencies
+            .map { it.session }
+            .filter { it.kind == FirSession.Kind.Source }
+            .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
+
+    var builtInsModule: KotlinBuiltIns? = null
+    val dependencies = mutableListOf<ModuleDescriptorImpl>()
+
+    val resolvedLibraries = context.config.resolvedLibraries.getFullResolvedList()
+    val configuration = context.environment.configuration
+    val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
+        val storageManager = LockBasedStorageManager("ModulesStructure")
+
+        val moduleDescriptor = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                resolvedLibrary.library,
+                configuration.languageVersionSettings,
+                storageManager,
+                builtInsModule,
+                packageAccessHandler = null,
+                lookupTracker = LookupTracker.DO_NOTHING
+        )
+        dependencies += moduleDescriptor
+        moduleDescriptor.setDependencies(ArrayList(dependencies))
+
+        val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
+        if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
+
+        moduleDescriptor
+    }
+
+    val fir2irResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+            input.session, input.scopeSession, input.firFiles + commonFirFiles,
+            configuration.languageVersionSettings, signaturer,
+            fir2IrExtensions,
+            FirJvmKotlinMangler(input.session), // TODO: replace with potentially simpler Konan version
+            KonanManglerIr, IrFactoryImpl,
+            Fir2IrVisibilityConverter.Default,
+            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
+            IrGenerationExtension.getInstances(context.environment.project),
+            generateSignatures = false,
+            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance // TODO: consider passing externally
+    ).also {
+        (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+    }
+
+    return Fir2IrOutput(input.session, input.scopeSession, input.firFiles, fir2irResult)
+}

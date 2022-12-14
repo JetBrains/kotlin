@@ -95,16 +95,17 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             engine: PhaseEngine<PhaseContext>,
             config: KonanConfig,
             environment: KotlinCoreEnvironment
-    ) {
-        val k2frontendContext = K2FrontendContextImpl(environment, config)
-        val frontendOutput = engine.useContext(k2frontendContext) { it.runFrontend(environment) }
+    ): Boolean {
+        val context = FirFrontendContextImpl(config, environment)
+        val frontendOutput = engine.useContext(context) { it.runFirFrontend(environment) }
+        if (frontendOutput is FirOutput.ShouldNotGenerateCode) return false
+        require(frontendOutput is FirOutput.Full)
 
-        val serializerOutput = when (frontendOutput) {
-            is K2FrontendPhaseOutput.IR -> engine.useContext(k2frontendContext) { it.runSerializerFirNative(frontendOutput) }
-            is K2FrontendPhaseOutput.Serialized -> frontendOutput.serializerOutput
-            is K2FrontendPhaseOutput.ShouldNotGenerateCode -> return
-        }
-        return
+        val fir2IrOutput = engine.useContext(context) { it.runFir2Ir(frontendOutput) }
+
+        engine.useContext(context) { it.runFirSerializer(fir2IrOutput) }
+
+        return true  // klib is serialized to `runFirSerializer output`.klibPath
     }
 
     /**

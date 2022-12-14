@@ -31,7 +31,7 @@ data class SerializerOutput(
 )
 
 internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
-        "Serializer", "IR serialzer",
+        "Serializer", "IR serializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
