@@ -110,7 +110,7 @@ class TraceInformationTest : AbstractIrTransformTest() {
             @ComposableInferredTarget(scheme = "[0[0]]")
             fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Wrapper)<conten...>:Test.kt")
+              sourceInformation(%composer, "CC(Wrapper)<conten...>:Test.kt")
               content(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }

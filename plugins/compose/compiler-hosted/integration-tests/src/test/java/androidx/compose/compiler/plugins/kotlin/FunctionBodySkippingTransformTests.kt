@@ -3332,7 +3332,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
               val current: Int
                 @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
                 get() {
-                  sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                  sourceInformationMarkerStart(%composer, <>, "CC:Test.kt")
                   val tmp0 = %composer.hashCode()
                   sourceInformationMarkerEnd(%composer)
                   return tmp0
@@ -3937,7 +3937,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
             @ComposableInferredTarget(scheme = "[0[0]]")
             fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Bug)P(1)*<conten...>:Test.kt")
+              sourceInformation(%composer, "CC(Bug)P(1)*<conten...>:Test.kt")
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
                 val item = tmp0_iterator.next()
