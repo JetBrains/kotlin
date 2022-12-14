@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
-import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
@@ -25,9 +24,13 @@ class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, graph: 
 class PropertyInitializationInfoCollector(
     private val localProperties: Set<FirPropertySymbol>,
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
-) : PathAwareControlFlowGraphVisitor<PathAwarePropertyInitializationInfo>() {
+) : PathAwareControlFlowGraphVisitor<PropertyInitializationInfo>() {
+    companion object {
+        val EMPTY: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
+    }
+
     override val emptyInfo: PathAwarePropertyInitializationInfo
-        get() = PathAwarePropertyInitializationInfo.EMPTY
+        get() = EMPTY
 
     override fun visitVariableAssignmentNode(
         node: VariableAssignmentNode,
@@ -55,11 +58,7 @@ class PropertyInitializationInfoCollector(
     }
 
     fun getData(graph: ControlFlowGraph) =
-        graph.collectDataForNode(
-            TraverseDirection.Forward,
-            PathAwarePropertyInitializationInfo.EMPTY,
-            this
-        )
+        graph.collectDataForNode(TraverseDirection.Forward, this)
 
     private fun processVariableWithAssignment(
         dataForNode: PathAwarePropertyInitializationInfo,
@@ -68,9 +67,9 @@ class PropertyInitializationInfoCollector(
     ): PathAwarePropertyInitializationInfo {
         assert(dataForNode.keys.isNotEmpty())
         return if (overwriteRange)
-            overwriteRange(dataForNode, symbol, EventOccurrencesRange.ZERO, ::PathAwarePropertyInitializationInfo)
+            overwriteRange(dataForNode, symbol, EventOccurrencesRange.ZERO)
         else
-            addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE, ::PathAwarePropertyInitializationInfo)
+            addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE)
     }
 
     // --------------------------------------------------
@@ -92,7 +91,7 @@ class PropertyInitializationInfoCollector(
             else -> return result
         }
         return declaredVariableSymbolsInCapturedScope.fold(data) { filteredData, variableSymbol ->
-            removeRange(filteredData, variableSymbol, ::PathAwarePropertyInitializationInfo)
+            removeRange(filteredData, variableSymbol)
         }
     }
 
@@ -110,36 +109,33 @@ class PropertyInitializationInfoCollector(
     }
 }
 
-internal fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
-    pathAwareInfo: P,
+internal fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
+    pathAwareInfo: PathAwareControlFlowInfo<S>,
     key: K,
     range: EventOccurrencesRange,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
+): PathAwareControlFlowInfo<S> {
     // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
     // after (if key is p1):
     //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return updateRange(pathAwareInfo, key, { existingKind -> existingKind + range }, constructor)
+    return updateRange(pathAwareInfo, key) { existingKind -> existingKind + range }
 }
 
-private fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> overwriteRange(
-    pathAwareInfo: P,
+private fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> overwriteRange(
+    pathAwareInfo: PathAwareControlFlowInfo<S>,
     key: K,
     range: EventOccurrencesRange,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
+): PathAwareControlFlowInfo<S> {
     // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
     // after (if key is p1):
     //   { |-> { p1 |-> r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return updateRange(pathAwareInfo, key, { range }, constructor)
+    return updateRange(pathAwareInfo, key) { range }
 }
 
-private inline fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> updateRange(
-    pathAwareInfo: P,
+private inline fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> updateRange(
+    pathAwareInfo: PathAwareControlFlowInfo<S>,
     key: K,
     computeNewRange: (EventOccurrencesRange) -> EventOccurrencesRange,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
+): PathAwareControlFlowInfo<S> {
     var resultMap = persistentMapOf<EdgeLabel, S>()
     // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
     for ((label, dataPerLabel) in pathAwareInfo) {
@@ -149,14 +145,13 @@ private inline fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K
     }
     // after (if key is p1):
     //   { |-> { p1 |-> computeNewRange(PI1) }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return constructor(resultMap)
+    return resultMap
 }
 
-private fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> removeRange(
-    pathAwareInfo: P,
+private fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> removeRange(
+    pathAwareInfo: PathAwareControlFlowInfo<S>,
     key: K,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
+): PathAwareControlFlowInfo<S> {
     var resultMap = persistentMapOf<EdgeLabel, S>()
     // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
     for ((label, dataPerLabel) in pathAwareInfo) {
@@ -164,5 +159,5 @@ private fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, Event
     }
     // after (if key is p1):
     //   { |-> { }, l1 |-> { p2 |-> PI2 } }
-    return constructor(resultMap)
+    return resultMap
 }

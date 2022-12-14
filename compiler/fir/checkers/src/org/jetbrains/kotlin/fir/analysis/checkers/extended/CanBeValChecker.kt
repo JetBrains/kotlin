@@ -93,7 +93,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
             val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, EventOccurrencesRange.ZERO)
             val info = data.getValue(node)
-            propertiesCharacteristics[symbol] = currentCharacteristic.or(info.infoAtNormalPath[symbol] ?: EventOccurrencesRange.ZERO)
+            propertiesCharacteristics[symbol] = info.values.fold(currentCharacteristic) { a, b -> b[symbol]?.let(a::or) ?: a }
         }
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {

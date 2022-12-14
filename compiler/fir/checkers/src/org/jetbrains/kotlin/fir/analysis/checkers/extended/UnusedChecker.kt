@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
@@ -151,26 +152,19 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             merge(other) // TODO: not sure
     }
 
-    class PathAwareVariableStatusInfo(
-        map: PersistentMap<EdgeLabel, VariableStatusInfo> = persistentMapOf()
-    ) : PathAwareControlFlowInfo<PathAwareVariableStatusInfo, VariableStatusInfo>(map) {
-        companion object {
-            val EMPTY = PathAwareVariableStatusInfo(persistentMapOf(NormalPath to VariableStatusInfo.EMPTY))
-        }
-
-        override val constructor: (PersistentMap<EdgeLabel, VariableStatusInfo>) -> PathAwareVariableStatusInfo =
-            ::PathAwareVariableStatusInfo
-    }
-
     private class ValueWritesWithoutReading(
         private val session: FirSession,
         private val localProperties: Set<FirPropertySymbol>
-    ) : PathAwareControlFlowGraphVisitor<PathAwareVariableStatusInfo>() {
+    ) : PathAwareControlFlowGraphVisitor<VariableStatusInfo>() {
+        companion object {
+            val EMPTY: PathAwareVariableStatusInfo = persistentMapOf(NormalPath to VariableStatusInfo.EMPTY)
+        }
+
         override val emptyInfo: PathAwareVariableStatusInfo
-            get() = PathAwareVariableStatusInfo.EMPTY
+            get() = EMPTY
 
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
-            return graph.collectDataForNode(TraverseDirection.Backward, PathAwareVariableStatusInfo.EMPTY, this)
+            return graph.collectDataForNode(TraverseDirection.Backward, this)
         }
 
         private fun PathAwareVariableStatusInfo.withAnnotationsFrom(node: CFGNode<*>): PathAwareVariableStatusInfo =
@@ -306,21 +300,13 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             pathAwareInfo: PathAwareVariableStatusInfo,
             vararg symbols: FirPropertySymbol,
             updater: (VariableStatus?) -> VariableStatus?,
-        ): PathAwareVariableStatusInfo {
-            var resultMap = persistentMapOf<EdgeLabel, VariableStatusInfo>()
-            var changed = false
+        ): PathAwareVariableStatusInfo = pathAwareInfo.mutate {
             for ((label, dataPerLabel) in pathAwareInfo) {
                 for (symbol in symbols) {
-                    val v = updater.invoke(dataPerLabel[symbol])
-                    if (v != null) {
-                        resultMap = resultMap.put(label, dataPerLabel.put(symbol, v))
-                        changed = true
-                    } else {
-                        resultMap = resultMap.put(label, dataPerLabel)
-                    }
+                    val v = updater.invoke(dataPerLabel[symbol]) ?: continue
+                    it[label] = dataPerLabel.put(symbol, v)
                 }
             }
-            return if (changed) PathAwareVariableStatusInfo(resultMap) else pathAwareInfo
         }
     }
 
@@ -330,3 +316,5 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
         }
 }
+
+private typealias PathAwareVariableStatusInfo = PathAwareControlFlowInfo<UnusedChecker.VariableStatusInfo>

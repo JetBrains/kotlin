@@ -85,7 +85,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         val invocationData = graph.collectDataForNode(
             TraverseDirection.Forward,
-            PathAwareLambdaInvocationInfo.EMPTY,
             InvocationDataCollector(functionalTypeEffects.keys.filterTo(mutableSetOf()) { it !in leakedSymbols })
         )
 
@@ -224,22 +223,15 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             ::LambdaInvocationInfo
     }
 
-    class PathAwareLambdaInvocationInfo(
-        map: PersistentMap<EdgeLabel, LambdaInvocationInfo> = persistentMapOf()
-    ) : PathAwareControlFlowInfo<PathAwareLambdaInvocationInfo, LambdaInvocationInfo>(map) {
-        companion object {
-            val EMPTY = PathAwareLambdaInvocationInfo(persistentMapOf(NormalPath to LambdaInvocationInfo.EMPTY))
-        }
-
-        override val constructor: (PersistentMap<EdgeLabel, LambdaInvocationInfo>) -> PathAwareLambdaInvocationInfo =
-            ::PathAwareLambdaInvocationInfo
-    }
-
     private class InvocationDataCollector(
         val functionalTypeSymbols: Set<FirBasedSymbol<*>>
-    ) : PathAwareControlFlowGraphVisitor<PathAwareLambdaInvocationInfo>() {
+    ) : PathAwareControlFlowGraphVisitor<LambdaInvocationInfo>() {
+        companion object {
+            val EMPTY: PathAwareLambdaInvocationInfo = persistentMapOf(NormalPath to LambdaInvocationInfo.EMPTY)
+        }
+
         override val emptyInfo: PathAwareLambdaInvocationInfo
-            get() = PathAwareLambdaInvocationInfo.EMPTY
+            get() = EMPTY
 
         override fun visitFunctionCallNode(
             node: FunctionCallNode,
@@ -286,9 +278,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             range: EventOccurrencesRange
         ): PathAwareLambdaInvocationInfo {
             val symbol = referenceToSymbol(reference)
-            return if (symbol != null) {
-                addRange(this, symbol, range, ::PathAwareLambdaInvocationInfo)
-            } else this
+            return if (symbol != null) addRange(this, symbol, range) else this
         }
     }
 
@@ -329,3 +319,5 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         else -> null
     }
 }
+
+private typealias PathAwareLambdaInvocationInfo = PathAwareControlFlowInfo<FirCallsEffectAnalyzer.LambdaInvocationInfo>
