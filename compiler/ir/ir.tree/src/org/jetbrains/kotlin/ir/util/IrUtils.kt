@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.TypedEquals
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_FQ_NAME
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -664,7 +666,15 @@ internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
 
 fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrValueParameter?): IrExpression = when (this) {
     is IrGetField ->
-        IrGetFieldImpl(startOffset, endOffset, symbol, type, receiver?.remapReceiver(oldReceiver, newReceiver), origin, superQualifierSymbol)
+        IrGetFieldImpl(
+            startOffset,
+            endOffset,
+            symbol,
+            type,
+            receiver?.remapReceiver(oldReceiver, newReceiver),
+            origin,
+            superQualifierSymbol
+        )
     is IrGetValue ->
         IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
     is IrCall ->
@@ -1137,10 +1147,12 @@ fun IrClass.addFakeOverrides(
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
     IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this,
-                                                          implementedMembers = implementedMembers,
-                                                          compatibilityMode = false,
-                                                          ignoredParentSymbols = ignoredParentSymbols)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(
+            this,
+            implementedMembers = implementedMembers,
+            compatibilityMode = false,
+            ignoredParentSymbols = ignoredParentSymbols
+        )
         .forEach { addChild(it) }
 }
 
@@ -1349,13 +1361,5 @@ fun IrFunction.isEquals() =
             valueParameters.singleOrNull()?.type?.isNullableAny() == true
 
 val IrFunction.isValueClassTypedEquals: Boolean
-    get() {
-        val parentClass = parent as? IrClass ?: return false
-        val enclosingClassStartProjection = parentClass.symbol.starProjectedType
-        return name == OperatorNameConventions.EQUALS
-                && (returnType.isBoolean() || returnType.isNothing())
-                && valueParameters.size == 1
-                && (valueParameters[0].type == enclosingClassStartProjection)
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-                && (parentClass.isValue)
-    }
+    get() = this.hasAnnotation(TypedEquals.asSingleFqName())
+

@@ -56,6 +56,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTopLevelFunctionsChecker,
             FirMemberFunctionsChecker,
             FirDataObjectContentChecker,
+            FirTypedEqualsApplicabilityChecker
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

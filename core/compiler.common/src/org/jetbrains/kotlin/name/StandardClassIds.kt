@@ -170,6 +170,8 @@ object StandardClassIds {
 
         val WasExperimental = "WasExperimental".baseId()
 
+        val TypedEquals = "TypedEquals".baseId()
+
         object Java {
             val Deprecated = "Deprecated".javaLangId()
             val Repeatable = "Repeatable".javaAnnotationId()

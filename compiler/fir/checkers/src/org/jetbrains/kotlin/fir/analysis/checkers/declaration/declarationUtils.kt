@@ -116,15 +116,15 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
     return null
 }
 
-fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
+fun FirSimpleFunction.isTypedEqualsInValueClassBySignature(session: FirSession): Boolean =
     containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
         val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
-        with(this@isTypedEqualsInValueClass) {
+        with(this@isTypedEqualsInValueClassBySignature) {
             contextReceivers.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
                     && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                    && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
+                    && valueParameters[0].returnTypeRef.coneType == valueClassStarProjection
         }
     } ?: false
 

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getFirstArgumentExpression
+import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_FQ_NAME
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAME
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME
@@ -51,6 +54,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
+import org.jetbrains.kotlin.resolve.scopes.findFirstFunctionOrNull
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
@@ -81,7 +85,8 @@ class OptInUsageChecker(project: Project) : CallChecker {
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val resultingDescriptor = resolvedCall.resultingDescriptor
+        val resultingDescriptor =
+            tryToSpecializeToTypedEquals(resolvedCall, context.trace.bindingContext) ?: resolvedCall.resultingDescriptor
         val bindingContext = context.trace.bindingContext
         val languageVersionSettings = context.languageVersionSettings
         val optIns = resultingDescriptor.loadOptIns(moduleAnnotationsResolver, bindingContext, languageVersionSettings)
@@ -108,6 +113,16 @@ class OptInUsageChecker(project: Project) : CallChecker {
             reportNotAllowedOptIns(samOptIns, reportOn, context)
         }
         reportNotAllowedOptIns(optIns, reportOn, context)
+    }
+
+    private fun tryToSpecializeToTypedEquals(resolvedCall: ResolvedCall<*>, context: BindingContext): SimpleFunctionDescriptor? {
+        if (!resolvedCall.resultingDescriptor.isEqualsDescriptor()) return null
+        val receiverType = resolvedCall.dispatchReceiver?.type ?: return null
+        if (!receiverType.isValueClassType()) return null
+        val otherArgument = resolvedCall.getFirstArgumentExpression() ?: return null
+        val otherArgumentType = otherArgument.getType(context) ?: return null
+        if (receiverType.constructor.declarationDescriptor != otherArgumentType.constructor.declarationDescriptor) return null
+        return receiverType.memberScope.findFirstFunctionOrNull("equals") { it is SimpleFunctionDescriptor && it.isTypedEqualsInValueClass() }
     }
 
     private fun FunctionDescriptor.findRelevantDataClassPropertyIfAny(context: CallCheckerContext): PropertyDescriptor? {

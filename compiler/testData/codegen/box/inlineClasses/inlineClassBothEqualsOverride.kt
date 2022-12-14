@@ -3,7 +3,6 @@
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 
-
 interface I {
     fun getVal(): Int
 }
@@ -14,6 +13,7 @@ value class IC1(val x: Int) : I {
         return x
     }
 
+    @TypedEquals
     fun equals(other: IC1): Boolean {
         return x == other.x
     }
@@ -36,6 +36,7 @@ value class IC2(val y: Int) : I {
         return y * 10
     }
 
+    @TypedEquals
     fun equals(other: IC2): Boolean {
         return y == other.y
     }

@@ -250,6 +250,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
@@ -2048,6 +2049,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Overriding ''equals'' from ''Any'' in value class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
             RENDER_TYPE
         )
+
+        map.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable for this function")
 
         //imports
         map.put(

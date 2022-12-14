@@ -126,15 +126,10 @@ abstract class DataClassMembersGenerator(
             )
         }
 
-        private fun IrSimpleFunction.isTypedEqualsInValueClass() = name == OperatorNameConventions.EQUALS &&
-                returnType == context.irBuiltIns.booleanType && irClass.isValue
-                && valueParameters.size == 1 && valueParameters[0].type.classifierOrNull == irClass.symbol
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-
         fun generateEqualsMethodBody(properties: List<IrProperty>) {
             val irType = irClass.defaultType
 
-            val typedEqualsFunction = irClass.functions.singleOrNull { it.isTypedEqualsInValueClass() }
+            val typedEqualsFunction = irClass.functions.singleOrNull { it.isValueClassTypedEquals }
             if (irClass.isValue && typedEqualsFunction != null) {
                 +irIfThenReturnFalse(irNotIs(irOther(), irType))
                 val otherCasted = irImplicitCast(irOther(), irType)

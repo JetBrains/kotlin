@@ -17967,6 +17967,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("debug.kt")
+            public void testDebug() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/debug.kt");
+            }
+
+            @Test
             @TestMetadata("delegatedPropertyInInlineClass.kt")
             public void testDelegatedPropertyInInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/delegatedPropertyInInlineClass.kt");

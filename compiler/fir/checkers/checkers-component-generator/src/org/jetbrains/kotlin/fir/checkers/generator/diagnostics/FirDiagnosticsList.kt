@@ -1420,6 +1420,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<ConeKotlinType>("type")
         }
+
+        val INAPPLICABLE_TYPED_EQUALS_ANNOTATION by error<KtAnnotationEntry>()
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {
