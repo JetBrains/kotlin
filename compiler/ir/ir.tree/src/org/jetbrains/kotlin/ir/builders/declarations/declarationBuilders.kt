@@ -198,6 +198,7 @@ fun IrClass.addFunction(
     isStatic: Boolean = false,
     isSuspend: Boolean = false,
     isFakeOverride: Boolean = false,
+    isInline: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
@@ -211,6 +212,7 @@ fun IrClass.addFunction(
         this.visibility = visibility
         this.isSuspend = isSuspend
         this.isFakeOverride = isFakeOverride
+        this.isInline = isInline
         this.origin = origin
     }.apply {
         if (!isStatic) {

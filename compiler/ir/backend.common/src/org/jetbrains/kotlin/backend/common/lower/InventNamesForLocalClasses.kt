@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -118,6 +119,12 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
             putLocalClassName(expression, internalName)
 
             expression.acceptChildren(this, data)
+        }
+
+        override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {
+            expression.acceptChildren(this, data)
+            val internalName = localFunctionNames[expression.function.symbol] ?: inventName(null, data)
+            putLocalClassName(expression, internalName)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: Data) {

@@ -70,6 +70,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
                 irBuiltIns.dataClassArrayMemberHashCodeSymbol.toKey()!! to IrDataClassArrayMemberHashCode,
                 irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
+                symbols.singleArgumentInlineFunction.toKey()!! to SingleArgumentInlineFunctionIntrinsic,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
                 symbols.throwNullPointerException.toKey()!! to ThrowException(Type.getObjectType("java/lang/NullPointerException")),
