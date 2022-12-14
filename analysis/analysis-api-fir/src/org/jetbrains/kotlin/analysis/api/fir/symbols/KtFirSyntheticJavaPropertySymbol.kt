@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
@@ -97,7 +98,11 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> = withValidityAssertion {
-        KtFirJavaSyntheticPropertySymbolPointer(requireOwnerPointer(), name)
+        KtFirJavaSyntheticPropertySymbolPointer(
+            ownerPointer = requireOwnerPointer(),
+            propertyName = name,
+            isSynthetic = firSymbol is SyntheticSymbol,
+        )
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

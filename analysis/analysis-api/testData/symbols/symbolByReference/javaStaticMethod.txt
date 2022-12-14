@@ -1,0 +1,26 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /JavaClass.foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: false
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  modality: OPEN
+  name: foo
+  origin: JAVA
+  receiverParameter: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

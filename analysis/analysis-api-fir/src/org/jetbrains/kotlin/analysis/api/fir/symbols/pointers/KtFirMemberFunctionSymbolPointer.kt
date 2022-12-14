@@ -18,7 +18,8 @@ internal class KtFirMemberFunctionSymbolPointer(
     ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
     private val name: Name,
     private val signature: FirCallableSignature,
-) : KtFirMemberSymbolPointer<KtFunctionSymbol>(ownerPointer) {
+    isStatic: Boolean,
+) : KtFirMemberSymbolPointer<KtFunctionSymbol>(ownerPointer, isStatic) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession

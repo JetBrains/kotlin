@@ -65,6 +65,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("enumValueOf.kt")
+    public void testEnumValueOf() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValueOf.kt");
+    }
+
+    @Test
+    @TestMetadata("enumValues.kt")
+    public void testEnumValues() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValues.kt");
+    }
+
+    @Test
     @TestMetadata("explicitLambdaParameter.kt")
     public void testExplicitLambdaParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/explicitLambdaParameter.kt");
@@ -104,6 +116,30 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     @TestMetadata("javaField.kt")
     public void testJavaField() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaMethod.kt")
+    public void testJavaMethod() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticField.kt")
+    public void testJavaStaticField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticMethod.kt")
+    public void testJavaStaticMethod() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("javaSyntheticAccessor.kt")
+    public void testJavaSyntheticAccessor() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaSyntheticAccessor.kt");
     }
 
     @Test

@@ -1,0 +1,67 @@
+KtSyntheticJavaPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /JavaClass.foo
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: /JavaClass.getFoo
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE_MEMBER_GENERATED
+    receiverParameter: KtReceiverParameterSymbol:
+      annotationsList: []
+      origin: SOURCE
+      owningCallableSymbol: KtSyntheticJavaPropertySymbol(/JavaClass.foo)
+      type: JavaClass
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
+
+      deprecationStatus: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertyGetterSymbol
+
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isDelegatedProperty: false
+  isExtension: true
+  isFromPrimaryConstructor: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  javaGetterSymbol: KtFunctionSymbol(/JavaClass.getFoo)
+  javaSetterSymbol: null
+  modality: FINAL
+  name: foo
+  origin: JAVA_SYNTHETIC_PROPERTY
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    owningCallableSymbol: KtSyntheticJavaPropertySymbol(/JavaClass.foo)
+    type: JavaClass
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
+
+    deprecationStatus: null
+  returnType: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSyntheticJavaPropertySymbol
+
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getFoo
+  javaSetterName: null
+  setterDeprecationStatus: null

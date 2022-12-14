@@ -6,41 +6,51 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
     private val ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
+    private val isStatic: Boolean = false,
 ) : KtSymbolPointer<S>() {
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     final override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         require(analysisSession is KtFirAnalysisSession)
-        val ownerSymbol = with(analysisSession) {
-            ownerPointer.restoreSymbol()
-        }
+        val scope = with(analysisSession) {
+            val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
+            val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
+            getSearchScope(owner)
+        } ?: return null
 
-        val owner = ownerSymbol?.firSymbol as? FirClassSymbol ?: return null
-        val firSession = analysisSession.useSiteSession
-        val scope = owner.unsubstitutedScope(
-            firSession,
-            analysisSession.getScopeSessionFor(firSession),
-            withForcedTypeCalculator = false,
-        )
-
-        return analysisSession.chooseCandidateAndCreateSymbol(scope, firSession)
+        return analysisSession.chooseCandidateAndCreateSymbol(scope, analysisSession.useSiteSession)
     }
 
     protected abstract fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
+
+    context(KtFirAnalysisSession)
+    protected open fun getSearchScope(owner: FirClassSymbol<*>): FirScope? {
+        val firSession = useSiteSession
+        val scopeSession = getScopeSessionFor(firSession)
+        return if (isStatic) {
+            val firClass = owner.fir as? FirClass ?: return null
+            firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, firSession, scopeSession)
+        } else {
+            owner.unsubstitutedScope(
+                useSiteSession = firSession,
+                scopeSession = scopeSession,
+                withForcedTypeCalculator = false,
+            )
+        }
+    }
 }
 
 context(KtAnalysisSession)

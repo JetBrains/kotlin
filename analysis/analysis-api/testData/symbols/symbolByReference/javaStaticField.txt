@@ -1,0 +1,17 @@
+KtJavaFieldSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /JavaClass.field
+  contextReceivers: []
+  isExtension: false
+  isStatic: true
+  isVal: false
+  modality: OPEN
+  name: field
+  origin: JAVA
+  receiverParameter: null
+  returnType: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

@@ -55,7 +55,7 @@ internal class KtFirJavaFieldSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
-        KtFirJavaFieldSymbolPointer(requireOwnerPointer(), name)
+        KtFirJavaFieldSymbolPointer(requireOwnerPointer(), name, firSymbol.isStatic)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

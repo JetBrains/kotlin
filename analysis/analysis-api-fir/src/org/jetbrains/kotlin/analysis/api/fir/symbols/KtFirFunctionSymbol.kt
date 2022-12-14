@@ -117,6 +117,7 @@ internal class KtFirFunctionSymbol(
                 requireOwnerPointer(),
                 firSymbol.name,
                 FirCallableSignature.createSignature(firSymbol),
+                isStatic = firSymbol.isStatic,
             )
 
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
