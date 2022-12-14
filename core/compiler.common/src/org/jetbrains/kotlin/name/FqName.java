@@ -98,6 +98,11 @@ public final class FqName {
         return fqName.pathSegments();
     }
 
+    @NotNull
+    public String[] pathStringSegments() {
+        return fqName.pathStringSegments();
+    }
+
     public boolean startsWith(@NotNull Name segment) {
         return fqName.startsWith(segment);
     }
@@ -119,9 +124,7 @@ public final class FqName {
 
         FqName otherFqName = (FqName) o;
 
-        if (!fqName.equals(otherFqName.fqName)) return false;
-
-        return true;
+        return fqName.equals(otherFqName.fqName);
     }
 
     @Override

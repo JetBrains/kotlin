@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.IntArrayList
 import java.util.*
 
 // speeds up finding files/classes in classpath/java source roots
@@ -112,7 +111,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
 
     private fun <T : Any> search(request: SearchRequest, handler: (VirtualFile, JavaRoot.RootType) -> T?): T? {
         // a list of package sub names, ["org", "jb", "kotlin"]
-        val packagesPath = request.packageFqName.pathSegments().map { it.identifier }
+        val packagesPath = request.packageFqName.pathStringSegments()
         // a list of caches corresponding to packages, [default, "org", "org.jb", "org.jb.kotlin"]
         val caches = cachesPath(packagesPath)
 
@@ -152,7 +151,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
     private fun travelPath(
         rootIndex: Int,
         packageFqName: FqName,
-        packagesPath: List<String>,
+        packagesPath: Array<String>,
         fillCachesAfter: Int,
         cachesPath: List<Cache>
     ): VirtualFile? {
@@ -170,7 +169,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         }
     }
 
-    private fun doTravelPath(rootIndex: Int, packagesPath: List<String>, fillCachesAfter: Int, cachesPath: List<Cache>): VirtualFile? {
+    private fun doTravelPath(rootIndex: Int, packagesPath: Array<String>, fillCachesAfter: Int, cachesPath: List<Cache>): VirtualFile? {
         val pathRoot = roots[rootIndex]
         val prefixPathSegments = pathRoot.prefixFqName?.pathSegments()
 
@@ -217,7 +216,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         return childDirectory
     }
 
-    private fun cachesPath(path: List<String>): List<Cache> {
+    private fun cachesPath(path: Array<String>): List<Cache> {
         val caches = ArrayList<Cache>(path.size + 1)
         caches.add(rootCache)
         var currentCache = rootCache

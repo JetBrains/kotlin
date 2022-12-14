@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public final class FqNameUnsafe {
     private static final Name ROOT_NAME = Name.special("<root>");
-    private static final Pattern SPLIT_BY_DOTS = Pattern.compile("\\.");
+    //private static final Pattern SPLIT_BY_DOTS = Pattern.compile("\\.");
 
     private static final Function1<String, Name> STRING_TO_NAME = new Function1<String, Name>() {
         @Override
@@ -159,7 +159,24 @@ public final class FqNameUnsafe {
 
     @NotNull
     public List<Name> pathSegments() {
-        return isRoot() ? Collections.<Name>emptyList() : ArraysKt.map(SPLIT_BY_DOTS.split(fqName), STRING_TO_NAME);
+        return isRoot() ? Collections.<Name>emptyList() : ArraysKt.map(pathStringSegments(), STRING_TO_NAME);
+    }
+
+    public String[] pathStringSegments() {
+        String[] temp = new String[(fqName.length() / 2) + 1];
+        int wordCount = 0;
+        int i = 0;
+        int j = fqName.indexOf('.');
+        while (j >= 0)
+        {
+            temp[wordCount++] = fqName.substring(i, j);
+            i = j + 1;
+            j = fqName.indexOf('.', i);
+        }
+        temp[wordCount++] = fqName.substring(i);
+        String[] result = new String[wordCount];
+        System.arraycopy(temp, 0, result, 0, wordCount);
+        return result;
     }
 
     public boolean startsWith(@NotNull Name segment) {
@@ -190,9 +207,7 @@ public final class FqNameUnsafe {
         FqNameUnsafe that = (FqNameUnsafe) o;
 
         if (cachedHashCode != that.cachedHashCode) return false;
-        if (!fqName.equals(that.fqName)) return false;
-
-        return true;
+        return fqName.equals(that.fqName);
     }
 
     @Override
