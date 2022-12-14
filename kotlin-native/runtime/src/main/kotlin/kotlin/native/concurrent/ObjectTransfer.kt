@@ -38,11 +38,11 @@ import kotlin.native.internal.Frozen
 // Not @FreezingIsDeprecated: every `Worker.execute` uses this.
 public enum class TransferMode(val value: Int) {
     /**
-     * Reachibility check is performed.
+     * Reachability check is performed.
      */
     SAFE(0),
     /**
-     * Skip reachibility check, can lead to mysterious crashes in an application.
+     * Skip reachability check, can lead to mysterious crashes in an application.
      * USE UNSAFE MODE ONLY IF ABSOLUTELY SURE WHAT YOU'RE DOING!!!
      */
     UNSAFE(1)

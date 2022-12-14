@@ -70,7 +70,7 @@ public object Platform {
         get() = OsFamily.values()[Platform_getOsFamily()]
 
     /**
-     * Architechture of the CPU program executes upon.
+     * Architecture of the CPU program executes upon.
      */
     public val cpuArchitecture: CpuArchitecture
         get() = CpuArchitecture.values()[Platform_getCpuArchitecture()]
