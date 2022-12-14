@@ -537,7 +537,6 @@ class KotlinCoreEnvironment private constructor(
                                             timerTask { delayedCleanup() },
                                             10000
                                         )
-                                        ourApplicationEnvironment?.idleCleanup()
                                     }
                                 }
                             }
