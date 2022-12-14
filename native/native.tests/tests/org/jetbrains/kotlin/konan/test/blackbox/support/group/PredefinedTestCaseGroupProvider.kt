@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.group
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomKlibs
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
@@ -72,7 +74,10 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                     ignoredTests = predefinedTestCase.ignoredTests.toSet()
                 )
             )
-            testCase.initialize(null, null)
+            testCase.initialize(
+                givenModules = settings.get<CustomKlibs>().klibs.mapToSet(TestModule::Given),
+                findSharedModule = null
+            )
 
             TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
         }

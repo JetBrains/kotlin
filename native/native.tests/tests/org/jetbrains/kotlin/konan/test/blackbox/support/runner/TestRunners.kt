@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.native.executors.EmulatorExecutor
 import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.native.executors.RosettaExecutor
 import org.jetbrains.kotlin.native.executors.XcodeSimulatorExecutor
+import org.jetbrains.kotlin.native.executors.XCTestHostExecutor
+import org.jetbrains.kotlin.native.executors.XCTestSimulatorExecutor
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.util.concurrent.ConcurrentHashMap
 
@@ -20,11 +22,24 @@ internal object TestRunners {
         if (get<ForcedNoopTestRunner>().value) {
             NoopTestRunner
         } else with(get<KotlinNativeTargets>()) {
-            if (testTarget == hostTarget) {
+            val configurables = configurables
+
+            if (get<XCTestRunner>().isEnabled) {
+                // Forcibly run tests with XCTest
+                check(configurables is AppleConfigurables) {
+                    "Running tests with XCTest is not supported on non-Apple $configurables"
+                }
+                val executor = cached(
+                    if (testTarget == hostTarget) {
+                        XCTestHostExecutor(configurables)
+                    } else {
+                        XCTestSimulatorExecutor(configurables)
+                    }
+                )
+                RunnerWithExecutor(executor, testRun)
+            } else if (testTarget == hostTarget) {
                 LocalTestRunner(testRun)
             } else {
-                val configurables = configurables
-
                 val executor = cached(
                     when {
                         configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)

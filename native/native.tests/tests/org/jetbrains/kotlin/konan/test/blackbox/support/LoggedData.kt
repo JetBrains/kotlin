@@ -24,7 +24,7 @@ import kotlin.time.DurationUnit
  */
 internal abstract class LoggedData {
     private val text: String by lazy { computeText() }
-    protected abstract fun computeText(): String
+    abstract fun computeText(): String
     final override fun toString() = text
 
     fun withErrorMessage(errorMessage: String, t: Throwable? = null): String = buildString {

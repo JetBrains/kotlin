@@ -297,3 +297,12 @@ internal enum class CompilerOutputInterceptor {
     DEFAULT,
     NONE
 }
+
+/**
+ * XCTestRunner setting.
+ *
+ * @param frameworksPath is a linker path to the developer frameworks location.
+ */
+internal class XCTestRunner(val frameworksPath: String) {
+    val isEnabled: Boolean = frameworksPath.isNotEmpty()
+}

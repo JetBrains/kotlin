@@ -64,10 +64,10 @@ val validPropertiesNames = listOf(
 )
 
 val Project.kotlinNativeDist
-    get() = rootProject.currentKotlinNativeDist
+    get() = rootProject.project(":kotlin-native").currentKotlinNativeDist
 
 val Project.currentKotlinNativeDist
-    get() = file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
+    get() = rootProject.file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
 
 val kotlinNativeHome
     get() = validPropertiesNames.mapNotNull(System::getProperty).first()
@@ -178,7 +178,7 @@ fun Project.dependsOnDist(taskName: String) {
     project.tasks.getByName(taskName).dependsOnDist()
 }
 
-fun TaskProvider<Task>.dependsOnDist() {
+fun TaskProvider<out Task>.dependsOnDist() {
     configure {
         dependsOnDist()
     }
@@ -213,6 +213,10 @@ private fun Project.isCrossDist(target: KonanTarget): Boolean {
 
 fun Task.dependsOnDist() {
     val target = project.testTarget
+    dependsOnDist(target)
+}
+
+fun Task.dependsOnDist(target: KonanTarget) {
     if (project.isDefaultNativeHome) {
         dependsOn(":kotlin-native:dist")
         if (target != HostManager.host) {
@@ -238,6 +242,12 @@ fun Task.dependsOnCrossDist(target: KonanTarget) {
         if (!project.isCrossDist(target)) {
             dependsOn(":kotlin-native:${target.name}CrossDist")
         }
+    }
+}
+
+fun Task.dependsOnPlatformLibs(target: KonanTarget) {
+    if (project.isDefaultNativeHome) {
+        dependsOn(":kotlin-native:${target.name}PlatformLibs")
     }
 }
 

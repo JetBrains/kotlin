@@ -146,7 +146,7 @@ class XcodeSimulatorExecutor(
         check(version.major >= 14) {
             "Was unable to get the required runtimes running on Xcode $version. Check the Xcode installation"
         }
-        if (version.minor >= 1) {
+        if (version >= XcodeVersion(14, 1)) {
             // Option -downloadPlatform NAME available only since 14.1
             hostExecutor.run("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
         } else {

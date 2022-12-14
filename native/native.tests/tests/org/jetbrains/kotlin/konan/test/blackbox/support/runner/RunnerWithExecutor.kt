@@ -43,6 +43,7 @@ internal class RunnerWithExecutor(
         val request = ExecuteRequest(
             executableAbsolutePath = executable.executable.executableFile.absolutePath,
             args = programArgs,
+            workingDirectory = executable.executable.executableFile.parentFile,
             stdin = stdin,
             stdout = stdout,
             stderr = stderr,

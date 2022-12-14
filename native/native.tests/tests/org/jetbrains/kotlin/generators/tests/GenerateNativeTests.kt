@@ -60,6 +60,18 @@ fun main() {
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxTestWithXCTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    xctest(),
+                    disabledWithoutXCTest("*.kt"),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("fileCheck"))
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("fileCheck"))
+            }
+            testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
                 annotations = listOf(
                     *frontendFir(),
@@ -431,11 +443,23 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
     )
 }
 
+// If XCTest framework wasn't set, disable all source locaitons provided by the parameter
+private fun TestGroup.disabledWithoutXCTest(vararg unexpandedPaths: String): AnnotationModel {
+    require(unexpandedPaths.isNotEmpty()) { "No unexpanded paths specified" }
+
+    return annotation(
+        DisabledTestsIfProperty::class.java,
+        "sourceLocations" to unexpandedPaths.map { unexpandedPath -> "$testDataRoot/$unexpandedPath" }.toTypedArray(),
+        "property" to ClassLevelProperty.XCTEST_FRAMEWORK,
+        "propertyValue" to "" // if it's not set
+    )
+}
+
 private fun frontendFir() = arrayOf(
     annotation(Tag::class.java, "frontend-fir"),
     annotation(FirPipeline::class.java)
 )
-
+private fun xctest() = annotation(Tag::class.java, "xctest")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
 private fun k1libContents() = annotation(Tag::class.java, "k1libContents")

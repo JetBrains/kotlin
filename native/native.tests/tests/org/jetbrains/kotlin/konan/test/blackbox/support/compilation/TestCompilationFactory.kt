@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -26,10 +27,12 @@ internal class TestCompilationFactory {
     private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, KlibCompilations>()
     private val cachedExecutableCompilations = ThreadSafeCache<ExecutableCacheKey, TestCompilation<Executable>>()
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
+    private val cachedTestBundleCompilations = ThreadSafeCache<TestBundleCacheKey, TestBundleCompilation>()
 
     private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs)
     private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
+    private data class TestBundleCacheKey(val sourceModules: Set<TestModule>)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
     private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?)
@@ -131,6 +134,39 @@ internal class TestCompilationFactory {
 
         return cachedExecutableCompilations.computeIfAbsent(cacheKey) {
             ExecutableCompilation(
+                settings = settings,
+                freeCompilerArgs = freeCompilerArgs,
+                sourceModules = sourceModulesToCompileExecutable,
+                extras = extras,
+                dependencies = dependenciesToCompileExecutable,
+                expectedArtifact = executableArtifact
+            )
+        }
+    }
+
+    fun testCasesToTestBundle(testCases: Collection<TestCase>, settings: Settings): TestCompilation<XCTestBundle> {
+        val rootModules = testCases.flatMapToSet { testCase -> testCase.rootModules }
+        val cacheKey = TestBundleCacheKey(rootModules)
+
+        // Fast pass.
+        cachedTestBundleCompilations[cacheKey]?.let { return it }
+
+        // Long pass.
+        val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
+        val extras = testCases.first().extras // Should be identical inside the same test case group.
+        val executableArtifact = XCTestBundle(settings.artifactFileForXCTestBundle(rootModules))
+
+        val (
+            dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,
+            sourceModulesToCompileExecutable: Set<TestModule.Exclusive>
+        ) = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
+            // TODO: should also include caches but the test compilation architecture is not configurable enough
+            //  to de-duplicate code used for executable and other compiler outputs
+            ProduceStaticCache.No
+        }
+
+        return cachedTestBundleCompilations.computeIfAbsent(cacheKey) {
+            TestBundleCompilation(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = sourceModulesToCompileExecutable,
@@ -269,6 +305,18 @@ internal class TestCompilationFactory {
 
         private fun Settings.artifactFileForExecutable(module: TestModule.Exclusive) =
             singleModuleArtifactFile(module, get<KotlinNativeTargets>().testTarget.family.exeSuffix)
+
+        private fun Settings.artifactFileForXCTestBundle(modules: Set<TestModule.Exclusive>) = when (modules.size) {
+            1 -> artifactFileForXCTestBundle(modules.first())
+            else -> multiModuleArtifactFile(modules, xctestExtension())
+        }
+
+        private fun Settings.artifactFileForXCTestBundle(module: TestModule.Exclusive) =
+            singleModuleArtifactFile(module, xctestExtension())
+
+        private fun Settings.xctestExtension(): String = CompilerOutputKind.TEST_BUNDLE
+            .suffix(get<KotlinNativeTargets>().testTarget)
+            .substringAfterLast(".")
 
         private fun Settings.artifactFileForKlib(modules: Set<TestModule>, freeCompilerArgs: TestCompilerArgs): File =
             when (modules.size) {

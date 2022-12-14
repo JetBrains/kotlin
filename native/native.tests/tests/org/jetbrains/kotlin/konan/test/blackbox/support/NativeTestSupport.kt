@@ -208,6 +208,7 @@ internal object NativeTestSupport {
         output += computePipelineType(enforcedProperties, testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
+        output += computeXCTestRunner(enforcedProperties)
 
         return nativeTargets
     }
@@ -260,7 +261,7 @@ internal object NativeTestSupport {
         enforcedProperties: EnforcedProperties,
         distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
-        optimizationMode: OptimizationMode
+        optimizationMode: OptimizationMode,
     ): CacheMode {
         val defaultCache = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
@@ -335,6 +336,15 @@ internal object NativeTestSupport {
         )
         return Timeouts(executionTimeout)
     }
+
+    private fun computeXCTestRunner(enforcedProperties: EnforcedProperties) = XCTestRunner(
+        ClassLevelProperty.XCTEST_FRAMEWORK.readValue(
+            enforcedProperties,
+            // The property is always set, it can be empty or contain a path
+            { if (it.isNotEmpty()) File(it).absolutePath else "" },
+            default = ""
+        )
+    )
 
     /*************** Test class settings (for black box tests only) ***************/
 
@@ -435,7 +445,7 @@ internal object NativeTestSupport {
     private fun computeGeneratedSourceDirs(
         baseDirs: BaseDirs,
         targets: KotlinNativeTargets,
-        enclosingTestClass: Class<*>
+        enclosingTestClass: Class<*>,
     ): GeneratedSources {
         val testSourcesDir = baseDirs.testBuildDir
             .resolve("bb.src") // "bb" for black box
@@ -453,7 +463,7 @@ internal object NativeTestSupport {
     private fun computeBinariesForBlackBoxTests(
         baseDirs: BaseDirs,
         targets: KotlinNativeTargets,
-        enclosingTestClass: Class<*>
+        enclosingTestClass: Class<*>,
     ): Binaries {
         val testBinariesDir = baseDirs.testBuildDir
             .resolve("bb.out") // "bb" for black box
