@@ -104,6 +104,15 @@ class LocalDeclarationsLowering(
         LocalDeclarationsTransformer(irBlock, container, closestParent, classesToLower, functionsToSkip).lowerLocalDeclarations()
     }
 
+    fun lowerWithoutActualChange(irBody: IrBody, container: IrDeclaration) {
+        val oldCapturedConstructors = context.mapping.capturedConstructors.keys
+            .mapNotNull { context.mapping.capturedConstructors[it] }
+        LocalDeclarationsTransformer(irBody, container).cacheLocalConstructors()
+        oldCapturedConstructors
+            .filter { context.mapping.capturedConstructors[it] != null }
+            .forEach { context.mapping.capturedConstructors[it] = null }
+    }
+
     internal class ScopeWithCounter(val irElement: IrElement) {
         // Continuous numbering across all declarations in the container.
         var counter: Int = 0
@@ -265,6 +274,15 @@ class LocalDeclarationsLowering(
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf()
+
+        fun cacheLocalConstructors() {
+            collectLocalDeclarations()
+            collectClosureForLocalDeclarations()
+
+            localClassConstructors.values.forEach {
+                createTransformedConstructorDeclaration(it)
+            }
+        }
 
         fun lowerLocalDeclarations() {
             collectLocalDeclarations()
@@ -776,6 +794,20 @@ class LocalDeclarationsLowering(
 
             val localClassContext = localClasses[oldDeclaration.parent]!!
             val capturedValues = localClassContext.closure.capturedValues
+
+            // Restore context if constructor was cached
+            context.mapping.capturedConstructors[oldDeclaration]?.let { newDeclaration ->
+                transformedDeclarations[oldDeclaration] = newDeclaration
+                constructorContext.transformedDeclaration = newDeclaration
+                newDeclaration.valueParameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                    newParameterToCaptured[it] = capturedValue
+                }
+                oldDeclaration.valueParameters.zip(newDeclaration.valueParameters).forEach { (v, it) ->
+                    newParameterToOld.putAbsentOrSame(it, v)
+                }
+                newDeclaration.recordTransformedValueParameters(constructorContext)
+                return
+            }
 
             val newDeclaration = context.irFactory.buildConstructor {
                 updateFrom(oldDeclaration)
