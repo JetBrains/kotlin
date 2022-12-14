@@ -73,8 +73,8 @@ internal class OpenAddressLinearProbingHashTableNullable<K : Any, V, CONTEXT>(
         @Suppress("UNCHECKED_CAST")
         if (index > 0) return array[index] as V
         val nIndex = -index
-        array[nIndex] = key
         val newValue = createValue(key, context)
+        array[nIndex] = key
         array[nIndex + 1] = newValue
 
         rehashIfNeeded()
