@@ -43,7 +43,7 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
         knownTopLevelClassifiers(fqName)
     }
 
-    protected open val dependencyProviders by lazy {
+    val dependencyProviders by lazy {
         val moduleData =
             session.nullableModuleData ?: error("FirDependenciesSymbolProvider should not be created if there are no dependencies")
         val visited = mutableSetOf<FirSymbolProvider>()
