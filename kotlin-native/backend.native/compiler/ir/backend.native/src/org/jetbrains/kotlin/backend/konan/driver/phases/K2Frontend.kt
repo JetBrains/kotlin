@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -73,16 +72,23 @@ import java.io.File
 sealed class K2FrontendPhaseOutput {
     object ShouldNotGenerateCode : K2FrontendPhaseOutput()
 
-    data class Full(
+    data class IR(
+            val firFiles: List<FirFile>,
+            val fir2irResult: Fir2IrResult,
+    ) : K2FrontendPhaseOutput()
+
+    data class Serialized(
             val serializerOutput: SerializerOutput
     ) : K2FrontendPhaseOutput()
 }
 
 internal interface K2FrontendContext : PhaseContext {
+    val environment: KotlinCoreEnvironment
     var frontendServices: FrontendServices
 }
 
 internal class K2FrontendContextImpl(
+        override val environment: KotlinCoreEnvironment,
         config: KonanConfig
 ) : BasicPhaseContext(config), K2FrontendContext {
     override lateinit var frontendServices: FrontendServices
@@ -216,24 +222,29 @@ private fun phaseBody(
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
 
-    // Serialize KLib
+    if (true) {
+        // Serialize KLib later in Native way.
+        // On 20221207 codegen tests: 6737 tests completed, 5690 failed, 458 skipped
+        return K2FrontendPhaseOutput.IR(firFiles, fir2irResult)
+    } else {
+        // Serialize KLib in JS way.
+        // On 20221207 codegen tests: 6737 tests completed, 405 failed, 458 skipped
+        val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
+        val metadataVersion =
+                configuration.get(CommonConfigurationKeys.METADATA_VERSION)
+                        ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
 
-    val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
-    val metadataVersion =
-            configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-                    ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
+        val serializerOutput = serializeModuleInJSWay(
+                context,
+                firFiles,
+                fir2irResult.irModuleFragment
+        ) { file ->
+            val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+            serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
+        }
 
-    val serializerOutput = serializeModuleIntoKlib(
-            environment,
-            context,
-            firFiles,
-            fir2irResult.irModuleFragment,
-    ) { file ->
-        val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-        serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
+        return K2FrontendPhaseOutput.Serialized(serializerOutput)
     }
-
-    return K2FrontendPhaseOutput.Full(serializerOutput)
 }
 
 private val CompilerConfiguration.expectActualLinker: Boolean
@@ -241,13 +252,13 @@ private val CompilerConfiguration.expectActualLinker: Boolean
 
 
 // inspired by from compiler/ir/serialization.js/src/org/jetbrains/kotlin/ir/backend/js/klib.kt:serializeModuleIntoKlib()
-internal fun serializeModuleIntoKlib(
-        environment: KotlinCoreEnvironment,
+internal fun serializeModuleInJSWay(
         context: K2FrontendContext,
         firFiles: List<FirFile>,
         moduleFragment: IrModuleFragment,
         serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
+    val environment: KotlinCoreEnvironment = context.environment
     val configuration = environment.configuration
     val messageLogger: IrMessageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val sourceFiles = firFiles.mapNotNull { it.sourceFile }

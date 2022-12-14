@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
