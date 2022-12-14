@@ -13,113 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.name
 
-package org.jetbrains.kotlin.name;
+class Name private constructor(private val name: String, val isSpecial: Boolean) : Comparable<Name> {
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public final class Name implements Comparable<Name> {
-    @NotNull
-    private final String name;
-    private final boolean special;
-
-    private Name(@NotNull String name, boolean special) {
-        this.name = name;
-        this.special = special;
+    fun asString(): String {
+        return name
     }
 
-    @NotNull
-    public String asString() {
-        return name;
-    }
-
-    @NotNull
-    public String getIdentifier() {
-        if (special) {
-            throw new IllegalStateException("not identifier: " + this);
+    val identifier: String
+        get() {
+            check(!isSpecial) { "not identifier: $this" }
+            return asString()
         }
-        return asString();
+
+    fun asStringStripSpecialMarkers(): String {
+        return if (isSpecial) asString().substring(1, asString().length - 1) else asString()
     }
 
-    public boolean isSpecial() {
-        return special;
+    override fun compareTo(other: Name): Int {
+        return name.compareTo(other.name)
     }
 
-    @NotNull
-    public String asStringStripSpecialMarkers() {
-        if (isSpecial()) return asString().substring(1, asString().length() - 1);
-        return asString();
+    val identifierOrNullIfSpecial: String?
+        get() = if (isSpecial) null else asString()
+
+    override fun toString(): String {
+        return name
     }
 
-    @Override
-    public int compareTo(Name that) {
-        return this.name.compareTo(that.name);
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Name) return false
+        if (isSpecial != other.isSpecial) return false
+        return name == other.name
     }
 
-    @NotNull
-    public static Name identifier(@NotNull String name) {
-        return new Name(name, false);
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + if (isSpecial) 1 else 0
+        return result
     }
 
-    public static boolean isValidIdentifier(@NotNull String name) {
-        if (name.isEmpty() || name.startsWith("<")) return false;
-        for (int i = 0; i < name.length(); i++) {
-            char ch = name.charAt(i);
-            if (ch == '.' || ch == '/' || ch == '\\') {
-                return false;
+    companion object {
+        @JvmStatic
+        fun identifier(name: String): Name {
+            return Name(name, false)
+        }
+
+        @JvmStatic
+        fun isValidIdentifier(name: String): Boolean {
+            if (name.isEmpty() || name.startsWith("<")) return false
+            for (i in 0 until name.length) {
+                val ch = name[i]
+                if (ch == '.' || ch == '/' || ch == '\\') {
+                    return false
+                }
+            }
+            return true
+        }
+
+        @JvmStatic
+        fun special(name: String): Name {
+            require(name.startsWith("<")) { "special name must start with '<': $name" }
+            return Name(name, true)
+        }
+
+        @JvmStatic
+        fun guessByFirstCharacter(name: String): Name {
+            return if (name.startsWith("<")) {
+                special(name)
+            } else {
+                identifier(name)
             }
         }
-
-        return true;
-    }
-
-    @NotNull
-    public static Name special(@NotNull String name) {
-        if (!name.startsWith("<")) {
-            throw new IllegalArgumentException("special name must start with '<': " + name);
-        }
-        return new Name(name, true);
-    }
-
-    @NotNull
-    public static Name guessByFirstCharacter(@NotNull String name) {
-        if (name.startsWith("<")) {
-            return special(name);
-        }
-        else {
-            return identifier(name);
-        }
-    }
-
-    @Nullable
-    public String getIdentifierOrNullIfSpecial() {
-        if (special) return null;
-        return asString();
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Name)) return false;
-
-        Name name1 = (Name) o;
-
-        if (special != name1.special) return false;
-        if (!name.equals(name1.name)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + (special ? 1 : 0);
-        return result;
     }
 }
