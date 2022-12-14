@@ -251,7 +251,7 @@ private val CompilerConfiguration.expectActualLinker: Boolean
     get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
 
-// inspired by from compiler/ir/serialization.js/src/org/jetbrains/kotlin/ir/backend/js/klib.kt:serializeModuleIntoKlib()
+// inspired by compiler/ir/serialization.js/src/org/jetbrains/kotlin/ir/backend/js/klib.kt:serializeModuleIntoKlib()
 internal fun serializeModuleInJSWay(
         context: K2FrontendContext,
         firFiles: List<FirFile>,

@@ -96,12 +96,14 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             config: KonanConfig,
             environment: KotlinCoreEnvironment
     ) {
-        val k2FrontendOutput = engine.useContext(K2FrontendContextImpl(config)) { it.runFrontend(environment) }
-        when (k2FrontendOutput) {
+        val k2frontendContext = K2FrontendContextImpl(environment, config)
+        val frontendOutput = engine.useContext(k2frontendContext) { it.runFrontend(environment) }
+
+        val serializerOutput = when (frontendOutput) {
+            is K2FrontendPhaseOutput.IR -> engine.useContext(k2frontendContext) { it.runSerializerFirNative(frontendOutput) }
+            is K2FrontendPhaseOutput.Serialized -> frontendOutput.serializerOutput
             is K2FrontendPhaseOutput.ShouldNotGenerateCode -> return
         }
-        require(k2FrontendOutput is K2FrontendPhaseOutput.Full)
-        engine.writeKlib(k2FrontendOutput.serializerOutput)
         return
     }
 

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.serialization.K2KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -18,9 +18,11 @@ internal val SerializerFirNativePhase = createSimpleNamedCompilerPhase<K2Fronten
         "SerializerFirNative", "FIR serializer in Native style",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
 ) { context: K2FrontendContext, input: K2FrontendPhaseOutput.IR ->
-    val environment: KotlinCoreEnvironment = context.environment
     val sourceFiles = input.firFiles.mapNotNull { it.sourceFile }
-    assert(sourceFiles.size == input.fir2irResult.irModuleFragment.files.size)
+    val irModuleFragment = input.fir2irResult.irModuleFragment
+    assert(sourceFiles.size == irModuleFragment.files.size)
+
+    val environment: KotlinCoreEnvironment = context.environment
     val configuration = environment.configuration
     val messageLogger: IrMessageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val expectActualLinker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
@@ -29,21 +31,21 @@ internal val SerializerFirNativePhase = createSimpleNamedCompilerPhase<K2Fronten
     val serializedIr =
             KonanIrModuleSerializer(
                     messageLogger,
-                    input.fir2irResult.irModuleFragment.irBuiltins,
+                    irModuleFragment.irBuiltins,
                     mutableMapOf(), // TODO: expect -> actual mapping
                     skipExpects = !expectActualLinker,
                     compatibilityMode = CompatibilityMode.CURRENT, // TODO get from test file data
                     normalizeAbsolutePaths = absolutePathNormalization,
                     sourceBaseDirs = sourceBaseDirs
-            ).serializedIrModule(input.fir2irResult.irModuleFragment)
-    val serializer = KlibMetadataMonolithicSerializer(
+            ).serializedIrModule(irModuleFragment)
+    val metaDataSerializer = K2KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
             context.config.project,
             exportKDoc = context.shouldExportKDoc(),
             !expectActualLinker, includeOnlyModuleContent = true)
-    val serializedMetadata = serializer.serializeModule(input.fir2irResult.irModuleFragment.descriptor)
-    val neededLibraries = context.config.librariesWithDependencies(input.fir2irResult.irModuleFragment.descriptor)
+    val serializedMetadata = metaDataSerializer.serializeModule(irModuleFragment.descriptor)
+    val neededLibraries = context.config.librariesWithDependencies(irModuleFragment.descriptor)
 
     SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
 }
