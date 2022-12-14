@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
+import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.konan.FrontendServices
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
@@ -25,10 +27,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -40,7 +39,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -52,31 +51,29 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.getSerializedData
-import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
-import org.jetbrains.kotlin.ir.backend.js.serializeSingleFirFile
+import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import java.io.File
 
 sealed class K2FrontendPhaseOutput {
     object ShouldNotGenerateCode : K2FrontendPhaseOutput()
 
     data class Full(
-//            val bindingContext: BindingContext,
-//            val frontendServices: FrontendServices,
-            val environment: KotlinCoreEnvironment,
-            val firFiles: List<FirFile>,    // FIR output
-            val fir2irResult: Fir2IrResult, // FIR2IR output
+            val serializerOutput: SerializerOutput
     ) : K2FrontendPhaseOutput()
 }
 
@@ -219,43 +216,117 @@ private fun phaseBody(
     }
 
     // Serialize KLib
-    // TODO Maybe SerializerPhase and WriteKlibPhase can be re-used from K1?
 
-    val sourceFiles = firFiles.mapNotNull { it.sourceFile }
     val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
-
-    val icData = environment.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-    // TODO: expect -> actual mapping
-    val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-
     val metadataVersion =
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
 
-    val outputFiles = OutputFiles(context.config.outputPath, context.config.target, context.config.produce)
-    val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
-    val klibOutputFileName = outputFiles.klibOutputFileName(!nopack)
-    println("K2 OUTPUT KLIB: $klibOutputFileName")
-
-    serializeModuleIntoKlib(
-            context.config.moduleId,
-            configuration,
-            configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
-            sourceFiles,
-            klibPath = klibOutputFileName,
-            resolvedLibraries.map { it.library },
+    val serializerOutput = serializeModuleIntoKlib(
+            environment,
+            context,
+            firFiles,
             fir2irResult.irModuleFragment,
-            expectDescriptorToSymbol,
-            cleanFiles = icData,
-            nopack = true,
-            perFile = false,
-            containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
-            abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-            jsOutputName = null
     ) { file ->
         val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
     }
 
-    return K2FrontendPhaseOutput.Full(environment, firFiles, fir2irResult)
+    return K2FrontendPhaseOutput.Full(serializerOutput)
+}
+
+private val CompilerConfiguration.expectActualLinker: Boolean
+    get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
+
+
+// inspired by from compiler/ir/serialization.js/src/org/jetbrains/kotlin/ir/backend/js/klib.kt:serializeModuleIntoKlib()
+internal fun serializeModuleIntoKlib(
+        environment: KotlinCoreEnvironment,
+        context: K2FrontendContext,
+        firFiles: List<FirFile>,
+        moduleFragment: IrModuleFragment,
+        serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
+): SerializerOutput {
+    val configuration = environment.configuration
+    val messageLogger: IrMessageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+    val sourceFiles = firFiles.mapNotNull { it.sourceFile }
+    val cleanFiles = environment.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
+
+    assert(sourceFiles.size == moduleFragment.files.size)
+
+    val compatibilityMode = CompatibilityMode(KotlinAbiVersion.CURRENT) // TODO get from test file data)
+    val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
+    val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
+    val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: false
+
+    val serializedIr =
+            JsIrModuleSerializer(
+                    messageLogger,
+                    moduleFragment.irBuiltins,
+                    mutableMapOf(), // TODO: expect -> actual mapping
+                    compatibilityMode,
+                    skipExpects = !configuration.expectActualLinker,
+                    normalizeAbsolutePaths = absolutePathNormalization,
+                    sourceBaseDirs = sourceBaseDirs,
+                    signatureClashChecks
+            ).serializedIrModule(moduleFragment)
+
+    val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    val empty = ByteArray(0)
+
+    fun processCompiledFileData(ioFile: File, compiledFile: KotlinFileSerializedData) {
+        incrementalResultsConsumer?.run {
+            processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+            with(compiledFile.irData) {
+                processIrFile(ioFile, fileData, types, signatures, strings, declarations, bodies, fqName.toByteArray(), debugInfo)
+            }
+        }
+    }
+
+    val additionalFiles = mutableListOf<KotlinFileSerializedData>()
+
+    for ((ktSourceFile, binaryFile) in sourceFiles.zip(serializedIr.files)) {
+        assert(ktSourceFile.path == binaryFile.path) {
+            """The Kt and Ir files are put in different order
+                Kt: ${ktSourceFile.path}
+                Ir: ${binaryFile.path}
+            """.trimMargin()
+        }
+        val packageFragment = serializeSingleFile(ktSourceFile)
+        val compiledKotlinFile = KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
+
+        additionalFiles += compiledKotlinFile
+        val ioFile = ktSourceFile.toIoFileOrNull()
+        assert(ioFile != null) {
+            "No file found for source ${ktSourceFile.path}"
+        }
+        processCompiledFileData(ioFile!!, compiledKotlinFile)
+    }
+
+    val compiledKotlinFiles = (cleanFiles + additionalFiles)
+
+    val header = serializeKlibHeader(
+            configuration.languageVersionSettings, moduleFragment.descriptor,
+            compiledKotlinFiles.map { it.irData.fqName }.distinct().sorted(),
+            emptyList()
+    ).toByteArray()
+
+    incrementalResultsConsumer?.run {
+        processHeader(header)
+    }
+
+    val serializedMetadata =
+            makeSerializedKlibMetadata(
+                    compiledKotlinFiles.groupBy { it.irData.fqName }
+                            .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
+                    header
+            )
+
+    val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
+
+    return SerializerOutput(
+            serializedMetadata,
+            fullSerializedIr,
+            null,
+            context.config.librariesWithDependencies(moduleFragment.descriptor))
 }
