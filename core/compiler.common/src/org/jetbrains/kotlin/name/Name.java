@@ -22,11 +22,8 @@ import org.jetbrains.annotations.Nullable;
 public final class Name implements Comparable<Name> {
     @NotNull
     private final String name;
-    private final boolean special;
-
-    private Name(@NotNull String name, boolean special) {
+    private Name(@NotNull String name) {
         this.name = name;
-        this.special = special;
     }
 
     @NotNull
@@ -36,14 +33,14 @@ public final class Name implements Comparable<Name> {
 
     @NotNull
     public String getIdentifier() {
-        if (special) {
+        if (isSpecial()) {
             throw new IllegalStateException("not identifier: " + this);
         }
         return asString();
     }
 
     public boolean isSpecial() {
-        return special;
+        return name.startsWith("<");
     }
 
     @NotNull
@@ -59,7 +56,10 @@ public final class Name implements Comparable<Name> {
 
     @NotNull
     public static Name identifier(@NotNull String name) {
-        return new Name(name, false);
+        if (name.startsWith("<")) {
+            throw new IllegalArgumentException("identifier must not start with '<': " + name);
+        }
+        return new Name(name);
     }
 
     public static boolean isValidIdentifier(@NotNull String name) {
@@ -79,7 +79,7 @@ public final class Name implements Comparable<Name> {
         if (!name.startsWith("<")) {
             throw new IllegalArgumentException("special name must start with '<': " + name);
         }
-        return new Name(name, true);
+        return new Name(name);
     }
 
     @NotNull
@@ -94,7 +94,7 @@ public final class Name implements Comparable<Name> {
 
     @Nullable
     public String getIdentifierOrNullIfSpecial() {
-        if (special) return null;
+        if (isSpecial()) return null;
         return asString();
     }
 
@@ -110,7 +110,6 @@ public final class Name implements Comparable<Name> {
 
         Name name1 = (Name) o;
 
-        if (special != name1.special) return false;
         if (!name.equals(name1.name)) return false;
 
         return true;
@@ -118,8 +117,6 @@ public final class Name implements Comparable<Name> {
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + (special ? 1 : 0);
-        return result;
+        return 31 * name.hashCode();
     }
 }
