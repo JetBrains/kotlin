@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -65,7 +66,17 @@ private interface CLibrary : Library {
     }
 }
 
-internal fun isolate() {
+internal fun isolate() { 
+    println("Version: " + System.getProperty("java.version"))
+    println("JDK at: " + System.getProperty("java.home"))
+    println("java.runtime.version: " + System.getProperty("java.runtime.version"))
+    System.getProperties().forEach { (name, value) ->
+        if (name !is String) return@forEach
+        if (!name.startsWith("java")) return@forEach
+        println("$name: $value")
+    }
+
+
     val isolatedList = System.getenv("DOCKER_ISOLATED_CPUSET")
     val othersList = System.getenv("DOCKER_CPUSET")
     println("Trying to set affinity, other: '$othersList', isolated: '$isolatedList'")
@@ -207,6 +218,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val disposable = Disposer.newDisposable()
         val configuration = createDefaultConfiguration(moduleData)
+        configuration.put(CommonConfigurationKeys.USE_FIR, true)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         PsiElementFinder.EP.getPoint(environment.project)
