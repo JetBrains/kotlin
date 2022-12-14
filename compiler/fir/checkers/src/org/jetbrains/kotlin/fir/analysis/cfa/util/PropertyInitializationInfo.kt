@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K : Any>(
@@ -51,13 +49,4 @@ class PropertyInitializationInfo(
         ::PropertyInitializationInfo
 }
 
-class PathAwarePropertyInitializationInfo(
-    map: PersistentMap<EdgeLabel, PropertyInitializationInfo> = persistentMapOf()
-) : PathAwareControlFlowInfo<PathAwarePropertyInitializationInfo, PropertyInitializationInfo>(map) {
-    companion object {
-        val EMPTY = PathAwarePropertyInitializationInfo(persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY))
-    }
-
-    override val constructor: (PersistentMap<EdgeLabel, PropertyInitializationInfo>) -> PathAwarePropertyInitializationInfo =
-        ::PathAwarePropertyInitializationInfo
-}
+typealias PathAwarePropertyInitializationInfo = PathAwareControlFlowInfo<PropertyInitializationInfo>
