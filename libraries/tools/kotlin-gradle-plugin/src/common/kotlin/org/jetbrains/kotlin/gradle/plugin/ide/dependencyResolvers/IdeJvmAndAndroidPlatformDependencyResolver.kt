@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.java.TargetJvmEnvironment
@@ -33,5 +34,11 @@ internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project):
                     project.objects.named(TargetJvmEnvironment.STANDARD_JVM)
                 )
             },
+            /*
+            Prevent this resolver from running against project dependencies:
+            Otherwise we would match the -jvm.jar from the dependency project which will result in
+            matching the jvmMain source set as well (which is undesired)
+             */
+            componentFilter = { identifier -> identifier !is ProjectComponentIdentifier }
         )
     )

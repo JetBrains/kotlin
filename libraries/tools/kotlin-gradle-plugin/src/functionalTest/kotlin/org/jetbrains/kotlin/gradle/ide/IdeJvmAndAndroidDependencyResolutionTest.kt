@@ -7,36 +7,36 @@
 
 package org.jetbrains.kotlin.gradle.ide
 
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.regularSourceDependency
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class IdeJvmAndAndroidPlatformDependencyResolverTest {
+class IdeJvmAndAndroidDependencyResolutionTest {
 
     @BeforeTest
     fun checkEnvironment() {
         assumeAndroidSdkAvailable()
     }
 
-    @Test
-    fun `test - MVIKotlin - on jvmAndAndroidMain`() {
-        val project = buildProject {
-            enableDefaultStdlibDependency(false)
-            enableDependencyVerification(false)
-            applyMultiplatformPlugin()
-            plugins.apply("com.android.library")
-            androidExtension.compileSdkVersion(33)
-            repositories.mavenCentralCacheRedirector()
-        }
+    private fun Project.configureAndroidAndMultiplatform() {
+        enableDefaultStdlibDependency(false)
+        enableDependencyVerification(false)
+        applyMultiplatformPlugin()
+        plugins.apply("com.android.library")
+        androidExtension.compileSdkVersion(33)
+        repositories.mavenCentralCacheRedirector()
 
-        val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.custom {
+        project.multiplatformExtension.targetHierarchy.custom {
             common {
                 group("jvmAndAndroid") {
                     anyJvm()
@@ -45,9 +45,15 @@ class IdeJvmAndAndroidPlatformDependencyResolverTest {
             }
         }
 
-        kotlin.jvm()
-        kotlin.android()
+        project.multiplatformExtension.jvm()
+        project.multiplatformExtension.android()
 
+    }
+
+    @Test
+    fun `test - MVIKotlin - on jvmAndAndroidMain`() {
+        val project = buildProject { configureAndroidAndMultiplatform() }
+        val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
             implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
         }
@@ -71,5 +77,26 @@ class IdeJvmAndAndroidPlatformDependencyResolverTest {
 
         IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidTest"))
             .assertMatches(jvmAndAndroidDependencies)
+    }
+
+    @Test
+    fun `test - project to project dependency`() {
+        val root = buildProject()
+        val producer = buildProject({ withParent(root).withName("producer") }) { configureAndroidAndMultiplatform() }
+        val consumer = buildProject({ withParent(root).withName("consumer") }) { configureAndroidAndMultiplatform() }
+
+        root.evaluate()
+        producer.evaluate()
+        consumer.evaluate()
+
+        consumer.multiplatformExtension.sourceSets.getByName("commonMain").dependencies {
+            implementation(project(":producer"))
+        }
+
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("jvmAndAndroidMain").assertMatches(
+            dependsOnDependency(":consumer/commonMain"),
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/jvmAndAndroidMain"),
+        )
     }
 }
