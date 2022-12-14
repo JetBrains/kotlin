@@ -197,6 +197,8 @@ private object NativeTestSupport {
         output += computeForcedStandaloneTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
+        // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
+        output += computePipelineType(testClass.get())
 
         return nativeTargets
     }
@@ -325,8 +327,6 @@ private object NativeTestSupport {
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
-                // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
-                this += computePipelineType(testClass.get())
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
