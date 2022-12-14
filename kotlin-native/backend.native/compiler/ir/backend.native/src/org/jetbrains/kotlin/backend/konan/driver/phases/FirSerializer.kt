@@ -65,7 +65,7 @@ internal val FirSerializerPhase = createSimpleNamedCompilerPhase<FirFrontendCont
     FirSerializerOutput(File(outputKlibPath))
 }
 
-internal fun <T : FirFrontendContext> PhaseEngine<T>.runFirSerializer(
+internal fun <T : FirFrontendContext> PhaseEngine<T>.runFirSerializerIntoKlib(
         fir2irOutput: Fir2IrOutput
 ): FirSerializerOutput {
     return this.runPhase(FirSerializerPhase, fir2irOutput)

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 object FirNativeSessionFactory : FirAbstractSessionFactory() {
     fun createLibrarySession(
         mainModuleName: Name,
+        resolvedLibraries: List<KotlinResolvedLibrary>,
         sessionProvider: FirProjectSessionProvider,
         dependencyListForCliModule: DependencyListForCliModule,
         languageVersionSettings: LanguageVersionSettings,
@@ -37,6 +38,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
+                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 )

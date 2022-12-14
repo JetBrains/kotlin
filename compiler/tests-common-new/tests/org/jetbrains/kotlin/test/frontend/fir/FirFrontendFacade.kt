@@ -149,9 +149,9 @@ open class FirFrontendFacade(
                 projectEnvironment = null
                 FirNativeSessionFactory.createLibrarySession(
                     moduleName,
+                    listOf(),
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
-                    listOf(),
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )

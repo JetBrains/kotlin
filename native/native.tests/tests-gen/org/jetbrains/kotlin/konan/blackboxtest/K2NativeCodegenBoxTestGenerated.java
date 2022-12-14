@@ -14930,6 +14930,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("funInterfaceTypealias.kt")
+            public void testFunInterfaceTypealias() throws Exception {
+                runTest("compiler/testData/codegen/box/funInterface/funInterfaceTypealias.kt");
+            }
+
+            @Test
             @TestMetadata("funInterfaceWithReceiver.kt")
             public void testFunInterfaceWithReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithReceiver.kt");
@@ -17075,6 +17081,7 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19229,6 +19236,13 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("secondaryConstructorsWithBody.kt")
+            public void testSecondaryConstructorsWithBody() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt");
             }
 
             @Test
@@ -23984,6 +23998,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             @TestMetadata("kt52677.kt")
             public void testKt52677() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/kt52677.kt");
+            }
+
+            @Test
+            @TestMetadata("kt55318.kt")
+            public void testKt55318() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/kt55318.kt");
             }
 
             @Test

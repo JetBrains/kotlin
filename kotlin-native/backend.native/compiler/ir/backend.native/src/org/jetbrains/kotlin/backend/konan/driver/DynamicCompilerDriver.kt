@@ -80,6 +80,22 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             produceKlibK1(engine, config, environment)
     }
 
+    private fun produceKLibK2(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment
+    ) {
+        val context = FirFrontendContextImpl(config, environment)
+        val frontendOutput = engine.useContext(context) { it.runFirFrontend(environment) }
+        if (frontendOutput is FirOutput.ShouldNotGenerateCode) return
+        require(frontendOutput is FirOutput.Full)
+
+        val fir2IrOutput = engine.useContext(context) { it.runFir2Ir(frontendOutput) }
+
+        engine.useContext(context) { it.runFirSerializerIntoKlib(fir2IrOutput) }
+        // klib is now serialized to `runFirSerializer output`.klibPath
+    }
+
     private fun produceKlibK1(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = if (config.metadataKlib) {
@@ -89,23 +105,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         engine.writeKlib(serializerOutput)
-    }
-
-    private fun produceKLibK2(
-            engine: PhaseEngine<PhaseContext>,
-            config: KonanConfig,
-            environment: KotlinCoreEnvironment
-    ): Boolean {
-        val context = FirFrontendContextImpl(config, environment)
-        val frontendOutput = engine.useContext(context) { it.runFirFrontend(environment) }
-        if (frontendOutput is FirOutput.ShouldNotGenerateCode) return false
-        require(frontendOutput is FirOutput.Full)
-
-        val fir2IrOutput = engine.useContext(context) { it.runFir2Ir(frontendOutput) }
-
-        engine.useContext(context) { it.runFirSerializer(fir2IrOutput) }
-
-        return true  // klib is serialized to `runFirSerializer output`.klibPath
     }
 
     /**

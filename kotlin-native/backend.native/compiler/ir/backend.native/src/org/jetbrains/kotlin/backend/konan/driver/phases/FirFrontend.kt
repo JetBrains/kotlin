@@ -91,10 +91,11 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
     val resolvedLibraries: List<KotlinResolvedLibrary> = context.config.resolvedLibraries.getFullResolvedList()
     FirNativeSessionFactory.createLibrarySession(
             mainModuleName,
+            resolvedLibraries,
             sessionProvider,
             dependencyList,
-            resolvedLibraries,
             configuration.languageVersionSettings,
+            registerExtraComponents = {},
     )
     val mainModuleData = FirModuleDataImpl(
             mainModuleName,
