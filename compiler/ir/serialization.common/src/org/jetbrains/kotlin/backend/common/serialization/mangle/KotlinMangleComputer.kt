@@ -5,9 +5,28 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle
 
-interface KotlinMangleComputer<D : Any> {
+/**
+ * Something capable of producing a mangled name for a Kotlin declaration.
+ *
+ * @param Declaration A class representing a Kotlin declaration.
+ */
+interface KotlinMangleComputer<Declaration : Any> {
 
-    fun computeMangle(declaration: D): String
+    /**
+     * Computes the mangled name of [declaration].
+     *
+     * @param declaration The Kotlin declaration to compute a mangle name for.
+     * @return The mangled name of [declaration].
+     */
+    fun computeMangle(declaration: Declaration): String
 
-    fun copy(newMode: MangleMode): KotlinMangleComputer<D>
+    /**
+     * Creates a copy of this mangle computer with a different mangle mode but otherwise the same state.
+     *
+     * Useful for temporarily switching the mangle mode.
+     *
+     * @param newMode The mangle mode to use in the new mangle computer.
+     * @return A copy of this mangle computer.
+     */
+    fun copy(newMode: MangleMode): KotlinMangleComputer<Declaration>
 }
