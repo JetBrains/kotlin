@@ -246,7 +246,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc);
+                MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.guessByFirstCharacter(name), desc);
                 if (v == null) return null;
 
                 int methodParamCount = Type.getArgumentTypes(desc).length;
