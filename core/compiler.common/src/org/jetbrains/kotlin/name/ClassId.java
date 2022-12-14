@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.name;
 
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * A class name which is used to uniquely identify a Kotlin class.
@@ -41,12 +38,18 @@ public final class ClassId {
     private final FqName relativeClassName;
     private final boolean local;
 
+    private final int cachedHashCode;
+
     public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
         assert !relativeClassName.isRoot() :
                 "Class name must not be root: " + packageFqName + (local ? " (local)" : "");
         this.relativeClassName = relativeClassName;
         this.local = local;
+        int hashCode = packageFqName.hashCode();
+        hashCode = 31 * hashCode + relativeClassName.hashCode();
+        hashCode = 31 * hashCode + Boolean.valueOf(local).hashCode();
+        this.cachedHashCode = hashCode;
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
@@ -155,6 +158,7 @@ public final class ClassId {
 
         ClassId id = (ClassId) o;
 
+        if (cachedHashCode != id.cachedHashCode) return false;
         return packageFqName.equals(id.packageFqName) &&
                relativeClassName.equals(id.relativeClassName) &&
                local == id.local;
@@ -162,10 +166,7 @@ public final class ClassId {
 
     @Override
     public int hashCode() {
-        int result = packageFqName.hashCode();
-        result = 31 * result + relativeClassName.hashCode();
-        result = 31 * result + Boolean.valueOf(local).hashCode();
-        return result;
+        return cachedHashCode;
     }
 
     @Override
