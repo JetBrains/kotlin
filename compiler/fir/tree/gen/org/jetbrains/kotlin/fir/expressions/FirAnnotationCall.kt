@@ -38,6 +38,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)

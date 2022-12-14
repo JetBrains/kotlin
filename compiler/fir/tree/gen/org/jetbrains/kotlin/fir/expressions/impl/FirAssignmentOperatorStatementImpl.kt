@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirAssignmentOperatorStatementImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val operation: FirOperation,
     override var leftArgument: FirExpression,
     override var rightArgument: FirExpression,
@@ -52,5 +54,9 @@ internal class FirAssignmentOperatorStatementImpl(
     override fun <D> transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
         rightArgument = rightArgument.transform(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

@@ -43,6 +43,10 @@ sealed class FirImplicitBuiltinTypeRef(
         return this
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Replacing annotations in FirImplicitBuiltinTypeRef is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
         return this
     }

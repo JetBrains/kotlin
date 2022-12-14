@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirDynamicTypeRefImpl
@@ -30,7 +31,7 @@ class FirDynamicTypeRefBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirDynamicTypeRef {
         return FirDynamicTypeRefImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             isMarkedNullable,
         )
     }

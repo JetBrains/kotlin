@@ -182,6 +182,10 @@ class FirSyntheticProperty(
         notSupported()
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        notSupported()
+    }
+
     private fun notSupported(): Nothing {
         throw AssertionError("Transformation of synthetic property isn't supported")
     }

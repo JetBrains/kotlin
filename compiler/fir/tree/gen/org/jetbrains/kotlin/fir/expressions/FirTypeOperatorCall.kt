@@ -31,6 +31,8 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall

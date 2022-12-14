@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -22,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirExpressionStub @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -42,5 +44,9 @@ class FirExpressionStub @FirImplementationDetail constructor(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

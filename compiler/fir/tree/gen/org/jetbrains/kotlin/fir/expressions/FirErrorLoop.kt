@@ -31,6 +31,8 @@ abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformErrorLoop(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoop
 
     abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop

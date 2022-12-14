@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -39,7 +40,7 @@ class FirErrorExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
     override fun build(): FirErrorExpression {
         return FirErrorExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             diagnostic,
             expression,
             nonExpressionElement,

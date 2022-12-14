@@ -58,6 +58,8 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)

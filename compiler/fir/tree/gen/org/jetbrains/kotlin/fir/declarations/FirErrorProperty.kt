@@ -72,6 +72,8 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorProperty

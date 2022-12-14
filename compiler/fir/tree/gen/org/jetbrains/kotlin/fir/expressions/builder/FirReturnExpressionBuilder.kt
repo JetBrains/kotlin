@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -39,7 +40,7 @@ class FirReturnExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionB
     override fun build(): FirReturnExpression {
         return FirReturnExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             target,
             result,
         )

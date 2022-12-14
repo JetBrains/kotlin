@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -37,7 +38,7 @@ class FirCheckedSafeCallSubjectBuilder : FirAnnotationContainerBuilder, FirExpre
         return FirCheckedSafeCallSubjectImpl(
             source,
             typeRef,
-            annotations,
+            annotations.toMutableOrEmpty(),
             originalReceiverRef,
         )
     }

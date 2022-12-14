@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.impl.FirFileAnnotationsContainerImpl
@@ -37,7 +38,7 @@ class FirFileAnnotationsContainerBuilder : FirAnnotationContainerBuilder {
             source,
             resolvePhase,
             moduleData,
-            annotations,
+            annotations.toMutableOrEmpty(),
             containingFileSymbol,
         )
     }

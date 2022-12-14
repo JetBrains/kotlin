@@ -36,5 +36,7 @@ sealed class FirDeclaration : FirElementWithResolvePhase(), FirAnnotationContain
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDeclaration
 }

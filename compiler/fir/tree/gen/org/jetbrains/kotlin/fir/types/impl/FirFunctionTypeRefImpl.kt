@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirFunctionTypeRefImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,
     override val parameters: MutableList<FirFunctionTypeParameter>,
@@ -49,5 +51,9 @@ internal class FirFunctionTypeRefImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

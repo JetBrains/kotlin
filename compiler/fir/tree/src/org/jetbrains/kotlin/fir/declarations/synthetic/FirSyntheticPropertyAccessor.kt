@@ -162,4 +162,8 @@ class FirSyntheticPropertyAccessor(
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
 }

@@ -72,6 +72,8 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirBackingField
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirBackingField

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -22,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedReifiedParameterReferenceImpl(
     override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirTypeParameterSymbol,
 ) : FirResolvedReifiedParameterReference() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -43,5 +45,9 @@ internal class FirResolvedReifiedParameterReferenceImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

@@ -125,6 +125,10 @@ class FirJavaField @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutating annotations for FirJava* is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
         return this
     }

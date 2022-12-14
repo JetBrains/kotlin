@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -44,7 +45,7 @@ class FirDefaultPropertyBackingField(
     symbol = FirBackingFieldSymbol(CallableId(BACKING_FIELD)),
     propertySymbol = propertySymbol,
     initializer = null,
-    annotations = annotations,
+    annotations = annotations.toMutableOrEmpty(),
     typeParameters = mutableListOf(),
     status = status,
     contextReceivers = mutableListOf(),

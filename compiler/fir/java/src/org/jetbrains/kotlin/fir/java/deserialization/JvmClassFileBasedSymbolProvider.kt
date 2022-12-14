@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
@@ -144,7 +145,7 @@ class JvmClassFileBasedSymbolProvider(
         kotlinClass: KotlinClassFinder.Result.KotlinClass,
         symbol: FirRegularClassSymbol
     ) {
-        val annotations = symbol.fir.annotations as MutableList<FirAnnotation>
+        val annotations = mutableListOf<FirAnnotation>()
         kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
             object : KotlinJvmBinaryClass.AnnotationVisitor {
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
@@ -156,6 +157,7 @@ class JvmClassFileBasedSymbolProvider(
             },
             kotlinClass.byteContent,
         )
+        symbol.fir.replaceAnnotations(annotations.toMutableOrEmpty())
         symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session.firCachesFactory))
     }
 

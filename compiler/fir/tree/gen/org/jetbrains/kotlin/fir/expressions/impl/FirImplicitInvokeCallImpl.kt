@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
@@ -28,7 +30,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 internal class FirImplicitInvokeCallImpl(
     override var source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
@@ -100,6 +102,10 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {

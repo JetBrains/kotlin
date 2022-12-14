@@ -41,6 +41,8 @@ abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)

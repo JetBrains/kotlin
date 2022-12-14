@@ -33,6 +33,8 @@ abstract class FirTryExpression : FirExpression(), FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTryExpression

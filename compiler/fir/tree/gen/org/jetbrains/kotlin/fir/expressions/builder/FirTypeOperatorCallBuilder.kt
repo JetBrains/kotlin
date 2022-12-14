@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
@@ -39,7 +40,7 @@ class FirTypeOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder
     override fun build(): FirTypeOperatorCall {
         return FirTypeOperatorCallImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             argumentList,
             operation,
             conversionTypeRef,

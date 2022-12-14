@@ -34,6 +34,8 @@ abstract class FirSmartCastExpression : FirExpression() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformSmartCastExpression(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSmartCastExpression

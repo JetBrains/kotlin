@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirStringConcatenationCallImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
 ) : FirStringConcatenationCall() {
     override var typeRef: FirTypeRef = FirImplicitStringTypeRef(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
@@ -45,6 +47,10 @@ internal class FirStringConcatenationCallImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStringConcatenationCallImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

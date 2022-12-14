@@ -62,8 +62,8 @@ fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = fa
 
 // ----------- Field list -----------
 
-fun fieldList(name: String, type: Importable, withReplace: Boolean = false): Field {
-    return FieldList(name, type, withReplace)
+fun fieldList(name: String, type: Importable, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
+    return FieldList(name, type, withReplace, useMutableOrEmpty)
 }
 
 fun fieldList(element: AbstractElement, withReplace: Boolean = false): Field {

@@ -34,6 +34,8 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformDelegatedConstructorCall(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)

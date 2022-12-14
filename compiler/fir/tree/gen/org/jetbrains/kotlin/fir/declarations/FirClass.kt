@@ -49,6 +49,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
 
     abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClass

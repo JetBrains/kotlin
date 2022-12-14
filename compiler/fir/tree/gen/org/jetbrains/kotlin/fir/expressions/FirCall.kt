@@ -25,6 +25,8 @@ sealed interface FirCall : FirStatement {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformCall(this, data) as E
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCall

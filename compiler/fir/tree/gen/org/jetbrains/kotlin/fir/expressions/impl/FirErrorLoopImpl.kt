@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -25,12 +27,12 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirErrorLoopImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var label: FirLabel?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorLoop() {
     override var block: FirBlock = FirEmptyExpressionBlock()
-    override var condition: FirExpression = FirErrorExpressionImpl(source, mutableListOf(), ConeStubDiagnostic(diagnostic), null, null)
+    override var condition: FirExpression = FirErrorExpressionImpl(source, MutableOrEmptyList(), ConeStubDiagnostic(diagnostic), null, null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -65,5 +67,9 @@ internal class FirErrorLoopImpl(
         transformAnnotations(transformer, data)
         label = label?.transform(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

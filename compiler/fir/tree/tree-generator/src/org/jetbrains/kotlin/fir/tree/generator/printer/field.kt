@@ -22,7 +22,7 @@ fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: B
     } else {
         print("var")
     }
-    val type = if (isImplementation) field.mutableType else field.typeWithArguments
+    val type = if (isImplementation) field.getMutableType() else field.typeWithArguments
     println(" ${field.name}: $type$end")
 }
 
@@ -37,7 +37,7 @@ fun SmartPrinter.printFieldWithDefaultInImplementation(field: Field) {
     } else {
         print("var")
     }
-    print(" ${field.name}: ${field.mutableType} ")
+    print(" ${field.name}: ${field.getMutableType()} ")
     if (field.withGetter) {
         if (field.customSetter != null) {
             println()

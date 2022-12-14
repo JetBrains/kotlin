@@ -28,5 +28,7 @@ abstract class FirUserTypeRef : FirTypeRefWithNullability() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformUserTypeRef(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef
 }

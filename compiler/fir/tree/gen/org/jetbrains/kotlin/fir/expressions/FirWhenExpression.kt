@@ -36,6 +36,8 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?)

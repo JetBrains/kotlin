@@ -28,6 +28,8 @@ abstract class FirDoWhileLoop : FirLoop() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformDoWhileLoop(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
 
     abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirDoWhileLoop

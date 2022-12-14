@@ -28,5 +28,7 @@ abstract class FirResolvedTypeRef : FirTypeRef() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedTypeRef(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef
 }

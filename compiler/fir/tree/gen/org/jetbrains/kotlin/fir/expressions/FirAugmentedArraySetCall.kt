@@ -31,6 +31,8 @@ abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformAugmentedArraySetCall(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall

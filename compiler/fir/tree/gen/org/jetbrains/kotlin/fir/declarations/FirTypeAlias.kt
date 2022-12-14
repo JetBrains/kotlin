@@ -45,6 +45,8 @@ abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParametersOwner 
 
     abstract fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAlias
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAlias

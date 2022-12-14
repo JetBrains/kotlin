@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
@@ -33,7 +34,7 @@ class FirLambdaArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExp
     override fun build(): FirLambdaArgumentExpression {
         return FirLambdaArgumentExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             expression,
         )
     }

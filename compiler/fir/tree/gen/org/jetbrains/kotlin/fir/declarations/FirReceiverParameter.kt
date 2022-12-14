@@ -31,6 +31,8 @@ abstract class FirReceiverParameter : FirPureAbstractElement(), FirAnnotationCon
 
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirReceiverParameter
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReceiverParameter

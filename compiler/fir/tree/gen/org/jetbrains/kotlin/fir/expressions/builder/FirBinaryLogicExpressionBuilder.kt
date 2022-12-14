@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -37,7 +38,7 @@ class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
     override fun build(): FirBinaryLogicExpression {
         return FirBinaryLogicExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             leftOperand,
             rightOperand,
             kind,

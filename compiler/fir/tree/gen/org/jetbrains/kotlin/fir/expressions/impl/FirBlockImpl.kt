@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -22,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirBlockImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val statements: MutableList<FirStatement>,
 ) : FirBlock() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
@@ -53,6 +55,10 @@ internal class FirBlockImpl(
         transformAnnotations(transformer, data)
         typeRef = typeRef.transform(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

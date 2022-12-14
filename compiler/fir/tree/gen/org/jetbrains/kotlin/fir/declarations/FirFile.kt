@@ -45,6 +45,8 @@ abstract class FirFile : FirDeclaration() {
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
 
     abstract fun <D> transformAnnotationsContainer(transformer: FirTransformer<D>, data: D): FirFile

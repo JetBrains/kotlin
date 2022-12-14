@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
@@ -36,7 +37,7 @@ class FirThrowExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
     override fun build(): FirThrowExpression {
         return FirThrowExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             exception,
         )
     }

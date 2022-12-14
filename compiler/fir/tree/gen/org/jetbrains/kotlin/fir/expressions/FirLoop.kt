@@ -30,6 +30,8 @@ sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement 
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformLoop(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop
 
     abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop

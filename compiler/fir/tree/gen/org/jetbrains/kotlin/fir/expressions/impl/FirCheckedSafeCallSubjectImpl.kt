@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirCheckedSafeCallSubjectImpl(
     override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val originalReceiverRef: FirExpressionRef<FirExpression>,
 ) : FirCheckedSafeCallSubject() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -44,5 +46,9 @@ internal class FirCheckedSafeCallSubjectImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

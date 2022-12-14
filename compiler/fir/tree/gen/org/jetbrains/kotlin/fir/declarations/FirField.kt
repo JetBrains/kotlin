@@ -71,6 +71,8 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField

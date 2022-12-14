@@ -67,7 +67,19 @@ private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind)
             allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
             typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
-    val result = fqns.filterRedundantImports(packageName, kind)
+    val result = fqns.filterRedundantImports(packageName, kind) +
+            if (allFields.any { it is FieldList && it.isMutableOrEmpty }) {
+                when (kind) {
+                    ImportKind.Implementation -> listOf(
+                        "org.jetbrains.kotlin.fir.MutableOrEmptyList",
+                        "org.jetbrains.kotlin.fir.builder.toMutableOrEmpty"
+                    )
+                    ImportKind.Builder -> listOf("org.jetbrains.kotlin.fir.builder.toMutableOrEmpty")
+                    else -> emptyList()
+                }
+            } else {
+                emptyList()
+            }
     if (allFields.any { it.name == "source" && it.withReplace }) {
         return (result + "org.jetbrains.kotlin.fir.FirImplementationDetail").distinct()
     }
@@ -89,7 +101,8 @@ val KindOwner.needPureAbstractElement: Boolean
     get() = (kind != Kind.Interface && kind != Kind.SealedInterface) && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
 
 
-val Field.isVal: Boolean get() = this is FieldList || (this is FieldWithDefault && origin is FieldList) || !isMutable
+val Field.isVal: Boolean
+    get() = (this is FieldList && !isMutableOrEmpty) || (this is FieldWithDefault && origin is FieldList && !origin.isMutableOrEmpty) || !isMutable
 
 
 fun Field.transformFunctionDeclaration(returnType: String): String {
@@ -109,12 +122,15 @@ fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNul
     return "fun replace$capName(new$capName: $typeWithNullable)"
 }
 
-val Field.mutableType: String
-    get() = when (this) {
-        is FieldList -> if (isMutable) "Mutable$typeWithArguments" else typeWithArguments
-        is FieldWithDefault -> if (isMutable) origin.mutableType else typeWithArguments
+fun Field.getMutableType(forBuilder: Boolean = false): String = when (this) {
+    is FieldList -> when {
+        isMutableOrEmpty && !forBuilder -> "MutableOrEmpty$typeWithArguments"
+        isMutable -> "Mutable$typeWithArguments"
         else -> typeWithArguments
     }
+    is FieldWithDefault -> if (isMutable) origin.getMutableType() else typeWithArguments
+    else -> typeWithArguments
+}
 
 fun Field.call(): String = if (nullable) "?." else "."
 

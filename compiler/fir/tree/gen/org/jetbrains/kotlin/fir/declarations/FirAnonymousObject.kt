@@ -50,6 +50,8 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject

@@ -158,7 +158,7 @@ class ValueParameter(
                 symbol,
             ).also {
                 it.initContainingClassAttr(context)
-                it.annotations += modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_GETTER)
+                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_GETTER))
             }
             setter = if (this.isVar) FirDefaultPropertySetter(
                 defaultAccessorSource,
@@ -170,7 +170,7 @@ class ValueParameter(
                 parameterAnnotations = modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.SETTER_PARAMETER)
             ).also {
                 it.initContainingClassAttr(context)
-                it.annotations += modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_SETTER)
+                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_SETTER))
             } else null
         }.apply {
             if (firValueParameter.isVararg) {

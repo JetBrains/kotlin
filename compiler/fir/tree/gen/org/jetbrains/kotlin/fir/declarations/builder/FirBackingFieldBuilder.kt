@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -91,7 +92,7 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
             symbol,
             propertySymbol,
             initializer,
-            annotations,
+            annotations.toMutableOrEmpty(),
             typeParameters,
             status,
         )

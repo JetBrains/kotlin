@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -51,7 +53,7 @@ internal class FirValueParameterImpl(
     override val contextReceivers: MutableList<FirContextReceiver>,
     override val name: Name,
     override var backingField: FirBackingField?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirValueParameterSymbol,
     override var defaultValue: FirExpression?,
     override val containingFunctionSymbol: FirFunctionSymbol<*>,
@@ -168,6 +170,10 @@ internal class FirValueParameterImpl(
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference

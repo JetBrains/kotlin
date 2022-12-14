@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
@@ -37,7 +38,7 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
     override fun build(): FirStringConcatenationCall {
         return FirStringConcatenationCallImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             argumentList,
         )
     }

@@ -22,6 +22,7 @@ sealed class Field : Importable {
 
     open val defaultValueInImplementation: String? get() = null
     abstract var isMutable: Boolean
+    abstract var isMutableOrEmpty: Boolean
     open var isMutableInInterface: Boolean = false
     open val withGetter: Boolean get() = false
     open val customSetter: String? get() = null
@@ -98,6 +99,7 @@ class FieldWithDefault(val origin: Field) : Field() {
     override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
     var defaultValueInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable
+    override var isMutableOrEmpty: Boolean = origin.isMutableOrEmpty
     override var isMutableInInterface: Boolean = origin.isMutableInInterface
     override var withGetter: Boolean = false
     override var customSetter: String? = null
@@ -135,6 +137,7 @@ class SimpleField(
         get() = customType?.fullQualifiedName ?: super.fullQualifiedName
 
     override var isMutable: Boolean = withReplace
+    override var isMutableOrEmpty: Boolean = false
 
     override fun internalCopy(): Field {
         return SimpleField(
@@ -182,6 +185,7 @@ class FirField(
     override val isFirType: Boolean = true
 
     override var isMutable: Boolean = true
+    override var isMutableOrEmpty: Boolean = false
 
     override fun internalCopy(): Field {
         return FirField(
@@ -200,7 +204,8 @@ class FirField(
 class FieldList(
     override val name: String,
     val baseType: Importable,
-    override var withReplace: Boolean
+    override var withReplace: Boolean,
+    useMutableOrEmpty: Boolean = false
 ) : Field() {
     override var defaultValueInImplementation: String? = null
     override val packageName: String? get() = baseType.packageName
@@ -212,12 +217,14 @@ class FieldList(
 
     override var isVolatile: Boolean = false
     override var isMutable: Boolean = true
+    override var isMutableOrEmpty: Boolean = useMutableOrEmpty
 
     override fun internalCopy(): Field {
         return FieldList(
             name,
             baseType,
-            withReplace
+            withReplace,
+            isMutableOrEmpty
         )
     }
 

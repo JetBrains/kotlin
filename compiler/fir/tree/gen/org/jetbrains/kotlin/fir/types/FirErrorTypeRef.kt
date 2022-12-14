@@ -31,5 +31,7 @@ abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformErrorTypeRef(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRef
 }

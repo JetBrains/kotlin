@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -58,6 +60,8 @@ internal class FirAnnotationImpl(
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
     override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
         annotationTypeRef = newAnnotationTypeRef

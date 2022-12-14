@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -25,7 +27,7 @@ internal class FirFileAnnotationsContainerImpl(
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val containingFileSymbol: FirFileSymbol,
 ) : FirFileAnnotationsContainer() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -44,5 +46,9 @@ internal class FirFileAnnotationsContainerImpl(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

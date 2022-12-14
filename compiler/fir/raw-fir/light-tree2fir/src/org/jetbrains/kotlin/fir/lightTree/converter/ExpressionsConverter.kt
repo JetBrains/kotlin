@@ -451,7 +451,10 @@ class ExpressionsConverter(
 
         val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer("???"))
         require(result is FirAnnotationContainer)
-        (result.annotations as MutableList<FirAnnotation>) += firAnnotationList
+        if (firAnnotationList.isNotEmpty()) {
+            val replacementAnnotations = if (result.annotations.isNotEmpty()) result.annotations + firAnnotationList else firAnnotationList
+            result.replaceAnnotations(replacementAnnotations)
+        }
         return result
     }
 

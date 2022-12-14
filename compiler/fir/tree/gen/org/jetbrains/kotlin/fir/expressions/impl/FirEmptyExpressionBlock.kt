@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -48,6 +50,8 @@ class FirEmptyExpressionBlock : FirBlock() {
         typeRef = typeRef.transform(transformer, data)
         return this
     }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef

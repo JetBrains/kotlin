@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirDelegatedConstructorCallImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
     override val contextReceiverArguments: MutableList<FirExpression>,
     override var constructedTypeRef: FirTypeRef,
@@ -65,6 +67,10 @@ internal class FirDelegatedConstructorCallImpl(
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

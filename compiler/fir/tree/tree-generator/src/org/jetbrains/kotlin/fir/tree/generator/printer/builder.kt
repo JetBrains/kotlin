@@ -83,7 +83,9 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
                 withIndent {
                     for (field in builder.allFields) {
                         val name = field.name
-                        println(name, ",")
+                        print(name)
+                        if (field.isMutableOrEmpty) print(".toMutableOrEmpty()")
+                        println(",")
                     }
                 }
                 println(")")
@@ -210,7 +212,7 @@ private fun SmartPrinter.printDeprecationOnUselessFieldIfNeeded(field: Field, bu
 private fun SmartPrinter.printFieldListInBuilder(field: FieldList, builder: Builder, fieldIsUseless: Boolean) {
     printDeprecationOnUselessFieldIfNeeded(field, builder, fieldIsUseless)
     printModifiers(builder, field, fieldIsUseless)
-    print("val ${field.name}: ${field.mutableType}")
+    print("val ${field.name}: ${field.getMutableType(forBuilder = true)}")
     if (builder is LeafBuilder) {
         print(" = mutableListOf()")
     }

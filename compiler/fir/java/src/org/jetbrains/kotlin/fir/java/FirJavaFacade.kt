@@ -108,8 +108,6 @@ abstract class FirJavaFacade(
             variance = INVARIANT
             isReified = false
             javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)
-            // TODO: should be lazy (in case annotations refer to the containing class)
-            annotations.addFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
             this.containingDeclarationSymbol = containingDeclarationSymbol
             for (upperBound in this@toFirTypeParameter.upperBounds) {
                 bounds += upperBound.toFirJavaTypeRef(session, javaTypeParameterStack)
@@ -119,6 +117,9 @@ abstract class FirJavaFacade(
                     type = ConeFlexibleType(builtinTypes.anyType.type, builtinTypes.nullableAnyType.type)
                 }
             }
+        }.apply {
+            // TODO: should be lazy (in case annotations refer to the containing class)
+            addAnnotationsFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
         }
     }
 
@@ -181,7 +182,7 @@ abstract class FirJavaFacade(
         // 1. Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
         // 3. Enhance super types - may refer to type parameter bounds, take default nullability from annotations
-        firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
+        firJavaClass.addAnnotationsFromJava(session, javaClass, javaTypeParameterStack)
 
         enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
 
@@ -511,10 +512,10 @@ abstract class FirJavaFacade(
                 returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = javaOrigin(javaField.isFromSource)
-                // TODO: check if this works properly with annotations that take the enum class as an argument
-                annotations.addFromJava(session, javaField, javaTypeParameterStack)
             }.apply {
                 containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                // TODO: check if this works properly with annotations that take the enum class as an argument
+                addAnnotationsFromJava(session, javaField, javaTypeParameterStack)
             }
             else -> buildJavaField {
                 source = javaField.toSourceElement()

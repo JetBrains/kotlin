@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -67,7 +68,7 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
             classKind,
             superTypeRefs,
             declarations,
-            annotations,
+            annotations.toMutableOrEmpty(),
             scopeProvider,
             symbol,
         )

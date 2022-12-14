@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -45,6 +47,8 @@ class FirLazyBlock : FirBlock() {
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {
         return this
     }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

@@ -958,7 +958,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
             return if (operation == FirOperation.ASSIGN) {
                 val result = unwrappedLhs.convert()
-                (result.annotations as MutableList<FirAnnotation>) += annotations
+                if (annotations.isNotEmpty()) {
+                    val annotationsToReplace = if (result.annotations.isEmpty()) annotations else mutableListOf<FirAnnotation>().apply {
+                        addAll(result.annotations)
+                        addAll(annotations)
+                    }
+                    result.replaceAnnotations(annotationsToReplace)
+                }
                 result.pullUpSafeCallIfNecessary()
             } else {
                 val receiver = unwrappedLhs.convert()

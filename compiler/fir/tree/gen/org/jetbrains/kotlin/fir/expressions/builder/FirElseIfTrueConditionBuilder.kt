@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
@@ -35,7 +36,7 @@ class FirElseIfTrueConditionBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirExpression {
         return FirElseIfTrueCondition(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
         )
     }
 

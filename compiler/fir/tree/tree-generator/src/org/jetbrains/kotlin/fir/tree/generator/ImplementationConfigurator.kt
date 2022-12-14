@@ -195,7 +195,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
-            default("condition", "FirErrorExpressionImpl(source, mutableListOf(), ConeStubDiagnostic(diagnostic), null, null)")
+            default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList(), ConeStubDiagnostic(diagnostic), null, null)")
             useTypes(emptyExpressionBlock, coneStubDiagnosticType)
         }
 

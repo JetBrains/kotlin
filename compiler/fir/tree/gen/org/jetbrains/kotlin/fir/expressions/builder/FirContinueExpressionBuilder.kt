@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -38,7 +39,7 @@ class FirContinueExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerB
     override fun build(): FirContinueExpression {
         return FirContinueExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             target,
         )
     }

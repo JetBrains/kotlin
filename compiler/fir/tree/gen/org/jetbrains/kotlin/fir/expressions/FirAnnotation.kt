@@ -34,6 +34,8 @@ abstract class FirAnnotation : FirExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)

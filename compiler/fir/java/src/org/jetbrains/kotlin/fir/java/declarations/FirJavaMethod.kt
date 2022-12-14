@@ -139,6 +139,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
         return this
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutating annotations for FirJava* is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
         return this
     }

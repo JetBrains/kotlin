@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -22,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirNamedArgumentExpressionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
     override val isSpread: Boolean,
     override val name: Name,
@@ -46,6 +48,10 @@ internal class FirNamedArgumentExpressionImpl(
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
 
     override fun replaceExpression(newExpression: FirExpression) {
         expression = newExpression

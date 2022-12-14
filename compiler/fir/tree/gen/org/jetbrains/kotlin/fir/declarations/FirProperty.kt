@@ -73,6 +73,8 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)

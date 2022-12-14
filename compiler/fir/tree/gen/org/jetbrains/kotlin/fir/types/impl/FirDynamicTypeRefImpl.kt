@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirDynamicTypeRefImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -34,5 +36,9 @@ internal class FirDynamicTypeRefImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

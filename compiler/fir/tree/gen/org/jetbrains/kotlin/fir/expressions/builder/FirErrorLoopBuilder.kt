@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -37,7 +38,7 @@ class FirErrorLoopBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirErrorLoop {
         return FirErrorLoopImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             label,
             diagnostic,
         )

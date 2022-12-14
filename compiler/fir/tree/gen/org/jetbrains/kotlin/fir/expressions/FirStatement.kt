@@ -25,5 +25,7 @@ interface FirStatement : FirAnnotationContainer {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformStatement(this, data) as E
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStatement
 }

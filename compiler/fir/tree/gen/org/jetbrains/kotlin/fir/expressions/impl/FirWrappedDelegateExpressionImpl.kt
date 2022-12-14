@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirWrappedDelegateExpressionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
     override var delegateProvider: FirExpression,
 ) : FirWrappedDelegateExpression() {
@@ -46,6 +48,10 @@ internal class FirWrappedDelegateExpressionImpl(
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
 
     override fun replaceExpression(newExpression: FirExpression) {
         expression = newExpression

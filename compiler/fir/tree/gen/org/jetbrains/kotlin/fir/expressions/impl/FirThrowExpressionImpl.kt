@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirThrowExpressionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var exception: FirExpression,
 ) : FirThrowExpression() {
     override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
@@ -49,5 +51,9 @@ internal class FirThrowExpressionImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

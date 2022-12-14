@@ -144,3 +144,49 @@ inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R):
         block,
     )
 }
+
+@JvmInline
+value class MutableOrEmptyList<T>(val list: MutableList<T>? = null) : List<T> {
+    override val size: Int
+        get() = list?.size ?: 0
+
+    override fun get(index: Int): T {
+        return list!![index]
+    }
+
+    override fun isEmpty(): Boolean {
+        return list?.isEmpty() ?: true
+    }
+
+    override fun iterator(): Iterator<T> {
+        return list?.iterator() ?: emptyList<T>().iterator()
+    }
+
+    override fun listIterator(): ListIterator<T> {
+        return list?.listIterator() ?: emptyList<T>().listIterator()
+    }
+
+    override fun listIterator(index: Int): ListIterator<T> {
+        return list?.listIterator(index) ?: emptyList<T>().listIterator(index)
+    }
+
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> {
+        return list!!.subList(fromIndex, toIndex)
+    }
+
+    override fun lastIndexOf(element: T): Int {
+        return list?.lastIndexOf(element) ?: -1
+    }
+
+    override fun indexOf(element: T): Int {
+        return list?.indexOf(element) ?: -1
+    }
+
+    override fun containsAll(elements: Collection<T>): Boolean {
+        return list?.containsAll(elements) ?: elements.isEmpty()
+    }
+
+    override fun contains(element: T): Boolean {
+        return list?.contains(element) ?: false
+    }
+}

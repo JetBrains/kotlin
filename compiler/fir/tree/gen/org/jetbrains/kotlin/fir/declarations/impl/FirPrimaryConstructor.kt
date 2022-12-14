@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -51,7 +53,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val contextReceivers: MutableList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,
     override var delegatedConstructor: FirDelegatedConstructorCall?,
     override var body: FirBlock?,
@@ -158,6 +160,10 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?) {

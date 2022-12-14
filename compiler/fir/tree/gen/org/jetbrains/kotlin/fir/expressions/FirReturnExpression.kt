@@ -32,6 +32,8 @@ abstract class FirReturnExpression : FirJump<FirFunction>() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression
 
     abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression

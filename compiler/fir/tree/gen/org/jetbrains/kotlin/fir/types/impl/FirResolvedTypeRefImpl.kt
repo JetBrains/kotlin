@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -22,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
     override val isFromStubType: Boolean,
@@ -39,5 +41,9 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

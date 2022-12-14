@@ -354,7 +354,7 @@ open class RawFirBuilder(
                         val lastChild = children.lastOrNull()
                         if (lastChild is KtBlockExpression) {
                             firBlock = lastChild.toFirBlock()
-                            extractAnnotationsTo(firBlock.annotations as MutableList<FirAnnotation>)
+                            extractAnnotationsTo(firBlock)
                         }
                     }
                     firBlock ?: FirSingleExpressionBlock(convert())
@@ -499,7 +499,12 @@ open class RawFirBuilder(
                             if (this != null) {
                                 it.extractAnnotationsFrom(this)
                             }
-                            it.annotations += accessorAnnotationsFromProperty
+                            val resultAnnotations = when {
+                                accessorAnnotationsFromProperty.isEmpty() -> it.annotations
+                                it.annotations.isEmpty() -> accessorAnnotationsFromProperty
+                                else -> it.annotations + accessorAnnotationsFromProperty
+                            }
+                            it.replaceAnnotations(resultAnnotations)
                             it.status = status
                             it.initContainingClassAttr()
                         }
@@ -660,7 +665,7 @@ open class RawFirBuilder(
                     symbol,
                 ).also { getter ->
                     getter.initContainingClassAttr()
-                    getter.annotations += parameterAnnotations.filterUseSiteTarget(PROPERTY_GETTER)
+                    getter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
                 }
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
@@ -672,7 +677,7 @@ open class RawFirBuilder(
                     parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
                 ).also { setter ->
                     setter.initContainingClassAttr()
-                    setter.annotations += parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER)
+                    setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
                 } else null
                 annotations += parameterAnnotations.filter {
                     it.useSiteTarget == null || it.useSiteTarget == PROPERTY ||
@@ -691,17 +696,23 @@ open class RawFirBuilder(
         }
 
         private fun FirDefaultPropertyAccessor.extractAnnotationsFrom(annotated: KtAnnotated) {
-            annotated.extractAnnotationsTo(this.annotations)
+            annotated.extractAnnotationsTo(this)
         }
 
-        private fun KtAnnotated.extractAnnotationsTo(container: MutableList<FirAnnotation>) {
+        private fun KtAnnotated.extractAnnotationsTo(container: FirAnnotationContainer) {
+            if (annotationEntries.isEmpty()) return
+            val annotations = mutableListOf<FirAnnotation>()
+            annotations.addAll(container.annotations)
             for (annotationEntry in annotationEntries) {
-                container += annotationEntry.convert<FirAnnotation>()
+                annotations += annotationEntry.convert<FirAnnotation>()
             }
+            container.replaceAnnotations(annotations)
         }
 
         private fun KtAnnotated.extractAnnotationsTo(container: FirAnnotationContainerBuilder) {
-            extractAnnotationsTo(container.annotations)
+            for (annotationEntry in annotationEntries) {
+                container.annotations += annotationEntry.convert<FirAnnotation>()
+            }
         }
 
         private fun KtTypeParameterListOwner.extractTypeParametersTo(
@@ -2647,7 +2658,7 @@ open class RawFirBuilder(
                     expression.toFirSourceElement(),
                     ConeNotAnnotationContainer(rawResult?.render() ?: "???")
                 )
-            expression.extractAnnotationsTo(result.annotations as MutableList<FirAnnotation>)
+            expression.extractAnnotationsTo(result)
             return result
         }
 

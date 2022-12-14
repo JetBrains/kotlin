@@ -42,6 +42,8 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)

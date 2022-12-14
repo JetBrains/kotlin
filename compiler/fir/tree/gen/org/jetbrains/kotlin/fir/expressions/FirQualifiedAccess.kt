@@ -35,6 +35,8 @@ interface FirQualifiedAccess : FirResolvable, FirStatement, FirContextReceiverAr
 
     override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)

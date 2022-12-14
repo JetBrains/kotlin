@@ -27,6 +27,8 @@ abstract class FirStringConcatenationCall : FirCall, FirExpression() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformStringConcatenationCall(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)

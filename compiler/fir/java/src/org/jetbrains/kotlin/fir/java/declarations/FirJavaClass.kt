@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -36,7 +38,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
@@ -108,6 +110,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         return this
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
         annotations.transformInplace(transformer, data)
         return this
@@ -152,7 +158,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
             origin = javaOrigin(isFromSource),
-            annotations,
+            annotations.toMutableOrEmpty(),
             status,
             classKind,
             declarations,

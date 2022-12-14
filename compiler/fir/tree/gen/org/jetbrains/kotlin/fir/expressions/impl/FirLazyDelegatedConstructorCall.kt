@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -57,6 +59,8 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
         calleeReference = calleeReference.transform(transformer, data)
         return this
     }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {}
 

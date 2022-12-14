@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -46,7 +47,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
         return FirWhenExpressionImpl(
             source,
             typeRef,
-            annotations,
+            annotations.toMutableOrEmpty(),
             calleeReference,
             subject,
             subjectVariable,

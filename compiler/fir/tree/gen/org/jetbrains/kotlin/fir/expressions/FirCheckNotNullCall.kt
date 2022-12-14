@@ -31,6 +31,8 @@ abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)

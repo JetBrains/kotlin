@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -54,7 +56,7 @@ internal class FirSimpleFunctionImpl(
     override var contractDescription: FirContractDescription,
     override val name: Name,
     override val symbol: FirNamedFunctionSymbol,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirSimpleFunction() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -166,5 +168,9 @@ internal class FirSimpleFunctionImpl(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
         contractDescription = newContractDescription
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

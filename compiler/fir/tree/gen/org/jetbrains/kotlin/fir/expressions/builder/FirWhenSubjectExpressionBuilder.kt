@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
@@ -34,7 +35,7 @@ class FirWhenSubjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
     override fun build(): FirWhenSubjectExpression {
         return FirWhenSubjectExpressionImpl(
             source,
-            annotations,
+            annotations.toMutableOrEmpty(),
             whenRef,
         )
     }

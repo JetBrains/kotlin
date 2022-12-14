@@ -381,6 +381,10 @@ class FirFakeArgumentForCallableReference(
         shouldNotBeCalled()
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        shouldNotBeCalled()
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression {
         shouldNotBeCalled()
     }

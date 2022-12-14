@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirLambdaArgumentExpressionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
 ) : FirLambdaArgumentExpression() {
     override val typeRef: FirTypeRef get() = expression.typeRef
@@ -44,6 +46,10 @@ internal class FirLambdaArgumentExpressionImpl(
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
 
     override fun replaceExpression(newExpression: FirExpression) {
         expression = newExpression

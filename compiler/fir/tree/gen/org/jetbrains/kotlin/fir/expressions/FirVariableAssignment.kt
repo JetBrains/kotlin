@@ -40,6 +40,8 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)

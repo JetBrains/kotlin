@@ -11,6 +11,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -47,7 +48,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
         return FirResolvedQualifierImpl(
             source,
             typeRef,
-            annotations,
+            annotations.toMutableOrEmpty(),
             packageFqName,
             relativeClassFqName,
             symbol,

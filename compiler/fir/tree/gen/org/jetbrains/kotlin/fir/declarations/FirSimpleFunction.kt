@@ -70,6 +70,8 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
 
     abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction

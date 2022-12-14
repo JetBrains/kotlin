@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -39,7 +41,7 @@ internal class FirTypeParameterImpl(
     override val variance: Variance,
     override val isReified: Boolean,
     override val bounds: MutableList<FirTypeRef>,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeParameter() {
     init {
         symbol.bind(this)
@@ -68,5 +70,9 @@ internal class FirTypeParameterImpl(
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         bounds.clear()
         bounds.addAll(newBounds)
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

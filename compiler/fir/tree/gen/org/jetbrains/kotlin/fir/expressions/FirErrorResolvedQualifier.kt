@@ -43,6 +43,8 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)
 
     abstract override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)

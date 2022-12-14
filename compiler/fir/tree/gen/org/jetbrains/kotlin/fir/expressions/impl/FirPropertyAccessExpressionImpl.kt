@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirReference,
     override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
@@ -93,6 +95,10 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {

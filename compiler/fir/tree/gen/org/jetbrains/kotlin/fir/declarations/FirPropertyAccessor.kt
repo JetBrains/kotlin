@@ -72,6 +72,8 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
 
     abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessor

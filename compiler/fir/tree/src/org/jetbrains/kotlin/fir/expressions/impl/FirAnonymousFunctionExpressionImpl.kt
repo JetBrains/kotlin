@@ -31,6 +31,10 @@ internal class FirAnonymousFunctionExpressionImpl(
         return transformAnonymousFunction(transformer, data)
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        anonymousFunction.replaceAnnotations(newAnnotations)
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpressionImpl {
         return this
     }

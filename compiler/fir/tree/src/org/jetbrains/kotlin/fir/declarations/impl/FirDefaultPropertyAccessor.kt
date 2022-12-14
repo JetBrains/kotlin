@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
@@ -60,7 +61,7 @@ abstract class FirDefaultPropertyAccessor(
     symbol,
     propertySymbol,
     isGetter,
-    annotations = mutableListOf(),
+    annotations = MutableOrEmptyList(),
     typeParameters = mutableListOf(),
 ) {
     override val dispatchReceiverType: ConeSimpleKotlinType?

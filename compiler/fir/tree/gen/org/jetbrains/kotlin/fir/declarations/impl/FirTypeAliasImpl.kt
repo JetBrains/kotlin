@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -40,7 +42,7 @@ internal class FirTypeAliasImpl(
     override val name: Name,
     override val symbol: FirTypeAliasSymbol,
     override var expandedTypeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeAlias() {
     init {
         symbol.bind(this)
@@ -91,5 +93,9 @@ internal class FirTypeAliasImpl(
 
     override fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef) {
         expandedTypeRef = newExpandedTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

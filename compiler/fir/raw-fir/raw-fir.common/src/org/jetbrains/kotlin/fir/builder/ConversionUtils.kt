@@ -577,7 +577,10 @@ fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
         source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
         @Suppress("UNCHECKED_CAST")
         annotations += (typeRef.annotations as List<FirAnnotationCall>).filterUseSiteTarget(AnnotationUseSiteTarget.RECEIVER)
-        (typeRef.annotations as MutableList<FirAnnotation>).removeIf { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
+        val filteredTypeRefAnnotations = typeRef.annotations.filterNot { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
+        if (filteredTypeRefAnnotations.size != typeRef.annotations.size) {
+            typeRef.replaceAnnotations(filteredTypeRefAnnotations)
+        }
         this.typeRef = typeRef
     }
 }

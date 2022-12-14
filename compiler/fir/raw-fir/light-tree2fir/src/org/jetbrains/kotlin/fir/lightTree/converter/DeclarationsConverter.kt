@@ -1235,7 +1235,7 @@ class DeclarationsConverter(
                             symbol,
                         ).also {
                             it.status = defaultAccessorStatus()
-                            it.annotations += modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER)
+                            it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER))
                             it.initContainingClassAttr()
                         }
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
@@ -1251,7 +1251,7 @@ class DeclarationsConverter(
                                 parameterAnnotations = modifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
                             ).also {
                                 it.status = defaultAccessorStatus()
-                                it.annotations += modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER)
+                                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER))
                                 it.initContainingClassAttr()
                             }
                         } else null
@@ -1417,8 +1417,7 @@ class DeclarationsConverter(
                     isGetter
                 )
                 .also { accessor ->
-                    accessor.annotations += modifiers.annotations
-                    accessor.annotations += accessorAdditionalAnnotations
+                    accessor.replaceAnnotations(modifiers.annotations + accessorAdditionalAnnotations)
                     accessor.status = status
                     accessor.initContainingClassAttr()
                 }
@@ -2022,7 +2021,12 @@ class DeclarationsConverter(
         }
 
         for (modifierList in allTypeModifiers) {
-            (calculatedFirType.annotations as MutableList<FirAnnotation>) += modifierList.annotations
+            if (modifierList.annotations.isNotEmpty()) {
+                val replacementAnnotations =
+                    if (calculatedFirType.annotations.isNotEmpty()) calculatedFirType.annotations + modifierList.annotations
+                    else modifierList.annotations
+                calculatedFirType.replaceAnnotations(replacementAnnotations)
+            }
         }
         return calculatedFirType
     }
