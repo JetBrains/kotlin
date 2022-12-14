@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
@@ -21,15 +17,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
-import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -62,18 +53,6 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
             binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtLibraryModule>() }.asIterable(),
         )
     }
-
-    private fun createFakeStdlibModule(
-        platform: TargetPlatform,
-        project: Project
-    ): KtLibraryModule = KtLibraryModuleImpl(
-        libraryName = "fake-std-lib",
-        platform = platform,
-        contentScope = ProjectScope.getLibrariesScope(project),
-        project = project,
-        binaryRoots = emptyList(),
-        librarySources = null,
-    )
 
     override fun doOutOfBlockModification(file: KtFile) {
         error("Should not be called for compiler based tests")
