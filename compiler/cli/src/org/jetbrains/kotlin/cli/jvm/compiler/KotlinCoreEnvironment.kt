@@ -101,7 +101,12 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.FileSystems
+import java.util.*
 import java.util.zip.ZipFile
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.concurrent.timerTask
 
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: ProjectEnvironment,
@@ -528,6 +533,10 @@ class KotlinCoreEnvironment private constructor(
                                     if (CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true) {
                                         disposeApplicationEnvironment()
                                     } else {
+                                        Timer("IdleCleanup", false).schedule(
+                                            timerTask { delayedCleanup() },
+                                            10000
+                                        )
                                         ourApplicationEnvironment?.idleCleanup()
                                     }
                                 }
@@ -539,6 +548,14 @@ class KotlinCoreEnvironment private constructor(
                 }
 
                 return ourApplicationEnvironment!!
+            }
+        }
+
+        private fun delayedCleanup() {
+            synchronized(APPLICATION_LOCK) {
+                if (ourProjectCount <= 0) {
+                    ourApplicationEnvironment?.idleCleanup()
+                }
             }
         }
 
