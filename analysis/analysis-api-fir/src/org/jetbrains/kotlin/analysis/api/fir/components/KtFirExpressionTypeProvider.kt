@@ -167,7 +167,11 @@ internal class KtFirExpressionTypeProvider(
                         arg.psi == argumentExpression
                 }
             }?.value ?: return null
-        return firParameterForExpression.returnTypeRef.coneType.asKtType()
+        val coneType = firParameterForExpression.returnTypeRef.coneType
+        return if (firParameterForExpression.isVararg)
+            coneType.varargElementType().asKtType()
+        else
+            coneType.asKtType()
     }
 
     private fun PsiElement.getFunctionCallAsWithThisAsParameter(): KtCallWithArgument? {
