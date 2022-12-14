@@ -77,24 +77,12 @@ data class Edge(
 }
 
 sealed class EdgeLabel(val label: String?) {
-    open val isNormal: Boolean
-        get() = false
-
     override fun toString(): String {
         return label ?: ""
     }
 }
 
-object NormalPath : EdgeLabel(label = null) {
-    override val isNormal: Boolean
-        get() = true
-}
-
-object LoopBackPath : EdgeLabel(label = null) {
-    override val isNormal: Boolean
-        get() = true
-}
-
+object NormalPath : EdgeLabel(label = null)
 object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
 
 // TODO: Label `return`ing edge with this.
