@@ -83,7 +83,7 @@ class PropertyInitializationInfoCollector(
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val result = super.visitEdge(from, to, metadata, data)
-        if (metadata.label != LoopBackPath) return result
+        if (!metadata.kind.isBack) return result
         val declaredVariableSymbolsInCapturedScope = when (to) {
             is LoopEnterNode -> declaredVariableCollector.declaredVariablesPerElement[to.fir]
             is LoopBlockEnterNode -> declaredVariableCollector.declaredVariablesPerElement[to.fir]

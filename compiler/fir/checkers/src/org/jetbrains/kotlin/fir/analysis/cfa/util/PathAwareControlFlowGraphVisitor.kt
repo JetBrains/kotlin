@@ -33,42 +33,31 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
 
     open fun visitEdge(from: CFGNode<*>, to: CFGNode<*>, metadata: Edge, data: PathAwareControlFlowInfo<I>): PathAwareControlFlowInfo<I> {
         val label = metadata.label
-        if (label.isNormal) {
-            // Special case: when we exit the try expression, null label means a normal path.
-            // Filter out any info bound to non-null label
-            // One day, if we allow multiple edges between nodes with different labels, e.g., labeling all paths in try/catch/finally,
-            // instead of this kind of special handling, proxy enter/exit nodes per label are preferred.
-            if (to is TryExpressionExitNode) {
-                val infoAtNormalPath = data[NormalPath] ?: return emptyInfo
-                return persistentMapOf(NormalPath to infoAtNormalPath)
-            }
-            // In general, null label means no additional path info, hence return `this` as-is.
-            return data
-        }
-        return if (data.keys.any { !it.isNormal }) {
-            // { |-> ..., l1 |-> I1, l2 |-> I2, ... }
-            //   | l1         // path exit: if the given info has non-null labels, this acts like a filtering
-            // { |-> I1 }     // NB: remove the path label, except for uncaught exception path
-            val info = data[label] ?: return emptyInfo
+        return if (from is FinallyBlockExitNode) {
+            // Finally exit is splitting labeled flow. So if we have data for different labels, then
+            // data for each only goes along an edge with the same label, and the leftover data
+            // is forwarded along an UncaughtExceptionPath edge, if any, to the next finally block.
             if (label == UncaughtExceptionPath) {
-                // Special case: uncaught exception path, which still represents an uncaught exception path
-                // Target node is most likely fun/init exit, and we should keep info separated.
-                persistentMapOf(label to info)
+                data.mutate {
+                    for (other in from.followingNodes) {
+                        val otherLabel = from.edgeTo(other).label
+                        if (otherLabel != UncaughtExceptionPath) {
+                            it.remove(otherLabel)
+                        }
+                    }
+                }.ifEmpty { emptyInfo } // there should always be UncaughtExceptionPath data, but just in case
             } else {
-                // { |-> I }
-                //   | l1       // e.g., enter to proxy1 with l1
-                // { l1 -> I }
-                //   ...
-                // { |-> ..., l1 -> I', ... }
-                //   | l1       // e.g., exit proxy1 with l1
-                // { l1 -> I' }
+                val info = data[label] ?: return emptyInfo
                 persistentMapOf(NormalPath to info)
             }
+        } else if (label == NormalPath) {
+            // A normal path forwards all data. (Non-normal paths should only have data in finally blocks.)
+            data
         } else {
-            // { |-> ... }    // empty path info
-            //   | l1         // path entry
-            // { l1 -> ... }  // now, every info bound to the label
-            persistentMapOf(label to data.infoAtNormalPath)
+            // Labeled edge from a jump statement to a `finally` block forks flow. Usually we'd only have
+            // NormalPath data here, but technically it's possible (though questionable) to jump from a `finally`
+            // (discarding the exception or aborting a previous jump in the process) so merge all data just in case.
+            persistentMapOf(label to data.values.reduce { a, b -> a.merge(b) })
         }
     }
 
@@ -82,6 +71,3 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
         data: PathAwareControlFlowInfo<I>
     ): PathAwareControlFlowInfo<I> where T : CFGNode<*>, T : UnionNodeMarker = data
 }
-
-internal val <I> PathAwareControlFlowInfo<I>.infoAtNormalPath: I
-    get() = getValue(NormalPath)
