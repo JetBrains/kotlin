@@ -170,6 +170,8 @@ private fun phaseBody(
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
         return K2FrontendPhaseOutput.ShouldNotGenerateCode
     }
+    firFiles.forEach { println(it.render()) }
+
     // FIR2IR
 
     val fir2IrExtensions = Fir2IrExtensions.Default
