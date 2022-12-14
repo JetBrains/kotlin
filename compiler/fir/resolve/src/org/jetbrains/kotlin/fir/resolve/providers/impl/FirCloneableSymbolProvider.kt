@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -23,7 +22,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 @NoMutableState
 class FirCloneableSymbolProvider(
@@ -73,6 +75,15 @@ class FirCloneableSymbolProvider(
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
+
+    override fun computePackageSet(): Set<String> = setOf(StandardClassIds.Cloneable.packageFqName.asString())
+
+    override fun mayHaveTopLevelClass(classId: ClassId) = classId == StandardClassIds.Cloneable
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> =
+        if (fqName == StandardClassIds.Cloneable.packageFqName) setOf(StandardClassIds.Cloneable.shortClassName.asString()) else emptySet()
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> = emptySet()
 
     override fun getPackage(fqName: FqName): FqName? {
         return null

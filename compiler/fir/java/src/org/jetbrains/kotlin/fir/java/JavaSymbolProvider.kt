@@ -48,6 +48,13 @@ class JavaSymbolProvider(
     private fun getFirJavaClass(classId: ClassId): FirRegularClassSymbol? =
         classCache.getValue(classId, classId.outerClassId?.let { getFirJavaClass(it) })
 
+    override fun computePackageSet(): Set<String> = emptySet()
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean = javaFacade.hasTopLevelClassOf(classId)
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> = javaFacade.knownTopLevelClassifiers(fqName)
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> = emptySet()
+
     @OptIn(FirSymbolProviderInternals::class)
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {}
 
