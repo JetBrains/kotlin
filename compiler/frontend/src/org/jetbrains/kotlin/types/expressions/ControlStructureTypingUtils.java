@@ -77,8 +77,8 @@ public class ControlStructureTypingUtils {
 
         ResolveConstruct(String name) {
             this.name = name;
-            this.specialFunctionName = Name.identifier("<SPECIAL-FUNCTION-FOR-" + name.toUpperCase() + "-RESOLVE>");
-            this.specialTypeParameterName = Name.identifier("<TYPE-PARAMETER-FOR-" + name.toUpperCase() + "-RESOLVE>");
+            this.specialFunctionName = Name.identifier("_<SPECIAL-FUNCTION-FOR-" + name.toUpperCase() + "-RESOLVE>");
+            this.specialTypeParameterName = Name.identifier("_<TYPE-PARAMETER-FOR-" + name.toUpperCase() + "-RESOLVE>");
         }
 
         public String getName() {

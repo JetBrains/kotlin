@@ -282,7 +282,7 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
     }
 
 fun IrFunction.addValueParameter(name: String, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
-    addValueParameter(Name.identifier(name), type, origin)
+    addValueParameter(Name.guessByFirstCharacter(name), type, origin)
 
 fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     addValueParameter {

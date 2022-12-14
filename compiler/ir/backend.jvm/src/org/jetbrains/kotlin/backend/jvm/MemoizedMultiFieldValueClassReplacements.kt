@@ -60,7 +60,7 @@ class MemoizedMultiFieldValueClassReplacements(
         val valueParameters = rootMfvcNode.mapLeaves { leaf ->
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
-                this.name = Name.identifier("${name ?: oldParam.name}-${leaf.fullFieldName}")
+                this.name = Name.guessByFirstCharacter("${name ?: oldParam.name}-${leaf.fullFieldName}")
                 type = leaf.type.substitute(localSubstitutionMap)
                 origin = originWhenFlattened
                 index = targetFunction.valueParameters.size
