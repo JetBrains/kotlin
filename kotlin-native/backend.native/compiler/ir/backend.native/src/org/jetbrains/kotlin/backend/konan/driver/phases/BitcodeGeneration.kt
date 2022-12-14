@@ -28,7 +28,7 @@ internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<Native
 
 internal data class RTTIInput(
         val irModule: IrModuleFragment,
-        val referencedFunctions: Set<IrFunction>
+        val referencedFunctions: Set<IrFunction>?
 )
 
 internal val RTTIPhase = createSimpleNamedCompilerPhase<NativeGenerationState, RTTIInput>(

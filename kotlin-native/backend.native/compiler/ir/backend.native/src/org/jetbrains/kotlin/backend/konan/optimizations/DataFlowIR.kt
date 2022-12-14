@@ -430,7 +430,7 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: Context, val irModule: IrModuleFragment, val module: Module) {
+    class SymbolTable(val context: Context, val module: Module) {
 
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
@@ -454,7 +454,7 @@ internal object DataFlowIR {
         var privateTypeIndex = 1 // 0 for [Virtual]
         var privateFunIndex = 0
 
-        init {
+        fun populateWith(irModule: IrModuleFragment) {
             irModule.accept(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)

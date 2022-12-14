@@ -84,7 +84,7 @@ internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
 internal fun IrField.shouldBeFrozen(context: Context): Boolean =
         this.storageKind(context) == FieldStorageKind.SHARED_FROZEN
 
-internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>) : IrElementVisitorVoid {
+internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>?) : IrElementVisitorVoid {
     val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)

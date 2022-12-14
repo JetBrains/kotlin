@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
-        val referencedFunctions: Set<IrFunction>,
+        val referencedFunctions: Set<IrFunction>?,
 ) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
@@ -298,7 +298,7 @@ internal class RTTIGenerator(
         // TODO: compile-time resolution limits binary compatibility.
         val vtableEntries = context.getLayoutBuilder(irClass).vtableEntries.map {
             val implementation = it.implementation
-            if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions.contains(implementation) == false) {
+            if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
                 NullPointer(llvm.int8Type)
             } else {
                 implementation.entryPointAddress
@@ -379,7 +379,7 @@ internal class RTTIGenerator(
                     else {
                         val vtableEntries = iface.interfaceVTableEntries.map { ifaceFunction ->
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
-                            if (impl == null || referencedFunctions.contains(impl) == false)
+                            if (impl == null || referencedFunctions?.contains(impl) == false)
                                 NullPointer(llvm.int8Type)
                             else impl.entryPointAddress
                         }
