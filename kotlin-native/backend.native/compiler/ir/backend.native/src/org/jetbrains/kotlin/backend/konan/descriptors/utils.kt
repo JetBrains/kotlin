@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -63,10 +61,5 @@ fun BaseKotlinLibrary.isInteropLibrary() =
         manifestProperties["ir_provider"] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 
 fun ModuleDescriptor.isFromInteropLibrary() =
-        when (this) {
-            is ModuleDescriptorImpl ->
-                if (klibModuleOrigin !is DeserializedKlibModuleOrigin) false
-                else kotlinLibrary.isInteropLibrary()
-            else -> false // TODO add capabilities to FirModuleDescriptor, so klibModuleOrigin can be used
-        }
-
+        if (klibModuleOrigin !is DeserializedKlibModuleOrigin) false
+        else kotlinLibrary.isInteropLibrary()
