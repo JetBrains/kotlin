@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: Disabling of StrictOnlyInputTypesChecks is not supported by FIR
 // WITH_STDLIB
 // SKIP_TXT

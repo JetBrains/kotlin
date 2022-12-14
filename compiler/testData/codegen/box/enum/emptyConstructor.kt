@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR, NATIVE
 package test
 
 enum class My(val s: String) {

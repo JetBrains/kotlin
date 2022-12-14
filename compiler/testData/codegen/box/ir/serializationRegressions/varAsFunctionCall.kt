@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: ARGUMENT_TYPE_MISMATCH at ok.z(fail), actual String, expected T
 // MODULE: lib
 // FILE: l1.kt
