@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
 /**
@@ -19,6 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 internal fun Project.addIntransitiveMetadataDependencyIfPossible(sourceSet: DefaultKotlinSourceSet, dependency: FileCollection) {
     val dependencyConfigurationName =
         if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-        else sourceSet.resolvableMetadataConfigurationName
+        else return
     project.dependencies.add(dependencyConfigurationName, dependency)
 }

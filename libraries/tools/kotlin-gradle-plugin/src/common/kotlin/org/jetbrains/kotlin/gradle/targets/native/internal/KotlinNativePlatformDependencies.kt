@@ -95,11 +95,8 @@ private fun Project.addDependencies(
         }
     }
 
-    if (isIdeDependency && sourceSet is DefaultKotlinSourceSet) {
-        val metadataConfigurationName =
-            if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-            else sourceSet.resolvableMetadataConfigurationName
-        dependencies.add(metadataConfigurationName, libraries)
+    if (isIdeDependency && sourceSet is DefaultKotlinSourceSet && project.isIntransitiveMetadataConfigurationEnabled) {
+        dependencies.add(sourceSet.intransitiveMetadataConfigurationName, libraries)
     }
 }
 
