@@ -49,4 +49,13 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
     }
+
+    override fun computePackageSet(): Set<String> = providers.flatMapTo(mutableSetOf()) { it.computePackageSet() }
+
+    override fun mayHaveTopLevelClass(classId: ClassId) = providers.any { it.mayHaveTopLevelClass(classId) }
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> = providers.flatMapTo(mutableSetOf()) { it.knownTopLevelClassifiers(fqName) }
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> =
+        providers.flatMapTo(mutableSetOf()) { it.computeCallableNames(fqName)!! }
 }

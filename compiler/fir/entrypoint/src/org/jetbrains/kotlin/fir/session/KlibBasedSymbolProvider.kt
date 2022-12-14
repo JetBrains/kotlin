@@ -101,6 +101,10 @@ class KlibBasedSymbolProvider(
 
     override fun mayHaveTopLevelClass(classId: ClassId) = true
 
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> {
+        TODO("Not yet implemented")
+    }
+
     @OptIn(SymbolInternals::class)
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val packageStringName = classId.packageFqName.asString()

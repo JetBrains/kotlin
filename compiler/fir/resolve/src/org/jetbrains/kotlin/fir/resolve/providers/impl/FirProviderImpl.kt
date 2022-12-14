@@ -71,6 +71,18 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             destination += (state.propertyMap[CallableId(packageFqName, null, name)] ?: emptyList())
         }
 
+        override fun computePackageSet(): Set<String> = state.allSubPackages.mapTo(mutableSetOf()) { it.asString() }
+
+        override fun mayHaveTopLevelClass(classId: ClassId): Boolean = classId in state.classifierMap
+
+        override fun knownTopLevelClassifiers(fqName: FqName): Set<String> =
+            state.classifierInPackage[fqName].orEmpty().mapTo(mutableSetOf()) { it.asString() }
+
+        override fun computeCallableNames(fqName: FqName): Set<Name> = buildSet {
+            state.functionMap.keys.mapTo(this) { it.callableName }
+            state.propertyMap.keys.mapTo(this) { it.callableName }
+        }
+
         override fun getPackage(fqName: FqName): FqName? {
             if (fqName in state.allSubPackages) return fqName
             return null
@@ -109,6 +121,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
             if (!classId.isNestedClass && !classId.isLocal) {
                 data.state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
+                data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
             }
 
             regularClass.acceptChildren(this, data)
@@ -120,6 +133,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data.state.classifierMap.put(classId, typeAlias)?.let {
                 data.nameConflictsTracker?.registerClassifierRedeclaration(classId, typeAlias.symbol, data.file, it.symbol, prevFile)
             }
+
+            data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
         }
 
         override fun visitPropertyAccessor(
@@ -171,6 +186,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
         val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
         val classesInPackage = mutableMapOf<FqName, MutableSet<Name>>()
+        val classifierInPackage = mutableMapOf<FqName, MutableSet<Name>>()
         val functionMap = mutableMapOf<CallableId, List<FirNamedFunctionSymbol>>()
         val propertyMap = mutableMapOf<CallableId, List<FirPropertySymbol>>()
         val constructorMap = mutableMapOf<CallableId, List<FirConstructorSymbol>>()
