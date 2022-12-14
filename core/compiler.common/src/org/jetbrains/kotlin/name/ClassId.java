@@ -151,7 +151,7 @@ public final class ClassId {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ClassId)) return false;
 
         ClassId id = (ClassId) o;
 
