@@ -59,6 +59,14 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             extensions.flatGroupBy { it.topLevelClassIdsCache.getValue() }
         }
 
+    override fun computePackageSet(): Set<String> = emptySet()
+
+    override fun mayHaveTopLevelClass(classId: ClassId) = false
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> = emptySet()
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> = emptySet()
+
     private val extensionsByNestedClassifierClassId: FirCache<ClassId, Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
         session.firCachesFactory.createCache cache@{ outerClassId, _ ->
             val outerClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(outerClassId) as? FirClassSymbol<*>

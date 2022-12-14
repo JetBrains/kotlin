@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -29,6 +31,17 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
     private val topLevelPropertyCache = session.firCachesFactory.createCache(::computeTopLevelProperties)
     private val packageCache = session.firCachesFactory.createCache(::computePackage)
 
+    private val allPackageNames by lazy {
+        computePackageSet()
+    }
+
+    private val callableNames = session.firCachesFactory.createCache { fqName: FqName ->
+        computeCallableNames(fqName)
+    }
+
+    private val knownClassNamesInPackage: FirCache<FqName, Set<String>, Nothing?> = session.firCachesFactory.createCache { fqName: FqName ->
+        knownTopLevelClassifiers(fqName)
+    }
 
     protected open val dependencyProviders by lazy {
         val moduleData =
@@ -99,11 +112,18 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        if (!mayBeCallables(packageFqName, name)) return
         destination += topLevelFunctionCache.getValue(CallableId(packageFqName, name))
+    }
+
+    private fun mayBeCallables(fqName: FqName, name: Name): Boolean {
+        if (fqName.asString() !in allPackageNames) return false
+        return name in callableNames.getValue(fqName)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+        if (!mayBeCallables(packageFqName, name)) return
         destination += topLevelPropertyCache.getValue(CallableId(packageFqName, name))
     }
 
@@ -113,14 +133,38 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+        if (!mayBeCallables(packageFqName, name)) return emptyList()
         return topLevelCallableCache.getValue(CallableId(packageFqName, name))
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        val parentClassId = classId.outerClassId
+
+        if (parentClassId == null && !mayHaveTopLevelClass1(classId)) return null
+        if (parentClassId != null && !mayHaveTopLevelClass1(classId.outermostClassId)) return null
+
         return classCache.getValue(classId)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
         return packageCache.getValue(fqName)
     }
+
+
+    override fun computePackageSet(): Set<String> = dependencyProviders.flatMapTo(mutableSetOf()) { it.computePackageSet() }
+
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    private fun mayHaveTopLevelClass1(classId: ClassId): Boolean  {
+        if (FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null) return true
+
+        return classId.shortClassName.asString() in knownClassNamesInPackage.getValue(classId.packageFqName)
+    }
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> = dependencyProviders.flatMapTo(mutableSetOf()) { it.knownTopLevelClassifiers(fqName)}
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> =
+        dependencyProviders.flatMapTo(mutableSetOf()) { it.computeCallableNames(fqName)!! }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
@@ -95,6 +96,11 @@ class JvmClassFileBasedSymbolProvider(
     override fun computePackageSet(): Set<String> = packagePartProvider.allPackageNames().toSet()
 
     override fun mayHaveTopLevelClass(classId: ClassId): Boolean = javaFacade.hasTopLevelClassOf(classId)
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> {
+        if (fqName.asString() !in packageNames) return javaFacade.knownTopLevelClassifiers(fqName)
+        return javaFacade.knownTopLevelClassifiers(fqName) + typeAliasesNamesByPackage.getValue(fqName).map { it.asString() }
+    }
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {

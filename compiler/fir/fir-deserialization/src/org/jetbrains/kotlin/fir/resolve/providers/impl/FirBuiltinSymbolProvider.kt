@@ -96,6 +96,17 @@ open class FirBuiltinSymbolProvider(
         }
     }
 
+    override fun computePackageSet(): Set<String> = allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean =
+        allPackageFragments[classId.packageFqName]?.any { classId in it.classDataFinder.allClassIds } == true
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> = allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
+        it.classDataFinder.allClassIds.filter { !it.isNestedClass }.map { it.shortClassName.asString() }
+    } ?: emptySet()
+
+    override fun computeCallableNames(fqName: FqName): Set<Name> =
+        allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) { it.getAllCallableNames() } ?: emptySet()
+
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
@@ -152,6 +163,11 @@ open class FirBuiltinSymbolProvider(
 
         fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
             return getTopLevelFunctionSymbols(name)
+        }
+
+        fun getAllCallableNames(): Set<Name> = buildSet {
+            packageProto.`package`.functionList.mapTo(this) { nameResolver.getName(it.name) } +
+                    packageProto.`package`.propertyList.mapTo(this) { nameResolver.getName(it.name) }
         }
 
         fun getTopLevelFunctionSymbols(name: Name): List<FirNamedFunctionSymbol> {

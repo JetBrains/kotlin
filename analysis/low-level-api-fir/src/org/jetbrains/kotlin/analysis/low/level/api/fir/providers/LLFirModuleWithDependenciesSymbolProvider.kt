@@ -81,6 +81,22 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
 
     fun getPackageWithoutDependencies(fqName: FqName): FqName? =
         providers.firstNotNullOfOrNull { it.getPackage(fqName) }
+
+    override fun computePackageSet(): Set<String> {
+        TODO("Not yet implemented")
+    }
+
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun computeCallableNames(fqName: FqName): Set<Name>? {
+        TODO("Not yet implemented")
+    }
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> {
+        TODO("Not yet implemented")
+    }
 }
 
 internal abstract class LLFirDependentModuleProviders(
@@ -178,6 +194,21 @@ internal abstract class LLFirDependentModuleProviders(
         return jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
     }
 
+    override fun computePackageSet(): Set<String> {
+        TODO("Not yet implemented")
+    }
+
+    override fun mayHaveTopLevelClass(classId: ClassId): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun computeCallableNames(fqName: FqName): Set<Name>? {
+        TODO("Not yet implemented")
+    }
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> {
+        TODO("Not yet implemented")
+    }
 }
 
 internal class LLFirDependentModuleProvidersBySessions(
@@ -191,6 +222,10 @@ internal class LLFirDependentModuleProvidersBySessions(
 
     constructor(session: FirSession, createSessions: MutableList<LLFirSession>.() -> Unit)
             : this(session, buildList { createSessions() })
+
+    override fun knownTopLevelClassifiers(fqName: FqName): Set<String> {
+        TODO("Not yet implemented")
+    }
 }
 
 
