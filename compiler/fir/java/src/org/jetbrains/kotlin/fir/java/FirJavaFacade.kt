@@ -92,6 +92,8 @@ abstract class FirJavaFacade(
         return classId.relativeClassName.topLevelName() in knownNames
     }
 
+    fun knownTopLevelClassifiers(fqName: FqName): Set<String> = knownClassNamesInPackage.getValue(fqName)!!
+
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
 
     private fun JavaTypeParameter.toFirTypeParameter(
