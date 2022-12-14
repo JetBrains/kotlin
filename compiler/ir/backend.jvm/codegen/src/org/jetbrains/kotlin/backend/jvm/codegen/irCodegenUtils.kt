@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -67,8 +67,19 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
     return leave(irDeclaration.symbol)
 }
 
+fun IrClass.getOriginalDeclaration(): IrDeclaration? {
+    val originalClass = this.attributeOwnerIdBeforeInline ?: return null
+    return when (originalClass) {
+        is IrClass -> return originalClass
+        is IrFunctionExpression -> originalClass.function
+        is IrFunctionReference -> originalClass.symbol.owner
+        else -> null
+    }
+}
+
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val fileEntry = declaration.fileParent.fileEntry
+    val originalDeclarationBeforeInline = declaration.getOriginalDeclaration() ?: declaration
+    val fileEntry = originalDeclarationBeforeInline.fileParent.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
@@ -77,12 +88,13 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name
-        else -> declaration.fileParent.name
+        else -> originalDeclarationBeforeInline.fileParent.name
     }
+    val type = declaration.attributeOwnerIdBeforeInline?.let { getLocalClassType(it)!! } ?: defaultTypeMapper.mapClass(declaration)
     return SourceMapper(
         SourceInfo(
             sourceFileName,
-            defaultTypeMapper.mapClass(declaration).internalName,
+            type.internalName,
             endLineNumber + 1
         )
     )
