@@ -81,7 +81,7 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: Kotlin
     getAllCInteropOutputFiles(platformCompilation)
 }
 
-private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
+internal fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 

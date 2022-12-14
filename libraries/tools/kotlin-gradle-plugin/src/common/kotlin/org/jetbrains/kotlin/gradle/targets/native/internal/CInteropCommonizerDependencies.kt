@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
@@ -42,16 +43,20 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
  * The copying task prevent red code within the IDE after cleaning the build output.
  */
 private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {
-    val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return
+    addIntransitiveMetadataDependencyIfPossible(sourceSet, cinteropCommonizerDependencies(sourceSet))
+}
 
-    addIntransitiveMetadataDependencyIfPossible(sourceSet, filesProvider files@{
+internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSourceSet): FileCollection {
+    val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return project.files()
+
+    return filesProvider {
         val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
         val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
 
         listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
             cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
         }
-    })
+    }
 }
 
 private fun Project.setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {

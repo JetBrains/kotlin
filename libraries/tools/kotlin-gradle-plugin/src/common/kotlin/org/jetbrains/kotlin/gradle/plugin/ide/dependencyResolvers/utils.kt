@@ -9,8 +9,17 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.metadataDependencyResolutionsOrEmpty
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.packageFqName
+import org.jetbrains.kotlin.library.shortName
+import org.jetbrains.kotlin.library.uniqueName
 
 internal inline fun <reified T : MetadataDependencyResolution> KotlinSourceSet.resolveMetadata(): List<T> {
     if (this !is DefaultKotlinSourceSet) return emptyList()
     return compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty.filterIsInstance<T>()
 }
+
+internal val KotlinLibrary.moduleDisplayName: String
+    get() = packageFqName ?: shortName ?: uniqueName

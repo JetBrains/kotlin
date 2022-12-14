@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
+import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.UnusedSourcesAndDocumentationFilter
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -82,6 +85,27 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
+            resolver = IdePlatformCinteropDependencyResolver,
+            constraint = { sourceSet -> SourceSetConstraint.isLeaf(sourceSet) && SourceSetConstraint.isNative(sourceSet) },
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+        )
+
+        registerDependencyResolver(
+            resolver = IdeCommonizedCinteropDependencyResolver,
+            constraint = { sourceSet -> SourceSetConstraint.isNative(sourceSet) && getCommonizerTarget(sourceSet) is SharedCommonizerTarget },
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+        )
+
+        registerDependencyResolver(
+            resolver = IdeCInteropMetadataDependencyClasspathResolver,
+            constraint = { SourceSetConstraint.isNative(it) && !SourceSetConstraint.isLeaf(it) },
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
 
         /*
