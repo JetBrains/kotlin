@@ -379,7 +379,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             @ComposableInferredTarget(scheme = "[0[0]]")
             fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example)<conten...>:Test.kt#2487m")
+              sourceInformation(%composer, "CC(Example)<conten...>:Test.kt#2487m")
               content(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
@@ -687,7 +687,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                 @ComposableInferredTarget(scheme = "[0[0]]")
                 fun emit(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(emit)<compos...>:Test.kt#2487m")
+                  sourceInformation(%composer, "CC(emit)<compos...>:Test.kt#2487m")
                   composable(%composer, 0b1110 and %changed)
                   %composer.endReplaceableGroup()
                 }

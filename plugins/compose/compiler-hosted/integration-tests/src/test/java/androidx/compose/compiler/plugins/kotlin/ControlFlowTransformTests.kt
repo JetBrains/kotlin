@@ -996,7 +996,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @ComposableInferredTarget(scheme = "[0[0]]")
             fun FakeBox(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(FakeBox)<conten...>:Test.kt")
+              sourceInformation(%composer, "CC(FakeBox)<conten...>:Test.kt")
               content(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
@@ -5672,7 +5672,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               val current: Int
                 @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
                 get() {
-                  sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                  sourceInformationMarkerStart(%composer, <>, "CC:Test.kt")
                   val tmp0 = 0
                   sourceInformationMarkerEnd(%composer)
                   return tmp0
