@@ -25,21 +25,17 @@ internal inline fun <T> executeWithoutPCE(crossinline action: () -> T): T {
 }
 
 internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
-    var needToRun = true
-    var result: T? = null
-    while (needToRun) {
+    while (true) {
         checkCanceled()
         if (tryLock(lockingIntervalMs, TimeUnit.MILLISECONDS)) {
             try {
                 checkCanceled()
-                needToRun = false
-                result = action()
+                return action()
             } finally {
                 unlock()
             }
         }
     }
-    return result!!
 }
 
 @Suppress("NOTHING_TO_INLINE")
