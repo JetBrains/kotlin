@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -829,8 +829,8 @@ abstract class FirDataFlowAnalyzer(
     private fun processConditionalContract(flow: MutableFlow, qualifiedAccess: FirQualifiedAccess) {
         val callee = when (qualifiedAccess) {
             is FirFunctionCall -> qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction
-            is FirQualifiedAccessExpression -> (qualifiedAccess.calleeReference.resolvedSymbol?.fir as? FirProperty)?.getter
-            is FirVariableAssignment -> (qualifiedAccess.lValue.resolvedSymbol?.fir as? FirProperty)?.setter
+            is FirQualifiedAccessExpression -> qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.fir?.getter
+            is FirVariableAssignment -> qualifiedAccess.lValue.toResolvedPropertySymbol()?.fir?.setter
             else -> null
         } ?: return
 
@@ -891,7 +891,7 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { flow ->
-            val property = assignment.lValue.resolvedSymbol?.fir as? FirProperty ?: return@mergeIncomingFlow
+            val property = assignment.lValue.toResolvedPropertySymbol()?.fir ?: return@mergeIncomingFlow
             if (property.isLocal || property.isVal) {
                 exitVariableInitialization(flow, assignment.rValue, property, assignment, hasExplicitType = false)
             } else {

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -54,7 +54,7 @@ object UnusedChecker : FirControlFlowChecker() {
         override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val variableSymbol = node.fir.calleeReference.resolvedSymbol ?: return
+            val variableSymbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
             val dataPerNode = data[node] ?: return
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
@@ -233,7 +233,7 @@ object UnusedChecker : FirControlFlowChecker() {
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            val symbol = node.fir.lValue.resolvedSymbol as? FirPropertySymbol ?: return dataForNode
+            val symbol = node.fir.lValue.toResolvedPropertySymbol() ?: return dataForNode
             return update(dataForNode, symbol) update@{ prev ->
                 val toPut = when {
                     symbol !in localProperties -> {
@@ -282,8 +282,7 @@ object UnusedChecker : FirControlFlowChecker() {
             vararg qualifiedAccesses: FirQualifiedAccess,
         ): PathAwareVariableStatusInfo {
             fun retrieveSymbol(qualifiedAccess: FirQualifiedAccess): FirPropertySymbol? {
-                val symbol = qualifiedAccess.calleeReference.resolvedSymbol as? FirPropertySymbol ?: return null
-                return if (symbol !in localProperties) null else symbol
+                return qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.takeIf { it in localProperties }
             }
 
             val symbols = qualifiedAccesses.mapNotNull { retrieveSymbol(it) }.toTypedArray()

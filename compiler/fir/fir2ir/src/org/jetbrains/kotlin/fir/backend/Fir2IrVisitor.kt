@@ -326,7 +326,7 @@ class Fir2IrVisitor(
         }
         val initializer = variable.initializer
         val isNextVariable = initializer is FirFunctionCall &&
-                (initializer.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId?.isIteratorNext() == true &&
+                initializer.calleeReference.toResolvedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
                 variable.source?.isChildOfForLoop == true
         val irVariable = declarationStorage.createIrVariable(
             variable, conversionScope.parentFromStack(),
@@ -850,7 +850,7 @@ class Fir2IrVisitor(
                 noArguments = true
             ) as IrDynamicOperatorExpression).apply {
                 originalVararg?.arguments?.forEach {
-                    val that = (it as? FirPropertyAccessExpression)?.calleeReference?.resolvedSymbol?.fir as? FirProperty
+                    val that = (it as? FirPropertyAccessExpression)?.calleeReference?.toResolvedPropertySymbol()?.fir
                     val initializer = that?.initializer ?: return@forEach
                     arguments.add(convertToIrExpression(initializer))
                 }

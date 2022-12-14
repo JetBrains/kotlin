@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -39,7 +38,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
             if (label?.source?.kind !is KtRealSourceElementKind) {
                 val functionCall = context.qualifiedAccessOrAnnotationCalls.asReversed().find {
                     it is FirFunctionCall &&
-                            (it.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId ==
+                            (it.calleeReference.toResolvedFunctionSymbol())?.callableId ==
                             FirSuspendCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID
                 }
                 if (functionCall is FirFunctionCall &&

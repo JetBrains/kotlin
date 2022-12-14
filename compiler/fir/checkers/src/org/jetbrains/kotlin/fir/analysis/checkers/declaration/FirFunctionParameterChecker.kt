@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -89,17 +88,17 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                 }
 
                 override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+                    val referredParameter = qualifiedAccessExpression.calleeReference.toResolvedValueParameterSymbol() ?: return
 
                     @OptIn(SymbolInternals::class)
-                    val referredParameter = qualifiedAccessExpression.calleeReference.resolvedSymbol?.fir as? FirValueParameter ?: return
-                    val referredParameterIndex = function.valueParameters.indexOf(referredParameter)
+                    val referredParameterIndex = function.valueParameters.indexOf(referredParameter.fir)
                     // Skip if the referred parameter is not declared in the same function.
                     if (referredParameterIndex < 0) return
 
                     if (index <= referredParameterIndex) {
                         reporter.reportOn(
                             qualifiedAccessExpression.source, FirErrors.UNINITIALIZED_PARAMETER,
-                            referredParameter.symbol,
+                            referredParameter,
                             context
                         )
                     }

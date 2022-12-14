@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirAssignmentOperatorCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val resolvedCalleeSymbol = expression.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return
+        val resolvedCalleeSymbol = expression.calleeReference.toResolvedFunctionSymbol() ?: return
         val resolvedCalleeName = resolvedCalleeSymbol.name
         if (expression.origin != FirFunctionCallOrigin.Operator ||
             resolvedCalleeName !in FirOperationNameConventions.ASSIGNMENT_NAMES

@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -43,7 +42,7 @@ private fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClas
 private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
     get() =
         (this as? FirQualifiedAccessExpression)?.let {
-            val callableSymbol = it.calleeReference.resolvedSymbol as? FirCallableSymbol<*>
+            val callableSymbol = it.calleeReference.toResolvedCallableSymbol()
             callableSymbol?.callableId?.callableName
         }
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -32,7 +32,7 @@ val FirClass.delegateFields: List<FirField>
     get() = declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
 
 val FirQualifiedAccess.referredVariableSymbol: FirVariableSymbol<*>?
-    get() = calleeReference.resolvedSymbol as? FirVariableSymbol<*>
+    get() = calleeReference.toResolvedVariableSymbol()
 
 val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
     get() = referredVariableSymbol as? FirPropertySymbol

@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -378,7 +380,7 @@ class CallAndReferenceGenerator(
             val dispatchReceiver = qualifiedAccess.dispatchReceiver
             val calleeReference = qualifiedAccess.calleeReference
 
-            val firSymbol = calleeReference.resolvedSymbol
+            val firSymbol = calleeReference.toResolvedBaseSymbol()
             val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
             if (isDynamicAccess) {
@@ -472,8 +474,8 @@ class CallAndReferenceGenerator(
                     }
 
                     is IrFieldSymbol -> if (annotationMode) {
-                        val resolvedSymbol = calleeReference.resolvedSymbol ?: error("should have resolvedSymbol")
-                        val returnType = (resolvedSymbol as FirCallableSymbol<*>).resolvedReturnTypeRef.toIrType()
+                        val resolvedSymbol = calleeReference.toResolvedCallableSymbol() ?: error("should have resolvedSymbol")
+                        val returnType = resolvedSymbol.resolvedReturnTypeRef.toIrType()
                         val firConstExpression = (resolvedSymbol.fir as FirVariable).initializer as? FirConstExpression<*>
                             ?: error("should be FirConstExpression")
                         firConstExpression.toIrConst(returnType)
@@ -539,7 +541,7 @@ class CallAndReferenceGenerator(
             val calleeReference = variableAssignment.calleeReference
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
 
-            val firSymbol = calleeReference.resolvedSymbol
+            val firSymbol = calleeReference.toResolvedBaseSymbol()
             val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
             if (isDynamicAccess) {

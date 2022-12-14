@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -892,7 +893,7 @@ class Fir2IrDeclarationStorage(
                     val setter = property.setter
                     if (delegate != null || property.hasBackingField) {
                         backingField = if (delegate != null) {
-                            ((delegate as? FirQualifiedAccess)?.calleeReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
+                            ((delegate as? FirQualifiedAccess)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
                                 classifierStorage.preCacheTypeParameters(it, symbol)
                             }
                             createBackingField(
@@ -1038,7 +1039,7 @@ class Fir2IrDeclarationStorage(
     private fun getOrCreateDelegateIrField(field: FirField, owner: FirClass, irClass: IrClass): IrField {
         val initializer = field.initializer
         if (initializer is FirQualifiedAccessExpression && initializer.explicitReceiver == null) {
-            val resolvedSymbol = initializer.calleeReference.resolvedSymbol as? FirValueParameterSymbol
+            val resolvedSymbol = initializer.calleeReference.toResolvedValueParameterSymbol()
             if (resolvedSymbol is FirValueParameterSymbol) {
                 val name = resolvedSymbol.name
                 val constructorProperty = owner.declarations.filterIsInstance<FirProperty>().find {

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -67,10 +67,7 @@ internal object FirCompileTimeConstantEvaluator {
                 evaluateFunctionCall(fir, mode)
             }
             is FirNamedReference -> {
-                when (val resolvedSymbol = fir.resolvedSymbol) {
-                    is FirPropertySymbol -> resolvedSymbol.toConstExpression(mode)
-                    else -> null
-                }
+                fir.toResolvedPropertySymbol()?.toConstExpression(mode)
             }
             else -> null
         }

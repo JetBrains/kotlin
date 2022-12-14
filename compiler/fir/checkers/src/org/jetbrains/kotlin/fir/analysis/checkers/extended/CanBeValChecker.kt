@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
@@ -87,7 +87,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val symbol = node.fir.calleeReference.resolvedSymbol as? FirPropertySymbol ?: return
+            val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
             if (symbol !in localProperties) return
             unprocessedProperties.remove(symbol)
 

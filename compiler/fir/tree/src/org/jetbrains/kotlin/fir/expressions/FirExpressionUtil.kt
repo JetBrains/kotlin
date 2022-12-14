@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -55,7 +54,7 @@ inline val FirCall.dynamicVarargArguments: List<FirExpression>?
     get() = dynamicVararg?.arguments
 
 inline val FirFunctionCall.isCalleeDynamic: Boolean
-    get() = (calleeReference.resolvedSymbol?.fir as? FirFunction)?.origin == FirDeclarationOrigin.DynamicScope
+    get() = calleeReference.toResolvedFunctionSymbol()?.origin == FirDeclarationOrigin.DynamicScope
 
 inline val FirCall.resolvedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
