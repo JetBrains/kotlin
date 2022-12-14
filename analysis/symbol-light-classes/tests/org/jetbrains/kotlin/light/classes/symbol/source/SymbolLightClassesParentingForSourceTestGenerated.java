@@ -49,6 +49,12 @@ public class SymbolLightClassesParentingForSourceTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("AnnotationJavaRepeatable.kt")
+    public void testAnnotationJavaRepeatable() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotationJavaRepeatable.kt");
+    }
+
+    @Test
     @TestMetadata("AnnotationJvmRepeatable.kt")
     public void testAnnotationJvmRepeatable() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/AnnotationJvmRepeatable.kt");

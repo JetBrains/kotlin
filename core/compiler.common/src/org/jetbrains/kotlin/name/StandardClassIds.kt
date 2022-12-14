@@ -177,6 +177,8 @@ object StandardClassIds {
             val Retention = "Retention".javaAnnotationId()
             val Documented = "Documented".javaAnnotationId()
             val Target = "Target".javaAnnotationId()
+            val ElementType = "ElementType".javaAnnotationId()
+            val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
         }
 
         object ParameterNames {

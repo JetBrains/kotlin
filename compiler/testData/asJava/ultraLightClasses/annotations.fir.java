@@ -1,24 +1,29 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno2 /* Anno2*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno3 /* Anno3*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno4 /* Anno4*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno5 /* Anno5*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno6 /* Anno6*/ {
 }
@@ -52,7 +57,9 @@ public abstract @interface Anno /* Anno*/ {
 }
 
 @Deprecated(message = "This anno is deprecated, use === instead", replaceWith = @ReplaceWith(expression = "this === other"))
+@java.lang.annotation.Documented()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.MustBeDocumented()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})

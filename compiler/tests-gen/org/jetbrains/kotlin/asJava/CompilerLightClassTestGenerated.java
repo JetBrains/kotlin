@@ -49,6 +49,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/AnnotationClass.kt");
     }
 
+    @TestMetadata("AnnotationJavaRepeatable.kt")
+    public void testAnnotationJavaRepeatable() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotationJavaRepeatable.kt");
+    }
+
     @TestMetadata("AnnotationJvmRepeatable.kt")
     public void testAnnotationJvmRepeatable() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/AnnotationJvmRepeatable.kt");
