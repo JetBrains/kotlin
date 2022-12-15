@@ -92,20 +92,27 @@ internal abstract class FirBaseTowerResolveTask(
         processLevel(towerLevel, callInfo, group, explicitReceiverKind)
     }
 
-    protected suspend fun <T> processLevel(
+    protected suspend fun processLevelWithoutCaching(
         towerLevel: TowerScopeLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-        levelProducerAndCache: Pair<T, MutableSet<T>>,
     ) {
-        val (levelProducer, cache) = levelProducerAndCache
+        processLevel(towerLevel, callInfo, group, explicitReceiverKind)
+    }
+
+    protected suspend fun <T> processLevel(
+        towerLevel: TowerScopeLevel,
+        callInfo: CallInfo,
+        group: TowerGroup,
+        levelProducer: T,
+        cache: MutableSet<T>,
+        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+    ) {
         if (levelProducer in cache) return
 
-        val isEmpty = processLevel(towerLevel, callInfo, group, explicitReceiverKind)
-
-        if (isEmpty) {
-            cache.add(levelProducer)
+        if (processLevel(towerLevel, callInfo, group, explicitReceiverKind)) {
+            cache += levelProducer
         }
     }
 
@@ -117,9 +124,9 @@ internal abstract class FirBaseTowerResolveTask(
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
         emptyScopesCache: EmptyScopesCache,
     ) {
-//        if (contextReceiverGroup.all { it in emptyScopesCache.contextReceivers }) {
-//            return
-//        }
+        if (contextReceiverGroup.all { it in emptyScopesCache.contextReceivers }) {
+            return
+        }
 
         val towerLevel = buildLevel(contextReceiverGroup)
         processLevel(towerLevel, callInfo, group, explicitReceiverKind)
@@ -287,7 +294,8 @@ internal open class FirTowerResolveTask(
         processLevel(
             callableScope.toScopeTowerLevel(includeInnerConstructors = false),
             info, TowerGroup.Qualifier,
-            levelProducerAndCache = callableScope to emptyScopesCache.emptyScopes,
+            levelProducer = callableScope,
+            cache = emptyScopesCache.emptyScopes,
         )
     }
 
@@ -305,7 +313,8 @@ internal open class FirTowerResolveTask(
         processLevel(
             scope.toScopeTowerLevel(includeInnerConstructors = false), info,
             TowerGroup.Classifier,
-            levelProducerAndCache = scope to emptyScopesCache.emptyScopes,
+            levelProducer = scope,
+            cache = emptyScopesCache.emptyScopes,
         )
     }
 
@@ -320,9 +329,10 @@ internal open class FirTowerResolveTask(
         processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup, emptyScopesCache)
 
         // Member scope of expression receiver
-        processLevelStupid(
-            explicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER,
-//            receiver to emptyScopesCache.explicitReceivers,
+        processLevel(
+            explicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member,
+            receiver, emptyScopesCache.explicitReceivers,
+            ExplicitReceiverKind.DISPATCH_RECEIVER,
         )
 
         enumerateTowerLevels(
@@ -338,25 +348,21 @@ internal open class FirTowerResolveTask(
             },
             onImplicitReceiver = { implicitReceiverValue, group ->
                 // Member extensions
-                processLevelStupid(
+                processLevel(
                     implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = explicitReceiverValue),
-                    info, group.Member, ExplicitReceiverKind.EXTENSION_RECEIVER,
-//                    implicitReceiverValue to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
+                    info, group.Member,
+                    implicitReceiverValue,
+                    emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
+                    ExplicitReceiverKind.EXTENSION_RECEIVER,
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
-                processLevelStupid(
-                    contextReceiverGroup.toMemberScopeTowerLevel(emptyScopesCache, extensionReceiver = explicitReceiverValue),
+                processLevelForContextReceiverGroup(
+                    contextReceiverGroup,
+                    { it.toMemberScopeTowerLevel(emptyScopesCache, extensionReceiver = explicitReceiverValue) },
                     info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER,
-//                    implicitReceiverValue to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
+                    emptyScopesCache,
                 )
-
-//                processLevelForContextReceiverGroup(
-//                    contextReceiverGroup,
-//                    { it.toMemberScopeTowerLevel(emptyScopesCache, extensionReceiver = explicitReceiverValue) },
-//                    info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER,
-//                    emptyScopesCache,
-//                )
             }
         )
     }
@@ -398,13 +404,11 @@ internal open class FirTowerResolveTask(
     suspend fun runResolverForSuperReceiver(
         info: CallInfo,
         superCall: FirQualifiedAccessExpression,
-        emptyScopesCache: EmptyScopesCache,
     ) {
         val receiverValue = ExpressionReceiverValue(superCall)
-        processLevelStupid(
+        processLevelWithoutCaching(
             receiverValue.toMemberScopeTowerLevel(),
             info, TowerGroup.Member, explicitReceiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER,
-//            superCall to emptyScopesCache.superCalls,
         )
     }
 
@@ -447,8 +451,9 @@ internal open class FirTowerResolveTask(
     ) {
         processLevel(
             scope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
-            info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER,
-            scope to emptyScopesCache.emptyScopes,
+            info, towerGroup,
+            scope, emptyScopesCache.emptyScopes,
+            ExplicitReceiverKind.EXTENSION_RECEIVER,
         )
     }
 
@@ -460,7 +465,8 @@ internal open class FirTowerResolveTask(
     ) {
         processLevel(
             receiver.toMemberScopeTowerLevel(), info, parentGroup.Member,
-            levelProducerAndCache = receiver to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
+            levelProducer = receiver,
+            cache = emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
         )
 
         enumerateTowerLevels(
@@ -469,7 +475,8 @@ internal open class FirTowerResolveTask(
                 processLevel(
                     scope.toScopeTowerLevel(extensionReceiver = receiver),
                     info, group,
-                    levelProducerAndCache = scope to emptyScopesCache.emptyScopes,
+                    levelProducer = scope,
+                    cache = emptyScopesCache.emptyScopes,
                 )
             },
             onImplicitReceiver = l@{ implicitReceiverValue, group ->
@@ -479,7 +486,8 @@ internal open class FirTowerResolveTask(
                         givenExtensionReceiverCameFromImplicitReceiver = true,
                     ),
                     info, group,
-                    levelProducerAndCache = implicitReceiverValue to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
+                    levelProducer = implicitReceiverValue,
+                    cache = emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
@@ -511,14 +519,16 @@ internal open class FirTowerResolveTask(
                 processLevel(
                     scope.toScopeTowerLevel(contextReceiverGroup = contextReceiverGroup),
                     info, towerGroup,
-                    levelProducerAndCache = scope to emptyScopesCache.emptyScopes,
+                    levelProducer = scope,
+                    cache = emptyScopesCache.emptyScopes,
                 )
             },
             onImplicitReceiver = { implicitReceiverValue, towerGroup ->
-                processLevelStupid(
+                processLevel(
                     implicitReceiverValue.toMemberScopeTowerLevel(contextReceiverGroup = contextReceiverGroup),
                     info, towerGroup,
-//                    levelProducerAndCache = implicitReceiverValue to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
+                    levelProducer = implicitReceiverValue,
+                    cache = emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
                 )
             },
             onContextReceiverGroup = { otherContextReceiverGroup, towerGroup ->
@@ -548,8 +558,8 @@ internal open class FirTowerResolveTask(
             ),
             info,
             parentGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
+            topLevelScope, emptyScopesCache.emptyScopes,
             explicitReceiverKind,
-            topLevelScope to emptyScopesCache.emptyScopes,
         )
     }
 }

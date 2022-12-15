@@ -53,13 +53,12 @@ internal class FirInvokeResolveTowerExtension(
     fun enqueueResolveTasksForSuperReceiver(info: CallInfo, receiver: FirQualifiedAccessExpression) {
         if (info.callKind != CallKind.Function) return
         val invokeReceiverVariableInfo = info.replaceWithVariableAccess()
-        val emptyScopesCacheForSuperReceiver = EmptyScopesCache()
         enqueueInvokeReceiverTask(
             info,
             invokeReceiverVariableInfo,
             invokeBuiltinExtensionMode = false,
         ) {
-            it.runResolverForSuperReceiver(invokeReceiverVariableInfo, receiver, emptyScopesCacheForSuperReceiver)
+            it.runResolverForSuperReceiver(invokeReceiverVariableInfo, receiver)
         }
     }
 
@@ -385,11 +384,12 @@ private class InvokeFunctionResolveTask(
         parentGroupForInvokeCandidates: TowerGroup,
         emptyScopesCache: EmptyScopesCache,
     ) {
-        processLevelForRegularInvokeStupid(
+        processLevelForRegularInvoke(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, parentGroupForInvokeCandidates.Member,
+            invokeReceiverValue,
+            emptyScopesCache.invokeReceiverValuesWithEmptyScopes,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
-//            invokeReceiverValue to emptyScopesCache.invokeReceiverValuesWithEmptyScopes,
         )
 
         enumerateTowerLevels(
@@ -397,17 +397,17 @@ private class InvokeFunctionResolveTask(
                 processLevelForRegularInvoke(
                     scope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group,
+                    scope, emptyScopesCache.emptyScopes,
                     ExplicitReceiverKind.EXTENSION_RECEIVER,
-                    scope to emptyScopesCache.emptyScopes,
                 )
             },
             onImplicitReceiver = { receiver, group ->
                 // NB: companions are processed via implicitReceiverValues!
-                processLevelForRegularInvokeStupid(
+                processLevelForRegularInvoke(
                     receiver.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group.Member,
+                    receiver, emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
                     ExplicitReceiverKind.EXTENSION_RECEIVER,
-//                    receiver to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
@@ -429,11 +429,11 @@ private class InvokeFunctionResolveTask(
         parentGroupForInvokeCandidates: TowerGroup,
         emptyScopesCache: EmptyScopesCache,
     ) {
-        processLevelStupid(
+        processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, parentGroupForInvokeCandidates.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
+            invokeReceiverValue, emptyScopesCache.invokeReceiverValuesWithEmptyScopes,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
-//            invokeReceiverValue to emptyScopesCache.invokeReceiverValuesWithEmptyScopes,
         )
     }
 
@@ -453,12 +453,12 @@ private class InvokeFunctionResolveTask(
                     .InvokeExtension
                     .InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION)
 
-            processLevelStupid(
+            processLevel(
                 invokeReceiverValue.toMemberScopeTowerLevel(),
                 // Try to supply `implicitReceiverValue` as an "x" in "f.invoke(x)"
                 info.withReceiverAsArgument(implicitReceiverValue.receiverExpression), towerGroup,
+                implicitReceiverValue, emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
-//                implicitReceiverValue to emptyScopesCache.implicitReceiverValuesWithEmptyScopes,
             )
         }
     }
@@ -467,23 +467,13 @@ private class InvokeFunctionResolveTask(
         towerLevel: TowerScopeLevel,
         callInfo: CallInfo,
         group: TowerGroup,
+        levelProducer: T,
+        cache: MutableSet<T>,
         explicitReceiverKind: ExplicitReceiverKind,
-        levelProducerAndCache: Pair<T, MutableSet<T>>,
     ) = processLevel(
         towerLevel, callInfo,
         group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
-        explicitReceiverKind,
-        levelProducerAndCache,
-    )
-
-    private suspend fun processLevelForRegularInvokeStupid(
-        towerLevel: TowerScopeLevel,
-        callInfo: CallInfo,
-        group: TowerGroup,
-        explicitReceiverKind: ExplicitReceiverKind,
-    ) = processLevelStupid(
-        towerLevel, callInfo,
-        group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
+        levelProducer, cache,
         explicitReceiverKind,
     )
 

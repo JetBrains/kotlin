@@ -28,7 +28,6 @@ class EmptyScopesCache {
     val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
     val invokeReceiverValuesWithEmptyScopes = mutableSetOf<ExpressionReceiverValue>()
     val contextReceivers = mutableSetOf<ContextReceiverValue<*>>()
-    val superCalls = mutableSetOf<FirQualifiedAccessExpression>()
     val explicitReceivers = mutableSetOf<FirExpression>()
 }
 
@@ -89,7 +88,7 @@ class FirTowerResolver(
             else -> {
                 if (receiver is FirQualifiedAccessExpression) {
                     if (receiver.calleeReference is FirSuperReference) {
-                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver, emptyScopesCache) }
+                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
                         invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
                         return
                     }
