@@ -585,8 +585,24 @@ abstract class IncrementalCompilerRunner<
         defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(BuildTime.COMPILER_INITIALIZATION, it.milliseconds)
-                is CodeAnalysisMeasurement -> reporter.addTimeMetricMs(BuildTime.CODE_ANALYSIS, it.milliseconds)
-                is CodeGenerationMeasurement -> reporter.addTimeMetricMs(BuildTime.CODE_GENERATION, it.milliseconds)
+                is CodeAnalysisMeasurement -> {
+                    reporter.addTimeMetricMs(BuildTime.CODE_ANALYSIS, it.milliseconds)
+                    it.lines?.apply {
+                        reporter.addMetric(BuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            reporter.addMetric(BuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
+                is CodeGenerationMeasurement -> {
+                    reporter.addTimeMetricMs(BuildTime.CODE_GENERATION, it.milliseconds)
+                    it.lines?.apply {
+                        reporter.addMetric(BuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            reporter.addMetric(BuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
             }
         }
     }
