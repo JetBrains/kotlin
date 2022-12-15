@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskExecutionResult
@@ -18,9 +19,13 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
+import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -72,7 +77,32 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
                 buildMetrics.addAll(it.getMetrics())
             }
             val taskExecutionResult = TaskExecutionResults[taskPath]
-            taskExecutionResult?.buildMetrics?.also { buildMetrics.addAll(it) }
+            taskExecutionResult?.buildMetrics?.also {
+                buildMetrics.addAll(it)
+
+                KotlinBuildStatsService.applyIfInitialised { collector ->
+                    collector.report(NumericalMetrics.COMPILATION_DURATION, totalTimeMs)
+                    collector.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
+                    val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
+
+                    val linesOfCode = metricsMap[BuildPerformanceMetric.ANALYZED_LINES_NUMBER]
+                    if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
+                        collector.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
+                        collector.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
+                        metricsMap[BuildPerformanceMetric.ANALYSIS_LPS]?.also {
+                            collector.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, it, null, linesOfCode)
+                        }
+                        metricsMap[BuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
+                            collector.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
+                        }
+                    }
+                    collector.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
+                    collector.report(
+                        NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT,
+                        if (taskExecutionResult.buildMetrics.buildAttributes.asMap().isEmpty()) 1 else 0
+                    )
+                }
+            }
 
             buildOperationRecords.add(
                 TaskRecord(
