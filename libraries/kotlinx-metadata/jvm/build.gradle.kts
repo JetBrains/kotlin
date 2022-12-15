@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("org.jetbrains.dokka")
 }
 
 /*
@@ -73,10 +74,28 @@ tasks.apiBuild {
 
 apiValidation {
     ignoredPackages.add("kotlinx.metadata.internal")
-    nonPublicMarkers.addAll(listOf(
-        "kotlinx.metadata.internal.IgnoreInApiDump",
-        "kotlinx.metadata.jvm.internal.IgnoreInApiDump"
-    ))
+    nonPublicMarkers.addAll(
+        listOf(
+            "kotlinx.metadata.internal.IgnoreInApiDump",
+            "kotlinx.metadata.jvm.internal.IgnoreInApiDump"
+        )
+    )
+}
+
+tasks.dokkaHtml.configure {
+    outputDirectory.set(buildDir.resolve("dokka"))
+
+    dokkaSourceSets.configureEach {
+        sourceRoots.from(project(":kotlinx-metadata").getSources())
+
+        skipDeprecated.set(true)
+
+        perPackageOption {
+            matchingRegex.set("kotlinx\\.metadata\\.internal(\$|\\.).*")
+            suppress.set(true)
+            reportUndocumented.set(false)
+        }
+    }
 }
 
 sourcesJar {
