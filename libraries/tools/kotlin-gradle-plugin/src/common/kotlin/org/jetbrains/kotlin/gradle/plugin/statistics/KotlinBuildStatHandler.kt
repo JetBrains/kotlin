@@ -191,22 +191,33 @@ class KotlinBuildStatHandler {
         }
     }
 
-    internal fun report(sessionLogger: BuildSessionLogger, metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
-        runSafe("report metric ${metric.name}") {
-            sessionLogger.report(metric, value, subprojectName)
-        }
+    internal fun report(
+        sessionLogger: BuildSessionLogger,
+        metric: BooleanMetrics,
+        value: Boolean,
+        subprojectName: String?,
+        weight: Long? = null
+    ) = runSafe("report metric ${metric.name}") {
+        sessionLogger.report(metric, value, subprojectName, weight)
+    } ?: false
 
-    }
+    internal fun report(
+        sessionLogger: BuildSessionLogger,
+        metric: NumericalMetrics,
+        value: Long,
+        subprojectName: String?,
+        weight: Long? = null
+    ) = runSafe("report metric ${metric.name}") {
+        sessionLogger.report(metric, value, subprojectName, weight)
+    } as? Boolean ?: false
 
-    internal fun report(sessionLogger: BuildSessionLogger, metric: NumericalMetrics, value: Long, subprojectName: String?) {
-        runSafe("report metric ${metric.name}") {
-            sessionLogger.report(metric, value, subprojectName)
-        }
-    }
-
-    internal fun report(sessionLogger: BuildSessionLogger, metric: StringMetrics, value: String, subprojectName: String?) {
-        runSafe("report metric ${metric.name}") {
-            sessionLogger.report(metric, value, subprojectName)
-        }
-    }
+    internal fun report(
+        sessionLogger: BuildSessionLogger,
+        metric: StringMetrics,
+        value: String,
+        subprojectName: String?,
+        weight: Long? = null
+    ) = runSafe("report metric ${metric.name}") {
+            sessionLogger.report(metric, value, subprojectName, weight)
+        } as? Boolean ?: false
 }
