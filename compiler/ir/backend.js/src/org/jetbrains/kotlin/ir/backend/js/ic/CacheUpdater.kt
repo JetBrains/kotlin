@@ -4,6 +4,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
@@ -63,7 +64,12 @@ class CacheUpdater(
 
     private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
 
-    private val cacheRootDir = File(cacheDir, "version.${compilerConfiguration.configHashForIC()}")
+    private val icHasher = ICHasher()
+
+    private val cacheRootDir = run {
+        val configHash = icHasher.calculateConfigHash(compilerConfiguration)
+        File(cacheDir, "version.${configHash.hash.lowBytes.toString(Character.MAX_RADIX)}")
+    }
 
     fun getDirtyFileLastStats(): KotlinSourceFileMap<EnumSet<DirtyFileState>> = dirtyFileStats
 
@@ -77,7 +83,7 @@ class CacheUpdater(
     }
 
     private inner class CacheUpdaterInternal {
-        val signatureHashCalculator = IdSignatureHashCalculator()
+        val signatureHashCalculator = IdSignatureHashCalculator(icHasher)
 
         // libraries in topological order: [stdlib, ..., main]
         val libraryDependencies = stopwatch.measure("Resolving and loading klib dependencies") {
@@ -114,7 +120,8 @@ class CacheUpdater(
         private val incrementalCaches = libraryDependencies.keys.associate { lib ->
             val libFile = KotlinLibraryFile(lib)
             val file = File(libFile.path)
-            val libraryCacheDir = File(cacheRootDir, "${file.name}.${file.absolutePath.stringHashForIC()}")
+            val pathHash = file.absolutePath.cityHash64().toULong().toString(Character.MAX_RADIX)
+            val libraryCacheDir = File(cacheRootDir, "${file.name}.$pathHash")
             libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib), libraryCacheDir)
         }
 
@@ -734,6 +741,7 @@ fun rebuildCacheForDirtyFiles(
 
     val libFile = KotlinLibraryFile(library)
     val dirtySrcFiles = dirtyFiles?.map { KotlinSourceFile(it) } ?: KotlinLoadedLibraryHeader(library).sourceFileFingerprints.keys
+
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
     val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, emptyList(), irFactory)

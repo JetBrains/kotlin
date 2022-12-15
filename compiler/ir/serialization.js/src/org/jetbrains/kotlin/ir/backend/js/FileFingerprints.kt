@@ -15,7 +15,7 @@ import java.io.File
 @JvmInline
 value class FingerprintHash(val hash: Hash128Bits) {
     override fun toString(): String {
-        return "${hash.highBytes.toString(Character.MAX_RADIX)}$HASH_SEPARATOR${hash.lowBytes.toString(Character.MAX_RADIX)}"
+        return "${hash.lowBytes.toString(Character.MAX_RADIX)}$HASH_SEPARATOR${hash.highBytes.toString(Character.MAX_RADIX)}"
     }
 
     companion object {
@@ -23,7 +23,7 @@ value class FingerprintHash(val hash: Hash128Bits) {
 
         internal fun fromString(s: String): FingerprintHash? {
             val hashes = s.split(HASH_SEPARATOR).mapNotNull { it.toULongOrNull(Character.MAX_RADIX) }
-            return hashes.takeIf { it.size == 2 }?.let { FingerprintHash(Hash128Bits(it[0], it[1])) }
+            return hashes.takeIf { it.size == 2 }?.let { FingerprintHash(Hash128Bits(lowBytes = it[0], highBytes = it[1])) }
         }
     }
 }
@@ -77,7 +77,7 @@ value class SerializedKlibFingerprint(val klibFingerprint: FingerprintHash) {
             if (isDirectory) {
                 listFiles()!!.sortedBy { it.name }.forEach { f ->
                     val filePrefix = "$prefix${f.name}/"
-                    combinedHash = calculateKlibHash(filePrefix, cityHash128WithSeed(combinedHash, filePrefix.toByteArray()))
+                    combinedHash = f.calculateKlibHash(filePrefix, cityHash128WithSeed(combinedHash, filePrefix.toByteArray()))
                 }
             } else {
                 forEachBlock { buffer, bufferSize ->

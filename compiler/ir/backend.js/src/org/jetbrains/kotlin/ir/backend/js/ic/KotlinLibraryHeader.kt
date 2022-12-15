@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
-import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.ir.backend.js.jsOutputName
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.File
@@ -18,18 +15,26 @@ import java.io.File
 internal interface KotlinLibraryHeader {
     val libraryFile: KotlinLibraryFile
 
-    val libraryFingerprint: ICHash?
+    val libraryFingerprint: FingerprintHash?
 
     val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer>
-    val sourceFileFingerprints: Map<KotlinSourceFile, ICHash>
+    val sourceFileFingerprints: Map<KotlinSourceFile, FingerprintHash>
 
     val jsOutputName: String?
 }
 
 internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : KotlinLibraryHeader {
+    private fun parseFingerprintsFromManifest(): Map<KotlinSourceFile, FingerprintHash>? {
+        val manifestFingerprints = library.serializedIrFileFingerprints?.takeIf { it.size == sourceFiles.size } ?: return null
+        return sourceFiles.withIndex().associate { it.value to manifestFingerprints[it.index].fileFingerprint }
+    }
+
     override val libraryFile: KotlinLibraryFile = KotlinLibraryFile(library)
 
-    override val libraryFingerprint: ICHash by lazy { File(libraryFile.path).fileHashForIC() }
+    override val libraryFingerprint: FingerprintHash by lazy {
+        val serializedKlib = library.serializedKlibFingerprint ?: SerializedKlibFingerprint(File(libraryFile.path))
+        serializedKlib.klibFingerprint
+    }
 
     override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy {
         buildMapUntil(sourceFiles.size) {
@@ -47,9 +52,9 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
         }
     }
 
-    override val sourceFileFingerprints: Map<KotlinSourceFile, ICHash> by lazy {
-        buildMapUntil(sourceFiles.size) {
-            put(sourceFiles[it], library.fingerprint(it))
+    override val sourceFileFingerprints: Map<KotlinSourceFile, FingerprintHash> by lazy {
+        parseFingerprintsFromManifest() ?: buildMapUntil(sourceFiles.size) {
+            put(sourceFiles[it], SerializedIrFileFingerprint(library, it).fileFingerprint)
         }
     }
 
@@ -69,10 +74,10 @@ internal class KotlinRemovedLibraryHeader(private val libCacheDir: File) : Kotli
     override val libraryFile: KotlinLibraryFile
         get() = icError("removed library name is unavailable; cache dir: ${libCacheDir.absolutePath}")
 
-    override val libraryFingerprint: ICHash? get() = null
+    override val libraryFingerprint: FingerprintHash? get() = null
 
     override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> get() = emptyMap()
-    override val sourceFileFingerprints: Map<KotlinSourceFile, ICHash> get() = emptyMap()
+    override val sourceFileFingerprints: Map<KotlinSourceFile, FingerprintHash> get() = emptyMap()
 
     override val jsOutputName: String? get() = null
 }
