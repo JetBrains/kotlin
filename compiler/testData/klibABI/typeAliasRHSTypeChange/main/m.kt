@@ -1,6 +1,6 @@
 import abitestutils.abiTest
 
 fun box() = abiTest {
-    expectFailure(skipHashes("Function foo can not be called: No function found for symbol /foo")) { callFoo() }
+    expectFailure(linkage("Function foo can not be called: No function found for symbol /foo")) { callFoo() }
     expectSuccess { bar() }
 }
