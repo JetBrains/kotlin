@@ -221,7 +221,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 endOffset = irFunction.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = nameForCoroutineClass(irFunction)
-                visibility = irFunction.visibility
+                visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 parent = irFunction.parent
                 createParameterDeclarations()

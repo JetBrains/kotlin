@@ -281,7 +281,7 @@ suspend fun s23(f: Boolean) {
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s24#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s24() {
-    // CHECK: call void @"kfun:$s24COROUTINE${{[0-9]*}}#<init>
+    // CHECK: call void @"kfun:$s24COROUTINE${{[0-9]*}}.<init>#internal
     sInt()
 }
 // CHECK-LABEL: epilogue:
