@@ -84,16 +84,22 @@ class WrapJsComposableLambdaLowering(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
-    signatureBuilder: IdSignatureSerializer
+    signatureBuilder: IdSignatureSerializer,
+    private val decoysEnabled: Boolean
 ) : AbstractDecoysLowering(context, symbolRemapper, metrics, signatureBuilder) {
 
     private val rememberFunSymbol by lazy {
+        val composerParamTransformer = ComposerParamTransformer(
+            context, symbolRemapper, decoysEnabled, metrics
+        )
         symbolRemapper.getReferencedSimpleFunction(
             getTopLevelFunctions(ComposeCallableIds.remember).map { it.owner }.first {
                 it.valueParameters.size == 2 && !it.valueParameters.first().isVararg
             }.symbol
         ).owner.let {
-            if (!it.isDecoy()) {
+            if (!decoysEnabled) {
+                composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
+            } else if (!it.isDecoy()) {
                 // If a module didn't have any explicit remember calls,
                 // so `fun remember` wasn't transformed yet, then we have to transform it now.
                 val createDecoysTransformer = CreateDecoysTransformer(
@@ -101,9 +107,6 @@ class WrapJsComposableLambdaLowering(
                 )
                 createDecoysTransformer.visitSimpleFunction(it) as IrSimpleFunction
                 createDecoysTransformer.updateParents()
-                val composerParamTransformer = ComposerParamTransformer(
-                    context, symbolRemapper, true, metrics
-                )
                 composerParamTransformer.visitSimpleFunction(
                     it.getComposableForDecoy().owner as IrSimpleFunction
                 ) as IrSimpleFunction
