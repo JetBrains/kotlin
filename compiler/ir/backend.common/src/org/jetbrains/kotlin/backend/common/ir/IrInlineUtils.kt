@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.lower.inline.InlinedFunctionArguments
+import org.jetbrains.kotlin.backend.common.lower.inline.InlinedFunctionDefaultArguments
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
+import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -152,6 +153,52 @@ fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
 
 fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
     return !isFunctionInlining()
+}
+
+fun IrInlinedFunctionBlock.getAdditionalStatementsFromInlinedBlock(): List<IrStatement> {
+    return this.statements
+        .filterIsInstance<IrComposite>()
+        .filter { it.origin is InlinedFunctionArguments || it.origin is InlinedFunctionDefaultArguments }
+        .flatMap { it.statements }
+}
+
+fun IrInlinedFunctionBlock.getNonDefaultAdditionalStatementsFromInlinedBlock(): List<IrStatement> {
+    return this.statements
+        .filterIsInstance<IrComposite>()
+        .singleOrNull { it.origin is InlinedFunctionArguments }?.statements ?: emptyList()
+}
+
+fun IrInlinedFunctionBlock.getDefaultAdditionalStatementsFromInlinedBlock(): List<IrStatement> {
+    return this.statements
+        .filterIsInstance<IrComposite>()
+        .singleOrNull { it.origin is InlinedFunctionDefaultArguments }?.statements ?: emptyList()
+}
+
+fun IrInlinedFunctionBlock.getOriginalStatementsFromInlinedBlock(): List<IrStatement> {
+    return this.statements
+        .filter { it !is IrComposite || !(it.origin is InlinedFunctionArguments || it.origin is InlinedFunctionDefaultArguments) }
+}
+
+fun IrInlinedFunctionBlock.putStatementBeforeActualInline(builder: IrBuilderWithScope, statement: IrStatement) {
+    val evaluateStatements = this.statements
+        .filterIsInstance<IrComposite>()
+        .singleOrNull { it.origin is InlinedFunctionArguments }?.statements
+
+    if (evaluateStatements != null) {
+        evaluateStatements.add(0, statement)
+        return
+    }
+
+    val newInlinedArgumentsBlock = builder
+        .irComposite(UNDEFINED_OFFSET, UNDEFINED_OFFSET, InlinedFunctionArguments, builder.context.irBuiltIns.unitType) { +statement }
+    this.statements.add(0, newInlinedArgumentsBlock)
+}
+
+fun IrInlinedFunctionBlock.putStatementsInFrontOfInlinedFunction(statements: List<IrStatement>) {
+    val insertAfter = this.statements
+        .indexOfLast { it is IrComposite && (it.origin is InlinedFunctionArguments || it.origin is InlinedFunctionDefaultArguments) }
+
+    this.statements.addAll(if (insertAfter == -1) 0 else insertAfter + 1, statements)
 }
 
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
