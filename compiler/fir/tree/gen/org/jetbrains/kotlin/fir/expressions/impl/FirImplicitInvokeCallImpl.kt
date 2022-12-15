@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 internal class FirImplicitInvokeCallImpl(
     override var source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val contextReceiverArguments: MutableList<FirExpression>,
+    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
@@ -109,8 +109,7 @@ internal class FirImplicitInvokeCallImpl(
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
+        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 internal class FirComponentCallImpl(
     override var source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val contextReceiverArguments: MutableList<FirExpression>,
+    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
@@ -113,8 +113,7 @@ internal class FirComponentCallImpl(
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
+        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

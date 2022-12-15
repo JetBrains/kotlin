@@ -29,7 +29,7 @@ internal class FirDelegatedConstructorCallImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
-    override val contextReceiverArguments: MutableList<FirExpression>,
+    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var constructedTypeRef: FirTypeRef,
     override var dispatchReceiver: FirExpression,
     override var calleeReference: FirReference,
@@ -78,8 +78,7 @@ internal class FirDelegatedConstructorCallImpl(
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
+        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
     }
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {

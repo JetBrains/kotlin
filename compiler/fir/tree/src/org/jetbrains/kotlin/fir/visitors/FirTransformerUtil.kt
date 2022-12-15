@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.visitors
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
     return (this as FirPureAbstractElement).transform<T, D>(transformer, data)
@@ -25,7 +24,7 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
     }
 }
 
-fun <T : FirAnnotation, D> MutableOrEmptyList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
+fun <T : FirElement, D> MutableOrEmptyList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
     list?.transformInplace(transformer, data)
 }
 

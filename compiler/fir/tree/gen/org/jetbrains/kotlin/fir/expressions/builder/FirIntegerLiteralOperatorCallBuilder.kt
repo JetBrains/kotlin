@@ -53,7 +53,7 @@ open class FirIntegerLiteralOperatorCallBuilder : FirAbstractFunctionCallBuilder
             source,
             typeRef,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments,
+            contextReceiverArguments.toMutableOrEmpty(),
             typeArguments,
             explicitReceiver,
             argumentList,

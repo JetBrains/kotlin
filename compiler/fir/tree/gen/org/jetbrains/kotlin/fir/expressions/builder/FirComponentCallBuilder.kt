@@ -53,7 +53,7 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
         return FirComponentCallImpl(
             source,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments,
+            contextReceiverArguments.toMutableOrEmpty(),
             typeArguments,
             dispatchReceiver,
             extensionReceiver,

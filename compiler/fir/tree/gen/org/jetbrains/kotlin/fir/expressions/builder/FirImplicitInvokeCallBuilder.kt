@@ -51,7 +51,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
         return FirImplicitInvokeCallImpl(
             source,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments,
+            contextReceiverArguments.toMutableOrEmpty(),
             typeArguments,
             explicitReceiver,
             dispatchReceiver,

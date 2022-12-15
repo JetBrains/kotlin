@@ -47,7 +47,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
             source,
             annotations.toMutableOrEmpty(),
             argumentList,
-            contextReceiverArguments,
+            contextReceiverArguments.toMutableOrEmpty(),
             constructedTypeRef,
             dispatchReceiver,
             calleeReference,

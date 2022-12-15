@@ -50,7 +50,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessBuilder, FirAnnotati
             source,
             typeRef,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments,
+            contextReceiverArguments.toMutableOrEmpty(),
             typeArguments,
             explicitReceiver,
             dispatchReceiver,
