@@ -137,8 +137,8 @@ abstract class KotlinToolRunner(
         val transformedArgs = transformArgs(args)
         val classpath = executionContext.filesProvider(classpath)
         val systemProperties = System.getProperties()
-            /* Capture 'System.getProperties()' as List to avoid potential 'ConcurrentModificationException' */
-            .toListSynchronized()
+            /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
+            .snapshot()
             .asSequence()
             .map { (k, v) -> k.toString() to v.toString() }
             .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
@@ -226,9 +226,6 @@ abstract class KotlinToolRunner(
                 else -> this
             }
 
-        /**
-         * Safely enter the [Properties] monitor and capture the current values
-         */
-        private fun Properties.toListSynchronized(): List<Pair<Any, Any>> = synchronized(this) { toList() }
+        private fun Properties.snapshot(): Properties = clone() as Properties
     }
 }
