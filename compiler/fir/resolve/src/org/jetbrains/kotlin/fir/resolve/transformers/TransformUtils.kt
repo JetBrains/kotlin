@@ -41,65 +41,6 @@ internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
     }
 }
 
-
-internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
-        return element
-    }
-
-    override fun transformNamedReference(
-        namedReference: FirNamedReference,
-        data: FirNamedReference
-    ): FirNamedReference {
-        return data
-    }
-
-    override fun transformNamedReferenceWithCandidateSymbol(
-        namedReferenceWithCandidateSymbol: FirNamedReferenceWithCandidateSymbol,
-        data: FirNamedReference
-    ): FirReference {
-        return data
-    }
-
-    override fun transformThisReference(thisReference: FirThisReference, data: FirNamedReference): FirReference {
-        return data
-    }
-
-    override fun transformSuperReference(
-        superReference: FirSuperReference,
-        data: FirNamedReference
-    ): FirReference {
-        return data
-    }
-}
-
-internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
-        return element
-    }
-
-    override fun transformNamedReference(
-        namedReference: FirNamedReference,
-        data: FirNamedReference
-    ): FirNamedReference {
-        return data
-    }
-
-    override fun transformNamedReferenceWithCandidateSymbol(
-        namedReferenceWithCandidateSymbol: FirNamedReferenceWithCandidateSymbol,
-        data: FirNamedReference
-    ): FirReference {
-        return data
-    }
-
-    override fun transformResolvedNamedReference(
-        resolvedNamedReference: FirResolvedNamedReference,
-        data: FirNamedReference
-    ): FirNamedReference {
-        return data
-    }
-}
-
 internal fun FirValueParameter.transformVarargTypeToArrayType() {
     if (isVararg) {
         this.transformTypeToArrayType()

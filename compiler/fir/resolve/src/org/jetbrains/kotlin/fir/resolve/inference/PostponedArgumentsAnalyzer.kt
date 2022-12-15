@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -86,10 +85,8 @@ class PostponedArgumentsAnalyzer(
             diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
         }
 
-        callableReferenceAccess.transformCalleeReference(
-            StoreNameReference,
-            namedReference
-        ).apply {
+        callableReferenceAccess.apply {
+            replaceCalleeReference(namedReference)
             val typeForCallableReference = atom.resultingTypeForCallableReference
             val resolvedTypeRef = when {
                 typeForCallableReference != null -> buildResolvedTypeRef {

@@ -130,33 +130,29 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = extensionReceiver.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val result = qualifiedAccessExpression
-            .transformCalleeReference(
-                StoreCalleeReference,
-                calleeReference.toResolvedReference(),
-            ).apply {
-                replaceDispatchReceiver(dispatchReceiver)
-                replaceExtensionReceiver(extensionReceiver)
-            } as T
-
-        result.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
-
-        if (result is FirPropertyAccessExpressionImpl && calleeReference.candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
-            result.nonFatalDiagnostics.add(ConePropertyAsOperator(calleeReference.candidate.symbol as FirPropertySymbol))
+        qualifiedAccessExpression.apply {
+            replaceCalleeReference(calleeReference.toResolvedReference())
+            replaceDispatchReceiver(dispatchReceiver)
+            replaceExtensionReceiver(extensionReceiver)
         }
 
-        if (result is FirQualifiedAccessExpression) {
-            result.replaceTypeRef(typeRef)
-        } else if (result is FirVariableAssignment) {
-            result.replaceLValueTypeRef(typeRef)
+        qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
+
+        if (qualifiedAccessExpression is FirPropertyAccessExpressionImpl && calleeReference.candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
+            qualifiedAccessExpression.nonFatalDiagnostics.add(ConePropertyAsOperator(calleeReference.candidate.symbol as FirPropertySymbol))
+        }
+
+        if (qualifiedAccessExpression is FirQualifiedAccessExpression) {
+            qualifiedAccessExpression.replaceTypeRef(typeRef)
+        } else if (qualifiedAccessExpression is FirVariableAssignment) {
+            qualifiedAccessExpression.replaceLValueTypeRef(typeRef)
         }
 
         if (declaration !is FirErrorFunction) {
-            result.replaceTypeArguments(typeArguments)
+            qualifiedAccessExpression.replaceTypeArguments(typeArguments)
         }
         session.lookupTracker?.recordTypeResolveAsLookup(typeRef, qualifiedAccessExpression.source, context.file.source)
-        return result
+        return qualifiedAccessExpression
     }
 
     override fun transformQualifiedAccessExpression(
@@ -256,12 +252,8 @@ class FirCallCompletionResultsWriterTransformer(
         annotationCall: FirAnnotationCall,
         data: ExpectedArgumentType?
     ): FirStatement {
-        val calleeReference = annotationCall.calleeReference as? FirNamedReferenceWithCandidate
-            ?: return annotationCall
-        annotationCall.transformCalleeReference(
-            StoreCalleeReference,
-            calleeReference.toResolvedReference(),
-        )
+        val calleeReference = annotationCall.calleeReference as? FirNamedReferenceWithCandidate ?: return annotationCall
+        annotationCall.replaceCalleeReference(calleeReference.toResolvedReference())
         val subCandidate = calleeReference.candidate
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
         withFirArrayOfCallTransformer {
@@ -386,10 +378,8 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        return callableReferenceAccess.transformCalleeReference(
-            StoreCalleeReference,
-            resolvedReference,
-        ).apply {
+        return callableReferenceAccess.apply {
+            replaceCalleeReference(resolvedReference)
             replaceDispatchReceiver(subCandidate.dispatchReceiverExpression())
             replaceExtensionReceiver(subCandidate.chosenExtensionReceiverExpression())
         }
@@ -425,10 +415,9 @@ class FirCallCompletionResultsWriterTransformer(
         variableAssignment.replaceLValueTypeRef(resultLValueType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultLValueType, variableAssignment.lValue.source, context.file.source)
 
-        return variableAssignment.transformCalleeReference(
-            StoreCalleeReference,
-            calleeReference.toResolvedReference(),
-        )
+        return variableAssignment.apply {
+            replaceCalleeReference(calleeReference.toResolvedReference())
+        }
     }
 
     override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ExpectedArgumentType?): FirStatement {
@@ -510,10 +499,9 @@ class FirCallCompletionResultsWriterTransformer(
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it, delegatedConstructorCall.argumentList.source))
             }
         }
-        return delegatedConstructorCall.transformCalleeReference(
-            StoreCalleeReference,
-            calleeReference.toResolvedReference(),
-        )
+        return delegatedConstructorCall.apply {
+            replaceCalleeReference(calleeReference.toResolvedReference())
+        }
     }
 
     private fun computeTypeArguments(
@@ -782,10 +770,9 @@ class FirCallCompletionResultsWriterTransformer(
         syntheticCall.replaceTypeRefWithSubstituted(calleeReference, typeRef)
         transformSyntheticCallChildren(syntheticCall, data)
 
-        return (syntheticCall.transformCalleeReference(
-            StoreCalleeReference,
-            calleeReference.toResolvedReference(),
-        ) as D)
+        return syntheticCall.apply {
+            replaceCalleeReference(calleeReference.toResolvedReference())
+        }
     }
 
     private inline fun <reified D> transformSyntheticCallChildren(
