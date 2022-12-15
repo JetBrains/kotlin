@@ -154,15 +154,12 @@ class BuildSessionLogger(
         closeTrackingFile()
     }
 
-    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
-        metricsContainer.report(metric, value, subprojectName)
-    }
+    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
 
-    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
-        metricsContainer.report(metric, value, subprojectName)
-    }
+    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
 
-    override fun report(metric: StringMetrics, value: String, subprojectName: String?) {
-        metricsContainer.report(metric, value, subprojectName)
-    }
+    override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
 }
