@@ -19,7 +19,7 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinProjectArtifactDependencyP
     return ideaKotlinProjectArtifactDependencyProto {
         this.extras = IdeaExtrasProto(dependency.extras)
         this.type = dependency.type.toProto()
-        this.coordinates = IdeaKotlinProjectArtifactCoordinatesProto(dependency.coordinates)
+        this.coordinates = IdeaKotlinProjectCoordinatesProto(dependency.coordinates)
     }
 }
 
@@ -29,6 +29,6 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinProjectArtifactDependency(
     return IdeaKotlinProjectArtifactDependency(
         extras = Extras(proto.extras).toMutableExtras(),
         type = IdeaKotlinSourceDependencyType(proto.type),
-        coordinates = IdeaKotlinProjectArtifactCoordinates(proto.coordinates),
+        coordinates = IdeaKotlinProjectCoordinates(proto.coordinates),
     )
 }

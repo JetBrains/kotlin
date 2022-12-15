@@ -99,28 +99,30 @@ object IdeaKotlinResolvedBinaryDependencyProtoKt {
     }
 
     /**
-     * <code>optional string binary_file = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
      */
-    var binaryFile: kotlin.String
-      @JvmName("getBinaryFile")
-      get() = _builder.getBinaryFile()
-      @JvmName("setBinaryFile")
+    var classpath: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto
+      @JvmName("getClasspath")
+      get() = _builder.getClasspath()
+      @JvmName("setClasspath")
       set(value) {
-        _builder.setBinaryFile(value)
+        _builder.setClasspath(value)
       }
     /**
-     * <code>optional string binary_file = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
      */
-    fun clearBinaryFile() {
-      _builder.clearBinaryFile()
+    fun clearClasspath() {
+      _builder.clearClasspath()
     }
     /**
-     * <code>optional string binary_file = 4;</code>
-     * @return Whether the binaryFile field is set.
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     * @return Whether the classpath field is set.
      */
-    fun hasBinaryFile(): kotlin.Boolean {
-      return _builder.hasBinaryFile()
+    fun hasClasspath(): kotlin.Boolean {
+      return _builder.hasClasspath()
     }
+    val IdeaKotlinResolvedBinaryDependencyProtoKt.Dsl.classpathOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto?
+      get() = _builder.classpathOrNull
   }
 }
 @kotlin.jvm.JvmSynthetic
@@ -132,4 +134,7 @@ val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinResolvedBinar
 
 val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinResolvedBinaryDependencyProtoOrBuilder.coordinatesOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProto?
   get() = if (hasCoordinates()) getCoordinates() else null
+
+val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinResolvedBinaryDependencyProtoOrBuilder.classpathOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto?
+  get() = if (hasClasspath()) getClasspath() else null
 

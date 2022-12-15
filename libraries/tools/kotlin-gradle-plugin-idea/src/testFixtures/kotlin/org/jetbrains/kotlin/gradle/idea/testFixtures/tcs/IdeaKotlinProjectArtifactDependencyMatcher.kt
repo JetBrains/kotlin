@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import java.io.File
 
 internal class IdeaKotlinProjectArtifactDependencyMatcher(
@@ -22,9 +23,9 @@ internal class IdeaKotlinProjectArtifactDependencyMatcher(
     override fun matches(dependency: IdeaKotlinDependency): Boolean {
         if (dependency !is IdeaKotlinProjectArtifactDependency) return false
         return dependency.type == type &&
-                dependency.coordinates.project.buildId == buildId &&
-                dependency.coordinates.project.projectPath == projectPath &&
-                artifactFilePath.matches(dependency.coordinates.artifactFile)
+                dependency.coordinates.buildId == buildId &&
+                dependency.coordinates.projectPath == projectPath &&
+                dependency.artifactsClasspath.any { artifactFilePath.matches(it) }
 
     }
 }

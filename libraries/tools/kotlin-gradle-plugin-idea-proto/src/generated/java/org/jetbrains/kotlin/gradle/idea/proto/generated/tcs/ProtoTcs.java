@@ -35,6 +35,11 @@ public final class ProtoTcs {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinResolvedBinaryDependencyProto_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinClasspathProto_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinClasspathProto_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactDependencyProto_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -54,11 +59,6 @@ public final class ProtoTcs {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -102,46 +102,43 @@ public final class ProtoTcs {
       "es\030\002 \001(\0132V.org.jetbrains.kotlin.gradle.i" +
       "dea.proto.generated.tcs.IdeaKotlinBinary" +
       "CoordinatesProtoH\001\210\001\001\022\022\n\005cause\030\003 \001(\tH\002\210\001" +
-      "\001B\t\n\007_extrasB\016\n\014_coordinatesB\010\n\006_cause\"\342" +
-      "\002\n\'IdeaKotlinResolvedBinaryDependencyPro" +
+      "\001B\t\n\007_extrasB\016\n\014_coordinatesB\010\n\006_cause\"\256" +
+      "\003\n\'IdeaKotlinResolvedBinaryDependencyPro" +
       "to\022V\n\006extras\030\001 \001(\0132A.org.jetbrains.kotli" +
       "n.gradle.idea.proto.generated.IdeaExtras" +
       "ProtoH\000\210\001\001\022p\n\013coordinates\030\002 \001(\0132V.org.je" +
       "tbrains.kotlin.gradle.idea.proto.generat" +
       "ed.tcs.IdeaKotlinBinaryCoordinatesProtoH" +
-      "\001\210\001\001\022\030\n\013binary_type\030\003 \001(\tH\002\210\001\001\022\030\n\013binary" +
-      "_file\030\004 \001(\tH\003\210\001\001B\t\n\007_extrasB\016\n\014_coordina" +
-      "tesB\016\n\014_binary_typeB\016\n\014_binary_file\"\220\003\n(" +
-      "IdeaKotlinProjectArtifactDependencyProto" +
-      "\022V\n\006extras\030\001 \001(\0132A.org.jetbrains.kotlin." +
-      "gradle.idea.proto.generated.IdeaExtrasPr" +
-      "otoH\000\210\001\001\022m\n\004type\030\002 \001(\0162Z.org.jetbrains.k" +
-      "otlin.gradle.idea.proto.generated.tcs.Id" +
-      "eaKotlinSourceDependencyProto.TypeH\001\210\001\001\022" +
-      "y\n\013coordinates\030\003 \001(\0132_.org.jetbrains.kot" +
-      "lin.gradle.idea.proto.generated.tcs.Idea" +
-      "KotlinProjectArtifactCoordinatesProtoH\002\210" +
-      "\001\001B\t\n\007_extrasB\007\n\005_typeB\016\n\014_coordinates\"\237" +
-      "\001\n!IdeaKotlinProjectCoordinatesProto\022\025\n\010" +
-      "build_id\030\001 \001(\tH\000\210\001\001\022\031\n\014project_path\030\002 \001(" +
-      "\tH\001\210\001\001\022\031\n\014project_name\030\003 \001(\tH\002\210\001\001B\013\n\t_bu" +
-      "ild_idB\017\n\r_project_pathB\017\n\r_project_name" +
-      "\"\264\001\n IdeaKotlinBinaryCoordinatesProto\022\022\n" +
-      "\005group\030\001 \001(\tH\000\210\001\001\022\023\n\006module\030\002 \001(\tH\001\210\001\001\022\024" +
-      "\n\007version\030\003 \001(\tH\002\210\001\001\022\034\n\017source_set_name\030" +
-      "\004 \001(\tH\003\210\001\001B\010\n\006_groupB\t\n\007_moduleB\n\n\010_vers" +
-      "ionB\022\n\020_source_set_name\"\317\001\n IdeaKotlinSo" +
-      "urceCoordinatesProto\022m\n\007project\030\001 \001(\0132W." +
-      "org.jetbrains.kotlin.gradle.idea.proto.g" +
-      "enerated.tcs.IdeaKotlinProjectCoordinate" +
-      "sProtoH\000\210\001\001\022\034\n\017source_set_name\030\002 \001(\tH\001\210\001" +
-      "\001B\n\n\010_projectB\022\n\020_source_set_name\"\324\001\n)Id" +
-      "eaKotlinProjectArtifactCoordinatesProto\022" +
-      "m\n\007project\030\001 \001(\0132W.org.jetbrains.kotlin." +
-      "gradle.idea.proto.generated.tcs.IdeaKotl" +
-      "inProjectCoordinatesProtoH\000\210\001\001\022\032\n\rartifa" +
-      "ct_file\030\002 \001(\tH\001\210\001\001B\n\n\010_projectB\020\n\016_artif" +
-      "act_fileB\002P\001b\006proto3"
+      "\001\210\001\001\022\030\n\013binary_type\030\003 \001(\tH\002\210\001\001\022f\n\tclassp" +
+      "ath\030\004 \001(\0132N.org.jetbrains.kotlin.gradle." +
+      "idea.proto.generated.tcs.IdeaKotlinClass" +
+      "pathProtoH\003\210\001\001B\t\n\007_extrasB\016\n\014_coordinate" +
+      "sB\016\n\014_binary_typeB\014\n\n_classpath\")\n\030IdeaK" +
+      "otlinClasspathProto\022\r\n\005files\030\001 \003(\t\"\210\003\n(I" +
+      "deaKotlinProjectArtifactDependencyProto\022" +
+      "V\n\006extras\030\001 \001(\0132A.org.jetbrains.kotlin.g" +
+      "radle.idea.proto.generated.IdeaExtrasPro" +
+      "toH\000\210\001\001\022m\n\004type\030\002 \001(\0162Z.org.jetbrains.ko" +
+      "tlin.gradle.idea.proto.generated.tcs.Ide" +
+      "aKotlinSourceDependencyProto.TypeH\001\210\001\001\022q" +
+      "\n\013coordinates\030\003 \001(\0132W.org.jetbrains.kotl" +
+      "in.gradle.idea.proto.generated.tcs.IdeaK" +
+      "otlinProjectCoordinatesProtoH\002\210\001\001B\t\n\007_ex" +
+      "trasB\007\n\005_typeB\016\n\014_coordinates\"\237\001\n!IdeaKo" +
+      "tlinProjectCoordinatesProto\022\025\n\010build_id\030" +
+      "\001 \001(\tH\000\210\001\001\022\031\n\014project_path\030\002 \001(\tH\001\210\001\001\022\031\n" +
+      "\014project_name\030\003 \001(\tH\002\210\001\001B\013\n\t_build_idB\017\n" +
+      "\r_project_pathB\017\n\r_project_name\"\264\001\n Idea" +
+      "KotlinBinaryCoordinatesProto\022\022\n\005group\030\001 " +
+      "\001(\tH\000\210\001\001\022\023\n\006module\030\002 \001(\tH\001\210\001\001\022\024\n\007version" +
+      "\030\003 \001(\tH\002\210\001\001\022\034\n\017source_set_name\030\004 \001(\tH\003\210\001" +
+      "\001B\010\n\006_groupB\t\n\007_moduleB\n\n\010_versionB\022\n\020_s" +
+      "ource_set_name\"\317\001\n IdeaKotlinSourceCoord" +
+      "inatesProto\022m\n\007project\030\001 \001(\0132W.org.jetbr" +
+      "ains.kotlin.gradle.idea.proto.generated." +
+      "tcs.IdeaKotlinProjectCoordinatesProtoH\000\210" +
+      "\001\001\022\034\n\017source_set_name\030\002 \001(\tH\001\210\001\001B\n\n\010_pro" +
+      "jectB\022\n\020_source_set_nameB\002P\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -171,37 +168,37 @@ public final class ProtoTcs {
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinResolvedBinaryDependencyProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinResolvedBinaryDependencyProto_descriptor,
-        new java.lang.String[] { "Extras", "Coordinates", "BinaryType", "BinaryFile", "Extras", "Coordinates", "BinaryType", "BinaryFile", });
-    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactDependencyProto_descriptor =
+        new java.lang.String[] { "Extras", "Coordinates", "BinaryType", "Classpath", "Extras", "Coordinates", "BinaryType", "Classpath", });
+    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinClasspathProto_descriptor =
       getDescriptor().getMessageTypes().get(4);
+    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinClasspathProto_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinClasspathProto_descriptor,
+        new java.lang.String[] { "Files", });
+    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactDependencyProto_descriptor =
+      getDescriptor().getMessageTypes().get(5);
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactDependencyProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactDependencyProto_descriptor,
         new java.lang.String[] { "Extras", "Type", "Coordinates", "Extras", "Type", "Coordinates", });
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectCoordinatesProto_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectCoordinatesProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectCoordinatesProto_descriptor,
         new java.lang.String[] { "BuildId", "ProjectPath", "ProjectName", "BuildId", "ProjectPath", "ProjectName", });
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinBinaryCoordinatesProto_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinBinaryCoordinatesProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinBinaryCoordinatesProto_descriptor,
         new java.lang.String[] { "Group", "Module", "Version", "SourceSetName", "Group", "Module", "Version", "SourceSetName", });
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_descriptor,
         new java.lang.String[] { "Project", "SourceSetName", "Project", "SourceSetName", });
-    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_descriptor =
-      getDescriptor().getMessageTypes().get(8);
-    internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_descriptor,
-        new java.lang.String[] { "Project", "ArtifactFile", "Project", "ArtifactFile", });
     org.jetbrains.kotlin.gradle.idea.proto.generated.ProtoExtras.getDescriptor();
   }
 

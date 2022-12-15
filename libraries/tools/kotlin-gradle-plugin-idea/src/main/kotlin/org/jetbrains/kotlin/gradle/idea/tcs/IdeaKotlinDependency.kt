@@ -11,10 +11,4 @@ import java.io.Serializable
 @IdeaKotlinModel
 sealed interface IdeaKotlinDependency : Serializable, HasMutableExtras {
     val coordinates: IdeaKotlinDependencyCoordinates?
-
-    companion object {
-        const val CLASSPATH_BINARY_TYPE = "org.jetbrains.kotlin.gradle.idea.tcs.IdeDependency.classpathBinaryType"
-        const val SOURCES_BINARY_TYPE = "org.jetbrains.kotlin.gradle.idea.tcs.IdeDependency.sourcesBinaryType"
-        const val DOCUMENTATION_BINARY_TYPE = "org.jetbrains.kotlin.gradle.idea.tcs.IdeDependency.documentationBinaryType"
-    }
 }

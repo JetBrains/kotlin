@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tooling.core.*
 
 data class IdeaKotlinProjectArtifactDependency(
     val type: IdeaKotlinSourceDependency.Type,
-    override val coordinates: IdeaKotlinProjectArtifactCoordinates,
+    override val coordinates: IdeaKotlinProjectCoordinates,
     override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinDependency {
 
@@ -22,7 +22,7 @@ data class IdeaKotlinProjectArtifactDependency(
                     type = type,
                     extras = extras.toMutableExtras(),
                     coordinates = IdeaKotlinSourceCoordinates(
-                        project = coordinates.project,
+                        project = coordinates,
                         sourceSetName = sourceSetName
                     )
                 )

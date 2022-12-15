@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.gradle.idea.proto.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinResolvedBinaryDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ideaKotlinResolvedBinaryDependencyProto
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.tooling.core.toMutableExtras
-import java.io.File
 
 internal fun IdeaKotlinSerializationContext.IdeaKotlinResolvedBinaryDependencyProto(
     dependency: IdeaKotlinResolvedBinaryDependency
@@ -20,7 +20,7 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinResolvedBinaryDependencyPr
     return ideaKotlinResolvedBinaryDependencyProto {
         this.extras = IdeaExtrasProto(dependency.extras)
         this.binaryType = dependency.binaryType
-        this.binaryFile = dependency.binaryFile.path
+        dependency.classpath.toProto()?.let { this.classpath = it }
         dependency.coordinates?.let { this.coordinates = IdeaKotlinBinaryCoordinatesProto(it) }
     }
 }
@@ -31,7 +31,7 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinResolvedBinaryDependency(
     return IdeaKotlinResolvedBinaryDependency(
         extras = Extras(proto.extras).toMutableExtras(),
         binaryType = proto.binaryType,
-        binaryFile = File(proto.binaryFile),
+        classpath = if(proto.hasClasspath()) proto.classpath.toIdeaKotlinClasspath() else IdeaKotlinClasspath(),
         coordinates = if (proto.hasCoordinates()) IdeaKotlinBinaryCoordinates(proto.coordinates) else null
     )
 }

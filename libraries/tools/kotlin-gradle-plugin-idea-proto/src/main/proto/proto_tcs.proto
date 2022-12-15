@@ -35,13 +35,17 @@ message IdeaKotlinResolvedBinaryDependencyProto {
   optional IdeaExtrasProto extras = 1;
   optional IdeaKotlinBinaryCoordinatesProto coordinates = 2;
   optional string binary_type = 3;
-  optional string binary_file = 4;
+  optional IdeaKotlinClasspathProto classpath = 4;
+}
+
+message IdeaKotlinClasspathProto {
+  repeated string files = 1;
 }
 
 message IdeaKotlinProjectArtifactDependencyProto {
   optional IdeaExtrasProto extras = 1;
   optional IdeaKotlinSourceDependencyProto.Type type = 2;
-  optional IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;
+  optional IdeaKotlinProjectCoordinatesProto coordinates = 3;
 }
 
 message IdeaKotlinProjectCoordinatesProto {
@@ -60,9 +64,4 @@ message IdeaKotlinBinaryCoordinatesProto {
 message IdeaKotlinSourceCoordinatesProto {
   optional IdeaKotlinProjectCoordinatesProto project = 1;
   optional string source_set_name = 2;
-}
-
-message IdeaKotlinProjectArtifactCoordinatesProto {
-  optional IdeaKotlinProjectCoordinatesProto project = 1;
-  optional string artifact_file = 2;
 }

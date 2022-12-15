@@ -37,21 +37,19 @@ object TestIdeaKotlinInstances {
         sourceSetName = "mySourceSetName"
     )
 
-
-    val simpleProjectArtifactCoordinates = IdeaKotlinProjectArtifactCoordinates(
-        project = simpleProjectCoordinates,
-        artifactFile = File("myArtifactFile.klib")
-    )
-
     val simpleUnresolvedBinaryDependency = IdeaKotlinUnresolvedBinaryDependency(
         cause = "myCause",
         coordinates = simpleBinaryCoordinates,
         extras = extrasWithIntAndStrings.toMutableExtras()
     )
 
+    val simpleClasspath = IdeaKotlinClasspath(setOf(File("myFirstFile.klib"), File("mySecondFile.jar").absoluteFile))
+
+    val emptyClasspath = IdeaKotlinClasspath()
+
     val simpleResolvedBinaryDependency = IdeaKotlinResolvedBinaryDependency(
-        binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-        binaryFile = File("myBinaryFile.klib"),
+        binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+        classpath = simpleClasspath,
         coordinates = simpleBinaryCoordinates,
         extras = extrasWithIntAndStrings.toMutableExtras()
     )
@@ -63,7 +61,7 @@ object TestIdeaKotlinInstances {
     )
 
     val simpleProjectArtifactDependency = IdeaKotlinProjectArtifactDependency(
-        coordinates = simpleProjectArtifactCoordinates,
+        coordinates = simpleProjectCoordinates,
         type = IdeaKotlinSourceDependency.Type.Regular,
         extras = extrasWithIntAndStrings.toMutableExtras()
     )

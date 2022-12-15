@@ -17,7 +17,6 @@ private static final long serialVersionUID = 0L;
   }
   private IdeaKotlinResolvedBinaryDependencyProto() {
     binaryType_ = "";
-    binaryFile_ = "";
   }
 
   @java.lang.Override
@@ -144,50 +143,30 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int BINARY_FILE_FIELD_NUMBER = 4;
-  private volatile java.lang.Object binaryFile_;
+  public static final int CLASSPATH_FIELD_NUMBER = 4;
+  private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath_;
   /**
-   * <code>optional string binary_file = 4;</code>
-   * @return Whether the binaryFile field is set.
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+   * @return Whether the classpath field is set.
    */
   @java.lang.Override
-  public boolean hasBinaryFile() {
+  public boolean hasClasspath() {
     return ((bitField0_ & 0x00000008) != 0);
   }
   /**
-   * <code>optional string binary_file = 4;</code>
-   * @return The binaryFile.
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+   * @return The classpath.
    */
   @java.lang.Override
-  public java.lang.String getBinaryFile() {
-    java.lang.Object ref = binaryFile_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      binaryFile_ = s;
-      return s;
-    }
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto getClasspath() {
+    return classpath_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.getDefaultInstance() : classpath_;
   }
   /**
-   * <code>optional string binary_file = 4;</code>
-   * @return The bytes for binaryFile.
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getBinaryFileBytes() {
-    java.lang.Object ref = binaryFile_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      binaryFile_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProtoOrBuilder getClasspathOrBuilder() {
+    return classpath_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.getDefaultInstance() : classpath_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -214,7 +193,7 @@ private static final long serialVersionUID = 0L;
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, binaryType_);
     }
     if (((bitField0_ & 0x00000008) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, binaryFile_);
+      output.writeMessage(4, getClasspath());
     }
     getUnknownFields().writeTo(output);
   }
@@ -237,7 +216,8 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, binaryType_);
     }
     if (((bitField0_ & 0x00000008) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, binaryFile_);
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getClasspath());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -269,10 +249,10 @@ private static final long serialVersionUID = 0L;
       if (!getBinaryType()
           .equals(other.getBinaryType())) return false;
     }
-    if (hasBinaryFile() != other.hasBinaryFile()) return false;
-    if (hasBinaryFile()) {
-      if (!getBinaryFile()
-          .equals(other.getBinaryFile())) return false;
+    if (hasClasspath() != other.hasClasspath()) return false;
+    if (hasClasspath()) {
+      if (!getClasspath()
+          .equals(other.getClasspath())) return false;
     }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
@@ -297,9 +277,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + BINARY_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getBinaryType().hashCode();
     }
-    if (hasBinaryFile()) {
-      hash = (37 * hash) + BINARY_FILE_FIELD_NUMBER;
-      hash = (53 * hash) + getBinaryFile().hashCode();
+    if (hasClasspath()) {
+      hash = (37 * hash) + CLASSPATH_FIELD_NUMBER;
+      hash = (53 * hash) + getClasspath().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -431,6 +411,7 @@ private static final long serialVersionUID = 0L;
               .alwaysUseFieldBuilders) {
         getExtrasFieldBuilder();
         getCoordinatesFieldBuilder();
+        getClasspathFieldBuilder();
       }
     }
     @java.lang.Override
@@ -450,7 +431,11 @@ private static final long serialVersionUID = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
       binaryType_ = "";
       bitField0_ = (bitField0_ & ~0x00000004);
-      binaryFile_ = "";
+      if (classpathBuilder_ == null) {
+        classpath_ = null;
+      } else {
+        classpathBuilder_.clear();
+      }
       bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
@@ -501,9 +486,13 @@ private static final long serialVersionUID = 0L;
       }
       result.binaryType_ = binaryType_;
       if (((from_bitField0_ & 0x00000008) != 0)) {
+        if (classpathBuilder_ == null) {
+          result.classpath_ = classpath_;
+        } else {
+          result.classpath_ = classpathBuilder_.build();
+        }
         to_bitField0_ |= 0x00000008;
       }
-      result.binaryFile_ = binaryFile_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -564,10 +553,8 @@ private static final long serialVersionUID = 0L;
         binaryType_ = other.binaryType_;
         onChanged();
       }
-      if (other.hasBinaryFile()) {
-        bitField0_ |= 0x00000008;
-        binaryFile_ = other.binaryFile_;
-        onChanged();
+      if (other.hasClasspath()) {
+        mergeClasspath(other.getClasspath());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -615,7 +602,9 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 26
             case 34: {
-              binaryFile_ = input.readStringRequireUtf8();
+              input.readMessage(
+                  getClasspathFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000008;
               break;
             } // case 34
@@ -959,87 +948,124 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object binaryFile_ = "";
+    private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProtoOrBuilder> classpathBuilder_;
     /**
-     * <code>optional string binary_file = 4;</code>
-     * @return Whether the binaryFile field is set.
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     * @return Whether the classpath field is set.
      */
-    public boolean hasBinaryFile() {
+    public boolean hasClasspath() {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>optional string binary_file = 4;</code>
-     * @return The binaryFile.
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     * @return The classpath.
      */
-    public java.lang.String getBinaryFile() {
-      java.lang.Object ref = binaryFile_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        binaryFile_ = s;
-        return s;
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto getClasspath() {
+      if (classpathBuilder_ == null) {
+        return classpath_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.getDefaultInstance() : classpath_;
       } else {
-        return (java.lang.String) ref;
+        return classpathBuilder_.getMessage();
       }
     }
     /**
-     * <code>optional string binary_file = 4;</code>
-     * @return The bytes for binaryFile.
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
      */
-    public com.google.protobuf.ByteString
-        getBinaryFileBytes() {
-      java.lang.Object ref = binaryFile_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        binaryFile_ = b;
-        return b;
+    public Builder setClasspath(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto value) {
+      if (classpathBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        classpath_ = value;
+        onChanged();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        classpathBuilder_.setMessage(value);
       }
-    }
-    /**
-     * <code>optional string binary_file = 4;</code>
-     * @param value The binaryFile to set.
-     * @return This builder for chaining.
-     */
-    public Builder setBinaryFile(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-      binaryFile_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>optional string binary_file = 4;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearBinaryFile() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      binaryFile_ = getDefaultInstance().getBinaryFile();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>optional string binary_file = 4;</code>
-     * @param value The bytes for binaryFile to set.
-     * @return This builder for chaining.
-     */
-    public Builder setBinaryFileBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
       bitField0_ |= 0x00000008;
-      binaryFile_ = value;
-      onChanged();
       return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     */
+    public Builder setClasspath(
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.Builder builderForValue) {
+      if (classpathBuilder_ == null) {
+        classpath_ = builderForValue.build();
+        onChanged();
+      } else {
+        classpathBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     */
+    public Builder mergeClasspath(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto value) {
+      if (classpathBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+            classpath_ != null &&
+            classpath_ != org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.getDefaultInstance()) {
+          classpath_ =
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.newBuilder(classpath_).mergeFrom(value).buildPartial();
+        } else {
+          classpath_ = value;
+        }
+        onChanged();
+      } else {
+        classpathBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000008;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     */
+    public Builder clearClasspath() {
+      if (classpathBuilder_ == null) {
+        classpath_ = null;
+        onChanged();
+      } else {
+        classpathBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000008);
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.Builder getClasspathBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getClasspathFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProtoOrBuilder getClasspathOrBuilder() {
+      if (classpathBuilder_ != null) {
+        return classpathBuilder_.getMessageOrBuilder();
+      } else {
+        return classpath_ == null ?
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.getDefaultInstance() : classpath_;
+      }
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProtoOrBuilder> 
+        getClasspathFieldBuilder() {
+      if (classpathBuilder_ == null) {
+        classpathBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProtoOrBuilder>(
+                getClasspath(),
+                getParentForChildren(),
+                isClean());
+        classpath_ = null;
+      }
+      return classpathBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

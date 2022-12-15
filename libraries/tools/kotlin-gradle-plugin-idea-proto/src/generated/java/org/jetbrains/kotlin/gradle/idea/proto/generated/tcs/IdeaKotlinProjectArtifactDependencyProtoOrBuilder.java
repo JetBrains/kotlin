@@ -39,17 +39,17 @@ public interface IdeaKotlinProjectArtifactDependencyProtoOrBuilder extends
   org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceDependencyProto.Type getType();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
    * @return Whether the coordinates field is set.
    */
   boolean hasCoordinates();
   /**
-   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
    * @return The coordinates.
    */
-  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto getCoordinates();
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto getCoordinates();
   /**
-   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
    */
-  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder getCoordinatesOrBuilder();
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder getCoordinatesOrBuilder();
 }
