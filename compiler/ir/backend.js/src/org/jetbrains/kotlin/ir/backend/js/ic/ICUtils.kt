@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.OutputStream
 
 internal inline fun <T> File.ifExists(f: File.() -> T): T? = if (exists()) f() else null
 
@@ -28,14 +29,15 @@ internal inline fun <T> File.useCodedInputIfExists(f: CodedInputStream.() -> T) 
     }
 }
 
+internal inline fun OutputStream.useCodedOutput(f: CodedOutputStream.() -> Unit) = use {
+    val out = CodedOutputStream.newInstance(it)
+    out.f()
+    out.flush()
+}
+
 internal inline fun File.useCodedOutput(f: CodedOutputStream.() -> Unit) {
-    parentFile?.mkdirs()
     recreate()
-    FileOutputStream(this).use {
-        val out = CodedOutputStream.newInstance(it)
-        out.f()
-        out.flush()
-    }
+    FileOutputStream(this).useCodedOutput(f)
 }
 
 internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null): Nothing {

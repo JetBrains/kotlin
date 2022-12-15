@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 internal class IncrementalCache(private val library: KotlinLibraryHeader, val cacheDir: File) {
@@ -17,7 +18,6 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
         private const val BINARY_AST_SUFFIX = "ast.bin"
         private const val METADATA_SUFFIX = "metadata.bin"
-        private const val METADATA_TMP_SUFFIX = "metadata.tmp.bin"
     }
 
     private val cacheHeaderFile = File(cacheDir, CACHE_HEADER)
@@ -240,11 +240,13 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
             }
         }
 
-        val tmpCacheFile = srcFile.getCacheFile(METADATA_TMP_SUFFIX)
-        tmpCacheFile.useCodedOutput {
-            writeDirectDependencies(sourceFileMetadata.directDependencies)
-            writeInverseDependencies(sourceFileMetadata.inverseDependencies)
-        }
-        return SourceFileCacheArtifact.CommitMetadata(srcFile, binaryAstFile, headerCacheFile, tmpCacheFile)
+        val encodedMetadata = ByteArrayOutputStream(4096).apply {
+            useCodedOutput {
+                writeDirectDependencies(sourceFileMetadata.directDependencies)
+                writeInverseDependencies(sourceFileMetadata.inverseDependencies)
+            }
+        }.toByteArray()
+
+        return SourceFileCacheArtifact.CommitMetadata(srcFile, binaryAstFile, headerCacheFile, encodedMetadata)
     }
 }

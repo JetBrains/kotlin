@@ -29,15 +29,11 @@ internal sealed class SourceFileCacheArtifact(val srcFile: KotlinSourceFile, val
         srcFile: KotlinSourceFile,
         binaryAstFile: File,
         private val metadataFile: File,
-        private val tmpMetadataFile: File
+        private val encodedMetadata: ByteArray
     ) : SourceFileCacheArtifact(srcFile, binaryAstFile) {
         override fun commitMetadata() {
-            metadataFile.delete()
-            if (!tmpMetadataFile.renameTo(metadataFile)) {
-                tmpMetadataFile.copyTo(metadataFile, true)
-                tmpMetadataFile.delete()
-            }
-
+            metadataFile.recreate()
+            metadataFile.writeBytes(encodedMetadata)
         }
     }
 
