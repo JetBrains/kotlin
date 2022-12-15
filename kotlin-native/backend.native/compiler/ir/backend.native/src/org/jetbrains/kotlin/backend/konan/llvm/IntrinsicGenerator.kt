@@ -129,6 +129,8 @@ internal interface IntrinsicGeneratorEnvironment {
     fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef?): LLVMValueRef
 
     fun getObjectFieldPointer(thisRef: LLVMValueRef, field: IrField): LLVMValueRef
+
+    fun getStaticFieldPointer(field: IrField): LLVMValueRef
 }
 
 internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
@@ -320,17 +322,31 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitCmpExchange(callSite: IrCall, args: List<LLVMValueRef>, mode: CmpExchangeMode, resultSlot: LLVMValueRef?): LLVMValueRef {
         val field = context.mapping.functionToVolatileField[callSite.symbol.owner]!!
-        require(args.size == 3)
-        val address = environment.getObjectFieldPointer(args[0], field)
+        val address: LLVMValueRef
+        val expected: LLVMValueRef
+        val new: LLVMValueRef
+        if (callSite.dispatchReceiver != null) {
+            require(!field.isStatic)
+            require(args.size == 3)
+            address = environment.getObjectFieldPointer(args[0], field)
+            expected = args[1]
+            new = args[2]
+        } else {
+            require(field.isStatic)
+            require(args.size == 2)
+            address = environment.getStaticFieldPointer(field)
+            expected = args[0]
+            new = args[1]
+        }
         return if (isObjectRef(args[1])) {
             require(context.memoryModel == MemoryModel.EXPERIMENTAL)
             when (mode) {
-                CmpExchangeMode.SET -> call(llvm.CompareAndSetVolatileHeapRef, listOf(address, args[1], args[2]))
-                CmpExchangeMode.SWAP -> call(llvm.CompareAndSwapVolatileHeapRef, listOf(address, args[1], args[2]),
+                CmpExchangeMode.SET -> call(llvm.CompareAndSetVolatileHeapRef, listOf(address, expected, new))
+                CmpExchangeMode.SWAP -> call(llvm.CompareAndSwapVolatileHeapRef, listOf(address, expected, new),
                         environment.calculateLifetime(callSite), resultSlot = resultSlot)
             }
         } else {
-            val cmp = LLVMBuildAtomicCmpXchg(builder, address, args[1], args[2],
+            val cmp = LLVMBuildAtomicCmpXchg(builder, address, expected, new,
                     LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent,
                     LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent,
                     SingleThread = 0
@@ -342,15 +358,26 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitAtomicRMW(callSite: IrCall, args: List<LLVMValueRef>, op: LLVMAtomicRMWBinOp, resultSlot: LLVMValueRef?): LLVMValueRef {
         val field = context.mapping.functionToVolatileField[callSite.symbol.owner]!!
-        require(args.size == 2)
-        val address = environment.getObjectFieldPointer(args[0], field)
-        return if (isObjectRef(args[1])) {
+        val address: LLVMValueRef
+        val value: LLVMValueRef
+        if (callSite.dispatchReceiver != null) {
+            require(!field.isStatic)
+            require(args.size == 2)
+            address = environment.getObjectFieldPointer(args[0], field)
+            value = args[1]
+        } else {
+            require(field.isStatic)
+            require(args.size == 1)
+            address = environment.getStaticFieldPointer(field)
+            value = args[0]
+        }
+        return if (isObjectRef(value)) {
             require(op == LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpXchg)
             require(context.memoryModel == MemoryModel.EXPERIMENTAL)
-            call(llvm.GetAndSetVolatileHeapRef, listOf(address, args[1]),
+            call(llvm.GetAndSetVolatileHeapRef, listOf(address, value),
                     environment.calculateLifetime(callSite), resultSlot = resultSlot)
         } else {
-            LLVMBuildAtomicRMW(builder, op, address, args[1],
+            LLVMBuildAtomicRMW(builder, op, address, value,
                     LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent,
                     singleThread = 0
             )!!

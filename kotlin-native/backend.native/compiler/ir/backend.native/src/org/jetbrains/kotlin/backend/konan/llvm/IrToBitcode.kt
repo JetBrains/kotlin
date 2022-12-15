@@ -231,6 +231,9 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
         override fun getObjectFieldPointer(thisRef: LLVMValueRef, field: IrField): LLVMValueRef =
                 this@CodeGeneratorVisitor.fieldPtrOfClass(thisRef, field)
+
+        override fun getStaticFieldPointer(field: IrField) =
+                this@CodeGeneratorVisitor.staticFieldPtr(field, functionGenerationContext)
     }
 
     private val intrinsicGenerator = IntrinsicGenerator(intrinsicGeneratorEnvironment)
@@ -339,12 +342,12 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
         val initializer = irField.initializer ?: return
-        val address = generationState.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(this)
+        val address = staticFieldPtr(irField, this)
         storeAny(evaluateExpression(initializer.expression), address, false)
     }
 
     private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
-        val address = generationState.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(this)
+        val address = staticFieldPtr(irField, this)
         val initialValue = if (irField.hasNonConstInitializer) {
             val initialization = evaluateExpression(irField.initializer!!.expression)
             if (irField.shouldBeFrozen(context))
@@ -514,9 +517,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                             // Only if a subject for memory management.
                             .forEach { irField ->
                                 if (irField.type.binaryTypeIsReference() && irField.storageKind(context) != FieldStorageKind.THREAD_LOCAL) {
-                                    val address = generationState.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
-                                            functionGenerationContext
-                                    )
+                                    val address = staticFieldPtr(irField, functionGenerationContext)
                                     storeHeapRef(codegen.kNullObjHeaderPtr, address)
                                 }
                             }
@@ -1685,12 +1686,8 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive(context)) {
                     functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
-                val info = generationState.llvmDeclarations
-                        .forStaticField(value.symbol.owner)
-                fieldAddress = info
-                        .storageAddressAccess
-                        .getAddress(functionGenerationContext)
-                alignment = info.alignment
+                fieldAddress = staticFieldPtr(value.symbol.owner, functionGenerationContext)
+                alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
             }
         }
         return functionGenerationContext.loadSlot(
@@ -1764,9 +1761,8 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
-            val info = generationState.llvmDeclarations.forStaticField(value.symbol.owner)
-            address = info.storageAddressAccess.getAddress(functionGenerationContext)
-            alignment = info.alignment
+            address = staticFieldPtr(value.symbol.owner, functionGenerationContext)
+            alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
         }
         functionGenerationContext.storeAny(
                 valueToAssign, address, false,
@@ -1778,8 +1774,6 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         return codegen.theUnitInstanceRef.llvm
     }
 
-    private val vectorType = FqName("kotlin.native.Vector128").toUnsafe()
-
     //-------------------------------------------------------------------------//
     private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
         val fieldInfo = generationState.llvmDeclarations.forField(value)
@@ -1790,6 +1784,12 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         val fieldPtr = LLVMBuildStructGEP(functionGenerationContext.builder, typedBodyPtr, fieldInfo.index, "")
         return fieldPtr!!
     }
+
+    private fun staticFieldPtr(value: IrField, context: FunctionGenerationContext) =
+            generationState.llvmDeclarations
+                    .forStaticField(value.symbol.owner)
+                    .storageAddressAccess
+                    .getAddress(context)
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: IrConst<String>) =

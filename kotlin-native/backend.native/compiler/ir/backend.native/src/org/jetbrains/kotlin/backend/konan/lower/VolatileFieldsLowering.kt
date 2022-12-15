@@ -51,12 +51,17 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         startOffset = irField.startOffset
         endOffset = irField.endOffset
     }.apply {
-        val parentClass = irField.parents.filterIsInstance<IrClass>().first()
-        parent = parentClass
-        addDispatchReceiver {
-            startOffset = irField.startOffset
-            endOffset = irField.endOffset
-            type = parentClass.defaultType
+        val property = irField.correspondingPropertySymbol?.owner
+        val scope = property?.parent
+        require(scope != null)
+        require(scope is IrClass || scope is IrFile)
+        parent = scope
+        if (scope is IrClass) {
+            addDispatchReceiver {
+                startOffset = irField.startOffset
+                endOffset = irField.endOffset
+                type = scope.defaultType
+            }
         }
         builder()
         annotations += buildSimpleAnnotation(context.irBuiltIns,
@@ -124,7 +129,18 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformChildrenVoid()
-                declaration.declarations.transformFlat {
+                processDeclarationList(declaration.declarations)
+                return declaration
+            }
+
+            override fun visitFile(declaration: IrFile): IrFile {
+                declaration.transformChildrenVoid()
+                processDeclarationList(declaration.declarations)
+                return declaration
+            }
+
+            private fun processDeclarationList(declarations: MutableList<IrDeclaration>) {
+                declarations.transformFlat {
                     when {
                         it !is IrProperty -> null
                         it.backingField?.hasAnnotation(KonanFqNames.volatile) != true -> null
@@ -144,13 +160,15 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         }
                     }
                 }
-                return declaration
             }
 
             override fun visitField(declaration: IrField): IrStatement {
                 if (declaration.type == irBuiltins.booleanType && declaration.hasAnnotation(KonanFqNames.volatile)) {
                     convertedBooleanFields.add(declaration.symbol)
                     declaration.type = irBuiltins.byteType
+                    declaration.initializer?.let {
+                        it.expression = context.createIrBuilder(declaration.symbol).at(it.expression).irBoolToByte(it.expression)
+                    }
                 }
                 return super.visitField(declaration)
             }
@@ -189,7 +207,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 expression.transformChildrenVoid(this)
                 val intrinsicType = tryGetIntrinsicType(expression).takeIf { it in intrinsicMap } ?: return expression
                 builder.at(expression)
-                val reference = expression.getValueArgument(0) as? IrPropertyReference
+                val reference = expression.extensionReceiver as? IrPropertyReference
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = reference.symbol.owner
                 val backingField = property.backingField
@@ -201,10 +219,10 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 }
                 val function = intrinsicMap[intrinsicType]!!(backingField)
                 return builder.irCall(function).apply {
-                    dispatchReceiver = expression.extensionReceiver
-                    putValueArgument(0, expression.getValueArgument(1))
+                    dispatchReceiver = reference.dispatchReceiver
+                    putValueArgument(0, expression.getValueArgument(0))
                     if (intrinsicType == IntrinsicType.COMPARE_AND_SET_FIELD || intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD) {
-                        putValueArgument(1, expression.getValueArgument(2))
+                        putValueArgument(1, expression.getValueArgument(1))
                     }
                 }.let {
                     if (backingField.requiresBooleanConversion()) {

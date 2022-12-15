@@ -23,44 +23,44 @@ interface RefWrapper<T> : Wrapper<T> {
 
 
 class IntWrapper(@Volatile var x : Int) : IncWrapper<Int> {
-    override fun compareAndSwap(expected: Int, new: Int) = compareAndSwapField(IntWrapper::x, expected, new)
-    override fun compareAndSet(expected: Int, new: Int) = compareAndSetField(IntWrapper::x, expected, new)
-    override fun getAndSet(new: Int) = getAndSetField(IntWrapper::x, new)
-    override fun getAndAdd(delta: Int) = getAndAddField(IntWrapper::x, delta)
+    override fun compareAndSwap(expected: Int, new: Int) = this::x.compareAndSwapField(expected, new)
+    override fun compareAndSet(expected: Int, new: Int) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: Int) = this::x.getAndSetField(new)
+    override fun getAndAdd(delta: Int) = this::x.getAndAddField(delta)
 }
 
 class LongWrapper(@Volatile var x : Long) : IncWrapper<Long> {
-    override fun compareAndSwap(expected: Long, new: Long) = compareAndSwapField(LongWrapper::x, expected, new)
-    override fun compareAndSet(expected: Long, new: Long) = compareAndSetField(LongWrapper::x, expected, new)
-    override fun getAndSet(new: Long) = getAndSetField(LongWrapper::x, new)
-    override fun getAndAdd(delta: Long) = getAndAddField(LongWrapper::x, delta)
+    override fun compareAndSwap(expected: Long, new: Long) = this::x.compareAndSwapField(expected, new)
+    override fun compareAndSet(expected: Long, new: Long) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: Long) = this::x.getAndSetField(new)
+    override fun getAndAdd(delta: Long) = this::x.getAndAddField(delta)
 }
 
 class ShortWrapper(@Volatile var x : Short) : IncWrapper<Short> {
-    override fun compareAndSwap(expected: Short, new: Short) = compareAndSwapField(ShortWrapper::x, expected, new)
-    override fun compareAndSet(expected: Short, new: Short) = compareAndSetField(ShortWrapper::x, expected, new)
-    override fun getAndSet(new: Short) = getAndSetField(ShortWrapper::x, new)
-    override fun getAndAdd(delta: Short) = getAndAddField(ShortWrapper::x, delta)
+    override fun compareAndSwap(expected: Short, new: Short) = this::x.compareAndSwapField(expected, new)
+    override fun compareAndSet(expected: Short, new: Short) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: Short) = this::x.getAndSetField(new)
+    override fun getAndAdd(delta: Short) = this::x.getAndAddField(delta)
 }
 
 class ByteWrapper(@Volatile var x : Byte) : IncWrapper<Byte> {
-    override fun compareAndSwap(expected: Byte, new: Byte) = compareAndSwapField(ByteWrapper::x, expected, new)
-    override fun compareAndSet(expected: Byte, new: Byte) = compareAndSetField(ByteWrapper::x, expected, new)
-    override fun getAndSet(new: Byte) = getAndSetField(ByteWrapper::x, new)
-    override fun getAndAdd(delta: Byte) = getAndAddField(ByteWrapper::x, delta)
+    override fun compareAndSwap(expected: Byte, new: Byte) = this::x.compareAndSwapField(expected, new)
+    override fun compareAndSet(expected: Byte, new: Byte) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: Byte) = this::x.getAndSetField(new)
+    override fun getAndAdd(delta: Byte) = this::x.getAndAddField(delta)
 }
 
 
 class StringWrapper(@Volatile var x : String) : RefWrapper<String> {
-    override fun compareAndSwap(expected: String, new: String) = compareAndSwapField(StringWrapper::x, expected, new)
-    override fun compareAndSet(expected: String, new: String) = compareAndSetField(StringWrapper::x, expected, new)
-    override fun getAndSet(new: String) = getAndSetField(StringWrapper::x, new)
+    override fun compareAndSwap(expected: String, new: String) = this::x.compareAndSwapField(expected, new)
+    override fun compareAndSet(expected: String, new: String) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: String) = this::x.getAndSetField(new)
 }
 
 class GenericWrapper<T>(@Volatile var x : T) : RefWrapper<T> {
-    override fun compareAndSwap(expected: T, new: T) = compareAndSwapField(GenericWrapper<T>::x, expected, new)
-    override fun compareAndSet(expected: T, new: T) = compareAndSetField(GenericWrapper<T>::x, expected, new)
-    override fun getAndSet(new: T) = getAndSetField(GenericWrapper<T>::x, new)
+    override fun compareAndSwap(expected: T, new: T) = this::x.compareAndSwapField(expected, new)
+    override fun compareAndSet(expected: T, new: T) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: T) = this::x.getAndSetField(new)
 }
 
 

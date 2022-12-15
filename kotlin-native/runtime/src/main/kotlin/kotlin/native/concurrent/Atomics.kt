@@ -26,7 +26,7 @@ public class AtomicInt(public @Volatile var value: Int) {
      * @param delta the value to add
      * @return the new value
      */
-    public fun addAndGet(delta: Int): Int = getAndAddField(AtomicInt::value, delta) + delta
+    public fun addAndGet(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -35,7 +35,7 @@ public class AtomicInt(public @Volatile var value: Int) {
      * @param new the new value
      * @return the old value
      */
-    public fun compareAndSwap(expected: Int, new: Int): Int = compareAndSwapField(AtomicInt::value, expected, new)
+    public fun compareAndSwap(expected: Int, new: Int): Int = this::value.compareAndSwapField(expected, new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -44,7 +44,7 @@ public class AtomicInt(public @Volatile var value: Int) {
      * @param new the new value
      * @return true if successful
      */
-    public fun compareAndSet(expected: Int, new: Int): Boolean = compareAndSetField(AtomicInt::value, expected, new)
+    public fun compareAndSet(expected: Int, new: Int): Boolean = this::value.compareAndSetField(expected, new)
 
     /**
      * Increments value by one.
@@ -85,7 +85,7 @@ public class AtomicLong(public @Volatile var value: Long = 0)  {
      * @param delta the value to add
      * @return the new value
      */
-    public fun addAndGet(delta: Long): Long = getAndAddField(AtomicLong::value, delta) + delta
+    public fun addAndGet(delta: Long): Long = this::value.getAndAddField(delta) + delta
 
     /**
      * Increments the value by [delta] and returns the new value.
@@ -102,7 +102,7 @@ public class AtomicLong(public @Volatile var value: Long = 0)  {
      * @param new the new value
      * @return the old value
      */
-    public fun compareAndSwap(expected: Long, new: Long): Long = compareAndSwapField(AtomicLong::value, expected, new)
+    public fun compareAndSwap(expected: Long, new: Long): Long = this::value.compareAndSwapField(expected, new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -111,7 +111,7 @@ public class AtomicLong(public @Volatile var value: Long = 0)  {
      * @param new the new value
      * @return true if successful, false if state is unchanged
      */
-    public fun compareAndSet(expected: Long, new: Long): Boolean = compareAndSetField(AtomicLong::value, expected, new)
+    public fun compareAndSet(expected: Long, new: Long): Boolean = this::value.compareAndSetField(expected, new)
 
     /**
      * Increments value by one.
@@ -154,7 +154,7 @@ public class AtomicNativePtr(public @Volatile var value: NativePtr) {
      * @return the old value
      */
     public fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr =
-            compareAndSwapField(AtomicNativePtr::value, expected, new)
+            this::value.compareAndSwapField(expected, new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -164,7 +164,7 @@ public class AtomicNativePtr(public @Volatile var value: NativePtr) {
      * @return true if successful
      */
     public fun compareAndSet(expected: NativePtr, new: NativePtr): Boolean =
-            compareAndSetField(AtomicNativePtr::value, expected, new)
+            this::value.compareAndSetField(expected, new)
 
     /**
      * Returns the string representation of this object.
@@ -390,131 +390,131 @@ public class FreezableAtomicReference<T>(private var value_: T) {
 
 
 /**
- * Compares the value of the field referenced by [fieldRef] from [this] object to [expectedValue], and if they are equal,
+ * Compares the value of the field referenced by [this] to [expectedValue], and if they are equal,
  * atomically replaces it with [newValue].
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
  * Comparison is done by reference or value depending on field representation.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
  * Returns true if the actual field value matched [expectedValue]
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_SET_FIELD)
-internal external fun <T, S> T.compareAndSetField(filedRef: KMutableProperty1<T, S>, expectedValue: S, newValue: S): Boolean
+internal external fun <T> KMutableProperty0<T>.compareAndSetField(expectedValue: T, newValue: T): Boolean
 
 /**
- * Compares the value of the field referenced by [fieldRef] from [this] object to [expectedValue], and if they are equal,
+ * Compares the value of the field referenced by [this] to [expectedValue], and if they are equal,
  * atomically replaces it with [newValue].
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
  * Comparison is done by reference or value depending on field representation.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
  * Returns true if the actual field value before operation.
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_SWAP_FIELD)
-internal external fun <T, S> T.compareAndSwapField(filedRef: KMutableProperty1<T, S>, expectedValue: S, newValue: S): S
+internal external fun <T> KMutableProperty0<T>.compareAndSwapField(expectedValue: T, newValue: T): T
 
 /**
- * Atomically sets value of the field referenced by [fieldRef] from [this] object to [newValue] and returns old field value.
+ * Atomically sets value of the field referenced by [this] to [newValue] and returns old field value.
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_SET_FIELD)
-internal external fun <T, S> T.getAndSetField(filedRef: KMutableProperty1<T, S>, newValue: S): S
+internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
 
 
 /**
- * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
-internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Short>, delta: Short): Short
+internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Short
 
 /**
- * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
-internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Int>, newValue: Int): Int
+internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
 
 /**
- * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
-internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Long>, newValue: Long): Long
+internal external fun KMutableProperty0<Long>.getAndAddField(newValue: Long): Long
 
 /**
- * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
  *
- * For now, it can be used only within the same file, where class [T] is defined.
+ * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
  *
- * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
- * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ * If property referenced by [this] has nontrivial setter it will not be called.
  *
- * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
-internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Byte>, newValue: Byte): Byte
+internal external fun KMutableProperty0<Byte>.getAndAddField(newValue: Byte): Byte
