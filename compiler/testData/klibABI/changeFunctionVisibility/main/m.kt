@@ -56,10 +56,10 @@ private inline fun TestBuilder.success(expectedOutcome: String, noinline block: 
 
 private inline fun TestBuilder.unlinkedSymbol(signature: String, noinline block: () -> Unit) {
     val functionName = signature.removePrefix("/").substringAfterLast(".")
-    expectFailure(skipHashes("Function $functionName can not be called: No function found for symbol $signature"), block)
+    expectFailure(linkage("Function $functionName can not be called: No function found for symbol $signature"), block)
 }
 
 private inline fun TestBuilder.inaccessible(functionName: String, noinline block: () -> Unit) = expectFailure(
-    skipHashes("Function $functionName can not be called: Private function $functionName declared in module <lib1> can not be accessed from module <main>"),
+    linkage("Function $functionName can not be called: Private function $functionName declared in module <lib1> can not be accessed from module <main>"),
     block
 )

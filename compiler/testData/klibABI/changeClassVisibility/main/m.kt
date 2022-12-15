@@ -76,7 +76,7 @@ fun box() = abiTest {
     success("PublicTopLevelClassInheritor") { PublicTopLevelClassInheritor().toString() }
     // TODO: KT-54469, creating instance of PublicToInternalTopLevelClassInheritor should fail.
     success("PublicToInternalTopLevelClassInheritor") { PublicToInternalTopLevelClassInheritor().toString() }
-    expectFailure(skipHashes("Constructor PublicToPrivateTopLevelClassInheritor.<init> can not be called: Constructor PublicToPrivateTopLevelClassInheritor.<init> uses unlinked class symbol /PublicToPrivateTopLevelClass (through class PublicToPrivateTopLevelClassInheritor)")) { PublicToPrivateTopLevelClassInheritor() }
+    expectFailure(linkage("Constructor PublicToPrivateTopLevelClassInheritor.<init> can not be called: Constructor PublicToPrivateTopLevelClassInheritor.<init> uses unlinked class symbol /PublicToPrivateTopLevelClass (through class PublicToPrivateTopLevelClassInheritor)")) { PublicToPrivateTopLevelClassInheritor() }
 }
 
 // Shortcuts:
@@ -95,9 +95,9 @@ private inline fun TestBuilder.unlinkedSymbolInReturnType(signature: String, noi
 
 private inline fun TestBuilder.unlinkedConstructorSymbol(signature: String, noinline block: () -> Unit) {
     val constructorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
-    expectFailure(skipHashes("Constructor $constructorName can not be called: No constructor found for symbol $signature"), block)
+    expectFailure(linkage("Constructor $constructorName can not be called: No constructor found for symbol $signature"), block)
 }
 
 private inline fun TestBuilder.unlinkedSymbol(signature: String, functionName: String, noinline block: () -> Unit) {
-    expectFailure(skipHashes("Function $functionName can not be called: Function $functionName uses unlinked class symbol $signature"), block)
+    expectFailure(linkage("Function $functionName can not be called: Function $functionName uses unlinked class symbol $signature"), block)
 }
