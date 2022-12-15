@@ -22,6 +22,10 @@ private fun WasmOp.pureStacklessInstruction() = when (this) {
     else -> false
 }
 
+/**
+ * Read comments in [WasmExpressionBuilder]
+ * TODO merge into [WasmExpressionBuilder]
+ */
 class WasmIrExpressionBuilder(
     val expression: MutableList<WasmInstr>
 ) : WasmExpressionBuilder() {

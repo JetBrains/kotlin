@@ -7,6 +7,17 @@ package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+/**
+ * Class for building a wasm instructions list.
+ *
+ * Note in most of the methods, location is a required parameter, and it's expected to be passed explicitly.
+ * The goals are:
+ * - Avoid missing a location
+ * - Avoid providing a wrong location
+ *   - It's hard to achieve fully, but:
+ *     - at least, an API user has to think about what to pass a location
+ *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
+ */
 abstract class WasmExpressionBuilder {
     abstract fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate)
 
