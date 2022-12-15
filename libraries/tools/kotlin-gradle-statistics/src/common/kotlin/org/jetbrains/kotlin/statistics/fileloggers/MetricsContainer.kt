@@ -104,31 +104,34 @@ class MetricsContainer : IStatisticsValuesConsumer {
     private fun getProjectHash(perProject: Boolean, subprojectName: String?) =
         if (subprojectName == null) null else processProjectName(subprojectName, perProject)
 
-    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
+    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean {
         val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
             val metricContainer = booleanMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
                 .also { booleanMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-            metricContainer.addValue(metric.anonymization.anonymize(value))
+            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
         }
+        return true
     }
 
-    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
+    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?): Boolean {
         val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
             val metricContainer = numericalMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
                 .also { numericalMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-            metricContainer.addValue(metric.anonymization.anonymize(value))
+            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
         }
+        return true
     }
 
-    override fun report(metric: StringMetrics, value: String, subprojectName: String?) {
+    override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?): Boolean {
         val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
             val metricContainer = stringMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
                 .also { stringMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-            metricContainer.addValue(metric.anonymization.anonymize(value))
+            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
         }
+        return true
     }
 
     fun flush(trackingFile: IRecordLogger?) {
