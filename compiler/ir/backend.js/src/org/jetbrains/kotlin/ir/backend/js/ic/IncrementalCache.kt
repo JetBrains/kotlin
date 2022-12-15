@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 
 internal class IncrementalCache(private val library: KotlinLibraryHeader, val cacheDir: File) {
@@ -33,7 +32,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     private val cacheHeaderFromDisk by lazy {
         cacheHeaderFile.useCodedInputIfExists {
-            CacheHeader.fromProtoStream(this, library.libraryFingerprint)
+            CacheHeader.fromProtoStream(this)
         }
     }
 
@@ -41,8 +40,8 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     private class CacheHeader(
         val libraryFile: KotlinLibraryFile,
-        private val libraryFingerprint: ICHash?,
-        val sourceFileFingerprints: Map<KotlinSourceFile, ICHash>?
+        val libraryFingerprint: ICHash?,
+        val sourceFileFingerprints: Map<KotlinSourceFile, ICHash>
     ) {
         constructor(library: KotlinLibraryHeader) : this(library.libraryFile, library.libraryFingerprint, library.sourceFileFingerprints)
 
@@ -51,25 +50,21 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
             libraryFingerprint?.toProtoStream(out) ?: notFoundIcError("library fingerprint", libraryFile)
 
-            sourceFileFingerprints?.let { fingerprints ->
-                out.writeInt32NoTag(fingerprints.size)
-                for ((srcFile, fingerprint) in fingerprints) {
-                    srcFile.toProtoStream(out)
-                    fingerprint.toProtoStream(out)
-                }
-            } ?: notFoundIcError("source file fingerprints", libraryFile)
+            out.writeInt32NoTag(sourceFileFingerprints.size)
+            for ((srcFile, fingerprint) in sourceFileFingerprints) {
+                srcFile.toProtoStream(out)
+                fingerprint.toProtoStream(out)
+            }
         }
 
         companion object {
-            fun fromProtoStream(input: CodedInputStream, newLibraryFingerprint: ICHash?): CacheHeader {
+            fun fromProtoStream(input: CodedInputStream): CacheHeader {
                 val libraryFile = KotlinLibraryFile.fromProtoStream(input)
                 val oldLibraryFingerprint = ICHash.fromProtoStream(input)
 
-                val sourceFileFingerprints = (oldLibraryFingerprint != newLibraryFingerprint).ifTrue {
-                    buildMapUntil(input.readInt32()) {
-                        val file = KotlinSourceFile.fromProtoStream(input)
-                        put(file, ICHash.fromProtoStream(input))
-                    }
+                val sourceFileFingerprints = buildMapUntil(input.readInt32()) {
+                    val file = KotlinSourceFile.fromProtoStream(input)
+                    put(file, ICHash.fromProtoStream(input))
                 }
                 return CacheHeader(libraryFile, oldLibraryFingerprint, sourceFileFingerprints)
             }
@@ -84,8 +79,12 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
     private fun KotlinSourceFile.getCacheFile(suffix: String) = File(cacheDir, "${File(path).name}.${path.stringHashForIC()}.$suffix")
 
     fun buildIncrementalCacheArtifact(signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>): IncrementalCacheArtifact {
-        if (cacheHeaderShouldBeUpdated) {
-            cacheHeaderFile.useCodedOutput { CacheHeader(library).toProtoStream(this) }
+        val klibSrcFiles = if (cacheHeaderShouldBeUpdated) {
+            val newCacheHeader = CacheHeader(library)
+            cacheHeaderFile.useCodedOutput { newCacheHeader.toProtoStream(this) }
+            newCacheHeader.sourceFileFingerprints.keys
+        } else {
+            cacheHeaderFromDisk?.sourceFileFingerprints?.keys ?: notFoundIcError("source file fingerprints", library.libraryFile)
         }
 
         for (removedFile in removedSrcFiles) {
@@ -93,21 +92,24 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
             removedFile.getCacheFile(METADATA_SUFFIX).delete()
         }
 
-        val fileArtifacts = library.sourceFileFingerprints.keys.map { srcFile ->
+        val fileArtifacts = klibSrcFiles.map { srcFile ->
             commitSourceFileMetadata(srcFile.getCacheFile(BINARY_AST_SUFFIX), srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
         }
         return IncrementalCacheArtifact(cacheDir, removedSrcFiles.isNotEmpty(), fileArtifacts, library.jsOutputName)
     }
 
     data class ModifiedFiles(
-        val addedFiles: List<KotlinSourceFile> = emptyList(),
+        val addedFiles: Collection<KotlinSourceFile> = emptyList(),
         val removedFiles: Map<KotlinSourceFile, KotlinSourceFileMetadata> = emptyMap(),
         val modifiedFiles: Map<KotlinSourceFile, KotlinSourceFileMetadata> = emptyMap(),
-        val nonModifiedFiles: List<KotlinSourceFile> = emptyList()
+        val nonModifiedFiles: Collection<KotlinSourceFile> = emptyList()
     )
 
     fun collectModifiedFiles(): ModifiedFiles {
-        val cachedFingerprints = cacheHeaderFromDisk?.let { it.sourceFileFingerprints ?: return ModifiedFiles() } ?: emptyMap()
+        val cachedFingerprints = cacheHeaderFromDisk?.sourceFileFingerprints ?: emptyMap()
+        if (cacheHeaderFromDisk?.libraryFingerprint == library.libraryFingerprint) {
+            return ModifiedFiles(emptyList(), emptyMap(), emptyMap(), cachedFingerprints.keys)
+        }
 
         val addedFiles = mutableListOf<KotlinSourceFile>()
         val modifiedFiles = hashMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
