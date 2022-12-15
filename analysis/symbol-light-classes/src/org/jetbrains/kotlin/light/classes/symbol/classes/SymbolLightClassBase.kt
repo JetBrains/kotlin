@@ -52,6 +52,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
         myClass = this@SymbolLightClassBase,
         dependencies = listOf(manager.project.createProjectWideOutOfBlockModificationTracker()),
         lazyCreator = SymbolLightClassesLazyCreator(project),
+        generateEnumMethods = false,
     )
 
     override fun getFields(): Array<PsiField> = myInnersCache.fields

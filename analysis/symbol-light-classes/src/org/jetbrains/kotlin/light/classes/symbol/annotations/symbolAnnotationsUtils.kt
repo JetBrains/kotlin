@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
@@ -324,6 +326,10 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
     containingClass: SymbolLightClassBase,
     strictUseSite: Boolean = true,
 ) {
+    if (containingClass.isEnum && this is KtFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
+        builder.addReference("java.lang.IllegalArgumentException")
+    }
+
     val annoApp = findAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME, annotationUseSiteTarget, strictUseSite) ?: return
 
     fun handleAnnotationValue(annotationValue: KtAnnotationValue) = when (annotationValue) {

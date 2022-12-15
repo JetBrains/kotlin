@@ -31,6 +31,7 @@ class KotlinClassInnerStuffCache(
     private val myClass: KtExtensibleLightClass,
     private val dependencies: List<Any>,
     private val lazyCreator: LazyCreator,
+    private val generateEnumMethods: Boolean = true,
 ) {
     abstract class LazyCreator {
         abstract fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T>
@@ -55,13 +56,14 @@ class KotlinClassInnerStuffCache(
     private val methodsCache = cache {
         val own = myClass.ownMethods
         var ext = collectAugments(myClass, PsiMethod::class.java)
-        if (myClass.isEnum) {
+        if (generateEnumMethods && myClass.isEnum) {
             ext = ArrayList<PsiMethod>(ext.size + 2).also {
                 it += ext
                 it.addIfNotNull(getValuesMethod())
                 it.addIfNotNull(getValueOfMethod())
             }
         }
+
         ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY)
     }
 

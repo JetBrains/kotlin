@@ -8,12 +8,6 @@ public enum Foo /* Foo*/ {
 
   private final int x;
 
-  @org.jetbrains.annotations.NotNull()
-  public static Foo valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException;//  valueOf(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public static Foo[] values();//  values()
-
   public final int getX();//  getX()
 
 }

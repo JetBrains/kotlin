@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
-import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
@@ -122,21 +120,18 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
             val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
 
-            val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
-                filterNot { function ->
-                    function is KtFunctionSymbol && (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
+            val visibleDeclarations = declaredMemberScope.getCallableSymbols()
+                .applyIf(isObject) {
+                    filterNot {
+                        it is KtKotlinPropertySymbol && it.isConst
+                    }
+                }.applyIf(classOrObjectSymbol.isData) {
+                    // Technically, synthetic members of `data` class, such as `componentN` or `copy`, are visible.
+                    // They're just needed to be added later (to be in a backward-compatible order of members).
+                    filterNot { function ->
+                        function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+                    }
                 }
-            }.applyIf(isObject) {
-                filterNot {
-                    it is KtKotlinPropertySymbol && it.isConst
-                }
-            }.applyIf(classOrObjectSymbol.isData) {
-                // Technically, synthetic members of `data` class, such as `componentN` or `copy`, are visible.
-                // They're just needed to be added later (to be in a backward-compatible order of members).
-                filterNot { function ->
-                    function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
-                }
-            }
 
             val suppressStatic = isCompanionObject
             createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)

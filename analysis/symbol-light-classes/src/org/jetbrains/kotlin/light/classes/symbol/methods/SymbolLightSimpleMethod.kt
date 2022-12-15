@@ -107,7 +107,7 @@ internal class SymbolLightSimpleMethod(
             val isStatic = if (suppressStatic) {
                 false
             } else {
-                isTopLevel || withFunctionSymbol { it.hasJvmStaticAnnotation() }
+                isTopLevel || withFunctionSymbol { it.isStatic || it.hasJvmStaticAnnotation() }
             }
 
             mapOf(modifier to isStatic)
