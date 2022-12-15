@@ -57,7 +57,7 @@ public final class FqName {
 
     @NotNull
     public String asString() {
-        return fqName.asString();
+        return fqNameStr;
     }
 
     @NotNull
