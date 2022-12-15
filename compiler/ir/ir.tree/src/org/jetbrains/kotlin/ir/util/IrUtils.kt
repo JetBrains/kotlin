@@ -1391,27 +1391,6 @@ val IrFunction.isValueClassTypedEquals: Boolean
                 && (parentClass.isValue)
     }
 
-// This code is partially duplicated in jvm FunctionReferenceLowering::adapteeCall
-// The difference is jvm version doesn't support ReturnableBlock, but returns call node instead of called function.
-fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
-    if (origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) return null
-    // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
-    // applied to a either a call or ReturnableBlock produced from that call inlining.
-    // That call's target is the original function which we need to get.
-    fun unknownStructure(): Nothing = throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${dump()}")
-    val call = when (val statement = body?.statements?.singleOrNull() ?: unknownStructure()) {
-        is IrTypeOperatorCall -> {
-            if (statement.operator != IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) unknownStructure()
-            statement.argument
-        }
-        is IrReturn -> statement.value
-        else -> statement
-    }
-    if (call is IrReturnableBlock) return (call.inlineFunctionSymbol ?: unknownStructure()).owner
-    if (call !is IrFunctionAccessExpression) { unknownStructure() }
-    return call.symbol.owner
-}
-
 /**
  * The method is used to calculate the previous offset from the current one to prevent situations when it can calculate
  * [UNDEFINED_OFFSET] from 0 offset and -2 offset from the [UNDEFINED OFFSET]

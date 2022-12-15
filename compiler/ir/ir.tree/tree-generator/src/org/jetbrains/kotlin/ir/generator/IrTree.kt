@@ -645,7 +645,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(returnTarget)
 
         +symbol(returnableBlockSymbolType)
-        +field("inlineFunctionSymbol", functionSymbolType, nullable = true)
     }
     val inlinedFunctionBlock: ElementConfig by element(Expression) {
         parent(block)

@@ -60,7 +60,6 @@ class IrReturnableBlockImpl(
     override var type: IrType,
     override val symbol: IrReturnableBlockSymbol,
     override var origin: IrStatementOrigin? = null,
-    override var inlineFunctionSymbol: IrFunctionSymbol? = null
 ) : IrReturnableBlock() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
@@ -73,8 +72,7 @@ class IrReturnableBlockImpl(
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        inlineFunctionSymbol: IrFunctionSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, origin, inlineFunctionSymbol) {
+    ) : this(startOffset, endOffset, type, symbol, origin) {
         this.statements.addAll(statements)
     }
 
