@@ -132,11 +132,11 @@ internal class LazyModifiersBox(
             ktModule: KtModule,
             declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
         ): PersistentMap<String, Boolean> {
-            val visibility = analyzeForLightClasses(ktModule) {
+            val modality = analyzeForLightClasses(ktModule) {
                 declarationPointer.restoreSymbolOrThrowIfDisposed().computeSimpleModality()
             }
 
-            return MODALITY_MODIFIERS_MAP.with(visibility)
+            return MODALITY_MODIFIERS_MAP.with(modality)
         }
     }
 }
