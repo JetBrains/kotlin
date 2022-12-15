@@ -444,7 +444,8 @@ class FunctionInlining(
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,
-            val argumentExpression: IrExpression
+            val argumentExpression: IrExpression,
+            val isDefaultArg: Boolean = false
         ) {
 
             val isInlinableLambdaArgument: Boolean
@@ -541,7 +542,8 @@ class FunctionInlining(
                     parameter.defaultValue != null -> {  // There is no argument - try default value.
                         parametersWithDefaultToArgument += ParameterToArgument(
                             parameter = parameter,
-                            argumentExpression = parameter.defaultValue!!.expression
+                            argumentExpression = parameter.defaultValue!!.expression,
+                            isDefaultArg = true
                         )
                     }
 
@@ -572,9 +574,9 @@ class FunctionInlining(
 
         //-------------------------------------------------------------------------//
 
-        private fun evaluateArguments(reference: IrCallableReference<*>): List<IrStatement> {
+        private fun evaluateArguments(reference: IrCallableReference<*>): List<IrVariable> {
             val arguments = reference.getArgumentsWithIr().map { ParameterToArgument(it.first, it.second) }
-            val evaluationStatements = mutableListOf<IrStatement>()
+            val evaluationStatements = mutableListOf<IrVariable>()
             val substitutor = ParameterSubstitutor()
             val referenced = when (reference) {
                 is IrFunctionReference -> reference.symbol.owner
@@ -613,7 +615,8 @@ class FunctionInlining(
 
         private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
             val arguments = buildParameterToArgument(callSite, callee)
-            val evaluationStatements = mutableListOf<IrStatement>()
+            val evaluationStatements = mutableListOf<IrVariable>()
+            val evaluationStatementsFromDefault = mutableListOf<IrVariable>()
             val substitutor = ParameterSubstitutor()
             arguments.forEach { argument ->
                 /*
@@ -659,11 +662,28 @@ class FunctionInlining(
                             isMutable = false
                         )
 
-                    evaluationStatements.add(newVariable)
+                    if (argument.isDefaultArg) evaluationStatementsFromDefault.add(newVariable) else evaluationStatements.add(newVariable)
                     substituteMap[argument.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
                 }
             }
-            return evaluationStatements
+
+            // Next two composite blocks are used just as containers for two types of variables.
+            // First one store temp variables that represent non default arguments of inline call and second one store defaults.
+            // This is needed because these two groups of variables need slightly different processing on (JVM) backend.
+            val blockForNewStatements = IrCompositeImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType,
+                InlinedFunctionArguments, statements = evaluationStatements
+            )
+
+            val blockForNewStatementsFromDefault = IrCompositeImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType,
+                InlinedFunctionDefaultArguments, statements = evaluationStatementsFromDefault
+            )
+
+            return listOfNotNull(
+                blockForNewStatements.takeIf { evaluationStatements.isNotEmpty() },
+                blockForNewStatementsFromDefault.takeIf { evaluationStatementsFromDefault.isNotEmpty() }
+            )
         }
     }
 
@@ -687,6 +707,9 @@ class FunctionInlining(
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
     }
 }
+
+object InlinedFunctionArguments : IrStatementOrigin
+object InlinedFunctionDefaultArguments : IrStatementOrigin
 
 class InlinerExpressionLocationHint(val inlineAtSymbol: IrSymbol) : IrStatementOrigin {
     override fun toString(): String =
