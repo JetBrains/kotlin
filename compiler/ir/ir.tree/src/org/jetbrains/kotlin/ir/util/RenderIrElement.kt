@@ -357,8 +357,14 @@ class RenderIrElementVisitor(normalizeNames: Boolean = false, private val verbos
     override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
         "SPREAD_ELEMENT"
 
-    override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-        "${if (expression is IrReturnableBlock) "RETURNABLE_" else ""}BLOCK type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitBlock(expression: IrBlock, data: Nothing?): String {
+        val prefix = when (expression) {
+            is IrReturnableBlock -> "RETURNABLE_"
+            is IrInlinedFunctionBlock -> "INLINED_"
+            else -> ""
+        }
+        return "${prefix}BLOCK type=${expression.type.render()} origin=${expression.origin}"
+    }
 
     override fun visitComposite(expression: IrComposite, data: Nothing?): String =
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"

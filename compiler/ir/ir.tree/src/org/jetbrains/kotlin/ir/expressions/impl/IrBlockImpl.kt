@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -81,5 +80,26 @@ class IrReturnableBlockImpl(
 
     init {
         symbol.bind(this)
+    }
+}
+
+class IrInlinedFunctionBlockImpl(
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var type: IrType,
+    override var inlineCall: IrFunctionAccessExpression,
+    override var inlinedElement: IrElement,
+    override var origin: IrStatementOrigin? = null,
+) : IrInlinedFunctionBlock() {
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        inlineCall: IrFunctionAccessExpression,
+        inlinedElement: IrElement,
+        origin: IrStatementOrigin?,
+        statements: List<IrStatement>,
+    ) : this(startOffset, endOffset, type, inlineCall, inlinedElement, origin) {
+        this.statements.addAll(statements)
     }
 }

@@ -643,6 +643,12 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(returnableBlockSymbolType)
         +field("inlineFunctionSymbol", functionSymbolType, nullable = true)
     }
+    val inlinedFunctionBlock: ElementConfig by element(Expression) {
+        parent(block)
+
+        +field("inlineCall", functionAccessExpression)
+        +field("inlinedElement", rootElement)
+    }
     val syntheticBody: ElementConfig by element(Expression) {
         visitorParent = body
         visitorParam = "body"

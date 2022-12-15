@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -461,6 +459,14 @@ open class DeepCopyIrTreeWithSymbols(
                 mapStatementOrigin(expression.origin),
                 expression.statements.map { it.transform() },
                 expression.inlineFunctionSymbol
+            ).copyAttributes(expression)
+        else if (expression is IrInlinedFunctionBlock)
+            IrInlinedFunctionBlockImpl(
+                expression.startOffset, expression.endOffset,
+                expression.type.remapType(),
+                expression.inlineCall, expression.inlinedElement,
+                mapStatementOrigin(expression.origin),
+                statements = expression.statements.map { it.transform() },
             ).copyAttributes(expression)
         else
             IrBlockImpl(
