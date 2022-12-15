@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.statistics.metrics
 import java.util.*
 
 interface IMetricContainer<T> {
-    fun addValue(t: T)
+    fun addValue(t: T, weight: Long? = null)
 
     fun toStringRepresentation(): String
 
@@ -24,7 +24,7 @@ interface IMetricContainerFactory<T> {
 open class OverrideMetricContainer<T>() : IMetricContainer<T> {
     internal var myValue: T? = null
 
-    override fun addValue(t: T) {
+    override fun addValue(t: T, weight: Long?) {
         myValue = t
     }
 
@@ -44,7 +44,7 @@ class OverrideVersionMetricContainer() : OverrideMetricContainer<String>() {
         myValue = v
     }
 
-    override fun addValue(t: String) {
+    override fun addValue(t: String, weight: Long?) {
         if (myValue == null || myValue == "0.0.0") {
             myValue = t
         }
@@ -56,22 +56,23 @@ class SumMetricContainer() : OverrideMetricContainer<Long>() {
         myValue = v
     }
 
-    override fun addValue(t: Long) {
+    override fun addValue(t: Long, weight: Long?) {
         myValue = (myValue ?: 0) + t
     }
 }
 
 class AverageMetricContainer() : IMetricContainer<Long> {
-    private var count = 0
+    private var count = 0L
     private var myValue: Long? = null
 
     constructor(v: Long) : this() {
         myValue = v
     }
 
-    override fun addValue(t: Long) {
-        myValue = (myValue ?: 0) + t
-        count++
+    override fun addValue(t: Long, weight: Long?) {
+        val w = weight ?: 1
+        myValue = (myValue ?: 0) + t * w
+        count += w
     }
 
     override fun toStringRepresentation(): String {
@@ -88,7 +89,7 @@ class OrMetricContainer() : OverrideMetricContainer<Boolean>() {
         myValue = v
     }
 
-    override fun addValue(t: Boolean) {
+    override fun addValue(t: Boolean, weight: Long?) {
         myValue = (myValue ?: false) || t
     }
 }
@@ -104,7 +105,7 @@ class ConcatMetricContainer() : IMetricContainer<String> {
         myValues.addAll(values)
     }
 
-    override fun addValue(t: String) {
+    override fun addValue(t: String, weight: Long?) {
         myValues.add(t.replace(SEPARATOR, ","))
     }
 
