@@ -208,4 +208,18 @@ class BuildSessionLoggerTest {
             }
         }
     }
+
+    @Test
+    fun testWeight() {
+        val logger = BuildSessionLogger(rootFolder)
+        logger.startBuildSession(1, 1)
+
+        logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 10, null, 9)
+        logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 100, null, 1)
+
+        logger.finishBuildSession("Build", null)
+        MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
+            assertEquals(19L, it.getMetric(NumericalMetrics.ANALYSIS_LINES_PER_SECOND)?.getValue())
+        }
+    }
 }
