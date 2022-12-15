@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.name;
 
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +42,7 @@ public final class ClassId {
 
     private final String packageFqNameStr;
     private final String relativeClassNameStr;
+    private final int cachedHashCode;
 
     public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
@@ -52,6 +52,10 @@ public final class ClassId {
         this.relativeClassName = relativeClassName;
         relativeClassNameStr = this.relativeClassName.asString();
         this.local = local;
+        int result = packageFqNameStr.hashCode();
+        result = 31 * result + relativeClassNameStr.hashCode();
+        result = 31 * result + Boolean.valueOf(local).hashCode();
+        cachedHashCode = result;
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
@@ -167,10 +171,7 @@ public final class ClassId {
 
     @Override
     public int hashCode() {
-        int result = packageFqNameStr.hashCode();
-        result = 31 * result + relativeClassNameStr.hashCode();
-        result = 31 * result + Boolean.valueOf(local).hashCode();
-        return result;
+        return cachedHashCode;
     }
 
     @Override
