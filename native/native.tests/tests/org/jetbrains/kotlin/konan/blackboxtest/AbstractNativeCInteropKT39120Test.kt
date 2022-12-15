@@ -10,6 +10,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
@@ -35,7 +36,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         val includeFrameworkArgs = listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
 
         val test1Case: TestCase = generateCInteropTestCaseWithSingleDef(def1File, includeFrameworkArgs)
-        val klib1: KLIB = test1Case.cinteropToLibrary().resultingArtifact
+        val klib1: KLIB = test1Case.cinteropToLibrary().assertSuccess().resultingArtifact
         val contents1 = klib1.getContents(kotlinNativeClassLoader.classLoader)
 
         val expectedFiltered1Output = golden1File.readText()
@@ -44,7 +45,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
 
         val cinterop2ExtraArgs = listOf("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
         val test2Case: TestCase = generateCInteropTestCaseWithSingleDef(def2File, includeFrameworkArgs + cinterop2ExtraArgs)
-        val klib2: KLIB = test2Case.cinteropToLibrary().resultingArtifact
+        val klib2: KLIB = test2Case.cinteropToLibrary().assertSuccess().resultingArtifact
         val contents2 = klib2.getContents(kotlinNativeClassLoader.classLoader)
 
         val expectedFiltered2Output = golden2File.readText()

@@ -17,6 +17,7 @@ import java.io.PrintStream
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 internal data class CompilationToolCallResult(
@@ -73,6 +74,7 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
     return CompilationToolCallResult(exitCode, compilerOutput, messageCollector.hasErrors(), duration)
 }
 
+@OptIn(ExperimentalTime::class)
 internal fun invokeCInterop(
     kotlinNativeClassLoader: ClassLoader,
     targets: KotlinNativeTargets,
@@ -90,30 +92,38 @@ internal fun invokeCInterop(
     val interopClass = Class.forName("org.jetbrains.kotlin.native.interop.gen.jvm.Interop", true, kotlinNativeClassLoader)
     val entryPoint = interopClass.declaredMethods.single { it.name == "interopViaReflection" }
 
-    val possibleSubsequentCompilerInvocationArgs: Array<String>?
-
-    @OptIn(ExperimentalTime::class)
-    val duration = measureTime {
-        @Suppress("UNCHECKED_CAST")
-        possibleSubsequentCompilerInvocationArgs = entryPoint.invoke(
+    val (cinteropResult, duration) = measureTimedValue {
+        entryPoint.invoke(
             interopClass.getDeclaredConstructor().newInstance(),
             "native",
             args + extraArgs,
             false,
             generatedDir.absolutePath, nativesDir.absolutePath, manifest.path, cstubsName // args for InternalInteropOptions()
-        ) as? Array<String>?
-    }
-    // In currently tested usecases, cinterop must return no args for the subsequent compiler call
-    return if (possibleSubsequentCompilerInvocationArgs == null) {
-        // TODO There is no technical ability to extract `toolOutput` and `toolOutputHasErrors`
-        //      from C-interop tool invocation at the moment. This should be fixed in the future.
-        CompilationToolCallResult(exitCode = ExitCode.OK, toolOutput = "", toolOutputHasErrors = false, duration)
-    } else {
-        CompilationToolCallResult(
-            exitCode = ExitCode.COMPILATION_ERROR,
-            toolOutput = possibleSubsequentCompilerInvocationArgs.joinToString(" "),
-            toolOutputHasErrors = true,
-            duration
         )
+    }
+    return when {
+        // cinterop has failed with a known error that was returned as a result.
+        cinteropResult is Exception -> {
+            CompilationToolCallResult(
+                exitCode = ExitCode.COMPILATION_ERROR,
+                toolOutput = cinteropResult.message ?: "",
+                toolOutputHasErrors = true,
+                duration
+            )
+        }
+        // In currently tested usecases, cinterop must return no args for the subsequent compiler call
+        cinteropResult is Array<*> -> {
+            CompilationToolCallResult(
+                exitCode = ExitCode.COMPILATION_ERROR,
+                toolOutput = cinteropResult.joinToString(" "),
+                toolOutputHasErrors = true,
+                duration
+            )
+        }
+        else -> {
+            // TODO There is no technical ability to extract `toolOutput` and `toolOutputHasErrors`
+            //      from C-interop tool invocation at the moment. This should be fixed in the future.
+            CompilationToolCallResult(exitCode = ExitCode.OK, toolOutput = "", toolOutputHasErrors = false, duration)
+        }
     }
 }

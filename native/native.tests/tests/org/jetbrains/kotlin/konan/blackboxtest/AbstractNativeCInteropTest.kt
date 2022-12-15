@@ -10,12 +10,15 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.CInteropHints
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -40,8 +43,6 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             this is AbstractNativeCInteropFModulesTest &&
                     targets.testTarget.family == Family.ANDROID
         )
-        Assumptions.assumeFalse(!fmodules && testPath.endsWith("FModules/"))
-
         val testPathFull = getAbsoluteFile(testPath)
         val testDataDir = testPathFull.parentFile.parentFile
         val includeFolder = testDataDir.resolve("include")
@@ -65,11 +66,19 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
 
         val testCase: TestCase = generateCInteropTestCaseWithSingleDef(defFile, includeArgs + fmodulesArgs)
         val testCompilationResult = testCase.cinteropToLibrary()
-        val klibContents = testCompilationResult.resultingArtifact.getContents(kotlinNativeClassLoader.classLoader)
-
-        val expectedContents = goldenFile.readText()
-        assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContents)) {
-            "Test failed. CInterop compilation result was: $testCompilationResult"
+        // If we are running fmodules-specific test without -fmodules then we want to be sure that cinterop fails the way we want it to.
+        if (!fmodules && testPath.endsWith("FModules/")) {
+            val loggedData = (testCompilationResult as TestCompilationResult.CompilationToolFailure).loggedData
+            val prettyMessage = CInteropHints.fmodulesHint
+            assertTrue(loggedData.toString().contains(prettyMessage)) {
+                "Test failed. CInterop compilation result was: $testCompilationResult"
+            }
+        } else {
+            val klibContents = testCompilationResult.assertSuccess().resultingArtifact.getContents(kotlinNativeClassLoader.classLoader)
+            val expectedContents = goldenFile.readText()
+            assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContents)) {
+                "Test failed. CInterop compilation result was: $testCompilationResult"
+            }
         }
     }
 
