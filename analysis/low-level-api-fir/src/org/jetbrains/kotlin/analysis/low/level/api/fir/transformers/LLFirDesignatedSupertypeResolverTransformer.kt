@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.type
 
 /**
- * Transform designation into SUPER_TYPES phase. Affects only for designation, target declaration, it's children and dependents
+ * Transform designation into SUPER_TYPES phase. Affects only the designation, target declaration, its children, and dependents.
  */
 internal class LLFirDesignatedSupertypeResolverTransformer(
     private val designation: FirDesignationWithFile,
@@ -70,41 +73,67 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         }
     }
 
-    private fun collect(designation: FirDesignationWithFile): Collection<FirDesignationWithFile> {
-        val visited = mutableMapOf<FirElementWithResolvePhase, FirDesignationWithFile>()
-        val toVisit = mutableListOf<FirDesignationWithFile>()
+    private inner class DesignationCollector {
+        private val visited = mutableMapOf<FirElementWithResolvePhase, FirDesignationWithFile>()
+        private val toVisit = mutableListOf<FirDesignationWithFile>()
 
-        toVisit.add(designation)
-        while (toVisit.isNotEmpty()) {
-            for (nowVisit in toVisit) {
-                checkCanceled()
-                val resolver = DesignatedFirSupertypeResolverVisitor(nowVisit)
-                nowVisit.firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-                lockProvider.runCustomResolveUnderLock(nowVisit.firFile) {
-                    nowVisit.firFile.accept(resolver, null)
+        fun collect(designation: FirDesignationWithFile): Collection<FirDesignationWithFile> {
+            toVisit.add(designation)
+            while (toVisit.isNotEmpty()) {
+                toVisit.forEach(::visitDesignation)
+                toVisit.clear()
+
+                // We want to apply resolved supertypes to as many designations as possible. So we crawl the resolved supertypes of visited
+                // designations to find more designations to collect.
+                for (supertypeComputationStatus in supertypeComputationSession.supertypeStatusMap.values) {
+                    if (supertypeComputationStatus !is SupertypeComputationStatus.Computed) continue
+                    supertypeComputationStatus.supertypeRefs.forEach { crawlSupertype(it.type) }
                 }
-                resolver.declarationTransformer.ensureDesignationPassed()
-                visited[nowVisit.target] = nowVisit
             }
-            toVisit.clear()
+            return visited.values
+        }
 
-            for (value in supertypeComputationSession.supertypeStatusMap.values) {
-                if (value !is SupertypeComputationStatus.Computed) continue
-                for (reference in value.supertypeRefs) {
-                    val classLikeDeclaration = reference.type.toSymbol(session)?.fir
-                    if (classLikeDeclaration !is FirClassLikeDeclaration) continue
-                    if (classLikeDeclaration is FirJavaClass) continue
-                    if (visited.containsKey(classLikeDeclaration)) continue
-                    val cache = classLikeDeclaration.llFirResolvableSession?.moduleComponents?.cache ?: continue
-                    val containingFile = cache.getContainerFirFile(classLikeDeclaration) ?: continue
-                    toVisit.add(classLikeDeclaration.collectDesignation(containingFile))
-                }
+        private fun visitDesignation(designation: FirDesignationWithFile) {
+            checkCanceled()
+            val resolver = DesignatedFirSupertypeResolverVisitor(designation)
+            designation.firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
+            lockProvider.runCustomResolveUnderLock(designation.firFile) {
+                designation.firFile.accept(resolver, null)
+            }
+            resolver.declarationTransformer.ensureDesignationPassed()
+            visited[designation.target] = designation
+        }
+
+        private fun crawlSupertype(type: ConeKotlinType) {
+            val classLikeDeclaration = type.toSymbol(session)?.fir
+            if (classLikeDeclaration !is FirClassLikeDeclaration) return
+            if (classLikeDeclaration is FirJavaClass) return
+            if (visited.containsKey(classLikeDeclaration)) return
+
+            val containingFile =
+                classLikeDeclaration.llFirResolvableSession?.moduleComponents?.cache?.getContainerFirFile(classLikeDeclaration)
+            if (containingFile != null) {
+                toVisit.add(classLikeDeclaration.collectDesignation(containingFile))
+            } else if (type is ConeClassLikeType) {
+                // The `classLikeDeclaration` is not associated with a file and thus there is no need to resolve it, but it may still point
+                // to declarations via its type arguments which need to be collected and have a containing file. For example, a `Function1`
+                // could point to a type alias.
+                type.typeArguments.forEach { it.type?.let(::crawlSupertype) }
             }
         }
-        return visited.values
     }
 
-    private fun apply(visited: Collection<FirDesignationWithFile>) {
+    /**
+     * Resolves the supertypes of [designation] and collects all designations that resolved supertypes should be applied to, including
+     * [designation] itself and any designations discovered via resolved supertypes.
+     */
+    private fun collect(designation: FirDesignationWithFile): Collection<FirDesignationWithFile> =
+        DesignationCollector().collect(designation)
+
+    /**
+     * Applies the resolved supertypes in [supertypeComputationSession] to each designation in [designations].
+     */
+    private fun apply(designations: Collection<FirDesignationWithFile>) {
         fun applyToFileSymbols(designations: List<FirDesignationWithFile>) {
             for (designation in designations) {
                 checkCanceled()
@@ -114,7 +143,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             }
         }
 
-        val filesToDesignations = visited.groupBy { it.firFile }
+        val filesToDesignations = designations.groupBy { it.firFile }
         for (designationsPerFile in filesToDesignations) {
             checkCanceled()
             lockProvider.runCustomResolveUnderLock(designationsPerFile.key) {
