@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
-import org.jetbrains.kotlin.wasm.ir.source.location.withNoLocation
 
 class DeclarationGenerator(
     val context: WasmModuleCodegenContext,
@@ -477,7 +475,7 @@ class DeclarationGenerator(
 }
 
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) =
-    withNoLocation("Default initializer, usually don't require location") {
+    SourceLocation.NoLocation("Default initializer, usually don't require location").let { location ->
         when (type) {
             WasmI32 -> g.buildConstI32(0, location)
             WasmI64 -> g.buildConstI64(0, location)
@@ -503,7 +501,7 @@ fun IrFunction.isExported(): Boolean =
 
 
 fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmModuleCodegenContext, fileEntry: IrFileEntry?) =
-    withLocation(expression.getSourceLocation(fileEntry)) {
+    expression.getSourceLocation(fileEntry).let { location ->
         when (val kind = expression.kind) {
             is IrConstKind.Null -> {
                 val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType

@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import org.jetbrains.kotlin.wasm.ir.source.location.withLocation
-import org.jetbrains.kotlin.wasm.ir.source.location.withNoLocation
 
 class BodyGenerator(
     val context: WasmModuleCodegenContext,
@@ -108,7 +106,7 @@ class BodyGenerator(
 
         val constantArrayId = context.referenceConstantArray(resource)
 
-        withLocation(irVararg.getSourceLocation()) {
+        irVararg.getSourceLocation().let { location ->
             body.buildConstI32(0, location)
             body.buildConstI32(irVararg.elements.size, location)
             body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, wasmArrayType, WasmImmediate.DataIdx(constantArrayId))
@@ -330,7 +328,7 @@ class BodyGenerator(
         if (parentClass.isAbstractOrSealed) return
         val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
         body.commentGroupStart { "Object creation prefix" }
-        withNoLocation("Constructor preamble") {
+        SourceLocation.NoLocation("Constructor preamble").let { location ->
             body.buildGetLocal(thisParameter, location)
             body.buildInstr(WasmOp.REF_IS_NULL, location)
             body.buildIf("this_init")
@@ -518,109 +516,113 @@ class BodyGenerator(
             return true
         }
 
-        withLocation(call.getSourceLocation()) {
-            when (function.symbol) {
-                wasmSymbols.wasmClassId -> {
-                    val klass = call.getTypeArgument(0)!!.getClass()
-                        ?: error("No class given for wasmClassId intrinsic")
-                    assert(!klass.isInterface)
-                    body.buildConstI32Symbol(context.referenceClassId(klass.symbol), location)
-                }
+        val location = call.getSourceLocation()
 
-                wasmSymbols.wasmInterfaceId -> {
-                    val irInterface = call.getTypeArgument(0)!!.getClass()
-                        ?: error("No interface given for wasmInterfaceId intrinsic")
-                    assert(irInterface.isInterface)
-                    body.buildConstI32Symbol(context.referenceInterfaceId(irInterface.symbol), location)
-                }
+        when (function.symbol) {
+            wasmSymbols.wasmClassId -> {
+                val klass = call.getTypeArgument(0)!!.getClass()
+                    ?: error("No class given for wasmClassId intrinsic")
+                assert(!klass.isInterface)
+                body.buildConstI32Symbol(context.referenceClassId(klass.symbol), location)
+            }
 
-                wasmSymbols.wasmIsInterface -> {
-                    val irInterface = call.getTypeArgument(0)!!.getClass()
-                        ?: error("No interface given for wasmInterfaceId intrinsic")
-                    assert(irInterface.isInterface)
-                    if (irInterface.symbol in hierarchyDisjointUnions) {
-                        val classITable = context.referenceClassITableGcType(irInterface.symbol)
-                        val parameterLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
-                        body.buildSetLocal(parameterLocal, location)
-                        body.buildBlock("isInterface", WasmI32) { outerLabel ->
-                            body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
-                                body.buildGetLocal(parameterLocal, location)
-                                body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
-                                body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable, location)
-                                body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol), location)
-                                body.buildInstr(WasmOp.REF_IS_NULL, location)
-                                body.buildInstr(WasmOp.I32_EQZ, location)
-                                body.buildBr(outerLabel, location)
-                            }
-                            body.buildDrop(location)
-                            body.buildConstI32(0, location)
+            wasmSymbols.wasmInterfaceId -> {
+                val irInterface = call.getTypeArgument(0)!!.getClass()
+                    ?: error("No interface given for wasmInterfaceId intrinsic")
+                assert(irInterface.isInterface)
+                body.buildConstI32Symbol(context.referenceInterfaceId(irInterface.symbol), location)
+            }
+
+            wasmSymbols.wasmIsInterface -> {
+                val irInterface = call.getTypeArgument(0)!!.getClass()
+                    ?: error("No interface given for wasmInterfaceId intrinsic")
+                assert(irInterface.isInterface)
+                if (irInterface.symbol in hierarchyDisjointUnions) {
+                    val classITable = context.referenceClassITableGcType(irInterface.symbol)
+                    val parameterLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
+                    body.buildSetLocal(parameterLocal, location)
+                    body.buildBlock("isInterface", WasmI32) { outerLabel ->
+                        body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
+                            body.buildGetLocal(parameterLocal, location)
+                            body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
+                            body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL_DEPRECATED, innerLabel, classITable, location)
+                            body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol), location)
+                            body.buildInstr(WasmOp.REF_IS_NULL, location)
+                            body.buildInstr(WasmOp.I32_EQZ, location)
+                            body.buildBr(outerLabel, location)
                         }
-                    } else {
                         body.buildDrop(location)
                         body.buildConstI32(0, location)
                     }
-                }
-
-                wasmSymbols.refCastNull -> {
-                    generateRefNullCast(
-                        fromType = call.getValueArgument(0)!!.type,
-                        toType = call.getTypeArgument(0)!!,
-                        location = location
-                    )
-                }
-
-                wasmSymbols.refTest -> {
-                    generateRefTest(
-                        fromType = call.getValueArgument(0)!!.type,
-                        toType = call.getTypeArgument(0)!!,
-                        location
-                    )
-                }
-
-                wasmSymbols.unboxIntrinsic -> {
-                    val fromType = call.getTypeArgument(0)!!
-
-                    if (fromType.isNothing()) {
-                        body.buildUnreachableAfterNothingType()
-                        // TODO: Investigate why?
-                        return true
-                    }
-
-                    val toType = call.getTypeArgument(1)!!
-                    val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
-                    val field = getInlineClassBackingField(klass)
-
-                    generateRefNullCast(fromType, toType, location)
-                    generateInstanceFieldAccess(field, location)
-                }
-
-                wasmSymbols.unsafeGetScratchRawMemory -> {
-                    body.buildConstI32Symbol(context.scratchMemAddr, location)
-                }
-
-                wasmSymbols.wasmArrayCopy -> {
-                    val immediate = WasmImmediate.GcType(
-                        context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
-                    )
-                    body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
-                }
-
-                wasmSymbols.stringGetPoolSize -> {
-                    body.buildConstI32Symbol(context.stringPoolSize, location)
-                }
-
-                wasmSymbols.wasmArrayNewData0 -> {
-                    val arrayGcType = WasmImmediate.GcType(
-                        context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
-                    )
-                    body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
-                }
-
-                else -> {
-                    return false
+                } else {
+                    body.buildDrop(location)
+                    body.buildConstI32(0, location)
                 }
             }
+
+            wasmSymbols.refCastNull -> {
+                generateRefNullCast(
+                    fromType = call.getValueArgument(0)!!.type,
+                    toType = call.getTypeArgument(0)!!,
+                    location = location
+                )
+            }
+
+            wasmSymbols.refTest -> {
+                generateRefTest(
+                    fromType = call.getValueArgument(0)!!.type,
+                    toType = call.getTypeArgument(0)!!,
+                    location
+                )
+            }
+
+            wasmSymbols.unboxIntrinsic -> {
+                val fromType = call.getTypeArgument(0)!!
+
+                if (fromType.isNothing()) {
+                    body.buildUnreachableAfterNothingType()
+                    // TODO: Investigate why?
+                    return true
+                }
+
+                val toType = call.getTypeArgument(1)!!
+                val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
+                val field = getInlineClassBackingField(klass)
+
+                generateRefNullCast(fromType, toType, location)
+                generateInstanceFieldAccess(field, location)
+            }
+
+            wasmSymbols.unsafeGetScratchRawMemory -> {
+                
+                body.buildConstI32Symbol(context.scratchMemAddr, location)
+            }
+
+            
+
+            wasmSymbols.wasmArrayCopy -> {
+                val immediate = WasmImmediate.GcType(
+                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                )
+                body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
+            }
+
+            wasmSymbols.stringGetPoolSize -> {
+                body.buildConstI32Symbol(context.stringPoolSize, location)
+            }
+
+            wasmSymbols.wasmArrayNewData0 -> {
+                val arrayGcType = WasmImmediate.GcType(
+                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                )
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+            }
+
+            else -> {
+                return false
+            }
         }
+
         return true
     }
 
