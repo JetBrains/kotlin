@@ -189,7 +189,7 @@ class KotlinMetadataTargetConfigurator :
 
         if (project.isCompatibilityMetadataVariantEnabled) {
             val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-            configureMetadataDependenciesForCompilation(mainCompilation)
+            configureMetadataDependenciesForCompilation(mainCompilation, overrideMetadataTransformationTaskName = mainCompilation.name)
         }
 
         sourceSetsWithMetadataCompilations.values.forEach { compilation ->
@@ -330,12 +330,18 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun configureMetadataDependenciesForCompilation(compilation: KotlinCompilation<*>) {
+    private fun configureMetadataDependenciesForCompilation(
+        compilation: KotlinCompilation<*>,
+        // needed for case when commonMain have two metadata transformation tasks:
+        // one for HMPP, another for compatibility variant.
+        // remove it when [Project::isCompatibilityMetadataVariantEnabled] is deleted
+        overrideMetadataTransformationTaskName: String? = null
+    ) {
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
         project.registerTask<MetadataDependencyTransformationTask>(
-            transformGranularMetadataTaskName(compilation.name),
+            transformGranularMetadataTaskName(overrideMetadataTransformationTaskName ?: sourceSet.name),
             listOf(sourceSet)
         ) {
             it.description =
@@ -356,17 +362,13 @@ class KotlinMetadataTargetConfigurator :
         project: Project,
         sourceSet: KotlinSourceSet,
     ) {
-        val granularMetadataTransformation = GranularMetadataTransformation(
-            project = project,
-            kotlinSourceSet = sourceSet,
-            parentTransformations = lazy {
-                dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                    .map { it.compileDependenciesTransformationOrFail }
-            }
-        )
+        val granularMetadataTransformationTask = project.locateTask<MetadataDependencyTransformationTask>(
+            transformGranularMetadataTaskName(sourceSet.name)
+        ) ?: error("Task ${transformGranularMetadataTaskName(sourceSet.name)} must be registered. " +
+                   "Check [configureMetadataDependenciesForCompilation]")
 
         if (sourceSet is DefaultKotlinSourceSet)
-            sourceSet.compileDependenciesTransformation = granularMetadataTransformation
+            sourceSet.compileDependenciesTransformationProperty.set(granularMetadataTransformationTask.map { it.transformation })
     }
 
     private fun createMetadataDependencyTransformationClasspath(

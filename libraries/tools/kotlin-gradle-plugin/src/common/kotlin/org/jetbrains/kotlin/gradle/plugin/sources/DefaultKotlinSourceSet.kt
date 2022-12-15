@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
@@ -131,10 +132,10 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     }
 
     /**
-     * Returns [GranularMetadataTransformation] for all requested compile dependencies
+     * Holds [GranularMetadataTransformation] for all requested compile dependencies
      * scopes: API, IMPLEMENTATION, COMPILE_ONLY; See [KotlinDependencyScope.compileScopes]
      */
-    internal var compileDependenciesTransformation: GranularMetadataTransformation? = null
+    internal val compileDependenciesTransformationProperty: Property<GranularMetadataTransformation> = project.objects.property()
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 
@@ -167,7 +168,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
-            compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty
+            compileDependenciesTransformationOrNull.metadataDependencyResolutionsOrEmpty
                 .associateBy { ModuleIds.fromComponent(project, it.dependency) }
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
@@ -235,7 +236,10 @@ fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSour
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
 }
 
+internal val DefaultKotlinSourceSet.compileDependenciesTransformationOrNull: GranularMetadataTransformation?
+    get() = compileDependenciesTransformationProperty.orNull
+
 internal val DefaultKotlinSourceSet.compileDependenciesTransformationOrFail: GranularMetadataTransformation
-    get() = compileDependenciesTransformation
+    get() = compileDependenciesTransformationOrNull
         ?: error("Accessing Compile Dependencies Transformations that is not yet initialised; " +
                  "Check when compileDependenciesTransformation is set")

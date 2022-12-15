@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.metadataDependencyResolutionsOrEmpty
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrNull
 
 internal inline fun <reified T : MetadataDependencyResolution> KotlinSourceSet.resolveMetadata(): List<T> {
     if (this !is DefaultKotlinSourceSet) return emptyList()
-    return compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty.filterIsInstance<T>()
+    return compileDependenciesTransformationOrNull.metadataDependencyResolutionsOrEmpty.filterIsInstance<T>()
 }
