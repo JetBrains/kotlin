@@ -24,7 +24,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @NoMutableState
-class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
+class FirCompositeSymbolProvider(session: FirSession, providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
+
+    val providers: List<FirSymbolProvider> = providers.flatMap {
+        when (it) {
+            is FirCompositeSymbolProvider -> it.providers
+            is FirDependenciesSymbolProviderImpl -> it.dependencyProviders
+            else -> listOf(it)
+        }
+    }
+
     private val classCache = session.firCachesFactory.createCache(::computeClass)
     private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
     private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)
