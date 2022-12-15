@@ -197,6 +197,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("functionsFromCompanion.kt")
+    public void testFunctionsFromCompanion() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionsFromCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("implicitConstructorDelegationCall.kt")
     public void testImplicitConstructorDelegationCall() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/implicitConstructorDelegationCall.kt");
@@ -254,6 +260,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     @TestMetadata("outerAndInnerTypeAlias.kt")
     public void testOuterAndInnerTypeAlias() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/outerAndInnerTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesFromCompanion.kt")
+    public void testPropertiesFromCompanion() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertiesFromCompanion.kt");
     }
 
     @Test

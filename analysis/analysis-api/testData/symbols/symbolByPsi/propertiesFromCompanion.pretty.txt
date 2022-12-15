@@ -1,0 +1,21 @@
+class MyClass {
+  companion object {
+    val property: kotlin.Int
+
+    const val constProperty: kotlin.Int
+
+    @kotlin.jvm.JvmStatic
+    val staticProperty: kotlin.Int
+
+    @kotlin.jvm.JvmField
+    val fieldProperty: kotlin.Int
+
+    var variable: kotlin.Int
+
+    @kotlin.jvm.JvmStatic
+    var staticVariable: kotlin.Int
+
+    @kotlin.jvm.JvmField
+    var fieldVariable: kotlin.Int
+  }
+}
