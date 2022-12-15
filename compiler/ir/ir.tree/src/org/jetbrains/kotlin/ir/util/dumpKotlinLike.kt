@@ -117,7 +117,7 @@ enum class FakeOverridesStrategy {
     * wrap/escape invalid identifiers with "`", like "$$delegate"
  */
 
-private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
+private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?>() {
     private val IrSymbol.safeName get() = if (!isBound) {
         "/* ERROR: unbound symbol $signature */"
     } else {

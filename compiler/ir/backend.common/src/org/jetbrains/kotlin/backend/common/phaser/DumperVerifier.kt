@@ -66,7 +66,7 @@ fun dumpIrElement(actionState: ActionState, data: IrElement, @Suppress("UNUSED_P
     val dumpOnlyFqName = actionState.config.dumpOnlyFqName
     if (dumpOnlyFqName != null) {
         elementName = dumpOnlyFqName
-        data.acceptVoid(object : IrElementVisitorVoid {
+        data.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

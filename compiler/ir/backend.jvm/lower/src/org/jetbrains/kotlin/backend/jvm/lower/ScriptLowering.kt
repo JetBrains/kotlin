@@ -110,7 +110,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
     private fun collectCapturingClasses(irScript: IrScript, typeRemapper: SimpleTypeRemapper): Set<IrClassImpl> {
         val annotator = ClosureAnnotator(irScript, irScript)
         val capturingClasses = mutableSetOf<IrClassImpl>()
-        val collector = object : IrElementVisitorVoid {
+        val collector = object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -439,7 +439,7 @@ private class ScriptToClassTransformer(
     val innerClassesSupport: JvmInnerClassesSupport,
     val earlierScriptsField: IrField?,
     val implicitReceiversFieldsWithParameters: Collection<Pair<IrField, IrValueParameter>>
-) : IrElementTransformer<ScriptToClassTransformerContext> {
+) : IrElementTransformer<ScriptToClassTransformerContext>() {
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
 
@@ -797,7 +797,7 @@ private class ScriptToClassTransformer(
     }
 }
 
-private class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrElementTransformer<ScriptFixLambdasTransformerContext> {
+private class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrElementTransformer<ScriptFixLambdasTransformerContext>() {
 
     private fun unexpectedElement(element: IrElement): Nothing =
         throw IllegalArgumentException("Unsupported element type: $element")

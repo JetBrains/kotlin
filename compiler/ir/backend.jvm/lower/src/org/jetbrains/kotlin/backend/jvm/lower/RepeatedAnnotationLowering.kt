@@ -33,7 +33,7 @@ internal val repeatedAnnotationPhase = makeIrModulePhase(
     description = "Enclose repeated annotations in a container annotation, generating a container class if needed"
 )
 
-class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
+class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid() {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)
     }

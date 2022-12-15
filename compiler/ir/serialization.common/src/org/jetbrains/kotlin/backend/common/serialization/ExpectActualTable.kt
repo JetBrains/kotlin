@@ -16,7 +16,7 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
     val table = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
     private fun IrElement.recordActuals(rightHandSide: Map<DeclarationDescriptor, IrSymbol>, inModule: ModuleDescriptor) {
-        this.acceptVoid(object : IrElementVisitorVoid {
+        this.acceptVoid(object : IrElementVisitorVoid() {
 
             private fun recordDeclarationActuals(declaration: IrDeclaration) {
 
@@ -64,7 +64,7 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
     private fun IrDeclaration.recordRightHandSide(): Map<DeclarationDescriptor, IrSymbol> {
         val rightHandSide = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
-        this.acceptVoid(object : IrElementVisitorVoid {
+        this.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

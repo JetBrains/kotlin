@@ -56,7 +56,7 @@ private class BackendChecker(
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     val target = context.config.target
 
     fun reportError(location: IrElement, message: String): Nothing =
@@ -532,7 +532,7 @@ private class BackendChecker(
         if (targetValues.isEmpty()) return emptyList()
 
         val result = mutableListOf<IrExpression>()
-        function.acceptChildrenVoid(object: IrElementVisitorVoid {
+        function.acceptChildrenVoid(object: IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

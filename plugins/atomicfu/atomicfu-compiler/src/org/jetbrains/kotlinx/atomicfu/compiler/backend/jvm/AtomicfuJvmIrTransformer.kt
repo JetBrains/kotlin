@@ -87,7 +87,7 @@ class AtomicfuJvmIrTransformer(
 
     private val propertyToAtomicHandler = mutableMapOf<IrProperty, IrProperty>()
 
-    private inner class AtomicHandlerTransformer : IrElementTransformer<IrFunction?> {
+    private inner class AtomicHandlerTransformer : IrElementTransformer<IrFunction?>() {
         override fun visitClass(declaration: IrClass, data: IrFunction?): IrStatement {
             declaration.declarations.filter(::fromKotlinxAtomicfu).forEach {
                 (it as IrProperty).transformAtomicfuProperty(declaration)
@@ -472,7 +472,7 @@ class AtomicfuJvmIrTransformer(
 
     private data class AtomicFieldInfo(val dispatchReceiver: IrExpression?, val atomicHandler: IrExpression)
 
-    private inner class AtomicfuTransformer : IrElementTransformer<IrFunction?> {
+    private inner class AtomicfuTransformer : IrElementTransformer<IrFunction?>() {
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
         }

@@ -157,7 +157,7 @@ class MethodOrderTest : CodegenTestCase() {
                     fun visitElement(element: IrElement, data: D): R
                 }
 
-                interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
+                interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D>() {
                     override fun visitElement(element: IrElement, data: D): IrElement =
                             element.also { throw RuntimeException() }
                 }

@@ -161,7 +161,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
             // marking the parameters referenced in the function
             function.acceptChildrenVoid(
-                object : IrElementVisitorVoid {
+                object : IrElementVisitorVoid() {
                     override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
                     override fun visitGetValue(expression: IrGetValue) {

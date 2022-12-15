@@ -51,7 +51,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
 const val STUB_FOR_INLINING = "stub_for_inlining"
 
-private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, element as? IrDeclaration ?: data)
 

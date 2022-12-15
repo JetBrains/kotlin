@@ -25,7 +25,7 @@ class CheckIrElementVisitor(
     val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
     val config: IrValidatorConfig
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val visitedElements = hashSetOf<IrElement>()
 
     override fun visitElement(element: IrElement) {

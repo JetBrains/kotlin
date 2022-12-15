@@ -82,7 +82,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
     private inner class Transformer(
         private val fileEntry: IrFileEntry,
         private val inlineScopeResolver: IrInlineScopeResolver
-    ) : IrElementTransformer<IrDeclaration?> {
+    ) : IrElementTransformer<IrDeclaration?>() {
 
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 

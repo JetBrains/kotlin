@@ -16,7 +16,7 @@ fun collectNativeImplementations(context: JsIrBackendContext, moduleFragment: Ir
         moduleFragment.files.forEach { it.accept(collector, null) }
     }
 
-class CollectNativeImplementationsVisitor(private val context: JsIrBackendContext) : IrElementVisitorVoid {
+class CollectNativeImplementationsVisitor(private val context: JsIrBackendContext) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {}
 
     override fun visitFile(declaration: IrFile) {

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmUselessDeclarationsRemover(
     private val usefulDeclarations: Set<IrDeclaration>
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

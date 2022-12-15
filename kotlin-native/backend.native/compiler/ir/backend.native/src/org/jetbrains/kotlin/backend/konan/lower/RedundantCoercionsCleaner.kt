@@ -51,7 +51,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
     private val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
 
     private fun computeReturnableBlockValues(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object: IrElementVisitorVoid {
+        irFile.acceptChildrenVoid(object: IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

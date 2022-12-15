@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
+class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext>() {
 
     private fun JsGenerationContext.isClassInlineLike(irClass: IrClass) =
         staticContext.backendContext.inlineClassesUtils.isClassInlineLike(irClass)

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  */
 internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFile.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 // Don't need to iterate through children. All local classes are already moved to the top level by this moment.
             }

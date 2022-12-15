@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-abstract class AbstractTransformerForGenerator(protected val context: IrPluginContext) : IrElementVisitorVoid {
+abstract class AbstractTransformerForGenerator(protected val context: IrPluginContext) : IrElementVisitorVoid() {
     protected val irFactory = context.irFactory
     protected val irBuiltIns = context.irBuiltIns
 

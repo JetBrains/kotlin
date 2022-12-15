@@ -244,7 +244,7 @@ internal abstract class JvmValueClassAbstractLowering(
 
 
     // Functions for common lowering dispatching
-    private inner class NeedsToVisit : IrElementVisitor<Boolean, Nothing?> {
+    private inner class NeedsToVisit : IrElementVisitor<Boolean, Nothing?>() {
         override fun visitElement(element: IrElement, data: Nothing?): Boolean = false
         override fun visitClass(declaration: IrClass, data: Nothing?): Boolean =
             declaration.isSpecificLoweringLogicApplicable() || declaration.declarations.any { it.accept(this, null) }

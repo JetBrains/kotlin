@@ -157,7 +157,7 @@ internal val inventNamesForLocalClasses = makeKonanFileLoweringPhase(
 
 internal val extractLocalClassesFromInlineBodies = makeKonanFileOpPhase(
         { context, irFile ->
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

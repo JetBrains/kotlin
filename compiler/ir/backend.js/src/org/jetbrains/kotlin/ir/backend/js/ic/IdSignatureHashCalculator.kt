@@ -29,7 +29,7 @@ internal class IdSignatureHashCalculator {
     private val allIdSignatureHashes = hashMapOf<IdSignature, ICHash>()
 
 
-    private inner class FlatHashCalculator : IrElementVisitorVoid {
+    private inner class FlatHashCalculator : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -52,7 +52,7 @@ internal class IdSignatureHashCalculator {
         }
     }
 
-    private inner class InlineFunctionCallGraphBuilder : IrElementVisitor<Unit, MutableSet<IrFunction>> {
+    private inner class InlineFunctionCallGraphBuilder : IrElementVisitor<Unit, MutableSet<IrFunction>>() {
         override fun visitElement(element: IrElement, data: MutableSet<IrFunction>) {
             element.acceptChildren(this, data)
         }

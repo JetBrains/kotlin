@@ -172,7 +172,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
     fun build(): ModuleDFG {
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
-        irModule.accept(object : IrElementVisitorVoid {
+        irModule.accept(object : IrElementVisitorVoid() {
 
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -275,7 +275,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         return ModuleDFG(functions, symbolTable)
     }
 
-    private inner class ElementFinderVisitor : IrElementVisitorVoid {
+    private inner class ElementFinderVisitor : IrElementVisitorVoid() {
         val expressions = mutableMapOf<IrExpression, IrLoop?>()
         val parentLoops = mutableMapOf<IrLoop, IrLoop?>()
         val variableValues = VariableValues()

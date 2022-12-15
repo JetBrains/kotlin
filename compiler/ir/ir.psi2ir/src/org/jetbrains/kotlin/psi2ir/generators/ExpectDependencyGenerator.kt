@@ -29,7 +29,7 @@ internal fun referenceExpectsForUsedActuals(
 private class ExpectDependencyGenerator(
     private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val symbolTable: SymbolTable,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private fun <T> T.forEachExpect(body: (DeclarationDescriptor) -> Unit) where T : IrDeclaration {
         this.descriptor.findExpects().forEach {
             body(it)

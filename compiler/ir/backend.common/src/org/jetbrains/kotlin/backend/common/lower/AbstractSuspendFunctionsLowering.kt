@@ -57,7 +57,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     private fun buildCoroutines(irFile: IrFile) {
         irFile.transformDeclarationsFlat(::tryTransformSuspendFunction)
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -79,7 +79,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         else null
 
     private fun markSuspendLambdas(irElement: IrElement) {
-        irElement.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irElement.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -526,7 +526,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
     }
 
-    protected open class VariablesScopeTracker : IrElementVisitorVoid {
+    protected open class VariablesScopeTracker : IrElementVisitorVoid() {
 
         protected val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
 

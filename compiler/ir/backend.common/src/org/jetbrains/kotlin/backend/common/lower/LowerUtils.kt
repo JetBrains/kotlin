@@ -171,7 +171,7 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
         ?: irBuiltIns.anyType
     var callsSuper = false
     var numberOfCalls = 0
-    acceptChildrenVoid(object : IrElementVisitorVoid {
+    acceptChildrenVoid(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

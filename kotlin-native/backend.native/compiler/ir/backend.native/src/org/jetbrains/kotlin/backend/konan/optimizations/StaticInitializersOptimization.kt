@@ -286,7 +286,7 @@ internal object StaticInitializersOptimization {
             val initializedFilesAtLoopsContinues = mutableMapOf<IrLoop, BitSet>()
             // Each visitXXX function gets as [data] parameter the set of initialized files before evaluating
             // current element and returns the set of initialized files after evaluating this element.
-            val callerResult = body.accept(object : IrElementVisitor<BitSet, BitSet> {
+            val callerResult = body.accept(object : IrElementVisitor<BitSet, BitSet>() {
                 private fun intersectInitializedFiles(previous: BitSet?, current: BitSet) =
                         previous?.copy()?.also { it.and(current) } ?: current
 
@@ -532,7 +532,7 @@ internal object StaticInitializersOptimization {
         var numberOfCallSitesWithExtractedGlobalInitializerCall = 0
         var numberOfCallSitesWithExtractedThreadLocalInitializerCall = 0
 
-        context.irModule!!.transformChildren(object : IrElementTransformer<IrBuilderWithScope?> {
+        context.irModule!!.transformChildren(object : IrElementTransformer<IrBuilderWithScope?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope?): IrStatement {
                 return super.visitDeclaration(declaration, context.createIrBuilder(declaration.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET))
             }

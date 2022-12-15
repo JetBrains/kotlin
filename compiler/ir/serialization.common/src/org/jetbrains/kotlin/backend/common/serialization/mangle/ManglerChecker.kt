@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
-class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElementVisitorVoid {
+class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElementVisitorVoid() {
 
     private val manglers = _manglers.toList()
 
@@ -23,7 +23,7 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         element.acceptChildrenVoid(this)
     }
 
-    private val skipper = object : IrElementVisitor<Boolean, Nothing?> {
+    private val skipper = object : IrElementVisitor<Boolean, Nothing?>() {
         override fun visitElement(element: IrElement, data: Nothing?): Boolean {
             error("unexpected element: ${element.render()}")
         }

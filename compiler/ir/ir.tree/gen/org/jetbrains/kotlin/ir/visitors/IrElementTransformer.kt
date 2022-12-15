@@ -93,7 +93,7 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 
-interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
+abstract class IrElementTransformer<in D> : IrElementVisitor<IrElement, D>() {
     override fun visitElement(element: IrElement, data: D): IrElement {
         element.transformChildren(this, data)
         return element

@@ -99,7 +99,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
             visitor.annotatedAncestors
         }
 
-    private inner class AnnotatedTreeVisitor : IrElementVisitor<Unit, Stack<IrElement>> {
+    private inner class AnnotatedTreeVisitor : IrElementVisitor<Unit, Stack<IrElement>>() {
 
         val annotatedAncestors = mutableMapOf<IrElement, IrElement>()
 

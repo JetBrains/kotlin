@@ -91,7 +91,7 @@ fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ClassLoweringVisitor(
     private val loweringPass: ClassLoweringPass
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -108,7 +108,7 @@ fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ScriptLoweringVisitor(
     private val loweringPass: ScriptLoweringPass
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -126,7 +126,7 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class DeclarationContainerLoweringVisitor(
     private val loweringPass: DeclarationContainerLoweringPass
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -168,7 +168,7 @@ fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
 private open class BodyLoweringVisitor(
     private val loweringPass: BodyLoweringPass,
     private val withLocalDeclarations: Boolean,
-) : IrElementVisitor<Unit, IrDeclaration?> {
+) : IrElementVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         element.acceptChildren(this, data)
     }
@@ -242,7 +242,7 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
+    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

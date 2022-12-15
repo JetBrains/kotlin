@@ -111,7 +111,7 @@ class PartialLinkageSupportImpl(private val builtIns: IrBuiltIns) : PartialLinka
     }
 
     override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) {
-        function.acceptChildrenVoid(object : IrElementVisitorVoid {
+        function.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

@@ -27,7 +27,7 @@ fun IrElement.render() =
     accept(RenderIrElementVisitor(), null)
 
 class RenderIrElementVisitor(normalizeNames: Boolean = false, private val verboseErrorTypes: Boolean = true) :
-    IrElementVisitor<String, Nothing?> {
+    IrElementVisitor<String, Nothing?>() {
 
     private val variableNameData = VariableNameData(normalizeNames)
 
@@ -50,7 +50,7 @@ class RenderIrElementVisitor(normalizeNames: Boolean = false, private val verbos
     private class BoundSymbolReferenceRenderer(
         private val variableNameData: VariableNameData,
         private val verboseErrorTypes: Boolean,
-    ) : IrElementVisitor<String, Nothing?> {
+    ) : IrElementVisitor<String, Nothing?>() {
 
         override fun visitElement(element: IrElement, data: Nothing?) = buildTrimEnd {
             append('{')

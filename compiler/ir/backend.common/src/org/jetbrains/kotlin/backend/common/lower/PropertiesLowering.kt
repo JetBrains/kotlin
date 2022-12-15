@@ -46,7 +46,7 @@ class PropertiesLowering : DeclarationTransformer {
 
     companion object {
         fun checkNoProperties(irFile: IrFile) {
-            irFile.acceptVoid(object : IrElementVisitorVoid {
+            irFile.acceptVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

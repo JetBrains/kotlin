@@ -63,7 +63,7 @@ class ThrowableLowering(
             }
         }
 
-    inner class Transformer : IrElementTransformer<IrDeclarationParent> {
+    inner class Transformer : IrElementTransformer<IrDeclarationParent>() {
         override fun visitClass(declaration: IrClass, data: IrDeclarationParent) = super.visitClass(declaration, declaration)
 
         override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclarationParent): IrExpression {

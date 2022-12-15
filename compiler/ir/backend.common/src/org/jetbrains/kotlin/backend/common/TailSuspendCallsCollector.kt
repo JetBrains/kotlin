@@ -31,7 +31,7 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
     val tailSuspendCalls = mutableSetOf<IrCall>()
     val tailReturnableBlocks = mutableSetOf<IrReturnableBlockSymbol>()
 
-    val visitor = object : IrElementVisitor<Unit, VisitorState> {
+    val visitor = object : IrElementVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression = false))
         }

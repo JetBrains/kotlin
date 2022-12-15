@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCompileTimeChecker(
     containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.WITH_ANNOTATIONS
-) : IrElementVisitor<Boolean, Nothing?> {
+) : IrElementVisitor<Boolean, Nothing?>() {
     private var contextExpression: IrCall? = null
     private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
 

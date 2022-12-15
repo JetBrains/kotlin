@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 internal class ExternalPackageParentPatcher(
     private val components: Fir2IrComponents,
     private val fir2IrExtensions: Fir2IrExtensions
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

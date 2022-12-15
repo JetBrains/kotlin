@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext> {
+class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext>() {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsFunction {
         val parentClass = declaration.parent as? IrClass
         val isInterfaceDefaultImpl = parentClass?.isInterface ?: false

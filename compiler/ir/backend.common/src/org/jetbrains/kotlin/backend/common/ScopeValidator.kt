@@ -54,7 +54,7 @@ class ScopeValidator(
             )
     }
 
-    inner class Checker : IrElementVisitor<Unit, Visibles> {
+    inner class Checker : IrElementVisitor<Unit, Visibles>() {
         override fun visitElement(element: IrElement, data: Visibles) {
             element.acceptChildren(this, data)
         }

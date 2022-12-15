@@ -163,7 +163,7 @@ class ArrayAccessAssignmentReceiver(
 
     private class SamConversionsCollector(
         private val compoundAssignmentInfo: CompoundAssignmentInfo
-    ) : IrElementVisitorVoid {
+    ) : IrElementVisitorVoid() {
         val samConversionsPerVariable = HashMap<IrVariable, MutableList<IrTypeOperatorCall>>()
 
         override fun visitElement(element: IrElement) {

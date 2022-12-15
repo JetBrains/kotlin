@@ -114,7 +114,7 @@ internal val dcePhase = makeKonanModuleOpPhase(
                 }
             }
 
-            context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid {
+            context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

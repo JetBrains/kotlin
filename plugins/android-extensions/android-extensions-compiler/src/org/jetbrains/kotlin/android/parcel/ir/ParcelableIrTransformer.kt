@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelableIrTransformer(private val context: IrPluginContext, private val androidSymbols: AndroidSymbols) :
-    ParcelableExtensionBase, IrElementVisitorVoid {
+    ParcelableExtensionBase, IrElementVisitorVoid() {
     private val serializerFactory = IrParcelSerializerFactory(androidSymbols)
 
     private val deferredOperations = mutableListOf<() -> Unit>()

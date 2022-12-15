@@ -251,7 +251,7 @@ class SecondaryFactoryInjectorLowering(val context: JsIrBackendContext) : BodyLo
     }
 }
 
-private class CallsiteRedirectionTransformer(private val context: JsIrBackendContext) : IrElementTransformer<IrFunction?> {
+private class CallsiteRedirectionTransformer(private val context: JsIrBackendContext) : IrElementTransformer<IrFunction?>() {
 
     private val defaultThrowableConstructor = context.defaultThrowableCtor
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class Keeper(private val keep: Set<String>) : IrElementVisitor<Unit, Keeper.KeepData> {
+class Keeper(private val keep: Set<String>) : IrElementVisitor<Unit, Keeper.KeepData>() {
     private val keptDeclarations: MutableSet<IrDeclaration> = mutableSetOf()
 
     fun shouldKeep(declaration: IrDeclaration): Boolean {

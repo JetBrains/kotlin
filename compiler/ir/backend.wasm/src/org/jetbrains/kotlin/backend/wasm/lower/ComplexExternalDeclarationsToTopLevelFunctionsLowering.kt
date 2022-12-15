@@ -59,7 +59,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun processExternalDeclaration(declaration: IrDeclaration) {
-        declaration.acceptVoid(object : IrElementVisitorVoid {
+        declaration.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 error("Unknown external element ${element::class}")
             }

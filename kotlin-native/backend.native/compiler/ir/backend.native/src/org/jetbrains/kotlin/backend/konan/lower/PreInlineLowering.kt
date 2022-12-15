@@ -39,7 +39,7 @@ internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) = lower(irBody, container, container.file)
 
     fun lower(irBody: IrBody, container: IrDeclaration, irFile: IrFile) {
-        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
+        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
                             data = (declaration as? IrSymbolOwner)?.let { context.createIrBuilder(it.symbol, it.startOffset, it.endOffset) }

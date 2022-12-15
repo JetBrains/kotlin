@@ -70,7 +70,7 @@ internal class JvmValueClassLoweringDispatcher(context: JvmBackendContext) : IrE
         .transformStatement(inlineClassLowering)
 
     private fun IrElement.requiresHandling(lowering: JvmValueClassAbstractLowering) =
-        accept(object : IrElementVisitor<Boolean, Nothing?> {
+        accept(object : IrElementVisitor<Boolean, Nothing?>() {
             override fun visitElement(element: IrElement, data: Nothing?): Boolean = false
             override fun visitClass(declaration: IrClass, data: Nothing?): Boolean =
                 lowering.needsToVisitClassNew(declaration) || super.visitClass(declaration, data)

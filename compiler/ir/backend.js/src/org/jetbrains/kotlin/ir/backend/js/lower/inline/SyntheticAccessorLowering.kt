@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 
 class SyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
-    private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrElementVisitorVoid {
+    private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrElementVisitorVoid() {
 
         private fun IrSimpleFunction.isTopLevelPrivate(): Boolean {
             if (visibility != DescriptorVisibilities.PRIVATE) return false

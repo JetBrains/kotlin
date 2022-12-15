@@ -57,7 +57,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
     private val nothingType = context.irBuiltIns.nothingType
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transform(object : IrElementTransformer<IrDeclarationParent> {
+        irBody.transform(object : IrElementTransformer<IrDeclarationParent>() {
 
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
                 val parent = (declaration as? IrDeclarationParent) ?: data

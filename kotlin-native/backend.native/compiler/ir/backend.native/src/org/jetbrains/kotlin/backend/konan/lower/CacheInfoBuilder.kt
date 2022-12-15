@@ -21,7 +21,7 @@ internal class CacheInfoBuilder(
         private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer,
         private val irModule: IrModuleFragment
 ) {
-    fun build() = irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
+    fun build() = irModule.acceptChildrenVoid(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -57,7 +57,7 @@ internal class CacheInfoBuilder(
         if (irFunction in visitedInlineFunctions) return
         visitedInlineFunctions += irFunction
 
-        irFunction.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFunction.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

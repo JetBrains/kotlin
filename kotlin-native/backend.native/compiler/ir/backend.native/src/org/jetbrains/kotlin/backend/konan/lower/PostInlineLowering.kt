@@ -36,7 +36,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irFile = container.file
-        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
+        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
                             data = (declaration as? IrSymbolOwner)?.let { context.createIrBuilder(it.symbol, it.startOffset, it.endOffset) }

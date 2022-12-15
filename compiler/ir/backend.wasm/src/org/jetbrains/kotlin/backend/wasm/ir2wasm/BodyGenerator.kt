@@ -34,7 +34,7 @@ class BodyGenerator(
     val context: WasmFunctionCodegenContext,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
     private val isGetUnitFunction: Boolean,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     val body: WasmExpressionBuilder = context.bodyGen
 
     // Shortcuts

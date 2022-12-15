@@ -60,14 +60,117 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         scopeCounter = 0
     }
 
-    private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration>(),
-        IrElementVisitorVoid {
+    private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration>() {
+
+        val visitor = object : IrElementVisitorVoid() {
+            override fun visitElement(element: IrElement) =
+                error("Unexpected element ${element.render()}")
+
+            override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
+                description = declaration.render()
+            }
+
+            override fun visitPackageFragment(declaration: IrPackageFragment) {
+                packageFqn = declaration.fqName
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                collectParents(declaration)
+                isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
+                if (declaration.kind == ClassKind.ENUM_ENTRY) {
+                    classFqnSegments.add(MangleConstant.ENUM_ENTRY_CLASS_NAME)
+                }
+                setDescription(declaration)
+                setExpected(declaration.isExpect)
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                val property = declaration.correspondingPropertySymbol
+                if (property != null) {
+                    property.owner.acceptVoid(this)
+                    val preservedId = declaration.hashId()
+                    if (container != null) {
+                        createContainer()
+                        hashId = preservedId
+                    } else {
+                        hashIdAcc = preservedId
+                    }
+                    classFqnSegments.add(declaration.name.asString())
+                } else {
+                    collectParents(declaration)
+                    isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
+                    hashId = declaration.hashId()
+                    setDescription(declaration)
+                }
+                setExpected(declaration.isExpect)
+            }
+
+            override fun visitConstructor(declaration: IrConstructor) {
+                collectParents(declaration)
+                hashId = declaration.hashId()
+                setExpected(declaration.isExpect)
+            }
+
+            override fun visitScript(declaration: IrScript) {
+                collectParents(declaration)
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                collectParents(declaration)
+                isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
+                hashId = declaration.hashId()
+                setExpected(declaration.isExpect)
+            }
+
+            override fun visitTypeAlias(declaration: IrTypeAlias) {
+                collectParents(declaration)
+                isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+                collectParents(declaration)
+            }
+
+            override fun visitTypeParameter(declaration: IrTypeParameter) {
+                val rawParent = declaration.parent
+
+                val parent = if (rawParent is IrSimpleFunction) {
+                    rawParent.correspondingPropertySymbol?.owner ?: rawParent
+                } else rawParent
+
+                parent.accept(this, null)
+                createContainer()
+
+                if (parent is IrProperty && parent.setter == rawParent) {
+                    classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME_SETTER)
+                } else {
+                    classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME)
+                }
+                hashId = declaration.index.toLong()
+                description = declaration.render()
+            }
+
+            override fun visitField(declaration: IrField) {
+                val prop = declaration.correspondingPropertySymbol?.owner
+
+                if (prop != null) {
+                    // backing field
+                    prop.acceptVoid(this)
+                    createContainer()
+                    classFqnSegments.add(MangleConstant.BACKING_FIELD_NAME)
+                    description = declaration.render()
+                } else {
+                    collectParents(declaration)
+                    hashId = declaration.hashId()
+                }
+            }
+        }
 
         override val currentFileSignature: IdSignature.FileSignature?
             get() = currentFileSignatureX
 
         override fun accept(d: IrDeclaration) {
-            d.acceptVoid(this)
+            d.acceptVoid(visitor)
         }
 
         private fun createContainer() {
@@ -79,7 +182,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         }
 
         private fun collectParents(declaration: IrDeclarationWithName) {
-            declaration.parent.acceptVoid(this)
+            declaration.parent.acceptVoid(visitor)
             if (declaration !is IrClass || !declaration.isFacadeClass) {
                 classFqnSegments.add(declaration.name.asString())
             }
@@ -91,114 +194,12 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             }
         }
 
-        override fun visitElement(element: IrElement) =
-            error("Unexpected element ${element.render()}")
-
-        override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-            description = declaration.render()
-        }
-
-        override fun visitPackageFragment(declaration: IrPackageFragment) {
-            packageFqn = declaration.fqName
-        }
-
         private val IrDeclarationWithVisibility.isTopLevelPrivate: Boolean
             get() = visibility == DescriptorVisibilities.PRIVATE && !checkIfPlatformSpecificExport() &&
                     (parent is IrPackageFragment || parent.isFacadeClass)
 
-        override fun visitClass(declaration: IrClass) {
-            collectParents(declaration)
-            isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
-            if (declaration.kind == ClassKind.ENUM_ENTRY) {
-                classFqnSegments.add(MangleConstant.ENUM_ENTRY_CLASS_NAME)
-            }
-            setDescription(declaration)
-            setExpected(declaration.isExpect)
-        }
-
         // Note: `false` because `compatibleMode` is not applied to public signatures
         private fun IrDeclarationWithName.hashId(): Long = mangler.run { signatureMangle(compatibleMode = false) }
-
-        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            val property = declaration.correspondingPropertySymbol
-            if (property != null) {
-                property.owner.acceptVoid(this)
-                val preservedId = declaration.hashId()
-                if (container != null) {
-                    createContainer()
-                    hashId = preservedId
-                } else {
-                    hashIdAcc = preservedId
-                }
-                classFqnSegments.add(declaration.name.asString())
-            } else {
-                collectParents(declaration)
-                isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
-                hashId = declaration.hashId()
-                setDescription(declaration)
-            }
-            setExpected(declaration.isExpect)
-        }
-
-        override fun visitConstructor(declaration: IrConstructor) {
-            collectParents(declaration)
-            hashId = declaration.hashId()
-            setExpected(declaration.isExpect)
-        }
-
-        override fun visitScript(declaration: IrScript) {
-            collectParents(declaration)
-        }
-
-        override fun visitProperty(declaration: IrProperty) {
-            collectParents(declaration)
-            isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
-            hashId = declaration.hashId()
-            setExpected(declaration.isExpect)
-        }
-
-        override fun visitTypeAlias(declaration: IrTypeAlias) {
-            collectParents(declaration)
-            isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
-        }
-
-        override fun visitEnumEntry(declaration: IrEnumEntry) {
-            collectParents(declaration)
-        }
-
-        override fun visitTypeParameter(declaration: IrTypeParameter) {
-            val rawParent = declaration.parent
-
-            val parent = if (rawParent is IrSimpleFunction) {
-                rawParent.correspondingPropertySymbol?.owner ?: rawParent
-            } else rawParent
-
-            parent.accept(this, null)
-            createContainer()
-
-            if (parent is IrProperty && parent.setter == rawParent) {
-                classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME_SETTER)
-            } else {
-                classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME)
-            }
-            hashId = declaration.index.toLong()
-            description = declaration.render()
-        }
-
-        override fun visitField(declaration: IrField) {
-            val prop = declaration.correspondingPropertySymbol?.owner
-
-            if (prop != null) {
-                // backing field
-                prop.acceptVoid(this)
-                createContainer()
-                classFqnSegments.add(MangleConstant.BACKING_FIELD_NAME)
-                description = declaration.render()
-            } else {
-                collectParents(declaration)
-                hashId = declaration.hashId()
-            }
-        }
     }
 }
 

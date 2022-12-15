@@ -176,7 +176,7 @@ fun jsFunctionSignature(
     return calculateJsFunctionSignature(declarationSignature, context)
 }
 
-class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElementVisitorVoid {
+class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElementVisitorVoid() {
     val localLoopNames = NameTable<IrLoop>()
     val localReturnableBlockNames = NameTable<IrReturnableBlock>()
 

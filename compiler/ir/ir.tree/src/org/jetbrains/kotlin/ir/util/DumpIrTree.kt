@@ -52,7 +52,7 @@ class DumpIrTreeVisitor(
     out: Appendable,
     normalizeNames: Boolean = false,
     private val stableOrder: Boolean = false
-) : IrElementVisitor<Unit, String> {
+) : IrElementVisitor<Unit, String>() {
 
     private val printer = Printer(out, "  ")
     private val elementRenderer = RenderIrElementVisitor(normalizeNames, !stableOrder)
@@ -422,7 +422,7 @@ class DumpTreeFromSourceLineVisitor(
     private val lineNumber: Int,
     out: Appendable,
     normalizeNames: Boolean = false
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val dumper = DumpIrTreeVisitor(out, normalizeNames)
 
     override fun visitElement(element: IrElement) {

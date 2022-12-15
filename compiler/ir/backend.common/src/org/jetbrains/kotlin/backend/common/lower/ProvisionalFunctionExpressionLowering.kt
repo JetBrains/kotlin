@@ -25,7 +25,7 @@ class ProvisionalFunctionExpressionLoweringContext(
     val startOffset: Int? = null,
     val endOffset: Int? = null)
 class ProvisionalFunctionExpressionLowering :
-    IrElementTransformer<ProvisionalFunctionExpressionLoweringContext>,
+    IrElementTransformer<ProvisionalFunctionExpressionLoweringContext>(),
     BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

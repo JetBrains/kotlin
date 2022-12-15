@@ -277,7 +277,7 @@ internal abstract class HeaderInfoBuilder(
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
 ) :
-    IrElementVisitor<HeaderInfo?, IrCall?> {
+    IrElementVisitor<HeaderInfo?, IrCall?>() {
 
     private val symbols = context.ir.symbols
 

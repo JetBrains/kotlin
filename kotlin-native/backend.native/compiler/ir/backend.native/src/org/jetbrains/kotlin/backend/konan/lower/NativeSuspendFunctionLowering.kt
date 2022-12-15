@@ -97,7 +97,7 @@ internal class NativeSuspendFunctionsLowering(
                  *
                  * The visitor below does exactly this.
                  */
-                originalBody.transformChildren(object : IrElementTransformer<Boolean> {
+                originalBody.transformChildren(object : IrElementTransformer<Boolean>() {
                     fun IrBuilderWithScope.irGetCompletion() = irCall(completionGetter).apply { dispatchReceiver = irGet(thisReceiver) }
 
                     override fun visitCall(expression: IrCall, /* substituteContinuation */ data: Boolean): IrExpression {
@@ -507,7 +507,7 @@ internal class NativeSuspendFunctionsLowering(
 
     private fun IrElement.hasSuspendCalls(): Boolean {
         var hasSuspendCalls = false
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

@@ -529,7 +529,7 @@ private class LowerCtorHelper(
 
 private fun getSuperCall(constructor: IrConstructor): IrDelegatingConstructorCall? {
     var result: IrDelegatingConstructorCall? = null
-    (constructor.body as IrBlockBody).acceptChildren(object : IrElementVisitor<Unit, Any?> {
+    (constructor.body as IrBlockBody).acceptChildren(object : IrElementVisitor<Unit, Any?>() {
         override fun visitElement(element: IrElement, data: Any?) { }
 
         override fun visitBlock(expression: IrBlock, data: Any?) {
