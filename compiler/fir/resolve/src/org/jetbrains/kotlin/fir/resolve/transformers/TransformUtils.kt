@@ -28,19 +28,6 @@ internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
     }
 }
 
-internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
-        return element
-    }
-
-    override fun transformImplicitTypeRef(
-        implicitTypeRef: FirImplicitTypeRef,
-        data: FirTypeRef
-    ): FirTypeRef {
-        return data
-    }
-}
-
 internal fun FirValueParameter.transformVarargTypeToArrayType() {
     if (isVararg) {
         this.transformTypeToArrayType()

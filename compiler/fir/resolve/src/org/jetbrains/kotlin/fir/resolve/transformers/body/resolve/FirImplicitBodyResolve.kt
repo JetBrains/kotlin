@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
@@ -219,9 +218,7 @@ private class ReturnTypeCalculatorWithJump(
 
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
-            // TODO?
-            declaration.transformReturnTypeRef(
-                TransformImplicitType,
+            declaration.replaceReturnTypeRef(
                 buildErrorTypeRef {
                     diagnostic = ConeSimpleDiagnostic("Unsupported: implicit VP type")
                 }
