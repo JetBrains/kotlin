@@ -16,6 +16,10 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
     BUNDLE_SIZE(readableString = "Total size of the final bundle", type = ValueType.BYTES),
 
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
+        ANALYZED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
+        CODE_GENERATED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines for code generation", type = ValueType.NUMBER),
+        ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
+        CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
 
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
     CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT(parent = null, "Number of times 'ClasspathEntrySnapshotTransform' ran", type = ValueType.NUMBER),
