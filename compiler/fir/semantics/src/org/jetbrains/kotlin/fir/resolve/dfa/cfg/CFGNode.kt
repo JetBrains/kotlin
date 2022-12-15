@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @RequiresOptIn
@@ -112,8 +113,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         owner.addNode(this)
     }
 
-    private val _previousNodes: MutableList<CFGNode<*>> = mutableListOf()
-    private val _followingNodes: MutableList<CFGNode<*>> = mutableListOf()
+    private val _previousNodes: MutableList<CFGNode<*>> = SmartList()
+    private val _followingNodes: MutableList<CFGNode<*>> = SmartList()
 
     val previousNodes: List<CFGNode<*>> get() = _previousNodes
     val followingNodes: List<CFGNode<*>> get() = _followingNodes
