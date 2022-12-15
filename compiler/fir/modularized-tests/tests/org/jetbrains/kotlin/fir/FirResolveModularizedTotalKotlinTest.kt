@@ -57,7 +57,7 @@ private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").t
 
 private val REPORT_PASS_EVENTS = System.getProperty("fir.bench.report.pass.events", "false").toBooleanLenient()!!
 
-private interface CLibrary : Library {
+interface CLibrary : Library {
     fun getpid(): Int
     fun gettid(): Int
 

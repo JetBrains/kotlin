@@ -55,6 +55,11 @@ class FullPipelineParallelModularizedTest : AbstractFullPipelineParallelTest() {
         for (i in 0 until PASSES) {
             println("Pass $i")
             runTestOnce(i)
+	    
+	    val pid = CLibrary.INSTANCE.getpid()
+	    Runtime.getRuntime().exec("jcmd ${pid} VM.checkcast_stat")
+	    println("after diagnostic command")
+	    Thread.sleep(5000L)
         }
     }
 }
