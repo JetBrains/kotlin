@@ -428,7 +428,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
-
         functionTypeParameter.configure {
             +field("name", nameType, nullable = true)
             +field("returnTypeRef", typeRef)
@@ -449,6 +448,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         anonymousInitializer.configure {
             +body(nullable = true, withReplace = true)
             +symbol("FirAnonymousInitializerSymbol")
+            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
         }
 
         file.configure {

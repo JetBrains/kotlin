@@ -1815,6 +1815,7 @@ open class RawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 body = buildOrLazyBlock { initializer.body.toFirBlock() }
+                dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
             }
         }
 

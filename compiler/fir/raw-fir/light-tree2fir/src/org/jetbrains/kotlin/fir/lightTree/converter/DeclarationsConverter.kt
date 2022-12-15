@@ -959,6 +959,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             body = firBlock ?: buildEmptyExpressionBlock()
+            dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
         }
     }
 
