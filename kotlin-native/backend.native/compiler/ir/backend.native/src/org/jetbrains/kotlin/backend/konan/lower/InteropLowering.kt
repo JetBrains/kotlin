@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.inlineDeclaration
+import org.jetbrains.kotlin.backend.common.ir.inlineFunction
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
@@ -15,7 +20,10 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -39,12 +47,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.konan.ForeignExceptionMode
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.konan.ForeignExceptionMode
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 internal class InteropLowering(generationState: NativeGenerationState) : FileLoweringPass {
     // TODO: merge these lowerings.
@@ -693,7 +701,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression is IrReturnableBlock && expression.inlineFunctionSymbol?.isAutoreleasepool() == true) {
+        if (expression is IrReturnableBlock && expression.inlineFunction?.isAutoreleasepool() == true) {
             // Prohibit calling suspend functions from `autoreleasepool {}` block.
             // See https://youtrack.jetbrains.com/issue/KT-50786 for more details.
             // Note: we can't easily check this in frontend, because we need to prohibit indirect cases like
@@ -722,8 +730,8 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         return super.visitBlock(expression)
     }
 
-    private fun IrFunctionSymbol.isAutoreleasepool(): Boolean {
-        return this.owner.name.asString() == "autoreleasepool" && this.owner.parent.let { parent ->
+    private fun IrFunction.isAutoreleasepool(): Boolean {
+        return this.name.asString() == "autoreleasepool" && this.parent.let { parent ->
             parent is IrPackageFragment && parent.fqName == InteropFqNames.packageName
         }
     }

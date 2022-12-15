@@ -8,13 +8,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.fileOrNull
-
-@Suppress("unused") // Used in kotlin-native
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunctionSymbol?.owner?.fileOrNull?.symbol
 
 val IrFunctionReference.isWithReflection: Boolean
     get() = reflectionTarget != null

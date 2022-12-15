@@ -162,7 +162,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, true)
+        fun inline() = inlineFunction(callSite, callee, inlineFunctionResolver.getFunctionSymbol(callee).owner, true)
 
         private fun IrElement.copy(): IrElement {
             return copyIrElement.copy(this)
@@ -171,6 +171,7 @@ class FunctionInlining(
         private fun inlineFunction(
             callSite: IrFunctionAccessExpression,
             callee: IrFunction,
+            originalInlinedElement: IrElement,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
             val copiedCallee = (callee.copy() as IrFunction).apply {
@@ -198,18 +199,27 @@ class FunctionInlining(
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, endOffset, endOffset)
 
             val transformer = ParameterSubstitutor()
-            val newStatements = mutableListOf<IrStatement>()
+            val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
-            newStatements.addAll(evaluationStatements)
-            statements.mapTo(newStatements) { it.transform(transformer, data = null) as IrStatement }
+            val inlinedBlock = IrInlinedFunctionBlockImpl(
+                startOffset = callSite.startOffset,
+                endOffset = callSite.endOffset,
+                type = callSite.type,
+                inlineCall = callSite,
+                inlinedElement = originalInlinedElement,
+                origin = null,
+                statements = evaluationStatements + newStatements
+            )
 
+            // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to
+            // control special composite blocks that are inside `IrInlinedFunctionBlock`
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
                 symbol = irReturnableBlockSymbol,
                 origin = null,
-                statements = newStatements,
+                statements = listOf(inlinedBlock),
                 inlineFunctionSymbol = inlineFunctionResolver.getFunctionSymbol(callee)
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -281,9 +291,7 @@ class FunctionInlining(
             fun inlineFunctionExpression(irCall: IrCall, irFunctionExpression: IrFunctionExpression): IrExpression {
                 // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
                 val newExpression = inlineFunction(
-                    irCall,
-                    irFunctionExpression.function,
-                    false
+                    irCall, irFunctionExpression.function, irFunctionExpression, false
                 )
                 // Substitute lambda arguments with target function arguments.
                 return newExpression.transform(this, null)

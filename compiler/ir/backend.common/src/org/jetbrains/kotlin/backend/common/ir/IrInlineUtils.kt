@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class IrInlinable
@@ -127,3 +125,37 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             }
         }
     }
+
+val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
+    get() = when (val element = inlinedElement) {
+        is IrFunction -> element
+        is IrFunctionExpression -> element.function
+        is IrFunctionReference -> element.symbol.owner
+        is IrPropertyReference -> element.symbol.owner
+        else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
+    }
+
+private val IrInlinedFunctionBlock.inlineFunction: IrFunction?
+    get() = when (val element = inlinedElement) {
+        is IrFunction -> element
+        is IrFunctionExpression -> element.function
+        is IrFunctionReference -> element.symbol.owner.takeIf { it.isInline }
+        else -> null
+    }
+
+fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
+    return this.inlinedElement is IrFunction
+}
+
+fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
+    return !isFunctionInlining()
+}
+
+val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
+    get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
+
+val IrReturnableBlock.inlineFunction: IrFunction?
+    get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
+
+val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
+    get() = inlineFunction?.fileOrNull?.symbol
