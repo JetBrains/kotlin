@@ -446,17 +446,23 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
         var newParameterIndex = 0
 
+        fun remap(params: List<IrValueParameter>) {
+            params.mapTo(newValueParameters) { oldParameter ->
+                oldParameter.copy(lambda, newParameterIndex++).also {
+                    oldToNew[oldParameter] = it
+                }
+            }
+        }
+
+        remap(lambda.valueParameters.take(lambda.contextReceiverParametersCount))
+
         newValueParameters.add(
             oldExtensionReceiver.copy(lambda, newParameterIndex++, oldExtensionReceiver.name).also {
                 oldToNew[oldExtensionReceiver] = it
             }
         )
 
-        lambda.valueParameters.mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda, newParameterIndex++).also {
-                oldToNew[oldParameter] = it
-            }
-        }
+        remap(lambda.valueParameters.drop(lambda.contextReceiverParametersCount))
 
         lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
 
