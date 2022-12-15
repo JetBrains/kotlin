@@ -23,14 +23,14 @@ public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
-    return build(createListBuilder<E>().apply(builderAction))
+    return ArrayList<E>().apply(builderAction)
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
-    return build(createListBuilder<E>(capacity).apply(builderAction))
+    return ArrayList<E>(capacity).apply(builderAction)
 }
 
 @PublishedApi

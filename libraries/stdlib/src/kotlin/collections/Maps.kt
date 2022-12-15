@@ -26,7 +26,7 @@ private object EmptyMap : Map<Any?, Nothing>, Serializable {
     override fun get(key: Any?): Nothing? = null
     override val entries: Set<Map.Entry<Any?, Nothing>> get() = EmptySet
     override val keys: Set<Any?> get() = EmptySet
-    override val values: Collection<Nothing> get() = EmptyList
+    override val values: Collection<Nothing> get() = emptyList()
 
     private fun readResolve(): Any = EmptyMap
 }

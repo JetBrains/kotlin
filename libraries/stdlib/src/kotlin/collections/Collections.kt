@@ -64,11 +64,15 @@ private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Bool
     public fun toArray(): Array<out Any?> = values.copyToArrayOfAny(isVarargs)
 }
 
+object EmptyArrayList {
+    val Instance = ArrayList<Nothing>(0)
+}
+
 /**
  * Returns an empty read-only list.  The returned list is serializable (JVM).
  * @sample samples.collections.Collections.Lists.emptyReadOnlyList
  */
-public fun <T> emptyList(): List<T> = EmptyList
+public fun <T> emptyList(): List<T> = EmptyArrayList.Instance
 
 /**
  * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
