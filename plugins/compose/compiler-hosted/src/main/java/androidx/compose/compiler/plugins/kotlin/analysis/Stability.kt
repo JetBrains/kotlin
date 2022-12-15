@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -64,6 +63,7 @@ import org.jetbrains.kotlin.ir.util.isFinalClass
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 sealed class Stability {
     // class Foo(val bar: Int)
@@ -228,51 +228,6 @@ private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
         ?.getValueArgument(0) as? IrConst<*>
         )?.value as? Int
 
-// TODO: FunctionReference
-private val stableBuiltinTypes = mapOf(
-    "kotlin.Pair" to 0b11,
-    "kotlin.Triple" to 0b111,
-    "kotlin.Comparator" to 0,
-    "kotlin.Result" to 0b1,
-    "kotlin.ranges.ClosedRange" to 0b1,
-    "kotlin.ranges.ClosedFloatingPointRange" to 0b1,
-    // Guava
-    "com.google.common.collect.ImmutableList" to 0b1,
-    "com.google.common.collect.ImmutableEnumMap" to 0b11,
-    "com.google.common.collect.ImmutableMap" to 0b11,
-    "com.google.common.collect.ImmutableEnumSet" to 0b1,
-    "com.google.common.collect.ImmutableSet" to 0b1,
-    // Kotlinx immutable
-    "kotlinx.collections.immutable.ImmutableCollection" to 0b1,
-    "kotlinx.collections.immutable.ImmutableList" to 0b1,
-    "kotlinx.collections.immutable.ImmutableSet" to 0b1,
-    "kotlinx.collections.immutable.ImmutableMap" to 0b11,
-    "kotlinx.collections.immutable.PersistentCollection" to 0b1,
-    "kotlinx.collections.immutable.PersistentList" to 0b1,
-    "kotlinx.collections.immutable.PersistentSet" to 0b1,
-    "kotlinx.collections.immutable.PersistentMap" to 0b11,
-    // Dagger
-    "dagger.Lazy" to 0b1,
-)
-
-// TODO: buildList, buildMap, buildSet, etc.
-private val stableProducingFunctions = mapOf(
-    "kotlin.collections.CollectionsKt.emptyList" to 0,
-    "kotlin.collections.CollectionsKt.listOf" to 0b1,
-    "kotlin.collections.CollectionsKt.listOfNotNull" to 0b1,
-    "kotlin.collections.MapsKt.mapOf" to 0b11,
-    "kotlin.collections.MapsKt.emptyMap" to 0,
-    "kotlin.collections.SetsKt.setOf" to 0b1,
-    "kotlin.collections.SetsKt.emptySet" to 0,
-    // Kotlinx immutable
-    "kotlinx.collections.immutable.immutableListOf" to 0b1,
-    "kotlinx.collections.immutable.immutableSetOf" to 0b1,
-    "kotlinx.collections.immutable.immutableMapOf" to 0b11,
-    "kotlinx.collections.immutable.persistentListOf" to 0b1,
-    "kotlinx.collections.immutable.persistentSetOf" to 0b1,
-    "kotlinx.collections.immutable.persistentMapOf" to 0b11,
-)
-
 fun stabilityOf(irType: IrType): Stability =
     stabilityOf(irType, emptyMap(), emptySet())
 
@@ -298,8 +253,8 @@ private fun stabilityOf(
         val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
         val stability: Stability
         val mask: Int
-        if (stableBuiltinTypes.contains(fqName)) {
-            mask = stableBuiltinTypes[fqName] ?: 0
+        if (KnownStableConstructs.stableTypes.contains(fqName)) {
+            mask = KnownStableConstructs.stableTypes[fqName] ?: 0
             stability = Stability.Stable
         } else {
             mask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
@@ -348,7 +303,7 @@ private fun stabilityOf(
 
 private fun canInferStability(declaration: IrClass): Boolean {
     val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
-    return stableBuiltinTypes.contains(fqName) ||
+    return KnownStableConstructs.stableTypes.contains(fqName) ||
         declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 }
 
@@ -449,9 +404,9 @@ private fun IrSimpleType.substitutionMap(): Map<IrTypeParameterSymbol, IrTypeArg
 
 private fun stabilityOf(expr: IrCall, baseStability: Stability): Stability {
     val function = expr.symbol.owner
-    val fqName = function.fqNameForIrSerialization
+    val fqName = function.kotlinFqName
 
-    return when (val mask = stableProducingFunctions[fqName.asString()]) {
+    return when (val mask = KnownStableConstructs.stableFunctions[fqName.asString()]) {
         null -> baseStability
         0 -> Stability.Stable
         else -> Stability.Combined(
