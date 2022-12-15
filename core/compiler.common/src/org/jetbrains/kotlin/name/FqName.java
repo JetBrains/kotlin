@@ -35,6 +35,7 @@ public final class FqName {
 
     @NotNull
     private final String fqNameStr;
+    private final int cachedHashCode;
 
     // cache
     private transient FqName parent;
@@ -42,16 +43,19 @@ public final class FqName {
     public FqName(@NotNull String fqName) {
         this.fqName = new FqNameUnsafe(fqName, this);
         this.fqNameStr = this.fqName.asString();
+        this.cachedHashCode = fqNameStr.hashCode();
     }
 
     public FqName(@NotNull FqNameUnsafe fqName) {
         this.fqName = fqName;
         this.fqNameStr = this.fqName.asString();
+        this.cachedHashCode = fqNameStr.hashCode();
     }
 
     private FqName(@NotNull FqNameUnsafe fqName, FqName parent) {
         this.fqName = fqName;
         this.fqNameStr = this.fqName.asString();
+        this.cachedHashCode = fqNameStr.hashCode();
         this.parent = parent;
     }
 
@@ -130,6 +134,6 @@ public final class FqName {
 
     @Override
     public int hashCode() {
-        return fqNameStr.hashCode();
+        return cachedHashCode;
     }
 }
