@@ -33,19 +33,25 @@ public final class FqName {
     @NotNull
     private final FqNameUnsafe fqName;
 
+    @NotNull
+    private final String fqNameStr;
+
     // cache
     private transient FqName parent;
 
     public FqName(@NotNull String fqName) {
         this.fqName = new FqNameUnsafe(fqName, this);
+        this.fqNameStr = this.fqName.asString();
     }
 
     public FqName(@NotNull FqNameUnsafe fqName) {
         this.fqName = fqName;
+        this.fqNameStr = this.fqName.asString();
     }
 
     private FqName(@NotNull FqNameUnsafe fqName, FqName parent) {
         this.fqName = fqName;
+        this.fqNameStr = this.fqName.asString();
         this.parent = parent;
     }
 
@@ -119,13 +125,11 @@ public final class FqName {
 
         FqName otherFqName = (FqName) o;
 
-        if (!fqName.equals(otherFqName.fqName)) return false;
-
-        return true;
+        return fqNameStr.equals(otherFqName.fqNameStr);
     }
 
     @Override
     public int hashCode() {
-        return fqName.hashCode();
+        return fqNameStr.hashCode();
     }
 }
