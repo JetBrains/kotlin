@@ -31,24 +31,9 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
 
     override val libraryFingerprint: ICHash by lazy { File(libraryFile.path).fileHashForIC() }
 
-    override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy { sourceFiles.first }
-    override val sourceFileFingerprints: Map<KotlinSourceFile, ICHash> by lazy { sourceFiles.second }
-
-    override val jsOutputName: String?
-        get() = library.jsOutputName
-
-    private val sourceFiles by lazy {
-        val filesCount = library.fileCount()
-        val extReg = ExtensionRegistryLite.newInstance()
-
-        val deserializers = HashMap<KotlinSourceFile, IdSignatureDeserializer>(filesCount)
-        val fingerprints = HashMap<KotlinSourceFile, ICHash>(filesCount)
-
-        repeat(filesCount) {
-            val fileProto = IrFile.parseFrom(library.file(it).codedInputStream, extReg)
-            val srcFile = KotlinSourceFile(fileProto.fileEntry.name)
-
-            deserializers[srcFile] = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
+    override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy {
+        buildMapUntil(sourceFiles.size) {
+            val deserializer = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
                 private fun err(): Nothing = icError("Not supported")
                 override fun irDeclaration(index: Int): ByteArray = err()
                 override fun type(index: Int): ByteArray = err()
@@ -58,9 +43,25 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
                 override fun debugInfo(index: Int): ByteArray? = null
             }), null)
 
-            fingerprints[srcFile] = library.fingerprint(it)
+            put(sourceFiles[it], deserializer)
         }
-        deserializers to fingerprints
+    }
+
+    override val sourceFileFingerprints: Map<KotlinSourceFile, ICHash> by lazy {
+        buildMapUntil(sourceFiles.size) {
+            put(sourceFiles[it], library.fingerprint(it))
+        }
+    }
+
+    override val jsOutputName: String?
+        get() = library.jsOutputName
+
+    private val sourceFiles by lazy {
+        val extReg = ExtensionRegistryLite.newInstance()
+        Array(library.fileCount()) {
+            val fileProto = IrFile.parseFrom(library.file(it).codedInputStream, extReg)
+            KotlinSourceFile(fileProto.fileEntry.name)
+        }
     }
 }
 
