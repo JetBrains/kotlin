@@ -76,6 +76,14 @@ class Sequences {
         }
 
         @Sample
+        fun sequenceFromMap() {
+            val map = mapOf(1 to "x", 2 to "y", -1 to "zz")
+            val sequence = map.asSequence()
+
+            assertPrints(sequence.joinToString(), "1=x, 2=y, -1=zz")
+        }
+
+        @Sample
         fun sequenceFromIterator() {
             val array = arrayOf(1, 2, 3)
 
