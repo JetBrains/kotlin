@@ -67,12 +67,32 @@ class ActualTypealiasAdder : DocumentableTransformer {
             if (element.expectPresentInSet != null) {
                 typealiases[element.dri]?.let { ta ->
                     val merged = element.withNewExtras(element.extra + ActualTypealias(ta.underlyingType)).let {
-                        when(it) {
-                            is DClass -> it.copy(sourceSets = element.sourceSets + ta.sourceSets)
-                            is DEnum ->  it.copy(sourceSets = element.sourceSets + ta.sourceSets)
-                            is DInterface -> it.copy(sourceSets = element.sourceSets + ta.sourceSets)
-                            is DObject -> it.copy(sourceSets = element.sourceSets + ta.sourceSets)
-                            is DAnnotation -> it.copy(sourceSets = element.sourceSets + ta.sourceSets)
+                        when (it) {
+                            is DClass -> it.copy(
+                                documentation = element.documentation + ta.documentation,
+                                sourceSets = element.sourceSets + ta.sourceSets
+                            )
+
+                            is DEnum -> it.copy(
+                                documentation = element.documentation + ta.documentation,
+                                sourceSets = element.sourceSets + ta.sourceSets
+                            )
+
+                            is DInterface -> it.copy(
+                                documentation = element.documentation + ta.documentation,
+                                sourceSets = element.sourceSets + ta.sourceSets
+                            )
+
+                            is DObject -> it.copy(
+                                documentation = element.documentation + ta.documentation,
+                                sourceSets = element.sourceSets + ta.sourceSets
+                            )
+
+                            is DAnnotation -> it.copy(
+                                documentation = element.documentation + ta.documentation,
+                                sourceSets = element.sourceSets + ta.sourceSets
+                            )
+
                             else -> throw IllegalStateException("${it::class.qualifiedName} ${it.name} cannot have copy its sourceSets")
                         }
                     }
