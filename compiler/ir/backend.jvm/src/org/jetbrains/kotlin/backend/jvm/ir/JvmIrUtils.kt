@@ -316,7 +316,7 @@ fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
         !isStaticValueClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
-        parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+        parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
         attributeOwnerId as IrSimpleFunction
     else this

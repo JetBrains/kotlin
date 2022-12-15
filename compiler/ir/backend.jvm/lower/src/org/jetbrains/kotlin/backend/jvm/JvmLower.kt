@@ -81,7 +81,7 @@ private val validateIrAfterLowering = makeCustomPhase(
 )
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
+private val provisionalFunctionExpressionPhase = makeIrModulePhase<CommonBackendContext>(
     { ProvisionalFunctionExpressionLowering() },
     name = "FunctionExpression",
     description = "Transform IrFunctionExpression to a local function reference"
@@ -308,24 +308,6 @@ internal val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
 )
 
 private val jvmFilePhases = listOf(
-    typeAliasAnnotationMethodsPhase,
-    provisionalFunctionExpressionPhase,
-
-    jvmOverloadsAnnotationPhase,
-    mainMethodGenerationPhase,
-
-    inventNamesForLocalClassesPhase,
-    kCallableNamePropertyPhase,
-    annotationPhase,
-    annotationImplementationPhase,
-    polymorphicSignaturePhase,
-    varargPhase,
-
-    jvmLateinitLowering,
-
-    inlineCallableReferenceToLambdaPhase,
-    directInvokeLowering,
-    functionReferencePhase,
     suspendLambdaPhase,
     propertyReferenceDelegationPhase,
     singletonOrConstantDelegationPhase,
@@ -360,6 +342,7 @@ private val jvmFilePhases = listOf(
     // makePatchParentsPhase(),
 
     removeDuplicatedInlinedLocalClasses,
+
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
 
@@ -447,6 +430,28 @@ private fun buildJvmLoweringPhases(
                 functionInliningPhase then
                 createSeparateCallForInlinedLambdas then
                 markNecessaryInlinedClassesAsRegenerated then
+
+                // Note: following phases can be moved to file level, but are located here because of `functionInliningPhase`
+                // This is needed, for example, for `kt42408` test.
+                // Function expression there must be transformed into ir class before moving to file level phases.
+                typeAliasAnnotationMethodsPhase then
+                provisionalFunctionExpressionPhase then
+
+                jvmOverloadsAnnotationPhase then
+                mainMethodGenerationPhase then
+
+                kCallableNamePropertyPhase then
+                annotationPhase then
+                annotationImplementationPhase then
+                polymorphicSignaturePhase then
+                varargPhase then
+
+                jvmLateinitLowering then
+                inventNamesForLocalClassesPhase then
+
+                inlineCallableReferenceToLambdaPhase then
+                directInvokeLowering then
+                functionReferencePhase then
 
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
