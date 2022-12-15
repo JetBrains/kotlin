@@ -22,7 +22,7 @@ class C() : B() {
     }
 
     fun bar(c: C) {
-        this = c  //should be an error
+        <!VARIABLE_EXPECTED!>this<!> = c  //should be an error
     }
 }
 
@@ -31,7 +31,7 @@ fun getInt() = 0
 class D() {
     inner class B() {
         fun foo() {
-            this@D = D()
+            <!VARIABLE_EXPECTED!>this@D<!> = D()
         }
     }
 }
@@ -93,7 +93,7 @@ class Test() {
         ++<!VARIABLE_EXPECTED!>2<!>
         --(r@ <!VARIABLE_EXPECTED!>2<!>)
 
-        this<!UNRESOLVED_REFERENCE!>++<!>
+        <!VARIABLE_EXPECTED!>this<!><!UNRESOLVED_REFERENCE!>++<!>
 
         var s : String = "r"
         s += "ss"

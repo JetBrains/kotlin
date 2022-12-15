@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
@@ -30,6 +31,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         checkInvisibleSetter(expression, context, reporter)
         checkValReassignmentViaBackingField(expression, context, reporter)
         checkValReassignmentOnValueParameter(expression, context, reporter)
+        checkAssignmentToThis(expression, context, reporter)
     }
 
     private fun checkInvisibleSetter(
@@ -101,5 +103,15 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
     ) {
         val valueParameter = expression.lValue.toResolvedValueParameterSymbol() ?: return
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter, context)
+    }
+
+    private fun checkAssignmentToThis(
+        expression: FirVariableAssignment,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (expression.lValue is FirThisReference) {
+            reporter.reportOn(expression.lValue.source, FirErrors.VARIABLE_EXPECTED, context)
+        }
     }
 }
