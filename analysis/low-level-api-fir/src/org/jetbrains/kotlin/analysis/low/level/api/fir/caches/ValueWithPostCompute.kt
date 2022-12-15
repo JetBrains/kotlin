@@ -27,7 +27,6 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     private var _calculate: ((KEY) -> Pair<VALUE, DATA>)? = calculate
     private var _postCompute: ((KEY, VALUE, DATA) -> Unit)? = postCompute
     private var lock: ReentrantLock? = ReentrantLock()
-    private var guard: ThreadLocal<Boolean>? = ThreadLocal()
 
     /**
      * can be in one of the following three states:
@@ -43,16 +42,10 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     private var value: Any? = ValueIsNotComputed
 
     private inline fun <T> recursiveGuarded(body: () -> T): T {
-        val currentGuardValue = guard!!.get()
-        check(currentGuardValue == null || !currentGuardValue) {
+        check(lock!!.holdCount == 1) {
             "Should not be called recursively"
         }
-        guard!!.set(true)
-        return try {
-            body()
-        } finally {
-            guard!!.set(false)
-        }
+        return body()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -134,7 +127,6 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         _calculate = null
         _postCompute = null
         lock = null
-        guard = null
         value = calculatedValue
 
         return calculatedValue
