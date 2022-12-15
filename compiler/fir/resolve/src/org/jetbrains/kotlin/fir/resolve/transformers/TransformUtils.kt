@@ -100,13 +100,6 @@ internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
     }
 }
 
-internal object StoreReceiver : FirTransformer<FirExpression>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
-        @Suppress("UNCHECKED_CAST")
-        return (data as E)
-    }
-}
-
 internal fun FirValueParameter.transformVarargTypeToArrayType() {
     if (isVararg) {
         this.transformTypeToArrayType()

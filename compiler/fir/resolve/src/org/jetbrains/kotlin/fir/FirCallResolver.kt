@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -320,12 +319,14 @@ class FirCallResolver(
             }
         }
 
-        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
+        val resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
-            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
-            resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.chosenExtensionReceiverExpression())
-            resultExpression.replaceContextReceiverArguments(candidate.contextReceiverArguments())
+            resultExpression.apply {
+                replaceDispatchReceiver(candidate.dispatchReceiverExpression())
+                replaceExtensionReceiver(candidate.chosenExtensionReceiverExpression())
+                replaceContextReceiverArguments(candidate.contextReceiverArguments())
+            }
         }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
         return resultExpression
@@ -592,7 +593,7 @@ class FirCallResolver(
             if (singleCandidate != null) {
                 val symbol = singleCandidate.symbol
                 if (symbol is FirConstructorSymbol && symbol.fir.isInner) {
-                    transformDispatchReceiver(StoreReceiver, singleCandidate.dispatchReceiverExpression())
+                    replaceDispatchReceiver(singleCandidate.dispatchReceiverExpression())
                 }
                 replaceContextReceiverArguments(singleCandidate.contextReceiverArguments())
             }

@@ -135,9 +135,10 @@ class FirCallCompletionResultsWriterTransformer(
             .transformCalleeReference(
                 StoreCalleeReference,
                 calleeReference.toResolvedReference(),
-            )
-            .transformDispatchReceiver(StoreReceiver, dispatchReceiver)
-            .transformExtensionReceiver(StoreReceiver, extensionReceiver) as T
+            ).apply {
+                replaceDispatchReceiver(dispatchReceiver)
+                replaceExtensionReceiver(extensionReceiver)
+            } as T
 
         result.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
 
@@ -388,8 +389,10 @@ class FirCallCompletionResultsWriterTransformer(
         return callableReferenceAccess.transformCalleeReference(
             StoreCalleeReference,
             resolvedReference,
-        ).transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
-            .transformExtensionReceiver(StoreReceiver, subCandidate.chosenExtensionReceiverExpression())
+        ).apply {
+            replaceDispatchReceiver(subCandidate.dispatchReceiverExpression())
+            replaceExtensionReceiver(subCandidate.chosenExtensionReceiverExpression())
+        }
     }
 
     private fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic): FirNamedReference {

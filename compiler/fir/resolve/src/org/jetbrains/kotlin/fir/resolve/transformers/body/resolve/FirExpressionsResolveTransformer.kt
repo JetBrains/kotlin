@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
@@ -235,7 +234,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 lastDispatchReceiver
             }
         implicitReceiver?.receiverExpression?.let {
-            superReferenceContainer.transformDispatchReceiver(StoreReceiver, it)
+            superReferenceContainer.replaceDispatchReceiver(it)
         }
         val superTypeRefs = implicitReceiver?.boundSymbol?.fir?.superTypeRefs
         val superTypeRef = superReference.superTypeRef
