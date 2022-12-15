@@ -7,13 +7,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
@@ -21,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.fir.StandaloneAnalysisApiExtension
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -65,7 +57,6 @@ object FirKotlinToJvmBytecodeCompiler {
     fun compileModulesUsingFrontendIR(
         projectEnvironment: AbstractProjectEnvironment,
         projectConfiguration: CompilerConfiguration,
-        rootDisposable: Disposable,
         messageCollector: MessageCollector,
         allSources: List<KtFile>,
         buildFile: File?,
@@ -99,29 +90,13 @@ object FirKotlinToJvmBytecodeCompiler {
 
         // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
         val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
-        val analysisApiExtensions = project?.let { StandaloneAnalysisApiExtension.getInstances(it) }.orEmpty()
-
-        fun Module.getKtFiles(): List<KtFile> {
-            return getSourceFiles(
-                allSources, (projectEnvironment as? VfsBasedProjectEnvironment)?.localFileSystem, isMultiModuleChunk, buildFile
-            )
-        }
-
-        if (chunk.size == 1 && analysisApiExtensions.isNotEmpty()) {
-            return runStandaloneAnalysisApi(
-                rootDisposable,
-                project!!,
-                chunk.single().getKtFiles(),
-                analysisApiExtensions,
-                projectConfiguration
-            )
-        }
-
         for (module in chunk) {
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
             val context = CompilationContext(
                 module,
-                module.getKtFiles(),
+                module.getSourceFiles(
+                    allSources, (projectEnvironment as? VfsBasedProjectEnvironment)?.localFileSystem, isMultiModuleChunk, buildFile
+                ),
                 projectEnvironment,
                 messageCollector,
                 moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
@@ -296,36 +271,6 @@ object FirKotlinToJvmBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         return generationState
-    }
-
-    @OptIn(KtAnalysisApiInternals::class)
-    private fun runStandaloneAnalysisApi(
-        rootDisposable: Disposable,
-        project: Project,
-        ktFiles: List<KtFile>,
-        extensions: List<StandaloneAnalysisApiExtension>,
-        configuration: CompilerConfiguration
-    ): Boolean {
-        val module: KtSourceModule
-
-        val analysisSession = buildStandaloneAnalysisAPISession(
-            rootDisposable,
-            project
-        ) {
-            // I have files: List<File>
-            buildKtModuleProviderByCompilerConfiguration(configuration) {
-                module = it
-            }
-        }
-        val ktAnalysisSession = KtAnalysisSessionProvider.getInstance(analysisSession.project)
-            .getAnalysisSessionByUseSiteKtModule(module, KtAlwaysAccessibleLifetimeTokenFactory)
-
-        for (extension in extensions) {
-            // TODO: add ability to retry analysis with additional roots
-            extension.runAnalysis(ktFiles, ktAnalysisSession)
-        }
-        // TODO: compute proper return type
-        return true
     }
 
     private class CompilationContext(

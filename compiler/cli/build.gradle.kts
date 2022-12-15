@@ -36,7 +36,6 @@ dependencies {
     api(project(":compiler:fir:fir-serialization"))
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-io"))
-    api(project(":analysis:analysis-api-standalone"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
