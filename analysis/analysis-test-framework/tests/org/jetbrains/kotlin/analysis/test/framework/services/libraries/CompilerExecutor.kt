@@ -49,6 +49,10 @@ object CompilerExecutor {
             addAll(listOf("-api-version", apiVersion.versionString))
         }
 
+        module.directives[LanguageSettingsDirectives.LANGUAGE].firstOrNull()?.let {
+            add("-XXLanguage:$it")
+        }
+
         module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
             addAll(listOf("-jvm-target", jvmTarget.description))
         }

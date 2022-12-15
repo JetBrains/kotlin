@@ -114,6 +114,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/DollarsInNameNoPackage.kt");
     }
 
+    @TestMetadata("EnumClass.kt")
+    public void testEnumClass() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/EnumClass.kt");
+    }
+
+    @TestMetadata("EnumClassWithEnumEntries.kt")
+    public void testEnumClassWithEnumEntries() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/EnumClassWithEnumEntries.kt");
+    }
+
     @TestMetadata("EnumEntry.kt")
     public void testEnumEntry() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/EnumEntry.kt");
