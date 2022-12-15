@@ -301,22 +301,41 @@ class MemberScopeTowerLevel(
 class ContextReceiverGroupMemberScopeTowerLevel(
     bodyResolveComponents: BodyResolveComponents,
     contextReceiverGroup: ContextReceiverGroup,
+    private val emptyScopesCache: EmptyScopesCache,
     givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
 ) : TowerScopeLevel() {
     private val memberScopeLevels = contextReceiverGroup.map {
-        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
+        it to MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
+    }
+
+    val nonEmptyReceivers = mutableSetOf<ContextReceiverValue<*>>()
+
+    private inline fun minAmongReceivers(calculateResult: (MemberScopeTowerLevel) -> ProcessResult): ProcessResult {
+        return memberScopeLevels.minOf { (it, level) ->
+            if (it in emptyScopesCache.contextReceivers) {
+                return ProcessResult.SCOPE_EMPTY
+            }
+
+            val result = calculateResult(level)
+
+            if (result == ProcessResult.FOUND) {
+                nonEmptyReceivers += it
+            }
+
+            result
+        }
     }
 
     override fun processFunctionsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult {
-        return memberScopeLevels.minOf { it.processFunctionsByName(info, processor) }
+        return minAmongReceivers { it.processFunctionsByName(info, processor) }
     }
 
     override fun processPropertiesByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessResult {
-        return memberScopeLevels.minOf { it.processPropertiesByName(info, processor) }
+        return minAmongReceivers { it.processPropertiesByName(info, processor) }
     }
 
     override fun processObjectsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>): ProcessResult {
-        return memberScopeLevels.minOf { it.processObjectsByName(info, processor) }
+        return minAmongReceivers { it.processObjectsByName(info, processor) }
     }
 }
 

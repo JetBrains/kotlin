@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -17,6 +18,18 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+
+// NB: A new EmptyScopesCache must be created
+// per each CallKind. Also, because being empty due
+// to processing properties != being empty due
+// to processing functions.
+class EmptyScopesCache {
+    val emptyScopes = mutableSetOf<FirScope>()
+    val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
+    val invokeReceiverValuesWithEmptyScopes = mutableSetOf<ExpressionReceiverValue>()
+    val contextReceivers = mutableSetOf<ContextReceiverValue<*>>()
+    val explicitReceivers = mutableSetOf<FirExpression>()
+}
 
 class FirTowerResolver(
     private val components: BodyResolveComponents,
@@ -54,12 +67,7 @@ class FirTowerResolver(
         info: CallInfo
     ) {
         val invokeResolveTowerExtension = FirInvokeResolveTowerExtension(context, manager, candidateFactoriesAndCollectors)
-        val emptyScopesForMainTask = mutableSetOf<FirScope>()
-
-        val emptyScopesForInvokeResolution = when (info.callKind) {
-            CallKind.VariableAccess -> emptyScopesForMainTask
-            else -> mutableSetOf()
-        }
+        val emptyScopesCache = EmptyScopesCache()
 
         val mainTask = FirTowerResolveTask(
             components,
@@ -70,11 +78,11 @@ class FirTowerResolver(
         )
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> {
-                manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver, emptyScopesForMainTask) }
+                manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver, emptyScopesCache) }
                 invokeResolveTowerExtension.enqueueResolveTasksForQualifier(info, receiver)
             }
             null -> {
-                manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info, emptyScopesForMainTask) }
+                manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info, emptyScopesCache) }
                 invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
             }
             else -> {
@@ -86,10 +94,10 @@ class FirTowerResolver(
                     }
                 }
                 if (info.isImplicitInvoke) {
-                    invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver, emptyScopesForInvokeResolution)
+                    invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver, emptyScopesCache)
                     return
                 }
-                manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver, emptyScopesForMainTask) }
+                manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver, emptyScopesCache) }
                 invokeResolveTowerExtension.enqueueResolveTasksForExpressionReceiver(info, receiver)
             }
         }
