@@ -80,6 +80,10 @@ internal class FirDelegatedConstructorCallImpl(
         constructedTypeRef = newConstructedTypeRef
     }
 
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
     }

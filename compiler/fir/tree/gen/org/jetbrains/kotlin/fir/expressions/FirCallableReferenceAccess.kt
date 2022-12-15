@@ -48,6 +48,10 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)

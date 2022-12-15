@@ -127,6 +127,14 @@ internal class FirVariableAssignmentImpl(
         explicitReceiver = newExplicitReceiver
     }
 
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
+    }
+
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource

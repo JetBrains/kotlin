@@ -46,6 +46,10 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
 

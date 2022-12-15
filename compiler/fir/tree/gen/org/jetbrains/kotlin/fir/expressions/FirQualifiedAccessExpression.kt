@@ -48,6 +48,10 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression

@@ -66,6 +66,8 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
         constructedTypeRef = newConstructedTypeRef
     }
 
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {}
+
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
     }

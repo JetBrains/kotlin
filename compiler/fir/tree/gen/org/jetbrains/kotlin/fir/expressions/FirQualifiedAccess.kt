@@ -41,6 +41,10 @@ interface FirQualifiedAccess : FirResolvable, FirStatement, FirContextReceiverAr
 
     fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     @FirImplementationDetail
     fun replaceSource(newSource: KtSourceElement?)
 

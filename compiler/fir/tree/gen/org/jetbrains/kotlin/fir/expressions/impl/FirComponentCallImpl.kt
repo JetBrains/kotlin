@@ -126,6 +126,14 @@ internal class FirComponentCallImpl(
         typeArguments.addAll(newTypeArguments)
     }
 
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
+    }
+
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
     }

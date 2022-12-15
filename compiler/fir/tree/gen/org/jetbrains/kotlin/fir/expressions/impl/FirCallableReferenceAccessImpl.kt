@@ -119,6 +119,14 @@ internal class FirCallableReferenceAccessImpl(
         explicitReceiver = newExplicitReceiver
     }
 
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
+    }
+
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {
         calleeReference = newCalleeReference
     }

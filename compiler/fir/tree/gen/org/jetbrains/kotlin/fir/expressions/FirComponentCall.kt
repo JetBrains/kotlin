@@ -48,6 +48,10 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)

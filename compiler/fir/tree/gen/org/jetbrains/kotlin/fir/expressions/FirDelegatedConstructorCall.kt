@@ -40,6 +40,8 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
 
     abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
 
+    abstract fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall

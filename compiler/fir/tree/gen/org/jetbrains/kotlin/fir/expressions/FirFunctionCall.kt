@@ -49,6 +49,10 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)

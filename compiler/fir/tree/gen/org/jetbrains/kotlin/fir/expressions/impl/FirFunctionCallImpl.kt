@@ -124,6 +124,14 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         explicitReceiver = newExplicitReceiver
     }
 
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
+    }
+
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
     }
