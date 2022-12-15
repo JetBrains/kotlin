@@ -41,11 +41,16 @@ public final class ClassId {
     private final FqName relativeClassName;
     private final boolean local;
 
+    private final String packageFqNameStr;
+    private final String relativeClassNameStr;
+
     public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
+        packageFqNameStr = this.packageFqName.asString();
         assert !relativeClassName.isRoot() :
                 "Class name must not be root: " + packageFqName + (local ? " (local)" : "");
         this.relativeClassName = relativeClassName;
+        relativeClassNameStr = this.relativeClassName.asString();
         this.local = local;
     }
 
@@ -103,7 +108,7 @@ public final class ClassId {
     @NotNull
     public FqName asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
-        return new FqName(packageFqName.asString() + "." + relativeClassName.asString());
+        return new FqName(packageFqNameStr + "." + relativeClassNameStr);
     }
 
     public boolean startsWith(@NotNull Name segment) {
@@ -138,14 +143,14 @@ public final class ClassId {
      */
     @NotNull
     public String asString() {
-        if (packageFqName.isRoot()) return relativeClassName.asString();
-        return packageFqName.asString().replace('.', '/') + "/" + relativeClassName.asString();
+        if (packageFqName.isRoot()) return relativeClassNameStr;
+        return packageFqNameStr.replace('.', '/') + "/" + relativeClassNameStr;
     }
 
     @NotNull
     public String asFqNameString() {
-        if (packageFqName.isRoot()) return relativeClassName.asString();
-        return packageFqName.asString() + "." + relativeClassName.asString();
+        if (packageFqName.isRoot()) return relativeClassNameStr;
+        return packageFqNameStr + "." + relativeClassNameStr;
     }
 
     @Override
@@ -155,15 +160,15 @@ public final class ClassId {
 
         ClassId id = (ClassId) o;
 
-        return packageFqName.equals(id.packageFqName) &&
-               relativeClassName.equals(id.relativeClassName) &&
+        return packageFqNameStr.equals(id.packageFqNameStr) &&
+               relativeClassNameStr.equals(id.relativeClassNameStr) &&
                local == id.local;
     }
 
     @Override
     public int hashCode() {
-        int result = packageFqName.hashCode();
-        result = 31 * result + relativeClassName.hashCode();
+        int result = packageFqNameStr.hashCode();
+        result = 31 * result + relativeClassNameStr.hashCode();
         result = 31 * result + Boolean.valueOf(local).hashCode();
         return result;
     }
