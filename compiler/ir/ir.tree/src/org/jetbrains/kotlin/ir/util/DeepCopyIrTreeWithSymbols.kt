@@ -457,8 +457,7 @@ open class DeepCopyIrTreeWithSymbols(
                 expression.type.remapType(),
                 symbolRemapper.getReferencedReturnableBlock(expression.symbol),
                 mapStatementOrigin(expression.origin),
-                expression.statements.map { it.transform() },
-                expression.inlineFunctionSymbol
+                expression.statements.map { it.transform() }
             ).copyAttributes(expression)
         else if (expression is IrInlinedFunctionBlock)
             IrInlinedFunctionBlockImpl(

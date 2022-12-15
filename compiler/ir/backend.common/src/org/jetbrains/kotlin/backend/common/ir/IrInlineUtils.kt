@@ -104,7 +104,7 @@ private fun IrBody.move(
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
 // Inline simple function calls without type parameters, default parameters, or varargs.
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
-    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null, symbol).apply {
+    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
         statements += body!!.move(this@inline, target, symbol, explicitParameters.zip(arguments).toMap()).statements
     }
 

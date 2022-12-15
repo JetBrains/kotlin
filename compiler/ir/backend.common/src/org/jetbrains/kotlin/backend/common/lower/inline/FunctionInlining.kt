@@ -226,7 +226,6 @@ class FunctionInlining(
                 symbol = irReturnableBlockSymbol,
                 origin = null,
                 statements = listOf(inlinedBlock),
-                inlineFunctionSymbol = callee.symbol
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {
