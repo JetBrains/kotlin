@@ -108,6 +108,8 @@ internal object UsualClassTypeQualifierBuilder {
 
         return if (containingClass.isLocal) {
             containingClass.collectForLocal().reversed()
+        } else if (declaration is FirRegularClass){
+            listOf(declaration)
         } else {
             null
         }

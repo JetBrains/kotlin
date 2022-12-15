@@ -143,6 +143,12 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
     }
 
     @Test
+    @TestMetadata("localClassConstructor.kt")
+    public void testLocalClassConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/localClassConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("nameReference.kt")
     public void testNameReference() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference.kt");
