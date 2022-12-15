@@ -59,6 +59,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     }
 
     @Test
+    @TestMetadata("AnnotationOnCallSite.kt")
+    public void testAnnotationOnCallSite() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/AnnotationOnCallSite.kt");
+    }
+
+    @Test
     @TestMetadata("AnnotationOnFile.kt")
     public void testAnnotationOnFile() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/AnnotationOnFile.kt");

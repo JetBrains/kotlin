@@ -64,6 +64,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("annotationApplicationWithArgumentsOnCallSite.kt")
+        public void testAnnotationApplicationWithArgumentsOnCallSite() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationApplicationWithArgumentsOnCallSite.kt");
+        }
+
+        @Test
         @TestMetadata("fileAnnotation.kt")
         public void testFileAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/fileAnnotation.kt");
