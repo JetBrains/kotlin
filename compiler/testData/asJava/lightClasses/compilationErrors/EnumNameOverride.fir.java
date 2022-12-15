@@ -7,6 +7,9 @@ public enum EnumNameOverride /* EnumNameOverride*/ implements Bar {
   @org.jetbrains.annotations.NotNull()
   public static final EnumNameOverride[] values();//  values()
 
+  @org.jetbrains.annotations.NotNull()
+  public static final kotlin.enums.EnumEntries<EnumNameOverride> getEntries();//  getEntries()
+
   private  EnumNameOverride();//  .ctor()
 
 }

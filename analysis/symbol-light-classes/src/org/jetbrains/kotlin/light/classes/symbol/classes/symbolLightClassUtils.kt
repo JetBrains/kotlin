@@ -280,7 +280,6 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     suppressStatic: Boolean = false,
 ) {
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
-    if (declaration.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED) return
     if (declaration.name.isSpecial) return
 
     if (declaration.visibility.isPrivateOrPrivateToThis() &&

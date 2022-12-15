@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -185,7 +181,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 val isStatic = if (suppressStatic) {
                     false
                 } else {
-                    isTopLevel || hasJvmStaticAnnotation()
+                    isTopLevel || isStatic()
                 }
 
                 mapOf(modifier to isStatic)
@@ -195,8 +191,10 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    private fun hasJvmStaticAnnotation(): Boolean = analyzeForLightClasses(ktModule) {
-        propertySymbol().hasJvmStaticAnnotation(accessorSite, strictUseSite = false) ||
+    private fun isStatic(): Boolean = analyzeForLightClasses(ktModule) {
+        val propertySymbol = propertySymbol()
+        propertySymbol.isStatic ||
+                propertySymbol.hasJvmStaticAnnotation(accessorSite, strictUseSite = false) ||
                 propertyAccessorSymbol().hasJvmStaticAnnotation(accessorSite, strictUseSite = false)
     }
 
