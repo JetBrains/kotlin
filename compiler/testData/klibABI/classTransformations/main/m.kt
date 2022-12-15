@@ -45,12 +45,12 @@ fun box() = abiTest {
     expectFailure(linkage("Can not get instance of singleton Bar: No class found for symbol /ClassToEnum.Bar")) { getClassToEnumBarAsAnyInline() }
     expectFailure(linkage("Function getClassToEnumBaz can not be called: ${adjustForLazyIr("Function getClassToEnumBaz")} uses unlinked class symbol /ClassToEnum.Baz")) { getClassToEnumBaz() }
     expectFailure(linkage("Function getClassToEnumBazInline can not be called: ${adjustForLazyIr("Function getClassToEnumBazInline")} uses unlinked class symbol /ClassToEnum.Baz")) { getClassToEnumBazInline() }
-    expectFailure(linkage("Constructor ClassToEnum.<init> can not be called: ClassToEnum is enum class while regular class is expected")) { getClassToEnumBazAsAny() }
-    expectFailure(linkage("Constructor ClassToEnum.<init> can not be called: ClassToEnum is enum class while regular class is expected")) { getClassToEnumBazAsAnyInline() }
-    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: ClassToObject is object while regular class is expected")) { getClassToObject() }
-    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: ClassToObject is object while regular class is expected")) { getClassToObjectInline() }
-    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: ClassToObject is object while regular class is expected")) { getClassToObjectAsAny() }
-    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: ClassToObject is object while regular class is expected")) { getClassToObjectAsAnyInline() }
+    expectFailure(linkage("Constructor ClassToEnum.<init> can not be called: Private constructor ClassToEnum.<init> declared in module <lib1> can not be accessed from module <lib2>")) { getClassToEnumBazAsAny() }
+    expectFailure(linkage("Constructor ClassToEnum.<init> can not be called: Private constructor ClassToEnum.<init> declared in module <lib1> can not be accessed from module <lib2>")) { getClassToEnumBazAsAnyInline() }
+    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: Private constructor ClassToObject.<init> declared in module <lib1> can not be accessed from module <lib2>")) { getClassToObject() }
+    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: Private constructor ClassToObject.<init> declared in module <lib1> can not be accessed from module <lib2>")) { getClassToObjectInline() }
+    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: Private constructor ClassToObject.<init> declared in module <lib1> can not be accessed from module <lib2>")) { getClassToObjectAsAny() }
+    expectFailure(linkage("Constructor ClassToObject.<init> can not be called: Private constructor ClassToObject.<init> declared in module <lib1> can not be accessed from module <lib2>")) { getClassToObjectAsAnyInline() }
     expectFailure(linkage("Can not get instance of singleton ObjectToClass: ObjectToClass is class while object is expected")) { getObjectToClass() }
     expectFailure(linkage("Can not get instance of singleton ObjectToClass: ObjectToClass is class while object is expected")) { getObjectToClassInline() }
     expectFailure(linkage("Can not get instance of singleton ObjectToClass: ObjectToClass is class while object is expected")) { getObjectToClassAsAny() }
