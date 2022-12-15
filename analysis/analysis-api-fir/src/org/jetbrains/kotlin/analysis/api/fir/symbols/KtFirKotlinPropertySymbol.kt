@@ -145,9 +145,10 @@ internal class KtFirKotlinPropertySymbol(
 
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberPropertySymbolPointer(
-                    requireOwnerPointer(),
-                    firSymbol.name,
-                    FirCallableSignature.createSignature(firSymbol),
+                    ownerPointer = requireOwnerPointer(),
+                    name = firSymbol.name,
+                    signature = FirCallableSignature.createSignature(firSymbol),
+                    isStatic = firSymbol.isStatic,
                 )
 
             else -> throw UnsupportedSymbolKind(this::class, kind)

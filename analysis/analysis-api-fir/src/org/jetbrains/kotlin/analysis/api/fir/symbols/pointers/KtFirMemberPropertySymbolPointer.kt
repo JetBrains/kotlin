@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirMemberPropertySymbolPointer(
     ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
     private val name: Name,
-    private val signature: FirCallableSignature
-) : KtFirMemberSymbolPointer<KtKotlinPropertySymbol>(ownerPointer) {
+    private val signature: FirCallableSignature,
+    isStatic: Boolean,
+) : KtFirMemberSymbolPointer<KtKotlinPropertySymbol>(ownerPointer, isStatic) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession

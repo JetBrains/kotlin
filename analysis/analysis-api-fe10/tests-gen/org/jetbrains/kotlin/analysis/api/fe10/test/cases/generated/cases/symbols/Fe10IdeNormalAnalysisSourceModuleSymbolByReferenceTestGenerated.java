@@ -65,6 +65,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("enumEntries.kt")
+    public void testEnumEntries() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumEntries.kt");
+    }
+
+    @Test
     @TestMetadata("enumValueOf.kt")
     public void testEnumValueOf() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValueOf.kt");
