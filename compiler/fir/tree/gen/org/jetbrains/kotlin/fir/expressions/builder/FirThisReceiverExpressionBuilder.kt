@@ -48,7 +48,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
             typeRef,
             annotations.toMutableOrEmpty(),
             contextReceiverArguments.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             calleeReference,
             isImplicit,
         )

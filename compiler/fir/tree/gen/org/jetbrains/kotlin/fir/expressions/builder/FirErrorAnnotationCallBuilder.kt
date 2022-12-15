@@ -51,7 +51,7 @@ class FirErrorAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuil
             source,
             useSiteTarget,
             annotationTypeRef,
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             argumentList,
             calleeReference,
             diagnostic,

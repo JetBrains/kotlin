@@ -54,7 +54,7 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
             source,
             annotations.toMutableOrEmpty(),
             contextReceiverArguments.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             dispatchReceiver,
             extensionReceiver,
             argumentList,

@@ -40,7 +40,7 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
             useSiteTarget,
             annotationTypeRef,
             argumentMapping,
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
         )
     }
 

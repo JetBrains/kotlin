@@ -34,7 +34,7 @@ internal class FirErrorResolvedQualifierImpl(
     override val symbol: FirClassLikeSymbol<*>?,
     override var isNullableLHSForCallableReference: Boolean,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
@@ -81,7 +81,6 @@ internal class FirErrorResolvedQualifierImpl(
     override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean) {}
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 }

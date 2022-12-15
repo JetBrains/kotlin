@@ -35,7 +35,7 @@ internal class FirComponentCallImpl(
     override var source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
@@ -117,8 +117,7 @@ internal class FirComponentCallImpl(
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
     override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {

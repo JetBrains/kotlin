@@ -56,7 +56,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             typeRef,
             annotations.toMutableOrEmpty(),
             contextReceiverArguments.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,

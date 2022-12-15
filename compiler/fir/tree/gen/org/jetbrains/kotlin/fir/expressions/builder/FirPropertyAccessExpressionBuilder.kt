@@ -53,7 +53,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotat
             annotations.toMutableOrEmpty(),
             calleeReference,
             contextReceiverArguments.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,

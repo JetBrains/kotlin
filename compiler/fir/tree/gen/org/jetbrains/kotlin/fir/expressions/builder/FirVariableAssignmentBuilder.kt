@@ -47,7 +47,7 @@ class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationCon
             calleeReference,
             annotations.toMutableOrEmpty(),
             contextReceiverArguments.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,

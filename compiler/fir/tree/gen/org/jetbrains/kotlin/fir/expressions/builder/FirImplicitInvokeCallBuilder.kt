@@ -52,7 +52,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
             source,
             annotations.toMutableOrEmpty(),
             contextReceiverArguments.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,

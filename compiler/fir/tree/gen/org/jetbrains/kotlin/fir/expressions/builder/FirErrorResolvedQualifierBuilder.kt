@@ -52,7 +52,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             symbol,
             isNullableLHSForCallableReference,
             nonFatalDiagnostics.toMutableOrEmpty(),
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             diagnostic,
         )
     }

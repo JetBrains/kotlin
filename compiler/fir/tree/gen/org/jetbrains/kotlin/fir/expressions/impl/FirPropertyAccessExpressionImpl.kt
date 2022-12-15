@@ -31,7 +31,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirReference,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
@@ -110,8 +110,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {

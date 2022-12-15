@@ -31,7 +31,7 @@ object FieldSets {
         )
     }
 
-    val typeArguments by lazy { fieldList("typeArguments", typeProjection, withReplace = true) }
+    val typeArguments by lazy { fieldList("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true) }
 
     val arguments by lazy { fieldList("arguments", expression) }
 

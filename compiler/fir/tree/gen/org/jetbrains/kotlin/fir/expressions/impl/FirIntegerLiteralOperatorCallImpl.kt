@@ -32,7 +32,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override var typeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
@@ -121,8 +121,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
