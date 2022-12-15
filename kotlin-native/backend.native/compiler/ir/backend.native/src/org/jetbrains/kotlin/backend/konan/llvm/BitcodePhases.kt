@@ -324,7 +324,7 @@ internal val removeRedundantSafepointsPhase = makeKonanModuleOpPhase(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",
         op = { context, _ ->
-            RemoveRedundantSafepointsPass(context).runOnModule(
+            RemoveRedundantSafepointsPass().runOnModule(
                     module = context.generationState.llvm.module,
                     isSafepointInliningAllowed = context.shouldInlineSafepoints()
             )
