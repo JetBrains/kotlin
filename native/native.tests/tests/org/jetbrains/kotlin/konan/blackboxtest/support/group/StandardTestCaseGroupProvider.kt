@@ -49,7 +49,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             val testCases = includedTestDataFiles.map { testDataFile -> createTestCase(testDataFile, settings) }
 
             val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
-            if (lldbTestCases.isNotEmpty() && !settings.get<LLDB>().isAvailable) {
+            if (lldbTestCases.isNotEmpty()
+                && (settings.get<OptimizationMode>() != OptimizationMode.DEBUG || !settings.get<LLDB>().isAvailable)
+            ) {
                 lldbTestCases.mapTo(disabledTestCaseIds) { it.id }
             }
 
