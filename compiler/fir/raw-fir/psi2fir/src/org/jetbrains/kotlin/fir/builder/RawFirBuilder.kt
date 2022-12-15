@@ -701,10 +701,11 @@ open class RawFirBuilder(
 
         private fun KtAnnotated.extractAnnotationsTo(container: FirAnnotationContainer) {
             if (annotationEntries.isEmpty()) return
-            val annotations = mutableListOf<FirAnnotation>()
-            annotations.addAll(container.annotations)
-            for (annotationEntry in annotationEntries) {
-                annotations += annotationEntry.convert<FirAnnotation>()
+            val annotations = buildList {
+                addAll(container.annotations)
+                for (annotationEntry in annotationEntries) {
+                    add(annotationEntry.convert<FirAnnotation>())
+                }
             }
             container.replaceAnnotations(annotations)
         }

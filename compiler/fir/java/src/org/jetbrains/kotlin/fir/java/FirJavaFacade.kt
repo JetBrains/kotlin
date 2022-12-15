@@ -119,7 +119,7 @@ abstract class FirJavaFacade(
             }
         }.apply {
             // TODO: should be lazy (in case annotations refer to the containing class)
-            addAnnotationsFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
+            setAnnotationsFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
         }
     }
 
@@ -182,7 +182,7 @@ abstract class FirJavaFacade(
         // 1. Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
         // 3. Enhance super types - may refer to type parameter bounds, take default nullability from annotations
-        firJavaClass.addAnnotationsFromJava(session, javaClass, javaTypeParameterStack)
+        firJavaClass.setAnnotationsFromJava(session, javaClass, javaTypeParameterStack)
 
         enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
 
@@ -515,7 +515,7 @@ abstract class FirJavaFacade(
             }.apply {
                 containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
                 // TODO: check if this works properly with annotations that take the enum class as an argument
-                addAnnotationsFromJava(session, javaField, javaTypeParameterStack)
+                setAnnotationsFromJava(session, javaField, javaTypeParameterStack)
             }
             else -> buildJavaField {
                 source = javaField.toSourceElement()

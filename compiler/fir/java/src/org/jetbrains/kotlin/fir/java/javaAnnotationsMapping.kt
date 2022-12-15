@@ -49,7 +49,7 @@ internal fun JavaAnnotationOwner.convertAnnotationsToFir(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): List<FirAnnotation> = annotations.convertAnnotationsToFir(session, javaTypeParameterStack)
 
-internal fun FirAnnotationContainer.addAnnotationsFromJava(
+internal fun FirAnnotationContainer.setAnnotationsFromJava(
     session: FirSession,
     javaAnnotationOwner: JavaAnnotationOwner,
     javaTypeParameterStack: JavaTypeParameterStack

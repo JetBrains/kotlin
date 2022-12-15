@@ -39,7 +39,10 @@ object FieldSets {
 
     val annotations by lazy {
         fieldList(
-            "annotations", annotation, withReplace = true, useMutableOrEmpty = true
+            "annotations",
+            annotation,
+            withReplace = true,
+            useMutableOrEmpty = true
         ).withTransform(needTransformInOtherChildren = true)
     }
 
