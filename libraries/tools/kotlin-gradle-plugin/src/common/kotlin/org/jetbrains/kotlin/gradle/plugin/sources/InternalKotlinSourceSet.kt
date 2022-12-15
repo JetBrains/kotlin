@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -26,3 +27,9 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet, HasMutableExtras {
 }
 
 internal val KotlinSourceSet.project: Project get() = this.internal.project
+
+/**
+ * This method can be invoked only after evaluation because [compilations] can mutate
+ */
+internal val InternalKotlinSourceSet.hasMetadataCompilation: Boolean get() =
+    compilations.any { it.platformType == KotlinPlatformType.common }
