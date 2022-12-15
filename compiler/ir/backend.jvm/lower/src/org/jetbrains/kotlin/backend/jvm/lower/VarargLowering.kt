@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrArrayBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-val varargPhase = makeIrFilePhase(
+val varargPhase = makeIrModulePhase(
     ::VarargLowering,
     name = "VarargLowering",
     description = "Replace varargs with array arguments and lower arrayOf and emptyArray calls",
