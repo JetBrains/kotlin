@@ -178,7 +178,7 @@ class BodyGenerator(
     }
 
     override fun visitConst(expression: IrConst<*>): Unit =
-        generateConstExpression(expression, body, context, functionContext.irFunction.fileOrNull?.fileEntry)
+        generateConstExpression(expression, body, context, expression.getSourceLocation())
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
