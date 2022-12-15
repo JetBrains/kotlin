@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.cleanup
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -37,8 +37,8 @@ private class BlockRemover : IrElementVisitorVoid {
     private fun process(container: IrStatementContainer) {
         container.statements.transformFlat { statement ->
             when (statement) {
-                // returnable blocks required for sourcemaps generation, so keep them
-                is IrReturnableBlock -> null
+                // returnable and inlined function blocks required for sourcemaps generation, so keep them
+                is IrReturnableBlock, is IrInlinedFunctionBlock -> null
                 is IrStatementContainer -> statement.statements
                 else -> null
             }

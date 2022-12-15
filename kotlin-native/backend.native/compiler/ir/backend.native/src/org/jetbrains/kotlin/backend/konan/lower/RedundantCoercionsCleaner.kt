@@ -159,7 +159,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                                         symbol = newSymbol,
                                         origin = origin,
                                         statements = statements,
-                                        inlineFunctionSymbol = inlineFunctionSymbol)
+                                )
                             }
                             /*
                              * Visitor below requires being very careful when changing it.

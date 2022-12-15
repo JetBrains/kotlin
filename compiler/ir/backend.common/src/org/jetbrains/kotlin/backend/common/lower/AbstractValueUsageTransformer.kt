@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.ir.innerInlinedBlockOrThis
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -120,20 +121,25 @@ abstract class AbstractValueUsageTransformer(
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+        if (expression is IrInlinedFunctionBlock) {
+            expression.transformChildrenVoid(this)
+            return expression
+        }
+
         expression.transformChildrenVoid(this)
 
         if (expression.statements.isEmpty()) {
             return expression
         }
 
-        val lastIndex = expression.statements.lastIndex
-        expression.statements.forEachIndexed { i, irStatement ->
+        val container = expression.innerInlinedBlockOrThis
+        val lastIndex = container.statements.lastIndex
+        container.statements.forEachIndexed { i, irStatement ->
             if (irStatement is IrExpression) {
-                expression.statements[i] =
-                        if (i == lastIndex)
-                            irStatement.useAsResult(expression)
-                        else
-                            irStatement.useAsStatement()
+                container.statements[i] = when (i) {
+                    lastIndex -> irStatement.useAsResult(expression)
+                    else -> irStatement.useAsStatement()
+                }
             }
         }
 

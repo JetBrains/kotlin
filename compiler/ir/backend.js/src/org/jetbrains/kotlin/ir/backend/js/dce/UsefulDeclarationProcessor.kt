@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.ir.inlineFunction
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isAssociatedObjectAnnotatedAnnot
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -55,7 +55,7 @@ abstract class UsefulDeclarationProcessor(
             super.visitBlock(expression, data)
 
             if (expression is IrReturnableBlock) {
-                expression.inlineFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
+                expression.inlineFunction?.addToUsefulPolyfilledDeclarations()
             }
         }
 
