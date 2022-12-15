@@ -61,7 +61,7 @@ abstract class FirDefaultPropertyAccessor(
     symbol,
     propertySymbol,
     isGetter,
-    annotations = MutableOrEmptyList(),
+    annotations = MutableOrEmptyList.empty(),
     typeParameters = mutableListOf(),
 ) {
     override val dispatchReceiverType: ConeSimpleKotlinType?

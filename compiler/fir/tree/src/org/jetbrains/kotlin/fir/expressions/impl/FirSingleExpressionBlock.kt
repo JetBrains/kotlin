@@ -25,7 +25,7 @@ class FirSingleExpressionBlock(
 ) : FirBlock() {
     override val source: KtSourceElement?
         get() = statement.source?.fakeElement(KtFakeSourceElementKind.SingleExpressionBlock)
-    override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList()
+    override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
     override val statements: List<FirStatement> get() = listOf(statement)
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 

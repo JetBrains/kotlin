@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 annotation class FirBuilderDsl
 
 fun <T> MutableList<T>.toMutableOrEmpty(): MutableOrEmptyList<T> =
-    if (isEmpty()) MutableOrEmptyList() else MutableOrEmptyList(this)
+    if (isEmpty()) MutableOrEmptyList.empty() else MutableOrEmptyList(this)
 
 @JvmName("toMutableOrEmptyForImmutable")
 fun <T> List<T>.toMutableOrEmpty(): MutableOrEmptyList<T> =
-    if (isEmpty()) MutableOrEmptyList() else MutableOrEmptyList(this.toMutableList())
+    if (isEmpty()) MutableOrEmptyList.empty() else MutableOrEmptyList(this.toMutableList())

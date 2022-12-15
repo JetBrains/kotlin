@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -146,7 +143,10 @@ inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R):
 }
 
 @JvmInline
-value class MutableOrEmptyList<T>(val list: MutableList<T>? = null) : List<T> {
+value class MutableOrEmptyList<T>(val list: MutableList<T>?) : List<T> {
+
+    private constructor(list: Nothing?) : this(list as MutableList<T>?)
+
     override val size: Int
         get() = list?.size ?: 0
 
@@ -188,5 +188,12 @@ value class MutableOrEmptyList<T>(val list: MutableList<T>? = null) : List<T> {
 
     override fun contains(element: T): Boolean {
         return list?.contains(element) ?: false
+    }
+
+    companion object {
+        private val EMPTY = MutableOrEmptyList<Nothing>(null)
+
+        @Suppress("UNCHECKED_CAST")
+        fun <T> empty(): MutableOrEmptyList<T> = EMPTY as MutableOrEmptyList<T>
     }
 }

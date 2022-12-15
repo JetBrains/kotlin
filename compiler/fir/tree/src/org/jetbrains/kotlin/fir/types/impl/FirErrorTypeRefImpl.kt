@@ -32,7 +32,7 @@ internal class FirErrorTypeRefImpl(
         isFromStubType
     )
 
-    override val annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList()
+    override val annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
