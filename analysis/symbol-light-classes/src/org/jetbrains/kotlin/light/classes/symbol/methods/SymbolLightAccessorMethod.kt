@@ -165,30 +165,33 @@ internal class SymbolLightAccessorMethod private constructor(
         annotationsFromProperty + annotationsFromAccessor
     }
 
-    private fun computeModifiers(modifier: String): Map<String, Boolean>? {
-        return when (modifier) {
-            in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertyAccessorSymbolPointer)
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
+        in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertyAccessorSymbolPointer)
 
-            in LazyModifiersBox.MODALITY_MODIFIERS -> {
-                if (containingClass.isInterface) {
-                    return LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT)
+        in LazyModifiersBox.MODALITY_MODIFIERS -> {
+            val modality = if (containingClass.isInterface) {
+                PsiModifier.ABSTRACT
+            } else {
+                analyzeForLightClasses(ktModule) {
+                    val propertySymbol = propertySymbol()
+                    propertySymbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier(containingClass, propertySymbol) }
                 }
-
-                LazyModifiersBox.computeSimpleModality(ktModule, containingPropertySymbolPointer)
             }
 
-            PsiModifier.STATIC -> {
-                val isStatic = if (suppressStatic) {
-                    false
-                } else {
-                    isTopLevel || isStatic()
-                }
-
-                mapOf(modifier to isStatic)
-            }
-
-            else -> null
+            LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
+
+        PsiModifier.STATIC -> {
+            val isStatic = if (suppressStatic) {
+                false
+            } else {
+                isTopLevel || isStatic()
+            }
+
+            mapOf(modifier to isStatic)
+        }
+
+        else -> null
     }
 
     private fun isStatic(): Boolean = analyzeForLightClasses(ktModule) {

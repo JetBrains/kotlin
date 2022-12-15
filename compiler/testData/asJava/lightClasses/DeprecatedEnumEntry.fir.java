@@ -4,13 +4,13 @@ public enum E /* p.E*/ {
   @kotlin.Deprecated(message = "b") Entry3;
 
   @org.jetbrains.annotations.NotNull()
-  public static final kotlin.enums.EnumEntries<p.E> getEntries();//  getEntries()
+  public static kotlin.enums.EnumEntries<p.E> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.NotNull()
-  public static final p.E valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static p.E valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static final p.E[] values();//  values()
+  public static p.E[] values();//  values()
 
   private  E();//  .ctor()
 
