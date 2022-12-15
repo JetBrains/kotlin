@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionB
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
@@ -30,32 +31,35 @@ internal class FirInvokeResolveTowerExtension(
 
     fun enqueueResolveTasksForQualifier(info: CallInfo, receiver: FirResolvedQualifier) {
         if (info.callKind != CallKind.Function) return
-        enqueueResolveForExplicitReceiver(
-            info
-        ) { task, receiverInfo ->
-            task.runResolverForQualifierReceiver(receiverInfo, receiver)
+        val emptyScopes = mutableSetOf<FirScope>()
+        enqueueResolveForExplicitReceiver(info, emptyScopes) { task, receiverInfo ->
+            task.runResolverForQualifierReceiver(receiverInfo, receiver, emptyScopes)
         }
     }
 
     fun enqueueResolveTasksForNoReceiver(info: CallInfo) {
         if (info.callKind != CallKind.Function) return
         val invokeReceiverVariableInfo = info.replaceWithVariableAccess()
+        val emptyScopes = mutableSetOf<FirScope>()
         enqueueInvokeReceiverTask(
             info,
             invokeReceiverVariableInfo,
-            invokeBuiltinExtensionMode = false
+            invokeBuiltinExtensionMode = false,
+            emptyScopes = emptyScopes,
         ) {
-            it.runResolverForNoReceiver(invokeReceiverVariableInfo)
+            it.runResolverForNoReceiver(invokeReceiverVariableInfo, emptyScopes)
         }
     }
 
     fun enqueueResolveTasksForSuperReceiver(info: CallInfo, receiver: FirQualifiedAccessExpression) {
         if (info.callKind != CallKind.Function) return
         val invokeReceiverVariableInfo = info.replaceWithVariableAccess()
+        val emptyScopes = mutableSetOf<FirScope>()
         enqueueInvokeReceiverTask(
             info,
             invokeReceiverVariableInfo,
-            invokeBuiltinExtensionMode = false
+            invokeBuiltinExtensionMode = false,
+            emptyScopes = emptyScopes,
         ) {
             it.runResolverForSuperReceiver(invokeReceiverVariableInfo, receiver)
         }
@@ -63,10 +67,9 @@ internal class FirInvokeResolveTowerExtension(
 
     fun enqueueResolveTasksForExpressionReceiver(info: CallInfo, receiver: FirExpression) {
         if (info.callKind != CallKind.Function) return
-        enqueueResolveForExplicitReceiver(
-            info
-        ) { task, receiverInfo ->
-            task.runResolverForExpressionReceiver(receiverInfo, receiver)
+        val emptyScopes = mutableSetOf<FirScope>()
+        enqueueResolveForExplicitReceiver(info, emptyScopes) { task, receiverInfo ->
+            task.runResolverForExpressionReceiver(receiverInfo, receiver, emptyScopes)
         }
     }
 
@@ -78,6 +81,7 @@ internal class FirInvokeResolveTowerExtension(
      */
     private inline fun enqueueResolveForExplicitReceiver(
         originalCallInfo: CallInfo,
+        emptyScopes: MutableSet<FirScope>,
         crossinline invokeAction: suspend (FirTowerResolveTask, CallInfo) -> Unit
     ) {
         val invokeReceiverVariableInfo = originalCallInfo.replaceWithVariableAccess()
@@ -88,7 +92,8 @@ internal class FirInvokeResolveTowerExtension(
             originalCallInfo,
             invokeReceiverVariableInfo,
             towerDataElementsForName = towerDataElementsForName,
-            invokeBuiltinExtensionMode = false
+            invokeBuiltinExtensionMode = false,
+            emptyScopes,
         ) {
             invokeAction(it, invokeReceiverVariableInfo)
         }
@@ -99,9 +104,10 @@ internal class FirInvokeResolveTowerExtension(
             originalCallInfo,
             invokeReceiverVariableWithNoReceiverInfo,
             towerDataElementsForName = towerDataElementsForName,
-            invokeBuiltinExtensionMode = true
+            invokeBuiltinExtensionMode = true,
+            emptyScopes,
         ) {
-            it.runResolverForNoReceiver(invokeReceiverVariableWithNoReceiverInfo)
+            it.runResolverForNoReceiver(invokeReceiverVariableWithNoReceiverInfo, emptyScopes)
         }
     }
 
@@ -121,6 +127,7 @@ internal class FirInvokeResolveTowerExtension(
         invokeReceiverInfo: CallInfo,
         towerDataElementsForName: TowerDataElementsForName = TowerDataElementsForName(invokeReceiverInfo.name, components.towerDataContext),
         invokeBuiltinExtensionMode: Boolean,
+        emptyScopes: MutableSet<FirScope>,
         crossinline runResolutionForInvokeReceiverVariable: suspend (FirTowerResolveTask) -> Unit
     ) {
         val collector = CandidateCollector(components, components.resolutionStageRunner)
@@ -134,7 +141,8 @@ internal class FirInvokeResolveTowerExtension(
                 enqueueResolverTasksForInvokeReceiverCandidates(
                     invokeBuiltinExtensionMode, info,
                     receiverGroup = towerGroup,
-                    collector
+                    collector,
+                    emptyScopes,
                 )
                 collector.newDataSet()
             }
@@ -148,7 +156,8 @@ internal class FirInvokeResolveTowerExtension(
         invokeBuiltinExtensionMode: Boolean,
         info: CallInfo,
         receiverGroup: TowerGroup,
-        collector: CandidateCollector
+        collector: CandidateCollector,
+        emptyScopes: MutableSet<FirScope>,
     ) {
         for (invokeReceiverCandidate in collector.bestCandidates()) {
             val symbol = invokeReceiverCandidate.symbol
@@ -190,7 +199,8 @@ internal class FirInvokeResolveTowerExtension(
                 explicitReceiver,
                 invokeBuiltinExtensionMode,
                 useImplicitReceiverAsBuiltinInvokeArgument,
-                receiverGroup
+                receiverGroup,
+                emptyScopes,
             )
         }
     }
@@ -203,7 +213,8 @@ internal class FirInvokeResolveTowerExtension(
         invokeBuiltinExtensionMode: Boolean,
         // The call has a form "f(..)" without explicit receiver and "f" has an extension function type
         useImplicitReceiverAsBuiltinInvokeArgument: Boolean,
-        receiverGroup: TowerGroup
+        receiverGroup: TowerGroup,
+        emptyScopes: MutableSet<FirScope>,
     ) {
         val invokeOnGivenReceiverCandidateFactory = CandidateFactory(context, invokeFunctionInfo)
         val task = createInvokeFunctionResolveTask(invokeFunctionInfo, receiverGroup, invokeOnGivenReceiverCandidateFactory)
@@ -228,20 +239,22 @@ internal class FirInvokeResolveTowerExtension(
             manager.enqueueResolverTask {
                 task.runResolverForInvoke(
                     invokeFunctionInfo, explicitReceiver,
-                    TowerGroup.EmptyRoot
+                    TowerGroup.EmptyRoot,
+                    emptyScopes,
                 )
             }
         }
     }
 
     // For calls having a form of "x.(f)()"
-    fun enqueueResolveTasksForImplicitInvokeCall(info: CallInfo, receiverExpression: FirExpression) {
+    fun enqueueResolveTasksForImplicitInvokeCall(info: CallInfo, receiverExpression: FirExpression, emptyScopes: MutableSet<FirScope>) {
         val explicitReceiverValue = ExpressionReceiverValue(receiverExpression)
         val task = createInvokeFunctionResolveTask(info, TowerGroup.EmptyRoot)
         manager.enqueueResolverTask {
             task.runResolverForInvoke(
                 info, explicitReceiverValue,
-                TowerGroup.EmptyRoot
+                TowerGroup.EmptyRoot,
+                emptyScopes,
             )
         }
         manager.enqueueResolverTask {
@@ -369,7 +382,8 @@ private class InvokeFunctionResolveTask(
     suspend fun runResolverForInvoke(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue,
-        parentGroupForInvokeCandidates: TowerGroup
+        parentGroupForInvokeCandidates: TowerGroup,
+        emptyScopes: MutableSet<FirScope>,
     ) {
         processLevelForRegularInvoke(
             invokeReceiverValue.toMemberScopeTowerLevel(),
@@ -382,7 +396,10 @@ private class InvokeFunctionResolveTask(
                 processLevelForRegularInvoke(
                     scope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group,
-                    ExplicitReceiverKind.EXTENSION_RECEIVER
+                    ExplicitReceiverKind.EXTENSION_RECEIVER,
+                    onEmptyLevel = {
+                        emptyScopes += scope
+                    }
                 )
             },
             onImplicitReceiver = { receiver, group ->
@@ -444,10 +461,12 @@ private class InvokeFunctionResolveTask(
         towerLevel: TowerScopeLevel,
         callInfo: CallInfo,
         group: TowerGroup,
-        explicitReceiverKind: ExplicitReceiverKind
+        explicitReceiverKind: ExplicitReceiverKind,
+        onEmptyLevel: () -> Unit = {},
     ) = processLevel(
         towerLevel, callInfo,
         group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
-        explicitReceiverKind
+        explicitReceiverKind,
+        onEmptyLevel,
     )
 }

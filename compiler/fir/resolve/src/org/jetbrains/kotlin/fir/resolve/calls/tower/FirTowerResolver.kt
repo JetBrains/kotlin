@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.delegatingConstructorScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -53,6 +54,12 @@ class FirTowerResolver(
         info: CallInfo
     ) {
         val invokeResolveTowerExtension = FirInvokeResolveTowerExtension(context, manager, candidateFactoriesAndCollectors)
+        val emptyScopesForMainTask = mutableSetOf<FirScope>()
+
+        val emptyScopesForInvokeResolution = when (info.callKind) {
+            CallKind.VariableAccess -> emptyScopesForMainTask
+            else -> mutableSetOf()
+        }
 
         val mainTask = FirTowerResolveTask(
             components,
@@ -63,11 +70,11 @@ class FirTowerResolver(
         )
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> {
-                manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver) }
+                manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver, emptyScopesForMainTask) }
                 invokeResolveTowerExtension.enqueueResolveTasksForQualifier(info, receiver)
             }
             null -> {
-                manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info) }
+                manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info, emptyScopesForMainTask) }
                 invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
             }
             else -> {
@@ -79,10 +86,10 @@ class FirTowerResolver(
                     }
                 }
                 if (info.isImplicitInvoke) {
-                    invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver)
+                    invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver, emptyScopesForInvokeResolution)
                     return
                 }
-                manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver) }
+                manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver, emptyScopesForMainTask) }
                 invokeResolveTowerExtension.enqueueResolveTasksForExpressionReceiver(info, receiver)
             }
         }
