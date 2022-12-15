@@ -362,6 +362,8 @@ class KotlinMetadataTargetConfigurator :
         project: Project,
         sourceSet: KotlinSourceSet,
     ) {
+        if (!sourceSet.internal.hasMetadataCompilation) return
+
         val granularMetadataTransformationTask = project.locateTask<MetadataDependencyTransformationTask>(
             transformGranularMetadataTaskName(sourceSet.name)
         ) ?: error("Task ${transformGranularMetadataTaskName(sourceSet.name)} must be registered. " +
