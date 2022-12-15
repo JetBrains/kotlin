@@ -17,11 +17,11 @@ class CompilerInitializationMeasurement(val milliseconds: Long) : PerformanceMea
     override fun render(): String = "INIT: Compiler initialized in $milliseconds ms"
 }
 
-class CodeAnalysisMeasurement(private val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+class CodeAnalysisMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("ANALYZE", milliseconds, lines)
 }
 
-class CodeGenerationMeasurement(private val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+class CodeGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("GENERATE", milliseconds, lines)
 }
 
