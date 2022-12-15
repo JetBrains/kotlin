@@ -327,7 +327,8 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
     strictUseSite: Boolean = true,
 ) {
     if (containingClass.isEnum && this is KtFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
-        builder.addReference("java.lang.IllegalArgumentException")
+        builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
+        builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
     val annoApp = findAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME, annotationUseSiteTarget, strictUseSite) ?: return

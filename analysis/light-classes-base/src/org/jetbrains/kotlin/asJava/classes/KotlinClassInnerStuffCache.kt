@@ -199,7 +199,7 @@ private class KotlinEnumSyntheticMethod(
                 override fun getText(): String = name
                 override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
             }
-            nameParameter.setModifierList(NotNullModifierList(manager))
+
             addParameter(nameParameter)
         }
     }
@@ -228,13 +228,13 @@ private class KotlinEnumSyntheticMethod(
     override fun getReturnTypeElement(): PsiTypeElement? = null
     override fun getParameterList(): PsiParameterList = parameterList
 
-    override fun getThrowsList(): PsiReferenceList {
-        return LightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST).apply {
+    override fun getThrowsList(): PsiReferenceList =
+        LightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST).apply {
             if (kind == Kind.VALUE_OF) {
-                addReference("java.lang.IllegalArgumentException")
+                addReference(java.lang.IllegalArgumentException::class.qualifiedName)
+                addReference(java.lang.NullPointerException::class.qualifiedName)
             }
         }
-    }
 
     override fun getParent(): PsiElement = enumClass
     override fun getContainingClass(): KtExtensibleLightClass = enumClass
