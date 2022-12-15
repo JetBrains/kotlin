@@ -11,17 +11,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
 
 object FirTypedEqualsApplicabilityChecker : FirSimpleFunctionChecker() {
 
-    private val TYPED_EQUALS_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.annotations.TypedEquals"))
-
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(TYPED_EQUALS_ANNOTATION_CLASS_ID) ?: return
-        if (!declaration.isTypedEqualsInValueClassBySignature(context.session)) {
+        val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.TypedEquals) ?: return
+        if (!declaration.isSuitableSignatureForTypedEquals(context.session)) {
             reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION, context)
         }
     }

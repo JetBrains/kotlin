@@ -235,7 +235,7 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isMultiFieldValueClassFieldGetter -> null
 
                 (function.parent as? IrClass)?.isMultiFieldValueClass == true -> when {
-                    function.isValueClassTypedEquals -> createStaticReplacement(function).also {
+                    function.isValueClassTypedEqualsBySignature -> createStaticReplacement(function).also {
                         it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
                     }
 

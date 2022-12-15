@@ -8,6 +8,7 @@ import kotlin.math.abs
 
 @JvmInline
 value class IC1(val x: Double) {
+    @TypedEquals
     fun equals(other: IC1): Boolean {
         return abs(x - other.x) < 0.5
     }

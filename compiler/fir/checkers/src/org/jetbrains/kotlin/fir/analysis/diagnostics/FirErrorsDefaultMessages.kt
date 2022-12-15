@@ -505,7 +505,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
@@ -1296,7 +1295,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Secondary constructors with bodies are reserved for for future releases"
         )
         map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
-        map.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections")
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes")
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
         map.put(
@@ -2050,7 +2048,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
 
-        map.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable for this function")
+        map.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable")
 
         //imports
         map.put(

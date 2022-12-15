@@ -12,8 +12,7 @@ package kotlin
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(TypedEquals::class)`,
  * or by using the compiler argument `-opt-in=kotlin.TypedEquals`.
  */
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 annotation class TypedEquals

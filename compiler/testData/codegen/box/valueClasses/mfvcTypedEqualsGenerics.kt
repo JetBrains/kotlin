@@ -6,6 +6,7 @@
 @JvmInline
 value class MFVC1<T : Number>(val x: T, val other: Int) {
     fun equals(x: Int, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC1<*>) = true
 }
 
@@ -14,18 +15,21 @@ class Generic<T, R>(val x: T, val y: R)
 @JvmInline
 value class MFVC2<T, R>(val value: Generic<T, R>, val other: Int) {
     fun equals(value: MFVC1<Double>, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC2<*, *>) = true
 }
 
 @JvmInline
 value class MFVC3<T>(val value: T, val other: Int) {
     fun equals(value: Int, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC3<*>) = true
 }
 
 @JvmInline
 value class MFVC4<T>(val value: T, val other: Int) {
     fun equals(value: Any, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC4<*>) = true
 }
 

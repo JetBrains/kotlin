@@ -5,7 +5,8 @@
 
 @JvmInline
 value class A(val x: Int) {
-    operator fun equals(other: A) = true
+    @TypedEquals
+    fun equals(other: A) = true
 }
 
 class C
@@ -19,13 +20,15 @@ value class B2(val x: A?)
 
 @JvmInline
 value class D1(val x: C) {
-    operator fun equals(other: D1) = true
+    @TypedEquals
+    fun equals(other: D1) = true
 }
 
 
 @JvmInline
 value class D2(val x: C?) {
-    operator fun equals(other: D2) = true
+    @TypedEquals
+    fun equals(other: D2) = true
 }
 
 @JvmInline

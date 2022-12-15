@@ -200,16 +200,8 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(RANGE_UNTIL, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(EQUALS, Member) {
             fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
-            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() } || isTypedEqualsInValueClass()) {
-                buildString {
-                    append("must override ''equals()'' in Any")
-                    if (containingDeclaration.isValueClass()) {
-                        val expectedParameterTypeRendered = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(
-                            (containingDeclaration as ClassDescriptor).defaultType.replaceArgumentsWithStarProjections()
-                        )
-                        append(" or define ''equals(other: $expectedParameterTypeRendered): Boolean''")
-                    }
-                }
+            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) {
+                "must override ''equals()'' in Any"
             }
         },
         Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),

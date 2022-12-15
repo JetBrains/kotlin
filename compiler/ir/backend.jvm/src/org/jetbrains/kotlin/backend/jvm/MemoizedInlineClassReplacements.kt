@@ -57,7 +57,7 @@ class MemoizedInlineClassReplacements(
                 // Mangle all functions in the body of an inline class
                 (it.parent as? IrClass)?.isSingleFieldValueClass == true ->
                     when {
-                        it.isValueClassTypedEquals -> createStaticReplacement(it).also {
+                        it.isTypedEquals -> createStaticReplacement(it).also {
                             it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
                             specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
                         }

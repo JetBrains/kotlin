@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.*
@@ -171,7 +172,10 @@ object ValueClassDeclarationChecker : DeclarationChecker {
             context.trace.bindingContext.get(BindingContext.FUNCTION, declaration)
 
         fun isUntypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
-        fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInValueClass() ?: false
+        fun isTypedEquals(declaration: KtNamedFunction): Boolean =
+            getFunctionDescriptor(declaration)?.annotations?.hasAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName())
+                ?: false
+
         fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)) {
@@ -260,14 +264,8 @@ class ReservedMembersAndConstructsForValueClass : DeclarationChecker {
                 ) {
                     val nameIdentifier = ktFunction.nameIdentifier ?: return
                     context.trace.report(Errors.RESERVED_MEMBER_INSIDE_VALUE_CLASS.on(nameIdentifier, functionName))
-                } else if (descriptor.isTypedEqualsInValueClass()) {
-                    if (descriptor.typeParameters.isNotEmpty()) {
-                        context.trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(declaration))
-                    }
-                    val parameterType = descriptor.valueParameters.first()?.type
-                    if (parameterType != null && parameterType.arguments.any { !it.isStarProjection }) {
-                        context.trace.report(Errors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS.on(declaration.valueParameters[0].typeReference!!))
-                    }
+                } else if (descriptor.isSuitableSignatureForTypedEquals() && descriptor.typeParameters.isNotEmpty()) {
+                    context.trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(declaration))
                 }
             }
 

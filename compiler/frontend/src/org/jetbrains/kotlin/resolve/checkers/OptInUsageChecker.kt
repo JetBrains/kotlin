@@ -85,8 +85,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val resultingDescriptor =
-            tryToSpecializeToTypedEquals(resolvedCall, context.trace.bindingContext) ?: resolvedCall.resultingDescriptor
+        val resultingDescriptor = resolvedCall.resultingDescriptor
         val bindingContext = context.trace.bindingContext
         val languageVersionSettings = context.languageVersionSettings
         val optIns = resultingDescriptor.loadOptIns(moduleAnnotationsResolver, bindingContext, languageVersionSettings)
@@ -113,16 +112,6 @@ class OptInUsageChecker(project: Project) : CallChecker {
             reportNotAllowedOptIns(samOptIns, reportOn, context)
         }
         reportNotAllowedOptIns(optIns, reportOn, context)
-    }
-
-    private fun tryToSpecializeToTypedEquals(resolvedCall: ResolvedCall<*>, context: BindingContext): SimpleFunctionDescriptor? {
-        if (!resolvedCall.resultingDescriptor.isEqualsDescriptor()) return null
-        val receiverType = resolvedCall.dispatchReceiver?.type ?: return null
-        if (!receiverType.isValueClassType()) return null
-        val otherArgument = resolvedCall.getFirstArgumentExpression() ?: return null
-        val otherArgumentType = otherArgument.getType(context) ?: return null
-        if (receiverType.constructor.declarationDescriptor != otherArgumentType.constructor.declarationDescriptor) return null
-        return receiverType.memberScope.findFirstFunctionOrNull("equals") { it is SimpleFunctionDescriptor && it.isTypedEqualsInValueClass() }
     }
 
     private fun FunctionDescriptor.findRelevantDataClassPropertyIfAny(context: CallCheckerContext): PropertyDescriptor? {

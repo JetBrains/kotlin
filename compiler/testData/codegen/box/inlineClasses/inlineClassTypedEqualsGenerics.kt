@@ -6,6 +6,7 @@
 @JvmInline
 value class IC1<T : Number>(val x: T) {
     fun equals(other: Int) = false
+    @TypedEquals
     fun equals(other: IC1<*>) = true
 }
 
@@ -14,18 +15,21 @@ class Generic<T, R>(val x: T, val y: R)
 @JvmInline
 value class IC2<T, R>(val value: Generic<T, R>) {
     fun equals(other: IC1<Double>) = false
+    @TypedEquals
     fun equals(other: IC2<*, *>) = true
 }
 
 @JvmInline
 value class IC3<T>(val value: T) {
     fun equals(other: Int) = false
+    @TypedEquals
     fun equals(other: IC3<*>) = true
 }
 
 @JvmInline
 value class IC4<T>(val value: T) {
     fun equals(other: String) = false
+    @TypedEquals
     fun equals(other: IC4<*>) = true
 }
 

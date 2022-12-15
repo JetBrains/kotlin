@@ -1006,10 +1006,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
-    abstract class TypeArgumentOnTypedValueClassEquals : KtFirDiagnostic<KtTypeReference>() {
-        override val diagnosticClass get() = TypeArgumentOnTypedValueClassEquals::class
-    }
-
     abstract class InnerClassInsideValueClass : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = InnerClassInsideValueClass::class
     }

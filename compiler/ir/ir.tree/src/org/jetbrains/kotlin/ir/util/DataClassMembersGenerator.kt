@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * A platform-, frontend-independent logic for generating synthetic members of data class: equals, hashCode, toString, componentN, and copy.
@@ -129,7 +129,8 @@ abstract class DataClassMembersGenerator(
         fun generateEqualsMethodBody(properties: List<IrProperty>) {
             val irType = irClass.defaultType
 
-            val typedEqualsFunction = irClass.functions.singleOrNull { it.isValueClassTypedEquals }
+            val typedEqualsFunction =
+                irClass.functions.singleOrNull { it.descriptor.annotations.hasAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName()) }
             if (irClass.isValue && typedEqualsFunction != null) {
                 +irIfThenReturnFalse(irNotIs(irOther(), irType))
                 val otherCasted = irImplicitCast(irOther(), irType)

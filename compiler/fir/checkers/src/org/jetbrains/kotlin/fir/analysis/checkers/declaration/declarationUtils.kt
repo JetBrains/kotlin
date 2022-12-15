@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
@@ -116,10 +117,14 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
     return null
 }
 
-fun FirSimpleFunction.isTypedEqualsInValueClassBySignature(session: FirSession): Boolean =
+val FirSimpleFunction.isTypedEquals
+    get() = hasAnnotation(StandardClassIds.Annotations.TypedEquals)
+
+
+fun FirSimpleFunction.isSuitableSignatureForTypedEquals(session: FirSession): Boolean =
     containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
         val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
-        with(this@isTypedEqualsInValueClassBySignature) {
+        with(this@isSuitableSignatureForTypedEquals) {
             contextReceivers.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
