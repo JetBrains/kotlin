@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import kotlin.system.measureTimeMillis
 
 
 internal class IdeMultiplatformImportImpl(
@@ -47,6 +48,7 @@ internal class IdeMultiplatformImportImpl(
     }
 
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
+    private val registeredAdditionalArtifactResolvers = mutableListOf<RegisteredAdditionalArtifactResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
     private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
@@ -83,6 +85,20 @@ internal class IdeMultiplatformImportImpl(
     }
 
     @ExternalKotlinTargetApi
+    override fun registerAdditionalArtifactResolver(
+        resolver: IdeAdditionalArtifactResolver,
+        constraint: SourceSetConstraint,
+        phase: AdditionalArtifactResolutionPhase,
+        level: AdditionalArtifactResolutionLevel
+    ) {
+        registeredAdditionalArtifactResolvers.add(
+            RegisteredAdditionalArtifactResolver(
+                extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, level
+            )
+        )
+    }
+
+    @ExternalKotlinTargetApi
     override fun registerDependencyEffect(effect: IdeDependencyEffect, constraint: SourceSetConstraint) {
         registeredDependencyEffects.add(
             RegisteredDependencyEffect(effect, constraint)
@@ -95,9 +111,11 @@ internal class IdeMultiplatformImportImpl(
     }
 
     private fun createDependencyResolver(): IdeDependencyResolver {
-        return IdeDependencyResolver(DependencyResolutionPhase.values().map { phase ->
-            createDependencyResolver(phase)
-        }).withTransformer(createDependencyTransformer())
+        return IdeDependencyResolver(
+            DependencyResolutionPhase.values().map { phase -> createDependencyResolver(phase) }
+        )
+            .withAdditionalArtifactResolver(createAdditionalArtifactsResolver())
+            .withTransformer(createDependencyTransformer())
             .withEffect(createDependencyEffect())
     }
 
@@ -118,6 +136,25 @@ internal class IdeMultiplatformImportImpl(
         /* No resolvers found */
         emptySet()
     }
+
+    private fun createAdditionalArtifactsResolver() = IdeAdditionalArtifactResolver(
+        AdditionalArtifactResolutionPhase.values().map { phase -> createAdditionalArtifactsResolver(phase) })
+
+    private fun createAdditionalArtifactsResolver(phase: AdditionalArtifactResolutionPhase) =
+        IdeAdditionalArtifactResolver resolve@{ sourceSet, dependencies ->
+            val applicableResolvers = registeredAdditionalArtifactResolvers
+                .filter { it.phase == phase }
+                .filter { it.constraint(sourceSet) }
+                .groupBy { it.level }
+
+            AdditionalArtifactResolutionLevel.values().reversed().forEach { level ->
+                val resolvers = applicableResolvers[level].orEmpty()
+                if (resolvers.isNotEmpty()) {
+                    resolvers.forEach { resolver -> resolver.resolve(sourceSet, dependencies) }
+                    return@resolve
+                }
+            }
+        }
 
     private fun createDependencyTransformer(): IdeDependencyTransformer {
         return IdeDependencyTransformer(DependencyTransformationPhase.values().map { phase ->
@@ -200,6 +237,20 @@ internal class IdeMultiplatformImportImpl(
             dependencies.forEach { dependency ->
                 if (dependency.resolvedBy == null) dependency.resolvedBy = resolver
             }
+        }
+    }
+
+    private class RegisteredAdditionalArtifactResolver(
+        private val statistics: IdeMultiplatformImportStatistics,
+        private val resolver: IdeAdditionalArtifactResolver,
+        val constraint: SourceSetConstraint,
+        val phase: AdditionalArtifactResolutionPhase,
+        val level: AdditionalArtifactResolutionLevel
+    ) : IdeAdditionalArtifactResolver {
+        override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
+            runCatching { measureTimeMillis { resolver.resolve(sourceSet, dependencies) } }
+                .onFailure { logger.error("e: ${resolver::class.java.name} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}", it) }
+                .onSuccess { statistics.addExecutionTime(resolver::class.java, it) }
         }
     }
 }

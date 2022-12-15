@@ -9,14 +9,16 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeAdditionalArtifactResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.asAdditionalArtifactResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.utils.named
 
-internal fun IdeMetadataSourcesResolver(): IdeBinaryDependencyResolver = IdeBinaryDependencyResolver(
-    binaryType = IdeaKotlinDependency.SOURCES_BINARY_TYPE,
+internal fun IdeMetadataSourcesResolver(): IdeAdditionalArtifactResolver = IdeBinaryDependencyResolver(
+    binaryType = IdeDependencyResolver.SOURCES_BINARY_TYPE,
     artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.ResolvableConfiguration(
         configurationSelector = { it.internal.resolvableMetadataConfiguration },
         setupArtifactViewAttributes = {
@@ -24,4 +26,4 @@ internal fun IdeMetadataSourcesResolver(): IdeBinaryDependencyResolver = IdeBina
             attribute(DocsType.DOCS_TYPE_ATTRIBUTE, it.project.objects.named(DocsType.SOURCES))
         }
     )
-)
+).asAdditionalArtifactResolver()

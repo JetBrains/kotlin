@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -30,8 +32,8 @@ internal object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
         return artifactsView.artifacts.mapNotNull { artifact ->
             val moduleId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
             IdeaKotlinResolvedBinaryDependency(
-                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-                binaryFile = artifact.file,
+                binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+                classpath = IdeaKotlinClasspath(artifact.file),
                 coordinates = IdeaKotlinBinaryCoordinates(moduleId)
             )
         }.toSet()

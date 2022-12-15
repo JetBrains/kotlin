@@ -26,6 +26,9 @@ fun interface IdeDependencyResolver {
     }
 
     companion object {
+        const val SOURCES_BINARY_TYPE = "SOURCES"
+        const val DOCUMENTATION_BINARY_TYPE = "DOCUMENTATION"
+
         var IdeaKotlinDependency.resolvedBy: IdeDependencyResolver? by extrasReadWriteProperty("resolvedBy")
         var IdeaKotlinDependency.gradleArtifact: ResolvedArtifactResult? by extrasReadWriteProperty("gradleArtifact")
     }

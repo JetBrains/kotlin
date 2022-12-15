@@ -9,12 +9,12 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.utils.named
 
 internal fun IdePlatformSourcesResolver(): IdeBinaryDependencyResolver = IdeBinaryDependencyResolver(
-    binaryType = IdeaKotlinDependency.SOURCES_BINARY_TYPE,
+    binaryType = IdeDependencyResolver.SOURCES_BINARY_TYPE,
     artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.Compilation(
         setupArtifactViewAttributes = {
             attribute(Category.CATEGORY_ATTRIBUTE, it.project.objects.named(Category.DOCUMENTATION))

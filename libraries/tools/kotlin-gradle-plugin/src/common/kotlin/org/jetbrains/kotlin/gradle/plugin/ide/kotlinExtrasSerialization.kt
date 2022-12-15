@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.idea.proto.tcs.IdeaKotlinClasspathSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinBooleanExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer.Companion.javaIoSerializable
@@ -20,4 +21,7 @@ val kotlinExtrasSerialization = IdeaKotlinExtrasSerializationExtension {
     register(isNativeDistributionKey, IdeaKotlinBooleanExtrasSerializer)
     register(isNativeStdlibKey, IdeaKotlinBooleanExtrasSerializer)
     register(isCommonizedKey, IdeaKotlinBooleanExtrasSerializer)
+    register(sourcesClasspathKey, IdeaKotlinClasspathSerializer)
+    register(documentationClasspathKey, IdeaKotlinClasspathSerializer)
+    register(projectArtifactsClasspathKey, IdeaKotlinClasspathSerializer)
 }

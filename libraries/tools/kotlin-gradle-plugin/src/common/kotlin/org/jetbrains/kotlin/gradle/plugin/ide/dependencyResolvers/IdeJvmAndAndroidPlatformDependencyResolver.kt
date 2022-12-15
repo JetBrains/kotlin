@@ -12,7 +12,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.java.TargetJvmEnvironment
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.usageByName
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.named
  */
 internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project): IdeDependencyResolver =
     IdeBinaryDependencyResolver(
-        binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+        binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
         artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
             setupPlatformResolutionAttributes = {
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))

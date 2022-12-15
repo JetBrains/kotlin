@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.classLoaderForBackwardsCompatibleClasses
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
-import org.jetbrains.kotlin.gradle.idea.tcs.*
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinDependencySerializer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
@@ -66,27 +69,6 @@ class IdeaKotlinDependencyBackwardsCompatibilityTest {
         assertEquals(dependency.coordinates, deserializedCopied.coordinates)
         assertEquals(dependency.extras, deserializedCopied.extras)
     }
-
-    @Test
-    fun `test - empty classpath`() {
-        val classpath = TestIdeaKotlinInstances.emptyClasspath
-        val binary = TestIdeaKotlinDependencySerializer().serialize(classpath)
-        val deserialized = deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(binary)
-        val copied = deserialized.copy<IdeaKotlinClasspath>()
-
-        assertEquals(classpath.toSet(), copied.toSet())
-    }
-
-    @Test
-    fun `test - simple classpath`() {
-        val classpath = TestIdeaKotlinInstances.simpleClasspath
-        val binary = TestIdeaKotlinDependencySerializer().serialize(classpath)
-        val deserialized = deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(binary)
-        val copied = deserialized.copy<IdeaKotlinClasspath>()
-
-        assertEquals(classpath.toSet(), copied.toSet())
-    }
-
 }
 
 private fun deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(project: ByteArray): Any {

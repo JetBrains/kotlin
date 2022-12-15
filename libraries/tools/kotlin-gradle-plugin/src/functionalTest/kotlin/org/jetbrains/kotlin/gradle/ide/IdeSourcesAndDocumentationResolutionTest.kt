@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.isSourcesBinaryType
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.documentationClasspathKey
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspathKey
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
@@ -57,36 +59,36 @@ class IdeSourcesAndDocumentationResolutionTest {
         fun resolveDependencySources(sourceSet: KotlinSourceSet): List<IdeaKotlinResolvedBinaryDependency> =
             project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)
                 .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
-                .filter { it.isSourcesBinaryType }
-
+                .filter { it.sourcesClasspath.isNotEmpty() }
 
         /* Check commonMain&commonTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
             )
 
             val resolvedDependencies = resolveDependencySources(commonMain)
             resolvedDependencies.assertMatches(expectedDependencies)
             resolveDependencySources(commonTest).assertMatches(resolvedDependencies)
-            resolvedDependencies.assertFilesEndWith("-sources.jar")
+            resolvedDependencies.assertSourcesFilesEndWith("-sources.jar")
         }
 
         /* Check nativeMain&nativeTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:jsNativeMain"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
                 IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project)
             )
 
             val resolvedDependencies = resolveDependencySources(nativeMain)
             resolvedDependencies.assertMatches(expectedDependencies)
             resolveDependencySources(nativeTest).assertMatches(resolvedDependencies)
-            resolvedDependencies.assertFilesEndWith("-sources.jar", "-sources.zip")
+            resolvedDependencies.assertSourcesFilesEndWith("-sources.jar", "-sources.zip")
         }
 
         /* Check linuxX64Main and linuxX64Test */
@@ -114,16 +116,25 @@ class IdeSourcesAndDocumentationResolutionTest {
 
             val resolvedDependencies = resolveDependencySources(linuxX64Main)
             resolvedDependencies.assertMatches(expectedDependencies)
-            resolveDependencySources(linuxX64Test).assertMatches(resolvedDependencies)
-            resolvedDependencies.assertFilesEndWith("-sources.jar", "-sources.zip")
+            resolveDependencySources(linuxX64Test).withSanitisedExtras().assertMatches(resolvedDependencies.withSanitisedExtras())
+            resolvedDependencies.assertSourcesFilesEndWith("-sources.jar", "-sources.zip")
         }
     }
 }
 
-private fun Iterable<IdeaKotlinResolvedBinaryDependency>.assertFilesEndWith(vararg suffixes: String) {
+private fun Iterable<IdeaKotlinResolvedBinaryDependency>.withSanitisedExtras() = onEach { dependency ->
+    val keysToKeep = setOf(sourcesClasspathKey, documentationClasspathKey)
+    (dependency.extras.keys - keysToKeep).forEach { keyToRemove ->
+        dependency.extras.remove(keyToRemove)
+    }
+}
+
+private fun Iterable<IdeaKotlinResolvedBinaryDependency>.assertSourcesFilesEndWith(vararg suffixes: String) {
     forEach { dependency ->
-        if (suffixes.none { suffix -> dependency.binaryFile.path.endsWith(suffix) }) {
-            fail("Expected binaryFile to end with one of ${suffixes.toList()}. Found: ${dependency.binaryFile}")
+        dependency.sourcesClasspath.forEach { sourcesFile ->
+            if (suffixes.none { suffix -> sourcesFile.path.endsWith(suffix) }) {
+                fail("Expected binaryFile to end with one of ${suffixes.toList()}. Found: ${sourcesFile}")
+            }
         }
     }
 }

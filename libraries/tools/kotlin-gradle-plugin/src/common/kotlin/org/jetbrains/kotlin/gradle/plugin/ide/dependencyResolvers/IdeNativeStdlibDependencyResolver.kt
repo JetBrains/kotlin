@@ -9,15 +9,15 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.commonizer.KonanDistribution
+import org.jetbrains.kotlin.commonizer.sourcesDir
 import org.jetbrains.kotlin.commonizer.stdlib
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
@@ -30,11 +30,12 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
     private val logger: Logger = Logging.getLogger(IdeNativePlatformDependencyResolver::class.java)
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        val binaryFile = KonanDistribution(sourceSet.project.konanHome).stdlib
+        val konanDistribution = KonanDistribution(sourceSet.project.konanHome)
+        val stdlibFile = KonanDistribution(sourceSet.project.konanHome).stdlib
 
         val klibExtra = try {
             val kotlinLibrary = resolveSingleFileKlib(
-                libraryFile = File(binaryFile.absolutePath),
+                libraryFile = File(stdlibFile.absolutePath),
                 strategy = ToolingSingleFileKlibResolveStrategy
             )
 
@@ -46,13 +47,17 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
 
         return setOf(
             IdeaKotlinResolvedBinaryDependency(
-                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-                binaryFile = binaryFile,
+                binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+                classpath = IdeaKotlinClasspath(stdlibFile),
                 coordinates = nativeStdlibCoordinates(sourceSet.project)
             ).apply {
                 this.isNativeDistribution = true
                 this.isNativeStdlib = true
                 this.klibExtra = klibExtra
+                this.sourcesClasspath += konanDistribution.sourcesDir.listFiles().orEmpty()
+                    /* Ignore org.jetbrains.kotlinx. in this case */
+                    .filter { file -> file.name.startsWith("kotlin") }
+                    .ifEmpty { return emptySet() }
             }
         )
     }
