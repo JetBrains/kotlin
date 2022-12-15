@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
-import java.io.File
 
 sealed class IdeaKotlinBinaryDependency : IdeaKotlinDependency {
     abstract override val coordinates: IdeaKotlinBinaryCoordinates?
+
+    companion object {
+        const val KOTLIN_COMPILE_BINARY_TYPE = "KOTLIN_COMPILE"
+    }
 }
 
 data class IdeaKotlinResolvedBinaryDependency(
     val binaryType: String,
-    val binaryFile: File,
+    val classpath: IdeaKotlinClasspath,
     override val coordinates: IdeaKotlinBinaryCoordinates?,
     override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinBinaryDependency() {
@@ -34,11 +37,5 @@ data class IdeaKotlinUnresolvedBinaryDependency(
     }
 }
 
-val IdeaKotlinResolvedBinaryDependency.isClasspathBinaryType
-    get() = this.binaryType == IdeaKotlinDependency.CLASSPATH_BINARY_TYPE
-
-val IdeaKotlinResolvedBinaryDependency.isSourcesBinaryType
-    get() = this.binaryType == IdeaKotlinDependency.SOURCES_BINARY_TYPE
-
-val IdeaKotlinResolvedBinaryDependency.isDocumentationBinaryType
-    get() = this.binaryType == IdeaKotlinDependency.DOCUMENTATION_BINARY_TYPE
+val IdeaKotlinResolvedBinaryDependency.isKotlinCompileBinaryType
+    get() = this.binaryType == IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE

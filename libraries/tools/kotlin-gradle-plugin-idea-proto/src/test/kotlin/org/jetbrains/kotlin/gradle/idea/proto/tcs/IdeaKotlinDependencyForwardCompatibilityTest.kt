@@ -34,7 +34,7 @@ class IdeaKotlinDependencyForwardCompatibilityTest {
 
         assertEquals(TestIdeaKotlinInstances.simpleResolvedBinaryDependency.coordinates, deserialized.coordinates)
         assertEquals(TestIdeaKotlinInstances.simpleResolvedBinaryDependency.binaryType, deserialized.binaryType)
-        assertEquals(TestIdeaKotlinInstances.simpleResolvedBinaryDependency.binaryFile, deserialized.binaryFile)
+        assertEquals(TestIdeaKotlinInstances.simpleResolvedBinaryDependency.classpath, deserialized.classpath)
         assertEquals(TestIdeaKotlinInstances.simpleResolvedBinaryDependency.extras, deserialized.extras)
     }
 

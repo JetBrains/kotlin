@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinResolvedBinaryDependencyProto
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
@@ -26,7 +27,7 @@ class IdeaKotlinResolvedBinaryDependencySerializationTest : AbstractSerializatio
     fun `sample 0`() = testSerialization(
         IdeaKotlinResolvedBinaryDependency(
             binaryType = "myBinaryType",
-            binaryFile = File("myBinaryFile"),
+            classpath = IdeaKotlinClasspath(File("myBinaryFile")),
             extras = mutableExtrasOf(extrasKeyOf<String>() withValue "myStringExtras"),
             coordinates = TestIdeaKotlinInstances.simpleBinaryCoordinates
         )
@@ -36,7 +37,7 @@ class IdeaKotlinResolvedBinaryDependencySerializationTest : AbstractSerializatio
     fun `sample 1`() = testSerialization(
         IdeaKotlinResolvedBinaryDependency(
             binaryType = "myBinaryType",
-            binaryFile = File("myBinaryFile"),
+            classpath = IdeaKotlinClasspath(File("myBinaryFile")),
             extras = mutableExtrasOf(),
             coordinates = null
         )

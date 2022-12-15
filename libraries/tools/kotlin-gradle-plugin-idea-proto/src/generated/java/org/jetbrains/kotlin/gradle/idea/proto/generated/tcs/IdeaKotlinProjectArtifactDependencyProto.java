@@ -98,9 +98,9 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int COORDINATES_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates_;
+  private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates_;
   /**
-   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
    * @return Whether the coordinates field is set.
    */
   @java.lang.Override
@@ -108,19 +108,19 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000004) != 0);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
    * @return The coordinates.
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto getCoordinates() {
-    return coordinates_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance() : coordinates_;
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto getCoordinates() {
+    return coordinates_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance() : coordinates_;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder getCoordinatesOrBuilder() {
-    return coordinates_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance() : coordinates_;
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder getCoordinatesOrBuilder() {
+    return coordinates_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance() : coordinates_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -717,31 +717,31 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates_;
+    private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates_;
     private com.google.protobuf.SingleFieldBuilderV3<
-        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder> coordinatesBuilder_;
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder> coordinatesBuilder_;
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      * @return Whether the coordinates field is set.
      */
     public boolean hasCoordinates() {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      * @return The coordinates.
      */
-    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto getCoordinates() {
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto getCoordinates() {
       if (coordinatesBuilder_ == null) {
-        return coordinates_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance() : coordinates_;
+        return coordinates_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance() : coordinates_;
       } else {
         return coordinatesBuilder_.getMessage();
       }
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
-    public Builder setCoordinates(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto value) {
+    public Builder setCoordinates(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto value) {
       if (coordinatesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -755,10 +755,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
     public Builder setCoordinates(
-        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder builderForValue) {
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.Builder builderForValue) {
       if (coordinatesBuilder_ == null) {
         coordinates_ = builderForValue.build();
         onChanged();
@@ -769,15 +769,15 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
-    public Builder mergeCoordinates(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto value) {
+    public Builder mergeCoordinates(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto value) {
       if (coordinatesBuilder_ == null) {
         if (((bitField0_ & 0x00000004) != 0) &&
             coordinates_ != null &&
-            coordinates_ != org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance()) {
+            coordinates_ != org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance()) {
           coordinates_ =
-            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.newBuilder(coordinates_).mergeFrom(value).buildPartial();
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.newBuilder(coordinates_).mergeFrom(value).buildPartial();
         } else {
           coordinates_ = value;
         }
@@ -789,7 +789,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
     public Builder clearCoordinates() {
       if (coordinatesBuilder_ == null) {
@@ -802,33 +802,33 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
-    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder getCoordinatesBuilder() {
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.Builder getCoordinatesBuilder() {
       bitField0_ |= 0x00000004;
       onChanged();
       return getCoordinatesFieldBuilder().getBuilder();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
-    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder getCoordinatesOrBuilder() {
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder getCoordinatesOrBuilder() {
       if (coordinatesBuilder_ != null) {
         return coordinatesBuilder_.getMessageOrBuilder();
       } else {
         return coordinates_ == null ?
-            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance() : coordinates_;
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance() : coordinates_;
       }
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto coordinates = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder> 
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder> 
         getCoordinatesFieldBuilder() {
       if (coordinatesBuilder_ == null) {
         coordinatesBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder>(
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder>(
                 getCoordinates(),
                 getParentForChildren(),
                 isClean());

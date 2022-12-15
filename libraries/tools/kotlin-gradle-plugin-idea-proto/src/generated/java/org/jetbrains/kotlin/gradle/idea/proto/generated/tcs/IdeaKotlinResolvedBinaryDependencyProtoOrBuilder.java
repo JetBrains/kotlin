@@ -55,19 +55,17 @@ public interface IdeaKotlinResolvedBinaryDependencyProtoOrBuilder extends
       getBinaryTypeBytes();
 
   /**
-   * <code>optional string binary_file = 4;</code>
-   * @return Whether the binaryFile field is set.
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+   * @return Whether the classpath field is set.
    */
-  boolean hasBinaryFile();
+  boolean hasClasspath();
   /**
-   * <code>optional string binary_file = 4;</code>
-   * @return The binaryFile.
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
+   * @return The classpath.
    */
-  java.lang.String getBinaryFile();
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto getClasspath();
   /**
-   * <code>optional string binary_file = 4;</code>
-   * @return The bytes for binaryFile.
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProto classpath = 4;</code>
    */
-  com.google.protobuf.ByteString
-      getBinaryFileBytes();
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinClasspathProtoOrBuilder getClasspathOrBuilder();
 }
