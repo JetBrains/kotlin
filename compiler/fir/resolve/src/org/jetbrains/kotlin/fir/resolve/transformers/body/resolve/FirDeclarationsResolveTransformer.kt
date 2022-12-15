@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -447,7 +446,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             isSetter -> {
                 val valueParameter = valueParameters.firstOrNull() ?: return
                 if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-                    valueParameter.transformReturnTypeRef(StoreType, propertyTypeRef)
+                    valueParameter.replaceReturnTypeRef(propertyTypeRef)
                 }
             }
         }
@@ -1130,8 +1129,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
         override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement = whileAnalysing(valueParameter) {
             if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-                valueParameter.transformReturnTypeRef(
-                    StoreType,
+                valueParameter.replaceReturnTypeRef(
                     valueParameter.returnTypeRef.resolvedTypeFromPrototype(
                         ConeErrorType(
                             ConeSimpleDiagnostic(

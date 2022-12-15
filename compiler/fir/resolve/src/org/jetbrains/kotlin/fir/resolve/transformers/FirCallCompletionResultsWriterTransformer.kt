@@ -623,7 +623,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (finalType != null) {
             if (anonymousFunction.returnTypeRef !is FirImplicitUnitTypeRef) {
                 val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
-                anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+                anonymousFunction.replaceReturnTypeRef(resultType)
             }
             needUpdateLambdaType = true
         }

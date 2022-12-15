@@ -6,27 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-
-internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
-        return element
-    }
-
-    override fun transformTypeRef(typeRef: FirTypeRef, data: FirTypeRef): FirTypeRef {
-        return data
-    }
-}
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.createArrayType
 
 internal fun FirValueParameter.transformVarargTypeToArrayType() {
     if (isVararg) {
@@ -44,8 +32,7 @@ internal fun FirCallableDeclaration.transformTypeToArrayType() {
     ) return
     val returnType = returnTypeRef.coneType
 
-    transformReturnTypeRef(
-        StoreType,
+    replaceReturnTypeRef(
         buildResolvedTypeRef {
             source = returnTypeRef.source
             type = ConeKotlinTypeProjectionOut(returnType).createArrayType()
