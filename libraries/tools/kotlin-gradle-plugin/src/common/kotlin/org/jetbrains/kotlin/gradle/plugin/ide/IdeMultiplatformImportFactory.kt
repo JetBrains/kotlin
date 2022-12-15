@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.UnusedSourcesAndDocumentationFilter
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -97,32 +96,25 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
         )
 
         registerDependencyResolver(
-            resolver = IdeNativeStdlibSourcesResolver,
-            constraint = SourceSetConstraint.isNative,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
-        )
-
-        registerDependencyResolver(
             resolver = IdePlatformSourcesResolver(),
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 
-        registerDependencyResolver(
+        registerAdditionalArtifactResolver(
             resolver = IdeMetadataSourcesResolver(),
             constraint = !SourceSetConstraint.isSinglePlatformType,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndJavadocArtifactResolution,
+            level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Default
         )
 
         if (extension.project.kotlinPropertiesProvider.enableSlowIdeSourcesJarResolver) {
-            registerDependencyResolver(
+            registerAdditionalArtifactResolver(
                 resolver = IdeArtifactResolutionQuerySourcesAndDocumentationResolver,
                 constraint = SourceSetConstraint.unconstrained,
-                phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
-                level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+                phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndJavadocArtifactResolution,
+                level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Default
             )
         }
 
@@ -130,12 +122,6 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             transformer = IdePlatformStdlibCommonDependencyFilter,
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
-        )
-
-        registerDependencyTransformer(
-            transformer = UnusedSourcesAndDocumentationFilter,
-            constraint = SourceSetConstraint.unconstrained,
-            phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase
         )
 
         registerDependencyEffect(

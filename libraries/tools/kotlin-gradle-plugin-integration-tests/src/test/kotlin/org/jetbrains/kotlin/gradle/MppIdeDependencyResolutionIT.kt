@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isCommonized
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
@@ -37,7 +37,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
                         .filter { !it.isNativeStdlib }
                         .filter { it.isNativeDistribution }
-                        .filter { it.binaryType == CLASSPATH_BINARY_TYPE }
+                        .filter { it.binaryType == IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE }
 
                 val nativeMainDependencies = dependencies["nativeMain"].filterNativePlatformDependencies()
                 val nativeTestDependencies = dependencies["nativeTest"].filterNativePlatformDependencies()

@@ -15,6 +15,7 @@ import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifi
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.idea.tcs.*
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 @ExternalKotlinTargetApi
 class IdeBinaryDependencyResolver(
-    private val binaryType: String = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+    private val binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation()
 ) : IdeDependencyResolver {
 
@@ -100,18 +101,17 @@ class IdeBinaryDependencyResolver(
                 is ProjectComponentIdentifier -> {
                     IdeaKotlinProjectArtifactDependency(
                         type = IdeaKotlinSourceDependency.Type.Regular,
-                        coordinates = IdeaKotlinProjectArtifactCoordinates(
-                            project = IdeaKotlinProjectCoordinates(componentId),
-                            artifactFile = artifact.file
-                        )
-                    )
+                        coordinates = IdeaKotlinProjectCoordinates(componentId)
+                    ).apply {
+                        artifactsClasspath.add(artifact.file)
+                    }
                 }
 
                 is ModuleComponentIdentifier -> {
                     IdeaKotlinResolvedBinaryDependency(
                         coordinates = IdeaKotlinBinaryCoordinates(componentId),
                         binaryType = binaryType,
-                        binaryFile = artifact.file,
+                        classpath = IdeaKotlinClasspath(artifact.file),
                     )
                 }
 
@@ -123,7 +123,7 @@ class IdeBinaryDependencyResolver(
                             module = componentId.libraryName,
                             version = null, sourceSetName = null
                         ),
-                        binaryFile = artifact.file
+                        classpath = IdeaKotlinClasspath(artifact.file)
                     )
                 }
 

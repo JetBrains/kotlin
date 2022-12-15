@@ -25,7 +25,6 @@ data class IdeaKotlinBinaryCoordinates(
     }
 }
 
-@IdeaKotlinModel
 data class IdeaKotlinProjectCoordinates(
     val buildId: String,
     val projectPath: String,

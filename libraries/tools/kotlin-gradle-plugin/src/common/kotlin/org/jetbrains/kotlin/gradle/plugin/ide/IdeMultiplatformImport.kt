@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
@@ -48,6 +46,14 @@ interface IdeMultiplatformImport {
         constraint: SourceSetConstraint,
         phase: DependencyResolutionPhase,
         level: DependencyResolutionLevel = Default,
+    )
+
+    @ExternalKotlinTargetApi
+    fun registerAdditionalArtifactResolver(
+        resolver: IdeAdditionalArtifactResolver,
+        constraint: SourceSetConstraint,
+        phase: AdditionalArtifactResolutionPhase,
+        level: AdditionalArtifactResolutionLevel = AdditionalArtifactResolutionLevel.Default
     )
 
     @ExternalKotlinTargetApi
@@ -109,6 +115,16 @@ interface IdeMultiplatformImport {
      * Otherwise, all [Default] resolvers will run.
      */
     enum class DependencyResolutionLevel {
+        Default, Overwrite
+    }
+
+    enum class AdditionalArtifactResolutionPhase {
+        PreAdditionalArtifactResolution,
+        SourcesAndJavadocArtifactResolution,
+        PostAdditionalArtifactResolution
+    }
+
+    enum class AdditionalArtifactResolutionLevel {
         Default, Overwrite
     }
 

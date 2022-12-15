@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
@@ -35,8 +36,8 @@ internal fun Project.resolveNativeDistributionLibraryForIde(
     }
 
     return IdeaKotlinResolvedBinaryDependency(
-        binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-        binaryFile = library,
+        binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+        classpath = IdeaKotlinClasspath(library),
         coordinates = IdeaKotlinBinaryCoordinates(
             group = "org.jetbrains.kotlin.native",
             module = resolvedLibrary.packageFqName ?: resolvedLibrary.shortName ?: resolvedLibrary.uniqueName,

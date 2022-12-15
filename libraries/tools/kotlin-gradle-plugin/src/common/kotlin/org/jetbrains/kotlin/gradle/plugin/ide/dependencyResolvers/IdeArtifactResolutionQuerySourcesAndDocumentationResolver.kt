@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.artifacts.result.ArtifactResolutionResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.component.Artifact
 import org.gradle.jvm.JvmLibrary
 import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.language.java.artifact.JavadocArtifact
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.documentationClasspath
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import org.jetbrains.kotlin.gradle.idea.tcs.isKotlinCompileBinaryType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeAdditionalArtifactResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
@@ -32,8 +33,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.project
  *
  * cc Anton Lakotka, Sebastian Sellmair
  */
-internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeDependencyResolver {
-    override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
+internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeAdditionalArtifactResolver {
+    override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
+        val binaryDependencies = dependencies.filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+            .filter { dependency -> dependency.isKotlinCompileBinaryType }
+            .groupBy { dependency -> dependency.coordinates?.copy(sourceSetName = null) }
+
         val project = sourceSet.project
         val configuration = selectConfiguration(sourceSet)
         val resolutionResult = project.dependencies.createArtifactResolutionQuery()
@@ -41,25 +46,29 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeD
             .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java, JavadocArtifact::class.java)
             .execute()
 
-        return resolve(resolutionResult, SourcesArtifact::class.java, IdeaKotlinDependency.SOURCES_BINARY_TYPE) +
-                resolve(resolutionResult, JavadocArtifact::class.java, IdeaKotlinDependency.DOCUMENTATION_BINARY_TYPE)
-    }
+        val sourcesArtifacts = resolutionResult.resolvedComponents.flatMap { resolved ->
+            resolved.getArtifacts(SourcesArtifact::class.java).filterIsInstance<ResolvedArtifactResult>()
+        }
 
-    fun resolve(
-        resolutionResult: ArtifactResolutionResult, artifactType: Class<out Artifact>, binaryType: String
-    ): Set<IdeaKotlinResolvedBinaryDependency> {
-        return resolutionResult.resolvedComponents.flatMap { resolved ->
-            resolved.getArtifacts(artifactType)
-                .filterIsInstance<ResolvedArtifactResult>()
-                .mapNotNull { artifact ->
-                    val id = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
-                    IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(id),
-                        binaryType = binaryType,
-                        binaryFile = artifact.file
-                    )
-                }
-        }.toSet()
+        sourcesArtifacts.forEach { artifact ->
+            val artifactId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@forEach
+            val artifactCoordinates = IdeaKotlinBinaryCoordinates(artifactId)
+            binaryDependencies[artifactCoordinates]?.forEach { dependency ->
+                dependency.sourcesClasspath.add(artifact.file)
+            }
+        }
+
+        val javadocArtifacts = resolutionResult.resolvedComponents.flatMap { resolved ->
+            resolved.getArtifacts(JavadocArtifact::class.java).filterIsInstance<ResolvedArtifactResult>()
+        }
+
+        javadocArtifacts.forEach { artifact ->
+            val artifactId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@forEach
+            val artifactCoordinates = IdeaKotlinBinaryCoordinates(artifactId)
+            binaryDependencies[artifactCoordinates]?.forEach { dependency ->
+                dependency.documentationClasspath.add(artifact.file)
+            }
+        }
     }
 
     private fun selectConfiguration(sourceSet: KotlinSourceSet): Configuration {

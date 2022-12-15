@@ -335,6 +335,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinClasspath : ja
 	public fun add (Ljava/io/File;)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun addAll (Ljava/util/Collection;)Z
+	public final fun addAll (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinClasspath;)Z
 	public fun clear ()V
 	public fun contains (Ljava/io/File;)Z
 	public final fun contains (Ljava/lang/Object;)Z

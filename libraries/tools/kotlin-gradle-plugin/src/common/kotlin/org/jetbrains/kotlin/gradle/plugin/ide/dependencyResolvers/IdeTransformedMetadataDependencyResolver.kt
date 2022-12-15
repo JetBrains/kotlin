@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
@@ -42,8 +40,8 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                 }
 
                 IdeaKotlinResolvedBinaryDependency(
-                    binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-                    binaryFile = metadataLibraryOutputFile,
+                    binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+                    classpath = IdeaKotlinClasspath(metadataLibraryOutputFile),
                     extras = mutableExtrasOf(),
                     coordinates = IdeaKotlinBinaryCoordinates(
                         group = metadataProvider.moduleDependencyIdentifier.groupId ?: "",
