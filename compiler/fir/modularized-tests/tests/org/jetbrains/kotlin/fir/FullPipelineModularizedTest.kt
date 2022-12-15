@@ -14,6 +14,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.useK2 = true
         args.useIR = true
+        args.useFirLT = true
         args.apiVersion = LANGUAGE_VERSION
         args.jvmDefault = "compatibility"
         args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
