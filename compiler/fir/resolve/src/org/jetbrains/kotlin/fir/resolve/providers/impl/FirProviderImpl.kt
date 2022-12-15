@@ -79,8 +79,17 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             state.classifierInPackage[fqName].orEmpty().mapTo(mutableSetOf()) { it.asString() }
 
         override fun computeCallableNames(fqName: FqName): Set<Name> = buildSet {
-            state.functionMap.keys.mapTo(this) { it.callableName }
-            state.propertyMap.keys.mapTo(this) { it.callableName }
+            for (key in state.functionMap.keys) {
+                if (key.packageName == fqName) {
+                    add(key.callableName)
+                }
+            }
+
+            for (key in state.propertyMap.keys) {
+                if (key.packageName == fqName) {
+                    add(key.callableName)
+                }
+            }
         }
 
         override fun getPackage(fqName: FqName): FqName? {
