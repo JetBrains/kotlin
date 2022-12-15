@@ -284,9 +284,13 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     override val endOffset: Int
         get() = psi.textRange.endOffset
 
-    override val lighterASTNode by lazy { TreeBackedLighterAST.wrap(psi.node) }
+    override val lighterASTNode: LighterASTNode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        TreeBackedLighterAST.wrap(psi.node)
+    }
 
-    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy { WrappedTreeStructure(psi.containingFile) }
+    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        WrappedTreeStructure(psi.containingFile)
+    }
 
     internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
         private val lighterAST = TreeBackedLighterAST(file.node)
