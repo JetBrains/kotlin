@@ -34,7 +34,7 @@ internal class FirResolvedQualifierImpl(
     override var relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var isNullableLHSForCallableReference: Boolean,
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override val typeArguments: MutableList<FirTypeProjection>,
 ) : FirResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {

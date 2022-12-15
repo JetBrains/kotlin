@@ -51,7 +51,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             relativeClassFqName,
             symbol,
             isNullableLHSForCallableReference,
-            nonFatalDiagnostics,
+            nonFatalDiagnostics.toMutableOrEmpty(),
             typeArguments,
             diagnostic,
         )

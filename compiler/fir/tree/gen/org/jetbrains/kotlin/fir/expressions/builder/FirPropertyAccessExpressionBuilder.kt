@@ -57,7 +57,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotat
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
-            nonFatalDiagnostics,
+            nonFatalDiagnostics.toMutableOrEmpty(),
         )
     }
 

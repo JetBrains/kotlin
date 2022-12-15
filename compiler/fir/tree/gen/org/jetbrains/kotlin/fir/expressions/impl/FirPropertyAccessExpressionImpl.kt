@@ -35,7 +35,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
 ) : FirPropertyAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -125,5 +125,9 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
 
     override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
         extensionReceiver = newExtensionReceiver
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 }

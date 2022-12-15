@@ -53,7 +53,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             relativeClassFqName,
             symbol,
             isNullableLHSForCallableReference,
-            nonFatalDiagnostics,
+            nonFatalDiagnostics.toMutableOrEmpty(),
             typeArguments,
         )
     }

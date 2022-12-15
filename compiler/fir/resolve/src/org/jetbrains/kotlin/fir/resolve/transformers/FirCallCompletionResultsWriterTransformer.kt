@@ -139,7 +139,12 @@ class FirCallCompletionResultsWriterTransformer(
         qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
 
         if (qualifiedAccessExpression is FirPropertyAccessExpressionImpl && calleeReference.candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
-            qualifiedAccessExpression.nonFatalDiagnostics.add(ConePropertyAsOperator(calleeReference.candidate.symbol as FirPropertySymbol))
+            val conePropertyAsOperator = ConePropertyAsOperator(calleeReference.candidate.symbol as FirPropertySymbol)
+            val nonFatalDiagnostics: List<ConeDiagnostic> = buildList {
+                addAll(qualifiedAccessExpression.nonFatalDiagnostics)
+                add(conePropertyAsOperator)
+            }
+            qualifiedAccessExpression.replaceNonFatalDiagnostics(nonFatalDiagnostics)
         }
 
         if (qualifiedAccessExpression is FirQualifiedAccessExpression) {
