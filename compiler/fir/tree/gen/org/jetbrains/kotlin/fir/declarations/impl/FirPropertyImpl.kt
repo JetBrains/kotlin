@@ -61,7 +61,7 @@ internal class FirPropertyImpl(
     override var setter: FirPropertyAccessor?,
     override var backingField: FirBackingField?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,
@@ -204,8 +204,7 @@ internal class FirPropertyImpl(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {

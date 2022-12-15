@@ -54,7 +54,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             name,
             statements,
             symbol,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
         )
     }
 

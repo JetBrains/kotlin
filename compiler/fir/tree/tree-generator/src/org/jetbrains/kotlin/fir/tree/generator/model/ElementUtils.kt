@@ -66,8 +66,8 @@ fun fieldList(name: String, type: Importable, withReplace: Boolean = false, useM
     return FieldList(name, type, withReplace, useMutableOrEmpty)
 }
 
-fun fieldList(element: AbstractElement, withReplace: Boolean = false): Field {
-    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace)
+fun fieldList(element: AbstractElement, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
+    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace, useMutableOrEmpty)
 }
 
 // ----------- Field set -----------

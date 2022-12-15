@@ -51,7 +51,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,
@@ -149,8 +149,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

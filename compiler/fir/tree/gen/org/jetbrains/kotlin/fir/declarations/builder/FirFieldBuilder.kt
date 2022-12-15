@@ -78,7 +78,7 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             name,
             initializer,
             isVar,

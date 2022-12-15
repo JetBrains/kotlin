@@ -49,7 +49,7 @@ internal class FirErrorPropertyImpl(
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val name: Name,
     override var backingField: FirBackingField?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -152,8 +152,7 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {}

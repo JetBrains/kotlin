@@ -80,7 +80,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             valueParameters,
             body,
             contractDescription,

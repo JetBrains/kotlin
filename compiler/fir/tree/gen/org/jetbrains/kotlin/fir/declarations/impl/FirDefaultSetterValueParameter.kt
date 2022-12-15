@@ -51,7 +51,7 @@ internal class FirDefaultSetterValueParameter(
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
     override val isVar: Boolean,
@@ -178,8 +178,7 @@ internal class FirDefaultSetterValueParameter(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {

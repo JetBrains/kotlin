@@ -83,7 +83,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             initializer,
             delegate,
             isVar,

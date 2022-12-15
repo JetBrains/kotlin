@@ -70,7 +70,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             name,
             backingField,
             annotations.toMutableOrEmpty(),

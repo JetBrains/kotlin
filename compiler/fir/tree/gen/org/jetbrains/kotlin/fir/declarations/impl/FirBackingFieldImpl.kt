@@ -49,7 +49,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val name: Name,
     override var delegate: FirExpression?,
     override val isVar: Boolean,
@@ -169,8 +169,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {

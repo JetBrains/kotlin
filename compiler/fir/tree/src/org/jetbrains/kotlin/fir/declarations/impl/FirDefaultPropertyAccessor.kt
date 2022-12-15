@@ -54,7 +54,7 @@ abstract class FirDefaultPropertyAccessor(
     deprecationsProvider = UnresolvedDeprecationProvider,
     containerSource = null,
     dispatchReceiverType = null,
-    contextReceivers = mutableListOf(),
+    contextReceivers = MutableOrEmptyList.empty(),
     valueParameters,
     body = null,
     contractDescription = FirEmptyContractDescription,

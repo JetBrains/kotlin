@@ -103,7 +103,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
 
-            +fieldList(contextReceiver, withReplace = true)
+            +fieldList(contextReceiver, useMutableOrEmpty = true, withReplace = true)
         }
 
         function.configure {
@@ -284,7 +284,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("hasLazyNestedClassifiers")
             +field("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
             +superTypeRefs(withReplace = true)
-            +fieldList(contextReceiver)
+            +fieldList(contextReceiver, useMutableOrEmpty = true)
         }
 
         anonymousObject.configure {
@@ -346,7 +346,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         property.configure {
-            +fieldList(contextReceiver, withReplace = true).withTransform()
+            +fieldList(contextReceiver, useMutableOrEmpty = true, withReplace = true).withTransform()
             +symbol("FirPropertySymbol")
             +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
             +booleanField("isLocal")
@@ -471,7 +471,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +fieldList(statement).withTransform()
             +symbol("FirScriptSymbol")
-            +fieldList(contextReceiver)
+            +fieldList(contextReceiver, useMutableOrEmpty = true)
         }
 
         packageDirective.configure {

@@ -73,7 +73,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             name,
             initializer,
             backingField,

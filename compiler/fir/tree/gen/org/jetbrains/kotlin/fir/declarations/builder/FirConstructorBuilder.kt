@@ -76,7 +76,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             valueParameters,
             annotations.toMutableOrEmpty(),
             symbol,

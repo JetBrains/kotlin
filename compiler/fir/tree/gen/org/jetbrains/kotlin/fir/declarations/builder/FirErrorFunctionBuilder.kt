@@ -69,7 +69,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers,
+            contextReceivers.toMutableOrEmpty(),
             valueParameters,
             diagnostic,
             symbol,

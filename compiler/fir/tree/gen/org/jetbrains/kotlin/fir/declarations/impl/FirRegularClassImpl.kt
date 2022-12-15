@@ -52,7 +52,7 @@ internal class FirRegularClassImpl(
     override val symbol: FirRegularClassSymbol,
     override var companionObjectSymbol: FirRegularClassSymbol?,
     override val superTypeRefs: MutableList<FirTypeRef>,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
 ) : FirRegularClass() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val hasLazyNestedClassifiers: Boolean get() = false
