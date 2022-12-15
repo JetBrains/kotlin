@@ -171,7 +171,7 @@ private fun KotlinTarget.addStdlibDependency(
     }
 }
 
-private fun isStdlibAddedByUser(
+internal fun isStdlibAddedByUser(
     configurations: ConfigurationContainer,
     stdlibModules: Set<String>,
     vararg sourceSets: KotlinSourceSet
@@ -220,7 +220,7 @@ private fun KotlinSourceSet.isRelatedToAndroidTestSourceSet(): Boolean {
     return androidVariant in androidTestVariants
 }
 
-private val stdlibModules = setOf(
+internal val stdlibModules = setOf(
     "kotlin-stdlib-common",
     "kotlin-stdlib",
     "kotlin-stdlib-jdk7",
