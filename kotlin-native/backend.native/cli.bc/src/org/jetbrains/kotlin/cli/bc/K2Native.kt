@@ -67,9 +67,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             messageCollector.report(ERROR, "K2 does not support Native target right now")
             return ExitCode.COMPILATION_ERROR
         }
-        // TODO: Should be either of two, or PHASE_CONFIG will go away with the old driver.
-        // TODO: -Xlist-phases does not work correctly for now.
-        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhaseErased, arguments, messageCollector))
         configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(arguments))
 
 
@@ -369,7 +366,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
                 put(PARTIAL_LINKAGE, arguments.partialLinkage)
                 put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
-                putIfNotNull(FORCE_COMPILER_DRIVER, arguments.forceCompilerDriver)
             }
         }
     }

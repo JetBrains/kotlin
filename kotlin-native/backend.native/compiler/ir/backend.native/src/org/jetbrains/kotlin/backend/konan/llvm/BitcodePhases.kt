@@ -310,16 +310,6 @@ internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase(
         op = { context, _ -> removeMultipleThreadDataLoads(context.generationState) }
 )
 
-internal val produceOutputPhase = namedUnitPhase(
-        name = "ProduceOutput",
-        description = "Produce output",
-        lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                produceOutput(context.generationState)
-            }
-        }
-)
-
 internal val removeRedundantSafepointsPhase = makeKonanModuleOpPhase(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",

@@ -18,19 +18,6 @@ import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
  */
 internal class DynamicCompilerDriver : CompilerDriver() {
 
-    companion object {
-        fun supportsConfig(config: KonanConfig): Boolean =
-                config.produce in setOf(
-                        CompilerOutputKind.PROGRAM,
-                        CompilerOutputKind.LIBRARY,
-                        CompilerOutputKind.DYNAMIC_CACHE,
-                        CompilerOutputKind.STATIC_CACHE,
-                        CompilerOutputKind.FRAMEWORK,
-                        CompilerOutputKind.DYNAMIC,
-                        CompilerOutputKind.STATIC,
-                )
-    }
-
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
@@ -41,7 +28,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
                         CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
-                        CompilerOutputKind.BITCODE -> error("Dynamic compiler driver does not support `bitcode` output yet.")
+                        CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
@@ -114,7 +101,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     ) = Context(
             config,
             frontendOutput.environment,
-            frontendOutput.frontendServices,
             frontendOutput.bindingContext,
             frontendOutput.moduleDescriptor
     ).also {

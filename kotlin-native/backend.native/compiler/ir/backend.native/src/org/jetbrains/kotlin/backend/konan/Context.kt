@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
@@ -68,7 +67,6 @@ internal class NativeMapping : DefaultMapping() {
 internal class Context(
         config: KonanConfig,
         val environment: KotlinCoreEnvironment,
-        val frontendServices: FrontendServices,
         override var bindingContext: BindingContext,
         val moduleDescriptor: ModuleDescriptor,
 ) : KonanBackendContext(config), PsiToIrContext {
@@ -86,9 +84,6 @@ internal class Context(
         }
     }
 
-    /**
-     * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
-     */
     override var symbolTable: SymbolTable? = null
 
     lateinit var cAdapterExportedElements: CAdapterExportedElements
@@ -108,12 +103,6 @@ internal class Context(
     // TODO: Drop it to reduce code coupling and make it possible to have multiple
     //  generationStates at the same time.
     lateinit var generationState: NativeGenerationState
-
-    fun disposeGenerationState() {
-        if (::generationState.isInitialized) generationState.dispose()
-    }
-
-    val phaseConfig = config.phaseConfig
 
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
@@ -142,13 +131,6 @@ internal class Context(
     }
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
-
-    // We serialize untouched descriptor tree and IR.
-    // But we have to wait until the code generation phase,
-    // to dump this information into generated file.
-    var serializedMetadata: SerializedMetadata? = null
-    var serializedIr: SerializedIrModule? = null
-    var dataFlowGraph: ByteArray? = null
 
     val librariesWithDependencies by lazy {
         config.librariesWithDependencies(moduleDescriptor)
@@ -189,10 +171,6 @@ internal class Context(
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
     lateinit var library: KonanLibraryLayout
-
-    fun separator(title: String) {
-        println("\n\n--- ${title} ----------------------\n")
-    }
 
     fun verifyBitCode() {
         if (::generationState.isInitialized)

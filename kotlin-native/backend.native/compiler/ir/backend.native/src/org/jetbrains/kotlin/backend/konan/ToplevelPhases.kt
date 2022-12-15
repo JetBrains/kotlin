@@ -9,33 +9,15 @@ import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
-import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
-import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
-import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     if (!context.config.needVerifyIr) return
@@ -82,54 +64,6 @@ internal fun konanUnitPhase(
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
-internal val createSymbolTablePhase = konanUnitPhase(
-        op = {
-            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
-        },
-        name = "CreateSymbolTable",
-        description = "Create SymbolTable"
-)
-
-internal val objCExportPhase = konanUnitPhase(
-        op = {
-            objCExportedInterface = when {
-                !config.target.family.isAppleFamily -> null
-                config.produce != CompilerOutputKind.FRAMEWORK -> null
-                else -> produceObjCExportInterface(this, this.moduleDescriptor, this.frontendServices)
-            }
-            objCExportCodeSpec = objCExportedInterface?.createCodeSpec(symbolTable!!)
-        },
-        name = "ObjCExport",
-        description = "Objective-C header generation",
-        prerequisite = setOf(createSymbolTablePhase)
-)
-
-internal val buildCExportsPhase = konanUnitPhase(
-        op = {
-            val prefix = config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
-            val cAdapterTypeTranslator = CAdapterTypeTranslator(prefix, this.builtIns)
-            this.cAdapterExportedElements = CAdapterGenerator(this, cAdapterTypeTranslator).buildExports(this.moduleDescriptor)
-        },
-        name = "BuildCExports",
-        description = "Build C exports",
-        prerequisite = setOf(createSymbolTablePhase)
-)
-
-internal val psiToIrPhase = konanUnitPhase(
-        op = {
-            val input = PsiToIrInput(moduleDescriptor, environment, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
-            val psiToIrOutput = this.psiToIr(input, useLinkerWhenProducingLibrary = false)
-            this.populateAfterPsiToIr(psiToIrOutput)
-            val originalBindingContext = bindingContext as? CleanableBindingContext
-                    ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
-            originalBindingContext.clear()
-            this.bindingContext = BindingContext.EMPTY
-        },
-        name = "Psi2Ir",
-        description = "Psi to IR conversion and klib linkage",
-        prerequisite = setOf(createSymbolTablePhase)
-)
-
 internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         op = {
             val module = irModules[config.libraryToCache!!.klib.libraryName]
@@ -145,26 +79,6 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         description = "Build additional cache info (inline functions bodies and fields of classes)",
 // prerequisites generally do not work in dynamic driver.
 //        prerequisite = setOf(psiToIrPhase)
-)
-
-internal val destroySymbolTablePhase = konanUnitPhase(
-        op = {
-            this.symbolTable = null // TODO: invalidate symbolTable itself.
-        },
-        name = "DestroySymbolTable",
-        description = "Destroy SymbolTable",
-        prerequisite = setOf(createSymbolTablePhase)
-)
-
-// TODO: We copy default value expressions from expects to actuals before IR serialization,
-// because the current infrastructure doesn't allow us to get them at deserialization stage.
-// That requires some design and implementation work.
-internal val copyDefaultValuesToActualPhase = konanUnitPhase(
-        op = {
-            ExpectToActualDefaultValueCopier(irModule!!).process()
-        },
-        name = "CopyDefaultValuesToActual",
-        description = "Copy default values from expect to actual declarations"
 )
 
 /*
@@ -192,31 +106,6 @@ internal val checkSamSuperTypesPhase = konanUnitPhase(
         },
         name = "CheckSamSuperTypes",
         description = "Check SAM conversions super types"
-)
-
-internal val serializerPhase = konanUnitPhase(
-        op = {
-            val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
-            val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-            val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
-            val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
-
-            serializedIr = irModule?.let { ir ->
-                KonanIrModuleSerializer(
-                    messageLogger, ir.irBuiltins, expectDescriptorToSymbol, skipExpects = !expectActualLinker, compatibilityMode = CompatibilityMode.CURRENT, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = relativePathBase
-                ).serializedIrModule(ir)
-            }
-
-            val serializer = KlibMetadataMonolithicSerializer(
-                this.config.configuration.languageVersionSettings,
-                config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-                config.project,
-                exportKDoc = this.shouldExportKDoc(),
-                !expectActualLinker, includeOnlyModuleContent = true)
-            serializedMetadata = serializer.serializeModule(moduleDescriptor)
-        },
-        name = "Serializer",
-        description = "Serialize descriptor tree and inline IR bodies"
 )
 
 internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
@@ -349,42 +238,6 @@ internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase(
             }
         })
 
-internal val umbrellaCompilation = SameTypeNamedCompilerPhase(
-        name = "UmbrellaCompilation",
-        description = "A batched compilation with shared FE and ME phases",
-        prerequisite = emptySet(),
-        lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                val module = context.irModules[context.config.libraryToCache!!.klib.libraryName]
-                        ?: error("No module for the library being cached: ${context.config.libraryToCache!!.klib.libraryName}")
-
-                val files = module.files.toList()
-                module.files.clear()
-                val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
-
-                for (file in files) {
-                    if (file.isFunctionInterfaceFile) continue
-
-                    context.generationState = NativeGenerationState(
-                            context.config,
-                            context,
-                            CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
-                    )
-
-                    module.files += file
-                    if (context.generationState.shouldDefineFunctionClasses)
-                        module.files += functionInterfaceFiles
-
-                    entireBackend.invoke(phaseConfig, phaserState, context, Unit)
-
-                    module.files.clear()
-                    context.irModule!!.files.clear() // [dependenciesLowerPhase] puts all files to [context.irModule] for codegen.
-                }
-
-                module.files += files
-            }
-        })
-
 internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",
@@ -438,96 +291,6 @@ internal val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-private val backendCodegen = SameTypeNamedCompilerPhase(
-        name = "Backend codegen",
-        description = "Backend code generation",
-        lower = entryPointPhase then
-                allLoweringsPhase then // Lower current module first.
-                dependenciesLowerPhase then // Then lower all libraries in topological order.
-                                            // With that we guarantee that inline functions are unlowered while being inlined.
-                bitcodePhase then
-                verifyBitcodePhase then
-                printBitcodePhase then
-                linkBitcodeDependenciesPhase then
-                bitcodePostprocessingPhase
-)
-
-internal val createGenerationStatePhase = namedUnitPhase(
-        name = "CreateGenerationState",
-        description = "Create generation state",
-        lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                context.generationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
-            }
-        }
-)
-
-internal val disposeGenerationStatePhase = namedUnitPhase(
-        name = "DisposeGenerationState",
-        description = "Dispose generation state",
-        lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                context.disposeGenerationState()
-            }
-        }
-)
-
-private val phasesOverMainModule = SameTypeNamedCompilerPhase(
-        name = "PhasesOverMainModule",
-        description = "Phases over main module",
-        lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
-                specialBackendChecksPhase then
-                backendCodegen then
-                unitSink(),
-        prerequisite = setOf(psiToIrPhase)
-)
-
-private val entireBackend = SameTypeNamedCompilerPhase(
-        name = "EntireBackend",
-        description = "Entire backend",
-        lower = buildAdditionalCacheInfoPhase then
-                phasesOverMainModule then
-                saveAdditionalCacheInfoPhase then
-                produceOutputPhase then
-                objectFilesPhase then
-                linkerPhase then
-                finalizeCachePhase then
-                disposeGenerationStatePhase
-)
-
-private val middleEnd = SameTypeNamedCompilerPhase(
-        name = "MiddleEnd",
-        description = "Build and prepare IR for back end",
-        lower = createSymbolTablePhase then
-                objCExportPhase then
-                buildCExportsPhase then
-                psiToIrPhase then
-                destroySymbolTablePhase then
-                copyDefaultValuesToActualPhase then
-                checkSamSuperTypesPhase then
-                serializerPhase then
-                functionsWithoutBoundCheck
-)
-
-private val singleCompilation = SameTypeNamedCompilerPhase(
-        name = "SingleCompilation",
-        description = "Single compilation",
-        lower = createGenerationStatePhase then
-                entireBackend
-)
-
-internal val toplevelPhase: CompilerPhase<Context, Unit, Unit> = namedUnitPhase(
-        name = "Compiler",
-        description = "The whole compilation process",
-        lower = middleEnd then
-                singleCompilation then
-                umbrellaCompilation
-)
-
-// Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
-val toplevelPhaseErased: CompilerPhase<*, Unit, Unit>
-    get() = toplevelPhase
-
 internal fun PhaseConfigurationService.disableIf(phase: AnyNamedPhase, condition: Boolean) {
     if (condition) disable(phase)
 }
@@ -544,19 +307,11 @@ internal fun PhaseConfigurationService.konanPhasesConfig(config: KonanConfig) {
         // Also see https://youtrack.jetbrains.com/issue/KT-50399 for more details.
         disable(checkSamSuperTypesPhase)
 
-        disableIf(singleCompilation, config.producePerFileCache)
-        disableUnless(umbrellaCompilation, config.producePerFileCache)
-
-        // Don't serialize anything to a final executable.
-        disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
-        disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
         disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache)
         disableUnless(saveAdditionalCacheInfoPhase, config.produce.isCache)
         disableUnless(finalizeCachePhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
-        disableUnless(buildCExportsPhase, config.produce.isNativeLibrary)
         disableUnless(functionsWithoutBoundCheck, config.involvesCodegen)
-        disableUnless(backendCodegen, config.involvesCodegen)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
@@ -586,12 +341,5 @@ internal fun PhaseConfigurationService.konanPhasesConfig(config: KonanConfig) {
 
 
         disableUnless(removeRedundantSafepointsPhase, config.memoryModel == MemoryModel.EXPERIMENTAL)
-
-        if (config.metadataKlib || config.omitFrameworkBinary) {
-            disable(psiToIrPhase)
-            disable(copyDefaultValuesToActualPhase)
-            disable(phasesOverMainModule)
-            disable(checkSamSuperTypesPhase)
-        }
     }
 }
