@@ -336,8 +336,7 @@ internal class KtFirCallResolver(
         resolveFragmentOfCall: Boolean
     ): KtCall? {
         val targetSymbol = candidate?.symbol
-            ?: (fir.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
-            ?: (fir.calleeReference as? FirNamedReference)?.candidateSymbol
+            ?: fir.calleeReference.toResolvedBaseSymbol()
             ?: return null
         if (targetSymbol !is FirCallableSymbol<*>) return null
         if (targetSymbol is FirErrorFunctionSymbol || targetSymbol is FirErrorPropertySymbol) return null

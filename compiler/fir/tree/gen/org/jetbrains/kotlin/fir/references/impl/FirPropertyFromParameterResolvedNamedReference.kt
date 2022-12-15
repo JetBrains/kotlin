@@ -24,8 +24,6 @@ class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail co
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
 ) : FirResolvedNamedReference() {
-    override val candidateSymbol: FirBasedSymbol<*>? get() = null
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyFromParameterResolvedNamedReference {

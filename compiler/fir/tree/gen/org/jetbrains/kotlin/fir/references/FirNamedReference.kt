@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirNamedReference : FirReference() {
     abstract override val source: KtSourceElement?
     abstract val name: Name
-    abstract val candidateSymbol: FirBasedSymbol<*>?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedReference(this, data)
 

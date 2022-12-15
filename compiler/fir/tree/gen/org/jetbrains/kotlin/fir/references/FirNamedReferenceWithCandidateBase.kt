@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirDelegateFieldReference : FirResolvedNamedReference() {
+abstract class FirNamedReferenceWithCandidateBase : FirNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
-    abstract override val resolvedSymbol: FirDelegateFieldSymbol
+    abstract val candidateSymbol: FirBasedSymbol<*>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegateFieldReference(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedReferenceWithCandidateBase(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformDelegateFieldReference(this, data) as E
+        transformer.transformNamedReferenceWithCandidateBase(this, data) as E
 }

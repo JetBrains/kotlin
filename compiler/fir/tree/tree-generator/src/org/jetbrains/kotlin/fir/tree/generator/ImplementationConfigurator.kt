@@ -111,7 +111,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(callableReferenceAccess)
 
         impl(componentCall) {
-            default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"), null)")
+            default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"))")
             useTypes(simpleNamedReferenceType, nameType)
             optInToInternals()
         }
@@ -404,26 +404,21 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(resolvedNamedReference) {
-            defaultNull("candidateSymbol", withGetter = true)
-        }
+        impl(resolvedNamedReference)
 
         impl(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
-            defaultNull("candidateSymbol", withGetter = true)
             publicImplementation()
         }
 
-        impl(resolvedErrorReference) {
-            defaultNull("candidateSymbol", withGetter = true)
-        }
+        impl(resolvedErrorReference)
 
-        impl(resolvedCallableReference) {
-            defaultNull("candidateSymbol", withGetter = true)
-        }
+        impl(resolvedCallableReference)
 
         impl(namedReference, "FirSimpleNamedReference") {
-            kind = OpenClass
+            publicImplementation()
         }
+
+        noImpl(namedReferenceWithCandidateBase)
 
         impl(delegateFieldReference) {
             default("name") {

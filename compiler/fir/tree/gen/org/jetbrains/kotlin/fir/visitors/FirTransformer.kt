@@ -125,6 +125,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -631,6 +632,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformNamedReference(namedReference: FirNamedReference, data: D): FirReference {
         return transformElement(namedReference, data)
+    }
+
+    open fun transformNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): FirReference {
+        return transformElement(namedReferenceWithCandidateBase, data)
     }
 
     open fun transformErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): FirReference {
@@ -1199,6 +1204,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitNamedReference(namedReference: FirNamedReference, data: D): FirReference {
         return transformNamedReference(namedReference, data)
+    }
+
+    final override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): FirReference {
+        return transformNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase, data)
     }
 
     final override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): FirReference {

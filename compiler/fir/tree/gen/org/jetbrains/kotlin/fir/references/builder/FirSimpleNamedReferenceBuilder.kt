@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -26,14 +25,12 @@ import org.jetbrains.kotlin.name.Name
 class FirSimpleNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
-    var candidateSymbol: FirBasedSymbol<*>? = null
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirNamedReference {
         return FirSimpleNamedReference(
             source,
             name,
-            candidateSymbol,
         )
     }
 

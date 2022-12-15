@@ -386,6 +386,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         ) {
             storeTypeFromCallee(functionCall)
         }
+        if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
         if (calleeReference !is FirSimpleNamedReference) {
             // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
             // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
@@ -394,7 +395,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             return functionCall
         }
-        if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
         functionCall.transformAnnotations(transformer, data)
         functionCall.replaceLambdaArgumentInvocationKinds(session)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
@@ -455,11 +455,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun FirFunctionCall.transformToIntegerOperatorCallOrApproximateItIfNeeded(resolutionMode: ResolutionMode): FirFunctionCall {
         if (!explicitReceiver.isIntegerLiteralOrOperatorCall()) return this
-        val resolvedSymbol = when (val reference = calleeReference) {
-            is FirResolvedNamedReference -> reference.resolvedSymbol
-            is FirErrorNamedReference -> reference.candidateSymbol
-            else -> null
-        } ?: return this
+        val resolvedSymbol = calleeReference.toResolvedFunctionSymbol() ?: return this
         if (!resolvedSymbol.isWrappedIntegerOperator()) return this
 
         val arguments = this.argumentList.arguments
@@ -1223,7 +1219,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // TODO: Use source of operator for callee reference source
                     this.source = source
                     this.name = name
-                    candidateSymbol = null
                 }
                 origin = FirFunctionCallOrigin.Operator
             }

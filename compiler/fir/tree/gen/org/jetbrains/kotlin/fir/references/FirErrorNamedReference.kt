@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirErrorNamedReference : FirNamedReference(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
-    abstract override val candidateSymbol: FirBasedSymbol<*>?
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorNamedReference(this, data)

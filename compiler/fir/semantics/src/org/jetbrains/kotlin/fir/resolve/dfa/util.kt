@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -55,7 +55,7 @@ internal val FirResolvable.symbol: FirBasedSymbol<*>?
     get() = when (val reference = calleeReference) {
         is FirThisReference -> reference.boundSymbol
         is FirResolvedNamedReference -> reference.resolvedSymbol
-        is FirSimpleNamedReference -> reference.candidateSymbol
+        is FirNamedReferenceWithCandidateBase -> reference.candidateSymbol
         else -> null
     }
 

@@ -54,6 +54,13 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
         return data
     }
 
+    override fun transformNamedReferenceWithCandidateSymbol(
+        namedReferenceWithCandidateSymbol: FirNamedReferenceWithCandidateSymbol,
+        data: FirNamedReference
+    ): FirReference {
+        return data
+    }
+
     override fun transformThisReference(thisReference: FirThisReference, data: FirNamedReference): FirReference {
         return data
     }
@@ -75,6 +82,13 @@ internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
         namedReference: FirNamedReference,
         data: FirNamedReference
     ): FirNamedReference {
+        return data
+    }
+
+    override fun transformNamedReferenceWithCandidateSymbol(
+        namedReferenceWithCandidateSymbol: FirNamedReferenceWithCandidateSymbol,
+        data: FirNamedReference
+    ): FirReference {
         return data
     }
 

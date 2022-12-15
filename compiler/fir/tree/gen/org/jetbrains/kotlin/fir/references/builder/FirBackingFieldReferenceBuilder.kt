@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -25,13 +24,11 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirBackingFieldReferenceBuilder {
     var source: KtSourceElement? = null
-    var candidateSymbol: FirBasedSymbol<*>? = null
     lateinit var resolvedSymbol: FirBackingFieldSymbol
 
     fun build(): FirBackingFieldReference {
         return FirBackingFieldReferenceImpl(
             source,
-            candidateSymbol,
             resolvedSymbol,
         )
     }

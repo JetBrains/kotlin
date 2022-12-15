@@ -544,14 +544,7 @@ private class ElementsToShortenCollector(
     private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): FirCallableSymbol<*>? {
         val unambiguousSymbol = when (namedReference) {
             is FirResolvedNamedReference -> namedReference.resolvedSymbol
-            is FirErrorNamedReference -> {
-                val candidateSymbol = namedReference.candidateSymbol
-                if (candidateSymbol !is FirErrorFunctionSymbol) {
-                    candidateSymbol
-                } else {
-                    getSingleUnambiguousCandidate(namedReference)
-                }
-            }
+            is FirErrorNamedReference -> getSingleUnambiguousCandidate(namedReference)
             else -> null
         }
 

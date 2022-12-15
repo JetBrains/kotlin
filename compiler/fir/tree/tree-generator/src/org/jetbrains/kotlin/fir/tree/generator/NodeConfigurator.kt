@@ -620,7 +620,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         namedReference.configure {
             +name
-            +field("candidateSymbol", firBasedSymbolType, "*", nullable = true)
+        }
+
+        namedReferenceWithCandidateBase.configure {
+            +field("candidateSymbol", firBasedSymbolType, "*")
         }
 
         resolvedNamedReference.configure {

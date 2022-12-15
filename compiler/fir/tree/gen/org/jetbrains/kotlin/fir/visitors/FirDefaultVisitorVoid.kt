@@ -125,6 +125,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -261,6 +262,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression)  = visitWrappedExpression(wrappedDelegateExpression)
 
     override fun visitNamedReference(namedReference: FirNamedReference)  = visitReference(namedReference)
+
+    override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase)  = visitNamedReference(namedReferenceWithCandidateBase)
 
     override fun visitSuperReference(superReference: FirSuperReference)  = visitReference(superReference)
 

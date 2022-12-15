@@ -152,6 +152,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val wrappedDelegateExpression by element(Expression, wrappedExpression)
 
     val namedReference by element(Reference, reference)
+    val namedReferenceWithCandidateBase by element(Reference, namedReference)
     val errorNamedReference by element(Reference, namedReference, diagnosticHolder)
     val superReference by element(Reference, reference)
     val thisReference by element(Reference, reference)

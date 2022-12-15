@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -401,7 +397,6 @@ class FirCallCompletionResultsWriterTransformer(
         return when (calleeReference.candidateSymbol) {
             is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
                 source = calleeReference.source
-                candidateSymbol = calleeReference.candidateSymbol
                 this.diagnostic = diagnostic
             }
             else -> buildResolvedErrorReference {
@@ -417,8 +412,7 @@ class FirCallCompletionResultsWriterTransformer(
         variableAssignment: FirVariableAssignment,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        val calleeReference = variableAssignment.calleeReference as? FirNamedReferenceWithCandidate
-            ?: return variableAssignment
+        val calleeReference = variableAssignment.calleeReference as? FirNamedReferenceWithCandidate ?: return variableAssignment
 
         // Initialize lValueTypeRef
         val qualifiedTransform = prepareQualifiedTransform(variableAssignment, calleeReference)

@@ -67,7 +67,6 @@ class FirAssignmentPluginAssignAltererExtension(
             calleeReference = buildSimpleNamedReference {
                 source = variableAssignment.source
                 name = ASSIGN_METHOD
-                candidateSymbol = null
             }
             origin = FirFunctionCallOrigin.Regular
         }

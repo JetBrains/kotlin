@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -89,11 +88,7 @@ internal interface KtFirAnalysisSessionComponent {
     }
 
     fun FirQualifiedAccess.createConeSubstitutorFromTypeArguments(): ConeSubstitutor? {
-        val symbol = when (val calleeReference = calleeReference) {
-            is FirResolvedNamedReference -> calleeReference.resolvedSymbol as? FirCallableSymbol<*>
-            is FirErrorNamedReference -> calleeReference.candidateSymbol as? FirCallableSymbol<*>
-            else -> null
-        } ?: return null
+        val symbol = calleeReference.toResolvedCallableSymbol() ?: return null
         return createConeSubstitutorFromTypeArguments(symbol)
     }
 

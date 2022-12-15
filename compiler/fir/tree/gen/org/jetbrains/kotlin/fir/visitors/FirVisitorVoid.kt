@@ -125,6 +125,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -630,6 +631,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitNamedReference(namedReference: FirNamedReference) {
         visitElement(namedReference)
+    }
+
+    open fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase) {
+        visitElement(namedReferenceWithCandidateBase)
     }
 
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
@@ -1198,6 +1203,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitNamedReference(namedReference: FirNamedReference, data: Nothing?) {
         visitNamedReference(namedReference)
+    }
+
+    final override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: Nothing?) {
+        visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase)
     }
 
     final override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: Nothing?) {
