@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import java.io.File
@@ -18,7 +17,7 @@ abstract class AbstractNativeCInteropBaseTest : AbstractNativeSimpleTest() {
     internal val targets: KotlinNativeTargets get() = testRunSettings.get<KotlinNativeTargets>()
     internal val kotlinNativeClassLoader: KotlinNativeClassLoader get() = testRunSettings.get<KotlinNativeClassLoader>()
 
-    internal fun TestCase.cinteropToLibrary(): TestCompilationResult.Success<out KLIB> {
+    internal fun TestCase.cinteropToLibrary(): TestCompilationResult<out KLIB> {
         modules.singleOrNull()
         val compilation = CInteropCompilation(
             classLoader = testRunSettings.get(),
@@ -27,7 +26,7 @@ abstract class AbstractNativeCInteropBaseTest : AbstractNativeSimpleTest() {
             defFile = modules.singleOrNull()!!.files.singleOrNull()!!.location,
             expectedArtifact = toLibraryArtifact()
         )
-        return compilation.result.assertSuccess()
+        return compilation.result
     }
 
     private fun TestCase.toLibraryArtifact() = KLIB(buildDir.resolve(modules.singleOrNull()!!.name + ".klib"))
