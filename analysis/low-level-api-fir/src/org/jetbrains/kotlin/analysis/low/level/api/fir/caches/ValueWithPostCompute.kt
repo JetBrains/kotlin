@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock
  * assuming that postCompute may try to read that value inside current thread,
  * So in the period then value is calculated but post compute was not finished,
  * only thread that initiated the calculating may see the value,
- * other threads will have to wait wait until that value is calculated
+ * other threads will have to wait until that value is calculated
  */
 internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     /**
@@ -26,6 +26,11 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
 ) {
     private var _calculate: ((KEY) -> Pair<VALUE, DATA>)? = calculate
     private var _postCompute: ((KEY, VALUE, DATA) -> Unit)? = postCompute
+
+    /**
+     * [lock] being volatile ensures the consistent reads between [lock] and [value] in different threads.
+     */
+    @Volatile
     private var lock: ReentrantLock? = ReentrantLock()
 
     /**
@@ -35,7 +40,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
      * [ValueIsPostComputingNow] -- thread with threadId has computed the value and only it can access it during post compute
      * some value of type [VALUE] -- value is computed and post compute was executed, values is visible for all threads
      *
-     * Value may be set only under [LazyValueWithPostCompute] intrinsic lock hold
+     * Value may be set only under [ValueWithPostCompute] intrinsic lock hold
      * And may be read from any thread
      */
     @Volatile
@@ -55,7 +60,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                 if (stateSnapshot.threadId == Thread.currentThread().id) {
                     return stateSnapshot.value as VALUE
                 } else {
-                    lock!!.lockWithPCECheck(LOCKING_INTERVAL_MS) { // wait until other thread which holds the lock now computes the value
+                    lock?.lockWithPCECheck(LOCKING_INTERVAL_MS) { // wait until other thread which holds the lock now computes the value
                         when (val newStateSnapshot = value) {
                             ValueIsNotComputed -> {
                                 // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
@@ -71,12 +76,13 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                                 return value as VALUE
                             }
                         }
-                    }
+                    } ?: return value as VALUE
                 }
             }
-            ValueIsNotComputed -> lock!!.lockWithPCECheck(LOCKING_INTERVAL_MS) {
+            ValueIsNotComputed -> lock?.lockWithPCECheck(LOCKING_INTERVAL_MS) {
                 return computeValueWithoutLock()
-            }
+            } ?: return value as VALUE
+
             is ExceptionWasThrownDuringValueComputation -> {
                 throw stateSnapshot.error
             }
@@ -104,7 +110,6 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
             else -> {
                 // other thread computed the value for us and set `lock` to null
                 require(lock == null)
-
                 return value as VALUE
             }
         }
@@ -124,10 +129,11 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
             }
             throw e
         }
+        // reading lock = null implies that the value is calculated and stored
+        value = calculatedValue
         _calculate = null
         _postCompute = null
         lock = null
-        value = calculatedValue
 
         return calculatedValue
     }
