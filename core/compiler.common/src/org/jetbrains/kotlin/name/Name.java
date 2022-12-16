@@ -113,10 +113,8 @@ public final class Name implements Comparable<Name> {
         if (!(o instanceof Name)) return false;
 
         Name name1 = (Name) o;
-
-        if (!name.equals(name1.name)) return false;
-
-        return true;
+        if (cachedHashCode != 0 && name1.cachedHashCode != 0 && cachedHashCode != name1.cachedHashCode) return false;
+        return name.equals(name1.name);
     }
 
     @Override
