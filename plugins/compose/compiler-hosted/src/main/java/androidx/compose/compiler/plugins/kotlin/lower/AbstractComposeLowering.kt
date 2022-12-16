@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.analysis.KnownStableConstructs
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
@@ -64,7 +65,9 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -110,6 +113,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFalseConst
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -872,13 +876,18 @@ abstract class AbstractComposeLowering(
             return stabilityOf(type.unboxInlineClass()).knownStable() &&
                 getValueArgument(0)?.isStatic() == true
         }
+
+        // If a type is immutable, then calls to its constructor are static if all of
+        // the provided arguments are static.
+        if (symbol.owner.parentAsClass.hasAnnotationSafe(ComposeFqNames.Immutable)) {
+            return areAllArgumentsStatic()
+        }
         return false
     }
 
     private fun IrCall.isStatic(): Boolean {
         val function = symbol.owner
         val fqName = function.kotlinFqName
-        // todo: special case, for instance, listOf(...statics...)
         return when (origin) {
             is IrStatementOrigin.GET_PROPERTY -> {
                 // If we are in a GET_PROPERTY call, then this should usually resolve to
@@ -975,18 +984,41 @@ abstract class AbstractComposeLowering(
                 if (context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true) {
                     return true
                 }
+
                 // normal function call. If the function is marked as Stable and the result
                 // is Stable, then the static-ness of it is the static-ness of its arguments
-                val isStable = symbol.owner.hasAnnotation(ComposeFqNames.Stable)
-                if (!isStable) return false
+                // For functions that we have an exception for, skip these checks. We've already
+                // assumed the stability here and can go straight to checking their arguments.
+                if (fqName.asString() !in KnownStableConstructs.stableFunctions) {
+                    val isStable = symbol.owner.hasAnnotation(ComposeFqNames.Stable)
+                    if (!isStable) return false
 
-                val typeIsStable = stabilityOf(type).knownStable()
-                if (!typeIsStable) return false
+                    val typeIsStable = stabilityOf(type).knownStable()
+                    if (!typeIsStable) return false
+                }
 
-                // getArguments includes the receivers!
-                getArgumentsWithIr().all { it.second.isStatic() }
+                areAllArgumentsStatic()
             }
             else -> false
+        }
+    }
+
+    private fun IrMemberAccessExpression<*>.areAllArgumentsStatic(): Boolean {
+        // getArguments includes the receivers!
+        return getArgumentsWithIr().all { (_, argExpression) ->
+            when (argExpression) {
+                // In a vacuum, we can't assume varargs are static because they're backed by
+                // arrays. Arrays aren't stable types due to their implicit mutability and
+                // lack of built-in equality checks. But in this context, because the static-ness of
+                // an argument is meaningless unless the function call that owns the argument is
+                // stable and capable of being static. So in this case, we're able to ignore the
+                // array implementation detail and check whether all of the parameters sent in the
+                // varargs are static on their own.
+                is IrVararg -> argExpression.elements.all { varargElement ->
+                    (varargElement as? IrExpression)?.isStatic() ?: false
+                }
+                else -> argExpression.isStatic()
+            }
         }
     }
 
