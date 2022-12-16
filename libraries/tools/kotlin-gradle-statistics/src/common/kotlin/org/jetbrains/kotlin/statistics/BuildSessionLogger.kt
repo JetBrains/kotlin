@@ -19,7 +19,8 @@ class BuildSessionLogger(
     rootPath: File,
     private val maxProfileFiles: Int = DEFAULT_MAX_PROFILE_FILES,
     private val maxFileSize: Long = DEFAULT_MAX_PROFILE_FILE_SIZE,
-    private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE
+    private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE,
+    private val forceValuesValidation: Boolean = false
 ) : IStatisticsValuesConsumer {
 
     companion object {
@@ -46,7 +47,7 @@ class BuildSessionLogger(
     private var buildSession: BuildSession? = null
     private var trackingFile: IRecordLogger? = null
 
-    private val metricsContainer = MetricsContainer()
+    private val metricsContainer = MetricsContainer(forceValuesValidation)
 
     @Synchronized
     fun startBuildSession(buildSinceDaemonStart: Long, buildStartedTime: Long?) {
