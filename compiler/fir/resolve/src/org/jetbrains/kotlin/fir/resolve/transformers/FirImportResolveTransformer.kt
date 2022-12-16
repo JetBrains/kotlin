@@ -100,7 +100,7 @@ open class FirImportResolveTransformer protected constructor(
 fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
     var currentPackage = fqName
 
-    val pathSegments = fqName.pathSegments()
+    val pathSegments = fqName.pathStringSegments()
     var prefixSize = pathSegments.size
     while (!currentPackage.isRoot && prefixSize > 0) {
         if (symbolProvider.getPackage(currentPackage) != null) {
@@ -111,7 +111,7 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
     }
 
     if (currentPackage == fqName) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
-    val relativeClassFqName = FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
+    val relativeClassFqName = FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it] })
 
     val classId = ClassId(currentPackage, relativeClassFqName, false)
     val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return PackageResolutionResult.Error(

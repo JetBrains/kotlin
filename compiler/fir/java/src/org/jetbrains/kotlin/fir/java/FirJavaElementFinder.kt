@@ -81,10 +81,10 @@ class FirJavaElementFinder(
 
             val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
             val topLevelResult = buildStub(firClass, fileStub).psi
-            val tail = fqName.tail(topLevelClass).pathSegments()
+            val tail = fqName.tail(topLevelClass).pathStringSegments()
 
             return tail.fold(topLevelResult) { psiClass, segment ->
-                psiClass.findInnerClassByName(segment.identifier, false) ?: return null
+                psiClass.findInnerClassByName(segment, false) ?: return null
             }
         }
 

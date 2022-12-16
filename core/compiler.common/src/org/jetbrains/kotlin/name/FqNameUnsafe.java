@@ -16,28 +16,21 @@
 
 package org.jetbrains.kotlin.name;
 
-import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Like {@link FqName} but allows '<' and '>' characters in name.
  */
 public final class FqNameUnsafe {
     private static final Name ROOT_NAME = Name.special("<root>");
-    private static final Pattern SPLIT_BY_DOTS = Pattern.compile("\\.");
 
-    private static final Function1<String, Name> STRING_TO_NAME = new Function1<String, Name>() {
-        @Override
-        public Name invoke(String name) {
-            return Name.guessByFirstCharacter(name);
-        }
-    };
+    private static final Function1<String, Name> STRING_TO_NAME = name -> Name.guessByFirstCharacter(name);
 
     @NotNull
     private final String fqName;
@@ -155,7 +148,22 @@ public final class FqNameUnsafe {
 
     @NotNull
     public List<Name> pathSegments() {
-        return isRoot() ? Collections.<Name>emptyList() : ArraysKt.map(SPLIT_BY_DOTS.split(fqName), STRING_TO_NAME);
+        return isRoot() ? new ArrayList<>() : CollectionsKt.map(pathStringSegments(), STRING_TO_NAME);
+    }
+
+    public ArrayList<String> pathStringSegments() {
+        if (fqName.isEmpty()) return new ArrayList<>();
+        ArrayList<String> res = new ArrayList<>(7);
+        int pos = 0;
+        int nextDot;
+        while (true) {
+            nextDot = fqName.indexOf('.', pos);
+            if (nextDot < 0) break;
+            res.add(fqName.substring(pos, nextDot));
+            pos = nextDot + 1;
+        }
+        res.add(fqName.substring(pos));
+        return res;
     }
 
     public boolean startsWith(@NotNull Name segment) {
@@ -185,9 +193,7 @@ public final class FqNameUnsafe {
 
         FqNameUnsafe that = (FqNameUnsafe) o;
 
-        if (!fqName.equals(that.fqName)) return false;
-
-        return true;
+        return fqName.equals(that.fqName);
     }
 
     @Override

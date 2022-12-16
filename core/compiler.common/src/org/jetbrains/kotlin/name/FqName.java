@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.name;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.utils.StringsKt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class FqName {
@@ -106,6 +107,11 @@ public final class FqName {
     @NotNull
     public List<Name> pathSegments() {
         return fqName.pathSegments();
+    }
+
+    @NotNull
+    public ArrayList<String> pathStringSegments() {
+        return fqName.pathStringSegments();
     }
 
     public boolean startsWith(@NotNull Name segment) {
