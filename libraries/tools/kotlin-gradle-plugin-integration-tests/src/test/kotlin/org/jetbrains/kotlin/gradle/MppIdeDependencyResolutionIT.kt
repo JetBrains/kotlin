@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isCommonized
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -81,6 +78,76 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.posix:.*")),
                         binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.*"))
                     )
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    fun testCinterops(gradleVersion: GradleVersion) {
+        fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
+            this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
+                it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
+            }
+
+        project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
+            build(":dep-with-cinterop:publishToMavenLocal")
+//            build(":prepareKotlinIdeaImport")
+//            build("copyCommonizeCInteropForIde")
+//            build(":clientForBinaryDep:transformCommonMainCInteropDependenciesMetadataForIde")
+
+            resolveIdeDependencies("dep-with-cinterop") { dependencies ->
+                val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
+                val commonTestDependencies = dependencies["commonTest"].cinteropDependencies()
+                val linuxX64MainDependencies = dependencies["linuxX64Main"].cinteropDependencies()
+                val linuxX64TestDependencies = dependencies["linuxX64Test"].cinteropDependencies()
+                val linuxArmMainDependencies = dependencies["linuxArm64Main"].cinteropDependencies()
+                val linuxArmTestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
+
+                for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
+                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64, linux_x64")))
+                }
+
+                linuxX64MainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
+                linuxArmMainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
+                // TODO (kirpichenkov): cinterops from associate compilations for platform source sets
+                linuxX64TestDependencies.assertMatches(/*binaryCoordinates(Regex("a:dep.*linux_x64"))*/)
+                linuxArmTestDependencies.assertMatches(/*binaryCoordinates(Regex("a:dep.*linux_arm64"))*/)
+            }
+
+            resolveIdeDependencies("client-for-binary-dep") { dependencies ->
+                val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
+                val commonTestDependencies = dependencies["commonTest"].cinteropDependencies()
+                val linuxMainDependencies = dependencies["linuxX64Main"].cinteropDependencies()
+                val linuxTestDependencies = dependencies["linuxX64Test"].cinteropDependencies()
+                val linux2MainDependencies = dependencies["linuxArm64Main"].cinteropDependencies()
+                val linux2TestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
+
+                for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
+                    commonDeps.assertMatches(
+                    )
+                }
+
+                for (platformDeps in listOf(linuxMainDependencies, linuxTestDependencies, linux2MainDependencies, linux2TestDependencies)) {
+                    platformDeps.assertMatches(
+                    )
+                }
+            }
+
+            resolveIdeDependencies("client-for-project-to-project-dep") { dependencies ->
+                val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
+                val commonTestDependencies = dependencies["commonTest"].cinteropDependencies()
+                val linuxMainDependencies = dependencies["linuxX64Main"].cinteropDependencies()
+                val linuxTestDependencies = dependencies["linuxX64Test"].cinteropDependencies()
+                val linux2MainDependencies = dependencies["linuxArm64Main"].cinteropDependencies()
+                val linux2TestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
+
+                for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
+                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64, linux_x64")))
+                }
+
+                for (platformDeps in listOf(linuxMainDependencies, linuxTestDependencies, linux2MainDependencies, linux2TestDependencies)) {
+                    platformDeps.assertMatches() // TODO (kirpichenkov): project to project dependency, platform source set cinterops
                 }
             }
         }
