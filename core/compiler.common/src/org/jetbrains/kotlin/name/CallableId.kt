@@ -83,7 +83,7 @@ class CallableId(
 
     override fun hashCode(): Int {
         if (cachedHashCode == 0) {
-            cachedHashCode = 31 * packageName.hashCode() + 31 * className.hashCode() + callableName.hashCode()
+            cachedHashCode = 31 * (31 * packageName.hashCode() + className.hashCode() + callableName.hashCode())
         }
         return cachedHashCode
     }
