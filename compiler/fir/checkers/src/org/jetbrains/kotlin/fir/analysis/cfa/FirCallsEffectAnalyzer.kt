@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -71,7 +70,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         val leakedSymbols = mutableMapOf<FirBasedSymbol<*>, MutableList<KtSourceElement>>()
         graph.traverse(
-            TraverseDirection.Forward,
             CapturedLambdaFinder(function),
             IllegalScopeContext(functionalTypeEffects.keys, leakedSymbols)
         )
@@ -163,6 +161,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         override fun <T> visitUnionNode(node: T, data: IllegalScopeContext) where T : CFGNode<*>, T : UnionNodeMarker {}
 
         override fun visitFunctionEnterNode(node: FunctionEnterNode, data: IllegalScopeContext) {
+            // TODO: this is not how CFG works, this should be done by FIR tree traversal. Especially considering that
+            //  none of these methods use anything from the CFG other than `node.fir`, which should've been a hint.
             data.enterScope(node.fir === rootFunction || node.fir.isInPlaceLambda())
         }
 

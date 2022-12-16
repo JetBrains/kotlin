@@ -40,7 +40,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         context: CheckerContext
     ) {
         val ownData = ValueWritesWithoutReading(context.session, properties).getData(graph)
-        graph.traverse(TraverseDirection.Backward, CfaVisitor(ownData, reporter, context))
+        graph.traverse(CfaVisitor(ownData, reporter, context))
     }
 
     class CfaVisitor(
@@ -72,6 +72,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
+            // TODO: merge values for labels, otherwise diagnostics are inconsistent
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
 

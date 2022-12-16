@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
-import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
@@ -38,7 +35,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     ) {
         val localProperties = properties.filterNotTo(mutableSetOf()) { it.isInitialized() }
         val reporterVisitor = PropertyReporter(data, localProperties, capturedWrites, reporter, context)
-        graph.traverse(TraverseDirection.Forward, reporterVisitor)
+        graph.traverse(reporterVisitor)
     }
 
     private fun FirVariableSymbol<*>.isInitialized(): Boolean {
