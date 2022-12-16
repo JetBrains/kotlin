@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.renderWithType
-import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -47,7 +48,6 @@ internal object UsualClassTypeQualifierBuilder {
             val nonLocalDesignation = it.tryCollectDesignation()
             nonLocalDesignation?.toSequence(includeTarget = true)?.toList()
                 ?: collectDesignationPathForLocal(it)
-                ?: emptyList()
         }
 
 
@@ -90,26 +90,21 @@ internal object UsualClassTypeQualifierBuilder {
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()
         }
-        return designation
+        return designation.asReversed()
     }
 
-    private fun collectDesignationPathForLocal(declaration: FirDeclaration): List<FirDeclaration>? {
-        @OptIn(LookupTagInternals::class)
-        val containingClass = when (declaration) {
-            is FirCallableDeclaration -> declaration.getContainingClass(declaration.moduleData.session)
-            is FirAnonymousObject -> return listOf(declaration)
-            is FirClassLikeDeclaration -> declaration.let {
-                if (!declaration.isLocal) return null
-                (it as? FirRegularClass)?.containingClassForLocal()?.toFirRegularClass(declaration.moduleData.session)
-            }
-
+    private fun collectDesignationPathForLocal(declaration: FirClassLikeDeclaration): List<FirDeclaration> {
+        checkWithAttachmentBuilder(
+            declaration.isLocal,
+            message = { "${declaration::class} is not local" }
+        ) {
+            withFirEntry("firDeclaration", declaration)
+        }
+        return when (declaration) {
+            is FirAnonymousObject -> listOf(declaration)
+            is FirRegularClass -> declaration.collectForLocal()
+            is FirTypeAlias -> listOf(declaration) // TODO: handle type aliases
             else -> error("Invalid declaration ${declaration.renderWithType()}")
-        } ?: return listOf(declaration)
-
-        return if (containingClass.isLocal) {
-            containingClass.collectForLocal().reversed()
-        } else {
-            null
         }
     }
 }
