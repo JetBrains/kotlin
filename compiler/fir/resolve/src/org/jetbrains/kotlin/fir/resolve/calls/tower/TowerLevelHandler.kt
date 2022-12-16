@@ -22,7 +22,7 @@ internal class CandidateFactoriesAndCollectors(
 internal class TowerLevelHandler {
 
     // Try to avoid adding additional state here
-    private var processResult = ProcessResult.SCOPE_EMPTY
+    private var processResult = ProcessResult.DEFINITELY_EMPTY
 
     fun handleLevel(
         collector: CandidateCollector,
@@ -32,7 +32,7 @@ internal class TowerLevelHandler {
         group: TowerGroup,
         towerLevel: TowerScopeLevel
     ): ProcessResult {
-        processResult = ProcessResult.SCOPE_EMPTY
+        processResult = ProcessResult.DEFINITELY_EMPTY
         val processor =
             TowerScopeLevelProcessor(
                 info,
@@ -50,7 +50,7 @@ internal class TowerLevelHandler {
                     processResult += if (!towerLevel.areThereExtensionReceiverOptions()) {
                         towerLevel.processObjectsByName(info, processor)
                     } else {
-                        ProcessResult.FOUND
+                        ProcessResult.UNKNOWN
                     }
                 }
             }

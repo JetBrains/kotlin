@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 enum class ProcessResult {
-    FOUND, SCOPE_EMPTY;
+    UNKNOWN, DEFINITELY_EMPTY;
 
     operator fun plus(other: ProcessResult): ProcessResult {
-        if (this == FOUND || other == FOUND) return FOUND
+        if (this == UNKNOWN || other == UNKNOWN) return UNKNOWN
         return this
     }
 }
@@ -86,7 +86,7 @@ class MemberScopeTowerLevel(
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
-        val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
+        val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.DEFINITELY_EMPTY
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
         val scopeWithoutSmartcast = (dispatchReceiverValue.receiverExpression as? FirSmartCastExpression)
@@ -161,7 +161,7 @@ class MemberScopeTowerLevel(
             }
         }
 
-        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
+        return if (empty) ProcessResult.DEFINITELY_EMPTY else ProcessResult.UNKNOWN
     }
 
     private fun <T : FirCallableSymbol<*>> processMembersFromSmartcastedType(
@@ -268,7 +268,7 @@ class MemberScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>
     ): ProcessResult {
-        return ProcessResult.SCOPE_EMPTY
+        return ProcessResult.DEFINITELY_EMPTY
     }
 
     private inline fun withMemberCallLookup(
@@ -313,12 +313,12 @@ class ContextReceiverGroupMemberScopeTowerLevel(
     private inline fun minAmongReceivers(calculateResult: (MemberScopeTowerLevel) -> ProcessResult): ProcessResult {
         return memberScopeLevels.minOf { (it, level) ->
             if (it in emptyScopesCache.contextReceivers) {
-                return ProcessResult.SCOPE_EMPTY
+                return ProcessResult.DEFINITELY_EMPTY
             }
 
             val result = calculateResult(level)
 
-            if (result == ProcessResult.FOUND) {
+            if (result == ProcessResult.UNKNOWN) {
                 nonEmptyReceivers += it
             }
 
@@ -467,7 +467,7 @@ class ScopeTowerLevel(
             empty = false
             consumeCallableCandidate(candidate, processor)
         }
-        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
+        return if (empty) ProcessResult.DEFINITELY_EMPTY else ProcessResult.UNKNOWN
     }
 
     override fun processPropertiesByName(
@@ -480,7 +480,7 @@ class ScopeTowerLevel(
             empty = false
             consumeCallableCandidate(candidate, processor)
         }
-        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
+        return if (empty) ProcessResult.DEFINITELY_EMPTY else ProcessResult.UNKNOWN
     }
 
     override fun processObjectsByName(
@@ -500,7 +500,7 @@ class ScopeTowerLevel(
                 objectsByName = true
             )
         }
-        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
+        return if (empty) ProcessResult.DEFINITELY_EMPTY else ProcessResult.UNKNOWN
     }
 }
 

@@ -199,7 +199,7 @@ internal abstract class FirBaseTowerResolveTask(
             towerLevel
         )
         if (collector.isSuccess) onSuccessfulLevel(finalGroup)
-        return result == ProcessResult.SCOPE_EMPTY
+        return result == ProcessResult.DEFINITELY_EMPTY
     }
 }
 
