@@ -40,3 +40,5 @@ internal fun sha256(s: String): String {
     val digest = md.digest(s.toByteArray())
     return digest.fold("", { str, it -> str + "%02x".format(it) })
 }
+
+class MetricValueValidationFailed(message: String) : RuntimeException(message)

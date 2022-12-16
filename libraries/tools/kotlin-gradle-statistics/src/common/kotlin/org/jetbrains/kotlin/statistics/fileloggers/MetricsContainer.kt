@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.statistics.fileloggers
 
+import org.jetbrains.kotlin.statistics.MetricValueValidationFailed
 import org.jetbrains.kotlin.statistics.metrics.*
+import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy.AllowedListAnonymizer.Companion.UNEXPECTED_VALUE
 import org.jetbrains.kotlin.statistics.sha256
 import java.io.*
 import java.nio.channels.Channels
@@ -14,7 +16,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.*
 
-class MetricsContainer : IStatisticsValuesConsumer {
+class MetricsContainer(private val forceValuesValidation: Boolean = false) : IStatisticsValuesConsumer {
     data class MetricDescriptor(val name: String, val projectHash: String?) : Comparable<MetricDescriptor> {
         override fun compareTo(other: MetricDescriptor): Int {
             val compareNames = name.compareTo(other.name)
@@ -129,7 +131,14 @@ class MetricsContainer : IStatisticsValuesConsumer {
         synchronized(metricsLock) {
             val metricContainer = stringMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
                 .also { stringMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
+
+            val anonymizedValue = metric.anonymization.anonymize(value)
+            if (forceValuesValidation && !metric.anonymization.anonymizeOnIdeSize()) {
+                if (anonymizedValue.contains(UNEXPECTED_VALUE) || !anonymizedValue.matches(Regex(metric.anonymization.validationRegexp()))) {
+                    throw MetricValueValidationFailed("Metric ${metric.name} has value [${value}], after anonymization [${anonymizedValue}]. Validation regex: ${metric.anonymization.validationRegexp()}.")
+                }
+            }
+            metricContainer.addValue(anonymizedValue, weight)
         }
         return true
     }

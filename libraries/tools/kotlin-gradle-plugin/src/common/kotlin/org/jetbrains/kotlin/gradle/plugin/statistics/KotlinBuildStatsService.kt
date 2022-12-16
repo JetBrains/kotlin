@@ -49,6 +49,9 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
         // Property name for disabling saving statistical information
         const val ENABLE_STATISTICS_PROPERTY_NAME = "enable_kotlin_performance_profile"
 
+        // Property used for tests. Build will fail fast if collected value doesn't fit regexp
+        const val FORCE_VALUES_VALIDATION = "kotlin_performance_profile_force_validation"
+
         // default state
         const val DEFAULT_STATISTICS_STATE = true
 
@@ -191,7 +194,8 @@ internal class DefaultKotlinBuildStatsService internal constructor(
     gradle: Gradle,
     val beanName: ObjectName
 ) : KotlinBuildStatsService(), KotlinBuildStatsMXBean {
-    private val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir)
+    private val forcePropertiesValidation = gradle.rootProject.properties[FORCE_VALUES_VALIDATION]?.toString()?.toBoolean() ?: false
+    private val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir, forceValuesValidation = forcePropertiesValidation)
 
     private fun gradleBuildStartTime(gradle: Gradle): Long? {
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
