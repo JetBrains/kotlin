@@ -168,8 +168,7 @@ public final class ClassId {
     public int hashCode() {
         if (cachedHashCode == 0) {
             int result = packageFqNameStr.hashCode();
-            result = 31 * result + relativeClassNameStr.hashCode();
-            result = 31 * result + Boolean.valueOf(local).hashCode();
+            result = 31 * result + relativeClassNameStr.hashCode(); // isLocal hashCode is not taken into account, because it is irrelevant
             cachedHashCode = result;
         }
         return cachedHashCode;
