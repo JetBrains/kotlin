@@ -95,6 +95,9 @@ sealed class WasmImmediate {
     class HeapType(val value: WasmHeapType) : WasmImmediate() {
         constructor(type: WasmType) : this(type.getHeapType())
     }
+
+    // Pseudo-immediates
+    class ConstString(val value: String) : WasmImmediate()
 }
 
 
@@ -403,11 +406,17 @@ enum class WasmOp(
 
     // ============================================================
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
-    GET_UNIT("call", 0x10, FUNC_IDX)
+    GET_UNIT("call", 0x10, FUNC_IDX),
+
+    PSEUDO_COMMENT_PREVIOUS_INSTR("<comment-single>", WASM_OP_PSEUDO_OPCODE),
+    PSEUDO_COMMENT_GROUP_START("<comment-group-start>", WASM_OP_PSEUDO_OPCODE),
+    PSEUDO_COMMENT_GROUP_END("<comment-group-end>", WASM_OP_PSEUDO_OPCODE),
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())
 }
+
+const val WASM_OP_PSEUDO_OPCODE = 0xFFFF
 
 val opcodesToOp: Map<Int, WasmOp> =
     enumValues<WasmOp>().associateBy { it.opcode }

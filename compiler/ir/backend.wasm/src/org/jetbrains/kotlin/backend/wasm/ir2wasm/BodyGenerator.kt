@@ -181,6 +181,7 @@ class BodyGenerator(
             }
         } else {
             body.buildGetGlobal(context.referenceGlobalField(field.symbol))
+            body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
     }
 
@@ -202,6 +203,7 @@ class BodyGenerator(
             WasmImmediate.GcType(context.referenceGcType(field.parentAsClass.symbol)),
             WasmImmediate.StructFieldIdx(context.getStructFieldRef(field))
         )
+        body.commentPreviousInstr { "name: ${field.name.asString()}, type: ${field.type.render()}" }
     }
 
     override fun visitSetField(expression: IrSetField) {
@@ -215,9 +217,11 @@ class BodyGenerator(
                 struct = context.referenceGcType(field.parentAsClass.symbol),
                 fieldId = context.getStructFieldRef(field),
             )
+            body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
         } else {
             generateExpression(expression.value)
             body.buildSetGlobal(context.referenceGlobalField(expression.symbol))
+            body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
 
         body.buildGetUnit()
@@ -234,11 +238,13 @@ class BodyGenerator(
             else
                 functionContext.referenceLocal(valueSymbol)
         )
+        body.commentPreviousInstr { "type: ${valueDeclaration.type.render()}" }
     }
 
     override fun visitSetValue(expression: IrSetValue) {
         generateExpression(expression.value)
         body.buildSetLocal(functionContext.referenceLocal(expression.symbol))
+        body.commentPreviousInstr { "type: ${expression.symbol.owner.type.render()}" }
         body.buildGetUnit()
     }
 
@@ -263,6 +269,7 @@ class BodyGenerator(
                 WasmOp.ARRAY_NEW_DEFAULT,
                 WasmImmediate.GcType(wasmGcType)
             )
+            body.commentPreviousInstr { "@WasmArrayOf ctor call: ${klass.fqNameWhenAvailable}" }
             return
         }
 
@@ -272,6 +279,7 @@ class BodyGenerator(
                 generateExpression(expression.getValueArgument(i)!!)
             }
             body.buildStructNew(wasmGcType)
+            body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
             return
         }
 
@@ -281,6 +289,7 @@ class BodyGenerator(
 
     private fun generateAnyParameters(klassSymbol: IrClassSymbol) {
         //ClassITable and VTable load
+        body.commentGroupStart { "Any parameters" }
         body.buildGetGlobal(context.referenceGlobalVTable(klassSymbol))
         if (klassSymbol.owner.hasInterfaceSuperClass()) {
             body.buildGetGlobal(context.referenceGlobalClassITable(klassSymbol))
@@ -290,6 +299,7 @@ class BodyGenerator(
 
         body.buildConstI32Symbol(context.referenceClassId(klassSymbol))
         body.buildConstI32(0) // Any::_hashCode
+        body.commentGroupEnd()
     }
 
     fun generateObjectCreationPrefixIfNeeded(constructor: IrConstructor) {
@@ -297,6 +307,7 @@ class BodyGenerator(
         if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
         if (parentClass.isAbstractOrSealed) return
         val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
+        body.commentGroupStart { "Object creation prefix" }
         body.buildGetLocal(thisParameter)
         body.buildInstr(WasmOp.REF_IS_NULL)
         body.buildIf("this_init")
@@ -310,6 +321,7 @@ class BodyGenerator(
         body.buildStructNew(context.referenceGcType(parentClass.symbol))
         body.buildSetLocal(thisParameter)
         body.buildEnd()
+        body.commentGroupEnd()
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
@@ -330,6 +342,7 @@ class BodyGenerator(
         generateAnyParameters(klassSymbol)
         generateExpression(expression)
         body.buildStructNew(context.referenceGcType(klassSymbol))
+        body.commentPreviousInstr { "box" }
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
@@ -394,17 +407,21 @@ class BodyGenerator(
                 val receiver = call.dispatchReceiver!!
                 generateExpression(receiver)
 
+                body.commentGroupStart { "virtual call: ${function.fqNameWhenAvailable}" }
+
                 //TODO: check why it could be needed
                 generateRefNullCast(receiver.type, klass.defaultType)
 
                 body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0))
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot))
                 body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
+                body.commentGroupEnd()
             } else {
                 val symbol = klass.symbol
                 if (symbol in hierarchyDisjointUnions) {
                     generateExpression(call.dispatchReceiver!!)
 
+                    body.commentGroupStart { "interface call: ${function.fqNameWhenAvailable}" }
                     body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
 
                     val classITableReference = context.referenceClassITableGcType(symbol)
@@ -416,6 +433,7 @@ class BodyGenerator(
 
                     body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot))
                     body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
+                    body.commentGroupEnd()
                 } else {
                     body.buildUnreachable()
                 }

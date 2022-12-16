@@ -60,6 +60,34 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendInstr(wasmInstr: WasmInstr) {
         val op = wasmInstr.operator
+
+        if (op.opcode == WASM_OP_PSEUDO_OPCODE) {
+            fun commentText() =
+                (wasmInstr.immediates.single() as WasmImmediate.ConstString).value
+
+            when (op) {
+                WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> {
+                    val text = commentText()
+                    require(text.lineSequence().count() < 2) { "Comments for single instruction should be in one line" }
+                    stringBuilder.append("  ;; ")
+                    stringBuilder.append(text)
+                }
+                WasmOp.PSEUDO_COMMENT_GROUP_START -> {
+                    newLine()
+                    commentText().lines().forEach { line ->
+                        newLine()
+                        stringBuilder.append(";; ")
+                        stringBuilder.append(line)
+                    }
+                }
+                WasmOp.PSEUDO_COMMENT_GROUP_END -> {
+                    newLine()
+                }
+                else -> error("Unknown pseudo op $op")
+            }
+            return
+        }
+
         if (op == WasmOp.END || op == WasmOp.ELSE || op == WasmOp.CATCH)
             indent--
 
@@ -113,6 +141,8 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.HeapType -> {
                 appendHeapType(x.value)
             }
+
+            is WasmImmediate.ConstString -> error("Pseudo immediate")
         }
     }
 

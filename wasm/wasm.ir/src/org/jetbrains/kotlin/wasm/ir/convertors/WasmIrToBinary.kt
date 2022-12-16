@@ -210,6 +210,10 @@ class WasmIrToBinary(
         }
 
         val opcode = instr.operator.opcode
+
+        if (opcode == WASM_OP_PSEUDO_OPCODE)
+            return
+
         if (opcode > 0xFF) {
             b.writeByte((opcode ushr 8).toByte())
             b.writeByte((opcode and 0xFF).toByte())
@@ -259,6 +263,8 @@ class WasmIrToBinary(
             is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.HeapType -> appendHeapType(x.value)
+            is WasmImmediate.ConstString ->
+                error("Instructions with pseudo immediates should be skipped")
         }
     }
 
