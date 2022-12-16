@@ -85,7 +85,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             config: KonanConfig,
             environment: KotlinCoreEnvironment
     ) {
-        val context = FirFrontendContextImpl(config, environment)
+        val context = FirFrontendContextImpl(config)
         val frontendOutput = engine.useContext(context) { it.runFirFrontend(environment) }
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return
         require(frontendOutput is FirOutput.Full)

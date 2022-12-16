@@ -46,7 +46,7 @@ internal fun FirFrontendContext.fir2Ir(
     val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
-    val configuration = environment.configuration
+    val configuration = config.configuration
     val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
         val storageManager = LockBasedStorageManager("ModulesStructure")
 
@@ -75,7 +75,7 @@ internal fun FirFrontendContext.fir2Ir(
             KonanManglerIr, IrFactoryImpl,
             Fir2IrVisibilityConverter.Default,
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
-            IrGenerationExtension.getInstances(environment.project),
+            IrGenerationExtension.getInstances(config.project),
             generateSignatures = false,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance // TODO: consider passing externally
     ).also {

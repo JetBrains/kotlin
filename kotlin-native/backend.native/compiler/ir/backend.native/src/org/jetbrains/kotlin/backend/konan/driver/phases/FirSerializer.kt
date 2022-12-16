@@ -29,7 +29,7 @@ internal val FirSerializerPhase = createSimpleNamedCompilerPhase<FirFrontendCont
 ) { context: FirFrontendContext, input: Fir2IrOutput ->
     // Serialize KLib in the same way as K2/JS does.
 
-    val configuration = context.environment.configuration
+    val configuration = context.config.configuration
     val sourceFiles = input.firFiles.mapNotNull { it.sourceFile }
     val firFilesBySourceFile = input.firFiles.associateBy { it.sourceFile }
     val metadataVersion =

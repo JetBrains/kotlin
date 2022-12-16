@@ -46,17 +46,11 @@ sealed class FirOutput {
     ) : FirOutput()
 }
 
-internal interface FirFrontendContext : PhaseContext {
-    val environment: KotlinCoreEnvironment
-}
+internal interface FirFrontendContext : PhaseContext
 
 internal class FirFrontendContextImpl(
         config: KonanConfig,
-        private val env: KotlinCoreEnvironment
-) : BasicPhaseContext(config), FirFrontendContext {
-    override val environment: KotlinCoreEnvironment
-        get() = env
-}
+) : BasicPhaseContext(config), FirFrontendContext
 
 internal fun <T : FirFrontendContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
     return this.runPhase(FIRPhase, environment)

@@ -20,12 +20,12 @@ data class Fir2IrOutput(
 )
 
 internal fun <T : FirFrontendContext> PhaseEngine<T>.runFir2Ir(input: FirOutput.Full): Fir2IrOutput {
-    return this.runPhase(Fir2IrPhase, input)!!
+    return this.runPhase(Fir2IrPhase, input)
 }
 
 internal val Fir2IrPhase = createSimpleNamedCompilerPhase(
         "Fir2Ir", "Compiler Fir2Ir Frontend phase",
-        outputIfNotEnabled = { _, _, _, _ -> null }
+        outputIfNotEnabled = { _, _, _, _ -> error("Fir2Ir phase cannot be disabled") }
 ) { context: FirFrontendContext, input: FirOutput.Full ->
-    context.fir2Ir(input, context)
+    context.fir2Ir(input)
 }
