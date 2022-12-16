@@ -22,12 +22,8 @@ import org.jetbrains.annotations.Nullable;
 public final class Name implements Comparable<Name> {
     @NotNull
     private final String name;
-
-    private int cachedHashCode;
-
     private Name(@NotNull String name) {
         this.name = name;
-        cachedHashCode = 0;
     }
 
     @NotNull
@@ -113,15 +109,12 @@ public final class Name implements Comparable<Name> {
         if (!(o instanceof Name)) return false;
 
         Name name1 = (Name) o;
-        if (cachedHashCode != 0 && name1.cachedHashCode != 0 && cachedHashCode != name1.cachedHashCode) return false;
+
         return name.equals(name1.name);
     }
 
     @Override
     public int hashCode() {
-        if (cachedHashCode == 0) {
-            cachedHashCode = name.hashCode();
-        }
-        return name.hashCode();
+        return 31 * name.hashCode();
     }
 }
