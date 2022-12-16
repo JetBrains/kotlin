@@ -670,6 +670,8 @@ class FunctionInlining(
                 } else {
                     val newVariable =
                         currentScope.scope.createTemporaryVariable(
+                            startOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
+                            endOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
                             irExpression = irExpression,
                             irType = if (inlineArgumentsWithTheirOriginalTypeAndOffset) it.parameter.getOriginalType() else irExpression.type,
                             nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_" + it.parameter.name.asStringStripSpecialMarkers(),
@@ -775,8 +777,14 @@ class FunctionInlining(
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
 
-                if (argument.isImmutableVariableLoad) {
-                    substituteMap[argument.parameter] = variableInitializer
+                // Note: second condition is needed only for JVM backend, but apparently it doesn't ruin others.
+                // This condition come from IrInlineCodegen.kt:138 (`genValueAndPut` method).
+                if (argument.isImmutableVariableLoad && argument.parameter.index >= 0) {
+                    substituteMap[argument.parameter] = if (variableInitializer is IrGetValue) {
+                        IrGetValueWithoutLocation(variableInitializer.symbol)
+                    } else {
+                        variableInitializer
+                    }
                     return@forEach
                 }
 
@@ -790,14 +798,14 @@ class FunctionInlining(
                 val newVariable =
                     currentScope.scope.createTemporaryVariable(
                         irExpression = IrBlockImpl(
-                            variableInitializer.startOffset,
-                            variableInitializer.endOffset,
+                            if (argument.isDefaultArg) variableInitializer.startOffset else UNDEFINED_OFFSET,
+                            if (argument.isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) argument.parameter.getOriginalType() else variableInitializer.type,
                             InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
                         ).apply {
                             statements.add(variableInitializer)
                         },
-                        nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
+                        nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_" + argument.parameter.name.asStringStripSpecialMarkers(),
                         isMutable = false
                     )
 

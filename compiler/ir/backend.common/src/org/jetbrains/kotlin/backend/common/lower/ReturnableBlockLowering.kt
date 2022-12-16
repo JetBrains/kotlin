@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -161,7 +162,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
                 +loop
                 if (!expression.type.isUnit()) {
                     // this is little hack to avoid exceptions in `MethodVerifier` before optimizations
-                    +irGet(variable)
+                    +at(UNDEFINED_OFFSET, UNDEFINED_OFFSET).irGet(variable)
                 }
             }
         }

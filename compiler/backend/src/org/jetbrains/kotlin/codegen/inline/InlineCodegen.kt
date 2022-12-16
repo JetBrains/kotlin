@@ -41,12 +41,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
+    fun compileInline(): SMAPAndMethodNode {
+        return sourceCompiler.compileInlineFunction(jvmSignature).apply {
+            node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+        }
+    }
+
     fun performInline(registerLineNumberAfterwards: Boolean, isInlineOnly: Boolean) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
-                node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-            }
+            nodeAndSmap = compileInline()
             val result = inlineCall(nodeAndSmap, isInlineOnly)
             leaveTemps()
             codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)

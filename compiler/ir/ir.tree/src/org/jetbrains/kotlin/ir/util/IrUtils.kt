@@ -199,7 +199,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns,
 }
 
 fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
-    symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null }
+    symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null && (!it.isVararg || it.defaultValue != null) }
 
 fun IrValueParameter.createStubDefaultValue(): IrExpressionBody =
     factory.createExpressionBody(

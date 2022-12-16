@@ -49,12 +49,9 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
                 type = if (makeNullable) newType.makeNullable() else newType,
                 defaultValue = if (it.defaultValue != null) {
                     original.factory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            it.type,
-                            "Default Stub"
-                        )
+                        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub").apply {
+                            attributeOwnerId = it.defaultValue!!.expression
+                        }
                     )
                 } else null,
                 isAssignable = it.defaultValue != null
