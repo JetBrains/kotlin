@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
@@ -35,13 +36,19 @@ import java.io.Serializable
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
+internal val KotlinSourceSet.cinteropMetadataDependencyTransformationTaskName: String
+    get() = lowerCamelCaseName("transform", name, "CInteropDependenciesMetadata")
+
+internal val KotlinSourceSet.cinteropMetadataDependencyTransformationForIdeTaskName: String
+    get() = lowerCamelCaseName("transform", name, "CInteropDependenciesMetadataForIde")
+
 internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTask(
     sourceSet: DefaultKotlinSourceSet,
 ): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
     if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
 
     return locateOrRegisterTask(
-        lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadata"),
+        sourceSet.cinteropMetadataDependencyTransformationTaskName,
         args = listOf(
             sourceSet,
             /* outputDirectory = */
@@ -61,7 +68,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
     if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
 
     return locateOrRegisterTask(
-        lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadataForIde"),
+        sourceSet.cinteropMetadataDependencyTransformationForIdeTaskName,
         invokeWhenRegistered = {
             @OptIn(Idea222Api::class)
             ideaImportDependsOn(this)

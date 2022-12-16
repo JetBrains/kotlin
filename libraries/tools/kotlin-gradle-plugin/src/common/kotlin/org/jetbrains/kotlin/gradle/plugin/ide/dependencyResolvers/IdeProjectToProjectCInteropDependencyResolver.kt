@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 
 object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver {
-    private val platformDependencyResolver = IdePlatformDependencyResolver(
+    private val platformDependencyResolver = IdeBinaryDependencyResolver(
         resolvedArtifactHandler = handler@{ artifact, context ->
             val identifier = artifact.id.componentIdentifier as? ProjectComponentIdentifier
                 ?: return@handler null

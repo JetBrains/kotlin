@@ -92,9 +92,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
         project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
             build(":dep-with-cinterop:publishToMavenLocal")
-//            build(":prepareKotlinIdeaImport")
-//            build("copyCommonizeCInteropForIde")
-//            build(":clientForBinaryDep:transformCommonMainCInteropDependenciesMetadataForIde")
 
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
                 val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
@@ -125,6 +122,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
                 for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
                     commonDeps.assertMatches(
+                        commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64, linux_x64")))
                     )
                 }
 
