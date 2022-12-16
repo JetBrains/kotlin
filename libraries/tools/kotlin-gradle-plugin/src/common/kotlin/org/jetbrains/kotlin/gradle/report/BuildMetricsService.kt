@@ -77,27 +77,30 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
                 buildMetrics.addAll(it.getMetrics())
             }
             val taskExecutionResult = TaskExecutionResults[taskPath]
-            taskExecutionResult?.buildMetrics?.also { buildMetrics.addAll(it) }
+            taskExecutionResult?.buildMetrics?.also {
+                buildMetrics.addAll(it)
 
-            KotlinBuildStatsService.applyIfInitialised { collector ->
-                collector.report(NumericalMetrics.COMPILATION_DURATION, totalTimeMs)
-                collector.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
-                val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
+                KotlinBuildStatsService.applyIfInitialised { collector ->
+                    collector.report(NumericalMetrics.COMPILATION_DURATION, totalTimeMs)
+                    collector.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
+                    val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
 
-                val linesOfCode = metricsMap[BuildPerformanceMetric.ANALYZED_LINES_NUMBER]
-                if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
-                    collector.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
-                    collector.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
-                    metricsMap[BuildPerformanceMetric.ANALYSIS_LPS]?.also {
-                        collector.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, it, null, linesOfCode)
+                    val linesOfCode = metricsMap[BuildPerformanceMetric.ANALYZED_LINES_NUMBER]
+                    if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
+                        collector.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
+                        collector.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
+                        metricsMap[BuildPerformanceMetric.ANALYSIS_LPS]?.also {
+                            collector.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, it, null, linesOfCode)
+                        }
+                        metricsMap[BuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
+                            collector.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
+                        }
                     }
-                    metricsMap[BuildPerformanceMetric.CODE_GENERATION_LPS]?.also {
-                        collector.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, it, null, linesOfCode)
-                    }
-                }
-                collector.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
-                if (taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.isEmpty() == true) {
-                    collector.report(NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT, 1)
+                    collector.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
+                    collector.report(
+                        NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT,
+                        if (taskExecutionResult.buildMetrics.buildAttributes.asMap().isEmpty()) 1 else 0
+                    )
                 }
             }
 
