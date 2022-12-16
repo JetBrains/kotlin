@@ -73,9 +73,9 @@ internal abstract class FirBaseTowerResolveTask(
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-        levelProducerAndCache: Pair<T, MutableSet<T>>,
+        levelProducer: T,
+        cache: MutableSet<T>,
     ) {
-        val (levelProducer, cache) = levelProducerAndCache
         val isEmpty = processLevel(towerLevel, callInfo, group, explicitReceiverKind)
 
         if (isEmpty) {
@@ -381,7 +381,8 @@ internal open class FirTowerResolveTask(
 
                 processLevelWithoutCheck(
                     scope.toScopeTowerLevel(), info, group,
-                    levelProducerAndCache = scope to emptyScopesCache.emptyScopes,
+                    levelProducer = scope,
+                    cache = emptyScopesCache.emptyScopes,
                 )
             },
             onImplicitReceiver = { receiver, group ->
