@@ -66,6 +66,8 @@ class KtFe10AnalysisSession(
     override val substitutorFactoryImpl: KtSubstitutorFactory = KtFe10SubstitutorFactory(this)
     override val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi = KtFe10SymbolProviderByJavaPsi(this)
 
+    override val ktMetadataCalculatorImpl: KtMetadataCalculator = KtMetadataCalculator.Empty
+
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
         withValidityAssertion {
             KtFe10AnalysisSession(elementToReanalyze, token)

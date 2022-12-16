@@ -156,6 +156,10 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     protected abstract val scopeSubstitutionImpl: KtScopeSubstitution
 
     @KtAnalysisApiInternals
+    public val ktMetadataCalculator: KtMetadataCalculator get() = ktMetadataCalculatorImpl
+    protected abstract val ktMetadataCalculatorImpl: KtMetadataCalculator
+
+    @KtAnalysisApiInternals
     public val substitutorFactory: KtSubstitutorFactory get() = substitutorFactoryImpl
     protected abstract val substitutorFactoryImpl: KtSubstitutorFactory
 
