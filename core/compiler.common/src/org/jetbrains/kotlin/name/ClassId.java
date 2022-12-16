@@ -40,7 +40,6 @@ public final class ClassId {
 
     private final String packageFqNameStr;
     private final String relativeClassNameStr;
-    private int cachedHashCode;
 
     public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
@@ -50,7 +49,6 @@ public final class ClassId {
         this.relativeClassName = relativeClassName;
         relativeClassNameStr = this.relativeClassName.asString();
         this.local = local;
-        cachedHashCode = 0;
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
@@ -158,7 +156,7 @@ public final class ClassId {
         if (!(o instanceof ClassId)) return false;
 
         ClassId id = (ClassId) o;
-        if (cachedHashCode != 0 && id.cachedHashCode != 0 && cachedHashCode != id.cachedHashCode) return false;
+
         return packageFqNameStr.equals(id.packageFqNameStr) &&
                relativeClassNameStr.equals(id.relativeClassNameStr) &&
                local == id.local;
@@ -166,12 +164,8 @@ public final class ClassId {
 
     @Override
     public int hashCode() {
-        if (cachedHashCode == 0) {
-            int result = packageFqNameStr.hashCode();
-            result = 31 * result + relativeClassNameStr.hashCode(); // isLocal hashCode is not taken into account, because it is irrelevant
-            cachedHashCode = result;
-        }
-        return cachedHashCode;
+        // isLocal and packageFqNameStr hashCode is not taken into account, because collisions on them considered rare
+        return relativeClassNameStr.hashCode();
     }
 
     @Override
