@@ -35,7 +35,7 @@ public final class FqName {
 
     @NotNull
     private final String fqNameStr;
-    private final int cachedHashCode;
+    private int cachedHashCode;
 
     // cache
     private transient FqName parent;
@@ -43,19 +43,19 @@ public final class FqName {
     public FqName(@NotNull String fqName) {
         this.fqName = new FqNameUnsafe(fqName, this);
         this.fqNameStr = this.fqName.asString();
-        this.cachedHashCode = fqNameStr.hashCode();
+        this.cachedHashCode = 0;
     }
 
     public FqName(@NotNull FqNameUnsafe fqName) {
         this.fqName = fqName;
         this.fqNameStr = this.fqName.asString();
-        this.cachedHashCode = fqNameStr.hashCode();
+        this.cachedHashCode = 0;
     }
 
     private FqName(@NotNull FqNameUnsafe fqName, FqName parent) {
         this.fqName = fqName;
         this.fqNameStr = this.fqName.asString();
-        this.cachedHashCode = fqNameStr.hashCode();
+        this.cachedHashCode = 0;
         this.parent = parent;
     }
 
@@ -128,12 +128,15 @@ public final class FqName {
         if (!(o instanceof FqName)) return false;
 
         FqName otherFqName = (FqName) o;
-
+        if (cachedHashCode != 0 && otherFqName.cachedHashCode != 0 && cachedHashCode != otherFqName.cachedHashCode) return false;
         return fqNameStr.equals(otherFqName.fqNameStr);
     }
 
     @Override
     public int hashCode() {
+        if (cachedHashCode == 0) {
+            cachedHashCode = fqNameStr.hashCode();
+        }
         return cachedHashCode;
     }
 }
