@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -46,20 +43,10 @@ sealed class FirOutput {
     ) : FirOutput()
 }
 
-internal interface FirFrontendContext : PhaseContext
-
-internal class FirFrontendContextImpl(
-        config: KonanConfig,
-) : BasicPhaseContext(config), FirFrontendContext
-
-internal fun <T : FirFrontendContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
-    return this.runPhase(FIRPhase, environment)
-}
-
 internal val FIRPhase = createSimpleNamedCompilerPhase(
         "FirFrontend", "Compiler Fir Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FirOutput.ShouldNotGenerateCode }
-) { context: FirFrontendContext, input: KotlinCoreEnvironment ->
+) { context: PhaseContext, input: KotlinCoreEnvironment ->
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
@@ -117,4 +104,8 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
             firFiles.forEach { println(it.render()) }
         FirOutput.Full(session, scopeSession, firFiles)
     }
+}
+
+internal fun <T : PhaseContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
+    return this.runPhase(FIRPhase, environment)
 }
