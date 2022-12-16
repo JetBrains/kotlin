@@ -95,7 +95,10 @@ class IdeaKotlinClasspath private constructor(private val files: MutableSet<File
         private val interner = WeakHashMap<File, WeakReference<File>>()
 
         private fun intern(file: File): File {
-            return interner.getOrPut(file) { WeakReference(file) }.get() ?: file
+            return interner.getOrPut(file) { WeakReference(file) }.get() ?: run {
+                interner[file] = WeakReference(file)
+                file
+            }
         }
     }
 }
