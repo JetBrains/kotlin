@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.test.tcs
 
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import java.io.File
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class IdeaKotlinClasspathTest {
 
@@ -61,5 +58,20 @@ class IdeaKotlinClasspathTest {
         assertTrue(classpath.isNotEmpty())
         classpath.remove(File("test").absoluteFile)
         assertTrue(classpath.isEmpty())
+    }
+
+    @Test
+    fun `test - classpath interner`() {
+        val classpath1 = IdeaKotlinClasspath()
+        val classpath2 = IdeaKotlinClasspath()
+
+        val fileAInstance1 = File("a")
+        val fileAInstance2 = File("a")
+
+        classpath1.add(fileAInstance1)
+        classpath2.add(fileAInstance2)
+
+        /* Check that fileAInstance2 got interned and will re-use instance 1 */
+        assertSame(classpath1.single(), classpath2.single())
     }
 }
