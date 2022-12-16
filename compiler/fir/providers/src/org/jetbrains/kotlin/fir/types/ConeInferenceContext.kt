@@ -400,7 +400,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val typeParameterErasureMap = this.extractTypeParameters()
             .map { (it as ConeTypeParameterLookupTag).typeParameterSymbol }
             .eraseToUpperBoundsAssociated(session, intersectUpperBounds = true, eraseRecursively = true)
-        val substitutor by lazy { ConeSubstitutorByMap(typeParameterErasureMap, session) }
+        val substitutor by lazy(LazyThreadSafetyMode.NONE) { ConeSubstitutorByMap(typeParameterErasureMap, session) }
         val typeWithErasedTypeParameters = if (argumentsCount() != 0) {
             replaceArgumentsDeeply {
                 val type = it.getType()

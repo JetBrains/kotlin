@@ -40,7 +40,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
             delegate.typeRef.coneType.lowerBoundIfFlexible().fullyExpandedType(context.session)
                 .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
         val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirRegularClassSymbol ?: return null
-        val delegateClassScope by lazy { delegateClassSymbol.unsubstitutedScope(context) }
+        val delegateClassScope by lazy(LazyThreadSafetyMode.NONE) { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {
             val theType = it.type ?: continue
             val argumentAsTypeParameterSymbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol

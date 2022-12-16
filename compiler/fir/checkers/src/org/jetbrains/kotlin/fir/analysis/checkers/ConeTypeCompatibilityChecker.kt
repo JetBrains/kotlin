@@ -438,11 +438,11 @@ object ConeTypeCompatibilityChecker {
     private data class FirClassWithSuperClasses(val firClass: FirClassSymbol<*>, val ctx: ConeInferenceContext) {
         val isInterface: Boolean get() = firClass.isInterface
 
-        val superClasses: Set<FirClassWithSuperClasses> by lazy {
+        val superClasses: Set<FirClassWithSuperClasses> by lazy(LazyThreadSafetyMode.NONE) {
             firClass.resolvedSuperTypes.mapNotNull { (it as? ConeClassLikeType)?.lookupTag?.toFirClassWithSuperClasses(ctx) }.toSet()
         }
 
-        val thisAndAllSuperClasses: Set<FirClassWithSuperClasses> by lazy {
+        val thisAndAllSuperClasses: Set<FirClassWithSuperClasses> by lazy(LazyThreadSafetyMode.NONE) {
             val queue = ArrayDeque<FirClassWithSuperClasses>()
             queue.addLast(this)
             buildSet {
