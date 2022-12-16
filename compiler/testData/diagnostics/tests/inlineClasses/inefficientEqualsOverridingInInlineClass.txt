@@ -16,7 +16,7 @@ package
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
-@kotlin.jvm.JvmInline public final value class IC3 {
+@kotlin.jvm.JvmInline @kotlin.AllowTypedEquals public final value class IC3 {
     public constructor IC3(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     @kotlin.TypedEquals public final fun equals(/*0*/ other: IC3): kotlin.Boolean

@@ -4,6 +4,7 @@
 
 
 @JvmInline
+@AllowTypedEquals
 value class A(val x: Int) {
     @TypedEquals
     fun equals(other: A) = true
@@ -12,13 +13,16 @@ value class A(val x: Int) {
 class C
 
 @JvmInline
+@OptIn(AllowTypedEquals::class)
 value class B1(val x: A)
 
 @JvmInline
+@OptIn(AllowTypedEquals::class)
 value class B2(val x: A?)
 
 
 @JvmInline
+@AllowTypedEquals
 value class D1(val x: C) {
     @TypedEquals
     fun equals(other: D1) = true
@@ -26,26 +30,31 @@ value class D1(val x: C) {
 
 
 @JvmInline
+@AllowTypedEquals
 value class D2(val x: C?) {
     @TypedEquals
     fun equals(other: D2) = true
 }
 
 @JvmInline
+@OptIn(AllowTypedEquals::class)
 value class E1(val x: D1)
 
 @JvmInline
+@OptIn(AllowTypedEquals::class)
 value class E2(val x: D2)
 
 @JvmInline
 value class F<T>(val x: T)
 
 @JvmInline
+@OptIn(AllowTypedEquals::class)
 value class G<T : D1>(val x: T)
 
 @JvmInline
 value class H<T>(val x: F<T>)
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     if (E1(D1(C())) != E1(D1(C()))) return "Fail 1"
 

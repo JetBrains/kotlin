@@ -6,6 +6,7 @@
 import kotlin.math.abs
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC(val x: Double, val y: Int) {
     @TypedEquals
     fun equals(other: MFVC): Boolean {
@@ -17,6 +18,7 @@ value class MFVC(val x: Double, val y: Int) {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     val set = setOf(MFVC(1.0, 100), MFVC(1.5, 200), MFVC(1.501, 300))
     return if (set.size == 2) "OK" else "Fail"

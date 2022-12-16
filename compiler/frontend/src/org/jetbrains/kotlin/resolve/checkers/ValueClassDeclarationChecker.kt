@@ -264,7 +264,9 @@ class ReservedMembersAndConstructsForValueClass : DeclarationChecker {
                 ) {
                     val nameIdentifier = ktFunction.nameIdentifier ?: return
                     context.trace.report(Errors.RESERVED_MEMBER_INSIDE_VALUE_CLASS.on(nameIdentifier, functionName))
-                } else if (descriptor.isSuitableSignatureForTypedEquals() && descriptor.typeParameters.isNotEmpty()) {
+                } else if (descriptor.annotations.hasAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName())
+                    && descriptor.typeParameters.isNotEmpty()
+                ) {
                     context.trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(declaration))
                 }
             }

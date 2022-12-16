@@ -6,18 +6,20 @@
 import kotlin.math.abs
 
 @JvmInline
+@AllowTypedEquals
 value class IC1(val value: Double) {
     @TypedEquals
     fun equals(other: IC1): Boolean {
         return abs(value - other.value) < 0.1
     }
 }
-
+@OptIn(AllowTypedEquals::class)
 interface I {
     fun equals(param: IC2): Boolean
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC2(val value: Int) : I {
     @TypedEquals
     override fun equals(param: IC2): Boolean {
@@ -36,6 +38,7 @@ value class IC4(val value: Int) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC5(val value: Int) {
     @TypedEquals
     fun equals(other: IC5): Boolean = TODO()
@@ -55,7 +58,7 @@ inline fun <reified T> assertThrows(block: () -> Unit): Boolean {
     return false
 }
 
-
+@OptIn(AllowTypedEquals::class)
 fun box() = when {
     IC1(1.0) != IC1(1.05) -> "Fail 1.1"
     (IC1(1.0) as Any) != IC1(1.05) -> "Fail 1.2"

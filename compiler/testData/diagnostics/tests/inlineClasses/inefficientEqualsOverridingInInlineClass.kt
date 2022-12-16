@@ -19,6 +19,7 @@ value class IC2(val x: Int) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC3(val x: Int) {
     override fun equals(other: Any?) = true
 

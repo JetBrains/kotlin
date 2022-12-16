@@ -8,6 +8,7 @@ interface I {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC1(val x: Int) : I {
     override fun getVal(): Int {
         return x
@@ -31,6 +32,7 @@ value class IC1(val x: Int) : I {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC2(val y: Int) : I {
     override fun getVal(): Int {
         return y * 10
@@ -53,4 +55,5 @@ value class IC2(val y: Int) : I {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String = if (setOf(IC1(10), IC2(1)).size == 1) "OK" else "Fail"

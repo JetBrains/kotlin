@@ -10,6 +10,7 @@ public final class Generic {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC1 {
     // source: 'inlineClassTypedEqualsGenerics.kt'
     private final @org.jetbrains.annotations.NotNull field x: java.lang.Number
@@ -30,6 +31,7 @@ public final class IC1 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC2 {
     // source: 'inlineClassTypedEqualsGenerics.kt'
     private final @org.jetbrains.annotations.NotNull field value: Generic
@@ -50,6 +52,7 @@ public final class IC2 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC3 {
     // source: 'inlineClassTypedEqualsGenerics.kt'
     private final field value: java.lang.Object
@@ -70,6 +73,7 @@ public final class IC3 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC4 {
     // source: 'inlineClassTypedEqualsGenerics.kt'
     private final field value: java.lang.Object

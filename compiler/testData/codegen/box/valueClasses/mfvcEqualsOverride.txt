@@ -6,6 +6,7 @@ public interface I {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class MFVC {
     // source: 'mfvcEqualsOverride.kt'
     private final field value: int

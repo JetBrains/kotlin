@@ -6,6 +6,7 @@
 import kotlin.math.abs
 
 @JvmInline
+@AllowTypedEquals
 value class IC(val x: Double) {
     @TypedEquals
     fun equals(other: IC): Boolean {
@@ -17,6 +18,7 @@ value class IC(val x: Double) {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     val set = setOf(IC(1.0), IC(1.5), IC(1.501))
     return if (set.size == 2) "OK" else "Fail"

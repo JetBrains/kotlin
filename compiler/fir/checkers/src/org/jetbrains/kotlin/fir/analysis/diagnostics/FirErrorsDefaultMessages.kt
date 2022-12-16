@@ -2048,7 +2048,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
 
-        map.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable")
+        map.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable: {0}", TO_STRING)
 
         //imports
         map.put(

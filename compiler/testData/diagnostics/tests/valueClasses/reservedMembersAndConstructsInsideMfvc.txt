@@ -55,10 +55,10 @@ package
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
-@kotlin.jvm.JvmInline public final value class IC6 {
+@kotlin.jvm.JvmInline @kotlin.AllowTypedEquals public final value class IC6 {
     public constructor IC6(/*0*/ a: kotlin.String)
     public final val a: kotlin.String
-    public final fun </*0*/ T> equals(/*0*/ other: IC6): kotlin.Boolean
+    @kotlin.TypedEquals public final fun </*0*/ T> equals(/*0*/ other: IC6): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
@@ -124,11 +124,11 @@ package
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
-@kotlin.jvm.JvmInline public final value class MFVC6 {
+@kotlin.jvm.JvmInline @kotlin.AllowTypedEquals public final value class MFVC6 {
     public constructor MFVC6(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String)
     public final val a: kotlin.String
     public final val b: kotlin.String
-    public final fun </*0*/ T> equals(/*0*/ other: MFVC6): kotlin.Boolean
+    @kotlin.TypedEquals public final fun </*0*/ T> equals(/*0*/ other: MFVC6): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String

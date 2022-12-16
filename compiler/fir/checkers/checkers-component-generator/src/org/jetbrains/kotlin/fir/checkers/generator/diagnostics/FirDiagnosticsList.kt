@@ -1420,7 +1420,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
 
-        val INAPPLICABLE_TYPED_EQUALS_ANNOTATION by error<KtAnnotationEntry>()
+        val INAPPLICABLE_TYPED_EQUALS_ANNOTATION by error<KtAnnotationEntry>() {
+            parameter<String>("reason")
+        }
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {

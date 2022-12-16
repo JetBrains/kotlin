@@ -7,6 +7,7 @@ import java.lang.AssertionError
 import kotlin.math.abs
 
 @JvmInline
+@AllowTypedEquals
 value class IC1(val x: Double) {
     @TypedEquals
     fun equals(other: IC1): Boolean {
@@ -24,6 +25,7 @@ value class IC2(val x: Int) {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     val a1Typed: IC1 = IC1(1.0)
     val b1Typed: IC1 = IC1(1.1)

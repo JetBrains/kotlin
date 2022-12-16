@@ -3312,6 +3312,7 @@ internal class InefficientEqualsOverridingInValueClassImpl(
 ) : KtFirDiagnostic.InefficientEqualsOverridingInValueClass(), KtAbstractFirDiagnostic<KtNamedFunction>
 
 internal class InapplicableTypedEqualsAnnotationImpl(
+    override val reason: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InapplicableTypedEqualsAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>

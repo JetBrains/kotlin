@@ -6,13 +6,22 @@
 package kotlin
 
 /**
- * This annotation specifies that the given function is a typed equals declaration
- *
- * Any usage of a declaration annotated with `@TypedEquals` must be accepted either by
- * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(TypedEquals::class)`,
- * or by using the compiler argument `-opt-in=kotlin.TypedEquals`.
+ * This annotation specifies that the given function is a typed equals declaration.
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 annotation class TypedEquals
+
+/**
+ * This annotation allows use @TypedEquals annotations inside given class declaration
+ *
+ * Any usage of a class annotated with `@AllowTypedEquals` must be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(AllowTypedEquals::class)`,
+ * or by using the compiler argument `-opt-in=kotlin.AllowTypedEquals`
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@RequiresOptIn
+annotation class AllowTypedEquals

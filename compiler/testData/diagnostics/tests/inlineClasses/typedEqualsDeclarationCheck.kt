@@ -5,6 +5,7 @@
 // SKIP_TXT
 
 @JvmInline
+@AllowTypedEquals
 value class IC1(val x: Int) {
     override fun equals(other: Any?) = true
 
@@ -15,6 +16,7 @@ value class IC1(val x: Int) {
 }
 
 @JvmInline
+@OptIn(AllowTypedEquals::class)
 value class IC2(val x: Int) {
     <!INAPPLICABLE_TYPED_EQUALS_ANNOTATION!>@TypedEquals<!>
     fun equals(other: IC1) = true
@@ -43,18 +45,21 @@ value class IC5<T: Number>(val x: T) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC6<T, R>(val x: T) {
     @TypedEquals
     fun<!TYPE_PARAMETERS_NOT_ALLOWED!><S1, S2><!> equals(other: IC6<*, *>) = true
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC7<T, R>(val x: T) {
     @TypedEquals
     fun equals(other: IC7<*, *>) = true
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC8<T, R>(val x: T) {
     @TypedEquals
     fun equals(other: IC8<*, *>): Boolean = TODO()

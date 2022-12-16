@@ -53,7 +53,9 @@ value class IC5(val a: String) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC6(val a: String) {
+    @TypedEquals
     fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: IC6): Boolean = true
 }
 
@@ -102,7 +104,9 @@ value class MFVC5(val a: String, val b: String) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC6(val a: String, val b: String) {
+    @TypedEquals
     fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: MFVC6): Boolean = true
 }
 

@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.fir.types.isNothing
@@ -24,24 +22,47 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
-object FirTypedEqualsApplicabilityChecker : FirSimpleFunctionChecker() {
+object FirTypedEqualsApplicabilityChecker : FirFunctionChecker() {
 
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.TypedEquals) ?: return
-        if (!declaration.hasSuitableSignatureForTypedEquals(context.session)) {
-            reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION, context)
+    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        val typedEqualsAnnotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.TypedEquals) ?: return
+        if (declaration !is FirSimpleFunction) {
+            reporter.reportOn(
+                typedEqualsAnnotation.source,
+                FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION,
+                "function must be a member of value class",
+                context
+            )
+            return
+        }
+        val parentClass =
+            declaration.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)?.takeIf { it.isInlineOrValueClass() }
+        if (parentClass == null) {
+            reporter.reportOn(
+                typedEqualsAnnotation.source,
+                FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION,
+                "function must be a member of value class",
+                context
+            )
+            return
+        }
+        if (!parentClass.annotations.hasAnnotation(StandardClassIds.Annotations.AllowTypedEquals)) {
+            reporter.reportOn(
+                typedEqualsAnnotation.source,
+                FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION,
+                "parent class must be annotated by @AllowTypedEquals",
+                context
+            )
+        }
+        if (!declaration.hasSuitableSignatureForTypedEquals(parentClass)) {
+            reporter.reportOn(typedEqualsAnnotation.source, FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "unexpected signature", context)
         }
     }
 
-    private fun FirSimpleFunction.hasSuitableSignatureForTypedEquals(session: FirSession): Boolean =
-        containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
-            val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
-            with(this@hasSuitableSignatureForTypedEquals) {
-                contextReceivers.isEmpty() && receiverParameter == null
-                        && name == OperatorNameConventions.EQUALS
-                        && this@run.isInline && valueParameters.size == 1
-                        && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                        && valueParameters[0].returnTypeRef.coneType == valueClassStarProjection
-            }
-        } ?: false
+    private fun FirSimpleFunction.hasSuitableSignatureForTypedEquals(parentClass: FirRegularClassSymbol): Boolean =
+        contextReceivers.isEmpty() && receiverParameter == null
+                && name == OperatorNameConventions.EQUALS
+                && valueParameters.size == 1
+                && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
+                && valueParameters[0].returnTypeRef.coneType == parentClass.defaultType().replaceArgumentsWithStarProjections()
 }

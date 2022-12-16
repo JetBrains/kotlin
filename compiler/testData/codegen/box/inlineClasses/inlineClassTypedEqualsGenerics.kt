@@ -4,6 +4,7 @@
 // CHECK_BYTECODE_LISTING
 
 @JvmInline
+@AllowTypedEquals
 value class IC1<T : Number>(val x: T) {
     fun equals(other: Int) = false
     @TypedEquals
@@ -13,6 +14,7 @@ value class IC1<T : Number>(val x: T) {
 class Generic<T, R>(val x: T, val y: R)
 
 @JvmInline
+@AllowTypedEquals
 value class IC2<T, R>(val value: Generic<T, R>) {
     fun equals(other: IC1<Double>) = false
     @TypedEquals
@@ -20,6 +22,7 @@ value class IC2<T, R>(val value: Generic<T, R>) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC3<T>(val value: T) {
     fun equals(other: Int) = false
     @TypedEquals
@@ -27,13 +30,14 @@ value class IC3<T>(val value: T) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC4<T>(val value: T) {
     fun equals(other: String) = false
     @TypedEquals
     fun equals(other: IC4<*>) = true
 }
 
-
+@OptIn(AllowTypedEquals::class)
 fun box() = when {
     IC1(5.0) != IC1(3) -> "Fail 1.1"
     (IC1(5.0) as Any) != IC1(3) -> "Fail 1.2"

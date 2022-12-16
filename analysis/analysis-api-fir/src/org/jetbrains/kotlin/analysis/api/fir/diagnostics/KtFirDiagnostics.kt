@@ -2747,6 +2747,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InapplicableTypedEqualsAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableTypedEqualsAnnotation::class
+        abstract val reason: String
     }
 
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {

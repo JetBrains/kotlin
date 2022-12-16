@@ -21,23 +21,39 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object TypedEqualsApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val annotation = descriptor.annotations.findAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName()) ?: return
+        val typedEqualsAnnotation =
+            descriptor.annotations.findAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName()) ?: return
         val functionDescriptor = context.trace.bindingContext.get(BindingContext.FUNCTION, declaration) ?: return
-        if (!functionDescriptor.hasSuitableSignatureForTypedEquals) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
-            context.trace.report(Errors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION.on(annotationEntry))
+        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(typedEqualsAnnotation) ?: return
+        val parentClass = (functionDescriptor.containingDeclaration as? ClassDescriptor)?.takeIf { it.isValueClass() }
+        if (parentClass == null) {
+            context.trace.report(
+                Errors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION.on(
+                    annotationEntry,
+                    "function must be a member of value class"
+                )
+            )
+            return
+        }
+        if (!parentClass.annotations.hasAnnotation(StandardClassIds.Annotations.AllowTypedEquals.asSingleFqName())) {
+            context.trace.report(
+                Errors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION.on(
+                    annotationEntry,
+                    "parent class must be annotated by @AllowTypedEquals"
+                )
+            )
+            return
+        }
+        if (!functionDescriptor.hasSuitableSignatureForTypedEquals(parentClass)) {
+            context.trace.report(Errors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION.on(annotationEntry, "unexpected signature"))
         }
     }
 
-    private val FunctionDescriptor.hasSuitableSignatureForTypedEquals: Boolean
-        get() {
-            val valueClassStarProjection =
-                (containingDeclaration as? ClassDescriptor)?.takeIf { it.isValueClass() }?.defaultType?.replaceArgumentsWithStarProjections()
-                    ?: return false
-            val returnType = returnType ?: return false
-            return name == OperatorNameConventions.EQUALS
-                    && (returnType.isBoolean() || returnType.isNothing())
-                    && valueParameters.size == 1 && valueParameters[0].type == valueClassStarProjection
-                    && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
-        }
+    private fun FunctionDescriptor.hasSuitableSignatureForTypedEquals(parentClass: ClassDescriptor): Boolean {
+        val returnType = returnType ?: return false
+        return name == OperatorNameConventions.EQUALS
+                && (returnType.isBoolean() || returnType.isNothing())
+                && valueParameters.size == 1 && valueParameters[0].type == parentClass.defaultType.replaceArgumentsWithStarProjections()
+                && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+    }
 }

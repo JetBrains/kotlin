@@ -28,6 +28,7 @@ value class MFVC3(val x: Int, val y: Int) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC4(val x: Int, val y: Int) {
     override fun equals(other: Any?) = true
 

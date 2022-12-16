@@ -3937,6 +3937,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION) { firDiagnostic ->
         InapplicableTypedEqualsAnnotationImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
