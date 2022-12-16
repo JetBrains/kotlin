@@ -36,11 +36,15 @@ sourceSets {
 val shadows by configurations.creating {
     isTransitive = false
 }
+val proguardDeps by configurations.creating
+
 configurations.getByName("compileOnly").extendsFrom(shadows)
 configurations.getByName("testApi").extendsFrom(shadows)
 
 dependencies {
     api(kotlinStdlib())
+    proguardDeps(kotlinStdlib())
+
     shadows(project(":kotlinx-metadata"))
     shadows(project(":core:metadata"))
     shadows(project(":core:metadata.jvm"))
@@ -97,6 +101,43 @@ tasks.dokkaHtml.configure {
         }
     }
 }
+
+
+val proguard by task<CacheableProguardTask> {
+    dependsOn(shadowJarTask)
+
+    injars(shadowJarTask.flatMap { it.archiveFile })
+    outjars(fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-proguard.jar"))
+
+    javaLauncher.set(project.getToolchainLauncherFor(chooseJdk_1_8ForJpsBuild(JdkMajorVersion.JDK_1_8)))
+    libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
+    libraryjars(
+        project.files(
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/rt.jar",
+                    "../Classes/classes.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )!!
+            }
+        )
+    )
+
+    configuration("$projectDir/metadata-jvm.pro")
+}
+
+val proguardJar by task<Jar> {
+    dependsOn(proguard)
+    setupPublicJar(base.archivesName.get() + "-proguard",)
+    from {
+        zipTree(proguard.get().singleOutputFile())
+    }
+}
+
+//tasks.named("install").configure {
+//    dependsOn(proguardJar)
+//}
+//setPublishableArtifact(proguardJar)
 
 sourcesJar {
     for (dependency in shadows.dependencies) {
