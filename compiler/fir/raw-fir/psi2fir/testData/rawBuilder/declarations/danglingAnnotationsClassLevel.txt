@@ -27,7 +27,7 @@ FILE: danglingAnnotationsClassLevel.kt
         }
 
         public? final? fun withLocal(): R|kotlin/Unit| {
-            local final? [ContainingClassKey=Outer] class Local : R|kotlin/Any| {
+            local final? class Local : R|kotlin/Any| {
                 public? [ContainingClassKey=Local] constructor(): R|Outer.Local| {
                     super<R|kotlin/Any|>()
                 }

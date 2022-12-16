@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
@@ -138,6 +139,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 AnalysisApiMode.Standalone ->
                     model("symbolByReference", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
             }
+        }
+    }
+
+    group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test(AbstractTypeByDeclarationReturnTypeTest::class) {
+            model("byDeclarationReturnType")
         }
     }
 

@@ -57,7 +57,7 @@ internal class KtFirTypeAliasSymbol(
         KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
     }
 
-    override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind(firResolveSession) }
+    override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind() }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
