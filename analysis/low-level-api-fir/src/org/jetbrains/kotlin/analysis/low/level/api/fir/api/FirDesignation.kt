@@ -64,6 +64,16 @@ private fun collectDesignationPath(target: FirElementWithResolvePhase): List<Fir
             }
 
             val containingClassId = target.containingClassLookupTag()?.classId ?: return emptyList()
+
+            if (target.origin == FirDeclarationOrigin.SubstitutionOverride) {
+                val originalContainingClassId = target.originalForSubstitutionOverride?.containingClassLookupTag()?.classId
+                if (containingClassId == originalContainingClassId) {
+                    // Ugly temporary hack for call-site substitution overrides.
+                    // Containing class ID from the origin cannot be used, as the origin might be in a different module.
+                    return emptyList()
+                }
+            }
+
             return collectDesignationPathWithContainingClass(useSiteSession, containingClassId)
         }
 
