@@ -5,7 +5,7 @@ FILE: enums3.kt
         }
 
         init {
-            local final? [ContainingClassKey=C] enum class Planet : R|kotlin/Enum<C.Planet>| {
+            local final? enum class Planet : R|kotlin/Enum<C.Planet>| {
                 private [ContainingClassKey=Planet] constructor([CorrespondingProperty=<local>/m] m: Double, [CorrespondingProperty=<local>/r] r: Double): R|C.Planet| {
                     super<R|kotlin/Enum<C.Planet>|>()
                 }

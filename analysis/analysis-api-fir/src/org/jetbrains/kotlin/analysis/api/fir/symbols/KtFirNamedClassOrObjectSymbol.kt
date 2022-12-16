@@ -107,7 +107,7 @@ internal class KtFirNamedClassOrObjectSymbol(
             firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)
         }
 
-    override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind(firResolveSession) }
+    override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind() }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {

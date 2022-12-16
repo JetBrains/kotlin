@@ -1332,7 +1332,9 @@ open class RawFirBuilder(
                     }
                 }
             }.also {
-                it.initContainingClassForLocalAttr()
+                if (classOrObject.parent is KtClassBody) {
+                    it.initContainingClassForLocalAttr()
+                }
                 classOrObject.fillDanglingConstraintsTo(it)
             }
         }

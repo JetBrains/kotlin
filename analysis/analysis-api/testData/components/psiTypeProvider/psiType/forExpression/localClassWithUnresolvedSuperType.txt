@@ -1,2 +1,2 @@
-KtType: Foo
+KtType: Foo.Bar
 PsiType: PsiType:Bar
