@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public final class FqNameUnsafe {
     private static final Name ROOT_NAME = Name.special("<root>");
 
     private static final Function1<String, Name> STRING_TO_NAME = name -> Name.guessByFirstCharacter(name);
+    private static final ArrayList<String> STRING_ARRAYLIST = new ArrayList<>();
 
     @NotNull
     private final String fqName;
@@ -148,11 +150,11 @@ public final class FqNameUnsafe {
 
     @NotNull
     public List<Name> pathSegments() {
-        return isRoot() ? new ArrayList<>() : CollectionsKt.map(pathStringSegments(), STRING_TO_NAME);
+        return isRoot() ? Collections.<Name>emptyList() : CollectionsKt.map(pathStringSegments(), STRING_TO_NAME);
     }
 
     public ArrayList<String> pathStringSegments() {
-        if (fqName.isEmpty()) return new ArrayList<>();
+        if (fqName.isEmpty()) return STRING_ARRAYLIST;
         ArrayList<String> res = new ArrayList<>(7);
         int pos = 0;
         int nextDot;
