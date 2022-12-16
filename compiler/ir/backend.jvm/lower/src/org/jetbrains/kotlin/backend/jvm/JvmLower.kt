@@ -332,6 +332,7 @@ private val jvmFilePhases = listOf(
     // makePatchParentsPhase(),
 
     removeDuplicatedInlinedLocalClasses,
+    inventNamesForInlinedLocalClassesPhase,
 
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,

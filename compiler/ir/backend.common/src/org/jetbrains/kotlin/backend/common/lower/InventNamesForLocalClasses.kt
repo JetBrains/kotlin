@@ -6,19 +6,25 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.getAdditionalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.isFunctionInlining
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import kotlin.collections.set
 
-abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Boolean) : FileLoweringPass {
+abstract class InventNamesForLocalClasses(
+    private val allowTopLevelCallables: Boolean,
+    private val generateNamesForRegeneratedObjects: Boolean = false
+) : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
@@ -38,8 +44,28 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
     }
 
     private inner class NameInventor : IrElementVisitor<Unit, Data> {
+        private var processingInlinedFunction = false
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: Data) {
+            if (expression is IrInlinedFunctionBlock && !generateNamesForRegeneratedObjects) {
+                return expression.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+            }
+
+            if (!processingInlinedFunction && expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
+                expression.getAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+
+                processingInlinedFunction = true
+                val inlinedAt = expression.inlineCall.symbol.owner.name.asString()
+                val newData = data.copy(enclosingName = data.enclosingName + "$\$inlined\$$inlinedAt", isLocal = true)
+                expression.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
+                processingInlinedFunction = false
+
+                return
+            }
+            super.visitContainerExpression(expression, data)
+        }
 
         override fun visitClass(declaration: IrClass, data: Data) {
             if (!data.isLocal) {
@@ -99,6 +125,8 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
                         localFunctionNames[declaration.symbol] = name
                     }
                 }
+
+                declaration is IrVariable && generateNamesForRegeneratedObjects || processingInlinedFunction -> enclosingName
                 enclosingName != null -> "$enclosingName$$simpleName"
                 else -> simpleName
             }
@@ -115,6 +143,10 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
+            if (processingInlinedFunction && expression.attributeOwnerIdBeforeInline == null) {
+                // skip IrFunctionReference from `singleArgumentInlineFunction`
+                return
+            }
             val internalName = localFunctionNames[expression.symbol] ?: inventName(null, data)
             putLocalClassName(expression, internalName)
 
