@@ -30,18 +30,18 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
 
 internal class KtFe10FunctionalType(
-    override val type: SimpleType,
+    override val fe10Type: SimpleType,
     private val descriptor: FunctionClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtFunctionalType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 
     override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
         get() = withValidityAssertion {
-            KtFe10JvmTypeMapperContext.getNestedType(type).allInnerTypes.map { innerType ->
+            KtFe10JvmTypeMapperContext.getNestedType(fe10Type).allInnerTypes.map { innerType ->
                 KtClassTypeQualifier.KtResolvedClassTypeQualifier(
                     innerType.classDescriptor.toKtClassSymbol(analysisContext),
                     innerType.arguments.map { it.toKtTypeProjection(analysisContext) },
@@ -57,12 +57,12 @@ internal class KtFe10FunctionalType(
         get() = withValidityAssertion { descriptor.arity }
 
     override val hasContextReceivers: Boolean
-        get() = withValidityAssertion { type.contextFunctionTypeParamsCount() > 0 }
+        get() = withValidityAssertion { fe10Type.contextFunctionTypeParamsCount() > 0 }
 
     @OptIn(KtAnalysisApiInternals::class)
     override val contextReceivers: List<KtContextReceiver>
         get() = withValidityAssertion {
-            type.getContextReceiverTypesFromFunctionType().map { receiverType ->
+            fe10Type.getContextReceiverTypesFromFunctionType().map { receiverType ->
                 // Context receivers in function types may not have labels, hence the `null` label.
                 KtContextReceiverImpl(
                     receiverType.toKtType(analysisContext),
@@ -75,28 +75,28 @@ internal class KtFe10FunctionalType(
     override val hasReceiver: Boolean
         get() = withValidityAssertion {
             if (descriptor.functionKind.isReflectType) false
-            else type.getReceiverTypeFromFunctionType() != null
+            else fe10Type.getReceiverTypeFromFunctionType() != null
         }
 
     override val receiverType: KtType?
         get() = withValidityAssertion {
             if (descriptor.functionKind.isReflectType) null
-            else type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext)
+            else fe10Type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext)
         }
 
     override val parameterTypes: List<KtType>
         get() = withValidityAssertion {
             when {
-                descriptor.functionKind.isReflectType -> type.arguments.dropLast(1)
-                else -> type.getValueParameterTypesFromFunctionType()
+                descriptor.functionKind.isReflectType -> fe10Type.arguments.dropLast(1)
+                else -> fe10Type.getValueParameterTypesFromFunctionType()
             }.map { it.type.toKtType(analysisContext) }
         }
 
     override val returnType: KtType
         get() = withValidityAssertion {
             when {
-                descriptor.functionKind.isReflectType -> type.arguments.last().type
-                else -> type.getReturnTypeFromFunctionType()
+                descriptor.functionKind.isReflectType -> fe10Type.arguments.last().type
+                else -> fe10Type.getReturnTypeFromFunctionType()
             }.toKtType(analysisContext)
         }
 
@@ -112,5 +112,5 @@ internal class KtFe10FunctionalType(
         get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
     override val ownTypeArguments: List<KtTypeProjection>
-        get() = withValidityAssertion { type.arguments.map { it.toKtTypeProjection(analysisContext) } }
+        get() = withValidityAssertion { fe10Type.arguments.map { it.toKtTypeProjection(analysisContext) } }
 }

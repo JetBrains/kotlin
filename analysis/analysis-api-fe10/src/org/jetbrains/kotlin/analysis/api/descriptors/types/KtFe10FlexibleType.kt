@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
@@ -18,17 +17,17 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.types.FlexibleType
 
 internal class KtFe10FlexibleType(
-    override val type: FlexibleType,
+    override val fe10Type: FlexibleType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtFlexibleType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val lowerBound: KtType
-        get() = withValidityAssertion { type.lowerBound.toKtType(analysisContext) }
+        get() = withValidityAssertion { fe10Type.lowerBound.toKtType(analysisContext) }
 
     override val upperBound: KtType
-        get() = withValidityAssertion { type.upperBound.toKtType(analysisContext) }
+        get() = withValidityAssertion { fe10Type.upperBound.toKtType(analysisContext) }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 }

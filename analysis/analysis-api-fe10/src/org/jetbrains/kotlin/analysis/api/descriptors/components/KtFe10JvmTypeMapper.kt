@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -25,7 +24,7 @@ internal class KtFe10JvmTypeMapper(
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
     override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type {
-        val kotlinType = (type as KtFe10Type).type
+        val kotlinType = (type as KtFe10Type).fe10Type
         return typeMapper.mapType(kotlinType, mode)
     }
 }

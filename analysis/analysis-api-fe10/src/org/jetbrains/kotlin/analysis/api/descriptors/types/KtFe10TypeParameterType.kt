@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
@@ -20,17 +19,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 
 internal class KtFe10TypeParameterType(
-    override val type: SimpleType,
+    override val fe10Type: SimpleType,
     private val parameter: TypeParameterDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtTypeParameterType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val name: Name
         get() = withValidityAssertion { parameter.name }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 
     override val symbol: KtTypeParameterSymbol
         get() = withValidityAssertion { KtFe10DescTypeParameterSymbol(parameter, analysisContext) }

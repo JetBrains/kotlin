@@ -18,30 +18,30 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.ErrorType
 
 internal class KtFe10ClassErrorType(
-    override val type: ErrorType,
+    override val fe10Type: ErrorType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtClassErrorType(), KtFe10Type {
     init {
-        check(type.kind.isUnresolved) {
-            "Expected unresolved ErrorType but ${type.kind} found for $type"
+        check(fe10Type.kind.isUnresolved) {
+            "Expected unresolved ErrorType but ${fe10Type.kind} found for $fe10Type"
         }
     }
 
     override val qualifiers: List<KtClassTypeQualifier.KtUnresolvedClassTypeQualifier>
         get() = withValidityAssertion {
-            type.formatParams.first().split('.').map {
+            fe10Type.formatParams.first().split('.').map {
                 KtClassTypeQualifier.KtUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), emptyList(), token)
             }
         }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val errorMessage: String
-        get() = withValidityAssertion { type.debugMessage }
+        get() = withValidityAssertion { fe10Type.debugMessage }
 
     override val candidateClassSymbols: Collection<KtClassLikeSymbol>
         get() = withValidityAssertion { emptyList() }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 }

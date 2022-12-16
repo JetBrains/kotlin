@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.types.DynamicType
 
 internal class KtFe10DynamicType(
-    override val type: DynamicType,
+    override val fe10Type: DynamicType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtDynamicType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 }

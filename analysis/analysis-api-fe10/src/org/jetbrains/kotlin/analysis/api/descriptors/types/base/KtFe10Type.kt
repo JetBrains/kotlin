@@ -18,15 +18,15 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
-    val type: UnwrappedType
+internal interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
+    val fe10Type: UnwrappedType
 
     val analysisContext: Fe10AnalysisContext
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
             KtFe10AnnotationsList.create(
-                type.annotations,
+                fe10Type.annotations,
                 token,
                 ignoreAnnotations = setOf(
                     StandardClassIds.Annotations.ExtensionFunctionType,
