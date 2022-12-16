@@ -96,7 +96,11 @@ abstract class KotlinSoftwareComponent(
         return _usages
     }
 
-    private fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
+    /**
+     * We don't want to publish source set metadata from source sets that don't participate in any compilation that is published,
+     * such as test or benchmark sources; find all published compilations:
+     */
+    private fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project, publishableOnly = true) +
             getHostSpecificMainSharedSourceSets(project)
 
     /**

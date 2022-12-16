@@ -174,7 +174,7 @@ class KotlinMetadataTargetConfigurator :
     ) = target.project.whenEvaluated {
         // Do this after all targets are configured by the user build script
 
-        val publishedCommonSourceSets: Set<KotlinSourceSet> = getCommonSourceSetsForMetadataCompilation(project)
+        val publishedCommonSourceSets: Set<KotlinSourceSet> = getCommonSourceSetsForMetadataCompilation(project, publishableOnly = false)
         val hostSpecificSourceSets: Set<KotlinSourceSet> = getHostSpecificSourceSets(project).toSet()
 
         val sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, KotlinCompilation<*>> = publishedCommonSourceSets
@@ -524,7 +524,7 @@ internal fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinS
  * support metadata compilation (see [KotlinMetadataTargetConfigurator.isMetadataCompilationSupported].
  * Those compilations will be created but the corresponding tasks will be disabled.
  */
-internal fun getCommonSourceSetsForMetadataCompilation(project: Project): Set<KotlinSourceSet> {
+internal fun getCommonSourceSetsForMetadataCompilation(project: Project, publishableOnly: Boolean): Set<KotlinSourceSet> {
     if (!project.shouldCompileIntermediateSourceSetsToMetadata)
         return setOf(project.multiplatformExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
 
@@ -538,13 +538,15 @@ internal fun getCommonSourceSetsForMetadataCompilation(project: Project): Set<Ko
         }
     }
 
-    // We don't want to publish source set metadata from source sets that don't participate in any compilation that is published,
-    // such as test or benchmark sources; find all published compilations:
-    val publishedCompilations = getPublishedPlatformCompilations(project).values
+    return if (publishableOnly) {
+        val publishedCompilations = getPublishedPlatformCompilations(project).values
 
-    return sourceSetsUsedInMultipleTargets
-        .filterValues { compilations -> compilations.any { it in publishedCompilations } }
-        .keys
+        sourceSetsUsedInMultipleTargets
+            .filterValues { compilations -> compilations.any { it in publishedCompilations } }
+            .keys
+    } else {
+        sourceSetsUsedInMultipleTargets.keys
+    }
 }
 
 internal fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsageContext, KotlinCompilation<*>> {
