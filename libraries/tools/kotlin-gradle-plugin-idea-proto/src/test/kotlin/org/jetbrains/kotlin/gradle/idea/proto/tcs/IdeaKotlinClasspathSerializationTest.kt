@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class IdeaKotlinClasspathSerializationTest : AbstractSerializationTest<IdeaKotlinClasspath>() {
@@ -25,4 +26,11 @@ class IdeaKotlinClasspathSerializationTest : AbstractSerializationTest<IdeaKotli
 
     @Test
     fun `test  - emptyClasspath`() = testSerialization(TestIdeaKotlinInstances.emptyClasspath)
+
+    @Test
+    fun `test - empty ByteArray`() {
+        assertEquals(IdeaKotlinClasspath(), deserialize(byteArrayOf()))
+        if (serialize(IdeaKotlinClasspath()).isNotEmpty())
+            fail("Expected empty classpath to serialize into empty ByteArray")
+    }
 }
