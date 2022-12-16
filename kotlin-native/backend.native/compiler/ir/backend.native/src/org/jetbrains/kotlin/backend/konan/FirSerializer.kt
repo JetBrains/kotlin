@@ -1,6 +1,10 @@
 package org.jetbrains.kotlin.backend.konan
 
+import com.intellij.openapi.vfs.VfsUtilCore
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
@@ -13,14 +17,16 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import java.io.File
 
 internal fun PhaseContext.firSerializer(
         input: Fir2IrOutput
@@ -32,9 +38,7 @@ internal fun PhaseContext.firSerializer(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
 
-    val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
-
     return serializeNativeModule(
             configuration = configuration,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
@@ -42,13 +46,14 @@ internal fun PhaseContext.firSerializer(
             resolvedLibraries.map { it.library as KonanLibrary },
             input.fir2irResult.irModuleFragment,
             expectDescriptorToSymbol = mutableMapOf(), // TODO: expect -> actual mapping
-            cleanFiles = icData,
             abiVersion = KotlinAbiVersion.CURRENT // TODO get from test file data
     ) { file ->
         val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(firFile, input.session, input.scopeSession, metadataVersion)
     }
 }
+
+class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
 internal fun PhaseContext.serializeNativeModule(
         configuration: CompilerConfiguration,
@@ -57,7 +62,6 @@ internal fun PhaseContext.serializeNativeModule(
         dependencies: List<KonanLibrary>,
         moduleFragment: IrModuleFragment,
         expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-        cleanFiles: List<KotlinFileSerializedData>,
         abiVersion: KotlinAbiVersion,
         serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
@@ -101,7 +105,7 @@ internal fun PhaseContext.serializeNativeModule(
         }
     }
 
-    val compiledKotlinFiles = (cleanFiles + additionalFiles)
+    val compiledKotlinFiles = additionalFiles.toList()
 
     val header = serializeKlibHeader(
             configuration.languageVersionSettings, moduleDescriptor,
@@ -119,4 +123,11 @@ internal fun PhaseContext.serializeNativeModule(
     val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
 
     return SerializerOutput(serializedMetadata, fullSerializedIr, null, dependencies)
+}
+
+fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
+    is KtIoFileSourceFile -> file
+    is KtVirtualFileSourceFile -> VfsUtilCore.virtualToIoFile(virtualFile)
+    is KtPsiSourceFile -> VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
+    else -> path?.let(::File)
 }
