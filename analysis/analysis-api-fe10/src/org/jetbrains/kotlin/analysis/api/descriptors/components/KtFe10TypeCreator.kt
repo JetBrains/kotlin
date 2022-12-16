@@ -69,7 +69,7 @@ internal class KtFe10TypeCreator(
             val projections = builder.arguments.mapIndexed { index, arg ->
                 when (arg) {
                     is KtStarTypeProjection -> StarProjectionImpl(typeParameters[index])
-                    is KtTypeArgumentWithVariance -> TypeProjectionImpl(arg.variance, (arg.type as KtFe10Type).type)
+                    is KtTypeArgumentWithVariance -> TypeProjectionImpl(arg.variance, (arg.type as KtFe10Type).fe10Type)
                 }
             }
 

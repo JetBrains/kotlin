@@ -21,13 +21,13 @@ internal class KtFe10SubtypingComponent(
     override fun isEqualTo(first: KtType, second: KtType): Boolean {
         require(first is KtFe10Type)
         require(second is KtFe10Type)
-        return analysisContext.resolveSession.kotlinTypeCheckerOfOwnerModule.equalTypes(first.type, second.type)
+        return analysisContext.resolveSession.kotlinTypeCheckerOfOwnerModule.equalTypes(first.fe10Type, second.fe10Type)
     }
 
     override fun isSubTypeOf(subType: KtType, superType: KtType): Boolean {
         require(subType is KtFe10Type)
         require(superType is KtFe10Type)
         val typeChecker = analysisContext.resolveSession.kotlinTypeCheckerOfOwnerModule
-        return typeChecker.isSubtypeOf(subType.type, superType.type)
+        return typeChecker.isSubtypeOf(subType.fe10Type, superType.fe10Type)
     }
 }

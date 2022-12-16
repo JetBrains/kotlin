@@ -25,15 +25,15 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
 
 internal class KtFe10UsualClassType(
-    override val type: SimpleType,
+    override val fe10Type: SimpleType,
     private val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtUsualClassType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
         get() = withValidityAssertion {
-            val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
+            val nestedType = KtFe10JvmTypeMapperContext.getNestedType(fe10Type)
             val nonInnerQualifiers =
                 generateSequence(nestedType.root.classifierDescriptor.containingDeclaration as? ClassDescriptor) { it.containingDeclaration as? ClassDescriptor }
 
@@ -64,9 +64,9 @@ internal class KtFe10UsualClassType(
         get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
     override val ownTypeArguments: List<KtTypeProjection>
-        get() = withValidityAssertion { type.arguments.map { it.toKtTypeProjection(analysisContext) } }
+        get() = withValidityAssertion { fe10Type.arguments.map { it.toKtTypeProjection(analysisContext) } }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 
 }

@@ -12,15 +12,11 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSyntheticFieldSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.isInterfaceLike
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KtFe10PsiDefaultPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
@@ -69,12 +65,12 @@ internal class KtFe10TypeProvider(
 
     override fun approximateToSuperPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFe10Type)
-        return typeApproximator.approximateToSuperType(type.type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
+        return typeApproximator.approximateToSuperType(type.fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
     }
 
     override fun approximateToSubPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFe10Type)
-        return typeApproximator.approximateToSubType(type.type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
+        return typeApproximator.approximateToSubType(type.fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
     }
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
@@ -85,7 +81,7 @@ internal class KtFe10TypeProvider(
     }
 
     override fun commonSuperType(types: Collection<KtType>): KtType {
-        val kotlinTypes = types.map { (it as KtFe10Type).type }
+        val kotlinTypes = types.map { (it as KtFe10Type).fe10Type }
         return CommonSupertypes.commonSupertype(kotlinTypes).toKtType(analysisContext)
     }
 
@@ -104,11 +100,11 @@ internal class KtFe10TypeProvider(
 
     override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType {
         require(type is KtFe10Type)
-        return type.type.makeNullableAsSpecified(newNullability == KtTypeNullability.NULLABLE).toKtType(analysisContext)
+        return type.fe10Type.makeNullableAsSpecified(newNullability == KtTypeNullability.NULLABLE).toKtType(analysisContext)
     }
 
     override fun haveCommonSubtype(a: KtType, b: KtType): Boolean {
-        return areTypesCompatible((a as KtFe10Type).type, (b as KtFe10Type).type)
+        return areTypesCompatible((a as KtFe10Type).fe10Type, (b as KtFe10Type).fe10Type)
     }
 
     override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
@@ -121,12 +117,12 @@ internal class KtFe10TypeProvider(
 
     override fun getDirectSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
         require(type is KtFe10Type)
-        return TypeUtils.getImmediateSupertypes(type.type).map { it.toKtType(analysisContext) }
+        return TypeUtils.getImmediateSupertypes(type.fe10Type).map { it.toKtType(analysisContext) }
     }
 
     override fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
         require(type is KtFe10Type)
-        return TypeUtils.getAllSupertypes(type.type).map { it.toKtType(analysisContext) }
+        return TypeUtils.getAllSupertypes(type.fe10Type).map { it.toKtType(analysisContext) }
     }
 
     override fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType? {
