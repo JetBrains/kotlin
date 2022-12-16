@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -34,11 +32,12 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
         }
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
+        // TODO: this is not how CFG works, tail calls inside try-catch should be detected by FIR tree traversal.
         var tryScopeCount = 0
         var catchScopeCount = 0
         var finallyScopeCount = 0
         var tailrecCount = 0
-        graph.traverse(TraverseDirection.Forward, object : ControlFlowGraphVisitorVoid() {
+        graph.traverse(object : ControlFlowGraphVisitorVoid() {
             override fun visitNode(node: CFGNode<*>) {}
 
             override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}

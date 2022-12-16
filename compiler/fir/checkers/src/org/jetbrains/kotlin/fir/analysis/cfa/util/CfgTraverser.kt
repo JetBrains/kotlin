@@ -7,31 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 
-// ------------------------------ Graph Traversal ------------------------------
-
 enum class TraverseDirection {
     Forward, Backward
 }
-
-fun <D> ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitor<*, D>,
-    data: D
-) {
-    for (node in getNodesInOrder(direction)) {
-        node.accept(visitor, data)
-        (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(direction, visitor, data) }
-    }
-}
-
-fun ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitorVoid
-) {
-    traverse(direction, visitor, null)
-}
-
-// ---------------------- Path-sensitive data collection -----------------------
 
 fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNode(
     direction: TraverseDirection,

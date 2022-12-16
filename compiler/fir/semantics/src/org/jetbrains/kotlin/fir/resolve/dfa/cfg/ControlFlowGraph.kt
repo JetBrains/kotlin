@@ -43,6 +43,21 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         FakeCall,
         DefaultArgument,
     }
+
+    // NOTE: this is only for dynamic dispatch on node types. If you're collecting data from predecessors,
+    // use `collectDataForNode` instead to account for `finally` block deduplication. If you don't need that,
+    // then you probably don't need this either. Hint: if the only thing you need from nodes is the corresponding
+    // FIR structure, then traverse the `FirFile` instead.
+    fun <D> traverse(visitor: ControlFlowGraphVisitor<*, D>, data: D) {
+        for (node in nodes) {
+            node.accept(visitor, data)
+            (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(visitor, data) }
+        }
+    }
+
+    fun traverse(visitor: ControlFlowGraphVisitorVoid) {
+        traverse(visitor, null)
+    }
 }
 
 data class Edge(

@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 
+// TODO: this should be a FIR tree visitor, not a control flow graph visitor.
 class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlowGraphVisitorVoid() {
     companion object {
         fun collect(graph: ControlFlowGraph): Pair<Set<FirPropertySymbol>, Set<FirVariableAssignment>> {
             val collector = LocalPropertyAndCapturedWriteCollector()
-            graph.traverse(TraverseDirection.Forward, collector)
+            graph.traverse(collector)
             return collector.symbols.keys to collector.capturedWrites
         }
     }
