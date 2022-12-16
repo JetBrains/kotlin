@@ -142,6 +142,17 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtr
 	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 }
 
+public abstract interface class org/jetbrains/kotlin/tooling/core/Interner {
+	public abstract fun getOrPut (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/InternerKt {
+	public static final fun Interner (Ljava/util/concurrent/locks/Lock;)Lorg/jetbrains/kotlin/tooling/core/Interner;
+	public static synthetic fun Interner$default (Ljava/util/concurrent/locks/Lock;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/Interner;
+	public static final fun WeakInterner (Ljava/util/concurrent/locks/Lock;)Lorg/jetbrains/kotlin/tooling/core/Interner;
+	public static synthetic fun WeakInterner$default (Ljava/util/concurrent/locks/Lock;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/Interner;
+}
+
 public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion : java/io/Serializable, java/lang/Comparable {
 	public fun <init> (IIILjava/lang/String;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
