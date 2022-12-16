@@ -40,6 +40,13 @@ internal fun FirScope.processConstructorsByName(
     val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, session, bodyResolveComponents) ?: return
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
+    if (
+        matchedClassSymbol is FirRegularClassSymbol &&
+        (matchedClassSymbol.classKind == ClassKind.OBJECT || matchedClassSymbol.classKind == ClassKind.ENUM_ENTRY)
+    ) {
+        return
+    }
+
     processConstructors(
         matchedClassSymbol,
         substitutor,
