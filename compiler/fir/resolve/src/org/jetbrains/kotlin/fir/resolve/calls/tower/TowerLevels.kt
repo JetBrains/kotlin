@@ -312,7 +312,7 @@ class ContextReceiverGroupMemberScopeTowerLevel(
 
     private inline fun minAmongReceivers(calculateResult: (MemberScopeTowerLevel) -> ProcessResult): ProcessResult {
         return memberScopeLevels.minOf { (it, level) ->
-            if (it in emptyScopesCache.contextReceivers) {
+            if (it in emptyScopesCache.contextReceiversValuesWithEmptyScopes) {
                 return ProcessResult.DEFINITELY_EMPTY
             }
 

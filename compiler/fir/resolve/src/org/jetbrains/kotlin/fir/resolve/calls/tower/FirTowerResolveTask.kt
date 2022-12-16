@@ -100,7 +100,7 @@ internal abstract class FirBaseTowerResolveTask(
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
         emptyScopesCache: EmptyScopesCache,
     ) {
-        if (contextReceiverGroup.all { it in emptyScopesCache.contextReceivers }) {
+        if (contextReceiverGroup.all { it in emptyScopesCache.contextReceiversValuesWithEmptyScopes }) {
             return
         }
 
@@ -109,7 +109,7 @@ internal abstract class FirBaseTowerResolveTask(
 
         for (it in contextReceiverGroup) {
             if (it !in towerLevel.nonEmptyReceivers) {
-                emptyScopesCache.contextReceivers.add(it)
+                emptyScopesCache.contextReceiversValuesWithEmptyScopes.add(it)
             }
         }
     }
@@ -305,9 +305,8 @@ internal open class FirTowerResolveTask(
         processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup, emptyScopesCache)
 
         // Member scope of expression receiver
-        processLevel(
+        processLevelWithoutCaching(
             explicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member,
-            receiver, emptyScopesCache.explicitReceivers,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
         )
 

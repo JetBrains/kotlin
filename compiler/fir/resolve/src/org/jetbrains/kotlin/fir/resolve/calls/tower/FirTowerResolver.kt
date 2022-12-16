@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -26,9 +25,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 class EmptyScopesCache {
     val emptyScopes = mutableSetOf<FirScope>()
     val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
-    val invokeReceiverValuesWithEmptyScopes = mutableSetOf<ExpressionReceiverValue>()
-    val contextReceivers = mutableSetOf<ContextReceiverValue<*>>()
-    val explicitReceivers = mutableSetOf<FirExpression>()
+    val contextReceiversValuesWithEmptyScopes = mutableSetOf<ContextReceiverValue<*>>()
 }
 
 class FirTowerResolver(

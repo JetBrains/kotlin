@@ -218,7 +218,6 @@ internal class FirInvokeResolveTowerExtension(
                 task.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
                     invokeFunctionInfo, explicitReceiver,
                     TowerGroup.EmptyRoot,
-                    emptyScopesCache,
                 )
             }
         } else {
@@ -258,7 +257,6 @@ internal class FirInvokeResolveTowerExtension(
             task.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
                 info, explicitReceiverValue,
                 TowerGroup.EmptyRoot,
-                emptyScopesCache,
             )
         }
         manager.enqueueResolverTask {
@@ -384,11 +382,9 @@ private class InvokeFunctionResolveTask(
         parentGroupForInvokeCandidates: TowerGroup,
         emptyScopesCache: EmptyScopesCache,
     ) {
-        processLevelForRegularInvoke(
+        processLevelForRegularInvokeWithoutCaching(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, parentGroupForInvokeCandidates.Member,
-            invokeReceiverValue,
-            emptyScopesCache.invokeReceiverValuesWithEmptyScopes,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
         )
 
@@ -427,12 +423,10 @@ private class InvokeFunctionResolveTask(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue,
         parentGroupForInvokeCandidates: TowerGroup,
-        emptyScopesCache: EmptyScopesCache,
     ) {
-        processLevel(
+        processLevelWithoutCaching(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, parentGroupForInvokeCandidates.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
-            invokeReceiverValue, emptyScopesCache.invokeReceiverValuesWithEmptyScopes,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
         )
     }
@@ -462,6 +456,17 @@ private class InvokeFunctionResolveTask(
             )
         }
     }
+
+    private suspend fun processLevelForRegularInvokeWithoutCaching(
+        towerLevel: TowerScopeLevel,
+        callInfo: CallInfo,
+        group: TowerGroup,
+        explicitReceiverKind: ExplicitReceiverKind,
+    ) = processLevelWithoutCaching(
+        towerLevel, callInfo,
+        group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
+        explicitReceiverKind,
+    )
 
     private suspend inline fun <reified T> processLevelForRegularInvoke(
         towerLevel: TowerScopeLevel,
