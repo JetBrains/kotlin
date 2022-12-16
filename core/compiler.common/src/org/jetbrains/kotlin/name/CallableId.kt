@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.name
 
 // NB: with className == null we are at top level
-data class CallableId(
+class CallableId(
     val packageName: FqName,
     val className: FqName?,
     val callableName: Name,
@@ -72,4 +72,20 @@ data class CallableId(
             append(callableName)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CallableId) return false
+        return packageName == other.packageName && className == other.className && callableName == other.callableName
+    }
+
+    override fun hashCode(): Int {
+        return 31 * packageName.hashCode() + 31 * className.hashCode() + callableName.hashCode()
+    }
+
+    fun copy(
+        packageName: FqName = this.packageName,
+        className: FqName? = this.className,
+        callableName: Name = this.callableName,
+    ) = CallableId(packageName, className, callableName, pathToLocal)
 }
