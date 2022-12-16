@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
@@ -21,15 +20,15 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 internal class KtFe10IntersectionType(
-    override val type: SimpleType,
+    override val fe10Type: SimpleType,
     private val supertypes: Collection<KotlinType>,
     override val analysisContext: Fe10AnalysisContext
 ) : KtIntersectionType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val conjuncts: List<KtType> by cached {
         val result = ArrayList<KtType>(supertypes.size)
-        val isNullable = type.isMarkedNullable
+        val isNullable = fe10Type.isMarkedNullable
         for (supertype in supertypes) {
             val mappedSupertype = if (isNullable) supertype.makeNullable() else supertype
             result += mappedSupertype.toKtType(analysisContext)
@@ -38,5 +37,5 @@ internal class KtFe10IntersectionType(
     }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 }

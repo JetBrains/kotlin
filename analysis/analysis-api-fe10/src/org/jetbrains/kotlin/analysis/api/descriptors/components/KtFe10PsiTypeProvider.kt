@@ -42,7 +42,7 @@ internal class KtFe10PsiTypeProvider(
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
     ): PsiType? {
-        val kotlinType = (type as KtFe10Type).type
+        val kotlinType = (type as KtFe10Type).fe10Type
 
         with(typeMapper.typeContext) {
             if (kotlinType.contains { it.isError() }) {
@@ -62,9 +62,9 @@ internal class KtFe10PsiTypeProvider(
             KtTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
             KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KtTypeMappingMode.RETURN_TYPE ->
-                typeMapper.typeContext.getOptimalModeForReturnType(type.type, isAnnotationMethod)
+                typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
             KtTypeMappingMode.VALUE_PARAMETER ->
-                typeMapper.typeContext.getOptimalModeForValueParameter(type.type)
+                typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
         }
     }
 

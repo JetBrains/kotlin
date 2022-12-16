@@ -16,28 +16,28 @@ import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 
 internal class KtFe10TypeErrorType(
-    override val type: ErrorType,
+    override val fe10Type: ErrorType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtTypeErrorType(), KtFe10Type {
     init {
-        check(!type.kind.isUnresolved) {
-            "Expected unresolved ErrorType but ${type.kind} found for $type"
+        check(!fe10Type.kind.isUnresolved) {
+            "Expected unresolved ErrorType but ${fe10Type.kind} found for $fe10Type"
         }
     }
 
     override fun tryRenderAsNonErrorType(): String? = withValidityAssertion {
-        when (type.kind) {
-            ErrorTypeKind.UNINFERRED_TYPE_VARIABLE -> type.formatParams.first()
+        when (fe10Type.kind) {
+            ErrorTypeKind.UNINFERRED_TYPE_VARIABLE -> fe10Type.formatParams.first()
             else -> null
         }
     }
 
 
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
 
     override val errorMessage: String
-        get() = withValidityAssertion { type.debugMessage }
+        get() = withValidityAssertion { fe10Type.debugMessage }
 
     override val nullability: KtTypeNullability
-        get() = withValidityAssertion { type.ktNullability }
+        get() = withValidityAssertion { fe10Type.ktNullability }
 }
