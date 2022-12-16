@@ -37,6 +37,7 @@ data class BuildOptions(
     val useFir: Boolean = false,
     val usePreciseJavaTracking: Boolean? = null,
     val freeArgs: List<String> = emptyList(),
+    val statisticsForceValidation: Boolean = true,
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -137,6 +138,10 @@ data class BuildOptions(
 
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
+        }
+
+        if (statisticsForceValidation) {
+            arguments.add("-Pkotlin_performance_profile_force_validation=true")
         }
 
         arguments.addAll(freeArgs)
