@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.statistics.MetricValueValidationFailed
 import java.io.File
 import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
@@ -32,6 +33,8 @@ class KotlinBuildStatHandler {
             return try {
                 getLogger().debug("Executing [$methodName]")
                 action.invoke()
+            } catch (e: MetricValueValidationFailed) {
+                throw e
             } catch (e: Throwable) {
                 logException("Could not execute [$methodName]", e)
                 null
