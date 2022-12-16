@@ -155,19 +155,22 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val useClasspathSnapshot: Boolean
         get() {
+            val reporter = KotlinBuildStatsService.getInstance()
             // The feature should be controlled by a Gradle property.
             // Currently, we also allow it to be controlled by a system property to make it easier to test the feature during development.
             // TODO: Remove the system property later.
 
             val gradleProperty = booleanProperty(CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property)
             if (gradleProperty != null) {
+                reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, gradleProperty.toString())
                 return gradleProperty
             }
             val systemProperty = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value?.toBooleanLenient()
             if (systemProperty != null) {
+                reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, systemProperty.toString())
                 return systemProperty
             }
-            // Default value
+            reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, "default-true")
             return true
         }
 
