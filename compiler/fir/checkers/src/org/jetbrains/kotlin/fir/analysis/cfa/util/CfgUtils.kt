@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
 fun ControlFlowGraph.getEnterNode(direction: TraverseDirection): CFGNode<*> = when (direction) {
@@ -30,14 +29,7 @@ val CFGNode<*>.previousCfgNodes: List<CFGNode<*>>
     }
 
 val CFGNode<*>.followingCfgNodes: List<CFGNode<*>>
-    get() {
-        val nodes = mutableListOf<CFGNode<*>>()
-
-        followingNodes.filterTo(nodes) {
-            val kind = edgeTo(it).kind
-            kind.usedInCfa && !kind.isDead
-        }
-        (this as? CFGNodeWithSubgraphs<*>)?.subGraphs?.mapTo(nodes) { it.enterNode }
-
-        return nodes
+    get() = followingNodes.filter {
+        val kind = edgeTo(it).kind
+        kind.usedInCfa && !kind.isDead
     }
