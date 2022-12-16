@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 
 import java.io.File
 import java.io.Serializable
+import java.lang.ref.WeakReference
+import java.util.*
 
 fun IdeaKotlinClasspath(files: Iterable<File>): IdeaKotlinClasspath = IdeaKotlinClasspath.from(files)
 
@@ -76,7 +78,8 @@ class IdeaKotlinClasspath private constructor(private val files: MutableSet<File
         private const val serialVersionUID = 0L
 
         fun normalise(file: File): File {
-            return file.absoluteFile.normalize()
+            val normalized = file.absoluteFile.normalize()
+            return intern(normalized)
         }
 
         fun from(files: Iterable<File>): IdeaKotlinClasspath {
@@ -88,5 +91,11 @@ class IdeaKotlinClasspath private constructor(private val files: MutableSet<File
         }
 
         fun empty() = IdeaKotlinClasspath(mutableSetOf())
+
+        private val interner = WeakHashMap<File, WeakReference<File>>()
+
+        private fun intern(file: File): File {
+            return interner.getOrPut(file) { WeakReference(file) }.get() ?: file
+        }
     }
 }
