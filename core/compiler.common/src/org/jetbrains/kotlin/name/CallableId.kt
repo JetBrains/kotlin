@@ -18,6 +18,8 @@ class CallableId(
         val PACKAGE_FQ_NAME_FOR_LOCAL = FqName.topLevel(LOCAL_NAME)
     }
 
+    private var cachedHashCode: Int = 0
+
     /**
      * Return `true` if corresponding declaration is itself local or it is a member of local class
      * Otherwise, returns `false`
@@ -80,7 +82,10 @@ class CallableId(
     }
 
     override fun hashCode(): Int {
-        return 31 * packageName.hashCode() + 31 * className.hashCode() + callableName.hashCode()
+        if (cachedHashCode == 0) {
+            cachedHashCode = 31 * packageName.hashCode() + 31 * className.hashCode() + callableName.hashCode()
+        }
+        return cachedHashCode
     }
 
     fun copy(
