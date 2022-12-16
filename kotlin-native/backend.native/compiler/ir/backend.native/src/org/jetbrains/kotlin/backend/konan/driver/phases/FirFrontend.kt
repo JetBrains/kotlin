@@ -119,7 +119,7 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
         FirOutput.ShouldNotGenerateCode
     } else {
-        if (configuration.getBoolean(KonanConfigKeys.PRINT_IR))
+        if (context.shouldPrintFiles())
             firFiles.forEach { println(it.render()) }
         FirOutput.Full(session, scopeSession, firFiles)
     }
