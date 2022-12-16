@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND_K2: ANY
+// FIR_STATUS: KT-35565
 //  java.lang.AssertionError
 //    at org.jetbrains.kotlin.js.translate.context.TranslationContext.getDispatchReceiver(TranslationContext.java:590)
 //    at org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldReference(TranslationUtils.java:237)

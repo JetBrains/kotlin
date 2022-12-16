@@ -73,7 +73,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
                 } else {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION, symbol, context)
                 }
-            } else if (symbol is FirSyntheticPropertySymbol || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
+            } else if (data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
                 reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
             }
         }

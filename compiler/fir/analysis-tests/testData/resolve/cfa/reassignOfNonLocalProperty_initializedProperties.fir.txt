@@ -1,0 +1,47 @@
+FILE: reassignOfNonLocalProperty_initializedProperties.kt
+    public final val z: R|kotlin/String| = String(ok)
+        public get(): R|kotlin/String|
+    public final val R|Some|.y: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(ok)
+        }
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = String(ok)
+            public get(): R|kotlin/String|
+
+        init {
+            this@R|/Some|.R|/Some.x| = String(error)
+            this@R|/Some|.R|/y| = String(error)
+            R|/z| = String(error)
+        }
+
+        public final val a: R|kotlin/String| = this@R|/Some|.R|kotlin/run|<R|Some|, R|kotlin/String|>(<L> = run@fun R|Some|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Some.x| = String(error)
+            this@R|special/anonymous|.R|/y| = String(error)
+            R|/z| = String(error)
+            ^ String(hello)
+        }
+        )
+            public get(): R|kotlin/String|
+
+        public final fun test_1(): R|kotlin/Unit| {
+            this@R|/Some|.R|/Some.x| = String(error)
+            this@R|/Some|.R|/y| = String(error)
+            R|/z| = String(error)
+        }
+
+    }
+    public final fun R|Some|.test_2(): R|kotlin/Unit| {
+        this@R|/test_2|.R|/Some.x| = String(error)
+        this@R|/test_2|.R|/y| = String(error)
+        R|/z| = String(error)
+    }
+    public final fun test_3(some: R|Some|): R|kotlin/Unit| {
+        R|<local>/some|.R|/Some.x| = String(error)
+        R|<local>/some|.R|/y| = String(error)
+        R|/z| = String(error)
+    }

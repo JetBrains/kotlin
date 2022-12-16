@@ -32,5 +32,5 @@ fun `should not report an error for assign return type for unannotated class`() 
     data class IntTask(val input: IntProperty)
 
     val task = IntTask(IntProperty(42))
-    task.input = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
+    task.<!VAL_REASSIGNMENT!>input<!> = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
 }

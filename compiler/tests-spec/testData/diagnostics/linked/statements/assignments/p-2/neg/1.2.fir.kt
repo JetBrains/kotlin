@@ -7,8 +7,8 @@
  */
 fun case1() {
     val x : Case1? = Case1()
-    x.x = "0"
-    x?.x = "0"
+    x.<!VAL_REASSIGNMENT!>x<!> = "0"
+    x?.<!VAL_REASSIGNMENT!>x<!> = "0"
     <!VARIABLE_EXPECTED!>x::x<!> = TODO()
 }
 
@@ -23,8 +23,8 @@ class Case1{
  */
 fun case2() {
     val x : Case2? = Case2(null)
-    x.x = "0"
-    x?.x = "0"
+    x.<!VAL_REASSIGNMENT!>x<!> = "0"
+    x?.<!VAL_REASSIGNMENT!>x<!> = "0"
     <!VARIABLE_EXPECTED!>x::x<!> = TODO()
 }
 
@@ -36,8 +36,8 @@ class Case2(val x: Any?) {}
  */
 fun case3() {
     val x : Case3? = Case3()
-    x.x = "0"
-    x?.x = "0"
+    x.<!VAL_REASSIGNMENT!>x<!> = "0"
+    x?.<!VAL_REASSIGNMENT!>x<!> = "0"
     <!VARIABLE_EXPECTED!>x::x<!> = TODO()
 }
 

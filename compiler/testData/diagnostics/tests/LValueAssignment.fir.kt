@@ -11,14 +11,14 @@ class C() : B() {
         this.x = 34
         this.b = 123
         super.b = 23
-        this.c = 34
-        super.c = 3535 //repeat for 'c'
+        this.<!VAL_REASSIGNMENT!>c<!> = 34
+        super.<!VAL_REASSIGNMENT!>c<!> = 3535 //repeat for 'c'
 
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
     fun foo1(c: C) {
-        super.c = 34
+        super.<!VAL_REASSIGNMENT!>c<!> = 34
     }
 
     fun bar(c: C) {

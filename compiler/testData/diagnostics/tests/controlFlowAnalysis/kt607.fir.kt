@@ -8,8 +8,8 @@ fun foo(a: A) {
            get() = 42
     }
 
-    a.z = 23
-    o.y = 11   //Should be an error here
+    a.<!VAL_REASSIGNMENT!>z<!> = 23
+    o.<!VAL_REASSIGNMENT!>y<!> = 11   //Should be an error here
 }
 
 class A() {

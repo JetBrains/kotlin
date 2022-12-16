@@ -63,6 +63,6 @@ class InitializationForbiddenInNonInitSection {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
 
     fun setup() {
-        myRun { x = 42 }
+        myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
     }
 }

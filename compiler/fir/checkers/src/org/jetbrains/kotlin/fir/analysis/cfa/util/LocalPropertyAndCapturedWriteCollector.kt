@@ -57,10 +57,6 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
         val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
-        if (symbol is FirSyntheticPropertySymbol) {
-            symbols[symbol] = true
-            return
-        }
 
         // Check if this variable assignment is inside a lambda or a local function.
         if (lambdaOrLocalFunctionStack.isEmpty()) return

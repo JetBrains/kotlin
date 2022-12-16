@@ -86,5 +86,5 @@ class My {
 <!MUST_BE_INITIALIZED!>val top: Int<!>
 
 fun init() {
-    top = 1
+    <!VAL_REASSIGNMENT!>top<!> = 1
 }

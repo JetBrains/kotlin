@@ -1,0 +1,39 @@
+FILE: reassignOfNonMemberProperty_lateInitialization.kt
+    public final val R|Some|.z: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(ok)
+        }
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val y: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        init {
+            this@R|/Some|.R|/Some.x| = String(ok)
+            this@R|/Some|.R|/Some.x| = String(error)
+            this@R|/Some|.R|/z| = String(error)
+        }
+
+        public final val a: R|kotlin/String| = this@R|/Some|.R|kotlin/run|<R|Some|, R|kotlin/String|>(<L> = run@fun R|Some|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Some.x| = String(error)
+            this@R|special/anonymous|.R|/Some.y| = String(ok)
+            this@R|special/anonymous|.R|/Some.y| = String(error)
+            this@R|special/anonymous|.R|/z| = String(error)
+            ^ String(hello)
+        }
+        )
+            public get(): R|kotlin/String|
+
+        init {
+            this@R|/Some|.R|/Some.x| = String(error)
+            this@R|/Some|.R|/Some.y| = String(error)
+            this@R|/Some|.R|/z| = String(error)
+        }
+
+    }

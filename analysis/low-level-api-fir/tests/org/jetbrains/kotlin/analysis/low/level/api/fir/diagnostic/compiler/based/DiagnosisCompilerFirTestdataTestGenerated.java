@@ -1086,6 +1086,18 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             public void testInitializationInTry() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfa/initializationInTry.kt");
             }
+
+            @Test
+            @TestMetadata("reassignOfNonLocalProperty_initializedProperties.kt")
+            public void testReassignOfNonLocalProperty_initializedProperties() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfa/reassignOfNonLocalProperty_initializedProperties.kt");
+            }
+
+            @Test
+            @TestMetadata("reassignOfNonMemberProperty_lateInitialization.kt")
+            public void testReassignOfNonMemberProperty_lateInitialization() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfa/reassignOfNonMemberProperty_lateInitialization.kt");
+            }
         }
 
         @Nested
