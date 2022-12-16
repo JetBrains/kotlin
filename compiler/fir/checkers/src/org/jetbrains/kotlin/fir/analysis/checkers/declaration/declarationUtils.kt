@@ -120,19 +120,6 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
 val FirSimpleFunction.isTypedEquals
     get() = hasAnnotation(StandardClassIds.Annotations.TypedEquals)
 
-
-fun FirSimpleFunction.isSuitableSignatureForTypedEquals(session: FirSession): Boolean =
-    containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
-        val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
-        with(this@isSuitableSignatureForTypedEquals) {
-            contextReceivers.isEmpty() && receiverParameter == null
-                    && name == OperatorNameConventions.EQUALS
-                    && this@run.isInline && valueParameters.size == 1
-                    && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                    && valueParameters[0].returnTypeRef.coneType == valueClassStarProjection
-        }
-    } ?: false
-
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
     coneType.typeConstructor().isMultiFieldValueClass() && !coneType.isNullable
 }

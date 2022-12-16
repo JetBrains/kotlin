@@ -1361,15 +1361,3 @@ fun IrFunction.isEquals() =
 
 val IrFunction.isTypedEquals: Boolean
     get() = this.hasAnnotation(TypedEquals.asSingleFqName())
-
-val IrFunction.isValueClassTypedEqualsBySignature: Boolean
-    get() {
-        val parentClass = parent as? IrClass ?: return false
-        val enclosingClassStartProjection = parentClass.symbol.starProjectedType
-        return name == OperatorNameConventions.EQUALS
-                && (returnType.isBoolean() || returnType.isNothing())
-                && valueParameters.size == 1
-                && (valueParameters[0].type == enclosingClassStartProjection)
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-                && (parentClass.isValue)
-    }

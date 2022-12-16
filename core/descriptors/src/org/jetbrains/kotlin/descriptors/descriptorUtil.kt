@@ -91,18 +91,6 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
 
 object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>
 
-fun FunctionDescriptor.isSuitableSignatureForTypedEquals(): Boolean {
-    val valueClassStarProjection =
-        (containingDeclaration as? ClassDescriptor)?.takeIf { it.isValueClass() }?.defaultType?.replaceArgumentsWithStarProjections()
-            ?: return false
-    val returnType = returnType ?: return false
-    return name == OperatorNameConventions.EQUALS
-            && (returnType.isBoolean() || returnType.isNothing())
-            && valueParameters.size == 1 && valueParameters[0].type == valueClassStarProjection
-            && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
-}
-
-
 fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
         && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
         && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
