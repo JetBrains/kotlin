@@ -18,67 +18,82 @@ import org.jetbrains.kotlin.fir.declarations.*
 class DeclarationCheckersDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
-    private val checkers: DeclarationCheckers = session.checkersComponent.declarationCheckers,
+    checkers: DeclarationCheckers = session.checkersComponent.declarationCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
+    private val allFileCheckers = checkers.allFileCheckers.toList()
+    private val allPropertyCheckers = checkers.allPropertyCheckers.toList()
+    private val allClassCheckers = checkers.allClassCheckers.toList()
+    private val allRegularClassCheckers = checkers.allRegularClassCheckers.toList()
+    private val allSimpleFunctionCheckers = checkers.allSimpleFunctionCheckers.toList()
+    private val allTypeAliasCheckers = checkers.allTypeAliasCheckers.toList()
+    private val allConstructorCheckers = checkers.allConstructorCheckers.toList()
+    private val allAnonymousFunctionCheckers = checkers.allAnonymousFunctionCheckers.toList()
+    private val allPropertyAccessorCheckers = checkers.allPropertyAccessorCheckers.toList()
+    private val allBackingFieldCheckers = checkers.allBackingFieldCheckers.toList()
+    private val allValueParameterCheckers = checkers.allValueParameterCheckers.toList()
+    private val allTypeParameterCheckers = checkers.allTypeParameterCheckers.toList()
+    private val allEnumEntryCheckers = checkers.allEnumEntryCheckers.toList()
+    private val allAnonymousObjectCheckers = checkers.allAnonymousObjectCheckers.toList()
+    private val allAnonymousInitializerCheckers = checkers.allAnonymousInitializerCheckers.toList()
 
     override fun visitFile(file: FirFile, data: CheckerContext) {
-        checkers.allFileCheckers.check(file, data)
+        allFileCheckers.check(file, data)
     }
 
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
-        checkers.allPropertyCheckers.check(property, data)
+        allPropertyCheckers.check(property, data)
     }
 
     override fun visitClass(klass: FirClass, data: CheckerContext) {
-        checkers.allClassCheckers.check(klass, data)
+        allClassCheckers.check(klass, data)
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        checkers.allRegularClassCheckers.check(regularClass, data)
+        allRegularClassCheckers.check(regularClass, data)
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
-        checkers.allSimpleFunctionCheckers.check(simpleFunction, data)
+        allSimpleFunctionCheckers.check(simpleFunction, data)
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: CheckerContext) {
-        checkers.allTypeAliasCheckers.check(typeAlias, data)
+        allTypeAliasCheckers.check(typeAlias, data)
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
-        checkers.allConstructorCheckers.check(constructor, data)
+        allConstructorCheckers.check(constructor, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
-        checkers.allAnonymousFunctionCheckers.check(anonymousFunction, data)
+        allAnonymousFunctionCheckers.check(anonymousFunction, data)
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
-        checkers.allPropertyAccessorCheckers.check(propertyAccessor, data)
+        allPropertyAccessorCheckers.check(propertyAccessor, data)
     }
 
     override fun visitBackingField(backingField: FirBackingField, data: CheckerContext) {
-        checkers.allBackingFieldCheckers.check(backingField, data)
+        allBackingFieldCheckers.check(backingField, data)
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter, data: CheckerContext) {
-        checkers.allValueParameterCheckers.check(valueParameter, data)
+        allValueParameterCheckers.check(valueParameter, data)
     }
 
     override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
-        checkers.allTypeParameterCheckers.check(typeParameter, data)
+        allTypeParameterCheckers.check(typeParameter, data)
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
-        checkers.allEnumEntryCheckers.check(enumEntry, data)
+        allEnumEntryCheckers.check(enumEntry, data)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
-        checkers.allAnonymousObjectCheckers.check(anonymousObject, data)
+        allAnonymousObjectCheckers.check(anonymousObject, data)
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {
-        checkers.allAnonymousInitializerCheckers.check(anonymousInitializer, data)
+        allAnonymousInitializerCheckers.check(anonymousInitializer, data)
     }
 
     private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(
