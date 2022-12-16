@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.util.*
+import kotlin.collections.ArrayList
 
 // TODO: rewrite
 fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
@@ -143,7 +145,7 @@ inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R):
 }
 
 @JvmInline
-value class MutableOrEmptyList<T>(val list: MutableList<T>?) : List<T> {
+value class MutableOrEmptyList<out T>(internal val list: MutableList<@UnsafeVariance T>?) : List<T> {
 
     private constructor(list: Nothing?) : this(list as MutableList<T>?)
 
@@ -159,42 +161,52 @@ value class MutableOrEmptyList<T>(val list: MutableList<T>?) : List<T> {
     }
 
     override fun iterator(): Iterator<T> {
-        return list?.iterator() ?: emptyList<T>().iterator()
+        return list?.iterator() ?: EMPTY_LIST_STUB_ITERATOR
     }
 
     override fun listIterator(): ListIterator<T> {
-        return list?.listIterator() ?: emptyList<T>().listIterator()
+        return list?.listIterator() ?: EMPTY_LIST_STUB_LIST_ITERATOR
     }
 
     override fun listIterator(index: Int): ListIterator<T> {
-        return list?.listIterator(index) ?: emptyList<T>().listIterator(index)
+        return list?.listIterator(index) ?: EMPTY_LIST_STUB_LIST_ITERATOR
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> {
+    override fun subList(fromIndex: Int, toIndex: Int): List<T> {
+        if (list == null && fromIndex == 0 && toIndex == 0) return this
         return list!!.subList(fromIndex, toIndex)
     }
 
-    override fun lastIndexOf(element: T): Int {
+    override fun lastIndexOf(element: @UnsafeVariance T): Int {
         return list?.lastIndexOf(element) ?: -1
     }
 
-    override fun indexOf(element: T): Int {
+    override fun indexOf(element: @UnsafeVariance T): Int {
         return list?.indexOf(element) ?: -1
     }
 
-    override fun containsAll(elements: Collection<T>): Boolean {
+    override fun containsAll(elements: Collection<@UnsafeVariance T>): Boolean {
         return list?.containsAll(elements) ?: elements.isEmpty()
     }
 
-    override fun contains(element: T): Boolean {
+    override fun contains(element: @UnsafeVariance T): Boolean {
         return list?.contains(element) ?: false
+    }
+
+    override fun toString(): String {
+        return list?.joinToString(prefix = "[", postfix = "]") ?: "[]"
     }
 
     companion object {
         private val EMPTY = MutableOrEmptyList<Nothing>(null)
 
-        @Suppress("UNCHECKED_CAST")
-        fun <T> empty(): MutableOrEmptyList<T> = EMPTY as MutableOrEmptyList<T>
+        private val EMPTY_LIST_STUB = emptyList<Nothing>()
+
+        private val EMPTY_LIST_STUB_ITERATOR = EMPTY_LIST_STUB.iterator()
+
+        private val EMPTY_LIST_STUB_LIST_ITERATOR = EMPTY_LIST_STUB.listIterator()
+
+        fun <T> empty(): MutableOrEmptyList<T> = EMPTY
     }
 }
 
