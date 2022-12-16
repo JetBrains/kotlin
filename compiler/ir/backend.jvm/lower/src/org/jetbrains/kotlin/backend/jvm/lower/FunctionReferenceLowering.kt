@@ -237,7 +237,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
         val proxyFun = context.irFactory.buildFun {
-            name = Name.identifier("${targetFun.name.asString()}__proxy")
+            name =
+                if (targetFun.name.isSpecial) Name.special("<${targetFun.name.asStringStripSpecialMarkers()}__proxy>")
+                else Name.identifier("${targetFun.name.asString()}__proxy")
             returnType = targetFun.returnType.eraseTypeParameters()
             visibility = DescriptorVisibilities.LOCAL
             modality = Modality.FINAL
