@@ -172,7 +172,6 @@ class IdeSourceDependencyResolutionTest {
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/jvmAndAndroidMain"),
             dependsOnDependency(":consumer/commonMain"),
-            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer-jvm.jar"))
         )
     }
 
