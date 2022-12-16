@@ -689,6 +689,8 @@ class FunctionInlining(
                 } else {
                     val newVariable =
                         currentScope.scope.createTemporaryVariable(
+                            startOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
+                            endOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
                             irExpression = irExpression,
                             irType = if (inlineArgumentsWithTheirOriginalTypeAndOffset) it.parameter.getOriginalType() else irExpression.type,
                             nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_" + it.parameter.name.asStringStripSpecialMarkers(),
@@ -793,14 +795,18 @@ class FunctionInlining(
                     (alwaysCreateTemporaryVariablesForArguments && !parameter.isInlineParameter()) ||
                             argument.shouldBeSubstitutedViaTemporaryVariable()
 
-                if (!shouldCreateTemporaryVariable) {
-                    substituteMap[parameter] = variableInitializer
+                if (shouldCreateTemporaryVariable) {
+                    val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
+                    if (argument.isDefaultArg) evaluationStatementsFromDefault.add(newVariable) else evaluationStatements.add(newVariable)
+                    substituteMap[parameter] = IrGetValueWithoutLocation(newVariable.symbol)
                     return@forEach
                 }
 
-                val newVariable = createTemporaryVariable(parameter, variableInitializer, callee)
-                if (argument.isDefaultArg) evaluationStatementsFromDefault.add(newVariable) else evaluationStatements.add(newVariable)
-                substituteMap[parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                substituteMap[parameter] = if (variableInitializer is IrGetValue) {
+                    IrGetValueWithoutLocation(variableInitializer.symbol)
+                } else {
+                    variableInitializer
+                }
             }
 
 
@@ -824,13 +830,19 @@ class FunctionInlining(
         }
 
         private fun ParameterToArgument.shouldBeSubstitutedViaTemporaryVariable(): Boolean =
-            !isImmutableVariableLoad && !(argumentExpression.isPure(false, context = context) && inlinePureArguments)
+            !(isImmutableVariableLoad && parameter.index >= 0) &&
+                    !(argumentExpression.isPure(false, context = context) && inlinePureArguments)
 
-        private fun createTemporaryVariable(parameter: IrValueParameter, variableInitializer: IrExpression, callee: IrFunction): IrVariable {
+        private fun createTemporaryVariable(
+            parameter: IrValueParameter,
+            variableInitializer: IrExpression,
+            isDefaultArg: Boolean,
+            callee: IrFunction
+        ): IrVariable {
             val variable = currentScope.scope.createTemporaryVariable(
                 irExpression = IrBlockImpl(
-                    variableInitializer.startOffset,
-                    variableInitializer.endOffset,
+                    if (isDefaultArg) variableInitializer.startOffset else UNDEFINED_OFFSET,
+                    if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
                     if (inlineArgumentsWithTheirOriginalTypeAndOffset) parameter.getOriginalType() else variableInitializer.type,
                     InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
                 ).apply {

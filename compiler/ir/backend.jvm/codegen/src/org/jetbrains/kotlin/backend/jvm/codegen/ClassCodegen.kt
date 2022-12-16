@@ -81,6 +81,7 @@ class ClassCodegen private constructor(
         )
     }
 
+    val smap = context.getSourceMapper(irClass)
     private val state get() = context.state
 
     private val innerClasses = mutableSetOf<IrClass>()
@@ -158,7 +159,6 @@ class ClassCodegen private constructor(
         // Generating a method node may cause the addition of a field with an initializer if an inline function
         // call uses `assert` and the JVM assertions mode is enabled. To avoid concurrent modification errors,
         // there is a very specific generation order.
-        val smap = context.getSourceMapper(irClass)
         // 1. Any method other than `<clinit>` can add a field and a `<clinit>` statement:
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
             if (method.name.asString() != "<clinit>" &&
