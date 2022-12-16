@@ -259,6 +259,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("unresolvedWithAliasedImport.kt")
+    public void testUnresolvedWithAliasedImport() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedWithAliasedImport.kt");
+    }
+
+    @Test
     @TestMetadata("wildcardOptimization.kt")
     public void testWildcardOptimization() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/wildcardOptimization.kt");

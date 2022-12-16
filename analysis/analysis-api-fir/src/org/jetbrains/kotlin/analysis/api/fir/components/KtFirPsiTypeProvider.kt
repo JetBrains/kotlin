@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import java.text.StringCharacterIterator
@@ -196,7 +197,14 @@ private fun ConeKotlinType.asPsiType(
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 
     //TODO Check thread safety
-    session.jvmTypeMapper.mapType(this, mode, signatureWriter)
+    session.jvmTypeMapper.mapType(this, mode, signatureWriter) {
+        val containingFile = useSitePosition.containingKtFile
+        // parameters for default setters does not have kotlin origin, but setter has
+            ?: (useSitePosition as? KtLightParameter)?.parent?.parent?.containingKtFile
+            ?: return@mapType null
+        val correspondingImport = containingFile.findImportByAlias(it) ?: return@mapType null
+        correspondingImport.importPath?.pathStr
+    }
 
     val canonicalSignature = signatureWriter.toString()
     require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
@@ -212,6 +220,9 @@ private fun ConeKotlinType.asPsiType(
     val typeElement = ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
     return typeElement.type
 }
+
+private val PsiElement.containingKtFile: KtFile?
+    get() = (this as? KtLightElement<*, *>)?.kotlinOrigin?.containingKtFile
 
 private class AnonymousTypesSubstitutor(
     private val session: FirSession,
