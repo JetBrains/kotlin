@@ -68,21 +68,6 @@ internal abstract class FirBaseTowerResolveTask(
     open fun interceptTowerGroup(towerGroup: TowerGroup) = towerGroup
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
 
-    protected suspend fun <T> processLevelWithoutCheck(
-        towerLevel: TowerScopeLevel,
-        callInfo: CallInfo,
-        group: TowerGroup,
-        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-        levelProducer: T,
-        cache: MutableSet<T>,
-    ) {
-        val isEmpty = processLevel(towerLevel, callInfo, group, explicitReceiverKind)
-
-        if (isEmpty) {
-            cache.add(levelProducer)
-        }
-    }
-
     protected suspend inline fun processLevelStupid(
         towerLevel: TowerScopeLevel,
         callInfo: CallInfo,
@@ -375,11 +360,7 @@ internal open class FirTowerResolveTask(
 
         enumerateTowerLevels(
             onScope = l@{ scope, group ->
-                // NB: this check does not work for variables
-                // because we do not search for objects if we have extension receiver
-                if (info.callKind != CallKind.VariableAccess && scope in emptyScopesCache.emptyScopes) return@l
-
-                processLevelWithoutCheck(
+                processLevel(
                     scope.toScopeTowerLevel(), info, group,
                     levelProducer = scope,
                     cache = emptyScopesCache.emptyScopes,

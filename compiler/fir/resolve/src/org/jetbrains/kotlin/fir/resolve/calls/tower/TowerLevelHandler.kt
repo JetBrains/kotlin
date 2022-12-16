@@ -46,8 +46,12 @@ internal class TowerLevelHandler {
             CallKind.VariableAccess -> {
                 processResult += towerLevel.processPropertiesByName(info, processor)
 
-                if (!collector.isSuccess && towerLevel is ScopeTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
-                    processResult += towerLevel.processObjectsByName(info, processor)
+                if (!collector.isSuccess && towerLevel is ScopeTowerLevel) {
+                    processResult += if (!towerLevel.areThereExtensionReceiverOptions()) {
+                        towerLevel.processObjectsByName(info, processor)
+                    } else {
+                        ProcessResult.FOUND
+                    }
                 }
             }
             CallKind.Function -> {

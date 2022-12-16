@@ -268,7 +268,7 @@ class MemberScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>
     ): ProcessResult {
-        return ProcessResult.FOUND
+        return ProcessResult.SCOPE_EMPTY
     }
 
     private inline fun withMemberCallLookup(
