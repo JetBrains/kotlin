@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.name;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**
  * A class name which is used to uniquely identify a Kotlin class.
  *
@@ -42,7 +40,7 @@ public final class ClassId {
 
     private final String packageFqNameStr;
     private final String relativeClassNameStr;
-    private final int cachedHashCode;
+    private int cachedHashCode;
 
     public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
@@ -52,10 +50,7 @@ public final class ClassId {
         this.relativeClassName = relativeClassName;
         relativeClassNameStr = this.relativeClassName.asString();
         this.local = local;
-        int result = packageFqNameStr.hashCode();
-        result = 31 * result + relativeClassNameStr.hashCode();
-        result = 31 * result + Boolean.valueOf(local).hashCode();
-        cachedHashCode = result;
+        cachedHashCode = 0;
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
@@ -163,7 +158,7 @@ public final class ClassId {
         if (o == null || getClass() != o.getClass()) return false;
 
         ClassId id = (ClassId) o;
-
+        if (cachedHashCode != 0 && id.cachedHashCode != 0 && cachedHashCode != id.cachedHashCode) return false;
         return packageFqNameStr.equals(id.packageFqNameStr) &&
                relativeClassNameStr.equals(id.relativeClassNameStr) &&
                local == id.local;
@@ -171,6 +166,12 @@ public final class ClassId {
 
     @Override
     public int hashCode() {
+        if (cachedHashCode == 0) {
+            int result = packageFqNameStr.hashCode();
+            result = 31 * result + relativeClassNameStr.hashCode();
+            result = 31 * result + Boolean.valueOf(local).hashCode();
+            cachedHashCode = result;
+        }
         return cachedHashCode;
     }
 
