@@ -18,7 +18,7 @@ external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, coun
 internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
 
 /**
- * Mutable concurrently accessible data buffer. Could be accessed from several workers simulteniously.
+ * Mutable concurrently accessible data buffer. Could be accessed from several workers simultaneously.
  */
 @Frozen
 @NoReorderFields

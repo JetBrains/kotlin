@@ -41,7 +41,7 @@ external fun getCachedLongBox(value: Long): Long?
 @GCUnsafeCall("inLongBoxCache")
 external fun inLongBoxCache(value: Long): Boolean
 
-// TODO: functions below are used for ObjCExport and CAdapterGenerator, move and rename them correspondigly.
+// TODO: functions below are used for ObjCExport and CAdapterGenerator, move and rename them correspondingly.
 
 @ExportForCppRuntime("Kotlin_boxBoolean")
 fun boxBoolean(value: Boolean): Boolean? = value

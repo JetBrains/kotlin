@@ -122,7 +122,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
  * Atomic lazy initializer, could be used in frozen objects, freezes initializing lambda,
  * so use very carefully. Also, as with other uses of an [AtomicReference] may potentially
  * leak memory, so it is recommended to use `atomicLazy` in cases of objects living forever,
- * such as object signletons, or in cases where it's guaranteed not to have cyclical garbage.
+ * such as object singletons, or in cases where it's guaranteed not to have cyclical garbage.
  */
 @FreezingIsDeprecated
 public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)
