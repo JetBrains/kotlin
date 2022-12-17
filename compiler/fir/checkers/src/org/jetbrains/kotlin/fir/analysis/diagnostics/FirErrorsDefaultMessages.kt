@@ -240,6 +240,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALLOW_TYPED_EQUALS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_FILE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_INFIX_MODIFIER
@@ -2049,6 +2050,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable: {0}", TO_STRING)
+
+        map.put(INAPPLICABLE_ALLOW_TYPED_EQUALS_ANNOTATION, "@AllowTypedEquals is applicable for value classes only")
 
         //imports
         map.put(

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.isValueClass
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object TypedEqualsApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (declaration !is KtFunction) return
         val typedEqualsAnnotation =
             descriptor.annotations.findAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName()) ?: return
         val functionDescriptor = context.trace.bindingContext.get(BindingContext.FUNCTION, declaration) ?: return

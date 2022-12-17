@@ -430,6 +430,8 @@ public interface Errors {
     DiagnosticFactory1<KtNamedFunction, KotlinType> INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS =
             DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory1<KtAnnotationEntry, String> INAPPLICABLE_TYPED_EQUALS_ANNOTATION = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory0<KtAnnotationEntry> INAPPLICABLE_ALLOW_TYPED_EQUALS_ANNOTATION = DiagnosticFactory0.create(ERROR);
     
     DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET =
             DiagnosticFactory1.create(ERROR);
