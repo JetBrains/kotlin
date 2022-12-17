@@ -79,12 +79,6 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
             return if (isJavaField) MangleConstant.JAVA_FIELD_SUFFIX else null
         }
 
-        override fun visitModuleDeclaration(descriptor: ModuleDescriptor) {
-            // In general, having module descriptor as `containingDeclaration` for regular declaration is considered an error (in JS/Native)
-            // because there should be `PackageFragmentDescriptor` in between
-            // but on JVM there is `SyntheticJavaPropertyDescriptor` whose parent is a module. So let just skip it.
-        }
-
         override fun mangleTypePlatformSpecific(type: KotlinType, tBuilder: StringBuilder) {
             // Disambiguate between 'double' and '@NotNull java.lang.Double' types in mixed Java/Kotlin class hierarchies
             if (SimpleClassicTypeSystemContext.hasEnhancedNullability(type)) {

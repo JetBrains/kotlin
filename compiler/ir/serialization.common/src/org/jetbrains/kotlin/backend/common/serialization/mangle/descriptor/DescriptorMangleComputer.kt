@@ -175,8 +175,6 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
         accessor.mangleFunction(false, property)
     }
 
-    protected open fun visitModuleDeclaration(descriptor: ModuleDescriptor) = reportUnexpectedDescriptor(descriptor)
-
     private inner class Visitor : DeclarationDescriptorVisitor<Unit, Nothing?> {
 
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Nothing?) {
@@ -209,7 +207,9 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
         }
 
         override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Nothing?) {
-            visitModuleDeclaration(descriptor)
+            // In general, having module descriptor as `containingDeclaration` for regular declaration is considered an error (in JS/Native)
+            // because there should be `PackageFragmentDescriptor` in between
+            // but on JVM there is `SyntheticJavaPropertyDescriptor` whose parent is a module. So let just skip it.
         }
 
         override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Nothing?) {
