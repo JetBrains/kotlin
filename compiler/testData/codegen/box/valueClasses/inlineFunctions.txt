@@ -51,6 +51,8 @@ public final class DSegment {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: double, p3: double, p4: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double): boolean
+    public final static method getLength-impl(p0: double, p1: double, p2: double, p3: double): double
+    public final static @org.jetbrains.annotations.NotNull method getMiddle-impl(p0: double, p1: double, p2: double, p3: double): DPoint
     public final @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public final @org.jetbrains.annotations.NotNull method getP2(): DPoint
     public method hashCode(): int
@@ -68,7 +70,10 @@ public final class DSegment {
 @kotlin.Metadata
 public final class DependencyKt {
     // source: 'dependency.kt'
+    public final static method getLength1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): double
+    public final static @org.jetbrains.annotations.NotNull method getMiddle1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): DPoint
     public final static @org.jetbrains.annotations.NotNull method myLet-GPBa7dw(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1): DPoint
+    public final static method square(p0: double): double
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata

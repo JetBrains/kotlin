@@ -13,12 +13,24 @@ fun runSuspend(block: suspend () -> Unit) {
 }
 
 // FILE: dependency.kt
+import kotlin.math.sqrt
 
 @JvmInline
 value class DPoint(val x: Double, val y: Double)
 
+fun Double.square() = this * this
+
 @JvmInline
-value class DSegment(val p1: DPoint, val p2: DPoint)
+value class DSegment(val p1: DPoint, val p2: DPoint) {
+    inline val length
+        get() = sqrt((p1.x - p2.x).square() + (p1.y - p2.y).square())
+    inline val middle
+        get() = DPoint((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0)
+}
+inline val DSegment.length1
+    get() = length
+inline val DSegment.middle1
+    get() = middle
 
 
 inline fun DSegment.myLet(f: (DSegment) -> DPoint) = f(this)
@@ -26,6 +38,7 @@ inline fun DSegment.myLet(f: (DSegment) -> DPoint) = f(this)
 // FILE: test.kt
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resume
+import kotlin.math.sqrt
 
 fun supply(x: Any?) = Unit
 
@@ -68,6 +81,20 @@ fun box(): String {
     supply("o")
     runSuspend { require(suspendFun() == DPoint(1.0, 2.0).toString()) }
     supply("p")
+    require(segment.length == sqrt(5.0))
+    supply("q")
+    require(segment.length1 == sqrt(5.0))
+    supply("r")
+    require(segment.middle == DPoint(1.5, 3.0))
+    supply("s")
+    require(segment.middle1 == DPoint(1.5, 3.0))
+    supply("t")
+    require(segment.middle.x == 1.5)
+    require(segment.middle.y == 3.0)
+    supply("u")
+    require(segment.middle1.x == 1.5)
+    require(segment.middle1.y == 3.0)
+    supply("v")
     
     return "OK"
 }

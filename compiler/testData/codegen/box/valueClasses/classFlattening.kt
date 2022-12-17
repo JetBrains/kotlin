@@ -60,6 +60,11 @@ value class SimpleMfvc(val x: UInt, val y: IC, val z: String) {
     context(SimpleMfvc)
     private val private2: SimpleMfvc
         get() = this@SimpleMfvc
+    
+    val a4: Int
+        get() = 2
+    val b4: SimpleMfvc
+        get() = this
 }
 
 fun smfvc(ic: IC, x: SimpleMfvc, ic1: UInt) = ic(ic) + x.x + ic(x.y) + ic1
@@ -154,5 +159,12 @@ fun box(): String {
     }
     
     require(idUnboxed(idBoxed(idUnboxed(o2) /*boxing*/) /*unbox*/) == o2)
+    
+    require(o2.a4 == 2)
+    require(o2.b4 == o2)
+    require(o2.b4.x == o2.x)
+    require(o2.b4.y == o2.y)
+    require(o2.b4.z == o2.z)
+    
     return "OK"
 }

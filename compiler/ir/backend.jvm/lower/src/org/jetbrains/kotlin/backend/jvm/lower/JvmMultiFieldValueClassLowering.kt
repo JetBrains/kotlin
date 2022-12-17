@@ -912,13 +912,7 @@ internal class JvmMultiFieldValueClassLowering(
     override fun visitCall(expression: IrCall): IrExpression {
         val callee = expression.symbol.owner
         val property = callee.property
-        if (
-            property != null &&
-            callee.extensionReceiverParameter == null &&
-            callee.contextReceiverParametersCount == 0 &&
-            callee.isGetter &&
-            (expression.type.needsMfvcFlattening() || expression.dispatchReceiver?.type?.needsMfvcFlattening() == true)
-        ) {
+        if (property != null && callee.isGetter && replacements.getMfvcPropertyNode(property) != null) {
             require(callee.valueParameters.isEmpty()) { "Unexpected getter:\n${callee.dump()}" }
             expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, null)
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
