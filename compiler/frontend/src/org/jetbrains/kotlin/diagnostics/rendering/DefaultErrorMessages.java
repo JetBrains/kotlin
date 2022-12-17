@@ -802,9 +802,7 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
         MAP.put(VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Value classes cannot have context receivers");
-        MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
-                "Overriding ''equals'' from ''Any'' in value class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
-                RENDER_TYPE);
+        MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS, "Overriding ''equals'' from ''Any'' in value class without operator typed equals leads to boxing on every equality comparison");
         MAP.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable: {0}", STRING);
         MAP.put(INAPPLICABLE_ALLOW_TYPED_EQUALS_ANNOTATION, "@AllowTypedEquals is applicable for value classes only");
         MAP.put(ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, "Annotations on {0} of multi-field value class type are not supported", STRING);

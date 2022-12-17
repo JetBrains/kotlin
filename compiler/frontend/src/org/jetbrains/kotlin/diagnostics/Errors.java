@@ -427,8 +427,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_BE_CLONEABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtContextReceiverList> VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<KtNamedFunction, KotlinType> INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS =
-            DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
+    DiagnosticFactory0<KtNamedFunction> INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS = DiagnosticFactory0.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory1<KtAnnotationEntry, String> INAPPLICABLE_TYPED_EQUALS_ANNOTATION = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtAnnotationEntry> INAPPLICABLE_ALLOW_TYPED_EQUALS_ANNOTATION = DiagnosticFactory0.create(ERROR);
