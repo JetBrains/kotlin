@@ -6,24 +6,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.file.FileCollection
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsDeprecated
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig
-import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
-import org.jetbrains.kotlin.gradle.tasks.Kapt
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 
 /** An API used by third-party plugins to integration with the Kotlin Gradle plugin. */
-interface KotlinJvmFactory {
+interface KotlinJvmFactory : KotlinFactory {
     /** Instance of DSL object that should be used to configure KAPT stub generation and annotation processing tasks.*/
     val kaptExtension: KaptExtensionConfig
-
-    /** Instance of DSL object that should be used to configure Kotlin compilation pipeline. */
-    val kotlinExtension: KotlinTopLevelExtensionConfig
 
     /**
      * Creates instance of DSL object that should be used to configure JVM/android specific compilation.
@@ -49,10 +40,4 @@ interface KotlinJvmFactory {
 
     /** Creates a KAPT task which runs annotation processing. */
     fun registerKaptTask(taskName: String): TaskProvider<out Kapt>
-
-    /** Adds a compiler plugin dependency to this project. This can be e.g a Maven coordinate or a project included in the build. */
-    fun addCompilerPluginDependency(dependency: Provider<Any>)
-
-    /** Returns a [FileCollection] that contains all compiler plugins classpath for this project. */
-    fun getCompilerPlugins(): FileCollection
 }

@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
+import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
-internal class KotlinCompileCommonConfig(
-    private val compilationInfo: KotlinCompilationInfo,
-) : AbstractKotlinCompileConfig<KotlinCompileCommon>(compilationInfo) {
-    init {
+internal class KotlinCompileCommonConfig : AbstractKotlinCompileConfig<KotlinCompileCommon> {
+    constructor(compilationInfo: KotlinCompilationInfo) : super(compilationInfo) {
         configureTask { task ->
             task.expectActualLinker.value(
                 providers.provider {
@@ -22,6 +23,18 @@ internal class KotlinCompileCommonConfig(
                 }
             ).disallowChanges()
             task.refinesMetadataPaths.from(compilationInfo.refinesPaths).disallowChanges()
+        }
+    }
+
+    constructor(project: Project, ext: KotlinTopLevelExtension) : super(
+        project, ext, languageSettings = getDefaultLangSetting(project, ext)
+    ) {
+        configureTask { task ->
+            task.expectActualLinker.value(
+                providers.provider {
+                    project.isKotlinGranularMetadataEnabled
+                }
+            )
         }
     }
 }

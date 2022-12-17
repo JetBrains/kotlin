@@ -172,3 +172,11 @@ interface Kapt : BaseKapt {
     @get:Classpath
     val kaptJars: ConfigurableFileCollection
 }
+
+interface KotlinJsCompileTask : BaseKotlinCompile,
+    KotlinCompilationTask<KotlinJsCompilerOptions> {
+}
+
+interface KotlinMetadataCompileTask : BaseKotlinCompile,
+    KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions> {
+}

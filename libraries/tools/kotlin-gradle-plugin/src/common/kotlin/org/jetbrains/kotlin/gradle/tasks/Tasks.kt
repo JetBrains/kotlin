@@ -949,6 +949,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
+    KotlinJsCompileTask,
     KotlinJsCompile {
 
     init {
