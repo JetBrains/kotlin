@@ -32,6 +32,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     // Enabled features
     BUILD_SRC_EXISTS(OR, SAFE),
+    BUILD_PREPARE_KOTLIN_BUILD_SCRIPT_MODEL(OR, SAFE),
     GRADLE_BUILD_CACHE_USED(OVERRIDE, SAFE),
     GRADLE_WORKER_API_USED(OVERRIDE, SAFE),
 
