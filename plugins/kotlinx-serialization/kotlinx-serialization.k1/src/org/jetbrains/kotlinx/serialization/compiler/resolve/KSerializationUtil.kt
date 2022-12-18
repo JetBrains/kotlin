@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.inheritableSerialInfoFqName
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.metaSerializableAnnotationFqName
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoFqName
@@ -141,7 +141,7 @@ val ClassDescriptor.shouldHaveGeneratedSerializer: Boolean
 val ClassDescriptor.useGeneratedEnumSerializer: Boolean
     get() {
         val functions = module.getPackage(SerializationPackages.internalPackageFqName).memberScope.getFunctionNames()
-        return !functions.contains(ENUM_SERIALIZER_FACTORY_FUNC_NAME) || !functions.contains(MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME)
+        return !functions.contains(ENUM_SERIALIZER_FACTORY_FUNC_NAME) || !functions.contains(ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME)
     }
 
 fun ClassDescriptor.enumEntries(): List<ClassDescriptor> {

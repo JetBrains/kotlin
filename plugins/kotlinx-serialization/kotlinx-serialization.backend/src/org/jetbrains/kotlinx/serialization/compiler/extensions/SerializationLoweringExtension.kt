@@ -85,10 +85,10 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
         )
     ).singleOrNull()
 
-    internal val markedEnumSerializerFactoryFunc = baseContext.referenceFunctions(
+    internal val annotatedEnumSerializerFactoryFunc = baseContext.referenceFunctions(
         CallableId(
             SerializationPackages.internalPackageFqName,
-            SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+            SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
         )
     ).singleOrNull()
 
@@ -98,7 +98,7 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     internal val kSerializerClass = referenceClass(SerialEntityNames.KSERIALIZER_CLASS_ID)?.owner
 
     // evaluated properties
-    override val runtimeHasEnumSerializerFactoryFunctions = enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null
+    override val runtimeHasEnumSerializerFactoryFunctions = enumSerializerFactoryFunc != null && annotatedEnumSerializerFactoryFunc != null
 
     override fun referenceClassId(classId: ClassId): IrClassSymbol? = referenceClass(classId)
 }

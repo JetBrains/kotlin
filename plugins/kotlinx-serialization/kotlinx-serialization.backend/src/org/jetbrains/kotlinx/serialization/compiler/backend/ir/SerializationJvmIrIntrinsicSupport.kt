@@ -39,8 +39,8 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringArrayType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringType
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
@@ -416,11 +416,13 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                         aconst(null)
                     }
                     checkcast(doubleAnnotationArrayType)
+                    // FIXME: same as fillArray above
+                    aconst(null)
 
                     invokestatic(
                         enumFactoriesType.internalName,
-                        MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME.asString(),
-                        "(${stringType.descriptor}${javaEnumArray.descriptor}${stringArrayType.descriptor}${doubleAnnotationArrayType.descriptor})${kSerializerType.descriptor}",
+                        ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME.asString(),
+                        "(${stringType.descriptor}${javaEnumArray.descriptor}${stringArrayType.descriptor}${doubleAnnotationArrayType.descriptor}${annotationArrayType.descriptor})${kSerializerType.descriptor}",
                         false
                     )
                 } else {

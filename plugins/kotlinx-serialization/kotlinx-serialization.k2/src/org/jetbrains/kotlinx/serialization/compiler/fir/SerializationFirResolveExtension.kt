@@ -49,11 +49,11 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             SerializationPackages.internalPackageFqName,
             SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
         ).isNotEmpty()
-        val hasMarkedFactory = session.symbolProvider.getTopLevelCallableSymbols(
+        val hasAnnotatedFactory = session.symbolProvider.getTopLevelCallableSymbols(
             SerializationPackages.internalPackageFqName,
-            SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+            SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
         ).isNotEmpty()
-        hasFactory && hasMarkedFactory
+        hasFactory && hasAnnotatedFactory
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {

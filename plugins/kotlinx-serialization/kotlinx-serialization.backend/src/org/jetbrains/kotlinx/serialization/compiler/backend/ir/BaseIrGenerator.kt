@@ -58,7 +58,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
     private val enumSerializerFactoryFunc = compilerContext.enumSerializerFactoryFunc
 
-    private val markedEnumSerializerFactoryFunc = compilerContext.markedEnumSerializerFactoryFunc
+    private val annotatedEnumSerializerFactoryFunc = compilerContext.annotatedEnumSerializerFactoryFunc
 
     fun useFieldMissingOptimization(): Boolean {
         return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
@@ -558,9 +558,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                     irCall(enumDescriptor.owner.findEnumValuesMethod()),
                 )
 
-                val enumSerializerFactoryFunc = enumSerializerFactoryFunc
-                val markedEnumSerializerFactoryFunc = markedEnumSerializerFactoryFunc
-                if (enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null) {
+                if (enumSerializerFactoryFunc != null && annotatedEnumSerializerFactoryFunc != null) {
                     // runtime contains enum serializer factory functions
                     val factoryFunc: IrSimpleFunctionSymbol = if (enumDescriptor.owner.isEnumWithSerialInfoAnnotation()) {
                         // need to store SerialInfo annotation in descriptor
@@ -577,13 +575,24 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                                 createArrayOfExpression(compilerContext.irBuiltIns.annotationType, annotationsConstructors)
                             }
                         }
+
+                        val classAnnotationConstructors = enumDescriptor.owner.annotations.map { a ->
+                            a.deepCopyWithVariables()
+                        }
+                        val classAnnotationsConstructors = copyAnnotationsFrom(classAnnotationConstructors)
+                        val classAnnotations = if (classAnnotationsConstructors.isEmpty()) {
+                            irNull()
+                        } else {
+                            createArrayOfExpression(compilerContext.irBuiltIns.annotationType, classAnnotationsConstructors)
+                        }
                         val annotationArrayType =
                             compilerContext.irBuiltIns.arrayClass.typeWith(compilerContext.irBuiltIns.annotationType.makeNullable())
 
                         enumArgs += createArrayOfExpression(compilerContext.irBuiltIns.stringType.makeNullable(), entriesNames)
                         enumArgs += createArrayOfExpression(annotationArrayType, entriesAnnotations)
+                        enumArgs += classAnnotations
 
-                        markedEnumSerializerFactoryFunc
+                        annotatedEnumSerializerFactoryFunc
                     } else {
                         enumSerializerFactoryFunc
                     }
