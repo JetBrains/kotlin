@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +SealedInlineClasses
-// IGNORE_BACKEND: JVM
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Marker(val i: Int)
