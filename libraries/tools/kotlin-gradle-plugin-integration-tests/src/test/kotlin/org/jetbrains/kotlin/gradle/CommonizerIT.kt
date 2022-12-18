@@ -270,11 +270,6 @@ class CommonizerIT : BaseGradleIT() {
     private fun `test single native platform`(project: String) {
         val posixInIntransitiveMetadataConfigurationRegex = Regex(""".*intransitiveMetadataConfiguration:.*([pP])osix""")
 
-        fun CompiledProject.containsPosixInImplementationMetadataConfiguration(): Boolean =
-            output.lineSequence().any { line ->
-                line.matches(posixInImplementationMetadataConfigurationRegex)
-            }
-
         fun CompiledProject.containsPosixInIntransitiveMetadataConfiguration(): Boolean =
             output.lineSequence().any { line ->
                 line.matches(posixInIntransitiveMetadataConfigurationRegex)
