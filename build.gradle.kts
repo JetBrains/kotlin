@@ -691,24 +691,23 @@ tasks {
         dependsOn("gradlePluginTest")
         dependsOn("toolsTest")
         dependsOn("examplesTest")
-
         dependsOn("nativeCompilerTest")
-
-        dependsOn(":kotlin-daemon-tests:test")
+        dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
-        dependsOn(":kotlin-build-common:test")
-        dependsOn(":compiler:incremental-compilation-impl:test")
-        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
-        dependsOn(":core:descriptors.runtime:test")
-
         dependsOn("jvmCompilerIntegrationTest")
-
         dependsOn("compilerPluginTest")
 
+        dependsOn(":kotlin-daemon-tests:test")
+        dependsOn(":kotlin-build-common:test")
+        dependsOn(":core:descriptors.runtime:test")
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
-
         dependsOn(":generators:test")
+    }
+
+    register("incrementalCompilationTest") {
+        dependsOn(":compiler:incremental-compilation-impl:test")
+        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
     register("compilerPluginTest") {
