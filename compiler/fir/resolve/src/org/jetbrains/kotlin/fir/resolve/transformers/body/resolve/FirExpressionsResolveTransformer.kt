@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.util.mapThrowable
 
 open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -417,8 +417,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
                 callCompleter.completeCall(resultExpression, data)
             } catch (e: Throwable) {
-                if (shouldIjPlatformExceptionBeRethrown(e)) throw e
-                throw RuntimeException("While resolving call ${functionCall.render()}", e)
+                throw mapThrowable(e) {
+                    RuntimeException("While resolving call ${functionCall.render()}", it)
+                }
             }
         val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
         if (!resolvingAugmentedAssignment) {
