@@ -58,3 +58,6 @@ internal val implementedAsIntrinsic: Nothing
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class WasmPrimitiveConstructor
+
+
+internal annotation class WasmImport(val module: String, val name: String)

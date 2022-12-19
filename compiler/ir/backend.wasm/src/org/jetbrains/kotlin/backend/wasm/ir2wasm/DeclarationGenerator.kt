@@ -67,11 +67,16 @@ class DeclarationGenerator(
             return
         }
 
-        val jsCode = declaration.getJsFunAnnotation() ?: if (declaration.isExternal) declaration.name.asString() else null
+        val wasmImportModule = declaration.getWasmImportAnnotation()
+        val jsCode = declaration.getJsFunAnnotation()
+            ?: if (declaration.isExternal && wasmImportModule == null) declaration.name.asString() else null
+
         val importedName = jsCode?.let {
             val jsCodeName = jsCodeName(declaration)
             context.addJsFun(jsCodeName, it)
             WasmImportPair("js_code", jsCodeName(declaration))
+        } ?: wasmImportModule?.let {
+            WasmImportPair(wasmImportModule.moduleName, wasmImportModule.declarationName)
         }
 
         if (declaration.isFakeOverride)

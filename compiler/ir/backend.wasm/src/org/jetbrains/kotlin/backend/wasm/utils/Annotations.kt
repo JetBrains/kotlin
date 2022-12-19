@@ -20,6 +20,17 @@ import org.jetbrains.kotlin.wasm.ir.WasmImportPair
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
 
+fun IrAnnotationContainer.getWasmImportAnnotation(): WasmImportPair? {
+    val annotation = getAnnotation(FqName("kotlin.wasm.internal.WasmImport"))
+        ?: return null
+
+    @Suppress("UNCHECKED_CAST")
+    return WasmImportPair(
+        (annotation.getValueArgument(0) as IrConst<String>).value,
+        (annotation.getValueArgument(1) as IrConst<String>).value
+    )
+}
+
 fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
     getAnnotation(FqName("kotlin.wasm.internal.WasmOp"))?.getSingleConstStringArgument()
 
