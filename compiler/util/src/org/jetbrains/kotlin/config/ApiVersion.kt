@@ -21,6 +21,9 @@ class ApiVersion private constructor(
     override val isUnsupported: Boolean
         get() = this < FIRST_SUPPORTED
 
+    override val isPreview: Boolean
+        get() = this >= PREVIEW
+
     override fun compareTo(other: ApiVersion): Int =
             version.compareTo(other.version)
 
@@ -74,6 +77,8 @@ class ApiVersion private constructor(
 
         @JvmField
         val FIRST_NON_DEPRECATED: ApiVersion = createByLanguageVersion(LanguageVersion.FIRST_NON_DEPRECATED)
+
+        val PREVIEW: ApiVersion = createByLanguageVersion(LanguageVersion.PREVIEW)
 
         @JvmStatic
         fun createByLanguageVersion(version: LanguageVersion): ApiVersion = parse(version.versionString)!!

@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
 
             testClass<AbstractIncrementalJsCompilerRunnerTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^incorrectLevelVersion.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
@@ -79,7 +79,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIncrementalJsCompilerRunnerWithMetadataOnlyTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^incorrectLevelVersion.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }

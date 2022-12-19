@@ -413,6 +413,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_1_7(1, 7),
     KOTLIN_1_8(1, 8),
     KOTLIN_1_9(1, 9),
+    KOTLIN_1_10(1, 10),
     ;
 
     override val isStable: Boolean
@@ -423,6 +424,9 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
 
     override val isUnsupported: Boolean
         get() = this < FIRST_SUPPORTED
+
+    override val isPreview: Boolean
+        get() = this >= PREVIEW
 
     override val versionString: String
         get() = "$major.$minor"
@@ -453,6 +457,10 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
 
         @JvmField
         val LATEST_STABLE = KOTLIN_1_8
+
+        // This version is not available and needed only for tests
+        @JvmField
+        val PREVIEW = KOTLIN_1_10
     }
 }
 
@@ -464,6 +472,8 @@ interface LanguageOrApiVersion : DescriptionAware {
     val isDeprecated: Boolean
 
     val isUnsupported: Boolean
+
+    val isPreview: Boolean
 
     override val description: String
         get() = when {

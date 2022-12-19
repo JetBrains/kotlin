@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
@@ -122,6 +123,14 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         doTest()
 
         checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testUnsupportedLanguageVersionExists() {
+        assertTrue(
+            "Please check, that PREVIEW language version exists and points to minor+1 from newest version, it is needed for some IC metadata tests",
+            LanguageVersion.PREVIEW.minor >= LanguageVersion.LATEST_STABLE.minor + 2
+        )
     }
 
     fun testSourcePackagePrefix() {
