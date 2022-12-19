@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
  *    * for class & type alias symbols if its qualified name was not changed
  *    * for package symbol if the package is still exists
  *
- * @see org.jetbrains.kotlin.analysis.api.ReadActionConfinementKtLifetimeToken
+ * @see org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeToken
  */
 public abstract class KtSymbolPointer<out S : KtSymbol> {
     /**
