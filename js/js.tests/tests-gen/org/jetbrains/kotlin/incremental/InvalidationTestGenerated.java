@@ -205,6 +205,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsParam/");
     }
 
+    @TestMetadata("inlineFunctionCircleUsage")
+    public void testInlineFunctionCircleUsage() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionCircleUsage/");
+    }
+
     @TestMetadata("inlineFunctionDefaultParams")
     public void testInlineFunctionDefaultParams() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");

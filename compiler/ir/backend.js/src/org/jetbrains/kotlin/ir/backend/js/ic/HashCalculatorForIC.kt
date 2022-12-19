@@ -112,7 +112,7 @@ internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().app
     update(languageVersionSettings.toString())
 }.finalize()
 
-internal fun IrSimpleFunction.irSimpleFunctionHashForIC() = HashCalculatorForIC().also {
+internal fun IrFunction.irFunctionHashForIC() = HashCalculatorForIC().also {
     it.update(this)
 }.finalize()
 

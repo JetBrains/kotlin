@@ -493,8 +493,6 @@ class CacheUpdater(
 
             val stdlibDirtyFiles = dirtyFiles[stdlibFile] ?: return
 
-            signatureHashCalculator.updateInlineFunctionTransitiveHashes(listOf(stdlibIr))
-
             val updatedMetadata = KotlinSourceFileMutableMap<DirtyFileMetadata>()
             val idSignatureToFile = updatedMetadata.getExportedSignaturesAndAddMetadata(linker, stdlibIr, stdlibFile, stdlibDirtyFiles)
 
@@ -636,9 +634,6 @@ class CacheUpdater(
         var lastDirtyFiles: KotlinSourceFileMap<KotlinSourceFileExports> = dirtyFileExports
 
         while (true) {
-            stopwatch.startNext("Dependencies ($iterations) - calculating transitive hashes for inline functions")
-            updater.signatureHashCalculator.updateInlineFunctionTransitiveHashes(loadedIr.loadedFragments.values)
-
             stopwatch.startNext("Dependencies ($iterations) - updating a dependency graph")
             val dirtyMetadata = updater.rebuildDirtySourceMetadata(loadedIr.linker, loadedIr.loadedFragments, lastDirtyFiles)
 
