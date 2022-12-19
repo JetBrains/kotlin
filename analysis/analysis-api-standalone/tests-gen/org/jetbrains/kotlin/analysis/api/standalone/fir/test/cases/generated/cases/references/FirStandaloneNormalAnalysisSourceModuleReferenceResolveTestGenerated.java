@@ -661,6 +661,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
             runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setOperator.kt");
         }
 
+        @Test
+        @TestMetadata("SetOperatorInc.kt")
+        public void testSetOperatorInc() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/SetOperatorInc.kt");
+        }
+
         @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors")
         @TestDataPath("$PROJECT_ROOT")
@@ -680,6 +686,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
             @TestMetadata("setFunction.kt")
             public void testSetFunction() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors/setFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("SetOperatorInc.kt")
+            public void testSetOperatorInc() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors/SetOperatorInc.kt");
             }
         }
     }
