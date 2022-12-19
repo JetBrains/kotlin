@@ -17597,6 +17597,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("valueClasses.kt")
+            public void testValueClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/valueClasses.kt");
+            }
+
+            @Test
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/vararg.kt");
