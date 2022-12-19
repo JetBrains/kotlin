@@ -252,6 +252,11 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
         }
 
+        @TestMetadata("incorrectLevelVersion")
+        public void testIncorrectLevelVersion() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/incorrectLevelVersion/");
+        }
+
         @TestMetadata("independentClasses")
         public void testIndependentClasses() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/independentClasses/");

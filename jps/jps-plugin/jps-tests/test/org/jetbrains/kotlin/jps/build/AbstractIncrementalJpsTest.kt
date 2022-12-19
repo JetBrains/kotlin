@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.incremental.AdditionalArgs.Companion.parseAdditionalArgs
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
@@ -76,17 +77,6 @@ abstract class AbstractIncrementalJpsTest(
         private val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
 
         private val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
-
-        private const val ARGUMENTS_FILE_NAME = "args.txt"
-
-        private fun parseAdditionalArgs(testDir: File): List<String> {
-            return File(testDir, ARGUMENTS_FILE_NAME)
-                .takeIf { it.exists() }
-                ?.readText()
-                ?.split(" ", "\n")
-                ?.filter { it.isNotBlank() }
-                ?: emptyList()
-        }
     }
 
     protected lateinit var testDataDir: File
