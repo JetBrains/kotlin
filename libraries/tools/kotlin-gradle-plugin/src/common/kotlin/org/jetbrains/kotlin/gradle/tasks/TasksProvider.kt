@@ -23,6 +23,7 @@ import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 
@@ -152,6 +153,30 @@ internal open class KotlinTasksProvider {
             taskName,
             KotlinCompileCommon::class.java,
             constructorArgs = listOf(compilerOptions)
+        ).also {
+            configuration.execute(it)
+        }
+    }
+
+    fun registerKotlinNativeTask(
+        project: Project,
+        taskName: String,
+        targetName: String,
+        compilationName: String,
+        compilerOptions: KotlinCommonCompilerOptions,
+    ): TaskProvider<out KotlinNativeCompile> {
+        val mpExt = project.multiplatformExtensionOrNull
+            ?: throw IllegalStateException("Kotlin multiplatform plugin not applied.")
+        val preset = mpExt.presets.getByName(targetName)
+        val target = mpExt.configureOrCreate(targetName, preset) {}
+        val compilation = target.compilations.getByName(compilationName)
+        val compilationInfo = KotlinCompilationInfo(compilation)
+        val configuration = KotlinNativeCompileConfig(compilationInfo)
+
+        return project.registerTask(
+            taskName,
+            KotlinNativeCompile::class.java,
+            constructorArgs = listOf(compilationInfo, compilerOptions)
         ).also {
             configuration.execute(it)
         }

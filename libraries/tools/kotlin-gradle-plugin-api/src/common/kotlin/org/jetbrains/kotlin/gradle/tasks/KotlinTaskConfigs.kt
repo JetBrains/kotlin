@@ -180,3 +180,7 @@ interface KotlinJsCompileTask : BaseKotlinCompile,
 interface KotlinMetadataCompileTask : BaseKotlinCompile,
     KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions> {
 }
+
+interface KotlinNativeCompileTask : BaseKotlinCompile,
+    KotlinCompilationTask<KotlinCommonCompilerOptions> {
+}

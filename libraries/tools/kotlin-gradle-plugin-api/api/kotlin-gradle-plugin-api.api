@@ -938,6 +938,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinMetadat
 	public abstract fun registerKotlinMetadataCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinNativeFactory : org/jetbrains/kotlin/gradle/plugin/KotlinFactory {
+	public abstract fun registerKotlinNativeCompileTask (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType$Companion;
 	public static final field androidJvm Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
@@ -1594,6 +1598,14 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinMetadata
 public final class org/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask$DefaultImpls {
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask : org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinToolTask : org/gradle/api/Task {

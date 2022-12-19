@@ -25,7 +25,8 @@ abstract class KotlinBaseApiPlugin :
     DefaultKotlinBasePlugin(),
     KotlinJvmFactory,
     KotlinJsFactory,
-    KotlinMetadataFactory
+    KotlinMetadataFactory,
+    KotlinNativeFactory
 {
 
     private lateinit var myProject: Project
@@ -58,6 +59,10 @@ abstract class KotlinBaseApiPlugin :
 
     override fun createCompilerMultiplatformCommonOptions(): KotlinMultiplatformCommonCompilerOptions {
         return myProject.objects.newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
+    }
+
+    private fun createCompilerCommonOptions(): KotlinCommonCompilerOptions {
+        return myProject.objects.newInstance(KotlinCommonCompilerOptionsDefault::class.java)
     }
 
     @Suppress("DEPRECATION")
@@ -109,6 +114,20 @@ abstract class KotlinBaseApiPlugin :
             taskName,
             createCompilerMultiplatformCommonOptions(),
             KotlinCompileCommonConfig(myProject, kotlinExtension)
+        )
+    }
+
+    override fun registerKotlinNativeCompileTask(
+        taskName: String,
+        targetName: String,
+        compilationName: String
+    ): TaskProvider<out KotlinNativeCompileTask> {
+        return taskCreator.registerKotlinNativeTask(
+            myProject,
+            taskName,
+            targetName,
+            compilationName,
+            createCompilerCommonOptions(),
         )
     }
 

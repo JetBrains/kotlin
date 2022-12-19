@@ -16,6 +16,7 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -319,12 +320,13 @@ internal constructor(
     @get:Internal
     @Transient  // can't be serialized for Gradle configuration cache
     final override val compilation: KotlinCompilationInfo,
+    override val compilerOptions: KotlinCommonCompilerOptions,
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    KotlinCompilationTask<KotlinCommonCompilerOptions> {
+    KotlinNativeCompileTask {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -345,7 +347,7 @@ internal constructor(
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
 
     @get:Input
-    val moduleName: String by lazy {
+    val klibModuleName: String by lazy {
         project.klibModuleName(baseName)
     }
 
@@ -390,8 +392,6 @@ internal constructor(
     // endregion.
 
     // region Kotlin options.
-    override val compilerOptions: KotlinCommonCompilerOptions = compilation.compilerOptions.options
-
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
@@ -436,7 +436,11 @@ internal constructor(
     override fun buildCommonArgs(defaultsOnly: Boolean): List<String> {
         val plugins = listOfNotNull(
             compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) },
+            CompilerPluginData(
+                pluginClasspath,
+                pluginOptions.get().fold(CompilerPluginOptions()) { acc, option -> acc + option }
+            )
         )
 
         return buildKotlinNativeCompileCommonArgs(
@@ -471,7 +475,11 @@ internal constructor(
 
         val plugins = listOfNotNull(
             compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) },
+            CompilerPluginData(
+                pluginClasspath,
+                pluginOptions.get().fold(CompilerPluginOptions()) { acc, option -> acc + option }
+            )
         )
 
         val buildArgs = buildKotlinNativeKlibCompilerArgs(
@@ -484,7 +492,7 @@ internal constructor(
             enableEndorsedLibs,
             compilerOptions,
             plugins,
-            moduleName,
+            klibModuleName,
             shortModuleName,
             friendModule,
             createSharedCompilationDataOrNull(),
@@ -505,7 +513,7 @@ internal class ExternalDependenciesBuilder(
     intermediateLibraryName: String?
 ) {
     constructor(project: Project, compilation: KotlinNativeCompilation) : this(
-        project, compilation, compilation.compileKotlinTask.moduleName
+        project, compilation, compilation.compileKotlinTask.klibModuleName
     )
 
     private val compileDependencyConfiguration: Configuration
