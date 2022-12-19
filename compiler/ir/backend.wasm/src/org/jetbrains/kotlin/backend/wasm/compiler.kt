@@ -179,12 +179,15 @@ fun WasmCompiledModuleFragment.generateJs(): String {
         return ifNotCached;
     }    """.trimIndent()
 
+
+    val jsModuleImports = jsModuleImports.joinToString("\n") { """  "$it": await import("$it"),""" }
+
     val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
     val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
-    val jsCode =
-        "\nconst js_code = {\n$jsCodeBodyIndented\n};\n"
+    val importObject =
+        "\nconst _import_object = { $jsModuleImports \n  js_code: { \n$jsCodeBodyIndented\n }};\n"
 
-    return runtime + jsCode
+    return runtime + importObject
 }
 
 fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
@@ -210,17 +213,17 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
       const dirpath = path.dirname(filepath);
       const wasmBuffer = fs.readFileSync(path.resolve(dirpath, '$wasmFilePath'));
       const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+      wasmInstance = new WebAssembly.Instance(wasmModule, _import_object);
     }
     
     if (isD8) {
       const wasmBuffer = read('$wasmFilePath', 'binary');
       const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+      wasmInstance = new WebAssembly.Instance(wasmModule, _import_object);
     }
     
     if (isBrowser) {
-      wasmInstance = (await WebAssembly.instantiateStreaming(fetch('$wasmFilePath'), { js_code })).instance;
+      wasmInstance = (await WebAssembly.instantiateStreaming(fetch('$wasmFilePath'), _import_object)).instance;
     }
     
     const wasmExports = wasmInstance.exports;
