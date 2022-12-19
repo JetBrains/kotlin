@@ -499,12 +499,7 @@ open class RawFirBuilder(
                             if (this != null) {
                                 it.extractAnnotationsFrom(this)
                             }
-                            val resultAnnotations = when {
-                                accessorAnnotationsFromProperty.isEmpty() -> it.annotations
-                                it.annotations.isEmpty() -> accessorAnnotationsFromProperty
-                                else -> it.annotations + accessorAnnotationsFromProperty
-                            }
-                            it.replaceAnnotations(resultAnnotations)
+                            it.replaceAnnotations(it.annotations.smartPlus(accessorAnnotationsFromProperty))
                             it.status = status
                             it.initContainingClassAttr()
                         }
@@ -704,7 +699,7 @@ open class RawFirBuilder(
             val annotations = buildList {
                 addAll(container.annotations)
                 for (annotationEntry in annotationEntries) {
-                    add(annotationEntry.convert<FirAnnotation>())
+                    add(annotationEntry.convert())
                 }
             }
             container.replaceAnnotations(annotations)

@@ -2021,12 +2021,7 @@ class DeclarationsConverter(
         }
 
         for (modifierList in allTypeModifiers) {
-            if (modifierList.annotations.isNotEmpty()) {
-                val replacementAnnotations =
-                    if (calculatedFirType.annotations.isNotEmpty()) calculatedFirType.annotations + modifierList.annotations
-                    else modifierList.annotations
-                calculatedFirType.replaceAnnotations(replacementAnnotations)
-            }
+            calculatedFirType.replaceAnnotations(calculatedFirType.annotations.smartPlus(modifierList.annotations))
         }
         return calculatedFirType
     }

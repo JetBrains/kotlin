@@ -197,3 +197,14 @@ value class MutableOrEmptyList<T>(val list: MutableList<T>?) : List<T> {
         fun <T> empty(): MutableOrEmptyList<T> = EMPTY as MutableOrEmptyList<T>
     }
 }
+
+fun <T> List<T>.smartPlus(other: List<T>): List<T> = when {
+    other.isEmpty() -> this
+    this.isEmpty() -> other
+    else -> {
+        val result = ArrayList<T>(this.size + other.size)
+        result.addAll(this)
+        result.addAll(other)
+        result
+    }
+}
