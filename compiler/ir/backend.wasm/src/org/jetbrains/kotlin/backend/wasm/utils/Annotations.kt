@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.utils
 import org.jetbrains.kotlin.ir.backend.js.utils.getSingleConstStringArgument
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -19,6 +20,17 @@ import org.jetbrains.kotlin.wasm.ir.WasmImportPair
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
+
+fun IrFunction.getWasmImportDescriptor(): WasmImportPair? {
+    val annotation = getAnnotation(FqName("kotlin.wasm.WasmImport"))
+        ?: return null
+
+    @Suppress("UNCHECKED_CAST")
+    return WasmImportPair(
+        (annotation.getValueArgument(0) as IrConst<String>).value,
+        (annotation.getValueArgument(1) as? IrConst<String>)?.value ?: this.name.asString()
+    )
+}
 
 fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
     getAnnotation(FqName("kotlin.wasm.internal.WasmOp"))?.getSingleConstStringArgument()

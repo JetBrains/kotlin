@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -179,12 +180,28 @@ fun WasmCompiledModuleFragment.generateJs(): String {
         return ifNotCached;
     }    """.trimIndent()
 
-    val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
-    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
-    val jsCode =
-        "\nconst js_code = {\n$jsCodeBodyIndented\n};\n"
+    val imports = jsModuleImports
+        .toList()
+        .sorted()
+        .joinToString("\n") {
+            val moduleSpecifier = it.toJsStringLiteral()
+            "  $moduleSpecifier: await import($moduleSpecifier),"
+        }
 
-    return runtime + jsCode
+    val jsCodeBody = jsFuns.joinToString(",\n") {
+        "${it.importName.toJsStringLiteral()} : ${it.jsCode}"
+    }
+    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
+    val importObject = """
+const _import_object = { 
+${imports} 
+  js_code: { 
+${jsCodeBodyIndented}
+  }
+};
+"""
+
+    return runtime + importObject
 }
 
 fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
@@ -210,17 +227,17 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
       const dirpath = path.dirname(filepath);
       const wasmBuffer = fs.readFileSync(path.resolve(dirpath, '$wasmFilePath'));
       const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+      wasmInstance = new WebAssembly.Instance(wasmModule, _import_object);
     }
     
     if (isD8) {
       const wasmBuffer = read('$wasmFilePath', 'binary');
       const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+      wasmInstance = new WebAssembly.Instance(wasmModule, _import_object);
     }
     
     if (isBrowser) {
-      wasmInstance = (await WebAssembly.instantiateStreaming(fetch('$wasmFilePath'), { js_code })).instance;
+      wasmInstance = (await WebAssembly.instantiateStreaming(fetch('$wasmFilePath'), _import_object)).instance;
     }
     
     const wasmExports = wasmInstance.exports;
