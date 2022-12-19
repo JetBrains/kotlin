@@ -26,11 +26,11 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
-    abstract override val dispatchReceiver: FirExpression
-    abstract override val extensionReceiver: FirExpression
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
+    abstract override val dispatchReceiver: FirExpression
+    abstract override val extensionReceiver: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntegerLiteralOperatorCall(this, data)
 
@@ -49,15 +49,15 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
-    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
-
-    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
-
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
 
@@ -65,9 +65,9 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
 
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
+
+    abstract fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
+
+    abstract fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
 }

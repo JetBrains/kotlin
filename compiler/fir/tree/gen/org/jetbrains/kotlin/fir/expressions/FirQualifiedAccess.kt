@@ -55,8 +55,4 @@ interface FirQualifiedAccess : FirResolvable, FirStatement, FirContextReceiverAr
     fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
     fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
-
-    fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
-
-    fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 }

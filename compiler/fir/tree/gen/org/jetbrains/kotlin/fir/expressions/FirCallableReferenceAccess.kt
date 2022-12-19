@@ -64,9 +64,5 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
-
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 }

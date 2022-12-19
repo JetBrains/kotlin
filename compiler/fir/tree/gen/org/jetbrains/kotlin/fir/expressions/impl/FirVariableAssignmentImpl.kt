@@ -94,16 +94,6 @@ internal class FirVariableAssignmentImpl(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
         rValue = rValue.transform(transformer, data)
         return this

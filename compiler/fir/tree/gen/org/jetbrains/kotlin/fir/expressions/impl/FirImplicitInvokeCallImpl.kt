@@ -88,16 +88,6 @@ internal class FirImplicitInvokeCallImpl(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this

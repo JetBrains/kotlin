@@ -63,9 +63,5 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment
-
     abstract fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 }

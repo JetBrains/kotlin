@@ -232,6 +232,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("origin", functionCallOrigin)
         }
 
+        integerLiteralOperatorCall.configure {
+            // we need methods for transformation of receivers
+            +field("dispatchReceiver", expression, withReplace = true).withTransform()
+            +field("extensionReceiver", expression, withReplace = true).withTransform()
+        }
+
         comparisonExpression.configure {
             +field("operation", operationType)
             +field("compareToCall", functionCall)

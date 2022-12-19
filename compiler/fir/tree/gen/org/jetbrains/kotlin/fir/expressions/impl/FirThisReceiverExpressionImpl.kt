@@ -83,16 +83,6 @@ internal class FirThisReceiverExpressionImpl(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this

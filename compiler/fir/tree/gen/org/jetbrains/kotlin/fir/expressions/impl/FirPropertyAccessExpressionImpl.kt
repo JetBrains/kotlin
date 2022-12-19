@@ -86,16 +86,6 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource

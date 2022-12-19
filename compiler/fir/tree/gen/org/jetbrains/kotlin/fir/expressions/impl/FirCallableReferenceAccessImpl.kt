@@ -81,16 +81,6 @@ internal class FirCallableReferenceAccessImpl(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this

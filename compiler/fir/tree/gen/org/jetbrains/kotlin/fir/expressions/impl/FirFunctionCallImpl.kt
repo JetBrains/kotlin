@@ -86,16 +86,6 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this

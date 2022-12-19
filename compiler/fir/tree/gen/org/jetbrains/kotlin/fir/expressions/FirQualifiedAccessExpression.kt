@@ -59,8 +59,4 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 }
