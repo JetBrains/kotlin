@@ -79,14 +79,6 @@ class KotlinClassInnerStuffCache(
     val innerClasses: Array<out PsiClass>
         get() = copy(innerClassesCache.value)
 
-    private val recordComponentsCache = cache {
-        val header = myClass.recordHeader
-        header?.recordComponents ?: PsiRecordComponent.EMPTY_ARRAY
-    }
-
-    val recordComponents: Array<PsiRecordComponent>
-        get() = copy(recordComponentsCache.value)
-
     private val fieldByNameCache = cache {
         val fields = this.fields.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
         Collections.unmodifiableMap(THashMap<String, PsiField>(fields.size).apply {
@@ -285,11 +277,6 @@ private class KotlinEnumSyntheticMethod(
 
 private val PsiClass.isAnonymous: Boolean
     get() = name == null || this is PsiAnonymousClass
-
-private class NotNullModifierList(manager: PsiManager) : LightModifierList(manager) {
-    private val annotation = PsiElementFactory.getInstance(project).createAnnotationFromText("@" + NotNull::class.java.name, context)
-    override fun getAnnotations() = arrayOf(annotation)
-}
 
 private fun <T> copy(value: Array<T>): Array<T> {
     return if (value.isEmpty()) value else value.clone()
