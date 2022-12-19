@@ -94,59 +94,40 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             build(":dep-with-cinterop:publishToMavenLocal")
 
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
-                val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
-                val commonTestDependencies = dependencies["commonTest"].cinteropDependencies()
-                val linuxX64MainDependencies = dependencies["linuxX64Main"].cinteropDependencies()
-                val linuxX64TestDependencies = dependencies["linuxX64Test"].cinteropDependencies()
-                val linuxArmMainDependencies = dependencies["linuxArm64Main"].cinteropDependencies()
-                val linuxArmTestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
-
-                for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
-                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
-                }
-
-                linuxX64MainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
-                linuxArmMainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
-                linuxX64TestDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
-                linuxArmTestDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
+                dependencies["commonMain"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                dependencies["commonTest"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
+                dependencies["linuxArm64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
+                dependencies["linuxX64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
+                dependencies["linuxArm64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
             }
 
             resolveIdeDependencies("client-for-binary-dep") { dependencies ->
-                val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
-                val commonTestDependencies = dependencies["commonTest"].cinteropDependencies()
-                val linuxMainDependencies = dependencies["linuxX64Main"].cinteropDependencies()
-                val linuxTestDependencies = dependencies["linuxX64Test"].cinteropDependencies()
-                val linux2MainDependencies = dependencies["linuxArm64Main"].cinteropDependencies()
-                val linux2TestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
+                dependencies["commonMain"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                dependencies["commonTest"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
 
-                for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
-                    commonDeps.assertMatches(
-                        commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
-                    )
-                }
-
-                for (platformDeps in listOf(linuxMainDependencies, linuxTestDependencies, linux2MainDependencies, linux2TestDependencies)) {
-                    platformDeps.assertMatches(
-                        // TODO (kirpichenkov): consider extracting cinterops from , platform source set cinterops
-                    )
-                }
+                // TODO (kirpichenkov): consider extracting cinterops from platform libraries (they are library roots currently)
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches()
+                dependencies["linuxX64Test"].cinteropDependencies().assertMatches()
+                dependencies["linuxArm64Main"].cinteropDependencies().assertMatches()
+                dependencies["linuxArm64Test"].cinteropDependencies().assertMatches()
             }
 
             resolveIdeDependencies("client-for-project-to-project-dep") { dependencies ->
-                val commonMainDependencies = dependencies["commonMain"].cinteropDependencies()
-                val commonTestDependencies = dependencies["commonTest"].cinteropDependencies()
-                val linuxMainDependencies = dependencies["linuxX64Main"].cinteropDependencies()
-                val linuxTestDependencies = dependencies["linuxX64Test"].cinteropDependencies()
-                val linux2MainDependencies = dependencies["linuxArm64Main"].cinteropDependencies()
-                val linux2TestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
+                dependencies["commonMain"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                dependencies["commonTest"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
 
-                for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
-                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
-                }
-
-                for (platformDeps in listOf(linuxMainDependencies, linuxTestDependencies, linux2MainDependencies, linux2TestDependencies)) {
-                    platformDeps.assertMatches() // TODO (kirpichenkov): project to project dependency, platform source set cinterops
-                }
+                // TODO (kirpichenkov): project to project dependency, platform source set cinterops
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches()
+                dependencies["linuxX64Test"].cinteropDependencies().assertMatches()
+                dependencies["linuxArm64Main"].cinteropDependencies().assertMatches()
+                dependencies["linuxArm64Test"].cinteropDependencies().assertMatches()
             }
         }
     }
