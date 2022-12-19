@@ -19,6 +19,12 @@ data class ObjCClassForwardDeclaration(
         val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList()
 )
 
+class HeaderDependency(
+        val moduleName: String,
+        val headerName: String,
+        val moduleDescriptor: ModuleDescriptor
+)
+
 abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) {
     abstract val descriptor: D?
     open val psi: PsiElement?

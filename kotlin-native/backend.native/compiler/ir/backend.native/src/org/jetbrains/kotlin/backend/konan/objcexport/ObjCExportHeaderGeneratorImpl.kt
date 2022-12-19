@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class ObjCExportHeaderGeneratorImpl(
         val context: PhaseContext,
+        moduleTranslationConfig: ModuleTranslationConfig,
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
+        objcGenerics: Boolean,
+        private val sharedState: ObjCExportSharedState,
+) : ObjCExportHeaderGenerator(moduleTranslationConfig,  moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context), sharedState) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()
 

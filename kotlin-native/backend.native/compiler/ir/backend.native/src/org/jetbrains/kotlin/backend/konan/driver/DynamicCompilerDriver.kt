@@ -45,8 +45,11 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     // Experiment with producing framework per klib.
     private fun produceMultipleObjCFrameworks(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
-        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
+        val modulesAndInterfaces = engine.runPhase(ProduceMultipleObjCExportInterfacesPhase, frontendOutput)
+        modulesAndInterfaces.forEach { (translationConfig, iface) ->
+            val outputPath = config.outputPath + "/${translationConfig.frameworkNaming.moduleName}"
+            engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(translationConfig.module, iface, outputPath))
+        }
     }
 
     /**
@@ -58,7 +61,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
-        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
+        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface, config.outputPath))
         if (config.omitFrameworkBinary) {
             return
         }

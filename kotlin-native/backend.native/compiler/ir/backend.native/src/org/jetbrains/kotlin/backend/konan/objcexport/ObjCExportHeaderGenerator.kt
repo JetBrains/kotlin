@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
@@ -1074,13 +1075,16 @@ internal class ObjCExportTranslatorImpl(
 }
 
 abstract class ObjCExportHeaderGenerator internal constructor(
+        private val moduleTranslationConfig: ModuleTranslationConfig,
         val moduleDescriptors: List<ModuleDescriptor>,
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
-        problemCollector: ObjCExportProblemCollector
+        problemCollector: ObjCExportProblemCollector,
+        private val sharedState: ObjCExportSharedState,
 ) {
     private val stubs = mutableListOf<Stub<*>>()
+    private val dependencies = mutableSetOf<HeaderDependency>()
 
     private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
     private val protocolForwardDeclarations = linkedSetOf<String>()
@@ -1097,6 +1101,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     fun build(): List<String> = mutableListOf<String>().apply {
         addImports(foundationImports)
         addImports(getAdditionalImports())
+        dependencies.forEach { dependency ->
+            add("#import <${dependency.moduleName}/${dependency.headerName}>")
+        }
         add("")
 
         if (classForwardDeclarations.isNotEmpty()) {
@@ -1163,7 +1170,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     fun translateModule() {
         // TODO: make the translation order stable
         // to stabilize name mangling.
-        translateBaseDeclarations()
+        if (moduleDescriptors.first().isNativeStdlib()) {
+            translateBaseDeclarations()
+        }
         translateModuleDeclarations()
     }
 
@@ -1172,50 +1181,65 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     fun translateModuleDeclarations() {
-        translatePackageFragments()
+        when (moduleTranslationConfig) {
+            is ModuleTranslationConfig.Full -> {
+                translatePackageFragments()
+            }
+            is ModuleTranslationConfig.Partial -> {
+                translateCollection(moduleTranslationConfig.referencedDeclarations())
+            }
+        }
         translateExtraClasses()
+    }
+
+    private fun translateMultipleDescriptors(descriptors: Sequence<DeclarationDescriptor>) {
+        descriptors
+                .filterIsInstance<CallableMemberDescriptor>()
+                .filter { mapper.shouldBeExposed(it) }
+                .forEach {
+                    val classDescriptor = mapper.getClassIfCategory(it)
+                    if (classDescriptor != null) {
+                        extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                    } else {
+                        topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
+                    }
+                }
+    }
+
+    private fun translateClasses(classes: Sequence<ClassDescriptor>) {
+        classes.forEach {
+                    if (mapper.shouldBeExposed(it)) {
+                        if (it.isInterface) {
+                            generateInterface(it)
+                        } else {
+                            generateClass(it)
+                        }
+
+                        translateClasses(it.unsubstitutedMemberScope.getContributedDescriptors().asSequence().filterIsInstance<ClassDescriptor>())
+                    } else if (mapper.shouldBeVisible(it)) {
+                        stubs += if (it.isInterface) {
+                            translator.translateUnexposedInterfaceAsUnavailableStub(it)
+                        } else {
+                            translator.translateUnexposedClassAsUnavailableStub(it)
+                        }
+                    }
+                }
+    }
+
+    private fun translateCollection(declarations: List<DeclarationDescriptor>) {
+        translateClasses(declarations.asSequence().filterIsInstance<ClassDescriptor>())
+        translateMultipleDescriptors(declarations.asSequence().filterIsInstance<CallableMemberDescriptor>())
     }
 
     private fun translatePackageFragments() {
         val packageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }
 
         packageFragments.forEach { packageFragment ->
-            packageFragment.getMemberScope().getContributedDescriptors()
-                    .asSequence()
-                    .filterIsInstance<CallableMemberDescriptor>()
-                    .filter { mapper.shouldBeExposed(it) }
-                    .forEach {
-                        val classDescriptor = mapper.getClassIfCategory(it)
-                        if (classDescriptor != null) {
-                            extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
-                        } else {
-                            topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
-                        }
-                    }
-
+            translateMultipleDescriptors(packageFragment.getMemberScope().getContributedDescriptors().asSequence())
         }
 
         fun MemberScope.translateClasses() {
-            getContributedDescriptors()
-                    .asSequence()
-                    .filterIsInstance<ClassDescriptor>()
-                    .forEach {
-                        if (mapper.shouldBeExposed(it)) {
-                            if (it.isInterface) {
-                                generateInterface(it)
-                            } else {
-                                generateClass(it)
-                            }
-
-                            it.unsubstitutedMemberScope.translateClasses()
-                        } else if (mapper.shouldBeVisible(it)) {
-                            stubs += if (it.isInterface) {
-                                translator.translateUnexposedInterfaceAsUnavailableStub(it)
-                            } else {
-                                translator.translateUnexposedClassAsUnavailableStub(it)
-                            }
-                        }
-                    }
+            translateClasses(getContributedDescriptors().asSequence().filterIsInstance<ClassDescriptor>())
         }
 
         packageFragments.forEach { packageFragment ->
@@ -1275,18 +1299,30 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     private fun generateClass(descriptor: ClassDescriptor) {
-        if (!generatedClasses.add(descriptor)) return
-        stubs.add(translator.translateClass(descriptor))
+        if (descriptor.module !in moduleDescriptors) {
+            dependencies.addIfNotNull(sharedState.addDependency(descriptor))
+        } else {
+            if (!generatedClasses.add(descriptor)) return
+            stubs.add(translator.translateClass(descriptor))
+        }
     }
 
     private fun generateInterface(descriptor: ClassDescriptor) {
-        if (!generatedClasses.add(descriptor)) return
-        stubs.add(translator.translateInterface(descriptor))
+        if (descriptor.module !in moduleDescriptors) {
+            dependencies.addIfNotNull(sharedState.addDependency(descriptor))
+        } else {
+            if (!generatedClasses.add(descriptor)) return
+            stubs.add(translator.translateInterface(descriptor))
+        }
     }
 
     internal fun requireClassOrInterface(descriptor: ClassDescriptor) {
-        if (shouldTranslateExtraClass(descriptor) && descriptor !in generatedClasses) {
+        if (descriptor.module in moduleDescriptors) {
             extraClassesToTranslate += descriptor
+        } else {
+            if (shouldTranslateExtraClass(descriptor) && descriptor !in generatedClasses) {
+                dependencies.addIfNotNull(sharedState.addDependency(descriptor))
+            }
         }
     }
 

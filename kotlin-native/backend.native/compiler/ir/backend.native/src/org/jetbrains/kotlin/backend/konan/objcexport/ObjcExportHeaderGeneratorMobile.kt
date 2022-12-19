@@ -8,18 +8,20 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
+        moduleTranslationConfig: ModuleTranslationConfig,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
         private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
+) : ObjCExportHeaderGenerator(moduleTranslationConfig, moduleDescriptors, mapper, namer, objcGenerics, problemCollector, ObjCExportSharedState(moduleDescriptors)) {
 
     companion object {
         fun createInstance(
                 configuration: ObjCExportLazy.Configuration,
                 problemCollector: ObjCExportProblemCollector,
                 builtIns: KotlinBuiltIns,
+                moduleTranslationConfig: ModuleTranslationConfig,
                 moduleDescriptors: List<ModuleDescriptor>,
                 deprecationResolver: DeprecationResolver? = null,
                 local: Boolean = false,
@@ -30,6 +32,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
 
             return ObjcExportHeaderGeneratorMobile(
                 moduleDescriptors,
+                moduleTranslationConfig,
                 mapper,
                 namer,
                 problemCollector,
