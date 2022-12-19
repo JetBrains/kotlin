@@ -323,7 +323,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-Xuse-fir-lt",
         description = "Compile using LightTree parser with Front-end IR. Warning: this feature is far from being production-ready"
     )
-    var useFirLT: Boolean by FreezableVar(false)
+    var useFirLT: Boolean by FreezableVar(true)
 
     @Argument(
         value = "-Xdisable-ultra-light-classes",
