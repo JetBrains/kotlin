@@ -231,6 +231,10 @@ internal fun <T> orderedValues(values: List<T>, buildElement: (T) -> CompositeBu
 fun urlParameterToBaseFormat(value: dynamic) =
         value.toString().replace("_", " ")
 
+@JsExport
+class ExportedPair<T, U>(val first: T, val second: U)
+
+
 // Routing of requests to current server.
 fun router(connector: ElasticSearchConnector) {
     val express = require("express")
@@ -451,14 +455,14 @@ fun router(connector: ElasticSearchConnector) {
                     buildSuffix = request.query.buildSuffix
                 }
             }
-
+            
             getBuildsNumbers(type, branch, target, buildsCountToShow, buildInfoIndex, beforeDate, afterDate).then { buildNumbers ->
                 if (aggregation == "geomean") {
                     // Get geometric mean for samples.
                     benchmarksDispatcher.getGeometricMean(metric, target, buildNumbers, normalize,
                             excludeNames, buildSuffix).then { geoMeansValues ->
                         success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master")
-                                .map { it.first.second to it.second })
+                                .map { ExportedPair(it.first.second, it.second) })
                     }.catch { errorResponse ->
                         println("Error during getting geometric mean")
                         println(errorResponse)
@@ -468,7 +472,7 @@ fun router(connector: ElasticSearchConnector) {
                     benchmarksDispatcher.getSamples(metric, target, samples, buildsCountToShow, buildNumbers, normalize, buildSuffix)
                             .then { geoMeansValues ->
                         success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master")
-                                .map { it.first.second to it.second })
+                                .map { ExportedPair(it.first.second, it.second) })
                     }.catch { errorResponse ->
                         println("Error during getting samples")
                         println(errorResponse)
@@ -688,7 +692,7 @@ fun BenchmarksReport.normalizeBenchmarksSet(dataForNormalization: Map<String, Li
         benchmarksList.value.map {
             NormalizedMeanVarianceBenchmark(it.name, it.status, it.score, it.metric,
                     it.runtimeInUs, it.repeat, it.warmup, (it as MeanVarianceBenchmark).variance,
-                    dataForNormalization[benchmarksList.key]?.get(0)?.score?.let { golden -> it.score / golden } ?: 0.0)
+                    dataForNormalization[benchmarksList.key]?.get(0)?.score?.let { golden -> it.score.toDouble() / golden } ?: 0.0)
         }
     }.flatten()
     return BenchmarksReport(env, resultBenchmarksList, compiler)
