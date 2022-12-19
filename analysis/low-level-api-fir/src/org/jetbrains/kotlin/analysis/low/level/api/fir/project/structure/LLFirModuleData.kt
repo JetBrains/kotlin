@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -40,7 +40,7 @@ class LLFirModuleData(
     }
 
     override val dependsOnDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ktModule.directRefinementDependencies.map(::LLFirModuleData)
+        ktModule.directDependsOnDependencies.map(::LLFirModuleData)
     }
 
     override val friendDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {

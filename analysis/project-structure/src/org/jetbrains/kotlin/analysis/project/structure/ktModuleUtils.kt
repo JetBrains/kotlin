@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.project.structure
 
 /**
- * A list of all modules current module can depend on with regular dependency
+ * A list of all modules that the current module can depend on with regular dependency.
  *
  * @see KtModule.directRegularDependencies
  */
@@ -14,7 +14,7 @@ public inline fun <reified M : KtModule> KtModule.directRegularDependenciesOfTyp
     directRegularDependencies.asSequence().filterIsInstance<M>()
 
 /**
- * A list of all modules current module can depend on with friend dependency
+ * A list of all modules that the current module can depend on with friend dependency.
  *
  * @see KtModule.directFriendDependencies
  */
@@ -22,34 +22,32 @@ public inline fun <reified M : KtModule> KtModule.directFriendDependenciesOfType
     directFriendDependencies.asSequence().filterIsInstance<M>()
 
 /**
- * A list of all modules current module can depend on with refinement dependency
+ * A list of all modules that the current module can depend on with refinement dependency.
  *
- * @see KtModule.directRefinementDependencies
+ * @see KtModule.directDependsOnDependencies
  */
-public inline fun <reified M : KtModule> KtModule.directRefinementDependenciesOfType(): Sequence<M> =
-    directRefinementDependencies.asSequence().filterIsInstance<M>()
-
-
+public inline fun <reified M : KtModule> KtModule.directDependsOnDependenciesOfType(): Sequence<M> =
+    directDependsOnDependencies.asSequence().filterIsInstance<M>()
 
 /**
- * A list of all other modules current module can depend on.
+ * A list of all other modules that the current module can depend on.
  *
  * @see KtModule.directRegularDependencies
- * @see KtModule.directRefinementDependencies
+ * @see KtModule.directDependsOnDependencies
  * @see KtModule.directFriendDependencies
  */
 public fun KtModule.allDirectDependencies(): Sequence<KtModule> =
     sequence {
         yieldAll(directRegularDependencies)
-        yieldAll(directRefinementDependencies)
+        yieldAll(directDependsOnDependencies)
         yieldAll(directFriendDependencies)
     }
 
 /**
- * A list of all other modules of type [M] current module can depend on.
+ * A list of all other modules of type [M] that the current module can depend on.
  *
  * @see KtModule.directRegularDependencies
- * @see KtModule.directRefinementDependencies
+ * @see KtModule.directDependsOnDependencies
  * @see KtModule.directFriendDependencies
  */
 public inline fun <reified M : KtModule> KtModule.allDirectDependenciesOfType(): Sequence<M> =

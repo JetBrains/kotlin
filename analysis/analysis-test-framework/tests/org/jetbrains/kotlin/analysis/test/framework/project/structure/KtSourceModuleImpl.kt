@@ -16,7 +16,7 @@ import java.nio.file.Path
 
 interface KtModuleWithModifiableDependencies {
     val directRegularDependencies: MutableList<KtModule>
-    val directRefinementDependencies: MutableList<KtModule>
+    val directDependsOnDependencies: MutableList<KtModule>
     val directFriendDependencies: MutableList<KtModule>
 }
 
@@ -30,7 +30,7 @@ class KtSourceModuleImpl(
     override val analyzerServices: PlatformDependentAnalyzerServices get() = platform.getAnalyzerServices()
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    override val directRefinementDependencies: MutableList<KtModule> = mutableListOf()
+    override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
 }
 
@@ -47,7 +47,7 @@ class KtJdkModuleImpl(
     override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    override val directRefinementDependencies: MutableList<KtModule> = mutableListOf()
+    override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
 }
 
@@ -63,7 +63,7 @@ class KtLibraryModuleImpl(
     override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    override val directRefinementDependencies: MutableList<KtModule> = mutableListOf()
+    override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
 }
 
@@ -77,6 +77,6 @@ class KtLibrarySourceModuleImpl(
     override val analyzerServices: PlatformDependentAnalyzerServices get() = platform.getAnalyzerServices()
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    override val directRefinementDependencies: MutableList<KtModule> = mutableListOf()
+    override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
 }

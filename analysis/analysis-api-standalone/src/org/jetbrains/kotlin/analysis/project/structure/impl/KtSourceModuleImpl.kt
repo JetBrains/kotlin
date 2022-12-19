@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 internal class KtSourceModuleImpl(
     override val directRegularDependencies: List<KtModule>,
-    override val directRefinementDependencies: List<KtModule>,
+    override val directDependsOnDependencies: List<KtModule>,
     override val directFriendDependencies: List<KtModule>,
     override val contentScope: GlobalSearchScope,
     override val platform: TargetPlatform,

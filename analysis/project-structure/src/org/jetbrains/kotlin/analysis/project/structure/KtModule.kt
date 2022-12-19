@@ -22,27 +22,27 @@ import java.nio.file.Path
  */
 public sealed interface KtModule {
     /**
-     * A list of Regular dependencies. Regular dependency allows current module to see symbols from dependent module.
-     * In a case for a source set, it can be other source set it depends on, library, or SDK.
+     * A list of Regular dependencies. Regular dependency allows the current module to see symbols from the dependent module. In the case
+     * of a source set, it can be either the source set it depends on, a library, or an SDK.
      *
-     * The dependencies list is non-transitive and should not include current module.
+     * The dependencies list is non-transitive and should not include the current module.
      */
     public val directRegularDependencies: List<KtModule>
 
     /**
-     * Only for Kotlin MPP project.
-     * A list of Refinement dependencies.
-     * Refinement dependency express that the current module can provide actual declarations for expect declarations from dependent module,
-     * as well as see internal symbols of dependent module.
+     * A list of `dependsOn` dependencies. (Kotlin MPP projects only.)
      *
-     * The dependencies list is non-transitive and should not include current module.
+     * A `dependsOn` dependency expresses that the current module can provide `actual` declarations for `expect` declarations from the
+     * dependent module, as well as see internal symbols of the dependent module.
+     *
+     * `dependsOn` dependencies are transitive, but the list is not a transitive closure. The list should not include the current module.
      */
-    public val directRefinementDependencies: List<KtModule>
+    public val directDependsOnDependencies: List<KtModule>
 
     /**
-     * A list of Friend dependencies. Friend dependencies express that current module may see internal symbols of dependent module.
+     * A list of Friend dependencies. Friend dependencies express that the current module may see internal symbols of the dependent module.
      *
-     * The dependencies list is non-transitive and should not include current module.
+     * The dependencies list is non-transitive and should not include the current module.
      */
     public val directFriendDependencies: List<KtModule>
 
@@ -54,7 +54,7 @@ public sealed interface KtModule {
     public val contentScope: GlobalSearchScope
 
     /**
-     * A platform (e.g, JVM, JS, Native) current module represents.
+     * A platform (e.g, JVM, JS, Native) which the current module represents.
      *
      * @see [TargetPlatform]
      */
@@ -63,19 +63,20 @@ public sealed interface KtModule {
     public val analyzerServices: PlatformDependentAnalyzerServices
 
     /**
-     * [Project] to which module belongs.
-     * If current module depends on some other modules, all those modules should have the same [Project] as the current one.
+     * [Project] to which the current module belongs.
+     *
+     * If the current module depends on some other modules, all those modules should have the same [Project] as the current one.
      */
     public val project: Project
 
     /**
-     * Human-readable description of the module. E.g, "main sources of module 'analysis-api'"
+     * A human-readable description of the current module. E.g, "main sources of module 'analysis-api'".
      */
     public val moduleDescription: String
 }
 
 /**
- * A module which consists of a set of source declarations inside a projects.
+ * A module which consists of a set of source declarations inside a project.
  *
  * Generally, a main or test Source Set.
  */
@@ -97,8 +98,8 @@ public interface KtSourceModule : KtModule {
 public sealed interface KtBinaryModule : KtModule {
     /**
      * A list of binary files which forms a binary module. It can be a list of JARs, KLIBs, folders with .class files.
-     * Should be consistent with [contentScope],
-     * so (pseudo-Kotlin) `
+     *
+     * It should be consistent with [contentScope], so (pseudo-Kotlin):
      * ```
      * library.contentScope.contains(file) <=> library.getBinaryRoots().listRecursively().contains(file)
      * ```
@@ -107,7 +108,7 @@ public sealed interface KtBinaryModule : KtModule {
 }
 
 /**
- * A module which represents a binary library. E.g, JAR or KLIB.
+ * A module which represents a binary library, e.g. JAR or KLIB.
  */
 public interface KtLibraryModule : KtBinaryModule {
     public val libraryName: String
@@ -122,7 +123,7 @@ public interface KtLibraryModule : KtBinaryModule {
 }
 
 /**
- * A module which represent some SDK. E.g, Java JDK.
+ * A module which represent some SDK, e.g. Java JDK.
  */
 public interface KtSdkModule : KtBinaryModule {
     public val sdkName: String
@@ -132,14 +133,14 @@ public interface KtSdkModule : KtBinaryModule {
 }
 
 /**
- * A sources for some [KtLibraryModule]
+ * Sources for some [KtLibraryModule].
  */
 public interface KtLibrarySourceModule : KtModule {
     public val libraryName: String
 
     /**
      * A library binary corresponding to the current library source.
-     * If current module is a source JAR, then [binaryLibrary] is corresponds to the binaries JAR.
+     * If the current module is a source JAR, then [binaryLibrary] corresponds to the binaries JAR.
      */
     public val binaryLibrary: KtLibraryModule
 
@@ -148,8 +149,8 @@ public interface KtLibrarySourceModule : KtModule {
 }
 
 /**
- * Module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for specific platform
- * Kotlin builtins are usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty
+ * A module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
+ * Kotlin builtins usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty.
  */
 public class KtBuiltinsModule(
     override val platform: TargetPlatform,
@@ -157,7 +158,7 @@ public class KtBuiltinsModule(
     override val project: Project
 ) : KtBinaryModule {
     override val directRegularDependencies: List<KtModule> get() = emptyList()
-    override val directRefinementDependencies: List<KtModule> get() = emptyList()
+    override val directDependsOnDependencies: List<KtModule> get() = emptyList()
     override val directFriendDependencies: List<KtModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
     override fun getBinaryRoots(): Collection<Path> = emptyList()
@@ -169,7 +170,7 @@ public class KtBuiltinsModule(
 
 
 /**
- * A set of sources which lives outside project content root. E.g, testdata files or source files of some other project.
+ * A set of sources which live outside the project content root. E.g, testdata files or source files of some other project.
  */
 public interface KtNotUnderContentRootModule : KtModule {
     /**

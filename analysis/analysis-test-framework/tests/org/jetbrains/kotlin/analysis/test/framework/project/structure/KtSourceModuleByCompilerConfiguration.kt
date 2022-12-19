@@ -55,7 +55,7 @@ abstract class KtModuleByCompilerConfiguration(
         }
     }
 
-    val directRefinementDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    val directDependsOnDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         testModule.dependsOnDependencies
             .map { moduleProvider.getModule(it.moduleName) }
     }
@@ -139,7 +139,7 @@ private class LibraryByRoots(
 ) : KtLibraryModule {
     override val libraryName: String get() = "Test Library"
     override val directRegularDependencies: List<KtModule> get() = emptyList()
-    override val directRefinementDependencies: List<KtModule> get() = emptyList()
+    override val directDependsOnDependencies: List<KtModule> get() = emptyList()
     override val directFriendDependencies: List<KtModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = ProjectScope.getLibrariesScope(project)
     override val platform: TargetPlatform get() = module.platform

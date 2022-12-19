@@ -20,7 +20,7 @@ public class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
     override fun build(): KtLibraryModule {
         return KtLibraryModuleImpl(
             directRegularDependencies,
-            directRefinementDependencies,
+            directDependsOnDependencies,
             directFriendDependencies,
             contentScope,
             platform,

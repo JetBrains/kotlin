@@ -34,7 +34,7 @@ public class KtSourceModuleBuilder : KtModuleBuilder() {
     override fun build(): KtSourceModule {
         return KtSourceModuleImpl(
             directRegularDependencies,
-            directRefinementDependencies,
+            directDependsOnDependencies,
             directFriendDependencies,
             contentScope,
             platform,

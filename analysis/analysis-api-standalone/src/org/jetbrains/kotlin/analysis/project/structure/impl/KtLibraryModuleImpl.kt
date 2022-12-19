@@ -16,7 +16,7 @@ import java.nio.file.Path
 
 internal class KtLibraryModuleImpl(
     override val directRegularDependencies: List<KtModule>,
-    override val directRefinementDependencies: List<KtModule>,
+    override val directDependsOnDependencies: List<KtModule>,
     override val directFriendDependencies: List<KtModule>,
     override val contentScope: GlobalSearchScope,
     override val platform: TargetPlatform,

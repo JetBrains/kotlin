@@ -71,7 +71,7 @@ internal class KtFe10SymbolContainingDeclarationProvider(
                     override val librarySources: KtLibrarySourceModule? = null
                     override fun getBinaryRoots(): Collection<Path> = listOf(libraryPath)
                     override val directRegularDependencies: List<KtModule> = emptyList()
-                    override val directRefinementDependencies: List<KtModule> = emptyList()
+                    override val directDependsOnDependencies: List<KtModule> = emptyList()
                     override val directFriendDependencies: List<KtModule> = emptyList()
                     override val contentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
                     override val platform: TargetPlatform

@@ -18,7 +18,7 @@ public class KtSdkModuleBuilder : KtBinaryModuleBuilder() {
     override fun build(): KtSdkModule {
         return KtSdkModuleImpl(
             directRegularDependencies,
-            directRefinementDependencies,
+            directDependsOnDependencies,
             directFriendDependencies,
             contentScope,
             platform,

@@ -94,7 +94,7 @@ object TestModuleStructureFactory {
             when (dependency.relation) {
                 DependencyRelation.RegularDependency -> ktModule.directRegularDependencies.add(dependencyKtModule)
                 DependencyRelation.FriendDependency -> ktModule.directFriendDependencies.add(dependencyKtModule)
-                DependencyRelation.DependsOnDependency -> ktModule.directRefinementDependencies.add(dependencyKtModule)
+                DependencyRelation.DependsOnDependency -> ktModule.directDependsOnDependencies.add(dependencyKtModule)
             }
         }
     }
