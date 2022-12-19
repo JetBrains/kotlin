@@ -74,34 +74,37 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
-            produceKLibK2(engine, environment)
+        val serializerOutput = if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
+            serializeKLibK2(engine, environment)
         else
-            produceKlibK1(engine, config, environment)
+            serializeKlibK1(engine, config, environment)
+        serializerOutput?.let { engine.writeKlib(it) }
     }
 
-    private fun produceKLibK2(
+    private fun serializeKLibK2(
             engine: PhaseEngine<PhaseContext>,
             environment: KotlinCoreEnvironment
-    ) {
+    ): SerializerOutput? {
         val frontendOutput = engine.runFirFrontend(environment)
-        if (frontendOutput is FirOutput.ShouldNotGenerateCode) return
+        if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
         val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-        val serializerOutput = engine.runFirSerializer(fir2IrOutput)
-        engine.writeKlib(serializerOutput)
+        return engine.runFirSerializer(fir2IrOutput)
     }
 
-    private fun produceKlibK1(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = engine.runFrontend(config, environment) ?: return
+    private fun serializeKlibK1(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment
+    ): SerializerOutput? {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return null
         val psiToIrOutput = if (config.metadataKlib) {
             null
         } else {
             engine.runPsiToIr(frontendOutput, isProducingLibrary = true)
         }
-        val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
-        engine.writeKlib(serializerOutput)
+        return engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
     }
 
     /**
