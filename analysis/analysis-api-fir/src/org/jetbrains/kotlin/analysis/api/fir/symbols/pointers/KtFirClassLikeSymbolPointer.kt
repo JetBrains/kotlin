@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import kotlin.reflect.KClass
@@ -25,4 +26,9 @@ internal class KtFirClassLikeSymbolPointer<T : KtClassLikeSymbol>(
         @Suppress("UNCHECKED_CAST")
         return classLikeSymbol as T
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = other === this ||
+            other is KtFirClassLikeSymbolPointer &&
+            other.classId == classId &&
+            other.expectedClass == expectedClass
 }

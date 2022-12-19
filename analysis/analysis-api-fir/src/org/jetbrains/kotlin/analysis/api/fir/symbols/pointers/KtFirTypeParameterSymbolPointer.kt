@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -29,4 +30,10 @@ internal class KtFirTypeParameterSymbolPointer(
         val firTypeParameterSymbol = ownerSymbol.firSymbol.typeParameterSymbols?.getOrNull(index)?.takeIf { it.name == name } ?: return null
         return analysisSession.firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firTypeParameterSymbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirTypeParameterSymbolPointer &&
+            other.index == index &&
+            other.name == name &&
+            other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

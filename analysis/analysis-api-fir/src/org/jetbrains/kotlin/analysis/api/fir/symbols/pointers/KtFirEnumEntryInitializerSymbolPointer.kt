@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 
@@ -26,4 +27,8 @@ internal class KtFirEnumEntryInitializerSymbolPointer(
         val initializer = owner?.firSymbol?.fir?.initializer as? FirAnonymousObjectExpression ?: return null
         return analysisSession.firSymbolBuilder.classifierBuilder.buildAnonymousObjectSymbol(initializer.anonymousObject.symbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirEnumEntryInitializerSymbolPointer &&
+            other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

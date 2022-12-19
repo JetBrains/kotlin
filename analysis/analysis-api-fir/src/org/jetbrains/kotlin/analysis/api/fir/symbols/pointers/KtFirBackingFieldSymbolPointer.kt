@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
 internal class KtFirBackingFieldSymbolPointer(
@@ -25,4 +26,8 @@ internal class KtFirBackingFieldSymbolPointer(
         check(propertySymbol is KtFirKotlinPropertySymbol)
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildBackingFieldSymbolByProperty(propertySymbol.firSymbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirBackingFieldSymbolPointer &&
+            other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
 }

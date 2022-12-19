@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,11 @@ public abstract class KtSymbolPointer<out S : KtSymbol> {
      */
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     public abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
+
+    /**
+     * @return **true** if [other] pointer should be restored to the same symbol
+     */
+    public open fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other
 }
 
 public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?): KtSymbolPointer<S> =
