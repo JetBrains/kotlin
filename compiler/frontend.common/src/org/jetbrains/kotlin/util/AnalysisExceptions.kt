@@ -38,9 +38,9 @@ internal fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSo
 }
 
 class FileAnalysisException(
-    private val path: String,
+    val path: String,
     override val cause: Throwable,
-    private val lineAndOffset: Pair<Int, Int>? = null,
+    val lineAndOffset: Pair<Int, Int>? = null,
 ) : Exception() {
     override val message
         get(): String {
@@ -86,5 +86,14 @@ inline fun <R> withSourceCodeAnalysisExceptionUnwrapping(block: () -> R): R {
         block()
     } catch (throwable: Throwable) {
         throw if (throwable is SourceCodeAnalysisException) throwable.cause else throwable
+    }
+}
+
+inline fun mapThrowable(throwable: Throwable, transform: (Throwable) -> Throwable): Throwable {
+    return when {
+        shouldIjPlatformExceptionBeRethrown(throwable) -> throwable
+        throwable is SourceCodeAnalysisException -> SourceCodeAnalysisException(throwable.source, transform(throwable.cause))
+        throwable is FileAnalysisException -> FileAnalysisException(throwable.path, transform(throwable.cause), throwable.lineAndOffset)
+        else -> transform(throwable)
     }
 }
