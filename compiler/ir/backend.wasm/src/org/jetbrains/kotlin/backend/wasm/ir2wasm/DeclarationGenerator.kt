@@ -54,7 +54,10 @@ class DeclarationGenerator(
     }
 
     private fun jsCodeName(declaration: IrFunction): String {
-        return declaration.fqNameWhenAvailable!!.asString() + "_" + (declaration as IrSimpleFunction).wasmSignature(irBuiltIns).hashCode()
+        require(declaration is IrSimpleFunction)
+        val fqName = declaration.fqNameWhenAvailable!!.asString()
+        val hashCode = declaration.wasmSignature(irBuiltIns).hashCode() + declaration.file.path.hashCode()
+        return "${fqName}_$hashCode"
     }
 
     override fun visitFunction(declaration: IrFunction) {
