@@ -94,7 +94,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightParameterForReceiver &&
             ktModule == other.ktModule &&
-            compareSymbolPointers(ktModule, receiverPointer, other.receiverPointer)
+            compareSymbolPointers(receiverPointer, other.receiverPointer)
 
     override fun hashCode(): Int = _name.hashCode()
 

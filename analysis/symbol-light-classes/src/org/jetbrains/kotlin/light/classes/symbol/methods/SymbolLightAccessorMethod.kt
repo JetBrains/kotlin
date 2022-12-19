@@ -258,7 +258,7 @@ internal class SymbolLightAccessorMethod private constructor(
             return containingPropertyDeclaration == other.containingPropertyDeclaration
         }
 
-        return compareSymbolPointers(ktModule, propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
+        return compareSymbolPointers(propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
     }
 
     override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()

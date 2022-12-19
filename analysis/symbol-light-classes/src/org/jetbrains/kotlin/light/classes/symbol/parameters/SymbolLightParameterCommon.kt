@@ -96,7 +96,7 @@ internal abstract class SymbolLightParameterCommon(
             return parameterDeclaration == other.parameterDeclaration
         }
 
-        return compareSymbolPointers(ktModule, parameterSymbolPointer, other.parameterSymbolPointer)
+        return compareSymbolPointers(parameterSymbolPointer, other.parameterSymbolPointer)
     }
 
     override fun hashCode(): Int = parameterDeclaration?.hashCode() ?: _name.hashCode()

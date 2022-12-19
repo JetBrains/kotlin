@@ -252,12 +252,11 @@ internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeFo
     restoreSymbol() != null
 }
 
-internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSymbolPointer<T>, right: KtSymbolPointer<T>): Boolean {
-    return left === right || analyzeForLightClasses(ktModule) {
-        val leftSymbol = left.restoreSymbol()
-        leftSymbol != null && leftSymbol == right.restoreSymbol()
-    }
-}
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <T : KtSymbol> compareSymbolPointers(
+    left: KtSymbolPointer<T>,
+    right: KtSymbolPointer<T>,
+): Boolean = left.pointsToTheSameSymbolAs(right)
 
 internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
     ktModule: KtModule,

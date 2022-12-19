@@ -100,7 +100,7 @@ internal class SymbolLightFieldForObject private constructor(
         }
 
         return other.containingClass == containingClass &&
-                compareSymbolPointers(ktModule, other.objectSymbolPointer, objectSymbolPointer)
+                compareSymbolPointers(other.objectSymbolPointer, objectSymbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()

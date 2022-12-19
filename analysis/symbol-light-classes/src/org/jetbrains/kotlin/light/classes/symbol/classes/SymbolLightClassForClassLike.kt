@@ -164,7 +164,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
             return other.classOrObjectDeclaration == classOrObjectDeclaration
         }
 
-        return compareSymbolPointers(ktModule, classOrObjectSymbolPointer, other.classOrObjectSymbolPointer)
+        return compareSymbolPointers(classOrObjectSymbolPointer, other.classOrObjectSymbolPointer)
     }
 
     override fun hashCode(): Int = classOrObjectDeclaration.hashCode()
