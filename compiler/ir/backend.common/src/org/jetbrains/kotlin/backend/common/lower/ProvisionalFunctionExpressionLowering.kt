@@ -68,7 +68,7 @@ class ProvisionalFunctionExpressionLowering :
                     valueArgumentsCount = function.valueParameters.size,
                     reflectionTarget = null,
                     origin = origin
-                ).copyAttributes(expression) // TODO better to copy just name
+                ).copyAttributes(expression)
             )
         )
     }

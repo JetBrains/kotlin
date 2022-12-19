@@ -91,7 +91,7 @@ class JvmBackendContext(
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
-    // TODO doc
+    // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
     val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
 
     private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
