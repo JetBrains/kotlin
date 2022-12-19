@@ -89,7 +89,7 @@ class KotlinClassInfo constructor(
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
-                classHeader.data ?: emptyArray(),
+                classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
                 constants.mapKeys { it.key.name },
