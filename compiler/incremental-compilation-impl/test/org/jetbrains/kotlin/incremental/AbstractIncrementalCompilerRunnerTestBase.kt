@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.incremental.AdditionalArgs.Companion.parseAdditionalArgs
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -195,16 +196,6 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         @JvmStatic
         protected fun abiSnapshotFile(cacheDir: File): File = File(cacheDir, IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
 
-        private const val ARGUMENTS_FILE_NAME = "args.txt"
         private const val FAIL_FILE_NAME = "fail.txt"
-
-        private fun parseAdditionalArgs(testDir: File): List<String> {
-            return File(testDir, ARGUMENTS_FILE_NAME)
-                .takeIf { it.exists() }
-                ?.readText()
-                ?.split(" ", "\n")
-                ?.filter { it.isNotBlank() }
-                ?: emptyList()
-        }
     }
 }

@@ -1,0 +1,3 @@
+fun main() {
+    println("foo")
+}
