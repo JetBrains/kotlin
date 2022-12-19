@@ -30,7 +30,7 @@ internal inline fun <reified T : ObjCExportScope> ObjCExportScope.nearestScopeOf
         if (parent is T) {
             return parent
         }
-        parent = this.parent
+        parent = parent.parent
     }
     return null
 }
