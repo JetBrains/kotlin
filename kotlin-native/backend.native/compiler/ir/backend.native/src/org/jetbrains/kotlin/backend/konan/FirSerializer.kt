@@ -86,9 +86,7 @@ internal fun PhaseContext.serializeNativeModule(
 
     val moduleDescriptor = moduleFragment.descriptor
 
-    val additionalFiles = mutableListOf<KotlinFileSerializedData>()
-
-    for ((ktSourceFile, binaryFile) in files.zip(serializedIr.files)) {
+    val compiledKotlinFiles = files.zip(serializedIr.files).map { (ktSourceFile, binaryFile) ->
         assert(ktSourceFile.path == binaryFile.path) {
             """The Kt and Ir files are put in different order
                 Kt: ${ktSourceFile.path}
@@ -96,16 +94,8 @@ internal fun PhaseContext.serializeNativeModule(
             """.trimMargin()
         }
         val packageFragment = serializeSingleFile(ktSourceFile)
-        val compiledKotlinFile = KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
-
-        additionalFiles += compiledKotlinFile
-        val ioFile = ktSourceFile.toIoFileOrNull()
-        assert(ioFile != null) {
-            "No file found for source ${ktSourceFile.path}"
-        }
+        KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
     }
-
-    val compiledKotlinFiles = additionalFiles.toList()
 
     val header = serializeKlibHeader(
             configuration.languageVersionSettings, moduleDescriptor,
@@ -123,11 +113,4 @@ internal fun PhaseContext.serializeNativeModule(
     val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
 
     return SerializerOutput(serializedMetadata, fullSerializedIr, null, dependencies)
-}
-
-fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
-    is KtIoFileSourceFile -> file
-    is KtVirtualFileSourceFile -> VfsUtilCore.virtualToIoFile(virtualFile)
-    is KtPsiSourceFile -> VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
-    else -> path?.let(::File)
 }
