@@ -150,7 +150,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         }
 
         return containingClass == other.containingClass &&
-                compareSymbolPointers(ktModule, functionSymbolPointer, other.functionSymbolPointer)
+                compareSymbolPointers(functionSymbolPointer, other.functionSymbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()

@@ -65,7 +65,7 @@ internal class SymbolLightTypeParameterList(
             return other.ktDeclaration == ktDeclaration
         }
 
-        return other.owner == owner && compareSymbolPointers(ktModule, symbolWithTypeParameterPointer, other.symbolWithTypeParameterPointer)
+        return other.owner == owner && compareSymbolPointers(symbolWithTypeParameterPointer, other.symbolWithTypeParameterPointer)
     }
 
     override fun hashCode(): Int = ktDeclaration.hashCode() + 1

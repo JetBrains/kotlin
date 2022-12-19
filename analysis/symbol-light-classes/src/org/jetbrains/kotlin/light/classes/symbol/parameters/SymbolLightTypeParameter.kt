@@ -181,7 +181,7 @@ internal class SymbolLightTypeParameter private constructor(
         }
 
         return other.kotlinOrigin == kotlinOrigin &&
-                compareSymbolPointers(ktModule, typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
+                compareSymbolPointers(typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
                 other.parent == parent
     }
 
