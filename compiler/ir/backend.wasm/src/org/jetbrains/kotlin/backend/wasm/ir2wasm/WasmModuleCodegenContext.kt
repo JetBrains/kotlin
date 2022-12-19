@@ -195,5 +195,9 @@ class WasmModuleCodegenContext(
         wasmFragment.jsFuns +=
             WasmCompiledModuleFragment.JsCodeSnippet(importName = importName, jsCode = jsCode)
     }
+
+    fun addJsModuleImport(module: String) {
+        wasmFragment.jsModuleImports += module
+    }
 }
 
