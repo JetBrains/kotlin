@@ -43,8 +43,6 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
 
     @Disabled("In JS IR all dependencies effectively api, not implementation")
-    override fun testAddDependencyInLib(gradleVersion: GradleVersion) {}
-
     @DisplayName("Add new dependency in lib project")
     @GradleTest
     override fun testAddDependencyInLib(gradleVersion: GradleVersion) {
