@@ -5,17 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
-import org.jetbrains.kotlin.js.backend.ast.JsArrayLiteral
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsNameRef
-import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 
-fun generateStringLiteralsSupport(literals: List<String>): String {
-    return JsBlock(
-        jsAssignment(
-            JsNameRef("stringLiterals", "runtime"),
-            JsArrayLiteral(literals.map { JsStringLiteral(it) })
-        ).makeStmt()
-    ).toString()
-}
+fun String.toJsStringLiteral(): CharSequence =
+    JsToStringGenerationVisitor.javaScriptString(this)
