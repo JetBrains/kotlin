@@ -1,0 +1,2 @@
+Resolved to:
+0: (in test.B) operator fun set(i: kotlin.Int, a: test.B)

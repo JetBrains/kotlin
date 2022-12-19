@@ -661,6 +661,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setOperator.kt");
         }
 
+        @Test
+        @TestMetadata("SetOperatorInc.kt")
+        public void testSetOperatorInc() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/SetOperatorInc.kt");
+        }
+
         @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors")
         @TestDataPath("$PROJECT_ROOT")
