@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetCo
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.UnusedSourcesAndDocumentationFilter
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {

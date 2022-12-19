@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.commonizerTarget
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.library.*
 
 fun resolveCinteropDependencies(project: Project, cinteropFiles: FileCollection): Set<IdeaKotlinDependency> {
     return cinteropFiles.files
@@ -38,13 +33,13 @@ private fun createCinteropLibraryDependency(project: Project, libraryFile: java.
     }
 
     return IdeaKotlinResolvedBinaryDependency(
-        binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-        binaryFile = libraryFile,
+        binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+        classpath = IdeaKotlinClasspath(libraryFile),
         coordinates = IdeaKotlinBinaryCoordinates(
             group = project.group.toString(),
             module = library.moduleDisplayName,
-            version = null,
-            sourceSetName = library.commonizerTarget
+            version = null, // TODO (kirpichenkov): if/when used for published cinterops, should be set up correctly
+            sourceSetName = library.nativeTargets.singleOrNull() ?: library.nativeTargets.joinToString(prefix = "(", postfix = ")")
         ),
     ).apply {
         klibExtra = KlibExtra(library)

@@ -102,14 +102,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 val linuxArmTestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
 
                 for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
-                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64, linux_x64")))
+                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
                 }
 
                 linuxX64MainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
                 linuxArmMainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
-                // TODO (kirpichenkov): cinterops from associate compilations for platform source sets
-                linuxX64TestDependencies.assertMatches(/*binaryCoordinates(Regex("a:dep.*linux_x64"))*/)
-                linuxArmTestDependencies.assertMatches(/*binaryCoordinates(Regex("a:dep.*linux_arm64"))*/)
+                linuxX64TestDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
+                linuxArmTestDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
             }
 
             resolveIdeDependencies("client-for-binary-dep") { dependencies ->
@@ -122,12 +121,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
                 for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
                     commonDeps.assertMatches(
-                        commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64, linux_x64")))
+                        commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
                     )
                 }
 
                 for (platformDeps in listOf(linuxMainDependencies, linuxTestDependencies, linux2MainDependencies, linux2TestDependencies)) {
                     platformDeps.assertMatches(
+                        // TODO (kirpichenkov): consider extracting cinterops from , platform source set cinterops
                     )
                 }
             }
@@ -141,7 +141,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 val linux2TestDependencies = dependencies["linuxArm64Test"].cinteropDependencies()
 
                 for (commonDeps in listOf(commonMainDependencies, commonTestDependencies)) {
-                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64, linux_x64")))
+                    commonDeps.assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
                 }
 
                 for (platformDeps in listOf(linuxMainDependencies, linuxTestDependencies, linux2MainDependencies, linux2TestDependencies)) {
