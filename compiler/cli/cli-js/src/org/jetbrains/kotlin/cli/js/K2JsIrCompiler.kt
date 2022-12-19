@@ -145,7 +145,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irSafeExternalBooleanDiagnostic,
                     messageCollector
                 ),
-                granularity = arguments.granularity
+                granularity = arguments.granularity,
+                es6mode = arguments.useEsNext
             )
         }
 
