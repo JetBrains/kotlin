@@ -1,10 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
@@ -22,11 +18,8 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import java.io.File
 
 internal fun PhaseContext.firSerializer(
         input: Fir2IrOutput
@@ -45,8 +38,7 @@ internal fun PhaseContext.firSerializer(
             sourceFiles,
             resolvedLibraries.map { it.library as KonanLibrary },
             input.fir2irResult.irModuleFragment,
-            expectDescriptorToSymbol = mutableMapOf(), // TODO: expect -> actual mapping
-            abiVersion = KotlinAbiVersion.CURRENT // TODO get from test file data
+            expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
     ) { file ->
         val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(firFile, input.session, input.scopeSession, metadataVersion)
@@ -62,15 +54,12 @@ internal fun PhaseContext.serializeNativeModule(
         dependencies: List<KonanLibrary>,
         moduleFragment: IrModuleFragment,
         expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-        abiVersion: KotlinAbiVersion,
         serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
     assert(files.size == moduleFragment.files.size)
 
-    val compatibilityMode = CompatibilityMode(abiVersion)
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
-
     val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
     val serializedIr =
@@ -79,7 +68,7 @@ internal fun PhaseContext.serializeNativeModule(
                     moduleFragment.irBuiltins,
                     expectDescriptorToSymbol,
                     skipExpects = !expectActualLinker,
-                    compatibilityMode,
+                    CompatibilityMode.CURRENT,
                     normalizeAbsolutePaths = absolutePathNormalization,
                     sourceBaseDirs = sourceBaseDirs
             ).serializedIrModule(moduleFragment)
@@ -110,7 +99,5 @@ internal fun PhaseContext.serializeNativeModule(
                     header
             )
 
-    val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
-
-    return SerializerOutput(serializedMetadata, fullSerializedIr, null, dependencies)
+    return SerializerOutput(serializedMetadata, serializedIr, null, dependencies)
 }
