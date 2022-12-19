@@ -49,7 +49,7 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
         ),
         RXJAVA3_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
-            sinceVersion = KotlinVersion(1, 8),
+            sinceVersion = KotlinVersion(1, 9),
             reportLevelAfter = ReportLevel.STRICT
         ),
     )
