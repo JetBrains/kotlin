@@ -21834,6 +21834,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("intermediateWithActualAndExpect.kt")
+                public void testIntermediateWithActualAndExpect() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediateWithActualAndExpect.kt");
+                }
+
+                @Test
+                @TestMetadata("kt-55570.kt")
+                public void testKt_55570() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/kt-55570.kt");
+                }
+
+                @Test
                 @TestMetadata("sealedInheritorsInComplexModuleStructure.kt")
                 public void testSealedInheritorsInComplexModuleStructure() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/sealedInheritorsInComplexModuleStructure.kt");

@@ -79,11 +79,15 @@ open class FirExpectActualMatcherTransformer(
     private fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         if (!memberDeclaration.isActual) return
         val actualSymbol = memberDeclaration.symbol
+
+        // Regardless of whether any `expect` symbols are found for `memberDeclaration`, it must be assigned an `expectForActual` map.
+        // Otherwise, `FirExpectActualDeclarationChecker` will assume that the symbol needs no checking and not report an
+        // `EXPECT_WITHOUT_ACTUAL` error.
         val expectForActualData = FirExpectActualResolver.findExpectForActual(
             actualSymbol,
             session,
             scopeSession
-        ) ?: return
+        ) ?: mapOf()
         memberDeclaration.expectForActual = expectForActualData
         for ((compatibility, expectSymbols) in expectForActualData) {
             if (compatibility.compatible) {
