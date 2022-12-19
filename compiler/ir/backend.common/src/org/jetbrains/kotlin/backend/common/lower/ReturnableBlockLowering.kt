@@ -129,9 +129,9 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
 
         val newStatements = expression.statements.mapIndexed { i, s ->
             if (expression.statements.size == 1 && s is IrInlinedFunctionBlock) {
-                val transformed = s.statements.mapIndexed { j, it -> transformSingleStatement(it, j == s.statements.lastIndex) }
-                s.statements.clear()
-                s.statements.addAll(transformed)
+                for ((j, statement) in s.statements.withIndex()) {
+                    s.statements[j] = transformSingleStatement(statement, j == s.statements.lastIndex)
+                }
                 s
             } else {
                 transformSingleStatement(s, i == expression.statements.lastIndex)
