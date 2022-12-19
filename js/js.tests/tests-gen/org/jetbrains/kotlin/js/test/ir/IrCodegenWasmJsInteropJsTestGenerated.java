@@ -74,6 +74,12 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
     }
 
     @Test
+    @TestMetadata("nameClash.kt")
+    public void testNameClash() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
+    }
+
+    @Test
     @TestMetadata("types.kt")
     public void testTypes() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
