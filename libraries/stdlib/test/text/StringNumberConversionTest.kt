@@ -154,6 +154,27 @@ class StringNumberConversionTest {
         }
     }
 
+    @Test fun toFloat() {
+        compareConversion(String::toFloat, String::toFloatOrNull, ::floatTotalOrderEquals) {
+            assertProduces("-77", -77.0f)
+            assertProduces("77.", 77.0f)
+            assertProduces("77.0", 77.0f)
+            assertProduces("-1.77", -1.77f)
+            assertProduces("+.77", 0.77f)
+            assertProduces("\t-77 \n", -77.0f)
+            assertProduces("7.7e1", 77.0f)
+            assertProduces("+770e-1", 77.0f)
+
+            assertProduces("-NaN", -Float.NaN)
+            assertProduces("+Infinity", Float.POSITIVE_INFINITY)
+
+            assertFailsOrNull("7..7")
+            assertFailsOrNull("007 not a number")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
+        }
+    }
+
 
 
     @Test fun toUByte() {
@@ -407,6 +428,8 @@ class StringNumberConversionTest {
 }
 
 internal fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean = (a as Any?) == b
+
+internal fun floatTotalOrderEquals(a: Float?, b: Float?): Boolean = (a as Any?) == b
 
 internal fun <T : Any> compareConversion(
     convertOrFail: (String) -> T,
