@@ -2045,8 +2045,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
-            "Overriding ''equals'' from ''Any'' in value class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
-            RENDER_TYPE
+            "Overriding ''equals'' from ''Any'' in value class without typed equals leads to boxing on every equality comparison"
         )
 
         //imports

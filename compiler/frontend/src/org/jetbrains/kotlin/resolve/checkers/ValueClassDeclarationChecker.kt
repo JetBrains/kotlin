@@ -179,12 +179,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
 
             declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
                 if (typedEquals == null) {
-                    trace.report(
-                        Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS.on(
-                            this@apply,
-                            descriptor.defaultType.replaceArgumentsWithStarProjections()
-                        )
-                    )
+                    trace.report(Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS.on(this@apply))
                 }
             }
         }

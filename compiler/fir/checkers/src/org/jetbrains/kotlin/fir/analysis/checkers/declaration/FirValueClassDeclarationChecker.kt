@@ -244,12 +244,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
             }
 
             if (equalsFromAnyOverriding != null && typedEquals == null) {
-                reporter.reportOn(
-                    equalsFromAnyOverriding.source,
-                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
-                    declaration.defaultType().replaceArgumentsWithStarProjections(),
-                    context
-                )
+                reporter.reportOn(equalsFromAnyOverriding.source, FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS, context)
             }
         }
     }
