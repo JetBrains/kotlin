@@ -442,7 +442,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
         if (args != null && args.contains(null)) {
-            throw new MojoExecutionException("Invalid compiler argument: null");
+            throw new MojoExecutionException("Empty compiler argument passed in the <configuration> section");
         }
 
         try {

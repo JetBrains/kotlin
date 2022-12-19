@@ -1,4 +1,4 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("Invalid compiler argument: null");
+assertBuildLogHasLineThatContains("Empty compiler argument passed in the <configuration> section");
