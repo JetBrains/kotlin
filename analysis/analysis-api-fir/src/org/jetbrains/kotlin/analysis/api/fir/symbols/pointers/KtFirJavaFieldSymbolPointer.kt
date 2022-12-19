@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtJavaFieldSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
@@ -27,4 +28,9 @@ internal class KtFirJavaFieldSymbolPointer(
         val javaField = candidates.getProperties(fieldName).mapNotNull { it.fir as? FirJavaField }.singleOrNull() ?: return null
         return firSymbolBuilder.variableLikeBuilder.buildFieldSymbol(javaField.symbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirJavaFieldSymbolPointer &&
+            other.fieldName == fieldName &&
+            hasTheSameOwner(other)
 }

@@ -37,6 +37,11 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
         return symbol as S
     }
 
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtPsiBasedSymbolPointer &&
+            other.expectedClass == expectedClass &&
+            other.psiPointer == psiPointer
+
     public constructor(psi: KtElement, expectedClass: KClass<S>) : this(psi.createSmartPointer(), expectedClass)
 
     public companion object {

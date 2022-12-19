@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
 @KtAnalysisApiInternals
@@ -24,4 +25,9 @@ class KtPropertyAccessorSymbolPointer(
 
         return if (isGetter) propertySymbol.getter else propertySymbol.setter
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtPropertyAccessorSymbolPointer &&
+            other.isGetter == isGetter &&
+            other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
 }

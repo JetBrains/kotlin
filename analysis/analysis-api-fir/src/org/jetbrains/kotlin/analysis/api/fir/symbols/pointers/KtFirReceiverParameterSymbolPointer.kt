@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
 internal class KtFirReceiverParameterSymbolPointer(
@@ -24,4 +25,8 @@ internal class KtFirReceiverParameterSymbolPointer(
 
         return analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(callableSymbol.firSymbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirReceiverParameterSymbolPointer &&
+            other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

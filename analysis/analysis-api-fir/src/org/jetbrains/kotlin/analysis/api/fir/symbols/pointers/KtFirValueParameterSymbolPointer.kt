@@ -29,4 +29,10 @@ internal class KtFirValueParameterSymbolPointer(
         val firValueParameterSymbol = function.valueParameters.getOrNull(index)?.symbol?.takeIf { it.name == name } ?: return null
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(firValueParameterSymbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirValueParameterSymbolPointer &&
+            other.index == index &&
+            other.name == name &&
+            other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

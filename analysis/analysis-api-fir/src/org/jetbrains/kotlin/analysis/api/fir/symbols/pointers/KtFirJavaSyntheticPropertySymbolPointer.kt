@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -49,4 +50,10 @@ internal class KtFirJavaSyntheticPropertySymbolPointer(
             baseScope
         }
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtFirJavaSyntheticPropertySymbolPointer &&
+            other.propertyName == propertyName &&
+            other.isSynthetic == isSynthetic &&
+            hasTheSameOwner(other)
 }

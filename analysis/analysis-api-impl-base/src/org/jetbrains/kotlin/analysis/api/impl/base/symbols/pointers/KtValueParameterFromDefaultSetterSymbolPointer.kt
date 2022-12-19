@@ -22,4 +22,8 @@ class KtValueParameterFromDefaultSetterSymbolPointer(
 
         return ownerSymbol?.setter?.parameter
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
+            other is KtValueParameterFromDefaultSetterSymbolPointer &&
+            other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

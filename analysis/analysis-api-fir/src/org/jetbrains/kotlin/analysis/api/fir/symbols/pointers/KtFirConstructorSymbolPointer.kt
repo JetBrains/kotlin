@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
@@ -29,4 +30,10 @@ internal class KtFirConstructorSymbolPointer(
         if (firConstructor.isPrimary != isPrimary) return null
         return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
+
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = other === this ||
+            other is KtFirConstructorSymbolPointer &&
+            other.signature == signature &&
+            other.isPrimary == isPrimary &&
+            hasTheSameOwner(other)
 }

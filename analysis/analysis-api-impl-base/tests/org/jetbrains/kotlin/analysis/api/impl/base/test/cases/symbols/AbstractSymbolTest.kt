@@ -62,24 +62,27 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
         fun KtAnalysisSession.safePointer(ktSymbol: KtSymbol): PointerWrapper? {
             val regularPointer = ktSymbol.runCatching {
-                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = false) { ktSymbol.createPointer() }
+                createPointerForTest(disablePsiBasedSymbols = false)
             }.let {
                 if (directiveToIgnoreSymbolRestore == null) it.getOrThrow() else it.getOrNull()
             } ?: return null
 
-            val nonPsiPointer = kotlin.runCatching {
-                if (ktSymbol is KtFileSymbol) return@runCatching null
-
-                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = true) { ktSymbol.createPointer() }
+            assertSymbolPointer(regularPointer, testServices)
+            val nonPsiPointer = ktSymbol.runCatching {
+                if (this is KtFileSymbol) return@runCatching null
+                createPointerForTest(disablePsiBasedSymbols = true)
             }
 
-            return PointerWrapper(
-                regularPointer = regularPointer,
-                pointerWithoutPsiAnchor = if (directiveToIgnoreSymbolRestore == null && directiveToIgnoreNonPsiSymbolRestore == null)
-                    nonPsiPointer.getOrThrow()
-                else
-                    nonPsiPointer.getOrNull(),
-            )
+            val pointerWithoutPsiAnchor = if (directiveToIgnoreSymbolRestore == null && directiveToIgnoreNonPsiSymbolRestore == null)
+                nonPsiPointer.getOrThrow()
+            else
+                nonPsiPointer.getOrNull()
+
+            if (pointerWithoutPsiAnchor != null) {
+                assertSymbolPointer(pointerWithoutPsiAnchor, testServices)
+            }
+
+            return PointerWrapper(regularPointer = regularPointer, pointerWithoutPsiAnchor = pointerWithoutPsiAnchor)
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
@@ -130,7 +133,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
         restoreSymbolsInOtherReadActionAndCompareResults(
             directiveToIgnore = directiveToIgnoreSymbolRestore,
-            pointerAccessor = PointerWrapper::regularPointer,
+            isRegularPointers = true,
             ktFile = ktFile,
             pointersWithRendered = pointersWithRendered.pointers,
             testServices = testServices,
@@ -139,11 +142,21 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         if (directiveToIgnoreSymbolRestore == null) {
             restoreSymbolsInOtherReadActionAndCompareResults(
                 directiveToIgnore = directiveToIgnoreNonPsiSymbolRestore,
-                pointerAccessor = PointerWrapper::pointerWithoutPsiAnchor,
+                isRegularPointers = false,
                 ktFile = ktFile,
                 pointersWithRendered = pointersWithRendered.pointers,
                 testServices = testServices,
             )
+        }
+    }
+
+    context(KtAnalysisSession)
+    private fun KtSymbol.createPointerForTest(disablePsiBasedSymbols: Boolean): KtSymbolPointer<*> =
+        KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedSymbols) { createPointer() }
+
+    private fun assertSymbolPointer(pointer: KtSymbolPointer<*>, testServices: TestServices) {
+        testServices.assertions.assertTrue(value = pointer.pointsToTheSameSymbolAs(pointer)) {
+            "The symbol is not equal to itself: ${pointer::class}"
         }
     }
 
@@ -187,17 +200,25 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
     private fun restoreSymbolsInOtherReadActionAndCompareResults(
         directiveToIgnore: Directive?,
-        pointerAccessor: (PointerWrapper) -> KtSymbolPointer<KtSymbol>?,
+        isRegularPointers: Boolean,
         ktFile: KtFile,
         pointersWithRendered: List<PointerWithRenderedSymbol>,
         testServices: TestServices,
     ) {
         var failed = false
+        val restoredPointers = mutableListOf<KtSymbolPointer<*>>()
         try {
             val restored = analyseForTest(ktFile) {
                 pointersWithRendered.mapNotNull { (pointerWrapper, expectedRender, shouldBeRendered) ->
-                    val pointer = pointerWrapper?.let(pointerAccessor) ?: error("Symbol pointer for $expectedRender was not created")
+                    val pointer = if (isRegularPointers) {
+                        pointerWrapper?.regularPointer
+                    } else {
+                        pointerWrapper?.pointerWithoutPsiAnchor
+                    } ?: error("Symbol pointer for $expectedRender was not created")
+
                     val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not restored")
+                    restoredPointers += pointer
+
                     val actualRender = renderSymbolForComparison(restored)
                     if (shouldBeRendered) {
                         actualRender
@@ -215,6 +236,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             failed = true
         }
 
+        if (!failed) {
+            compareRestoredSymbols(restoredPointers, testServices, ktFile, isRegularPointers)
+        }
+
         if (failed || directiveToIgnore == null) return
 
         testServices.assertions.assertEqualsToTestDataFileSibling(
@@ -223,6 +248,41 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         )
 
         fail("Redundant // ${directiveToIgnore.name} directive")
+    }
+
+    private fun compareRestoredSymbols(
+        restoredPointers: List<KtSymbolPointer<*>>,
+        testServices: TestServices,
+        ktFile: KtFile,
+        isRegularPointers: Boolean,
+    ) {
+        if (restoredPointers.isEmpty()) return
+
+        analyseForTest(ktFile) {
+            val symbolsToPointersMap = restoredPointers.groupByTo(mutableMapOf()) {
+                it.restoreSymbol() ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+            }
+
+            val pointersToCheck = symbolsToPointersMap.map { (key, value) ->
+                value += if (isRegularPointers) {
+                    key.createPointerForTest(disablePsiBasedSymbols = false)
+                } else {
+                    key.createPointerForTest(disablePsiBasedSymbols = true)
+                }
+
+                value
+            }
+
+            for (pointers in pointersToCheck) {
+                for (firstPointer in pointers) {
+                    for (secondPointer in pointers) {
+                        testServices.assertions.assertTrue(firstPointer.pointsToTheSameSymbolAs(secondPointer)) {
+                            "${firstPointer::class} is not the same as ${secondPointer::class}"
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected open fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol): String {

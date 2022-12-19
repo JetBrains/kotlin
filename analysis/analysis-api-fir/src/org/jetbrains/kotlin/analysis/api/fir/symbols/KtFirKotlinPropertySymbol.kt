@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.FirCallableSignature
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelPropertySymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -25,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerDelegator
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
@@ -128,13 +124,7 @@ internal class KtFirKotlinPropertySymbol(
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtVariableLikeSymbol>(this)?.let { psiPointer ->
-            return symbolPointerDelegator(psiPointer) {
-                when (it) {
-                    is KtKotlinPropertySymbol -> it
-                    is KtValueParameterSymbol -> it.generatedPrimaryConstructorProperty
-                    else -> null
-                }
-            }
+            return KtFirPsiBasedPropertySymbolPointer(psiPointer)
         }
 
         return when (val kind = symbolKind) {
@@ -158,3 +148,4 @@ internal class KtFirKotlinPropertySymbol(
     override fun equals(other: Any?): Boolean = symbolEquals(other)
     override fun hashCode(): Int = symbolHashCode()
 }
+

@@ -12,7 +12,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirPackageSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.name.FqName
 
@@ -38,12 +37,7 @@ class KtFirPackageSymbol(
         get() = withValidityAssertion { KtSymbolOrigin.SOURCE } // TODO
 
     context(KtAnalysisSession)
-    override fun createPointer(): KtSymbolPointer<KtPackageSymbol> = withValidityAssertion {
-        symbolPointer { session ->
-            check(session is KtFirAnalysisSession)
-            session.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
-        }
-    }
+    override fun createPointer(): KtSymbolPointer<KtPackageSymbol> = KtFirPackageSymbolPointer(fqName)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

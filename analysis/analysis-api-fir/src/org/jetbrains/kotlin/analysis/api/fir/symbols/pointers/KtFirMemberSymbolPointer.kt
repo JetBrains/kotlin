@@ -51,6 +51,10 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
             )
         }
     }
+
+    abstract override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean
+    protected fun hasTheSameOwner(other: KtFirMemberSymbolPointer<*>): Boolean =
+        other.isStatic == isStatic && other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }
 
 context(KtAnalysisSession)
