@@ -210,6 +210,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         public void testQualifiedWholeCall() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedWholeCall.kt");
         }
+
+        @Test
+        @TestMetadata("setOperator.kt")
+        public void testSetOperator() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/setOperator.kt");
+        }
     }
 
     @Nested
