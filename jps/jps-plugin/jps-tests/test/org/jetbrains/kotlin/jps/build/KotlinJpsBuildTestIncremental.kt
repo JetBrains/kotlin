@@ -143,15 +143,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val module = myProject.modules.first()
         val args = module.kotlinCompilerArguments
 
-        // Try to set Language version to Stable+2 (there is no promises that metadata will be supported)
-        val experimentalLevelVersion: LanguageVersion
-        try {
-            experimentalLevelVersion = LanguageVersion.values()[LanguageVersion.LATEST_STABLE.ordinal+2]
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            // there is no Stable+2 version for now, skiping test
-            return
-        }
-        CommonCompilerArguments::languageVersion.set(args, experimentalLevelVersion.versionString)
+        CommonCompilerArguments::languageVersion.set(args, LanguageVersion.PREVIEW.versionString)
         myProject.kotlinCommonCompilerArguments = args
 
         buildAllModules().assertSuccessful()
