@@ -4250,6 +4250,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
             }
 
             @Test
+            @TestMetadata("stackTraceAccessInsideInitBlock.kt")
+            public void testStackTraceAccessInsideInitBlock() throws Exception {
+                runTest("js/js.translator/testData/box/expression/misc/stackTraceAccessInsideInitBlock.kt");
+            }
+
+            @Test
             @TestMetadata("stackTraceCapturing.kt")
             public void testStackTraceCapturing() throws Exception {
                 runTest("js/js.translator/testData/box/expression/misc/stackTraceCapturing.kt");

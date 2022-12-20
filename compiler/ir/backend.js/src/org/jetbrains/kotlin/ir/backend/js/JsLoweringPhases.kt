@@ -279,6 +279,12 @@ private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = mak
     prerequisite = setOf(functionInliningPhase)
 )
 
+private val captureStackTraceInThrowablesPhase = makeBodyLoweringPhase(
+    ::CaptureStackTraceInThrowables,
+    name = "CaptureStackTraceInThrowables",
+    description = "Capture stack trace in Throwable constructors"
+)
+
 private val throwableSuccessorsLoweringPhase = makeBodyLoweringPhase(
     { context ->
         context.run {
@@ -289,7 +295,8 @@ private val throwableSuccessorsLoweringPhase = makeBodyLoweringPhase(
         }
     },
     name = "ThrowableLowering",
-    description = "Link kotlin.Throwable and JavaScript Error together to provide proper interop between language and platform exceptions"
+    description = "Link kotlin.Throwable and JavaScript Error together to provide proper interop between language and platform exceptions",
+    prerequisite = setOf(captureStackTraceInThrowablesPhase)
 )
 
 private val tailrecLoweringPhase = makeBodyLoweringPhase(
@@ -783,12 +790,6 @@ private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
-private val captureStackTraceInThrowablesPhase = makeBodyLoweringPhase(
-    ::CaptureStackTraceInThrowables,
-    name = "CaptureStackTraceInThrowables",
-    description = "Capture stack trace in Throwable constructors"
-)
-
 private val escapedIdentifiersLowering = makeBodyLoweringPhase(
     ::EscapedIdentifiersLowering,
     name = "EscapedIdentifiersLowering",
@@ -901,6 +902,7 @@ val loweringList = listOf<Lowering>(
     defaultArgumentPatchOverridesPhase,
     defaultParameterInjectorPhase,
     defaultParameterCleanerPhase,
+    captureStackTraceInThrowablesPhase,
     throwableSuccessorsLoweringPhase,
     es6AddInternalParametersToConstructorPhase,
     es6ConstructorLowering,
@@ -921,7 +923,6 @@ val loweringList = listOf<Lowering>(
     objectDeclarationLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
-    captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
