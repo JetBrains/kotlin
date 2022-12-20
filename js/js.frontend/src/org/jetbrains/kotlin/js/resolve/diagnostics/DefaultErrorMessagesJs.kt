@@ -107,6 +107,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NON_EXPORTABLE_TYPE, "Exported declaration uses non-exportable {0} type: {1}", STRING, RENDER_TYPE)
 
         put(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER, "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM", STRING)
+        put(ErrorsJs.EXPORTED_NAME_CLASH, "Declaration with the name ({0}) has already been exported in the module: {1}. Exported identifiers must be unique per module.",
+            STRING, Renderers.COMPACT)
 
         this
     }

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.js.descriptorUtils.getJsNameArgument
+import org.jetbrains.kotlin.js.descriptorUtils.getKotlinOrJsName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.inline.isInlineWithReified
 import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -220,16 +220,7 @@ object JsExportDeclarationChecker : DeclarationChecker {
         trace.report(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER.on(reportTarget, name))
     }
 
-    private fun DeclarationDescriptor.getKotlinOrJsName(): String {
-        return AnnotationsUtils.getJsName(this) ?: name.identifier
-    }
-
     private fun KtDeclaration.getIdentifier(): PsiElement {
         return (this as KtNamedDeclaration).nameIdentifier!!
-    }
-
-    private fun DeclarationDescriptor.getJsNameArgument(): PsiElement? {
-        val jsNameAnnotation = AnnotationsUtils.getJsNameAnnotation(this) ?: return null
-        return (jsNameAnnotation.source.getPsi() as KtAnnotationEntry).valueArgumentList?.arguments?.first()
     }
 }

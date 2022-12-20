@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.descriptorUtils
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -13,7 +14,9 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 
 val KotlinType.nameIfStandardType: Name?
@@ -55,3 +58,13 @@ private fun EffectiveVisibility.shouldBeExported(config: JsConfig): Boolean {
     if (config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
     return toVisibility() == Visibilities.Internal
 }
+
+fun DeclarationDescriptor.getJsNameArgument(): PsiElement? {
+    val jsNameAnnotation = AnnotationsUtils.getJsNameAnnotation(this) ?: return null
+    return (jsNameAnnotation.source.getPsi() as KtAnnotationEntry).valueArgumentList?.arguments?.first()
+}
+
+fun DeclarationDescriptor.getKotlinOrJsName(): String {
+    return AnnotationsUtils.getJsName(this) ?: name.identifier
+}
+

@@ -41,6 +41,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JsNameClashChecker>()
         container.useImpl<JsIdentifierChecker>()
         container.useImpl<JsNameCharsChecker>()
+        container.useImpl<JsExportedDeclarationNameClashChecker>()
         container.useImpl<JsBuiltinNameClashChecker>()
         container.useInstance(JsModuleClassLiteralChecker)
         container.useImpl<JsReflectionAPICallChecker>()

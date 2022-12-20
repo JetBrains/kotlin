@@ -100,6 +100,7 @@ class IrModuleToJsTransformer(
 ) {
     private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
+
     private val shouldGenerateTypeScriptDefinitions = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
 
     private val mainModuleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!

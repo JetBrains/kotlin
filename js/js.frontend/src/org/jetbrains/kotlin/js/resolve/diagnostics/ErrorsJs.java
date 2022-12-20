@@ -113,6 +113,8 @@ public interface ErrorsJs {
 
     DiagnosticFactory1<PsiElement, String> NON_CONSUMABLE_EXPORTED_IDENTIFIER = DiagnosticFactory1.create(WARNING, DEFAULT);
 
+    DiagnosticFactory2<KtElement, String, DeclarationDescriptor> EXPORTED_NAME_CLASH = DiagnosticFactory2.create(ERROR, DEFAULT);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

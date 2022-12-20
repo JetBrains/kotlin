@@ -408,6 +408,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("nameClashInsideModule.kt")
+        public void testNameClashInsideModule() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nameClashInsideModule.kt");
+        }
+
+        @Test
         @TestMetadata("nonConsumableIdentifiers.kt")
         public void testNonConsumableIdentifiers() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nonConsumableIdentifiers.kt");
