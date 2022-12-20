@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
@@ -23,5 +24,6 @@ internal class KtLibrarySourceModuleImpl(
     override val libraryName: String,
     override val binaryLibrary: KtLibraryModule,
 ) : KtLibrarySourceModule, KtModuleWithPlatform {
+    override val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
     override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 }

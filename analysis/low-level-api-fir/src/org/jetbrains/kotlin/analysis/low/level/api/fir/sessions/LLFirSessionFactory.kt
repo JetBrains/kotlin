@@ -113,26 +113,36 @@ internal object LLFirSessionFactory {
                 register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
             }
 
+            fun getOrCreateSessionForDependency(dependency: KtModule): LLFirSession? = when (dependency) {
+                is KtBuiltinsModule -> null //  build in is already added
+                is KtBinaryModule -> LLFirLibrarySessionFactory.getInstance(project).getLibrarySession(dependency, sessionsCache)
+                is KtSourceModule -> {
+                    createSourcesSession(
+                        project,
+                        dependency,
+                        globalResolveComponents,
+                        sessionInvalidator,
+                        sessionsCache,
+                        librariesSessionFactory = librariesSessionFactory,
+                        configureSession = configureSession,
+                    )
+                }
+                is KtNotUnderContentRootModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
+                is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
+            }
+
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                module.directRegularDependencies.mapNotNullTo(this) { dependency ->
-                    when (dependency) {
-                        is KtBuiltinsModule -> null //  build in is already added
-                        is KtBinaryModule -> LLFirLibrarySessionFactory.getInstance(project).getLibrarySession(dependency, sessionsCache)
-                        is KtSourceModule -> {
-                            createSourcesSession(
-                                project,
-                                dependency,
-                                globalResolveComponents,
-                                sessionInvalidator,
-                                sessionsCache,
-                                librariesSessionFactory = librariesSessionFactory,
-                                configureSession = configureSession,
-                            )
-                        }
-                        is KtNotUnderContentRootModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
-                        is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
+                module.directRegularDependencies.mapNotNullTo(this, ::getOrCreateSessionForDependency)
+
+                // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
+                // dependencies are transitive.
+                val directRegularDependenciesSet = module.directRegularDependencies.toSet()
+                module.transitiveDependsOnDependencies.forEach { dependency ->
+                    if (dependency !in directRegularDependenciesSet) {
+                        getOrCreateSessionForDependency(dependency)?.let(::add)
                     }
                 }
+
                 add(builtinsSession)
             }
 

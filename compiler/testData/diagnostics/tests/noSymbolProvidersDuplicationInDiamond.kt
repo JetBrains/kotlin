@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// FIR_IDE_IGNORE
 // !LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 

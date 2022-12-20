@@ -25,7 +25,7 @@ public sealed interface KtModule {
      * A list of Regular dependencies. Regular dependency allows the current module to see symbols from the dependent module. In the case
      * of a source set, it can be either the source set it depends on, a library, or an SDK.
      *
-     * The dependencies list is non-transitive and should not include the current module.
+     * The dependencies list is non-transitive and does not include the current module.
      */
     public val directRegularDependencies: List<KtModule>
 
@@ -35,14 +35,22 @@ public sealed interface KtModule {
      * A `dependsOn` dependency expresses that the current module can provide `actual` declarations for `expect` declarations from the
      * dependent module, as well as see internal symbols of the dependent module.
      *
-     * `dependsOn` dependencies are transitive, but the list is not a transitive closure. The list should not include the current module.
+     * `dependsOn` dependencies are transitive, but the list is not a transitive closure. The list does not include the current module.
      */
     public val directDependsOnDependencies: List<KtModule>
 
     /**
+     * A list of [directDependsOnDependencies] and all of their parents (directly and indirectly), sorted topologically with the nearest
+     * dependencies first in the list. The list does not include the current module.
+     *
+     * @see computeTransitiveDependsOnDependencies
+     */
+    public val transitiveDependsOnDependencies: List<KtModule>
+
+    /**
      * A list of Friend dependencies. Friend dependencies express that the current module may see internal symbols of the dependent module.
      *
-     * The dependencies list is non-transitive and should not include the current module.
+     * The dependencies list is non-transitive and does not include the current module.
      */
     public val directFriendDependencies: List<KtModule>
 
@@ -159,6 +167,7 @@ public class KtBuiltinsModule(
 ) : KtBinaryModule {
     override val directRegularDependencies: List<KtModule> get() = emptyList()
     override val directDependsOnDependencies: List<KtModule> get() = emptyList()
+    override val transitiveDependsOnDependencies: List<KtModule> get() = emptyList()
     override val directFriendDependencies: List<KtModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
     override fun getBinaryRoots(): Collection<Path> = emptyList()

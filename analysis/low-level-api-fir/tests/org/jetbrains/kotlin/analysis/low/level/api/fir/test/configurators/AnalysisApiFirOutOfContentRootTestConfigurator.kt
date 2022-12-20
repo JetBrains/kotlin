@@ -79,6 +79,9 @@ private class KtNotUnderContentRootModuleForTest(
     override val directDependsOnDependencies: List<KtModule>
         get() = emptyList()
 
+    override val transitiveDependsOnDependencies: List<KtModule>
+        get() = emptyList()
+
     override val directFriendDependencies: List<KtModule>
         get() = emptyList()
 

@@ -14,10 +14,17 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.test.getAnalyzerServices
 import java.nio.file.Path
 
-interface KtModuleWithModifiableDependencies {
-    val directRegularDependencies: MutableList<KtModule>
-    val directDependsOnDependencies: MutableList<KtModule>
-    val directFriendDependencies: MutableList<KtModule>
+abstract class KtModuleWithModifiableDependencies {
+    abstract val directRegularDependencies: MutableList<KtModule>
+    abstract val directDependsOnDependencies: MutableList<KtModule>
+    abstract val directFriendDependencies: MutableList<KtModule>
+
+    /**
+     * When dependencies are modifiable, transitive `dependsOn` dependencies must be recomputed each time as [directDependsOnDependencies]
+     * may have been mutated.
+     */
+    val transitiveDependsOnDependencies: List<KtModule>
+        get() = computeTransitiveDependsOnDependencies(directDependsOnDependencies)
 }
 
 class KtSourceModuleImpl(
@@ -26,7 +33,7 @@ class KtSourceModuleImpl(
     override val languageVersionSettings: LanguageVersionSettings,
     override val project: Project,
     override val contentScope: GlobalSearchScope,
-) : KtSourceModule, KtModuleWithModifiableDependencies {
+) : KtModuleWithModifiableDependencies(), KtSourceModule {
     override val analyzerServices: PlatformDependentAnalyzerServices get() = platform.getAnalyzerServices()
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
@@ -40,7 +47,7 @@ class KtJdkModuleImpl(
     override val contentScope: GlobalSearchScope,
     override val project: Project,
     private val binaryRoots: Collection<Path>,
-) : KtSdkModule, KtModuleWithModifiableDependencies {
+) : KtModuleWithModifiableDependencies(), KtSdkModule {
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = platform.getAnalyzerServices()
 
@@ -58,7 +65,7 @@ class KtLibraryModuleImpl(
     override val project: Project,
     private val binaryRoots: Collection<Path>,
     override var librarySources: KtLibrarySourceModule?,
-) : KtLibraryModule, KtModuleWithModifiableDependencies {
+) : KtModuleWithModifiableDependencies(), KtLibraryModule {
     override val analyzerServices: PlatformDependentAnalyzerServices get() = platform.getAnalyzerServices()
     override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
@@ -73,7 +80,7 @@ class KtLibrarySourceModuleImpl(
     override val contentScope: GlobalSearchScope,
     override val project: Project,
     override val binaryLibrary: KtLibraryModule,
-) : KtLibrarySourceModule, KtModuleWithModifiableDependencies {
+) : KtModuleWithModifiableDependencies(), KtLibrarySourceModule {
     override val analyzerServices: PlatformDependentAnalyzerServices get() = platform.getAnalyzerServices()
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()

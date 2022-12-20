@@ -9,10 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -59,6 +56,8 @@ abstract class KtModuleByCompilerConfiguration(
         testModule.dependsOnDependencies
             .map { moduleProvider.getModule(it.moduleName) }
     }
+
+    val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
 
     val directFriendDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
@@ -140,6 +139,7 @@ private class LibraryByRoots(
     override val libraryName: String get() = "Test Library"
     override val directRegularDependencies: List<KtModule> get() = emptyList()
     override val directDependsOnDependencies: List<KtModule> get() = emptyList()
+    override val transitiveDependsOnDependencies: List<KtModule> get() = emptyList()
     override val directFriendDependencies: List<KtModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = ProjectScope.getLibrariesScope(project)
     override val platform: TargetPlatform get() = module.platform

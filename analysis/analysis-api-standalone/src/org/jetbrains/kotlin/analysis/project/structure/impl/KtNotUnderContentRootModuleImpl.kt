@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -24,6 +25,7 @@ internal class KtNotUnderContentRootModuleImpl(
     override val moduleDescription: String,
     override val project: Project,
 ) : KtNotUnderContentRootModule, KtModuleWithPlatform {
+    override val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
     override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 
     override val contentScope: GlobalSearchScope =

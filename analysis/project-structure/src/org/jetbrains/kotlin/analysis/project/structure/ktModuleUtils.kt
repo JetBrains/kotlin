@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.project.structure
 
+import org.jetbrains.kotlin.utils.topologicalSort
+
 /**
  * A list of all modules that the current module can depend on with regular dependency.
  *
@@ -52,3 +54,13 @@ public fun KtModule.allDirectDependencies(): Sequence<KtModule> =
  */
 public inline fun <reified M : KtModule> KtModule.allDirectDependenciesOfType(): Sequence<M> =
     allDirectDependencies().filterIsInstance<M>()
+
+/**
+ * Computes the transitive `dependsOn` dependencies of [directDependsOnDependencies]. [computeTransitiveDependsOnDependencies] is the
+ * default computation strategy to provide [KtModule.transitiveDependsOnDependencies].
+ *
+ * The algorithm is a depth-first search-based topological sort. `dependsOn` dependencies cannot be cyclical and thus form a DAG, which
+ * allows the application of a topological sort.
+ */
+public fun computeTransitiveDependsOnDependencies(directDependsOnDependencies: List<KtModule>): List<KtModule> =
+    topologicalSort(directDependsOnDependencies) { this.directDependsOnDependencies }
