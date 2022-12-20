@@ -61,6 +61,14 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
     return lookupTags.mapNotNull { it.toSymbol(useSiteSession) as? FirClassSymbol<*> }
 }
 
+private fun <T> SmartSet<T>.toSmartList(): SmartList<T> {
+    return SmartList<T>().also {
+        for (element in this) {
+            it.add(element)
+        }
+    }
+}
+
 fun lookupSuperTypes(
     symbols: List<FirClassifierSymbol<*>>,
     lookupInterfaces: Boolean,
@@ -69,12 +77,12 @@ fun lookupSuperTypes(
     substituteTypes: Boolean,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
 ): List<ConeClassLikeType> {
-    return SmartList<ConeClassLikeType>().also {
+    return SmartSet.create<ConeClassLikeType>().also {
         val visitedSymbols = SmartSet.create<FirClassifierSymbol<*>>()
         for (symbol in symbols) {
             symbol.collectSuperTypes(it, visitedSymbols, deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
         }
-    }
+    }.toSmartList()
 }
 
 fun lookupSuperTypes(
@@ -85,9 +93,9 @@ fun lookupSuperTypes(
     substituteTypes: Boolean,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
 ): List<ConeClassLikeType> {
-    return SmartList<ConeClassLikeType>().also {
+    return SmartSet.create<ConeClassLikeType>().also {
         klass.symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
-    }
+    }.toSmartList()
 }
 
 fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
@@ -131,9 +139,9 @@ fun lookupSuperTypes(
     useSiteSession: FirSession,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
 ): List<ConeClassLikeType> {
-    return SmartList<ConeClassLikeType>().also {
+    return SmartSet.create<ConeClassLikeType>().also {
         symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, false, useSiteSession, supertypeSupplier)
-    }
+    }.toSmartList()
 }
 
 inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSessionKey<ID, FS> {
@@ -172,8 +180,8 @@ private fun ConeClassLikeType.computePartialExpansion(
 ): ConeClassLikeType = fullyExpandedType(useSiteSession) { supertypeSupplier.expansionForTypeAlias(it, useSiteSession) }
 
 private fun FirClassifierSymbol<*>.collectSuperTypes(
-    list: MutableList<ConeClassLikeType>,
-    visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
+    list: SmartSet<ConeClassLikeType>,
+    visitedSymbols: SmartSet<FirClassifierSymbol<*>>,
     deep: Boolean,
     lookupInterfaces: Boolean,
     substituteSuperTypes: Boolean,
@@ -188,12 +196,14 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
                     it.computePartialExpansion(useSiteSession, supertypeSupplier)
                         .takeIf { type -> lookupInterfaces || type.isClassBasedType(useSiteSession) }
                 }
-            list += superClassTypes
+            for (it in superClassTypes) {
+                list.add(it)
+            }
             if (deep)
                 superClassTypes.forEach {
                     if (it !is ConeErrorType) {
                         if (substituteSuperTypes) {
-                            val substitutedTypes = SmartList<ConeClassLikeType>()
+                            val substitutedTypes = SmartSet.create<ConeClassLikeType>()
                             it.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(
                                 substitutedTypes,
                                 visitedSymbols,
