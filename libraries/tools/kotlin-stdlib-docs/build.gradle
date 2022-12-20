@@ -1,10 +1,9 @@
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-    id "de.undercouch.download" version "4.1.1"
     id "base"
-    id "java"
     id "org.jetbrains.dokka"
 }
 
@@ -13,16 +12,14 @@ evaluationDependsOnChildren()
 def pKotlinBig() { return project('kotlin_big').extensions }
 def pKotlinNative() { return project('kotlin_native').extensions }
 
-task extractAll()
-
-extractAll.dependsOn ':kotlin_big:extractLibs'
-
 def outputDir = "$buildDir/doc"
 
-
-task callDokka() {
+task cleanDocs(type: Delete) {
     delete(outputDir)
-    dependsOn extractAll
+}
+
+task prepare() {
+    dependsOn(':kotlin_big:extractLibs')
 }
 
 repositories {
@@ -40,8 +37,10 @@ dependencies {
     dokkaPlugin "org.jetbrains.dokka:versioning-plugin:$dokka_version"
 }
 
-void createStdLibVersionedDocTask(String version, Boolean isLatest) {
-    tasks.register("stdlib_" + version, org.jetbrains.dokka.gradle.DokkaTask) {
+TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isLatest) {
+    return tasks.register("kotlin-stdlib_" + version + (isLatest ? "_latest" : ""), DokkaTask) {
+        dependsOn(prepare)
+
         def outputDir = "$buildDir/doc"
 
         def github_revision = pKotlinBig().github_revision
@@ -355,8 +354,10 @@ void createStdLibVersionedDocTask(String version, Boolean isLatest) {
     }
 }
 
-void createKotlinTestVersionedDocTask(String version, Boolean isLatest) {
-    tasks.register("kotlin.test_" + version, org.jetbrains.dokka.gradle.DokkaTask) {
+TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean isLatest, TaskProvider<DokkaTask> stdlibDocTask) {
+    return tasks.register("kotlin-test_" + version + (isLatest ? "_latest" : ""), DokkaTask) {
+        dependsOn(prepare, stdlibDocTask)
+
         def outputDir = "$buildDir/doc"
 
         def github_revision = pKotlinBig().github_revision
@@ -374,7 +375,7 @@ void createKotlinTestVersionedDocTask(String version, Boolean isLatest) {
         def kotlinTestJsClasspath = ["$kotlin_libs/kotlin-test-js".toString()]
         def kotlinTestJvmClasspath = ["$kotlin_libs/kotlin-test".toString()]
 
-        def stdlibPackageList = new URL("file:///$outputDir/kotlin-stdlib/package-list".toString())
+        def stdlibPackageList = new URL("file:///${stdlibDocTask.get().outputDirectory.get()}/stdlib/package-list".toString())
         def junit5PackageList = new URL("https://junit.org/junit5/docs/current/api/element-list".toString())
         def kotlinLanguageVersion = version
 
@@ -564,30 +565,26 @@ void createKotlinTestVersionedDocTask(String version, Boolean isLatest) {
 }
 
 gradle.projectsEvaluated {
-    String[] versions = ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8"]
+    def versions = ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8"]
+    String latestVersion = versions.last()
 
-    task buildStdLibDoc() {
-        createStdLibVersionedDocTask(versions[versions.length - 1], true)
-        for(int i = 0; i < versions.length -1; ++i) {
-            createStdLibVersionedDocTask(versions[i], false);
-            dependsOn tasks.named("stdlib_"+ versions[i])
+    // builds this version/all versions as historical for the next versions builds
+    tasks.register('buildAllVersions')
+    // builds the latest version incorporating all previous historical versions docs
+    tasks.register('buildLatestVersion')
+
+    def latestStdlib = createStdLibVersionedDocTask(latestVersion, true)
+    def latestTest = createKotlinTestVersionedDocTask(latestVersion, true, latestStdlib)
+
+    buildLatestVersion.configure { dependsOn(latestStdlib, latestTest) }
+
+    versions.forEach { version ->
+        def versionStdlib = createStdLibVersionedDocTask(version, false)
+        def versionTest = createKotlinTestVersionedDocTask(version, false, versionStdlib)
+        if (version != latestVersion) {
+            latestStdlib.configure { dependsOn versionStdlib }
+            latestTest.configure { dependsOn versionTest }
         }
-
-        def latestVersionTask = tasks.named("stdlib_"+ versions[versions.length - 1])
-        finalizedBy latestVersionTask
+        buildAllVersions.configure { dependsOn(versionStdlib, versionTest) }
     }
-
-    task buildKotlinTestDoc() {
-        createKotlinTestVersionedDocTask(versions[versions.length - 1], true)
-        for(int i = 0; i < versions.length -1; ++i) {
-            createKotlinTestVersionedDocTask(versions[i], false);
-            dependsOn tasks.named("kotlin.test_"+ versions[i])
-        }
-
-        def latestVersionTask = tasks.named("kotlin.test_"+ versions[versions.length - 1])
-        finalizedBy latestVersionTask
-    }
-
-    callDokka.finalizedBy buildStdLibDoc
-    buildStdLibDoc.finalizedBy buildKotlinTestDoc
 }
