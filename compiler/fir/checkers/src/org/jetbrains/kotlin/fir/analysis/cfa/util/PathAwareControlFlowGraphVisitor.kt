@@ -33,31 +33,31 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
 
     open fun visitEdge(from: CFGNode<*>, to: CFGNode<*>, metadata: Edge, data: PathAwareControlFlowInfo<I>): PathAwareControlFlowInfo<I> {
         val label = metadata.label
-        return if (from is FinallyBlockExitNode) {
+        return when {
             // Finally exit is splitting labeled flow. So if we have data for different labels, then
             // data for each only goes along an edge with the same label, and the leftover data
             // is forwarded along an UncaughtExceptionPath edge, if any, to the next finally block.
-            if (label == UncaughtExceptionPath) {
-                data.mutate {
-                    for (other in from.followingNodes) {
-                        val otherLabel = from.edgeTo(other).label
-                        if (otherLabel != UncaughtExceptionPath) {
-                            it.remove(otherLabel)
+            from is FinallyBlockExitNode -> {
+                if (label == UncaughtExceptionPath) {
+                    data.mutate {
+                        for (other in from.followingNodes) {
+                            val otherLabel = from.edgeTo(other).label
+                            if (otherLabel != UncaughtExceptionPath) {
+                                it.remove(otherLabel)
+                            }
                         }
-                    }
-                }.ifEmpty { emptyInfo } // there should always be UncaughtExceptionPath data, but just in case
-            } else {
-                val info = data[label] ?: return emptyInfo
-                persistentMapOf(NormalPath to info)
+                    }.ifEmpty { emptyInfo } // there should always be UncaughtExceptionPath data, but just in case
+                } else {
+                    val info = data[label] ?: return emptyInfo
+                    persistentMapOf(NormalPath to info)
+                }
             }
-        } else if (label == NormalPath) {
             // A normal path forwards all data. (Non-normal paths should only have data in finally blocks.)
-            data
-        } else {
+            label == NormalPath -> data
             // Labeled edge from a jump statement to a `finally` block forks flow. Usually we'd only have
             // NormalPath data here, but technically it's possible (though questionable) to jump from a `finally`
             // (discarding the exception or aborting a previous jump in the process) so merge all data just in case.
-            persistentMapOf(label to data.values.reduce { a, b -> a.merge(b) })
+            else -> persistentMapOf(label to data.values.reduce { a, b -> a.merge(b) })
         }
     }
 

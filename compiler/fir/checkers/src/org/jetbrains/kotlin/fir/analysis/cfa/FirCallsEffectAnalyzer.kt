@@ -227,11 +227,11 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         val functionalTypeSymbols: Set<FirBasedSymbol<*>>
     ) : PathAwareControlFlowGraphVisitor<LambdaInvocationInfo>() {
         companion object {
-            val EMPTY: PathAwareLambdaInvocationInfo = persistentMapOf(NormalPath to LambdaInvocationInfo.EMPTY)
+            private val EMPTY_INFO: PathAwareLambdaInvocationInfo = persistentMapOf(NormalPath to LambdaInvocationInfo.EMPTY)
         }
 
         override val emptyInfo: PathAwareLambdaInvocationInfo
-            get() = EMPTY
+            get() = EMPTY_INFO
 
         override fun visitFunctionCallNode(
             node: FunctionCallNode,

@@ -26,11 +26,11 @@ class PropertyInitializationInfoCollector(
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
 ) : PathAwareControlFlowGraphVisitor<PropertyInitializationInfo>() {
     companion object {
-        val EMPTY: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
+        private val EMPTY_INFO: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
     }
 
     override val emptyInfo: PathAwarePropertyInitializationInfo
-        get() = EMPTY
+        get() = EMPTY_INFO
 
     override fun visitVariableAssignmentNode(
         node: VariableAssignmentNode,

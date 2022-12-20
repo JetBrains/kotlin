@@ -229,6 +229,7 @@ class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir:
 
 class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int) : CFGNodeWithSubgraphs<FirClass>(owner, level),
     GraphEnterNodeMarker {
+    @set:CfgInternals
     override lateinit var subGraphs: List<ControlFlowGraph>
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
@@ -239,7 +240,8 @@ class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level:
 class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int) : CFGNodeWithSubgraphs<FirClass>(owner, level),
     GraphExitNodeMarker, UnionNodeMarker {
 
-    lateinit override var subGraphs: List<ControlFlowGraph>
+    @set:CfgInternals
+    override lateinit var subGraphs: List<ControlFlowGraph>
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitClassExitNode(this, data)
