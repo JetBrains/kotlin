@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import java.lang.annotation.ElementType
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
@@ -234,17 +235,17 @@ private fun KtAnnotationValue.mapToJavaTarget(): String? {
     val callableId = callableId ?: return null
     if (callableId.classId != StandardClassIds.AnnotationTarget) return null
     return when (callableId.callableName.asString()) {
-        "CLASS" -> "TYPE"
-        "ANNOTATION_CLASS" -> "ANNOTATION_TYPE"
-        "FIELD" -> "FIELD"
-        "LOCAL_VARIABLE" -> "LOCAL_VARIABLE"
-        "VALUE_PARAMETER" -> "PARAMETER"
-        "CONSTRUCTOR" -> "CONSTRUCTOR"
-        "FUNCTION", "PROPERTY_GETTER", "PROPERTY_SETTER" -> "METHOD"
-        "TYPE_PARAMETER" -> "TYPE_PARAMETER"
-        "TYPE" -> "TYPE_USE"
+        AnnotationTarget.CLASS.name -> ElementType.TYPE
+        AnnotationTarget.ANNOTATION_CLASS.name -> ElementType.ANNOTATION_TYPE
+        AnnotationTarget.FIELD.name -> ElementType.FIELD
+        AnnotationTarget.LOCAL_VARIABLE.name -> ElementType.LOCAL_VARIABLE
+        AnnotationTarget.VALUE_PARAMETER.name -> ElementType.PARAMETER
+        AnnotationTarget.CONSTRUCTOR.name -> ElementType.CONSTRUCTOR
+        AnnotationTarget.FUNCTION.name, AnnotationTarget.PROPERTY_GETTER.name, AnnotationTarget.PROPERTY_SETTER.name -> ElementType.METHOD
+        AnnotationTarget.TYPE_PARAMETER.name -> ElementType.TYPE_PARAMETER
+        AnnotationTarget.TYPE.name -> ElementType.TYPE_USE
         else -> null
-    }
+    }?.name
 }
 
 context(KtAnalysisSession)
