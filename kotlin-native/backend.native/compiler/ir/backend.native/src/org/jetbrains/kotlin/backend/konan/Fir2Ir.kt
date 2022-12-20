@@ -82,5 +82,6 @@ internal fun PhaseContext.fir2Ir(
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
 
+    // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
     return Fir2IrOutput(input.session, input.scopeSession, input.firFiles, fir2irResult)
 }
