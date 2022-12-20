@@ -81,11 +81,11 @@ DIModuleRef DICreateModule(DIBuilderRef builder, DIScopeOpaqueRef scope,
   return llvm::wrap(llvm::unwrap(builder)->createModule(llvm::unwrap(scope), name, configurationMacro, includePath, iSysRoot));
 }
 
-DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
-                                 const char* name, const char *linkageName,
-                                 DIFileRef file, unsigned lineNo,
-                                 DISubroutineTypeRef type, int isLocal,
-                                 int isDefinition, unsigned scopeLine) {
+static DISubprogramRef DICreateFunctionShared(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
+                                              llvm::StringRef name, llvm::StringRef linkageName,
+                                              DIFileRef file, unsigned lineNo,
+                                              DISubroutineTypeRef type, int isLocal,
+                                              int isDefinition, unsigned scopeLine) {
   auto builder = llvm::unwrap(builderRef);
   auto subprogram = builder->createFunction(llvm::unwrap(scope),
                                             name,
@@ -100,6 +100,26 @@ DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope
 
   builder->finalizeSubprogram(subprogram);
   return llvm::wrap(subprogram);
+}
+
+DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
+                                 const char* name, const char *linkageName,
+                                 DIFileRef file, unsigned lineNo,
+                                 DISubroutineTypeRef type, int isLocal,
+                                 int isDefinition, unsigned scopeLine) {
+  return DICreateFunctionShared(builderRef, scope, name, linkageName, file, lineNo, type, isLocal, isDefinition, scopeLine);
+}
+
+DISubprogramRef DICreateBridgeFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
+                                       LLVMValueRef function,
+                                       DIFileRef file, unsigned lineNo,
+                                       DISubroutineTypeRef type, int isLocal,
+                                       int isDefinition, unsigned scopeLine) {
+  auto fn = llvm::cast<llvm::Function>(llvm::unwrap(function));
+  auto name = fn->getName();
+  auto subprogram = DICreateFunctionShared(builderRef, scope, name, name, file, lineNo, type, isLocal, isDefinition, scopeLine);
+  fn->setSubprogram(llvm::unwrap(subprogram));
+  return subprogram;
 }
 
 DIScopeOpaqueRef DICreateLexicalBlockFile(DIBuilderRef builderRef, DIScopeOpaqueRef scopeRef, DIFileRef fileRef) {

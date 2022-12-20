@@ -275,20 +275,17 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
     val file = debugInfo.compilerGeneratedFile
 
     // TODO: can we share the scope among all bridges?
-    val scope: DIScopeOpaqueRef = DICreateFunction(
+    val scope: DIScopeOpaqueRef = DICreateBridgeFunction(
             builder = debugInfo.builder,
             scope = file.reinterpret(),
-            name = function.name,
-            linkageName = function.name,
+            function = function,
             file = file,
             lineNo = 0,
             type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0
-    )!!.also {
-        DIFunctionAddSubprogram(function, it)
-    }.reinterpret()
+    )!!.reinterpret()
 
     return LocationInfo(scope, 1, 0)
 }
