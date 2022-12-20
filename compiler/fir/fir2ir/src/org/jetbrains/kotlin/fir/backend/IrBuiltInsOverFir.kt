@@ -619,7 +619,6 @@ class IrBuiltInsOverFir(
     }
 
     override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
-        require(builtInClass in builtInClasses)
         return builtInClass.functions.filter { it.owner.name == name }.asIterable()
     }
 
