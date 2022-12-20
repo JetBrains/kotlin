@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.*
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -51,14 +51,12 @@ interface ObjCExportNamer {
     data class PropertyName(val swiftName: String, val objCName: String)
 
     interface Configuration {
+        val stdlibNamePrefix: String
         val topLevelNamePrefix: String
         fun getAdditionalPrefix(module: ModuleDescriptor): String?
         val objcGenerics: Boolean
     }
 
-    val topLevelNamePrefix: String
-
-    fun getFileClassName(file: SourceFile): ClassOrProtocolName
     fun getClassOrProtocolName(descriptor: ClassDescriptor): ClassOrProtocolName
     fun getSelector(method: FunctionDescriptor): String
     fun getSwiftName(method: FunctionDescriptor): String
@@ -76,6 +74,8 @@ interface ObjCExportNamer {
     val mutableMapName: ClassOrProtocolName
     val kotlinNumberName: ClassOrProtocolName
 
+    val stdlibTopLevelPrefix: String
+
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
 
@@ -86,19 +86,29 @@ interface ObjCExportNamer {
     }
 }
 
+interface ModuleObjCExportNamer : ObjCExportNamer {
+    val topLevelNamePrefix: String
+
+    fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName
+}
+
 fun createNamer(moduleDescriptor: ModuleDescriptor,
-                topLevelNamePrefix: String): ObjCExportNamer =
-        createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
+                topLevelNamePrefix: String,
+                stdlibNamePrefix: String,
+): ObjCExportNamer =
+        createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix, stdlibNamePrefix)
 
 fun createNamer(
         moduleDescriptor: ModuleDescriptor,
         exportedDependencies: List<ModuleDescriptor>,
-        topLevelNamePrefix: String
+        topLevelNamePrefix: String,
+        stdlibNamePrefix: String,
 ): ObjCExportNamer = ObjCExportNamerImpl(
         (exportedDependencies + moduleDescriptor).toSet(),
         moduleDescriptor.builtIns,
         ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
         topLevelNamePrefix,
+        stdlibNamePrefix = stdlibNamePrefix,
         local = true
 )
 
@@ -269,19 +279,23 @@ internal class ObjCExportNamerImpl(
         builtIns: KotlinBuiltIns,
         private val mapper: ObjCExportMapper,
         private val local: Boolean
-) : ObjCExportNamer {
+) : ModuleObjCExportNamer {
 
     constructor(
             moduleDescriptors: Set<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
             mapper: ObjCExportMapper,
             topLevelNamePrefix: String,
+            stdlibNamePrefix: String,
             local: Boolean,
             objcGenerics: Boolean = false
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
                     get() = topLevelNamePrefix
+
+                override val stdlibNamePrefix: String
+                    get() = stdlibNamePrefix
 
                 override fun getAdditionalPrefix(module: ModuleDescriptor): String? =
                         if (module in moduleDescriptors) null else module.objCExportAdditionalNamePrefix
@@ -303,6 +317,10 @@ internal class ObjCExportNamerImpl(
             swiftName = "Kotlin$this",
             objCName = "${topLevelNamePrefix}$this"
     )
+
+    override val stdlibTopLevelPrefix: String
+        get() = configuration.stdlibNamePrefix
+
 
     override val kotlinAnyName = "Base".toSpecialStandardClassOrProtocolName()
 
@@ -676,7 +694,7 @@ internal class ObjCExportNamerImpl(
                 builtIns.mutableMap to mutableMapName
         )
 
-        predefinedClassNames.forEach { descriptor, name ->
+        predefinedClassNames.forEach { (descriptor, name) ->
             objCClassNames.forceAssign(descriptor, name.objCName)
             swiftClassAndProtocolNames.forceAssign(descriptor, name.swiftName)
         }
@@ -687,11 +705,11 @@ internal class ObjCExportNamerImpl(
                         NoLookupLocation.FROM_BACKEND
                 ).single()
 
-        Predefined.anyMethodSelectors.forEach { name, selector ->
+        Predefined.anyMethodSelectors.forEach { (name, selector) ->
             methodSelectors.forceAssign(any.method(name), selector)
         }
 
-        Predefined.anyMethodSwiftNames.forEach { name, swiftName ->
+        Predefined.anyMethodSwiftNames.forEach { (name, swiftName) ->
             methodSwiftNames.forceAssign(any.method(name), swiftName)
         }
     }

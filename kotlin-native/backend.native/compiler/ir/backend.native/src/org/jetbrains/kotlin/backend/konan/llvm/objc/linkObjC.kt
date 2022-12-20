@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.llvm2string
+import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
+import org.jetbrains.kotlin.backend.konan.llvm.type
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
@@ -54,7 +56,7 @@ private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
 
     // Note: exported classes anyway use the same prefix,
     // so using more unique private prefix wouldn't help to prevent any clashes.
-    private val privatePrefix = objCExportNamer.topLevelNamePrefix
+    private val privatePrefix = objCExportNamer.stdlibTopLevelPrefix
 
     fun addProtocolImport(name: String) {
         literalPatches += LiteralPatch(ObjCDataGenerator.classNameGenerator, name, name)

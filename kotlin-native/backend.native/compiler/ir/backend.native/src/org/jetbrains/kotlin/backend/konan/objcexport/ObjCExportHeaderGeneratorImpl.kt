@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
+// TODO: Switch from context to moduleTranslationConfig entirely
 internal class ObjCExportHeaderGeneratorImpl(
         val context: PhaseContext,
         moduleTranslationConfig: ModuleTranslationConfig,
@@ -24,7 +25,7 @@ internal class ObjCExportHeaderGeneratorImpl(
         namer: ObjCExportNamer,
         objcGenerics: Boolean,
         private val sharedState: ObjCExportSharedState,
-) : ObjCExportHeaderGenerator(moduleTranslationConfig,  moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context), sharedState) {
+) : ObjCExportHeaderGenerator(moduleTranslationConfig,  moduleDescriptors, mapper, namer, moduleTranslationConfig.namer, objcGenerics, ProblemCollector(context), sharedState) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()
 

@@ -477,7 +477,7 @@ internal class ObjCExportCodeGenerator(
         // Replace runtime global with weak linkage:
         replaceExternalWeakOrCommonGlobal(
                 "Kotlin_ObjCInterop_uniquePrefix",
-                codegen.staticData.cStringLiteral(namer.topLevelNamePrefix),
+                codegen.staticData.cStringLiteral(namer.stdlibTopLevelPrefix),
                 context.standardLlvmSymbolsOrigin
         )
 
@@ -607,7 +607,7 @@ internal class ObjCExportCodeGenerator(
         }
 
         dataGenerator.emitClass(
-                "${namer.topLevelNamePrefix}KotlinSelectorsHolder",
+                "${namer.stdlibTopLevelPrefix}KotlinSelectorsHolder",
                 superName = "NSObject",
                 instanceMethods = methods
         )

@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.backend.konan.shouldDefineFunctionClasses
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -26,19 +28,31 @@ internal class ObjCExportedInterface(
         val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
         val headerLines: List<String>,
-        val namer: ObjCExportNamer,
+        val namer: ModuleObjCExportNamer,
         val mapper: ObjCExportMapper
 )
 
 class FrameworkNaming(val topLevelPrefix: String, val moduleName: String, val headerName: String)
 
-sealed class ModuleTranslationConfig(
+internal sealed class ModuleTranslationConfig(
         val module: ModuleDescriptor,
-        val frameworkNaming: FrameworkNaming
+        val frameworkNaming: FrameworkNaming,
+        val mapper: ObjCExportMapper,
+        val objcGenerics: Boolean,
 ) {
-    class Full(moduleDescriptor: ModuleDescriptor, frameworkNaming: FrameworkNaming): ModuleTranslationConfig(moduleDescriptor, frameworkNaming)
+    class Full(
+            moduleDescriptor: ModuleDescriptor,
+            frameworkNaming: FrameworkNaming,
+            mapper: ObjCExportMapper,
+            objcGenerics: Boolean,
+    ): ModuleTranslationConfig(moduleDescriptor, frameworkNaming, mapper, objcGenerics)
 
-    class Partial(moduleDescriptor: ModuleDescriptor, frameworkNaming: FrameworkNaming) : ModuleTranslationConfig(moduleDescriptor, frameworkNaming) {
+    class Partial(
+            moduleDescriptor: ModuleDescriptor,
+            frameworkNaming: FrameworkNaming,
+            mapper: ObjCExportMapper,
+            objcGenerics: Boolean,
+    ) : ModuleTranslationConfig(moduleDescriptor, frameworkNaming, mapper, objcGenerics) {
         private val referencedDeclarations = mutableSetOf<DeclarationDescriptor>()
         fun reference(declaration: DeclarationDescriptor): HeaderDependency {
             assert(declaration.module == module)
@@ -50,19 +64,36 @@ sealed class ModuleTranslationConfig(
             return referencedDeclarations.toList()
         }
     }
+
+    val namer: ModuleObjCExportNamer by lazy {
+        ObjCExportNamerImpl(
+                moduleDescriptors = setOf(module),
+                builtIns = module.builtIns,
+                mapper = mapper,
+                topLevelNamePrefix = frameworkNaming.topLevelPrefix,
+                stdlibNamePrefix = "stdlib",
+                local = false,
+                objcGenerics = objcGenerics,
+        )
+    }
 }
 
 internal class ObjCExportSharedState(
         exportedLibraries: List<ModuleDescriptor>,
-        private val moduleNamer: (ModuleDescriptor) -> String = { it.name.asStringStripSpecialMarkers() }
+        private val stdlibModule: ModuleDescriptor,
+        private val moduleNamer: (ModuleDescriptor) -> String = { it.name.asStringStripSpecialMarkers() },
+        private val createMapper: (ModuleDescriptor) -> ObjCExportMapper,
+        private val objcGenerics: Boolean,
 ) {
     private val modulesToTranslate: MutableMap<ModuleDescriptor, ModuleTranslationConfig> by lazy {
-        exportedLibraries.associateWith { ModuleTranslationConfig.Full(it, createHeaders(it)) }.toMutableMap()
+        exportedLibraries.associateWith {
+            ModuleTranslationConfig.Full(it, createHeaders(it), createMapper(it), objcGenerics)
+        }.toMutableMap()
     }
 
     fun addDependency(descriptor: DeclarationDescriptor): HeaderDependency? {
         val module = descriptor.module
-        val translationConfig = modulesToTranslate.getOrPut(module) { ModuleTranslationConfig.Partial(module, createHeaders(module)) }
+        val translationConfig = getTranslationConfigOrCreate(module)
         return when (translationConfig) {
             // Nothing to do, everything is exported anyway
             is ModuleTranslationConfig.Full -> null
@@ -70,6 +101,27 @@ internal class ObjCExportSharedState(
                 translationConfig.reference(descriptor)
             }
         }
+    }
+
+    fun addStdlibDependency(): HeaderDependency {
+        val stdlibTranslationConfig = getTranslationConfigOrCreate(stdlibModule)
+        return HeaderDependency(
+                stdlibTranslationConfig.frameworkNaming.moduleName,
+                stdlibTranslationConfig.frameworkNaming.headerName,
+                stdlibModule
+        )
+    }
+
+    fun findExportNamerFor(module: ModuleDescriptor): ObjCExportNamer {
+        val translationConfig = getTranslationConfigOrCreate(module)
+        return translationConfig.namer
+    }
+
+    fun findExportNamerForStdlib(): ObjCExportNamer =
+            findExportNamerFor(stdlibModule)
+
+    val globalNamer: ObjCExportNamer by lazy {
+        SharedObjCExportNamer(this)
     }
 
     fun yieldAll(config: KonanConfig): Sequence<ModuleTranslationConfig> = sequence {
@@ -91,36 +143,26 @@ internal class ObjCExportSharedState(
         val name = moduleNamer(moduleDescriptor)
         return FrameworkNaming(name, name, "$name.h")
     }
+
+    private fun getTranslationConfigOrCreate(module: ModuleDescriptor): ModuleTranslationConfig =
+            modulesToTranslate.getOrPut(module) {
+                ModuleTranslationConfig.Partial(module, createHeaders(module), createMapper(module), objcGenerics)
+            }
 }
 
 internal fun produceObjCExportInterface(
         context: PhaseContext,
         moduleTranslationConfig: ModuleTranslationConfig,
-        frontendServices: FrontendServices,
         sharedState: ObjCExportSharedState,
 ): ObjCExportedInterface {
-    val config = context.config
-    require(config.target.family.isAppleFamily)
-    require(config.produce == CompilerOutputKind.FRAMEWORK)
-
-    val topLevelNamePrefix: String = moduleTranslationConfig.frameworkNaming.topLevelPrefix
-
     // TODO: emit RTTI to the same modules as classes belong to.
     //   Not possible yet, since ObjCExport translates the entire "world" API at once
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
-    val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-    val mapper = ObjCExportMapper(frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+    val mapper = moduleTranslationConfig.mapper
     val moduleDescriptors = listOf(moduleTranslationConfig.module)
-    val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-    val namer = ObjCExportNamerImpl(
-            moduleDescriptors.toSet(),
-            moduleTranslationConfig.module.builtIns,
-            mapper,
-            topLevelNamePrefix,
-            local = false,
-            objcGenerics = objcGenerics
-    )
+    val objcGenerics = moduleTranslationConfig.objcGenerics
+    val namer = sharedState.globalNamer
     val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleTranslationConfig, moduleDescriptors, mapper, namer, objcGenerics, sharedState)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
@@ -180,6 +222,7 @@ internal class ObjCExport(
                 moduleDescriptor.builtIns,
                 mapper,
                 topLevelNamePrefix,
+                stdlibNamePrefix = "stdlib",
                 local = false
         )
 

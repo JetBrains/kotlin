@@ -6,17 +6,18 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-class ObjcExportHeaderGeneratorMobile internal constructor(
+internal class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
         moduleTranslationConfig: ModuleTranslationConfig,
         mapper: ObjCExportMapper,
-        namer: ObjCExportNamer,
+        namer: ModuleObjCExportNamer,
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
-        private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleTranslationConfig, moduleDescriptors, mapper, namer, objcGenerics, problemCollector, ObjCExportSharedState(moduleDescriptors)) {
+        private val restrictToLocalModules: Boolean,
+        sharedState: ObjCExportSharedState,
+) : ObjCExportHeaderGenerator(moduleTranslationConfig, moduleDescriptors, mapper, namer, namer, objcGenerics, problemCollector, sharedState) {
 
-    companion object {
+    internal companion object {
         fun createInstance(
                 configuration: ObjCExportLazy.Configuration,
                 problemCollector: ObjCExportProblemCollector,
@@ -25,19 +26,22 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 moduleDescriptors: List<ModuleDescriptor>,
                 deprecationResolver: DeprecationResolver? = null,
                 local: Boolean = false,
-                restrictToLocalModules: Boolean = false): ObjCExportHeaderGenerator {
+                restrictToLocalModules: Boolean = false,
+                sharedState: ObjCExportSharedState,
+        ): ObjCExportHeaderGenerator {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
             val namerConfiguration = createNamerConfiguration(configuration)
             val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local)
 
             return ObjcExportHeaderGeneratorMobile(
-                moduleDescriptors,
-                moduleTranslationConfig,
-                mapper,
-                namer,
-                problemCollector,
-                configuration.objcGenerics,
-                restrictToLocalModules
+                    moduleDescriptors,
+                    moduleTranslationConfig,
+                    mapper,
+                    namer,
+                    problemCollector,
+                    configuration.objcGenerics,
+                    restrictToLocalModules,
+                    sharedState
             )
         }
     }

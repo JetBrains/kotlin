@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
+import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
@@ -21,9 +24,9 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -55,6 +58,7 @@ internal class ObjCExportTranslatorImpl(
         private val generator: ObjCExportHeaderGenerator?,
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
+        val moduleNamer: ModuleObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
         val objcGenerics: Boolean
 ) : ObjCExportTranslator {
@@ -101,7 +105,7 @@ internal class ObjCExportTranslatorImpl(
             )
         }
 
-        val nsErrorCategoryName = "NSError${namer.topLevelNamePrefix}KotlinException"
+        val nsErrorCategoryName = "NSError${namer.stdlibTopLevelPrefix}KotlinException"
         add {
             ObjCInterfaceImpl("NSError", categoryName = nsErrorCategoryName, members = buildMembers {
                 add { ObjCProperty("kotlinException", null, ObjCNullableReferenceType(ObjCIdType), listOf("readonly")) }
@@ -267,7 +271,7 @@ internal class ObjCExportTranslatorImpl(
     }
 
     override fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface {
-        val name = namer.getFileClassName(file)
+        val name = moduleNamer.getFileClassName(file)
 
         // TODO: stop inheriting KotlinBase.
         val members = buildMembers {
@@ -1079,18 +1083,30 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         val moduleDescriptors: List<ModuleDescriptor>,
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
+        val moduleNamer: ModuleObjCExportNamer,
         val objcGenerics: Boolean,
         problemCollector: ObjCExportProblemCollector,
         private val sharedState: ObjCExportSharedState,
 ) {
     private val stubs = mutableListOf<Stub<*>>()
-    private val dependencies = mutableSetOf<HeaderDependency>()
+    private val dependencies = mutableSetOf<HeaderDependency>().also {
+        if (moduleDescriptors.all { !it.isNativeStdlib() }) {
+            it += sharedState.addStdlibDependency()
+        }
+    }
 
     private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
+    private val translator = ObjCExportTranslatorImpl(
+            this,
+            mapper,
+            namer,
+            moduleNamer,
+            problemCollector,
+            objcGenerics,
+    )
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
@@ -1159,7 +1175,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     internal fun buildInterface(): ObjCExportedInterface {
         val headerLines = build()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper)
+        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, moduleNamer, mapper)
     }
 
     fun getExportStubs(): ObjCExportedStubs =
@@ -1170,7 +1186,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     fun translateModule() {
         // TODO: make the translation order stable
         // to stabilize name mangling.
-        if (moduleDescriptors.first().isNativeStdlib()) {
+        if (moduleDescriptors.any { it.isNativeStdlib() }) {
             translateBaseDeclarations()
         }
         translateModuleDeclarations()
@@ -1246,11 +1262,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             packageFragment.getMemberScope().translateClasses()
         }
 
-        extensions.forEach { classDescriptor, declarations ->
+        extensions.forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { sourceFile, declarations ->
+        topLevel.forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }

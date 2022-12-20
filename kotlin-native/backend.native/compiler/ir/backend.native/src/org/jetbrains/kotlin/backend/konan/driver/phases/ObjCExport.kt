@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 
 /**
  * Create internal representation of Objective-C wrapper.
@@ -19,12 +21,22 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Ph
         "Objective-C header generation",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
-    val sharedState = ObjCExportSharedState(listOf(input.moduleDescriptor))
+    val sharedState = ObjCExportSharedState(
+            exportedLibraries = listOf(input.moduleDescriptor),
+            createMapper = { _ ->
+                ObjCExportMapper(
+                        input.frontendServices.deprecationResolver,
+                        local = false,
+                        unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+                )
+            },
+            objcGenerics = context.config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS),
+            stdlibModule = input.moduleDescriptor.allDependencyModules.single { it.isNativeStdlib() },
+    )
     val translationConfig = sharedState.yieldAll(context.config).toList().single()
     produceObjCExportInterface(
             context,
             translationConfig,
-            input.frontendServices,
             sharedState,
     )
 }
@@ -34,9 +46,20 @@ internal val ProduceMultipleObjCExportInterfacesPhase = createSimpleNamedCompile
         "Objective-C header generation",
         outputIfNotEnabled = { _, _, _, _ -> emptyMap() }
 ) { context, input ->
-    val sharedState = ObjCExportSharedState(listOf(input.moduleDescriptor) + input.moduleDescriptor.getExportedDependencies(context.config))
+    val sharedState = ObjCExportSharedState(
+            exportedLibraries = listOf(input.moduleDescriptor) + input.moduleDescriptor.getExportedDependencies(context.config),
+            createMapper = { _ ->
+                ObjCExportMapper(
+                        input.frontendServices.deprecationResolver,
+                        local = false,
+                        unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+                )
+            },
+            objcGenerics = context.config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS),
+            stdlibModule = input.moduleDescriptor.allDependencyModules.single { it.isNativeStdlib() },
+    )
     sharedState.yieldAll(context.config).map { moduleTranslationConfig ->
-        moduleTranslationConfig to produceObjCExportInterface(context, moduleTranslationConfig, input.frontendServices, sharedState)
+        moduleTranslationConfig to produceObjCExportInterface(context, moduleTranslationConfig, sharedState)
     }.onEach { (module, iface) ->
         printExportSummary(module, iface)
     }.toMap()

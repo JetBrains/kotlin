@@ -19,7 +19,7 @@ data class ObjCClassForwardDeclaration(
         val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList()
 )
 
-class HeaderDependency(
+data class HeaderDependency(
         val moduleName: String,
         val headerName: String,
         val moduleDescriptor: ModuleDescriptor
