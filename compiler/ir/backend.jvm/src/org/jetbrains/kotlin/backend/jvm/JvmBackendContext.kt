@@ -93,6 +93,10 @@ class JvmBackendContext(
 
     private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
 
+    val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
+        Type.getObjectType("java/lang/invoke/LambdaMetafactory")
+    ).isNotEmpty()
+
     fun getLocalClassType(container: IrAttributeContainer): Type? =
         localClassType[container.attributeOwnerId]
 
