@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
 import org.jetbrains.kotlin.backend.konan.llvm.printBitcodePhase
 import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -149,11 +150,46 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrMod
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
-    runPhaseInParentContext(allLoweringsPhase, module)
-    runPhaseInParentContext(dependenciesLowerPhase, module)
+    runAllLowerings(module)
+    lowerDependencies(module)
     runPhaseInParentContext(bitcodePhase, module)
     runPhaseInParentContext(verifyBitcodePhase, module)
     runPhaseInParentContext(printBitcodePhase, module)
     runPhaseInParentContext(linkBitcodeDependenciesPhase, module)
     runPhaseInParentContext(bitcodePostprocessingPhase, module)
+}
+
+/**
+ * Lowers and links to [inputModule] dependencies of the current compilation target.
+ */
+private fun PhaseEngine<NativeGenerationState>.lowerDependencies(inputModule: IrModuleFragment) {
+    val files = mutableListOf<IrFile>()
+    files += inputModule.files
+    inputModule.files.clear()
+
+    // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+    context.context.librariesWithDependencies
+            .reversed()
+            .forEach {
+                val libModule = context.context.irModules[it.libraryName]
+                if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
+                    return@forEach
+
+                inputModule.files += libModule.files
+                runAllLowerings(inputModule)
+                inputModule.files.clear()
+            }
+
+    // Save all files for codegen in reverse topological order.
+    // This guarantees that libraries initializers are emitted in correct order.
+    context.context.librariesWithDependencies
+            .forEach {
+                val libModule = context.context.irModules[it.libraryName]
+                if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
+                    return@forEach
+
+                inputModule.files += libModule.files
+            }
+
+    inputModule.files += files
 }

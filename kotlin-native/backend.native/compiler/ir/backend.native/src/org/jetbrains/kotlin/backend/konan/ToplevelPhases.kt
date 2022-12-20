@@ -197,47 +197,6 @@ internal val allLoweringsPhase = SameTypeNamedCompilerPhase(
         actions = setOf(defaultDumper, ::moduleValidationCallback)
 )
 
-internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase(
-        name = "LowerLibIR",
-        description = "Lower library's IR",
-        prerequisite = emptySet(),
-        lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
-                val files = mutableListOf<IrFile>()
-                files += input.files
-                input.files.clear()
-
-                // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
-                context.librariesWithDependencies
-                        .reversed()
-                        .forEach {
-                            val libModule = context.irModules[it.libraryName]
-                            if (libModule == null || !context.generationState.llvmModuleSpecification.containsModule(libModule))
-                                return@forEach
-
-                            input.files += libModule.files
-                            allLoweringsPhase.invoke(phaseConfig, phaserState, context, input)
-
-                            input.files.clear()
-                        }
-
-                // Save all files for codegen in reverse topological order.
-                // This guarantees that libraries initializers are emitted in correct order.
-                context.librariesWithDependencies
-                        .forEach {
-                            val libModule = context.irModules[it.libraryName]
-                            if (libModule == null || !context.generationState.llvmModuleSpecification.containsModule(libModule))
-                                return@forEach
-
-                            input.files += libModule.files
-                        }
-
-                input.files += files
-
-                return input
-            }
-        })
-
 internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",

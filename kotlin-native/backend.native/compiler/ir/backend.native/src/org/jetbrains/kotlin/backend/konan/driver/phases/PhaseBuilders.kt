@@ -14,23 +14,23 @@ internal fun <Context : LoggingContext, Input, Output> createSimpleNamedCompiler
         name: String,
         description: String,
         outputIfNotEnabled: (PhaseConfigurationService, PhaserState<Input>, Context, Input) -> Output,
-        phaseBody: (Context, Input) -> Output
+        op: (Context, Input) -> Output
 ): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(name, description) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
             outputIfNotEnabled(phaseConfig, phaserState, context, input)
 
     override fun phaseBody(context: Context, input: Input): Output =
-            phaseBody(context, input)
+            op(context, input)
 }
 
 internal fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
         name: String,
         description: String,
-        phaseBody: (Context, Input) -> Unit
+        op: (Context, Input) -> Unit
 ): SimpleNamedCompilerPhase<Context, Input, Unit> = object : SimpleNamedCompilerPhase<Context, Input, Unit>(name, description) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input) {}
 
     override fun phaseBody(context: Context, input: Input): Unit =
-            phaseBody(context, input)
+            op(context, input)
 }
 
