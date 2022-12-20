@@ -1,0 +1,15 @@
+// -- Module: <common> --
+package
+
+public final expect class Counter {
+    public final expect operator fun dec(): Counter
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final expect operator fun inc(): Counter
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+// -- Module: <main> --
+package
+
+public actual typealias Counter = kotlin.Int

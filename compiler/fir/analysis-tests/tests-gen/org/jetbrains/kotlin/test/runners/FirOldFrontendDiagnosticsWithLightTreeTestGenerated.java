@@ -21357,6 +21357,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("incDecOperatorsInExpectClass.kt")
+            public void testIncDecOperatorsInExpectClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/incDecOperatorsInExpectClass.kt");
+            }
+
+            @Test
             @TestMetadata("incompatibles.kt")
             public void testIncompatibles() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/incompatibles.kt");
