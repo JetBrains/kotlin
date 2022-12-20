@@ -175,9 +175,10 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
         val typeInfoSize = currentDataSectionAddress
         val memorySizeInPages = (typeInfoSize / 65_536) + 1
-        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), memorySizeInPages.toUInt()))
+        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null /* "unlimited" */))
 
         // Need to export the memory in order to pass complex objects to the host language.
+        // Export name "memory" is a WASI ABI convention.
         exports += WasmExport.Memory("memory", memory)
 
         val importedFunctions = functions.elements.filterIsInstance<WasmFunction.Imported>()
