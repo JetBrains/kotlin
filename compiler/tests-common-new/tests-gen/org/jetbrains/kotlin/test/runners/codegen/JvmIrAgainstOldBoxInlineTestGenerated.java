@@ -4571,6 +4571,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         }
 
         @Test
+        @TestMetadata("coroutinesWithTailCallOtpimization.kt")
+        public void testCoroutinesWithTailCallOtpimization() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/coroutinesWithTailCallOtpimization.kt");
+        }
+
+        @Test
         @TestMetadata("crossroutines.kt")
         public void testCrossroutines() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/crossroutines.kt");
@@ -4592,6 +4598,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @TestMetadata("forInline.kt")
         public void testForInline() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/forInline.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineProperty.kt")
+        public void testInlineProperty() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/inlineProperty.kt");
         }
 
         @Test
@@ -4664,6 +4676,18 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @TestMetadata("smapWithOldSyntax.kt")
         public void testSmapWithOldSyntax() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/smapWithOldSyntax.kt");
+        }
+
+        @Test
+        @TestMetadata("tryFinally1.kt")
+        public void testTryFinally1() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/tryFinally1.kt");
+        }
+
+        @Test
+        @TestMetadata("tryFinally2.kt")
+        public void testTryFinally2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/tryFinally2.kt");
         }
 
         @Nested
