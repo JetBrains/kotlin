@@ -119,7 +119,8 @@ class IrPreGenerator(
         }
 
         for (prop in serializableProperties) {
-            ctor.addValueParameter(prop.name, prop.type.makeNullableIfNotPrimitive(), SERIALIZATION_PLUGIN_ORIGIN)
+            // SerialName can contain illegal identifier characters, so we use original source code name for parameter
+            ctor.addValueParameter(prop.originalDescriptorName, prop.type.makeNullableIfNotPrimitive(), SERIALIZATION_PLUGIN_ORIGIN)
         }
 
         ctor.addValueParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType.makeNullable(), SERIALIZATION_PLUGIN_ORIGIN)
