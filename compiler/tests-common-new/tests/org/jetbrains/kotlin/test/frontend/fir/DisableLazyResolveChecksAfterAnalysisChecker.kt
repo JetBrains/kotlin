@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolveContractViolationErrorHandler
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -53,7 +54,7 @@ class DisableLazyResolveChecksAfterAnalysisChecker(
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return if (isDisableLazyResolveDirectivePresent()) {
-            failedAssertions.filter { it.cause is TestWithDisableLazyResolveDirectivePassesException }
+            failedAssertions.filterNot { it is WrappedException.FromHandler && it.handler is FirResolveContractViolationErrorHandler }
         } else {
             failedAssertions
         }
