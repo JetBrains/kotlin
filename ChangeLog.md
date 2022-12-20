@@ -1,3 +1,23 @@
+## 1.8.0-RC2
+
+### Compiler
+
+- [`KT-55357`](https://youtrack.jetbrains.com/issue/KT-55357) IllegalStateException when reading a class that delegates to a Java class with a definitely-not-null type with a flexible upper bound
+- [`KT-55068`](https://youtrack.jetbrains.com/issue/KT-55068) Kotlin Gradle DSL: No mapping for symbol: VALUE_PARAMETER SCRIPT_IMPLICIT_RECEIVER on JVM IR backend
+- [`KT-51284`](https://youtrack.jetbrains.com/issue/KT-51284) SAM conversion doesn't work if method has context receivers
+- [`KT-55065`](https://youtrack.jetbrains.com/issue/KT-55065) Kotlin Gradle DSL: Reflection cannot find class data for lambda, produced by JVM IR backend
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-55340`](https://youtrack.jetbrains.com/issue/KT-55340) Argument for kotlinx.serialization.UseSerializers does not implement KSerializer or does not provide serializer for concrete type
+
+### Tools. Gradle
+
+- [`KT-55334`](https://youtrack.jetbrains.com/issue/KT-55334) kaptGenerateStubs passes wrong android variant module names to compiler
+- [`KT-55255`](https://youtrack.jetbrains.com/issue/KT-55255) Gradle: stdlib version alignment fails build on dynamic stdlib version.
+- [`KT-55363`](https://youtrack.jetbrains.com/issue/KT-55363) [K1.8.0-Beta] Command line parsing treats plugin parameters as source files
+
+
 ## 1.8.0-RC
 
 ### Compiler
