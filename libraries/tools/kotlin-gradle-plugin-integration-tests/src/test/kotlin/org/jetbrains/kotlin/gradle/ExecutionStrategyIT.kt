@@ -76,6 +76,17 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @DisplayName("Compilation via Kotlin daemon without caching connection")
+    @GradleTest
+    fun testDaemonWithoutCachingConnection(gradleVersion: GradleVersion) {
+        doTestExecutionStrategy(
+            gradleVersion,
+            KotlinCompilerExecutionStrategy.DAEMON,
+            addHeapDumpOptions = false,
+            cacheDaemonConnection = false
+        )
+    }
+
     @DisplayName("Compilation via Kotlin daemon with fallback strategy")
     @GradleTest
     fun testDaemonFallbackStrategy(gradleVersion: GradleVersion) {
@@ -188,6 +199,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         addHeapDumpOptions: Boolean = true,
         testFallbackStrategy: Boolean = false,
         shouldConfigureStrategyViaGradleProperty: Boolean = true,
+        cacheDaemonConnection: Boolean? = null,
         additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
@@ -207,6 +219,9 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     // add jvm option that JVM fails to parse
                     add("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
                 }
+                if (cacheDaemonConnection != null) {
+                    add("-Pkotlin.daemon.cacheConnection=$cacheDaemonConnection")
+                }
             }.toTypedArray()
             val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
             val finishMessage = "Finished executing kotlin compiler using $expectedFinishStrategy strategy"
@@ -217,7 +232,8 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 assertNoBuildWarnings()
 
                 if (expectedFinishStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
-                    assertOutputContainsExactTimes("Creating a new connection to Kotlin Daemon", 1)
+                    val connectionsCount = if (cacheDaemonConnection == false) 2 else 1
+                    assertOutputContainsExactTimes("Creating a new connection to Kotlin Daemon", connectionsCount)
                 } else if (expectedFinishStrategy == KotlinCompilerExecutionStrategy.IN_PROCESS) {
                     assertOutputContainsExactTimes("Creating a new classloader for Kotlin Compiler", 1)
                 }

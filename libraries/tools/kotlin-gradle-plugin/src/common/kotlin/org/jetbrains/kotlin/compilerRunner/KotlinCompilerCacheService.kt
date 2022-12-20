@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -13,11 +14,16 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.registerSharedService
 import java.io.File
 import java.net.URLClassLoader
 
-internal abstract class KotlinCompilerCacheService : BuildService<BuildServiceParameters.None>, AutoCloseable {
+internal abstract class KotlinCompilerCacheService : BuildService<KotlinCompilerCacheService.Parameters>, AutoCloseable {
+    interface Parameters : BuildServiceParameters {
+        val cacheDaemonConnection: Property<Boolean>
+    }
+
     private data class DaemonConnectionKey(
         val compilerId: CompilerId,
         val clientAliveFlagFile: File,
@@ -29,6 +35,7 @@ internal abstract class KotlinCompilerCacheService : BuildService<BuildServicePa
 
     private val daemonConnections = HashMap<DaemonConnectionKey, CompileServiceSession?>()
     private val classloaders = HashMap<CompilerId, URLClassLoader>()
+    private val cacheDaemonConnection = parameters.cacheDaemonConnection.get()
 
     @Synchronized
     override fun close() {
@@ -86,39 +93,42 @@ internal abstract class KotlinCompilerCacheService : BuildService<BuildServicePa
                 )
             }
         }
-        val key = DaemonConnectionKey(
-            compilerId = compilerId,
-            clientAliveFlagFile = clientAliveFlagFile,
-            sessionAliveFlagFile = sessionAliveFlagFile,
-            isDebugEnabled = isDebugEnabled,
-            daemonOptions = daemonOptions,
-            daemonJVMOptions = daemonJvmOptions
-        )
-        val existingConnection = daemonConnections[key]
-        if (existingConnection != null) {
-            if (existingConnection.compileService.isAlive().isGood) {
-                return existingConnection
-            } else {
-                daemonConnections.remove(existingConnection)
-            }
+
+        fun newDaemonConnection(): CompileServiceSession? {
+            log.kotlinDebug { "Creating a new connection to Kotlin Daemon" }
+            return KotlinCompilerRunnerUtils.newDaemonConnection(
+                compilerId = compilerId,
+                clientAliveFlagFile = clientAliveFlagFile,
+                sessionAliveFlagFile = sessionAliveFlagFile,
+                isDebugEnabled = isDebugEnabled,
+                daemonOptions = daemonOptions,
+                daemonJVMOptions = daemonJvmOptions,
+                messageCollector = if (isDebugEnabled) messageCollector else MessageCollector.NONE
+            )
         }
 
-        log.kotlinDebug { "Creating a new connection to Kotlin Daemon" }
-        val newConnection = KotlinCompilerRunnerUtils.newDaemonConnection(
-            compilerId = compilerId,
-            clientAliveFlagFile = clientAliveFlagFile,
-            sessionAliveFlagFile = sessionAliveFlagFile,
-            isDebugEnabled = isDebugEnabled,
-            daemonOptions = daemonOptions,
-            daemonJVMOptions = daemonJvmOptions,
-            messageCollector = if (isDebugEnabled) messageCollector else MessageCollector.NONE
-        )
-        daemonConnections[key] = newConnection
-        return newConnection
+        return if (cacheDaemonConnection) {
+            val key = DaemonConnectionKey(
+                compilerId = compilerId,
+                clientAliveFlagFile = clientAliveFlagFile,
+                sessionAliveFlagFile = sessionAliveFlagFile,
+                isDebugEnabled = isDebugEnabled,
+                daemonOptions = daemonOptions,
+                daemonJVMOptions = daemonJvmOptions
+            )
+            val cachedConnection = daemonConnections[key]
+            if (cachedConnection != null && cachedConnection.compileService.isAlive().isGood) {
+                cachedConnection
+            } else {
+                newDaemonConnection().also { daemonConnections[key] = it }
+            }
+        } else newDaemonConnection()
     }
 
     companion object {
-        fun registerIfAbsent(project: Project): Provider<KotlinCompilerCacheService> =
-            project.gradle.registerSharedService()
+        fun registerIfAbsent(project: Project, properties: PropertiesProvider): Provider<KotlinCompilerCacheService> =
+            project.gradle.registerSharedService {
+                parameters.cacheDaemonConnection.set(properties.cacheDaemonConnection)
+            }
     }
 }

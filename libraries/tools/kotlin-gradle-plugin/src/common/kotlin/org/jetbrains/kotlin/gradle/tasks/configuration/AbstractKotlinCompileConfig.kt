@@ -66,7 +66,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     task.buildReportsService.value(it)
                 }
             }
-            KotlinCompilerCacheService.registerIfAbsent(project).also {
+            KotlinCompilerCacheService.registerIfAbsent(project, propertiesProvider).also {
                 task.usesService(it)
                 task.compilerCache.value(it)
             }
