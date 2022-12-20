@@ -9,26 +9,14 @@ import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.testFramework.TestDataFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.blackboxtest.InfrastructureDumpedTestListingTest.Companion.TEST_SUITE_PATH
-import org.jetbrains.kotlin.konan.blackboxtest.support.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExistingDependency
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.LibraryCompilation
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIB
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependency
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.IncludedLibrary
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.Library
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DumpedTestListing
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.LAUNCHER_MODULE_NAME
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -57,9 +45,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
     private fun doTest(@TestDataFile testDataPath: String, fromSources: Boolean) {
         val rootDir = File(testDataPath)
 
-        val fooTestCase: TestCase = generateTestCaseWithSingleModule(rootDir.resolve("foo"))
-        val fooCompilationResult: Success<out KLIB> = fooTestCase.compileToLibrary()
-        val fooLibrary: KLIB = fooCompilationResult.resultingArtifact
+        val fooLibrary = compileToLibrary(rootDir.resolve("foo"))
 
         val barTestCase: TestCase = generateTestCaseWithSingleModule(rootDir.resolve("bar"))
 
@@ -68,13 +54,14 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
 
         if (fromSources) {
             executableTestCase = barTestCase
-            executableCompilationResult = barTestCase.compileToExecutable(fooLibrary.asLibraryDependency())
+            executableCompilationResult = compileToExecutable(barTestCase, fooLibrary.asLibraryDependency())
         } else {
-            val barCompilationResult: Success<out KLIB> = barTestCase.compileToLibrary(fooLibrary.asLibraryDependency())
+            val barCompilationResult: Success<out KLIB> = compileToLibrary(barTestCase, fooLibrary.asLibraryDependency())
             val barLibrary: KLIB = barCompilationResult.resultingArtifact
 
             executableTestCase = generateTestCaseWithSingleModule(moduleDir = null) // No sources.
-            executableCompilationResult = executableTestCase.compileToExecutable(
+            executableCompilationResult = compileToExecutable(
+                executableTestCase,
                 fooLibrary.asLibraryDependency(),
                 barLibrary.asIncludedLibraryDependency()
             )
@@ -99,59 +86,6 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
         runExecutableAndVerify(executableTestCase, testExecutable) // <-- run executable and verify
     }
 
-    private fun generateTestCaseWithSingleModule(moduleDir: File?): TestCase {
-        val moduleName: String = moduleDir?.name ?: LAUNCHER_MODULE_NAME
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
-
-        moduleDir?.walkTopDown()
-            ?.filter { it.isFile && it.extension == "kt" }
-            ?.forEach { file -> module.files += TestFile.createCommitted(file, module) }
-
-        return TestCase(
-            id = TestCaseId.Named(moduleName),
-            kind = TestKind.STANDALONE,
-            modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs.EMPTY,
-            nominalPackageName = PackageName.EMPTY,
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-            extras = DEFAULT_EXTRAS
-        ).apply {
-            initialize(null, null)
-        }
-    }
-
-    private fun TestCase.compileToLibrary(vararg dependencies: TestCompilationDependency<*>): Success<out KLIB> {
-        val compilation = LibraryCompilation(
-            settings = testRunSettings,
-            freeCompilerArgs = freeCompilerArgs,
-            sourceModules = modules,
-            dependencies = dependencies.toList(),
-            expectedArtifact = toLibraryArtifact()
-        )
-        return compilation.result.assertSuccess()
-    }
-
-    private fun TestCase.compileToExecutable(vararg dependencies: TestCompilationDependency<*>): Success<out Executable> {
-        val compilation = ExecutableCompilation(
-            settings = testRunSettings,
-            freeCompilerArgs = freeCompilerArgs,
-            sourceModules = modules,
-            extras = DEFAULT_EXTRAS,
-            dependencies = dependencies.toList(),
-            expectedArtifact = toExecutableArtifact()
-        )
-        return compilation.result.assertSuccess()
-    }
-
-    private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
-
-    private fun TestCase.toLibraryArtifact() = KLIB(buildDir.resolve(modules.first().name + ".klib"))
-    private fun toExecutableArtifact() =
-        Executable(buildDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix))
-
-    private fun KLIB.asLibraryDependency() = ExistingDependency(this, Library)
-    private fun KLIB.asIncludedLibraryDependency() = ExistingDependency(this, IncludedLibrary)
-
     private fun assertDumpFilesEqual(expected: File, actual: File) {
         val expectedDumpFileContents = convertLineSeparators(expected.readText().trimEnd())
         val actualDumpFileContents = convertLineSeparators(actual.readText().trimEnd())
@@ -169,7 +103,5 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
         const val TEST_SUITE_PATH = "native/native.tests/testData/infrastructure"
         const val TEST_CASE_NAME = "testListing"
         const val TEST_CASE_PATH = "$TEST_SUITE_PATH/$TEST_CASE_NAME"
-
-        private val DEFAULT_EXTRAS = WithTestRunnerExtras(TestRunnerType.DEFAULT)
     }
 }
