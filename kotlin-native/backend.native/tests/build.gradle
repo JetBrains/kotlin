@@ -181,16 +181,13 @@ TaskCollection<Task> tasksOf(Class<? extends Task> type, Closure<Boolean> filter
 }
 
 run {
+    dependsOn("sanity")
+    // Note: sanity contains subsets of the tests listed below.
+
     dependsOn(tasksOf(KonanTest))
     // Add framework tests
     dependsOn(tasksOf(FrameworkTest))
-    dependsOn(tasksOf(MetadataComparisonTest))
-    // Add regular gradle test tasks
-    dependsOn(tasksOf(Test))
-    dependsOn(tasksOf(CoverageTest))
     dependsOn(tasksOf(FileCheckTest))
-    dependsOn(":kotlin-native:Interop:Indexer:check")
-    dependsOn(":kotlin-native:Interop:StubGenerator:check")
 }
 
 task sanity {
