@@ -190,7 +190,10 @@ private fun KtAnnotationApplication.tryConvertAsRetention(foundAnnotations: Set<
     if (classId != StandardClassIds.Annotations.Retention) return null
     if (JvmAnnotationNames.RETENTION_ANNOTATION.asString() in foundAnnotations) return null
 
-    val argumentWithKotlinRetention = arguments.firstOrNull { it.name.asString() == "value" }?.expression as? KtEnumEntryAnnotationValue
+    val argumentWithKotlinRetention = arguments.firstOrNull {
+        it.name == DEFAULT_VALUE_PARAMETER
+    }?.expression as? KtEnumEntryAnnotationValue
+
     val kotlinRetentionName = argumentWithKotlinRetention?.callableId?.callableName?.asString()
     return createRetentionAnnotation(modifierList, kotlinRetentionName)
 }
