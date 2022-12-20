@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrModuleHeader
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import java.io.File
 
 class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
@@ -99,17 +96,19 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     }
 
     fun fetchCompiledJsCode(artifact: ModuleArtifact) = artifact.artifactsDir?.let { cacheDir ->
-        val jsCode = File(cacheDir, CACHED_MODULE_JS).ifExists { readText() }
-        val sourceMap = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { readText() }
-        val tsDefinitions = File(cacheDir, CACHED_MODULE_D_TS).ifExists { TypeScriptFragment(readText()) }
-        jsCode?.let { CompilationOutputs(it, tsDefinitions, null, sourceMap) }
+        val jsCodeFilePath = File(cacheDir, CACHED_MODULE_JS).ifExists { absolutePath }
+        val sourceMapFilePath = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { absolutePath }
+        val tsDefinitionsFilePath = File(cacheDir, CACHED_MODULE_D_TS).ifExists { absolutePath }
+        jsCodeFilePath?.let { CompilationOutputsCached(it, sourceMapFilePath, tsDefinitionsFilePath) }
     }
 
-    fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputs) = artifact.artifactsDir?.let { cacheDir ->
-        File(cacheDir, CACHED_MODULE_JS).writeIfNotNull(compilationOutputs.jsCode)
-        File(cacheDir, CACHED_MODULE_JS_MAP).writeIfNotNull(compilationOutputs.sourceMap)
-        File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
-    }
+    fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputsBuilt) =
+        artifact.artifactsDir?.let { cacheDir ->
+            val jsCodeFile = File(cacheDir, CACHED_MODULE_JS)
+            val jsMapFile = File(cacheDir, CACHED_MODULE_JS_MAP)
+            compilationOutputs.writeJsCode(jsCodeFile, jsMapFile)
+            File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
+        }
 
     fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {
         return moduleArtifacts.map { artifact ->

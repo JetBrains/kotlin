@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -225,16 +226,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, JS_MODULE_KIND, moduleName))
         }
 
-        private fun writeJsFile(name: String, text: String): String {
-            val moduleFileName = "./$name.js"
-            val file = File(jsDir, moduleFileName)
-            if (file.exists()) {
-                file.delete()
-            }
-            file.writeAsJsModule(text, moduleFileName)
-            return file.canonicalPath
-        }
-
         private fun prepareExternalJsFiles(): MutableList<String> {
             jsDir.invalidateDir()
             return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
@@ -249,12 +240,15 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
             val files = prepareExternalJsFiles()
-            jsOutput.dependencies.mapTo(files) { writeJsFile(it.first, it.second.jsCode) }
-            files += writeJsFile(mainModuleName, jsOutput.jsCode)
+            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND)
+            for (jsCodeFile in compiledJsFiles) {
+                val jsFile = File(jsCodeFile)
+                jsFile.writeAsJsModule(jsFile.readText(), "./${jsFile.name}")
+            }
 
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
-                    files = files,
+                    files = files + compiledJsFiles,
                     testModuleName = "./$mainModuleName.js",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
@@ -269,11 +263,16 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        private fun verifyDTS(stepId: Int, testInfo: List<TestStepInfo>, jsOutput: CompilationOutputs) {
+        private fun verifyDTS(stepId: Int, testInfo: List<TestStepInfo>) {
             for (info in testInfo) {
                 val expectedDTS = info.expectedDTS ?: continue
-                val output = jsOutput.dependencies.find { it.first == info.moduleName }?.second ?: jsOutput
-                val gotDTS = output.getFullTsDefinition(info.moduleName, JS_MODULE_KIND)
+
+                val dtsFile = jsDir.resolve("${File(info.modulePath).nameWithoutExtension}.d.ts")
+                JUnit4Assertions.assertTrue(dtsFile.exists()) {
+                    "Cannot find d.ts (${dtsFile.absolutePath}) file for module ${info.moduleName} at step $stepId"
+                }
+
+                val gotDTS = dtsFile.readText()
                 JUnit4Assertions.assertEquals(expectedDTS, gotDTS) {
                     "Mismatched d.ts for module ${info.moduleName} at step $stepId"
                 }
@@ -320,7 +319,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true)
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
                 verifyJsCode(projStep.id, mainModuleName, jsOutput)
-                verifyDTS(projStep.id, testInfo, jsOutput)
+                verifyDTS(projStep.id, testInfo)
             }
         }
     }

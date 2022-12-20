@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
@@ -256,17 +258,28 @@ class JsIrBackendFacade(
         return this
     }
 
+    fun File.fixJsFile(newJsTarget: File, moduleId: String, moduleKind: ModuleKind) {
+        val newJsCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(readText(), moduleKind, moduleId)
+
+        val oldJsMap = File("$absolutePath.map")
+        val jsCodeMap = (moduleKind == ModuleKind.PLAIN && oldJsMap.exists()).ifTrue { oldJsMap.readText() }
+
+        this.delete()
+        oldJsMap.delete()
+
+        newJsTarget.write(newJsCode)
+        jsCodeMap?.let { File("${newJsTarget.absolutePath}.map").write(it) }
+    }
+
     private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
-        val wrappedCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, moduleId = moduleId, moduleKind = moduleKind)
-        outputFile.write(wrappedCode)
+        val allJsFiles = writeAll(outputFile.parentFile, outputFile.nameWithoutExtension, false, moduleId, moduleKind)
 
-        if (moduleKind == ModuleKind.PLAIN) {
-            writeSourceMapIfPresent(outputFile)
-        }
+        val mainModuleFile = File(allJsFiles.last())
+        mainModuleFile.fixJsFile(outputFile, moduleId, moduleKind)
 
-        dependencies.forEach { (moduleId, outputs) ->
-            val moduleWrappedCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(outputs.jsCode, moduleKind, moduleId)
-            outputFile.augmentWithModuleName(moduleId).write(moduleWrappedCode)
+        dependencies.map { it.first }.zip(allJsFiles.dropLast(1)).forEach { (depModuleId, builtJsFilePath) ->
+            val newFile = outputFile.augmentWithModuleName(depModuleId)
+            File(builtJsFilePath).fixJsFile(newFile, depModuleId, moduleKind)
         }
     }
 

@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -155,7 +156,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             return transformer.makeJsCodeGenerator(ir.allModules, mode)
         }
 
-        fun compileAndTransformIrNew(): CompilationOutputs {
+        fun compileAndTransformIrNew(): CompilationOutputsBuilt {
             return makeJsCodeGenerator().generateJsCode(relativeRequirePath = true, outJsProgram = false)
         }
     }
@@ -317,7 +318,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 )
 
                 val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.irPerModule, outJsProgram = false)
-                outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
+                outputs.writeAll(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
 
                 messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
                 for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
@@ -393,7 +394,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
-                outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
+                outputs.writeAll(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
             } catch (e: CompilationException) {
                 messageCollector.report(
                     ERROR,
@@ -702,28 +703,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             artifacts
         } else emptyList()
         return icCaches
-    }
-
-    private fun CompilationOutputs.write(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind) {
-        val outputFile = outputDir.resolve("$outputName.js")
-        outputFile.parentFile.mkdirs()
-        outputFile.write(this)
-        dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name.js").let {
-                it.parentFile.mkdirs()
-                it.write(content)
-            }
-        }
-
-        if (genDTS) {
-            val dtsFile = outputDir.resolve("$outputName.d.ts")
-            dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
-        }
-    }
-
-    private fun File.write(outputs: CompilationOutputs) {
-        writeText(outputs.jsCode)
-        outputs.writeSourceMapIfPresent(this)
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(

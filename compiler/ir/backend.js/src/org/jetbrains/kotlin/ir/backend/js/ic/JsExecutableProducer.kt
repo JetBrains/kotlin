@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -96,11 +95,10 @@ class JsExecutableProducer(
         val mainModule = cachedMainModule.compileModule(mainModuleName, true)
 
         val cachedOtherModules = cachedProgram.dropLast(1)
-        val dependencies = cachedOtherModules.map {
+        mainModule.dependencies = cachedOtherModules.map {
             it.jsIrHeader.externalModuleName to it.compileModule(it.jsIrHeader.externalModuleName, false)
         }
         stopwatch.stop()
-        val compilationOut = mainModule.addDependencies(dependencies)
-        return BuildResult(compilationOut, rebuildModules)
+        return BuildResult(mainModule, rebuildModules)
     }
 }
