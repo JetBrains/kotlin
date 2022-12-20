@@ -47,7 +47,11 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput to additionalOutput
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, module: IrModuleFragment) {
+internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(
+        backendContext: Context,
+        module: IrModuleFragment,
+        wholeWorld: Boolean = true,
+) {
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(module)
@@ -56,7 +60,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 nThreads = context.config.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1,
                 sequentialAction = { engine, module ->
                     println("Running sequential action on thread ${Thread.currentThread().name}")
-                    engine.runLowerings(module)
+                    engine.runLowerings(module, lowerAndLinkDeps = wholeWorld)
                     module
                 },
                 parallelAction = { engine, module ->
@@ -94,7 +98,10 @@ internal fun PhaseEngine<out Context>.splitIntoFragments(
     sequenceOf(nativeGenerationState to input)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runLowerings(module: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.runLowerings(
+        module: IrModuleFragment,
+        lowerAndLinkDeps: Boolean,
+) {
     if (context.config.produce.isCache) {
         runPhase(BuildAdditionalCacheInfoPhase, module)
     }
@@ -102,7 +109,7 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(module: IrModuleFra
         runPhase(EntryPointPhase, module)
     }
     runAllLowerings(module)
-    if (!context.config.produce.isCache) {
+    if (lowerAndLinkDeps) {
         lowerDependencies(module)
     }
 }

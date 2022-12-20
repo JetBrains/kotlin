@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -2800,27 +2797,33 @@ internal class CodeGeneratorVisitor(
                 else -> library.moduleConstructorName
             }
 
-            if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
-                val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+            when {
+                library == null || generationState.llvmModuleSpecification.containsLibrary(library) -> {
+                    val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
 
-                val ctorFunction = addCtorFunction(ctorName)
-                appendStaticInitializers(ctorFunction, initializers + otherInitializers)
+                    val ctorFunction = addCtorFunction(ctorName)
+                    appendStaticInitializers(ctorFunction, initializers + otherInitializers)
 
-                listOf(ctorFunction)
-            } else {
-                // A cached library.
-                check(initializers.isEmpty()) {
-                    "found initializer from ${library.libraryFile}, which is not included into compilation"
+                    listOf(ctorFunction)
                 }
+                generationState.llvmModuleSpecification is PartialLlvmModuleSpecification -> {
+                    listOf(addCtorFunction(ctorName))
+                }
+                else -> {
+                    // A cached library.
+                    check(initializers.isEmpty()) {
+                        "found initializer from ${library.libraryFile}, which is not included into compilation"
+                    }
 
-                val cache = context.config.cachedLibraries.getLibraryCache(library)
-                        ?: error("Library $library is expected to be cached")
+                    val cache = context.config.cachedLibraries.getLibraryCache(library)
+                            ?: error("Library $library is expected to be cached")
 
-                when (cache.granularity) {
-                    CachedLibraries.Granularity.MODULE -> listOf(addCtorFunction(ctorName))
-                    CachedLibraries.Granularity.FILE -> {
-                        context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds.map {
-                            addCtorFunction(fileCtorName(library.uniqueName, it))
+                    when (cache.granularity) {
+                        CachedLibraries.Granularity.MODULE -> listOf(addCtorFunction(ctorName))
+                        CachedLibraries.Granularity.FILE -> {
+                            context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds.map {
+                                addCtorFunction(fileCtorName(library.uniqueName, it))
+                            }
                         }
                     }
                 }

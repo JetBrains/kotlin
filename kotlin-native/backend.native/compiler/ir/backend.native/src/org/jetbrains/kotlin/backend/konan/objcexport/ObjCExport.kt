@@ -29,7 +29,8 @@ internal class ObjCExportedInterface(
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
         val headerLines: List<String>,
         val namer: ModuleObjCExportNamer,
-        val mapper: ObjCExportMapper
+        val mapper: ObjCExportMapper,
+        val origins: Set<ModuleDescriptor>,
 )
 
 class FrameworkNaming(val topLevelPrefix: String, val moduleName: String, val headerName: String)

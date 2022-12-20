@@ -118,9 +118,11 @@ internal class Linker(val generationState: NativeGenerationState) {
         return result
     }
 
-    private fun runLinker(objectFiles: List<ObjectFile>,
-                          includedBinaries: List<String>,
-                          libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
+    private fun runLinker(
+            objectFiles: List<ObjectFile>,
+            includedBinaries: List<String>,
+            libraryProvidedLinkerFlags: List<String>
+    ): ExecutableFile? {
         val outputFiles = generationState.outputFiles
 
         val additionalLinkerArgs: List<String>

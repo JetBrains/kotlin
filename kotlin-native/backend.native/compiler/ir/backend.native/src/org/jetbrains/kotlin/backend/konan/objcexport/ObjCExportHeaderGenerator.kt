@@ -1175,7 +1175,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     internal fun buildInterface(): ObjCExportedInterface {
         val headerLines = build()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, moduleNamer, mapper)
+        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, moduleNamer, mapper, moduleDescriptors.toSet())
     }
 
     fun getExportStubs(): ObjCExportedStubs =

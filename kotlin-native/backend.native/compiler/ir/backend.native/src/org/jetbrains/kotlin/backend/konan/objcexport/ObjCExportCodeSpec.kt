@@ -220,3 +220,18 @@ internal class ObjCClassForKotlinFile(
     override fun toString(): String =
             "ObjC spec of class `$binaryName` for `${sourceFile.name}`"
 }
+
+internal fun printCodeSpec(codespec: ObjCExportCodeSpec) {
+    codespec.files.forEach { file ->
+        println(file)
+        file.methods.forEach { method ->
+            println("- $method")
+        }
+    }
+    codespec.types.forEach { type ->
+        println(type)
+        type.methods.forEach { method ->
+            println("- $method")
+        }
+    }
+}

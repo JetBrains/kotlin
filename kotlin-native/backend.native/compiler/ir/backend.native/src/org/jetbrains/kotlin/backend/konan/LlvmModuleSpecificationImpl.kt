@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fileOrNull
@@ -58,4 +57,13 @@ internal class CacheLlvmModuleSpecification(
         return (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
+}
+
+internal class PartialLlvmModuleSpecification(
+        cachedLibraries: CachedLibraries,
+        private val libraries: Set<KotlinLibrary>,
+) : LlvmModuleSpecificationBase(cachedLibraries) {
+    override val isFinal = true
+
+    override fun containsLibrary(library: KotlinLibrary): Boolean = libraries.any { it == library }
 }

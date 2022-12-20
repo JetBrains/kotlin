@@ -6,25 +6,19 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.Mapping
-import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -85,10 +79,15 @@ internal class NativeGenerationState(
     lateinit var fileLowerState: FileLowerState
 
     val llvmModuleSpecification by lazy {
-        if (config.produce.isCache)
-            CacheLlvmModuleSpecification(this, config.cachedLibraries,
+        when {
+            config.produce.isCache -> CacheLlvmModuleSpecification(this, config.cachedLibraries,
                     PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!))
-        else DefaultLlvmModuleSpecification(config.cachedLibraries)
+            config.multipleFrameworks -> PartialLlvmModuleSpecification(
+                    config.cachedLibraries,
+                    setOf(context.moduleDescriptor.kotlinLibrary)
+            )
+            else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
+        }
     }
 
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)

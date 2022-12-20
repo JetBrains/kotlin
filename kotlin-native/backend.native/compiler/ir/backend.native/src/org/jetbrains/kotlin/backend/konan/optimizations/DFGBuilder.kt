@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
+import org.jetbrains.kotlin.backend.konan.ir.actualCallee
+import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.konan.ir.isObjCObjectType
+import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -260,7 +265,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
         context.logMultiple {
             +"SYMBOL TABLE:"
-            symbolTable.classMap.forEach { irClass, type ->
+            symbolTable.classMap.forEach { (irClass, type) ->
                 +"    DESCRIPTOR: ${irClass.descriptor}"
                 +"    TYPE: $type"
                 if (type !is DataFlowIR.Type.Declared)

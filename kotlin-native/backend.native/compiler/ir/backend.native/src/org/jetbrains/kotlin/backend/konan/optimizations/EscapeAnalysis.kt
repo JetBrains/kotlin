@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
-import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
@@ -1797,8 +1793,14 @@ internal object EscapeAnalysis {
         }
     }
 
-    fun computeLifetimes(context: Context, generationState: NativeGenerationState, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
-                         callGraph: CallGraph, lifetimes: MutableMap<IrElement, Lifetime>) {
+    fun computeLifetimes(
+            context: Context,
+            generationState: NativeGenerationState,
+            moduleDFG: ModuleDFG,
+            externalModulesDFG: ExternalModulesDFG,
+            callGraph: CallGraph,
+            lifetimes: MutableMap<IrElement, Lifetime>
+    ) {
         assert(lifetimes.isEmpty())
 
         try {
