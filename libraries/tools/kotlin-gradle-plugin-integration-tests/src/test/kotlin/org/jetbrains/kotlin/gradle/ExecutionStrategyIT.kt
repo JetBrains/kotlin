@@ -212,9 +212,15 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             val finishMessage = "Finished executing kotlin compiler using $expectedFinishStrategy strategy"
 
             build("build", *args) {
-                assertOutputContains(finishMessage)
+                assertOutputContainsExactTimes(finishMessage, 2)
                 checkOutput(this@project)
                 assertNoBuildWarnings()
+
+                if (expectedFinishStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+                    assertOutputContainsExactTimes("Creating a new connection to Kotlin Daemon", 1)
+                } else if (expectedFinishStrategy == KotlinCompilerExecutionStrategy.IN_PROCESS) {
+                    assertOutputContainsExactTimes("Creating a new classloader for Kotlin Compiler", 1)
+                }
 
                 if (testFallbackStrategy) {
                     assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")

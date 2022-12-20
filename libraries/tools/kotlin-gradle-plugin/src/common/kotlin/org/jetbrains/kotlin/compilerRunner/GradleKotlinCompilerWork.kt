@@ -198,6 +198,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     messageCollector = messageCollector,
                     isDebugEnabled = isDebugEnabled,
                     additionalJvmArgs = compilerExecutionSettings.daemonJvmArgs,
+                    log = log
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
@@ -341,7 +342,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private fun compileInProcessImpl(messageCollector: MessageCollector): ExitCode {
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
-        val classLoader = compilerCache.getClassloader(compilerFullClasspath)
+        val classLoader = compilerCache.getClassloader(compilerFullClasspath, log)
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
         val compiler = Class.forName(compilerClassName, true, classLoader)

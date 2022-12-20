@@ -12,6 +12,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.registerSharedService
 import java.io.File
 import java.net.URLClassLoader
@@ -39,11 +40,20 @@ internal abstract class KotlinCompilerCacheService : BuildService<BuildServicePa
     }
 
     @Synchronized
-    fun getClassloader(compilerClasspath: List<File>): ClassLoader {
+    fun getClassloader(
+        compilerClasspath: List<File>,
+        // currently it is not possible to inject or pass a Gradle/SLF4J logger
+        // via constructor or build service parameters
+        log: KotlinLogger
+    ): ClassLoader {
         val compilerId = CompilerId.makeCompilerId(compilerClasspath)
         return classloaders.getOrPut(compilerId) {
             val urls = compilerClasspath.map { it.toURI().toURL() }.toTypedArray()
-            URLClassLoader(urls)
+            URLClassLoader(urls).also {
+                log.kotlinDebug {
+                    "Creating a new classloader for Kotlin Compiler: " + compilerId.compilerClasspath.joinToString(", ")
+                }
+            }
         }
     }
 
@@ -54,7 +64,10 @@ internal abstract class KotlinCompilerCacheService : BuildService<BuildServicePa
         sessionAliveFlagFile: File,
         messageCollector: MessageCollector,
         isDebugEnabled: Boolean,
-        additionalJvmArgs: List<String>?
+        additionalJvmArgs: List<String>?,
+        // currently it is not possible to inject or pass a Gradle/SLF4J logger
+        // via constructor or build service parameters
+        log: KotlinLogger
     ): CompileServiceSession? {
         val compilerId = CompilerId.makeCompilerId(compilerClasspath)
         val daemonOptions = configureDaemonOptions()
@@ -86,6 +99,7 @@ internal abstract class KotlinCompilerCacheService : BuildService<BuildServicePa
             }
         }
 
+        log.kotlinDebug { "Creating a new connection to Kotlin Daemon" }
         val newConnection = KotlinCompilerRunnerUtils.newDaemonConnection(
             compilerId = compilerId,
             clientAliveFlagFile = clientAliveFlagFile,
