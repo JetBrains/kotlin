@@ -34,7 +34,11 @@ internal abstract class KotlinCompilerCacheService : BuildService<BuildServicePa
     override fun close() {
         daemonConnections.clear()
         for (classloader in classloaders.values) {
-            classloader.close()
+            try {
+                classloader.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
         classloaders.clear()
     }
