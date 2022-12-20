@@ -40,6 +40,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         }
 
         @Test
+        @TestMetadata("constValInSerialName.kt")
+        public void testConstValInSerialName() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/constValInSerialName.kt");
+        }
+
+        @Test
         @TestMetadata("contextualByDefault.kt")
         public void testContextualByDefault() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/contextualByDefault.kt");
