@@ -158,11 +158,11 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         private val localProperties: Set<FirPropertySymbol>
     ) : PathAwareControlFlowGraphVisitor<VariableStatusInfo>() {
         companion object {
-            val EMPTY: PathAwareVariableStatusInfo = persistentMapOf(NormalPath to VariableStatusInfo.EMPTY)
+            private val EMPTY_INFO: PathAwareVariableStatusInfo = persistentMapOf(NormalPath to VariableStatusInfo.EMPTY)
         }
 
         override val emptyInfo: PathAwareVariableStatusInfo
-            get() = EMPTY
+            get() = EMPTY_INFO
 
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
             return graph.collectDataForNode(TraverseDirection.Backward, this)
