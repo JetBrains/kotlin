@@ -103,8 +103,8 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
 #endif
     gcScheduler_(gcScheduler),
     finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) {
-        state_.finalized(epoch);
         GCHandle::getByEpoch(epoch).finalizersDone();
+        state_.finalized(epoch);
     })) {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
