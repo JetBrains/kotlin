@@ -4,6 +4,7 @@
       <w>anyref</w>
       <w>dataref</w>
       <w>ushr</w>
+      <w>wasi</w>
       <w>wasm</w>
     </words>
   </dictionary>
