@@ -8317,6 +8317,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("kt55494.kt")
+            public void testKt55494() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/kt55494.kt");
+            }
+
+            @Test
             @TestMetadata("lastExpressionIsLoop.kt")
             public void testLastExpressionIsLoop() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
