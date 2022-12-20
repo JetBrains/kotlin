@@ -687,6 +687,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
             public void testSetFunction() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors/setFunction.kt");
             }
+
+            @Test
+            @TestMetadata("SetOperatorInc.kt")
+            public void testSetOperatorInc() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors/SetOperatorInc.kt");
+            }
         }
     }
 
