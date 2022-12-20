@@ -226,6 +226,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("derivedIntersectionPropertyShadowsBaseClassField.kt")
+        public void testDerivedIntersectionPropertyShadowsBaseClassField() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/derivedIntersectionPropertyShadowsBaseClassField.kt");
+        }
+
+        @Test
         @TestMetadata("DiamondFunction.kt")
         public void testDiamondFunction() throws Exception {
             runTest("compiler/testData/diagnostics/tests/DiamondFunction.kt");

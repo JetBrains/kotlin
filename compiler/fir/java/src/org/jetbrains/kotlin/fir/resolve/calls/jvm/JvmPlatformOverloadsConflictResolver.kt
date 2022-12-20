@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class JvmPlatformOverloadsConflictResolver(
@@ -47,7 +48,7 @@ class JvmPlatformOverloadsConflictResolver(
     }
 
     private fun FirProperty.isShadowedByFieldCandidate(candidates: Set<Candidate>): Boolean {
-        val propertyContainingClassLookupTag = unwrapFakeOverrides().symbol.containingClassLookupTag() ?: return false
+        val propertyContainingClassLookupTag = unwrapSubstitutionOverrides().symbol.containingClassLookupTag() ?: return false
         for (otherCandidate in candidates) {
             val field = otherCandidate.symbol.fir as? FirField ?: continue
             val fieldContainingClassLookupTag = field.unwrapFakeOverrides().symbol.containingClassLookupTag()
@@ -67,7 +68,7 @@ class JvmPlatformOverloadsConflictResolver(
         val fieldContainingClassLookupTag = unwrapFakeOverrides().symbol.containingClassLookupTag() ?: return false
         for (otherCandidate in candidates) {
             val property = otherCandidate.symbol.fir as? FirProperty ?: continue
-            val propertyContainingClassLookupTag = property.unwrapFakeOverrides().symbol.containingClassLookupTag()
+            val propertyContainingClassLookupTag = property.unwrapSubstitutionOverrides().symbol.containingClassLookupTag()
             if (propertyContainingClassLookupTag != null &&
                 propertyContainingClassLookupTag.strictlyDerivedFrom(fieldContainingClassLookupTag)
             ) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -36,14 +37,14 @@ object JvmPropertyVsFieldAmbiguityCallChecker : CallChecker {
             resultingDescriptor.name, NoLookupLocation.FOR_ALREADY_TRACKED
         ).forEach { alternativePropertyDescriptor ->
             if (alternativePropertyDescriptor !== resultingDescriptor) {
-                val hasLateInit = alternativePropertyDescriptor.isLateInit
-                if (!hasLateInit &&
-                    alternativePropertyDescriptor.getter?.isDefault != false &&
-                    alternativePropertyDescriptor.setter?.isDefault != false &&
-                    alternativePropertyDescriptor.modality == Modality.FINAL
+                val basePropertyDescriptor = DescriptorUtils.unwrapSubstitutionOverride(alternativePropertyDescriptor)
+                val propertyClassDescriptor = basePropertyDescriptor.containingDeclaration as? ClassDescriptor
+                val hasLateInit = basePropertyDescriptor.selfOrBaseForFakeOverride { it.isLateInit }
+                val hasCustomGetter = basePropertyDescriptor.selfOrBaseForFakeOverride { it.getter?.isDefault == false }
+                val hasCustomSetter = basePropertyDescriptor.selfOrBaseForFakeOverride { it.setter?.isDefault == false }
+                if (!hasLateInit && !hasCustomGetter && !hasCustomSetter &&
+                    basePropertyDescriptor.modality == Modality.FINAL
                 ) return@forEach
-                val propertyClassDescriptor =
-                    DescriptorUtils.unwrapFakeOverride(alternativePropertyDescriptor).containingDeclaration as? ClassDescriptor
                 if (fieldClassDescriptor != null && propertyClassDescriptor != null &&
                     DescriptorUtils.isSubclass(fieldClassDescriptor, propertyClassDescriptor)
                 ) return@forEach
@@ -55,12 +56,9 @@ object JvmPropertyVsFieldAmbiguityCallChecker : CallChecker {
                     )
                 ) {
                     val factory = when {
-                        alternativePropertyDescriptor.getter?.isDefault == false ->
-                            ErrorsJvm.BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY
-                        hasLateInit || alternativePropertyDescriptor.setter?.isDefault == false ->
-                            ErrorsJvm.BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT
-                        else ->
-                            ErrorsJvm.BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY
+                        hasCustomGetter -> ErrorsJvm.BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY
+                        hasLateInit || hasCustomSetter -> ErrorsJvm.BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT
+                        else -> ErrorsJvm.BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY
                     }
                     context.trace.report(
                         factory.on(
@@ -73,5 +71,11 @@ object JvmPropertyVsFieldAmbiguityCallChecker : CallChecker {
                 }
             }
         }
+    }
+
+    private fun PropertyDescriptor.selfOrBaseForFakeOverride(predicate: (PropertyDescriptor) -> Boolean): Boolean {
+        if (predicate(this)) return true
+        if (kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
+        return overriddenDescriptors.any { it.selfOrBaseForFakeOverride(predicate) }
     }
 }

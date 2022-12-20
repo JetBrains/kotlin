@@ -93,6 +93,15 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverrides(): D {
     } while (true)
 }
 
+inline fun <reified D : FirCallableDeclaration> D.unwrapSubstitutionOverrides(): D {
+    var current = this
+
+    do {
+        val next = current.originalForSubstitutionOverride ?: return current
+        current = next
+    } while (true)
+}
+
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
 
 private object SubstitutedOverrideOriginalKey : FirDeclarationDataKey()

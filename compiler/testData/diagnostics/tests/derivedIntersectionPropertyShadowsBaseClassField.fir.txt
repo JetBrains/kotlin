@@ -1,0 +1,27 @@
+FILE: test.kt
+    public abstract interface Proxy : R|kotlin/Any| {
+        public abstract val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public open class Intermediate : R|Base| {
+        public constructor(): R|Intermediate| {
+            super<R|Base|>()
+        }
+
+        public final val x: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String( )
+            }
+
+    }
+    public final class Derived : R|Proxy|, R|Intermediate| {
+        public constructor(): R|Derived| {
+            super<R|Intermediate|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Derived|.R|/Proxy.x|
+        }
+
+    }
