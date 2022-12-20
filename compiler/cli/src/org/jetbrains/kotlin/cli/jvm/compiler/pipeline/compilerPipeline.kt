@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -82,6 +83,9 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+
+private const val kotlinFileExtensionWithDot = ".${KotlinFileType.EXTENSION}"
+private const val javaFileExtensionWithDot = ".${JavaFileType.DEFAULT_EXTENSION}"
 
 fun compileModulesUsingFrontendIrAndLightTree(
     projectEnvironment: AbstractProjectEnvironment,
@@ -114,10 +118,33 @@ fun compileModulesUsingFrontendIrAndLightTree(
         val commonSources = linkedSetOf<KtSourceFile>()
 
         // !!
+
+        // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
+        // TODO: implement in the next round of K2 scripting support
+        val skipScriptsInLtMode = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR) && compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
+        var skipScriptsInLtModeWarning = false
+
         compilerConfiguration.kotlinSourceRoots.forAllFiles(compilerConfiguration, projectEnvironment.project) { virtualFile, isCommon ->
             val file = KtVirtualFileSourceFile(virtualFile)
-            if (isCommon) commonSources.add(file)
-            else platformSources.add(file)
+            when {
+                file.path.endsWith(javaFileExtensionWithDot) -> {}
+                file.path.endsWith(kotlinFileExtensionWithDot) || !skipScriptsInLtMode -> {
+                    if (isCommon) commonSources.add(file)
+                    else platformSources.add(file)
+                }
+                else -> {
+                    // temporarily assume it is a script, see the TODO above
+                    skipScriptsInLtModeWarning = true
+                }
+            }
+        }
+
+        if (skipScriptsInLtModeWarning) {
+            // TODO: remove then Scripts are supported in LT (probably different K2 extension should be written for handling the case properly)
+            messageCollector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -XuseFirLT=false"
+            )
         }
 
         val renderDiagnosticName = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
