@@ -23,6 +23,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
 ) {
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR, arguments.useK2)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
     put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
