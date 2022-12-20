@@ -41,7 +41,7 @@ open class D8RootExtension(@Transient val rootProject: Project) : ConfigurationP
         fi;
     done;
     */
-    var version by Property("10.9.194")
+    var version by Property("11.1.31")
     var edition by Property("rel") // rel or dbg
 
     val setupTaskProvider: TaskProvider<out Copy>
