@@ -40,10 +40,10 @@ class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4ContextBin
         get() = Kapt4ContextBinaryArtifact.Kind
 
     override fun processModule(module: TestModule, info: Kapt4ContextBinaryArtifact) {
-        val generateNonExistentClass = KaptTestDirectives.NON_EXISTENT_CLASS in module.directives
+//        val generateNonExistentClass = KaptTestDirectives.NON_EXISTENT_CLASS in module.directives
         val validate = KaptTestDirectives.NO_VALIDATION !in module.directives
 
-        val (kaptContext, kaptStubs) = info
+        val (kaptContext) = info
         val convertedFiles = getJavaFiles(info, module)
         kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)

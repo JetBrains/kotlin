@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -586,7 +585,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 
     private fun convertPropertyInitializer(containingClass: PsiClass, field: PsiField): JCExpression? {
-        val origin = field.ktOrigin
+//        val origin = field.ktOrigin
 
         val propertyInitializer = field.initializer
 
@@ -860,10 +859,10 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
 
 
-        if (type.toString() == "PsiType:RootClass") {
-            val res = type.resolvedClass
-            Unit
-        }
+//        if (type.toString() == "PsiType:RootClass") {
+//            val res = type.resolvedClass
+//            Unit
+//        }
 
         val internalName = type.qualifiedName
         // Ignore type names with Java keywords in it
@@ -951,6 +950,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 
     // TODO
+
+    @Suppress("UNUSED_PARAMETER")
     private fun getClassName(lightClass: PsiClass, isDefaultImpls: Boolean, packageFqName: String): String {
         return lightClass.name!!
 //        return when (descriptor) {

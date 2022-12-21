@@ -27,6 +27,7 @@ internal class ParameterInfo(
     val invisibleAnnotations: List<PsiAnnotation>
 )
 
+@Suppress("UNUSED_PARAMETER")
 internal fun PsiMethod.getParametersInfo(
     containingClass: PsiClass,
     isInnerClassMember: Boolean
