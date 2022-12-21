@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 
+// due to KT-55615
+// IGNORE_BACKEND_K2: JVM_IR
+
 // WITH_STDLIB
 // FULL_JDK
 
@@ -12,6 +15,8 @@ class CustomDelegate {
 
 class C {
     @Volatile var vol = 1
+    @OptIn(ExperimentalStdlibApi::class)
+    @kotlin.concurrent.Volatile var vol2 = 1
     @Transient val tra = 1
     @delegate:Transient val del: String by CustomDelegate()
 
@@ -38,6 +43,7 @@ fun box(): String {
     val c = C::class.java
 
     if (c.getDeclaredField("vol").getModifiers() and Modifier.VOLATILE == 0) return "Fail: volatile"
+    if (c.getDeclaredField("vol2").getModifiers() and Modifier.VOLATILE == 0) return "Fail: volatile from kotlin.concurrent"
     if (c.getDeclaredField("tra").getModifiers() and Modifier.TRANSIENT == 0) return "Fail: transient"
     if (c.getDeclaredField("del\$delegate").getModifiers() and Modifier.TRANSIENT == 0) return "Fail: delegate transient"
 
