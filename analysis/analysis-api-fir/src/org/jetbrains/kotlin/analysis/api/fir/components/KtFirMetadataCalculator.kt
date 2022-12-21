@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.toMetadataVersion
 
 internal class KtFirMetadataCalculator(
     override val analysisSession: KtFirAnalysisSession
@@ -110,7 +110,7 @@ internal class KtFirMetadataCalculator(
             classBuilderMode = ClassBuilderMode.KAPT3,
             isParamAssertionsDisabled = true,
             unifiedNullChecks = false,
-            metadataVersion = GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(session.languageVersionSettings.languageVersion),
+            metadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion(),
             jvmDefaultMode = JvmDefaultMode.ENABLE,
             stringTable
         )
@@ -118,7 +118,8 @@ internal class KtFirMetadataCalculator(
             session,
             scopeSession,
             jvmSerializerExtension,
-            typeApproximator
+            typeApproximator,
+            session.languageVersionSettings
         ) to stringTable
     }
 
