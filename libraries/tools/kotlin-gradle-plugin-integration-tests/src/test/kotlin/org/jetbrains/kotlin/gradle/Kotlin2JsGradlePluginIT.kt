@@ -388,6 +388,17 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("Kotlin/JS project with module name starting with package")
+    @GradleTest
+    fun testKotlinJsPackageModuleName(gradleVersion: GradleVersion) {
+        project("kotlin-js-package-module-name", gradleVersion) {
+            build("assemble") {
+                assertFileInProjectExists("build/distributions/kotlin-js-package-module-name.js")
+                assertFileInProjectExists("build/js/packages/@foo/bar/kotlin/@foo/bar.js")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
