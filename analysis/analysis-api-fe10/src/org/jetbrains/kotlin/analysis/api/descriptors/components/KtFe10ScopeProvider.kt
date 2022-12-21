@@ -72,7 +72,7 @@ internal class KtFe10ScopeProvider(
         return KtFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
     }
 
-    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope  {
+    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
@@ -187,6 +187,11 @@ internal class KtFe10ScopeProvider(
     }
 
     override fun getTypeScope(type: KtType): KtTypeScope {
+        require(type is KtFe10Type)
+        TODO()
+    }
+
+    override fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope {
         require(type is KtFe10Type)
         TODO()
     }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -37,6 +38,8 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getTypeScope(type: KtType): KtTypeScope?
 
+    public abstract fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope?
+
     public abstract fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
@@ -44,6 +47,10 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 }
 
 public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Creates [KtScope] containing members of [KtDeclaration].
+     * Returned [KtScope] doesn't include synthetic Java properties. To get such properties use [getSyntheticJavaPropertiesScope].
+     */
     public fun KtSymbolWithMembers.getMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getMemberScope(this) }
 
@@ -81,6 +88,7 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
      * Inside the `LIST_KT_ELEMENT.getKtType().getTypeScope()` would contain the `get(i: Int): String` method with substituted type `T = String`
      *
      * @return type scope for the given type if given `KtType` is not error type, `null` otherwise.
+     * Returned [KtTypeScope] doesn't include synthetic Java properties. To get such properties use [getSyntheticJavaPropertiesScope].
      *
      * @see KtTypeScope
      * @see KtTypeProviderMixIn.getKtType
@@ -88,6 +96,16 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtType.getTypeScope(): KtTypeScope? =
         withValidityAssertion { analysisSession.scopeProvider.getTypeScope(this) }
 
+    /**
+     * Returns a [KtTypeScope] with synthetic Java properties created for a given [KtType].
+     */
+    public fun KtType.getSyntheticJavaPropertiesScope(): KtTypeScope? =
+        withValidityAssertion { analysisSession.scopeProvider.getSyntheticJavaPropertiesScope(this) }
+
+    /**
+     * Scopes in returned [KtScopeContext] don't include synthetic Java properties.
+     * To get such properties use [getSyntheticJavaPropertiesScope].
+     */
     public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
 

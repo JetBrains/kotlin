@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeProvider
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
@@ -38,11 +36,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.FqName
@@ -165,23 +160,16 @@ internal class KtFirScopeProvider(
         return KtCompositeScope(subScopes, token)
     }
 
-    @OptIn(KtAnalysisApiInternals::class)
-    override fun getTypeScope(type: KtType): KtTypeScope? {
+    override fun getTypeScope(type: KtType): KtTypeScope? = getFirTypeScope(type)?.let { convertToKtTypeScope(it) }
+
+    override fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
-        val firSession = firResolveSession.useSiteFirSession
-        val firTypeScope = type.coneType.scope(
-            firSession,
-            scopeSession,
-            FakeOverrideTypeCalculator.Forced,
-            requiredPhase = FirResolvePhase.STATUS,
-        ) ?: return null
-        return KtCompositeTypeScope(
-            listOfNotNull(
-                convertToKtTypeScope(firTypeScope),
-                FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(firSession, type.coneType, firTypeScope)?.let { convertToKtTypeScope(it) }
-            ),
-            token
-        )
+        val firTypeScope = getFirTypeScope(type) ?: return null
+        return FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
+            firResolveSession.useSiteFirSession,
+            type.coneType,
+            firTypeScope
+        )?.let { convertToKtTypeScope(it) }
     }
 
     override fun getScopeContextForPosition(
@@ -245,6 +233,16 @@ internal class KtFirScopeProvider(
             is FirContainingNamesAwareScope -> KtFirDelegatingTypeScope(firScope, builder, token)
             else -> TODO(firScope::class.toString())
         }
+    }
+
+    private fun getFirTypeScope(type: KtType): FirTypeScope? {
+        check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
+        return type.coneType.scope(
+            firResolveSession.useSiteFirSession,
+            scopeSession,
+            FakeOverrideTypeCalculator.Forced,
+            requiredPhase = FirResolvePhase.STATUS,
+        )
     }
 }
 
