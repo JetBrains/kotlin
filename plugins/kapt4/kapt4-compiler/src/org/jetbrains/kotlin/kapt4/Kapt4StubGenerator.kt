@@ -620,7 +620,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 //            }
 //        }
 //
-        if (field.isFinal) {
+        if (propertyInitializer != null || field.isFinal) {
             val type = field.type
             return if (propertyInitializer is PsiLiteralExpression) {
                 val rawValue = propertyInitializer.value
