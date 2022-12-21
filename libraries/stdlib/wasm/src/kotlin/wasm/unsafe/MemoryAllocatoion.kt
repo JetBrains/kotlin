@@ -65,7 +65,7 @@ internal var inScopedMemoryAllocatorBlock: Boolean = false
 @PublishedApi
 internal class ScopedMemoryAllocator : MemoryAllocator {
     private var destroyed = false
-    private var availableAddress: ULong = unsafeGetScratchRawMemory(0/*unused*/).toULong()
+    private var availableAddress: ULong = unsafeGetScratchRawMemory().toULong()
 
     override fun allocate(size: Int): Ptr {
         check(!destroyed) { "ScopedMemoryAllocator is destroyed when out of scope" }

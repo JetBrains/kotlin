@@ -64,7 +64,6 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val initFunctions = mutableListOf<FunWithPriority>()
 
     val scratchMemAddr = WasmSymbol<Int>()
-    val scratchMemSizeInBytes = 65_536
 
     val stringPoolSize = WasmSymbol<Int>()
 
@@ -126,11 +125,8 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             currentDataSectionAddress += typeInfoElement.sizeInBytes
         }
 
-        // Reserve some memory to pass complex exported types (like strings). It's going to be accessible through 'unsafeGetScratchRawMemory'
-        // runtime call from stdlib.
         currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
         scratchMemAddr.bind(currentDataSectionAddress)
-        currentDataSectionAddress += scratchMemSizeInBytes
 
         bind(classIds.unbound, klassIds)
         interfaceId.unbound.onEachIndexed { index, entry -> entry.value.bind(index) }

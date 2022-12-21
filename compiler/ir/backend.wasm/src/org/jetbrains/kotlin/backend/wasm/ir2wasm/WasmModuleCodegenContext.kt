@@ -28,9 +28,6 @@ class WasmModuleCodegenContext(
     val stringPoolSize: WasmSymbol<Int>
         get() = wasmFragment.stringPoolSize
 
-    val scratchMemSizeInBytes: Int
-        get() = wasmFragment.scratchMemSizeInBytes
-
     fun transformType(irType: IrType): WasmType {
         return with(typeTransformer) { irType.toWasmValueType() }
     }
