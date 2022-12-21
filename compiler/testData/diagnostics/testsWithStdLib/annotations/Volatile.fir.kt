@@ -5,15 +5,15 @@ import kotlin.properties.Delegates
 
 @OptIn(ExperimentalStdlibApi::class)
 class ConcurrentVolatile {
-    <!VOLATILE_ON_VALUE!>@Volatile<!> val x = 0
+    @Volatile val x = 0
     // ok
     @Volatile var y = 1
 
-    <!VOLATILE_ON_DELEGATE!>@delegate:Volatile<!> var z: String by Delegates.observable("?") { prop, old, new -> old.hashCode() }
+    @delegate:Volatile var z: String by Delegates.observable("?") { prop, old, new -> old.hashCode() }
 
-    <!VOLATILE_ON_VALUE!>@field:Volatile<!> val w = 2
+    @field:Volatile val w = 2
 
-    <!WRONG_ANNOTATION_TARGET!>@Volatile<!>
+    @Volatile
     var noBacking: String
         get() = ""
         set(value) {}
