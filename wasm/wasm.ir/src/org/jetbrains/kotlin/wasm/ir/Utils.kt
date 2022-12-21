@@ -16,7 +16,7 @@ fun WasmModule.calculateIds() {
     }
 
     functionTypes.calculateIds()
-    gcTypes.calculateIds(startIndex = functionTypes.size)
+    recGroupTypes.calculateIds(startIndex = functionTypes.size)
     importedFunctions.calculateIds()
     importedMemories.calculateIds()
     importedTables.calculateIds()

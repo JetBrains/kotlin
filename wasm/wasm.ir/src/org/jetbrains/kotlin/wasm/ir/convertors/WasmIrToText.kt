@@ -228,13 +228,14 @@ class WasmIrToText : SExpressionBuilder() {
         with(module) {
             newLineList("module") {
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                gcTypes.forEach {
+                recGroupTypes.forEach {
                     when (it) {
                         is WasmStructDeclaration ->
                             appendStructTypeDeclaration(it)
                         is WasmArrayDeclaration ->
                             appendArrayTypeDeclaration(it)
-                        else -> error("Unexpected GC type: $it")
+                        is WasmFunctionType ->
+                            appendFunctionTypeDeclaration(it)
                     }
                 }
                 importsInOrder.forEach {
