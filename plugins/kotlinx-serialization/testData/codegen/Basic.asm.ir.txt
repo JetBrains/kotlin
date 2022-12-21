@@ -258,7 +258,6 @@ public final class ListOfUsers : java/lang/Object {
           GETSTATIC (User$$serializer, INSTANCE, LUser$$serializer;)
           CHECKCAST (kotlinx/serialization/KSerializer)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (0)
           PUTSTATIC (ListOfUsers, $childSerializers, [Lkotlinx/serialization/KSerializer;)
@@ -381,7 +380,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (1)
           ICONST_0
           GETSTATIC (User$$serializer, INSTANCE, LUser$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ARETURN
@@ -760,12 +758,10 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (1)
           ICONST_0
           GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ICONST_1
           GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ARETURN
