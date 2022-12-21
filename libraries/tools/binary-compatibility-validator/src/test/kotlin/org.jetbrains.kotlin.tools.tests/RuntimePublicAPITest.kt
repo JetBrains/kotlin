@@ -48,7 +48,6 @@ class RuntimePublicAPITest {
         val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
 
-        println("Reading binary API from $jarFile")
         val api = JarFile(jarFile).loadApiFromJvmClasses(publicPackageFilter)
             .filterOutNonPublic(nonPublicPackages)
             .filterOutAnnotated(nonPublicAnnotations.toSet())
