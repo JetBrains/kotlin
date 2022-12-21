@@ -86,9 +86,8 @@ class JsExecutableProducer(
             )
 
             stopwatch.startNext("Committing compiled JS code")
-            jsMultiModuleCache.commitCompiledJsCode(artifact, compiledModule)
             rebuildModules += moduleName
-            return compiledModule
+            return jsMultiModuleCache.commitCompiledJsCode(artifact, compiledModule)
         }
 
         val cachedMainModule = cachedProgram.last()

@@ -74,6 +74,13 @@ class CompilationOutputsBuilt(
     }
 }
 
+private fun File.copyModificationTimeFrom(from: File) {
+    val mtime = from.lastModified()
+    if (mtime > 0) {
+        setLastModified(mtime)
+    }
+}
+
 class CompilationOutputsCached(
     private val jsCodeFilePath: String,
     private val sourceMapFilePath: String?,
@@ -86,10 +93,43 @@ class CompilationOutputsCached(
         get() = null
 
     override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
-        File(jsCodeFilePath).copyTo(outputJsFile, true)
+        File(jsCodeFilePath).copyToIfModified(outputJsFile)
 
         sourceMapFilePath?.let {
-            File(it).copyTo(outputJsMapFile, true)
+            File(it).copyToIfModified(outputJsMapFile)
         }
+    }
+
+    private fun File.copyToIfModified(target: File) {
+        val thisMtime = lastModified()
+        val targetMtime = target.lastModified()
+        if (thisMtime <= 0 || targetMtime <= 0 || targetMtime > thisMtime) {
+            copyTo(target, true)
+            copyModificationTimeFrom(target)
+        }
+    }
+}
+
+class CompilationOutputsBuiltForCache(
+    private val jsCodeFilePath: String,
+    private val sourceMapFilePath: String,
+    private val outputBuilt: CompilationOutputsBuilt
+) : CompilationOutputs() {
+
+    init {
+        dependencies = outputBuilt.dependencies
+    }
+
+    override val tsDefinitions: TypeScriptFragment?
+        get() = outputBuilt.tsDefinitions
+
+    override val jsProgram: JsProgram?
+        get() = outputBuilt.jsProgram
+
+    override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
+        outputBuilt.writeJsCode(outputJsFile, outputJsMapFile)
+
+        File(jsCodeFilePath).copyModificationTimeFrom(outputJsFile)
+        File(sourceMapFilePath).copyModificationTimeFrom(outputJsMapFile)
     }
 }

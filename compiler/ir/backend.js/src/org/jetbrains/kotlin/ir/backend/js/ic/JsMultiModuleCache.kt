@@ -102,13 +102,14 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
         jsCodeFilePath?.let { CompilationOutputsCached(it, sourceMapFilePath, tsDefinitionsFilePath) }
     }
 
-    fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputsBuilt) =
+    fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs =
         artifact.artifactsDir?.let { cacheDir ->
             val jsCodeFile = File(cacheDir, CACHED_MODULE_JS)
             val jsMapFile = File(cacheDir, CACHED_MODULE_JS_MAP)
             compilationOutputs.writeJsCode(jsCodeFile, jsMapFile)
             File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
-        }
+            CompilationOutputsBuiltForCache(jsCodeFile.absolutePath, jsMapFile.absolutePath, compilationOutputs)
+        } ?: compilationOutputs
 
     fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {
         return moduleArtifacts.map { artifact ->
