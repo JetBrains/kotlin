@@ -12,9 +12,15 @@ bitcode {
     hostTarget {
         module("files") {
             headersDirs.from(layout.projectDirectory.dir("src/files/headers"))
+            sourceSets {
+                main {}
+            }
         }
         module("env") {
             headersDirs.from(layout.projectDirectory.dir("src/env/headers"))
+            sourceSets {
+                main {}
+            }
         }
     }
 }

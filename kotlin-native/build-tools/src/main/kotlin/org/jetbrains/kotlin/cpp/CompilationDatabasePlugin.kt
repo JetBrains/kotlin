@@ -9,7 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
@@ -56,7 +55,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
         isCanBeConsumed = false
         isCanBeResolved = false
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
+            attribute(CppUsage.USAGE_ATTRIBUTE, project.objects.named(CppUsage.COMPILATION_DATABASE))
         }
     }
 
@@ -68,7 +67,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
         isCanBeConsumed = false
         isCanBeResolved = true
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
+            attribute(CppUsage.USAGE_ATTRIBUTE, project.objects.named(CppUsage.COMPILATION_DATABASE))
         }
         extendsFrom(compilationDatabase)
     }
@@ -81,7 +80,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
         isCanBeConsumed = true
         isCanBeResolved = false
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(USAGE))
+            attribute(CppUsage.USAGE_ATTRIBUTE, project.objects.named(CppUsage.COMPILATION_DATABASE))
         }
     }
 
@@ -202,9 +201,6 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
     companion object {
         @JvmStatic
         val TASK_GROUP = "development support"
-
-        @JvmStatic
-        val USAGE = "compilationDatabase"
     }
 }
 
@@ -221,9 +217,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
  */
 open class CompilationDatabasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.dependencies.attributesSchema {
-            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE)
-        }
+        project.apply<CppConsumerPlugin>()
         project.extensions.create<CompilationDatabaseExtension>("compilationDatabase", project)
     }
 }
