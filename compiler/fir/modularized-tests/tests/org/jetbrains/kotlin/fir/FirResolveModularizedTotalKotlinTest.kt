@@ -12,10 +12,13 @@ import com.intellij.psi.search.ProjectScope
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -122,20 +125,33 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
-        val project = environment.project
-        val ktFiles = environment.getSourceFiles()
 
-        val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+        val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
+        val project = environment.project
+
+        val (sourceFiles: Collection<KtSourceFile>, scope) =
+            if (USE_LIGHT_TREE) {
+                val (platformSources, _) = collectSources(environment.configuration, projectEnvironment, environment.messageCollector)
+                platformSources to projectEnvironment.getSearchScopeBySourceFiles(platformSources)
+            } else {
+                val ktFiles = environment.getSourceFiles()
+                ktFiles.map { KtPsiSourceFile(it) } to
+                        GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+                            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                            .toAbstractProjectFileSearchScope()
+            }
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = FirTestSessionFactoryHelper.createSessionForTests(
-            environment.toAbstractProjectEnvironment(),
-            scope.toAbstractProjectFileSearchScope(),
-            librariesScope.toAbstractProjectFileSearchScope(),
-            moduleData.qualifiedName,
-            moduleData.friendDirs.map { it.toPath() },
-            environment.configuration.languageVersionSettings
-        )
+
+        val session =
+            FirTestSessionFactoryHelper.createSessionForTests(
+                projectEnvironment,
+                scope,
+                librariesScope.toAbstractProjectFileSearchScope(),
+                moduleData.qualifiedName,
+                moduleData.friendDirs.map { it.toPath() },
+                environment.configuration.languageVersionSettings
+            )
+
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
@@ -149,20 +165,10 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         val firFiles = if (USE_LIGHT_TREE) {
             val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
-
-            val allSourceFiles = moduleData.sources.flatMap {
-                if (it.isDirectory) {
-                    it.walkTopDown().toList()
-                } else {
-                    listOf(it)
-                }
-            }.filter {
-                it.extension == "kt"
-            }
-            bench.buildFiles(lightTree2Fir, allSourceFiles)
+            bench.buildFiles(lightTree2Fir, sourceFiles)
         } else {
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
-            bench.buildFiles(builder, ktFiles)
+            bench.buildFiles(builder, sourceFiles.map { it as KtPsiSourceFile })
         }
 
 

@@ -8,6 +8,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -113,10 +115,11 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
     fun buildFiles(
         builder: RawFirBuilder,
-        ktFiles: List<KtFile>
+        files: Collection<KtPsiSourceFile>
     ): List<FirFile> {
         listener?.before()
-        return ktFiles.map { file ->
+        return files.map { sourceFile ->
+            val file = sourceFile.psiFile as KtFile
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
@@ -136,19 +139,18 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
     fun buildFiles(
         builder: LightTree2Fir,
-        files: List<File>
+        files: Collection<KtSourceFile>
     ): List<FirFile> {
         listener?.before()
         return files.map { file ->
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
-                val sourceFile = KtIoFileSourceFile(file)
-                val (code, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
+                val (code, linesMapping) = with(file.getContentsAsStream().reader(Charsets.UTF_8)) {
                     this.readSourceFileWithMapping()
                 }
                 totalLines += linesMapping.linesCount
-                firFile = builder.buildFirFile(code, sourceFile, linesMapping)
+                firFile = builder.buildFirFile(code, file, linesMapping)
                 (builder.session.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()
