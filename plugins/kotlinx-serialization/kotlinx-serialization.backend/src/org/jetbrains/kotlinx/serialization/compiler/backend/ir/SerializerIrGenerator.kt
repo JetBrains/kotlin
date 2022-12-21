@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -203,7 +203,7 @@ open class SerializerIrGenerator(
     fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: IrConstructor) =
         addFunctionBody(typedConstructorDescriptor) { ctor ->
             // generate call to primary ctor to init serialClassDesc and super()
-            val primaryCtor = irClass.constructors.primary
+            val primaryCtor = irClass.primaryConstructorOrFail
             +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
@@ -505,7 +505,7 @@ open class SerializerIrGenerator(
 
             generateGoldenMaskCheck(bitMasks, properties, localSerialDesc.get())
 
-            val ctor: IrConstructorSymbol = serializableIrClass.constructors.primary.symbol
+            val ctor: IrConstructorSymbol = serializableIrClass.primaryConstructorOrFail.symbol
             val params = ctor.owner.valueParameters
 
             val variableByParamReplacer: (ValueParameterDescriptor) -> IrExpression? = { vpd ->
@@ -623,7 +623,7 @@ open class SerializerIrGenerator(
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()
-            irClass.addDefaultConstructorIfAbsent(context)
+            irClass.addDefaultConstructorBodyIfAbsent(context)
             irClass.patchDeclarationParents(irClass.parent)
         }
     }

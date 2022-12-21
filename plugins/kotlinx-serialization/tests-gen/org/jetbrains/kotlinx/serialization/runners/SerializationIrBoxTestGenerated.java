@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,6 +41,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     @TestMetadata("enumsAreCached.kt")
     public void testEnumsAreCached() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
+    }
+
+    @Test
+    @TestMetadata("expectActual.kt")
+    public void testExpectActual() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");
     }
 
     @Test

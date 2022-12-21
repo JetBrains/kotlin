@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 
 // TODO KT-53096
@@ -38,9 +37,7 @@ fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor
     return irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
 }
 
-val Sequence<IrConstructor>.primary get() = find { it.isPrimary } ?: error("Expected to have a primary constructor")
-
-fun IrClass.addDefaultConstructorIfAbsent(ctx: IrPluginContext) {
-    val declaration = constructors.primary
+fun IrClass.addDefaultConstructorBodyIfAbsent(ctx: IrPluginContext) {
+    val declaration = primaryConstructor ?: return
     if (declaration.body == null) declaration.body = ctx.generateBodyForDefaultConstructor(declaration)
 }
