@@ -74,7 +74,7 @@ fun box() = abiTest {
     success("PublicTopLevelClassInheritor") { PublicTopLevelClassInheritor() }
     // TODO: KT-54469, creating instance of PublicToInternalTopLevelClassInheritor should fail.
     success("PublicToInternalTopLevelClassInheritor") { PublicToInternalTopLevelClassInheritor() }
-    expectFailure(linkage("Constructor PublicToPrivateTopLevelClassInheritor.<init> can not be called: Constructor PublicToPrivateTopLevelClassInheritor.<init> uses unlinked class symbol /PublicToPrivateTopLevelClass (through class PublicToPrivateTopLevelClassInheritor)")) { PublicToPrivateTopLevelClassInheritor() }
+    expectFailure(linkage("Constructor 'PublicToPrivateTopLevelClassInheritor.<init>' can not be called: Class 'PublicToPrivateTopLevelClassInheritor' uses unlinked class symbol '/PublicToPrivateTopLevelClass'")) { PublicToPrivateTopLevelClassInheritor() }
 }
 
 // Shortcuts:
@@ -85,7 +85,7 @@ private inline fun TestBuilder.successViaException(testExceptionId: String, noin
     expectFailure(custom { (it as? TestException)?.id == testExceptionId }, block)
 
 private inline fun TestBuilder.inaccessible(className: String, noinline block: () -> Unit) = expectFailure(
-    linkage("Constructor $className.<init> can not be called: Private constructor $className.<init> declared in module <lib1> can not be accessed from module <lib2>"),
+    linkage("Constructor '$className.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>"),
     block
 )
 
@@ -101,9 +101,9 @@ private inline fun TestBuilder.unlinkedSymbolInReturnType(signature: String, noi
 
 private inline fun TestBuilder.unlinkedConstructorSymbol(signature: String, noinline block: () -> Unit) {
     val constructorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
-    expectFailure(linkage("Constructor $constructorName can not be called: No constructor found for symbol $signature"), block)
+    expectFailure(linkage("Constructor '$constructorName' can not be called: No constructor found for symbol '$signature'"), block)
 }
 
 private inline fun TestBuilder.unlinkedSymbol(signature: String, functionName: String, noinline block: () -> Unit) {
-    expectFailure(linkage("Function $functionName can not be called: Function $functionName uses unlinked class symbol $signature"), block)
+    expectFailure(linkage("Function '$functionName' can not be called: Function uses unlinked class symbol '$signature'"), block)
 }

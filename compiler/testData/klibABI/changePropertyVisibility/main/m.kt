@@ -124,10 +124,10 @@ private inline fun TestBuilder.success(expectedOutcome: String, noinline block: 
 
 private inline fun TestBuilder.unlinkedSymbol(signature: String, noinline block: () -> Unit) {
     val accessorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
-    expectFailure(linkage("Property accessor $accessorName can not be called: No property accessor found for symbol $signature"), block)
+    expectFailure(linkage("Property accessor '$accessorName' can not be called: No property accessor found for symbol '$signature'"), block)
 }
 
 private inline fun TestBuilder.inaccessible(accessorName: String, noinline block: () -> Unit) = expectFailure(
-    linkage("Property accessor $accessorName can not be called: Private property accessor $accessorName declared in module <lib1> can not be accessed from module <main>"),
+    linkage("Property accessor '$accessorName' can not be called: Private property accessor declared in module <lib1> can not be accessed in module <main>"),
     block
 )

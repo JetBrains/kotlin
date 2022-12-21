@@ -122,13 +122,13 @@ private class GeneralIrLinkageError(private val expectedMessageWithoutHashes: St
     }
 
     override fun checkIrLinkageErrorMessage(errorMessage: String?) =
-        if (errorMessage?.replace(SIGNATURE_WITH_HASH) { it.groupValues[1] } == expectedMessageWithoutHashes)
+        if (errorMessage?.replace(SIGNATURE_WITH_HASH) { it.groupValues[1] + "'" } == expectedMessageWithoutHashes)
             null // Success.
         else
             TestMismatchedExpectation(expectedMessageWithoutHashes, errorMessage)
 
     companion object {
-        val SIGNATURE_WITH_HASH = Regex("(symbol /[\\da-zA-Z.<>_\\-]+)(\\|\\S+)")
+        val SIGNATURE_WITH_HASH = Regex("(symbol '/[\\da-zA-Z.<>_\\-]+)(\\|\\S+)'")
     }
 }
 
