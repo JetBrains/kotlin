@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.FileSignature
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 
+class InvalidIdSignatureException(val erroneousSignature: IdSignature, message: String) : Exception(message)
+
 /**
  * @see getFileSignature
  */
@@ -22,19 +25,24 @@ fun interface KlibFileSignatureProvider {
 
     /**
      * Used to build a signature of a private declaration.
-     * Returns a signature of a file from the current module with the provided [fqName] and [fileName].
+     * Returns a signature of a file from the current module with the provided [fqName] and [filePath].
      *
      * @param fqName A fully-qualified name of the package the file belongs to.
-     * @param fileName The name of the file.
+     * @param filePath The path to the file as oin the corresponding FileEntry.
      * @return A signature of a file from the current module.
      */
-    fun getFileSignature(fqName: String, fileName: String): FileSignature
+    fun getFileSignature(deserializer: IdSignatureDeserializer, fqName: FqName, filePath: String): FileSignature
+
+    object Default : KlibFileSignatureProvider {
+        override fun getFileSignature(deserializer: IdSignatureDeserializer, fqName: FqName, filePath: String) =
+            FileSignature(id = fqName to filePath, fqName, filePath)
+    }
 }
 
 class IdSignatureDeserializer(
     private val libraryFile: IrLibraryFile,
     private val currentFileSignature: FileSignature?,
-    private val fileSignatureProvider: KlibFileSignatureProvider? = null,
+    private val fileSignatureProvider: KlibFileSignatureProvider = KlibFileSignatureProvider.Default,
 ) {
 
     private fun loadSignatureProto(index: Int): ProtoIdSignature {
@@ -43,10 +51,47 @@ class IdSignatureDeserializer(
 
     private val signatureCache = HashMap<Int, IdSignature>()
 
+    private var silenceErrors = false
+
+    /**
+     * Used for better error reporting.
+     */
+    private val signatureDeserializationStack = mutableListOf<ProtoIdSignature>()
+
     fun deserializeIdSignature(index: Int): IdSignature {
         return signatureCache.getOrPut(index) {
             val sigData = loadSignatureProto(index)
-            deserializeSignatureData(sigData)
+            signatureDeserializationStack.add(sigData)
+            try {
+                deserializeSignatureData(sigData)
+            } finally {
+                signatureDeserializationStack.removeAt(signatureDeserializationStack.lastIndex)
+            }
+        }
+    }
+
+    /**
+     * If [silenceErrors] is `true`, calls [fallback]. Otherwise, throws an [InvalidIdSignatureException] with the information about
+     * which signature we were trying to deserialize when encountered the error.
+     */
+    private inline fun invalidIdSignature(message: String, fallback: () -> Nothing): Nothing {
+        if (silenceErrors) {
+            fallback()
+        }
+        val erroneousSignature = try {
+            IdSignatureDeserializer(libraryFile, currentFileSignature).apply {
+                silenceErrors = true
+            }.deserializeSignatureData(signatureDeserializationStack[0])
+        } catch (e: Throwable) {
+            throw IllegalStateException("This should never throw any exceptions!", e)
+        }
+        throw InvalidIdSignatureException(erroneousSignature, message)
+    }
+
+    internal fun invalidIdSignature(message: String): Nothing {
+        require(!silenceErrors)
+        invalidIdSignature(message) {
+            error("unreachable")
         }
     }
 
@@ -60,15 +105,25 @@ class IdSignatureDeserializer(
 
     private fun deserializeAccessorIdSignature(proto: ProtoAccessorIdSignature): IdSignature.AccessorSignature {
         val propertySignature = deserializeIdSignature(proto.propertySignature)
-        require(propertySignature is IdSignature.CommonSignature) { "For public accessor corresponding property supposed to be public as well" }
-        val name = libraryFile.string(proto.name)
         val hash = proto.accessorHashId
         val mask = proto.flags
 
-        val accessorSignature =
-            IdSignature.CommonSignature(propertySignature.packageFqName, "${propertySignature.declarationFqName}.$name", hash, mask)
+        fun buildAccessorSignature(packageFqName: String, declarationFqName: String): IdSignature.AccessorSignature {
+            val name = libraryFile.string(proto.name)
 
-        return IdSignature.AccessorSignature(propertySignature, accessorSignature)
+            val accessorSignature =
+                IdSignature.CommonSignature(packageFqName, "$declarationFqName.$name", hash, mask)
+
+            return IdSignature.AccessorSignature(propertySignature, accessorSignature)
+        }
+
+        if (propertySignature !is IdSignature.CommonSignature) {
+            invalidIdSignature("For public accessor corresponding property supposed to be public as well") {
+                return buildAccessorSignature(propertySignature.packageFqName().asString(), "")
+            }
+        }
+
+        return buildAccessorSignature(propertySignature.packageFqName, propertySignature.declarationFqName)
     }
 
     private fun deserializeFileLocalIdSignature(proto: ProtoFileLocalIdSignature): IdSignature {
@@ -93,15 +148,14 @@ class IdSignatureDeserializer(
     }
 
     private fun deserializeFileIdSignature(proto: ProtoFileSignature): FileSignature {
-        requireNotNull(fileSignatureProvider) {
-            "${(::fileSignatureProvider).name} is required for deserializing file signatures"
-        }
         return if (proto.hasFilePath()) {
             val fqName = libraryFile.deserializeFqName(proto.fqNameList)
-            fileSignatureProvider.getFileSignature(fqName, proto.filePath)
+            fileSignatureProvider.getFileSignature(this, FqName(fqName), proto.filePath)
         } else {
             // Fallback for older behavior when we serialized file signatures as empty structures
-            currentFileSignature ?: error("Provide file symbol")
+            currentFileSignature ?: invalidIdSignature("Provide file symbol") {
+                return FileSignature("<unknown>", FqName(""), "<unknown>")
+            }
         }
     }
 
@@ -114,7 +168,9 @@ class IdSignatureDeserializer(
             ProtoIdSignature.IdSigCase.COMPOSITE_SIG -> deserializeCompositeIdSignature(proto.compositeSig)
             ProtoIdSignature.IdSigCase.LOCAL_SIG -> deserializeLocalIdSignature(proto.localSig)
             ProtoIdSignature.IdSigCase.FILE_SIG -> deserializeFileIdSignature(proto.fileSig)
-            else -> error("Unexpected IdSignature kind: ${proto.idSigCase}")
+            else -> invalidIdSignature("Unexpected IdSignature kind: ${proto.idSigCase}") {
+                return IdSignature.CommonSignature("", "<unknown>", null, 0)
+            }
         }
     }
 

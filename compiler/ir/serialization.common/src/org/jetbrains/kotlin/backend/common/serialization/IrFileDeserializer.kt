@@ -69,7 +69,7 @@ class FileDeserializationState(
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
     moduleDeserializer: IrModuleDeserializer,
-    fileSignatureProvider: KlibFileSignatureProvider?
+    fileSignatureProvider: KlibFileSignatureProvider,
 ) {
 
     val file = fileInfo.file

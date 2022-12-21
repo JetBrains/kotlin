@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.MASKED_TARGET_NAME
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findKotlinNativeTargetName
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findParameterInOutput
@@ -232,6 +233,23 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `ambiguous file signature`() {
+        val repo = setupLocalRepo()
+
+        buildAndPublishLibrary(directoryPrefix = "native-ir-linker-issues-ambiguous-file-signature", projectName = "lib", localRepo = repo)
+        buildApplicationAndFail(
+            directoryPrefix = "native-ir-linker-issues-ambiguous-file-signature",
+            projectName = "app",
+            localRepo = repo,
+            useCache = true
+        ) { kotlinNativeCompilerVersion ->
+            """
+            |
+            """.trimMargin()
+        }
+    }
+
     private fun buildConflictingLibrariesAndApplication(
         directoryPrefix: String,
         useCache: Boolean,
@@ -291,7 +309,8 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
 
     private fun buildAndPublishLibrary(directoryPrefix: String, projectName: String, localRepo: File) {
         prepareProject(directoryPrefix, projectName, localRepo, useCache = true) {
-            build("publish") {
+            setupWorkingDir(enableCacheRedirector = false)
+            build("publish", "-Pkotlin.native.home=${System.getProperty("kotlin.internal.native.test.nativeHome")}") {
                 assertSuccessful()
             }
         }

@@ -66,7 +66,6 @@ fun deserializeFromByteArray(
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
         handleExpectActualMapping = { _, symbol -> symbol }, // no expect declarations
         fileSignature = dummyFileSignature,
-        fileSignatureProvider = null,
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
     }

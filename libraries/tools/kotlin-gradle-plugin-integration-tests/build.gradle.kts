@@ -253,13 +253,14 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
     }
 }
 
-val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run tests for Kotlin/Native part of Gradle plugin"
-    maxParallelForks = maxParallelTestForks
-    useJUnitPlatform {
-        includeTags("NativeKGP")
-        includeEngines("junit-jupiter")
+val nativeTestsTask = nativeTest("kgpNativeTests", "NativeKGP").apply {
+    configure {
+        group = KGP_TEST_TASKS_GROUP
+        description = "Run tests for Kotlin/Native part of Gradle plugin"
+        maxParallelForks = maxParallelTestForks
+        useJUnitPlatform {
+            includeEngines("junit-jupiter")
+        }
     }
 }
 
@@ -327,6 +328,10 @@ tasks.withType<Test> {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        addNativeTestProperties(project)
+    }
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {

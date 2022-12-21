@@ -208,7 +208,24 @@ abstract class KotlinIrLinker(
             deserializersForModules[moduleFragment.name.asString()] =
                 maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
         }
-        deserializersForModules.values.forEach { it.init() }
+
+        val errors = mutableListOf<KotlinIrLinkerIssue>()
+        deserializersForModules.values.forEach {
+            try {
+                it.init()
+            } catch (e: InvalidIdSignatureException) {
+                errors.add(
+                    InvalidSignature(
+                        cause = e,
+                        it,
+                        allModuleDeserializers = deserializersForModules.values,
+                        userVisibleIrModulesSupport = userVisibleIrModulesSupport,
+                    )
+                )
+            }
+        }
+        if (errors.isNotEmpty())
+            errors.raiseIssues(messageLogger, needStacktrace = false)
     }
 
     override fun postProcess() {
