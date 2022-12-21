@@ -124,7 +124,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.LocalIdx -> appendLocalReference(x.value.owner)
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> sameLineList("type") { appendModuleFieldReference(x.value.owner) }
-            is WasmImmediate.MemoryIdx -> appendModuleFieldIdIfNotNull(x.value.owner)
+            is WasmImmediate.MemoryIdx -> appendIdxIfNotZero(x.value)
             is WasmImmediate.DataIdx -> appendElement(x.value.toString())
             is WasmImmediate.TableIdx -> appendElement(x.value.toString())
             is WasmImmediate.LabelIdx -> appendElement(x.value.toString())
@@ -523,9 +523,7 @@ class WasmIrToText : SExpressionBuilder() {
         appendElement("$${local.id}_${sanitizeWatIdentifier(local.name)}")
     }
 
-    fun appendModuleFieldIdIfNotNull(field: WasmNamedModuleField) {
-        val id = field.id
-            ?: error("${field::class} ${field.name} ID is unlinked")
+    fun appendIdxIfNotZero(id: Int) {
         if (id != 0) appendElement(id.toString())
     }
 

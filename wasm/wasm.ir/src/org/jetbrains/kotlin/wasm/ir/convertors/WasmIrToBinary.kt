@@ -243,7 +243,7 @@ class WasmIrToBinary(
             is WasmImmediate.LocalIdx -> appendLocalReference(x.value.owner)
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.MemoryIdx -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.MemoryIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
