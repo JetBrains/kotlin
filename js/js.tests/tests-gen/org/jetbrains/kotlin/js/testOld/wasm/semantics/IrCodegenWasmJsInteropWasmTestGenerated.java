@@ -30,6 +30,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
+    @TestMetadata("callingWasmDirectly.kt")
+    public void testCallingWasmDirectly() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/callingWasmDirectly.kt");
+    }
+
     @TestMetadata("defaultValues.kt")
     public void testDefaultValues() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
