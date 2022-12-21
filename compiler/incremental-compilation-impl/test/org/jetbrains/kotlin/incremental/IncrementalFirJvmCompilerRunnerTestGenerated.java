@@ -1358,6 +1358,11 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryRemoved/");
             }
 
+            @TestMetadata("firstCase")
+            public void testFirstCase() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/firstCase/");
+            }
+
             @TestMetadata("javaAndKotlinChangedSimultaneously")
             public void testJavaAndKotlinChangedSimultaneously() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaAndKotlinChangedSimultaneously/");
@@ -1401,6 +1406,11 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
             @TestMetadata("rawErrorTypeDuringSerialization")
             public void testRawErrorTypeDuringSerialization() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization/");
+            }
+
+            @TestMetadata("renameMe")
+            public void testRenameMe() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/renameMe/");
             }
 
             @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType")
@@ -1559,6 +1569,19 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
                 }
             }
 
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/firstCase")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FirstCase extends AbstractIncrementalFirJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInFirstCase() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/firstCase"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                }
+            }
+
             @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaAndKotlinChangedSimultaneously")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1673,6 +1696,19 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
 
                 public void testAllFilesPresentInRawErrorTypeDuringSerialization() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/renameMe")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RenameMe extends AbstractIncrementalFirJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInRenameMe() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/renameMe"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
                 }
             }
 
