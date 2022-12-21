@@ -10,7 +10,7 @@ declare namespace JS_TESTS {
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
         }
-        function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
+        function f1(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
     }
     namespace a.b {
         class C2 {
@@ -22,7 +22,7 @@ declare namespace JS_TESTS {
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
         }
-        function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
+        function f2(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
     }
     class C3 {
         constructor(value: string);
@@ -33,5 +33,5 @@ declare namespace JS_TESTS {
         hashCode(): number;
         equals(other: Nullable<any>): boolean;
     }
-    function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
+    function f3(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
 }
