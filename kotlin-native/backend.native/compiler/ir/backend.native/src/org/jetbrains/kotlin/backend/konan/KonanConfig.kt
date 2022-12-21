@@ -219,9 +219,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val resolvedLibraries get() = resolve.resolvedLibraries
 
+    internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)
+
     internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
             externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
-                    externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File),
+                    externalDependenciesFile = externalDependenciesFile,
                     onMalformedExternalDependencies = { warningMessage ->
                         configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
                     }),
