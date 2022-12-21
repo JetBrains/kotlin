@@ -1,7 +1,6 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // SKIP_TXT
 
-// FILE: functions.kt
+// FILE: testFunctions.kt
 
 package functions
 

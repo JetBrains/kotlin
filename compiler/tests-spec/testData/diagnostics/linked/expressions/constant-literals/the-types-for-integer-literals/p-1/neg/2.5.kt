@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDE_IGNORE
 // SKIP_TXT
 
@@ -12,7 +11,7 @@
  * HELPERS: checkType
  */
 
-// FILE: functions.kt
+// FILE: testFunctions.kt
 
 package functions
 
