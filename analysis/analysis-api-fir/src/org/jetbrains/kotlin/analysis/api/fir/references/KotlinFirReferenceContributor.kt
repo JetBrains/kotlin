@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea.references
 
 import org.jetbrains.kotlin.analysis.api.fir.references.KtFirKDocReference
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 class KotlinFirReferenceContributor : KotlinReferenceProviderContributor {
@@ -30,6 +33,14 @@ class KotlinFirReferenceContributor : KotlinReferenceProviderContributor {
                         KtFirSimpleNameReference(nameReferenceExpression, isRead = false),
                     )
                 }
+            }
+
+            registerProvider provider@{ element: KtValueArgument ->
+                if (element.isNamed()) return@provider null
+                val annotationEntry = element.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList } ?: return@provider null
+                if (annotationEntry.valueArguments.size != 1) return@provider null
+
+                KtDefaultAnnotationArgumentReference(element)
             }
         }
     }
