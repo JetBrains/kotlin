@@ -77,3 +77,15 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmExternRef -> WasmHeapType.Simple.Extern
         else -> error("Unknown heap type for type $this")
     }
+
+fun WasmFunctionType.referencesTypeDeclarations(): Boolean =
+    parameterTypes.any { it.referencesTypeDeclaration() } or resultTypes.any { it.referencesTypeDeclaration() }
+
+fun WasmType.referencesTypeDeclaration(): Boolean {
+    val heapType = when (this) {
+        is WasmRefNullType -> getHeapType()
+        is WasmRefType -> getHeapType()
+        else -> return false
+    }
+    return heapType is WasmHeapType.Type
+}

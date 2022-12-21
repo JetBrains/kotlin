@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
-    val gcTypes: List<WasmTypeDeclaration> = emptyList(),
-    val gcTypesInRecursiveGroup: Boolean,
-
+    val recGroupTypes: List<WasmTypeDeclaration> = emptyList(),
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
     val importedMemories: List<WasmMemory> = emptyList(),

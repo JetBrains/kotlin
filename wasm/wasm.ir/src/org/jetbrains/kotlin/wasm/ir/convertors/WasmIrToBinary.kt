@@ -35,17 +35,18 @@ class WasmIrToBinary(
         with(module) {
             // type section
             appendSection(1u) {
-                if (module.gcTypesInRecursiveGroup) {
-                    appendVectorSize(1)
-                    b.writeByte(0x4f)
-                }
-                appendVectorSize(functionTypes.size + gcTypes.size)
+                val numRecGroups = if (recGroupTypes.isEmpty()) 0 else 1
+                appendVectorSize(functionTypes.size + numRecGroups)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                gcTypes.forEach {
-                    when (it) {
-                        is WasmStructDeclaration -> appendStructTypeDeclaration(it)
-                        is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
-                        is WasmFunctionType -> error("Function type in GC types")
+                if (!recGroupTypes.isEmpty()) {
+                    b.writeByte(0x4f)
+                    appendVectorSize(recGroupTypes.size)
+                    recGroupTypes.forEach {
+                        when (it) {
+                            is WasmStructDeclaration -> appendStructTypeDeclaration(it)
+                            is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
+                            is WasmFunctionType -> appendFunctionTypeDeclaration(it)
+                        }
                     }
                 }
             }
@@ -172,8 +173,8 @@ class WasmIrToBinary(
             // https://github.com/WebAssembly/extended-name-section/blob/main/document/core/appendix/custom.rst
 
             appendSection(4u) {
-                appendVectorSize(module.gcTypes.size)
-                module.gcTypes.forEach {
+                appendVectorSize(module.recGroupTypes.size)
+                module.recGroupTypes.forEach {
                     appendModuleFieldReference(it)
                     b.writeString(it.name)
                 }
@@ -190,7 +191,7 @@ class WasmIrToBinary(
             // Experimental fields name section
             // https://github.com/WebAssembly/gc/issues/193
             appendSection(10u) {
-                val structDeclarations = module.gcTypes.filterIsInstance<WasmStructDeclaration>()
+                val structDeclarations = module.recGroupTypes.filterIsInstance<WasmStructDeclaration>()
                 appendVectorSize(structDeclarations.size)
                 structDeclarations.forEach {
                     appendModuleFieldReference(it)
