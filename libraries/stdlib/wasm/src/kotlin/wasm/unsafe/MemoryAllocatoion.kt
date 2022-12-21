@@ -12,6 +12,7 @@ import kotlin.wasm.internal.unsafeGetScratchRawMemory
 /**
  * WebAssembly linear memory allocator.
  */
+@UnsafeWasmApi
 public interface MemoryAllocator {
     /**
      * Allocate a block of linear memory of given [size] in bytes.
@@ -43,6 +44,7 @@ public interface MemoryAllocator {
  *
  * WARNING! Accessing allocator outside of the [block] scope will throw [IllegalStateException].
  */
+@UnsafeWasmApi
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
 ): T {
@@ -60,9 +62,11 @@ public inline fun <T> withScopedMemoryAllocator(
 
 
 @PublishedApi
+@UnsafeWasmApi
 internal var inScopedMemoryAllocatorBlock: Boolean = false
 
 @PublishedApi
+@UnsafeWasmApi
 internal class ScopedMemoryAllocator : MemoryAllocator {
     private var destroyed = false
     private var availableAddress: ULong = unsafeGetScratchRawMemory().toULong()

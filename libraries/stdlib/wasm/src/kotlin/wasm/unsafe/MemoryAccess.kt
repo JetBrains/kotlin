@@ -16,45 +16,54 @@ typealias Ptr = Int
 
 /** Load a Byte (8 bit) value from linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_LOAD8_S)
+@UnsafeWasmApi
 public fun loadByte(ptr: Ptr): Byte =
     implementedAsIntrinsic
 
 /** Load a Short (16 bit) value from linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_LOAD16_S)
+@UnsafeWasmApi
 public fun loadShort(ptr: Ptr): Short =
     implementedAsIntrinsic
 
 /** Load an Int (32 bit) value from linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_LOAD)
+@UnsafeWasmApi
 public fun loadInt(ptr: Ptr): Int =
     implementedAsIntrinsic
 
 /** Load a Long (64 bit) value from linear memory at address [ptr]. */
 @WasmOp(WasmOp.I64_LOAD)
+@UnsafeWasmApi
 public fun loadLong(ptr: Ptr): Long =
     implementedAsIntrinsic
 
 /** Store a Byte (8 bit) value into linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_STORE8)
+@UnsafeWasmApi
 public fun storeByte(ptr: Ptr, value: Byte): Unit =
     implementedAsIntrinsic
 
 /** Store a Short (16 bit) value into linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_STORE16)
+@UnsafeWasmApi
 public fun storeShort(ptr: Ptr, value: Short): Unit =
     implementedAsIntrinsic
 
 /** Store a Short (16 bit) value into linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_STORE8)
+@UnsafeWasmApi
 public fun storeByte(ptr: Ptr, value: Int): Unit =
     implementedAsIntrinsic
 
 /** Store an Int (32 bit) value into linear memory at address [ptr]. */
 @WasmOp(WasmOp.I32_STORE)
+@UnsafeWasmApi
 public fun storeInt(ptr: Ptr, value: Int): Unit =
     implementedAsIntrinsic
 
 /** Store a Long (64 bit) [value] into linear memory at address [ptr]. */
 @WasmOp(WasmOp.I64_STORE)
+@UnsafeWasmApi
 public fun storeLong(ptr: Ptr, value: Long): Unit =
     implementedAsIntrinsic
