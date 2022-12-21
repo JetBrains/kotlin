@@ -142,10 +142,6 @@ abstract class CompileToBitcode @Inject constructor(
     @get:Internal
     abstract val headersDirs: ConfigurableFileCollection
 
-    // TODO: Move to module description.
-    @get:Internal
-    abstract val moduleName: Property<String>
-
     /**
      * Final computed compiler arguments.
      */

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
-import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -146,7 +146,7 @@ configurations {
         canBeConsumed = false
         canBeResolved = true
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CompileToBitcodeExtension.USAGE))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
         }
     }
 }

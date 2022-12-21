@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.CopyCommonSources
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.cpp.CppConsumerPlugin
+import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.cpp.DependencyHandlerExKt
 import org.jetbrains.gradle.plugins.tools.*
-import org.jetbrains.kotlin.bitcode.*
 /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
@@ -16,6 +15,7 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 apply plugin: "maven-publish"
+apply plugin: CppConsumerPlugin
 
 sourceSets {
     compiler {
@@ -46,25 +46,23 @@ configurations {
         canBeConsumed = false
         canBeResolved = true
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CompileToBitcodeExtension.USAGE))
-            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
-            attribute(CompileToBitcodeExtension.MODULE_ATTRIBUTE, "files")
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
         }
     }
     commonEnvBitcode {
         canBeConsumed = false
         canBeResolved = true
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CompileToBitcodeExtension.USAGE))
-            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
-            attribute(CompileToBitcodeExtension.MODULE_ATTRIBUTE, "env")
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
         }
     }
 }
 
 dependencies {
-    commonFilesBitcode project(":kotlin-native:common")
-    commonEnvBitcode project(":kotlin-native:common")
+    use(DependencyHandlerExKt) {
+        commonFilesBitcode module(project(":kotlin-native:common"), "files")
+        commonEnvBitcode module(project(":kotlin-native:common"), "env")
+    }
 }
 
 kotlinNativeInterop {
