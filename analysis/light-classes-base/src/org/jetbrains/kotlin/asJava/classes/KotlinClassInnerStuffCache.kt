@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -166,16 +167,33 @@ private class KotlinEnumSyntheticMethod(
     private val kind: Kind
 ) : LightElement(enumClass.manager, enumClass.language), KtLightMethod, SyntheticElement {
     enum class Kind(val methodName: String) {
-        VALUE_OF("valueOf"), VALUES("values")
+        VALUE_OF("valueOf"), VALUES("values"), ENTRIES("getEntries"),
     }
 
     private val returnType = run {
-        val enumType = JavaPsiFacade.getElementFactory(project).createType(enumClass)
+        val elementFactory = JavaPsiFacade.getElementFactory(project)
+        val enumTypeWithoutAnnotation = elementFactory.createType(enumClass)
+        val enumType = enumTypeWithoutAnnotation
             .annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
 
         when (kind) {
             Kind.VALUE_OF -> enumType
             Kind.VALUES -> enumType.createArrayType().annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+            Kind.ENTRIES -> {
+                val enumEntriesClass = JavaPsiFacade.getInstance(project).findClass(
+                    /* qualifiedName = */ StandardClassIds.EnumEntries.asFqNameString(),
+                    /* scope = */ resolveScope
+                )
+                val type = if (enumEntriesClass != null) {
+                    elementFactory.createType(enumEntriesClass, enumTypeWithoutAnnotation)
+                } else {
+                    elementFactory.createTypeFromText(
+                        /* text = */ "${StandardClassIds.EnumEntries.asFqNameString()}<${enumClass.qualifiedName}>",
+                        /* context = */ enumClass,
+                    )
+                }
+                type.annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+            }
         }
     }
 
@@ -281,3 +299,6 @@ private val PsiClass.isAnonymous: Boolean
 private fun <T> copy(value: Array<T>): Array<T> {
     return if (value.isEmpty()) value else value.clone()
 }
+
+fun getEnumEntriesPsiMethod(enumClass: KtExtensibleLightClass): PsiMethod =
+    KotlinEnumSyntheticMethod(enumClass, KotlinEnumSyntheticMethod.Kind.ENTRIES)
