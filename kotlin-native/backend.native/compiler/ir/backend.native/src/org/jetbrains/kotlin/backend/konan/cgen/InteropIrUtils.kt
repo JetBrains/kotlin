@@ -68,15 +68,13 @@ internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuilt
 
     if (isObjCObjectType()) return true
 
-    val descriptor = classifierOrNull?.descriptor ?: return false
-    val builtIns = (irBuiltIns as IrBuiltInsOverDescriptors).builtIns
-
-    return when (descriptor) {
-        builtIns.any,
-        builtIns.string,
-        builtIns.list, builtIns.mutableList,
-        builtIns.set,
-        builtIns.map -> true
+    return when (classifierOrNull) {
+        irBuiltIns.anyClass,
+        irBuiltIns.stringClass,
+        irBuiltIns.listClass,
+        irBuiltIns.mutableListClass,
+        irBuiltIns.setClass,
+        irBuiltIns.mapClass -> true
         else -> false
     }
 }

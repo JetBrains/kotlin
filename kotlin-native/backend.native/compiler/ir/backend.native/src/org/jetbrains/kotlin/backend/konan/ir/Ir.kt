@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -298,10 +298,7 @@ internal class KonanSymbols(
 
     val arraySet = arrays.associateWith { irBuiltIns.findBuiltInClassMemberFunctions(it, Name.identifier("set")).single() }
 
-    val arraySize = arrays.associateWith { it.descriptor.unsubstitutedMemberScope
-                    .getContributedVariables(Name.identifier("size"), NoLookupLocation.FROM_BACKEND)
-                    .single().let { symbolTable.referenceSimpleFunction(it.getter!!) } }
-
+    val arraySize = arrays.associateWith { irBuiltIns.findBuiltInClassMemberPropertyGetter(it, Name.identifier("size"))!! }
 
     val valuesForEnum = internalFunction("valuesForEnum")
 
@@ -317,7 +314,7 @@ internal class KonanSymbols(
     val initInstance = internalFunction("initInstance")
 
     val println = irBuiltIns.findFunctions(Name.identifier("println"), "kotlin", "io")
-            .single { it.descriptor.valueParameters.singleOrNull()?.type == (irBuiltIns as IrBuiltInsOverDescriptors).builtIns.stringType }
+            .single { it.descriptor.valueParameters.singleOrNull()?.type?.constructor?.declarationDescriptor == string.descriptor }
 
     override val getContinuation = internalFunction("getContinuation")
 
@@ -352,11 +349,7 @@ internal class KonanSymbols(
     val invokeSuspendFunction =
             irBuiltIns.findBuiltInClassMemberFunctions(baseContinuationImpl, Name.identifier("invokeSuspend")).single()
 
-    val completionGetter = symbolTable.referenceSimpleFunction(
-            baseContinuationImpl.descriptor.unsubstitutedMemberScope
-                    .getContributedVariables(Name.identifier("completion"), NoLookupLocation.FROM_BACKEND).single()
-                    .getter!!
-    )
+    val completionGetter = irBuiltIns.findBuiltInClassMemberPropertyGetter(baseContinuationImpl, Name.identifier("completion"))!!
 
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
@@ -455,14 +448,16 @@ internal class KonanSymbols(
 
     override val setWithoutBoundCheckName: Name? = KonanNameConventions.setWithoutBoundCheck
 
-    private val testFunctionKindCache = TestProcessor.FunctionKind.values().associate {
-        val symbol = if (it.runtimeKindString.isEmpty())
-            null
-        else
-            symbolTable.referenceEnumEntry(testFunctionKind.descriptor.unsubstitutedMemberScope.getContributedClassifier(
-                    Name.identifier(it.runtimeKindString), NoLookupLocation.FROM_BACKEND
-            ) as ClassDescriptor)
-        it to symbol
+    private val testFunctionKindCache by lazy {
+        TestProcessor.FunctionKind.values().associateWith { kind ->
+            if (kind.runtimeKindString.isEmpty())
+                null
+            else
+                testFunctionKind.owner.declarations
+                        .filterIsInstance<IrEnumEntry>()
+                        .single { it.name == Name.identifier(kind.runtimeKindString) }
+                        .symbol
+        }
     }
 
     fun getTestFunctionKind(kind: TestProcessor.FunctionKind) = testFunctionKindCache[kind]!!

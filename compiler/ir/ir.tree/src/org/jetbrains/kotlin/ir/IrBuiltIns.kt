@@ -164,6 +164,7 @@ abstract class IrBuiltIns {
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
 
     abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findBuiltInClassMemberPropertyGetter(builtInClass: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
 
     abstract fun getNonBuiltInFunctionsByExtensionReceiver(
         name: Name, vararg packageNameSegments: String
