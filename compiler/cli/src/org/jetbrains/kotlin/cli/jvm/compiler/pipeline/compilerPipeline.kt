@@ -108,6 +108,14 @@ fun compileModulesUsingFrontendIrAndLightTree(
         "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
     )
 
+    if (compilerConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+        messageCollector.report(
+            CompilerMessageSeverity.ERROR,
+            "K2 compiler does not support multi-platform projects yet, so please remove -Xuse-k2 flag"
+        )
+        return false
+    }
+
     val outputs = mutableListOf<GenerationState>()
     var mainClassFqName: FqName? = null
 
