@@ -6,8 +6,8 @@ import lib2.B1
 fun box() = abiTest {
     val a: A = B()
     val b = B()
-    expectFailure(nonImplementedCallable("function foo", "class B")) { a.foo() }
+    expectFailure(nonImplementedCallable("function 'foo'", "class 'B'")) { a.foo() }
     expectSuccess(-42) { a.bar() }
-    expectFailure(nonImplementedCallable("function foo", "class B")) { b.unlinkedFunctionUsage }
-    expectFailure(nonImplementedCallable("function foo", "class B1")) { B1() }
+    expectFailure(nonImplementedCallable("function 'foo'", "class 'B'")) { b.unlinkedFunctionUsage }
+    expectFailure(nonImplementedCallable("function 'foo'", "class 'B1'")) { B1() }
 }

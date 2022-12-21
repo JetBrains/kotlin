@@ -252,6 +252,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 result = newType.unusableClassifier
             }
 
+            dispatchReceiverParameter?.fixType() // The dispatcher (aka this) is intentionally the first one.
             extensionReceiverParameter?.fixType()
             valueParameters.forEach { it.fixType() }
 
@@ -266,8 +267,6 @@ internal class PartiallyLinkedIrTreePatcher(
                     result = newSuperType.unusableClassifier
                 }
             }
-
-            dispatchReceiverParameter?.fixType() // The dispatcher (aka this) is intentionally the last one.
 
             return result
         }

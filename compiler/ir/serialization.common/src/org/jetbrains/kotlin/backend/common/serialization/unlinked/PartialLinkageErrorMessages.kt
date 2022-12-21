@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkage
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.UNKNOWN_NAME
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.guessName
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -20,25 +21,34 @@ import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
 // TODO: Simplify and enhance PL error messages when new self-descriptive signatures are implemented.
 internal fun PartialLinkageCase.renderErrorMessage(): String = buildString {
     when (this@renderErrorMessage) {
         is MissingDeclaration -> noDeclarationForSymbol(missingDeclarationSymbol)
         is MissingEnclosingClass -> noEnclosingClass(orphanedClassSymbol)
+
         is DeclarationUsesPartiallyLinkedClassifier ->
-            declarationKindName(declarationSymbol, capitalized = true).append(" uses ").cause(cause)
+            declarationWithPartiallyLinkedClassifier(declarationSymbol, cause, forExpression = false)
+
         is UnimplementedAbstractCallable -> unimplementedAbstractCallable(callable)
-        is ExpressionUsesMissingDeclaration -> expression(expression).noDeclarationForSymbol(missingDeclarationSymbol)
-        is ExpressionUsesPartiallyLinkedClassifier -> expression(expression).append("IR expression uses ").cause(cause)
-        is ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier -> expression(expression)
-            .declarationKindName(referencedDeclarationSymbol, capitalized = true).append(" uses ").cause(cause)
-        is ExpressionUsesWrongTypeOfDeclaration -> expression(expression)
-            .declarationNameIsKind(actualDeclarationSymbol).append(" while ").append(expectedDeclarationDescription).append(" is expected")
-        is ExpressionsUsesInaccessibleDeclaration -> expression(expression)
-            .append("Private ").declarationKindName(referencedDeclarationSymbol, capitalized = false)
-            .append(" declared in ").module(declaringModule).append(" can not be accessed from ").module(useSiteModule)
+        is ExpressionUsesMissingDeclaration -> expression(expression) { noDeclarationForSymbol(missingDeclarationSymbol) }
+        is ExpressionUsesPartiallyLinkedClassifier -> expressionWithPartiallyLinkedClassifier(expression, cause)
+
+        is ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier -> expression(expression) {
+            declarationWithPartiallyLinkedClassifier(referencedDeclarationSymbol, cause, forExpression = true)
+        }
+
+        is ExpressionUsesWrongTypeOfDeclaration -> expression(expression) {
+            wrongTypeOfDeclaration(actualDeclarationSymbol, expectedDeclarationDescription)
+        }
+
+        is ExpressionsUsesInaccessibleDeclaration -> expression(expression) {
+            inaccessibleDeclaration(referencedDeclarationSymbol, declaringModule, useSiteModule)
+        }
     }
 }
 
@@ -97,6 +107,8 @@ private enum class ExpressionKind(val prefix: String?, val postfix: String?) {
     READING("Can not read value from", null),
     WRITING("Can not write value to", null),
     GETTING_INSTANCE("Can not get instance of", null),
+    TYPE_OPERATOR("Type operator expression", "can not be evaluated"),
+    ANONYMOUS_OBJECT_LITERAL("Anonymous object literal", "can not be evaluated"),
     OTHER_EXPRESSION("Expression", "can not be evaluated")
 }
 
@@ -120,16 +132,25 @@ private val IrExpression.expression: Expression
             else -> Expression(REFERENCE, OTHER_DECLARATION)
         }
         is IrInstanceInitializerCall -> Expression(CALLING_INSTANCE_INITIALIZER, classSymbol.declarationKind)
-        else -> Expression(OTHER_EXPRESSION, null)
+        is IrTypeOperatorCall -> Expression(TYPE_OPERATOR, null)
+        else -> {
+            if (this is IrBlock && origin == IrStatementOrigin.OBJECT_LITERAL)
+                Expression(ANONYMOUS_OBJECT_LITERAL, null)
+            else
+                Expression(OTHER_EXPRESSION, null)
+        }
     }
 
 private fun IrSymbol.guessName(): String? {
+    fun IrElement.isCompanionWithDefaultName() = this is IrClass && isCompanion && name == DEFAULT_NAME_FOR_COMPANION_OBJECT
+
     return signature
         ?.let { effectiveSignature ->
             val nameSegmentsToPickUp = when {
                 effectiveSignature is AccessorSignature -> 2 // property_name.accessor_name
-                this is IrConstructorSymbol -> 2 // class_name.<init>
-                (owner as? IrClass)?.run { isCompanion && name == DEFAULT_NAME_FOR_COMPANION_OBJECT } ?: false -> 2 // class_name.Companion
+                this is IrConstructorSymbol -> if (owner.parent.isCompanionWithDefaultName()) 3 else 2 // class_name.<init> or class_name.Companion.<init>
+                this is IrEnumEntrySymbol -> 2 // enum_class_name.entry_name
+                owner.isCompanionWithDefaultName() -> 2 // class_name.Companion
                 else -> 1
             }
             effectiveSignature.guessName(nameSegmentsToPickUp)
@@ -138,6 +159,7 @@ private fun IrSymbol.guessName(): String? {
 }
 
 private fun Appendable.signature(symbol: IrSymbol): Appendable {
+    var file: String? = null
     val symbolRepresentation = symbol.signature?.render()
         ?: symbol.privateSignature?.let {
             when (it) {
@@ -146,8 +168,8 @@ private fun Appendable.signature(symbol: IrSymbol): Appendable {
                     // Avoid printing full paths from FileSignature.
                     val container = it.container
                     if (container is FileSignature) {
-                        val fileNameWithoutPath = PathUtil.getFileName(container.fileName).takeIf(String::isNotEmpty) ?: UNKNOWN_FILE
-                        "${it.inner.render()} declared in file $fileNameWithoutPath"
+                        file = PathUtil.getFileName(container.fileName).takeIf(String::isNotEmpty) ?: UNKNOWN_FILE
+                        it.inner.render()
                     } else it.render()
                 }
                 else -> it.render()
@@ -155,14 +177,19 @@ private fun Appendable.signature(symbol: IrSymbol): Appendable {
         }
         ?: UNKNOWN_SYMBOL
 
-    return append(symbolRepresentation)
+    append('\'').append(symbolRepresentation).append('\'')
+    if (file != null) append(" declared in file ").append(file)
+    return this
 }
 
 private const val UNKNOWN_SYMBOL = "<unknown symbol>"
 private const val UNKNOWN_FILE = "<unknown file>"
 
 private fun Appendable.declarationName(symbol: IrSymbol): Appendable =
-    append(symbol.guessName() ?: UNKNOWN_NAME.asString())
+    append('\'').append(symbol.guessName() ?: UNKNOWN_NAME.asString()).append('\'')
+
+private fun Appendable.declarationKind(symbol: IrSymbol, capitalized: Boolean): Appendable =
+    appendCapitalized(symbol.declarationKind.displayName, capitalized)
 
 private fun Appendable.declarationKindName(symbol: IrSymbol, capitalized: Boolean): Appendable {
     val declarationKind = symbol.declarationKind
@@ -172,9 +199,9 @@ private fun Appendable.declarationKindName(symbol: IrSymbol, capitalized: Boolea
 }
 
 private fun Appendable.declarationNameIsKind(symbol: IrSymbol): Appendable =
-    declarationName(symbol).append(" is ").append(symbol.declarationKind.displayName)
+    declarationName(symbol).append(" is ").declarationKind(symbol, capitalized = false)
 
-private fun StringBuilder.expression(expression: IrExpression): Appendable {
+private fun StringBuilder.expression(expression: IrExpression, continuation: (ExpressionKind) -> Appendable): Appendable {
     val (expressionKind, referencedDeclarationKind) = expression.expression
 
     // Prefix may be null. But when it's not null, it is always capitalized.
@@ -194,8 +221,9 @@ private fun StringBuilder.expression(expression: IrExpression): Appendable {
     }
 
     expressionKind.postfix?.let { postfix -> append(" ").append(postfix) }
+    append(": ")
 
-    return append(": ")
+    return continuation(expressionKind)
 }
 
 private fun Appendable.cause(cause: Unusable): Appendable =
@@ -211,7 +239,7 @@ private fun Appendable.cause(cause: Unusable): Appendable =
     }
 
 private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
-    append("No ").append(symbol.declarationKind.displayName).append(" found for symbol ").signature(symbol)
+    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol)
 
 private fun Appendable.noEnclosingClass(symbol: IrClassSymbol): Appendable =
     declarationKindName(symbol, capitalized = true).append(" lacks enclosing class")
@@ -220,7 +248,7 @@ private fun Appendable.unlinkedSymbol(
     rootCause: Unusable.MissingClassifier,
     cause: Unusable.DueToOtherClassifier? = null
 ): Appendable {
-    append("unlinked ").append(rootCause.symbol.declarationKind.displayName).append(" symbol ").signature(rootCause.symbol)
+    append("unlinked ").declarationKind(rootCause.symbol, capitalized = false).append(" symbol ").signature(rootCause.symbol)
     if (cause != null) through(cause)
     return this
 }
@@ -237,12 +265,69 @@ private fun Appendable.noEnclosingClass(
 private fun Appendable.through(cause: Unusable.DueToOtherClassifier): Appendable =
     append(" (through ").declarationKindName(cause.symbol, capitalized = false).append(")")
 
-private fun Appendable.module(module: PartialLinkageUtils.Module): Appendable =
+private fun Appendable.module(module: PLModule): Appendable =
     append("module ").append(module.name)
 
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =
     append("Abstract ").declarationKindName(callable.symbol, capitalized = false)
         .append(" is not implemented in non-abstract ").declarationKindName(callable.parentAsClass.symbol, capitalized = false)
+
+private fun Appendable.wrongTypeOfDeclaration(actualDeclarationSymbol: IrSymbol, expectedDeclarationDescription: String): Appendable =
+    declarationNameIsKind(actualDeclarationSymbol).append(" while ").append(expectedDeclarationDescription).append(" is expected")
+
+private fun Appendable.declarationWithPartiallyLinkedClassifier(
+    declarationSymbol: IrSymbol,
+    cause: Unusable,
+    forExpression: Boolean
+): Appendable {
+    val declaration = declarationSymbol.owner
+    return if (declaration is IrFunction && declaration.parentClassOrNull?.symbol == cause.symbol) {
+        // Callable member is unusable due to unusable dispatch receiver.
+        if (forExpression) {
+            if (declaration is IrConstructor)
+                declarationKindName(cause.symbol, capitalized = true)
+            else
+                append("Dispatch receiver ").declarationKindName(cause.symbol, capitalized = true)
+            append(" uses ").cause(cause.rootCause)
+        } else {
+            declarationKindName(cause.symbol, capitalized = true)
+                .append(if (declaration is IrConstructor) " created by " else ", the dispatch receiver of ")
+                .declarationKindName(declarationSymbol, capitalized = false).append(" uses ").cause(cause.rootCause)
+        }
+    } else {
+        if (forExpression)
+            declarationKind(declarationSymbol, capitalized = true)
+        else
+            declarationKindName(declarationSymbol, capitalized = true)
+        append(" uses ").cause(cause)
+    }
+}
+
+private fun StringBuilder.expressionWithPartiallyLinkedClassifier(
+    expression: IrExpression,
+    cause: Unusable
+): Appendable = expression(expression) { expressionKind ->
+    // Printing the intermediate cause may pollute certain types of error messages. Need to avoid it when possible.
+    val printIntermediateCause = when {
+        expression is IrGetSingletonValue -> when (val expressionSymbol = expression.symbol) {
+            is IrEnumEntrySymbol -> (expressionSymbol.owner.parent as? IrClass)?.symbol != cause.symbol
+            else -> expressionSymbol != cause.symbol
+        }
+
+        expressionKind == ANONYMOUS_OBJECT_LITERAL -> cause.symbol.declarationKind != ANONYMOUS_OBJECT
+
+        else -> true
+    }
+
+    append("Expression uses ").cause(if (printIntermediateCause) cause else cause.rootCause)
+}
+
+private fun Appendable.inaccessibleDeclaration(
+    referencedDeclarationSymbol: IrSymbol,
+    declaringModule: PLModule,
+    useSiteModule: PLModule
+): Appendable = append("Private ").declarationKind(referencedDeclarationSymbol, capitalized = false)
+    .append(" declared in ").module(declaringModule).append(" can not be accessed in ").module(useSiteModule)
 
 private fun Appendable.appendCapitalized(text: String, capitalized: Boolean): Appendable {
     if (capitalized && text.isNotEmpty()) {
@@ -253,3 +338,5 @@ private fun Appendable.appendCapitalized(text: String, capitalized: Boolean): Ap
 
     return append(text)
 }
+
+private val Unusable.rootCause get() = if (this is Unusable.DueToOtherClassifier) rootCause else this
