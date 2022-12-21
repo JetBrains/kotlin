@@ -157,6 +157,7 @@ where advanced options include:
   -Xuse-type-table           Use type table in metadata serialization
   -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations
   -Xvalidate-ir              Validate IR before and after lowering
+  -Xvalue-classes            Enable experimental value classes
   -Xallow-any-scripts-in-source-roots
                              Allow to compile any scripts along with regular Kotlin sources
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info

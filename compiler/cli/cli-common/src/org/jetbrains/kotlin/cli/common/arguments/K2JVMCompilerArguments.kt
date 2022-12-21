@@ -546,6 +546,12 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
     )
     var oldInnerClassesLogic: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xvalue-classes",
+        description = "Enable experimental value classes"
+    )
+    var valueClasses: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -580,6 +586,9 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         if (JvmDefaultMode.fromStringOrNull(jvmDefault)?.forAllMethodsWithBody == true) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
             result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
+        }
+        if (valueClasses) {
+            result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
         }
         return result
     }
