@@ -44,6 +44,12 @@ public class FirPluginBlackBoxCodegenTestGenerated extends AbstractFirPluginBlac
     }
 
     @Test
+    @TestMetadata("localClassWithCompanionObject.kt")
+    public void testLocalClassWithCompanionObject() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("metaAnnotationFromLibrary.kt")
     public void testMetaAnnotationFromLibrary() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");

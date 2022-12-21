@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -63,8 +60,9 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
 
 // FIXME: this has to be shared
 @OptIn(SymbolInternals::class)
-fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: GeneratedDeclarationKey): FirConstructor {
-    val lookupTag = ConeClassLikeLookupTagImpl(classId)
+fun FirDeclarationGenerationExtension.buildConstructor(owner: FirClassSymbol<*>, isInner: Boolean, key: GeneratedDeclarationKey): FirConstructor {
+    val classId = owner.classId
+    val lookupTag = owner.toLookupTag()
     return buildPrimaryConstructor {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         moduleData = session.moduleData

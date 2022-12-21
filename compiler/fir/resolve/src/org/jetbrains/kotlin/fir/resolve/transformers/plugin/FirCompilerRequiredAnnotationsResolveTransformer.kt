@@ -14,15 +14,11 @@ import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
@@ -173,4 +169,43 @@ private class FirDesignatedSpecificAnnotationResolveTransformer(
     override fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean {
         return !designation.shouldSkipClass(declaration)
     }
+}
+
+fun <F : FirClassLikeDeclaration> F.runCompilerRequiredAnnotationsResolvePhaseForLocalClass(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    localClassesNavigationInfo: LocalClassesNavigationInfo,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
+): F {
+    val computationSession = CompilerRequiredAnnotationsComputationSession()
+    val annotationsResolveTransformer = FirSpecificAnnotationForLocalClassesResolveTransformer(
+        session,
+        scopeSession,
+        computationSession,
+        containingDeclarations,
+        localClassesNavigationInfo
+    )
+    return annotationsResolveTransformer.withFileScopes(useSiteFile) {
+        this.transformSingle(annotationsResolveTransformer, null)
+    }
+}
+
+private class FirSpecificAnnotationForLocalClassesResolveTransformer(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    computationSession: CompilerRequiredAnnotationsComputationSession,
+    containingDeclarations: List<FirDeclaration>,
+    private val localClassesNavigationInfo: LocalClassesNavigationInfo
+) : AbstractFirSpecificAnnotationResolveTransformer(session, scopeSession, computationSession, containingDeclarations) {
+    override fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean {
+        localClassesNavigationInfo.allMembers
+        return when (declaration) {
+            is FirClassLikeDeclaration -> declaration in localClassesNavigationInfo.parentForClass
+            else -> true
+        }
+    }
+
+    override val shouldRecordIntoPredicateBasedProvider: Boolean
+        get() = false
 }

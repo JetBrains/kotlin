@@ -10,9 +10,11 @@ import com.google.common.collect.Multimap
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
@@ -145,6 +147,9 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         // ------------------------------------ Utilities ------------------------------------
 
         private fun matchWith(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+            if (declaration is FirClass && declaration.isLocal) {
+                return declaration.annotations.any { it.fqName(session) in annotations }
+            }
             return cache.annotationsOfDeclaration[declaration].any { it in annotations }
         }
 

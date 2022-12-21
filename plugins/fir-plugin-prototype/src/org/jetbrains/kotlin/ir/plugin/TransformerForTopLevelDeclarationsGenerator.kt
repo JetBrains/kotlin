@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classFqName
 
-class TransformerForTopLevelDeclarationsGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context) {
+class TransformerForTopLevelDeclarationsGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = false) {
     override fun interestedIn(key: GeneratedDeclarationKey): Boolean {
         return key == TopLevelDeclarationsGenerator.Key
     }

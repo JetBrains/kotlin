@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -58,10 +57,8 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         return listOf(buildMaterializeFunction(matchedClassSymbol, callableId, Key).symbol)
     }
 
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (classId.shortClassName != NESTED_NAME) return null
-        val parentClassId = classId.parentClassId ?: return null
-        if (matchedClasses.none { it.classId == parentClassId }) return null
+    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+        if (matchedClasses.none { it == owner }) return null
         return buildRegularClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
@@ -69,16 +66,14 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
             classKind = ClassKind.CLASS
             scopeProvider = session.kotlinScopeProvider
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
-            name = classId.shortClassName
-            symbol = FirRegularClassSymbol(classId)
+            this.name = name
+            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(name))
             superTypeRefs += session.builtinTypes.anyType
         }.symbol
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val ownerClassId = context.owner.classId
-        assert(ownerClassId in nestedClassIds)
-        return listOf(buildConstructor(ownerClassId, isInner = false, Key).symbol)
+        return listOf(buildConstructor(context.owner, isInner = false, Key).symbol)
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {

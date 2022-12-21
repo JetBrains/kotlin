@@ -74,6 +74,12 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
         }
 
         @Test
+        @TestMetadata("localClassWithCompanionObject.kt")
+        public void testLocalClassWithCompanionObject() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/memberGen/localClassWithCompanionObject.kt");
+        }
+
+        @Test
         @TestMetadata("topLevelCallables.kt")
         public void testTopLevelCallables() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/memberGen/topLevelCallables.kt");

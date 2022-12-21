@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
  * This is also legal, because plugins can not generate annotation classes which can influence other plugins or this plugin itself
  */
 class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
-    private val delegate: FirSymbolProvider
+    private val delegate: FirExtensionDeclarationsSymbolProvider
 ) : FirSymbolProvider(delegate.session) {
     companion object {
         fun create(session: FirSession): FirSwitchableExtensionDeclarationsSymbolProvider? {

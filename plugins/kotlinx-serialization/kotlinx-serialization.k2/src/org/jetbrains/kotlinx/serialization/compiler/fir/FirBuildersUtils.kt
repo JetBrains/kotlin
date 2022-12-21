@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.Variance
 @OptIn(SymbolInternals::class)
 fun FirDeclarationGenerationExtension.buildPrimaryConstructor(owner: FirClassSymbol<*>, isInner: Boolean, key: GeneratedDeclarationKey, status: FirDeclarationStatus): FirConstructor {
     val classId = owner.classId
-    val lookupTag = ConeClassLikeLookupTagImpl(classId)
+    val lookupTag = owner.toLookupTag()
     return buildPrimaryConstructor {
         moduleData = session.moduleData
         origin = key.origin

@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -29,7 +26,6 @@ import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -42,15 +38,8 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         private val FOO_NAME = Name.identifier("foo")
     }
 
-    private val matchedClasses by lazy {
-        session.predicateBasedProvider.getSymbolsByPredicate(PREDICATE)
-            .filterIsInstance<FirRegularClassSymbol>()
-    }
-
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (classId.shortClassName != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return null
-        val owner = matchedClasses.firstOrNull { it.classId == classId.outerClassId } ?: return null
-        if (owner.companionObjectSymbol != null) return null
+    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+        if (name != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return null
         val regularClass = buildRegularClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
@@ -64,8 +53,8 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
             ).apply {
                 isCompanion = true
             }
-            name = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-            symbol = FirRegularClassSymbol(classId)
+            this.name = name
+            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(name))
             superTypeRefs += session.builtinTypes.anyType
         }
         return regularClass.symbol
@@ -94,7 +83,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val constructor = buildConstructor(context.owner.classId, isInner = false, Key)
+        val constructor = buildConstructor(context.owner, isInner = false, Key)
         return listOf(constructor.symbol)
     }
 

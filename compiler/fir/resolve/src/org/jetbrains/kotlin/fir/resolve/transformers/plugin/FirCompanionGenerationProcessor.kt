@@ -9,14 +9,20 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 class FirCompanionGenerationProcessor(
     session: FirSession,
@@ -26,8 +32,8 @@ class FirCompanionGenerationProcessor(
 }
 
 class FirCompanionGenerationTransformer(val session: FirSession) : FirTransformer<Nothing?>() {
-
-    lateinit var generatedDeclarationProvider: FirSwitchableExtensionDeclarationsSymbolProvider
+    private val generatedDeclarationProvider: FirSwitchableExtensionDeclarationsSymbolProvider? =
+        session.generatedDeclarationsSymbolProvider
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
@@ -35,26 +41,45 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         // I don't want to use laziness here to prevent possible multi-threading problems
-        generatedDeclarationProvider = session.generatedDeclarationsSymbolProvider ?: return file
+        if (generatedDeclarationProvider == null) return file
         return file.transformDeclarations(this, data)
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
-        generateCompanion(regularClass)
+        val companionSymbol = generateCompanion(regularClass)
+        if (companionSymbol != null) {
+            regularClass.replaceCompanionObjectSymbol(companionSymbol)
+        }
         return regularClass.transformDeclarations(this, data)
     }
 
-    private fun generateCompanion(regularClass: FirRegularClass) {
-        // TODO: add proper error reporting
-        generatedDeclarationProvider = session.generatedDeclarationsSymbolProvider ?: return
-        val companionClassId = regularClass.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
-        when (val generatedCompanion = generatedDeclarationProvider.getClassLikeSymbolByClassId(companionClassId)) {
-            null -> {}
+    private fun generateCompanion(regularClass: FirRegularClass): FirRegularClassSymbol? {
+        if (generatedDeclarationProvider == null) return null
+        val generatedCompanion = if (regularClass.isLocal) {
+            var result: FirClassLikeSymbol<*>? = null
+            session.nestedClassifierScope(regularClass)?.processClassifiersByName(DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+                if (it is FirClassLikeSymbol<*> && it.origin.generated) {
+                    result = it
+                }
+            }
+            result
+        } else {
+            val companionClassId = regularClass.classId.createNestedClassId(DEFAULT_NAME_FOR_COMPANION_OBJECT)
+            generatedDeclarationProvider.getClassLikeSymbolByClassId(companionClassId)?.takeIf { it.origin.generated }
+        }
+
+        return when (generatedCompanion) {
+            null -> null
             is FirRegularClassSymbol -> when {
                 regularClass.companionObjectSymbol != null -> error("Plugin generated companion object for class $regularClass, but it is already present in class")
-                else -> regularClass.replaceCompanionObjectSymbol(generatedCompanion)
+                else -> generatedCompanion
             }
             else -> error("Plugin generated non regular class as companion object")
         }
     }
+}
+
+fun <F : FirClassLikeDeclaration> F.runCompanionGenerationPhaseForLocalClass(session: FirSession): F {
+    val transformer = FirCompanionGenerationTransformer(session)
+    return this.transformSingle(transformer, null)
 }

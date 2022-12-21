@@ -78,11 +78,9 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         return functionsCache.getValue(classSymbol)?.get(callableId.callableName).orEmpty().map { it.symbol }
     }
 
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        val outerClassId = classId.outerClassId ?: return null
-        val outerClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(outerClassId) as? FirClassSymbol<*> ?: return null
-        if (!outerClassSymbol.isSuitableJavaClass()) return null
-        return builderClassCache.getValue(outerClassSymbol)?.symbol
+    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+        if (!owner.isSuitableJavaClass()) return null
+        return builderClassCache.getValue(owner)?.symbol
     }
 
     private fun createFunctions(classSymbol: FirClassSymbol<*>): Map<Name, List<FirJavaMethod>>? {

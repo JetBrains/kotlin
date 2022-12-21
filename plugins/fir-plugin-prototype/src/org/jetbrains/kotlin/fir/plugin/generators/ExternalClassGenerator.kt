@@ -61,30 +61,26 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         }
     }
 
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        val owner = classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) } as? FirClassSymbol<*>
-        return when {
-            owner != null -> when (val origin = owner.origin) {
-                is FirDeclarationOrigin.Plugin -> when (origin.key) {
-                    Key -> generateNestedClass(classId, owner)
-                    else -> null
-                }
-                else -> null
-            }
-            else -> generateAllOpenGeneratedClass(classId)
-        }
-    }
-
-    private fun generateAllOpenGeneratedClass(classId: ClassId): FirClassLikeSymbol<*>? {
+    override fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         if (classId != GENERATED_CLASS_ID) return null
         if (matchedClasses.isEmpty()) return null
         return buildClass(classId).symbol
     }
 
+    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+        return when (val origin = owner.origin) {
+            is FirDeclarationOrigin.Plugin -> when (origin.key) {
+                Key -> generateNestedClass(owner.classId.createNestedClassId(name), owner)
+                else -> null
+            }
+            else -> null
+        }
+    }
+
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val classId = context.owner.classId
         if (classId != GENERATED_CLASS_ID && classId !in classIdsForMatchedClasses) return emptyList()
-        return listOf(buildConstructor(classId, isInner = false, Key).symbol)
+        return listOf(buildConstructor(context.owner, isInner = false, Key).symbol)
     }
 
     private fun generateNestedClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {

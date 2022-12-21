@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.ownerGenerator
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -160,16 +161,18 @@ internal fun FirSession.getExtensionsForClass(klass: FirClass): List<FirDeclarat
 class FirGeneratedClassNestedClassifierScope private constructor(
     useSiteSession: FirSession,
     klass: FirClass,
-    private val nestedClassifierNames: Set<Name>
+    private val extensionsByName: Map<Name, List<FirDeclarationGenerationExtension>>,
 ) : FirNestedClassifierScope(klass, useSiteSession) {
     companion object {
         @OptIn(FirExtensionApiInternals::class)
         fun create(useSiteSession: FirSession, klass: FirClass): FirGeneratedClassNestedClassifierScope? {
-            val extensions = useSiteSession.getExtensionsForClass(klass)
             val symbol = klass.symbol
-            val classifierNames = extensions.flatMapTo(mutableSetOf()) { it.nestedClassifierNamesCache.getValue(symbol) }
-            if (classifierNames.isEmpty()) return null
-            return FirGeneratedClassNestedClassifierScope(useSiteSession, klass, classifierNames)
+
+            val extensionsByName = useSiteSession.getExtensionsForClass(klass).flatGroupBy {
+                it.nestedClassifierNamesCache.getValue(symbol)
+            }
+            if (extensionsByName.isEmpty()) return null
+            return FirGeneratedClassNestedClassifierScope(useSiteSession, klass, extensionsByName)
         }
     }
 
@@ -186,10 +189,25 @@ class FirGeneratedClassNestedClassifierScope private constructor(
             }
         }
 
-        if (name !in nestedClassifierNames) return null
-        val generatedClass = useSiteSession.generatedDeclarationsSymbolProvider
-            ?.getClassLikeSymbolByClassId(klass.classId.createNestedClassId(name))
-        require(generatedClass is FirRegularClassSymbol?) { "Only regular class are allowed as nested classes" }
+        val extensions = extensionsByName[name] ?: return null
+
+        val generatedClasses = extensions.mapNotNull { extension ->
+            extension.generateNestedClassLikeDeclaration(klass.symbol, name)?.also { symbol ->
+                symbol.fir.ownerGenerator = extension
+            }
+        }
+
+        val generatedClass = when (generatedClasses.size) {
+            0 -> return null
+            1 -> generatedClasses.first()
+            else -> error(
+                """
+                     Multiple plugins generated nested class with same name $name for class ${klass.classId}:
+                    ${generatedClasses.joinToString("\n") { it.fir.render() }}
+                """.trimIndent()
+            )
+        }
+        require(generatedClass is FirRegularClassSymbol) { "Only regular class are allowed as nested classes" }
         return generatedClass
     }
 
@@ -198,10 +216,10 @@ class FirGeneratedClassNestedClassifierScope private constructor(
     }
 
     override fun isEmpty(): Boolean {
-        return nestedClassifierNames.isEmpty()
+        return extensionsByName.isEmpty()
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return nestedClassifierNames
+        return extensionsByName.keys
     }
 }

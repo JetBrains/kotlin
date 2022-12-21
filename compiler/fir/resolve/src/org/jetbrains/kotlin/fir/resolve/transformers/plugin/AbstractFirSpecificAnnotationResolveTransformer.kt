@@ -45,7 +45,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     protected val session: FirSession,
     protected val scopeSession: ScopeSession,
-    protected val computationSession: CompilerRequiredAnnotationsComputationSession
+    protected val computationSession: CompilerRequiredAnnotationsComputationSession,
+    containingDeclarations: List<FirDeclaration> = emptyList()
 ) : FirDefaultTransformer<Nothing?>() {
     companion object {
         private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord)
@@ -57,6 +58,9 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     private val annotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.annotations
     private val metaAnnotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.metaAnnotations
+
+    protected open val shouldRecordIntoPredicateBasedProvider: Boolean
+        get() = true
 
     @PrivateForInline
     val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
@@ -72,7 +76,13 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     )
 
     private var owners: PersistentList<FirDeclaration> = persistentListOf()
-    private val classDeclarationsStack = ArrayDeque<FirClass>()
+    private val classDeclarationsStack = ArrayDeque<FirClass>().apply {
+        for (declaration in containingDeclarations) {
+            if (declaration is FirClass) {
+                add(declaration)
+            }
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): FirStatement {
@@ -163,7 +173,9 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @OptIn(FirExtensionApiInternals::class)
     override fun transformDeclaration(declaration: FirDeclaration, data: Nothing?): FirDeclaration {
         return (transformAnnotationContainer(declaration, data) as FirDeclaration).also {
-            predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
+            if (shouldRecordIntoPredicateBasedProvider) {
+                predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
+            }
         }
     }
 

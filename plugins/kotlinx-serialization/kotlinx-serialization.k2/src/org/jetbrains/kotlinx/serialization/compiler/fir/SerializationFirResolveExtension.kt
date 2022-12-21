@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -68,18 +68,15 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return result
     }
 
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        return when (classId.shortClassName) {
-            SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT -> {
-                generateCompanionDeclaration(classId)
-            }
-            SerialEntityNames.SERIALIZER_CLASS_NAME -> {
-                addSerializerImplClass(classId)
-            }
-            else -> error("Can't generate class ${classId.asSingleFqName()}")
+    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+        if (owner !is FirRegularClassSymbol) return null
+        if (!session.predicateBasedProvider.matches(FirSerializationPredicates.annotatedWithSerializableOrMeta, owner)) return null
+        return when (name) {
+            SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT -> generateCompanionDeclaration(owner)
+            SerialEntityNames.SERIALIZER_CLASS_NAME -> generateSerializerImplClass(owner)
+            else -> error("Can't generate class ${owner.classId.createNestedClassId(name).asSingleFqName()}")
         }
     }
-
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
         val classId = classSymbol.classId
@@ -285,15 +282,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return listOf(defaultObjectConstructor.symbol)
     }
 
-    private fun getClassWithAnnotatedWithSerializableOrMeta(classId: ClassId?): FirRegularClassSymbol? {
-        if (classId == null) return null
-        return (session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol)?.takeIf {
-            session.predicateBasedProvider.matches(FirSerializationPredicates.annotatedWithSerializableOrMeta, it)
-        }
-    }
-
-    fun addSerializerImplClass(classId: ClassId): FirClassLikeSymbol<*>? {
-        val owner = getClassWithAnnotatedWithSerializableOrMeta(classId.outerClassId) ?: return null
+    private fun generateSerializerImplClass(owner: FirRegularClassSymbol): FirClassLikeSymbol<*> {
         val hasTypeParams = owner.typeParameterSymbols.isNotEmpty()
         val serializerKind = if (hasTypeParams) ClassKind.CLASS else ClassKind.OBJECT
         val serializerFirClass = buildRegularClass {
@@ -302,7 +291,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             classKind = serializerKind
             scopeProvider = session.kotlinScopeProvider
             name = SerialEntityNames.SERIALIZER_CLASS_NAME
-            symbol = FirRegularClassSymbol(classId)
+            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(name))
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
@@ -325,13 +314,11 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     )
                 ), isNullable = false
             ).toFirResolvedTypeRef()
-        }
+        }.also { it.initLocalAttributeIfNeeded(owner) }
         return serializerFirClass.symbol
     }
 
-    fun generateCompanionDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (classId.shortClassName != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return null
-        val owner = getClassWithAnnotatedWithSerializableOrMeta(classId.outerClassId) ?: return null
+    private fun generateCompanionDeclaration(owner: FirRegularClassSymbol): FirRegularClassSymbol? {
         if (owner.companionObjectSymbol != null) return null
         val regularClass = buildRegularClass {
             moduleData = session.moduleData
@@ -346,14 +333,20 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 isCompanion = true
             }
             name = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-            symbol = FirRegularClassSymbol(classId)
+            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(name))
             superTypeRefs += session.builtinTypes.anyType
             if (with(session) { owner.companionNeedsSerializerFactory }) {
                 val serializerFactoryClassId = ClassId(SerializationPackages.internalPackageFqName, SERIALIZER_FACTORY_INTERFACE_NAME)
                 superTypeRefs += serializerFactoryClassId.constructClassLikeType(emptyArray(), false).toFirResolvedTypeRef()
             }
-        }
+        }.also { it.initLocalAttributeIfNeeded(owner) }
         return regularClass.symbol
+    }
+
+    private fun FirRegularClass.initLocalAttributeIfNeeded(owner: FirRegularClassSymbol) {
+        if (owner.isLocal) {
+            this.containingClassForLocalAttr = owner.toLookupTag()
+        }
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
