@@ -208,6 +208,9 @@ internal val List<IrConstructorCall>.hasAnySerialAnnotation: Boolean
 internal val List<IrConstructorCall>.serialNameValue: String?
     get() = findAnnotation(SerializationAnnotations.serialNameAnnotationFqName)?.getStringConstArgument(0) // @SerialName("foo")
 
+
+val IrClass.primaryConstructorOrFail get() = primaryConstructor ?: error("$this is expected to have a primary constructor")
+
 /**
  * True — ALWAYS
  * False — NEVER

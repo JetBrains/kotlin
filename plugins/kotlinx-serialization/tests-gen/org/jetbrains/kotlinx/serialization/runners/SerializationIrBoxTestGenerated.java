@@ -56,6 +56,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("expectActual.kt")
+    public void testExpectActual() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");
+    }
+
+    @Test
     @TestMetadata("externalSerialierJava.kt")
     public void testExternalSerialierJava() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerialierJava.kt");

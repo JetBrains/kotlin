@@ -199,7 +199,7 @@ open class SerializerIrGenerator(
     fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: IrConstructor) =
         addFunctionBody(typedConstructorDescriptor) { ctor ->
             // generate call to primary ctor to init serialClassDesc and super()
-            val primaryCtor = irClass.constructors.primary
+            val primaryCtor = irClass.primaryConstructorOrFail
             +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
@@ -518,7 +518,7 @@ open class SerializerIrGenerator(
 
             generateGoldenMaskCheck(bitMasks, properties, localSerialDesc.get())
 
-            val ctor: IrConstructorSymbol = serializableIrClass.constructors.primary.symbol
+            val ctor: IrConstructorSymbol = serializableIrClass.primaryConstructorOrFail.symbol
             val params = ctor.owner.valueParameters
 
             val variableByParamReplacer: (ValueParameterDescriptor) -> IrExpression? = { vpd ->
@@ -642,7 +642,7 @@ open class SerializerIrGenerator(
                 // replace origin only for plugin generated serializers
                 irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
             }
-            irClass.addDefaultConstructorIfAbsent(context)
+            irClass.addDefaultConstructorBodyIfAbsent(context)
             irClass.patchDeclarationParents(irClass.parent)
         }
     }
