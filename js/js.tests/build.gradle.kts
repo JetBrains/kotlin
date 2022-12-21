@@ -388,7 +388,7 @@ val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSiz
     configureTestDistribution()
 }
 
-projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+val jsTest = projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false)
     useJUnitPlatform()
 }
@@ -451,7 +451,7 @@ val mochaTest by task<NpmTask> {
 }
 
 val runMocha by tasks.registering {
-    dependsOn(test)
+    dependsOn(jsTest)
     finalizedBy(mochaTest)
 }
 
