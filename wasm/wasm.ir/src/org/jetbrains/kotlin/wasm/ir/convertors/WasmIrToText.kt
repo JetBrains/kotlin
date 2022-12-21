@@ -234,7 +234,8 @@ class WasmIrToText : SExpressionBuilder() {
                             appendStructTypeDeclaration(it)
                         is WasmArrayDeclaration ->
                             appendArrayTypeDeclaration(it)
-                        else -> error("Unexpected GC type: $it")
+                        is WasmFunctionType ->
+                            appendFunctionTypeDeclaration(it)
                     }
                 }
                 importsInOrder.forEach {

@@ -45,7 +45,7 @@ class WasmIrToBinary(
                     when (it) {
                         is WasmStructDeclaration -> appendStructTypeDeclaration(it)
                         is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
-                        is WasmFunctionType -> error("Function type in GC types")
+                        is WasmFunctionType -> appendFunctionTypeDeclaration(it)
                     }
                 }
             }

@@ -203,9 +203,24 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         globals.addAll(globalVTables.elements)
         globals.addAll(globalClassITables.elements.distinct())
 
+        val functionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + masterInitFunctionType
+
+        fun WasmType.canBeRecursive(): Boolean {
+            val heapType = when (this) {
+                is WasmRefNullType -> getHeapType()
+                is WasmRefType -> getHeapType()
+                else -> return false
+            }
+            return heapType is WasmHeapType.Type
+        }
+
+        val (functionTypesWithGcTypes, functionTypesWithoutGc) = functionTypes.partition { functionType ->
+            functionType.parameterTypes.any { it.canBeRecursive() } || functionType.resultTypes.any { it.canBeRecursive() }
+        }
+
         val module = WasmModule(
-            functionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + masterInitFunctionType,
-            gcTypes = typeDeclarations,
+            functionTypes = functionTypesWithoutGc,
+            gcTypes = functionTypesWithGcTypes + typeDeclarations,
             gcTypesInRecursiveGroup = true,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
