@@ -61,6 +61,7 @@ class OptimizationMethodVisitor(
         RedundantGotoMethodTransformer(),
         RedundantNopsCleanupMethodTransformer(),
         NegatedJumpsMethodTransformer(),
+        RedundantCheckcastsBeforeAastoreMethodTransformer,
         MethodVerifier("AFTER optimizations", generationState)
     )
 

@@ -346,12 +346,10 @@ final class Result$Companion$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/function
           ICONST_0
           ANEWARRAY (java/lang/annotation/Annotation)
           INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/annotation/Annotation;)V)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ICONST_0
@@ -536,7 +534,6 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (1)
           ICONST_0
           GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ARETURN
@@ -863,12 +860,10 @@ public final class X$Companion : java/lang/Object {
           ICONST_0
           ANEWARRAY (java/lang/annotation/Annotation)
           INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/annotation/Annotation;)V)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
           ICONST_0
