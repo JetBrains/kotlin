@@ -140,11 +140,11 @@ internal class DependenciesTrackerImpl(private val generationState: NativeGenera
 
         var isNewDependency = usedBitcode.add(library)
         if (!onlyBitcode) {
-            isNewDependency = isNewDependency || usedNativeDependencies.add(library)
+            isNewDependency = usedNativeDependencies.add(library) || isNewDependency
         }
 
         libraryFile?.let {
-            isNewDependency = isNewDependency || usedBitcodeOfFile.add(it)
+            isNewDependency = usedBitcodeOfFile.add(it) || isNewDependency
         }
 
         require(!(sealed && isNewDependency)) { "The dependencies have been sealed off" }
