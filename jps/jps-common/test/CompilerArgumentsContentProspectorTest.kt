@@ -165,6 +165,7 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::noUnifiedNullChecks,
             K2JVMCompilerArguments::useOldInlineClassesManglingScheme,
             K2JVMCompilerArguments::enableJvmPreview,
+            K2JVMCompilerArguments::valueClasses,
         )
 
         private val k2JVMCompilerArgumentsStringProperties = commonCompilerArgumentsStringProperties + listOf(
