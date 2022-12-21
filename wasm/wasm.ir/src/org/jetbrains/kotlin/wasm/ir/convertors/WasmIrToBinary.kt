@@ -35,17 +35,18 @@ class WasmIrToBinary(
         with(module) {
             // type section
             appendSection(1u) {
-                if (module.gcTypesInRecursiveGroup) {
-                    appendVectorSize(1)
-                    b.writeByte(0x4f)
-                }
-                appendVectorSize(functionTypes.size + gcTypes.size)
+                val numRecGroups = if (module.gcTypesInRecursiveGroup) 1 else 0
+                appendVectorSize(functionTypes.size + numRecGroups)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                gcTypes.forEach {
-                    when (it) {
-                        is WasmStructDeclaration -> appendStructTypeDeclaration(it)
-                        is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
-                        is WasmFunctionType -> appendFunctionTypeDeclaration(it)
+                if (module.gcTypesInRecursiveGroup) {
+                    b.writeByte(0x4f)
+                    appendVectorSize(gcTypes.size)
+                    gcTypes.forEach {
+                        when (it) {
+                            is WasmStructDeclaration -> appendStructTypeDeclaration(it)
+                            is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
+                            is WasmFunctionType -> appendFunctionTypeDeclaration(it)
+                        }
                     }
                 }
             }
