@@ -14,13 +14,16 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
@@ -131,6 +134,10 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                     filterNot { function ->
                         function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
                     }
+                }.applyIf(isEnum && isEnumEntriesDisabled()) {
+                    filterNot {
+                        it is KtKotlinPropertySymbol && it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED && it.name == StandardNames.ENUM_ENTRIES
+                    }
                 }
 
             val suppressStatic = isCompanionObject
@@ -146,6 +153,12 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
             result
         }
+    }
+
+    private fun isEnumEntriesDisabled(): Boolean {
+        return (ktModule as? KtSourceModule)
+            ?.languageVersionSettings
+            ?.supportsFeature(LanguageFeature.EnumEntries) != true
     }
 
     context(KtAnalysisSession)
