@@ -25,7 +25,7 @@ class Kapt4Facade(private val testServices: TestServices) :
 
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): Kapt4ContextBinaryArtifact {
         val configurationProvider = testServices.compilerConfigurationProvider
-        val project = configurationProvider.getProject(module)
+//        val project = configurationProvider.getProject(module)
 
         val configuration = configurationProvider.getCompilerConfiguration(module)
         configuration.addKotlinSourceRoots(module.files.filter { it.isKtFile }.map { it.realFile().absolutePath })
