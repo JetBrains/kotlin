@@ -45597,18 +45597,6 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 }
 
                 @Test
-                @TestMetadata("inlinInDefault.kt")
-                public void testInlinInDefault() throws Exception {
-                    runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlinInDefault.kt");
-                }
-
-                @Test
-                @TestMetadata("inlinInDefault2.kt")
-                public void testInlinInDefault2() throws Exception {
-                    runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlinInDefault2.kt");
-                }
-
-                @Test
                 @TestMetadata("inlineAnonymousInDefault.kt")
                 public void testInlineAnonymousInDefault() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineAnonymousInDefault.kt");
@@ -45618,6 +45606,18 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 @TestMetadata("inlineAnonymousInDefault2.kt")
                 public void testInlineAnonymousInDefault2() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineAnonymousInDefault2.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineInDefault.kt")
+                public void testInlineInDefault() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineInDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineInDefault2.kt")
+                public void testInlineInDefault2() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineInDefault2.kt");
                 }
 
                 @Test
