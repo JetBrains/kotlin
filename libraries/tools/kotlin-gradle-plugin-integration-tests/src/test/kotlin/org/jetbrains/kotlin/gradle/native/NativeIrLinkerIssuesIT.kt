@@ -310,7 +310,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
     private fun buildAndPublishLibrary(directoryPrefix: String, projectName: String, localRepo: File) {
         prepareProject(directoryPrefix, projectName, localRepo, useCache = true) {
             setupWorkingDir(enableCacheRedirector = false)
-            build("publish", "-Pkotlin.native.home=${System.getProperty("kotlin.internal.native.test.nativeHome")}") {
+            build("publish") {
                 assertSuccessful()
             }
         }

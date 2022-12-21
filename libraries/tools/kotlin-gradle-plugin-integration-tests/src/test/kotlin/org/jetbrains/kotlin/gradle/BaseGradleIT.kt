@@ -282,6 +282,7 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
+        val kotlinNativeHome: String? = KOTLIN_NATIVE_HOME,
     )
 
     enum class ConfigurationCacheProblems {
@@ -875,6 +876,9 @@ Finished executing task ':$taskName'|
 
             add("-Pkotlin_version=" + options.kotlinVersion)
             add("-Ptest_fixes_version=$KOTLIN_VERSION")
+            options.kotlinNativeHome?.let {
+                add("-Pkotlin.native.home=$it")
+            }
             options.incremental?.let {
                 add("-Pkotlin.incremental=$it")
             }
