@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
@@ -13,9 +14,16 @@ import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
 internal fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
         name: String,
         description: String,
+        preactions: Set<Action<Input, Context>> = emptySet(),
+        postactions: Set<Action<Output, Context>> = emptySet(),
         outputIfNotEnabled: (PhaseConfigurationService, PhaserState<Input>, Context, Input) -> Output,
         op: (Context, Input) -> Output
-): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(name, description) {
+): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
+        name,
+        description,
+        preactions = preactions,
+        postactions = postactions,
+) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
             outputIfNotEnabled(phaseConfig, phaserState, context, input)
 

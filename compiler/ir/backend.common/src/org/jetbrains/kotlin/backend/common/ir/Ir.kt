@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 // This is what Context collects about IR.
-abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: IrModuleFragment) {
+abstract class Ir<out T : CommonBackendContext>(val context: T) {
 
     abstract val symbols: Symbols
 

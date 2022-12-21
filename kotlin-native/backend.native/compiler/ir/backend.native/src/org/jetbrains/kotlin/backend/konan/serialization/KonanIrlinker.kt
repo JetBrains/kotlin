@@ -906,7 +906,7 @@ internal class KonanIrLinker(
         private val fileMap = mutableMapOf<PackageFragmentDescriptor, IrFile>()
 
         private fun getIrFile(packageFragment: PackageFragmentDescriptor): IrFile = fileMap.getOrPut(packageFragment) {
-            IrFileImpl(NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName), packageFragment).also {
+            IrFileImpl(NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName), packageFragment, moduleFragment).also {
                 moduleFragment.files.add(it)
             }
         }

@@ -122,8 +122,12 @@ internal class PhaseEngine<C : PhaseContext>(
 
     fun <Input, Output, P : AbstractNamedCompilerPhase<C, Input, Output>> runPhase(
             phase: P,
-            input: Input
+            input: Input,
+            disable: Boolean = false
     ): Output {
+        if (disable) {
+            return phase.outputIfNotEnabled(phaseConfig, phaserState.changePhaserStateType(), context, input)
+        }
         // We lose sticky postconditions here, but it should be ok, since type is changed.
         return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
     }
@@ -131,4 +135,8 @@ internal class PhaseEngine<C : PhaseContext>(
     fun <Output, P : AbstractNamedCompilerPhase<C, Unit, Output>> runPhase(
             phase: P,
     ): Output = runPhase(phase, Unit)
+
+    fun actionStateBefore(phase: AnyNamedPhase): ActionState = ActionState(phaseConfig, phase, phaserState.phaseCount, BeforeOrAfter.BEFORE)
+
+    fun actionStateAfter(phase: AnyNamedPhase): ActionState = ActionState(phaseConfig, phase, phaserState.phaseCount, BeforeOrAfter.AFTER)
 }

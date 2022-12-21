@@ -33,14 +33,23 @@ data class PsiToIrInput(
         val isProducingLibrary: Boolean,
 )
 
-// TODO: Possible improvement: a separate class for klib output (without irModules and irLinker).
-internal class PsiToIrOutput(
-        val irModules: Map<String, IrModuleFragment>,
+internal sealed class PsiToIrOutput(
         val irModule: IrModuleFragment,
-        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
         val symbols: KonanSymbols,
-        val irLinker: KonanIrLinker?,
-)
+) {
+    class ForBackend(
+            val irModules: Map<String, IrModuleFragment>,
+            irModule: IrModuleFragment,
+            symbols: KonanSymbols,
+            val irLinker: KonanIrLinker,
+    ) : PsiToIrOutput(irModule, symbols)
+
+    class ForKlib(
+            irModule: IrModuleFragment,
+            symbols: KonanSymbols,
+            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    ): PsiToIrOutput(irModule, symbols)
+}
 
 // TODO: Consider component-based approach
 internal interface PsiToIrContext : PhaseContext {

@@ -251,11 +251,9 @@ internal fun PsiToIrContext.psiToIr(
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
 
-    return PsiToIrOutput(
-            modules,
-            mainModule,
-            expectDescriptorToSymbol,
-            symbols,
-            if (isProducingLibrary) null else irDeserializer as KonanIrLinker
-    )
+    return if (isProducingLibrary) {
+        PsiToIrOutput.ForKlib(mainModule, symbols, expectDescriptorToSymbol)
+    } else {
+        PsiToIrOutput.ForBackend(modules, mainModule, symbols, irDeserializer as KonanIrLinker)
+    }
 }

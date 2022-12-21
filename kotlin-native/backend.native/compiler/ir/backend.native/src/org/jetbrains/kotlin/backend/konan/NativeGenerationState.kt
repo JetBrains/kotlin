@@ -97,10 +97,6 @@ internal class NativeGenerationState(
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
-    lateinit var bitcodeFileName: String
-
-    lateinit var compilerOutput: List<ObjectFile>
-
     val coverage by lazy { CoverageManager(this) }
 
     lateinit var objCExport: ObjCExport
@@ -112,27 +108,7 @@ internal class NativeGenerationState(
         verifyModule(llvm.module)
     }
 
-    // TODO: Do we need this function?
-    fun printBitCode() {
-        if (!llvmDelegate.isInitialized()) return
-        separator("BitCode:")
-        LLVMDumpModule(llvm.module)
-    }
-
-    private fun separator(title: String) {
-        println("\n\n--- ${title} ----------------------\n")
-    }
-
     private var isDisposed = false
-
-    // A little hack to make logging work when executing this phase in its parent context.
-    // TODO: A better solution would be a separate logger object or something like that.
-    //  PhaseContext should not be responsible for logging.
-    override var inVerbosePhase: Boolean
-        get() = context.inVerbosePhase
-        set(value) {
-            context.inVerbosePhase = value
-        }
 
     override fun dispose() {
         if (isDisposed) return

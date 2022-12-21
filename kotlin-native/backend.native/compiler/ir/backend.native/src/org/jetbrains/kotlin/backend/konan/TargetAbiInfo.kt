@@ -131,3 +131,16 @@ fun KonanTarget.getARCRetainAutoreleasedReturnValueMarker(): String? = when (thi
     Architecture.ARM32 -> "mov\tr7, r7\t\t// marker for objc_retainAutoreleaseReturnValue"
     else -> null
 }
+
+val KonanTarget.abiInfo: TargetAbiInfo
+    get() = when {
+        this == KonanTarget.MINGW_X64 -> {
+            WindowsX64TargetAbiInfo()
+        }
+        !family.isAppleFamily && architecture == Architecture.ARM64 -> {
+            AAPCS64TargetAbiInfo()
+        }
+        else -> {
+            DefaultTargetAbiInfo()
+        }
+    }

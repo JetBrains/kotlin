@@ -93,7 +93,7 @@ fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrF
         override fun getMemberScope(): MemberScope = MemberScope.Empty
     }
 
-    return IrFileImpl(fileEntry, packageFragmentDescriptor)
+    return IrFileImpl(fileEntry, packageFragmentDescriptor, this)
             .also { this.files += it }
 }
 

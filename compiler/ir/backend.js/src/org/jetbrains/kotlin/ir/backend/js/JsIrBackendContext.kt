@@ -59,7 +59,6 @@ class JsIrBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
-    irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
@@ -193,7 +192,7 @@ class JsIrBackendContext(
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
-    override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
+    override val ir = object : Ir<JsIrBackendContext>(this) {
         override val symbols = object : Symbols(irBuiltIns, symbolTable) {
             private val context = this@JsIrBackendContext
 

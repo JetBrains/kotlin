@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
 
-    private val irBuiltins = context.irModule!!.irBuiltins
+    private val irBuiltins = context.irBuiltIns
     private val symbols = context.ir.symbols
 
     override fun lower(irFile: IrFile) {

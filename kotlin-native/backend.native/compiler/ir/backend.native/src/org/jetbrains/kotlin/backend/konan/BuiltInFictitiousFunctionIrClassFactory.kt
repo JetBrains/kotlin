@@ -113,6 +113,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 error("Module has already been set")
             field = value
             value.files += filesMap.values
+            filesMap.values.forEach { (it as IrFileImpl).module = value }
 //            builtClasses.forEach { it.addFakeOverrides() }
         }
 

@@ -5,16 +5,23 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.changePhaserStateType
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.lower.ImportCachesAbiTransformer
+import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
+import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
+import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
+import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 
 /**
  * Run whole IR lowering pipeline over [irModuleFragment].
@@ -23,23 +30,127 @@ internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment
     val lowerings = getAllLowerings()
     irModuleFragment.files.forEach { file ->
         context.fileLowerState = FileLowerState()
-        lowerings.forEach {
-            runPhase(it, file)
+        lowerings.fold(file) { loweredFile, lowering ->
+            runPhase(lowering, loweredFile)
         }
     }
 }
 
-private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOf<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, Unit>>(
+internal val ReturnsInsertionPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "ReturnsInsertion",
+        description = "Returns insertion for Unit functions",
+        //prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), TODO: if there are no files in the module, this requirement fails.
+        op = { context, irFile -> ReturnsInsertionLowering(context.context).lower(irFile) }
+)
+
+internal val InlineClassPropertyAccessorsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "InlineClassPropertyAccessorsLowering",
+        description = "Inline class property accessors",
+        op = { context, irFile -> InlineClassPropertyAccessorsLowering(context.context).lower(irFile) }
+)
+
+internal val RedundantCoercionsCleaningPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "RedundantCoercionsCleaning",
+        description = "Redundant coercions cleaning",
+        op = { context, irFile -> RedundantCoercionsCleaner(context.context).lower(irFile) }
+)
+
+internal val PropertyAccessorInlinePhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "PropertyAccessorInline",
+        description = "Property accessor inline lowering"
+) { context, irFile ->
+    PropertyAccessorInlineLowering(context.context).lower(irFile)
+}
+
+internal val UnboxInlinePhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile>(
+        name = "UnboxInline",
+        description = "Unbox functions inline lowering"
+) { context, irFile ->
+    UnboxInlineLowering(context.context).lower(irFile)
+}
+
+private val InlinePhase = createFileLoweringPhase(
+        lowering = { context ->
+            object : FileLoweringPass {
+                override fun lower(irFile: IrFile) {
+                    FunctionInlining(context.context, NativeInlineFunctionResolver(context.context, context)).lower(irFile)
+                }
+            }
+        },
+        name = "Inline",
+        description = "Functions inlining",
+//        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
+)
+
+private val DelegationPhase = createFileLoweringPhase(
+        lowering = ::PropertyDelegationLowering,
+        name = "Delegation",
+        description = "Delegation lowering"
+)
+
+private val FunctionReferencePhase = createFileLoweringPhase(
+        lowering = ::FunctionReferenceLowering,
+        name = "FunctionReference",
+        description = "Function references lowering",
+//        prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
+)
+
+private val InventNamesForLocalClasses = createFileLoweringPhase(
+        lowering = ::NativeInventNamesForLocalClasses,
+        name = "InventNamesForLocalClasses",
+        description = "Invent names for local classes and anonymous objects",
+)
+
+private val UseInternalAbiPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>(
+        name = "UseInternalAbi",
+        description = "Use internal ABI functions to access private entities",
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+) { context, file ->
+    ImportCachesAbiTransformer(context).lower(file)
+    file
+}
+
+
+private val ObjectClassesPhase = createFileLoweringPhase(
+        lowering = ::ObjectClassLowering,
+        name = "ObjectClasses",
+        description = "Object classes lowering"
+)
+
+private val CoroutinesPhase = createFileLoweringPhase(
+        lowering = { context ->
+            object : FileLoweringPass {
+                override fun lower(irFile: IrFile) {
+                    NativeSuspendFunctionsLowering(context).lower(irFile)
+                    AddContinuationToNonLocalSuspendFunctionsLowering(context.context).lower(irFile)
+                    NativeAddContinuationToFunctionCallsLowering(context.context).lower(irFile)
+                    AddFunctionSupertypeToSuspendFunctionLowering(context.context).lower(irFile)
+                }
+            }
+        },
+        name = "Coroutines",
+        description = "Coroutines lowering",
+//        prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
+)
+
+private val InteropPhase = createFileLoweringPhase(
+        lowering = ::InteropLowering,
+        name = "Interop",
+        description = "Interop lowering",
+//        prerequisite = setOf(inlinePhase, localFunctionsPhase, functionReferencePhase)
+)
+
+private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOf<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
         convertToNativeGeneration(removeExpectDeclarationsPhase),
         convertToNativeGeneration(stripTypeAliasDeclarationsPhase),
         convertToNativeGeneration(lowerBeforeInlinePhase),
         convertToNativeGeneration(arrayConstructorPhase),
         convertToNativeGeneration(lateinitPhase),
         convertToNativeGeneration(sharedVariablesPhase),
-        convertToNativeGeneration(inventNamesForLocalClasses),
+        InventNamesForLocalClasses,
         convertToNativeGeneration(extractLocalClassesFromInlineBodies),
         convertToNativeGeneration(wrapInlineDeclarationsWithReifiedTypeParametersLowering),
-        convertToNativeGeneration(inlinePhase),
+        InlinePhase,
         convertToNativeGeneration(provisionalFunctionExpressionPhase),
         convertToNativeGeneration(postInlinePhase),
         convertToNativeGeneration(contractsDslRemovePhase),
@@ -60,28 +171,30 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOf<Abstra
         convertToNativeGeneration(dataClassesPhase),
         convertToNativeGeneration(ifNullExpressionsFusionPhase),
         convertToNativeGeneration(testProcessorPhase),
-        convertToNativeGeneration(delegationPhase),
-        convertToNativeGeneration(functionReferencePhase),
+        DelegationPhase,
+        FunctionReferencePhase,
         convertToNativeGeneration(singleAbstractMethodPhase),
         convertToNativeGeneration(enumWhenPhase),
         convertToNativeGeneration(builtinOperatorPhase),
         convertToNativeGeneration(finallyBlocksPhase),
         convertToNativeGeneration(enumClassPhase),
         convertToNativeGeneration(enumUsagePhase),
-        convertToNativeGeneration(interopPhase),
+        InteropPhase,
         convertToNativeGeneration(varargPhase),
         convertToNativeGeneration(kotlinNothingValueExceptionPhase),
-        convertToNativeGeneration(coroutinesPhase),
+        CoroutinesPhase,
         convertToNativeGeneration(typeOperatorPhase),
         convertToNativeGeneration(expressionBodyTransformPhase),
-        convertToNativeGeneration(objectClassesPhase),
+        ObjectClassesPhase,
         convertToNativeGeneration(constantInliningPhase),
         convertToNativeGeneration(staticInitializersPhase),
         convertToNativeGeneration(bridgesPhase),
         convertToNativeGeneration(exportInternalAbiPhase),
-        convertToNativeGeneration(useInternalAbiPhase),
+        UseInternalAbiPhase,
         convertToNativeGeneration(autoboxPhase),
 )
+
+private val fileLoweringActions = setOf<Action<IrFile, NativeGenerationState>>(nativeStateDumper, nativeStateIrValidator)
 
 /**
  * Simplify porting of lowerings from static driver (where lowerings were executed in one big Context)
@@ -89,11 +202,30 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOf<Abstra
  */
 private fun PhaseEngine<NativeGenerationState>.convertToNativeGeneration(
         phase: SameTypeNamedCompilerPhase<Context, IrFile>
-): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, Unit> {
+): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> {
     return createSimpleNamedCompilerPhase(
             phase.name,
             phase.description,
+            preactions = fileLoweringActions,
+            postactions = fileLoweringActions,
+            outputIfNotEnabled = { _, _, _, irFile -> irFile },
             op = { context, irFile -> phase.phaseBody(phaseConfig, phaserState.changePhaserStateType(), context.context, irFile) }
     )
 }
+
+private fun createFileLoweringPhase(
+    name: String,
+    description: String,
+    lowering: (NativeGenerationState) -> FileLoweringPass
+): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+        name,
+        description,
+        preactions = fileLoweringActions,
+        postactions = fileLoweringActions,
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+        op = { context, irFile ->
+            lowering(context).lower(irFile)
+            irFile
+        }
+)
 

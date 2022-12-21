@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
+import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 
-internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
+internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseContext(config), CommonBackendContext {
     abstract override val builtIns: KonanBuiltIns
 
     abstract override val ir: KonanIr
@@ -35,9 +36,6 @@ internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBac
         // TODO: investigate this.
         KonanSharedVariablesManager(this)
     }
-
-    val messageCollector: MessageCollector
-        get() = config.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
         val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))

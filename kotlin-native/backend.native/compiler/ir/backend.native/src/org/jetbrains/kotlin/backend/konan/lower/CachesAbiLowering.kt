@@ -147,10 +147,12 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
     }
 }
 
-internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
-    private val cachesAbiSupport = generationState.context.cachesAbiSupport
-    private val innerClassesSupport = generationState.context.innerClassesSupport
-    private val dependenciesTracker = generationState.dependenciesTracker
+internal class ImportCachesAbiTransformer(
+        private val generationState: NativeGenerationState
+) : FileLoweringPass, IrElementTransformerVoid() {
+    private val cachesAbiSupport get() = generationState.context.cachesAbiSupport
+    private val innerClassesSupport get() = generationState.context.innerClassesSupport
+    private val dependenciesTracker get() = generationState.dependenciesTracker
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
