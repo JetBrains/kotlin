@@ -180,9 +180,13 @@ fun printElements(generationPath: File, model: Model) = sequence {
 
 private fun TypeSpec.Builder.generateElementKDoc(element: Element) {
     addKdoc(buildString {
-        append("A ")
-        append(if (element.isLeaf) "leaf" else "non-leaf")
-        appendLine(" IR tree element.")
+        if (element.kDoc != null) {
+            appendLine(element.kDoc)
+        } else {
+            append("A ")
+            append(if (element.isLeaf) "leaf" else "non-leaf")
+            appendLine(" IR tree element.")
+        }
 
         append("@sample ${element.propertyName}")
     })

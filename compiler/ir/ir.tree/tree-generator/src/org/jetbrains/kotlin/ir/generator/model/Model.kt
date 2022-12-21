@@ -42,6 +42,7 @@ class Element(
     val generationCallback = config.generationCallback
     val suppressPrint = config.suppressPrint
     val propertyName = config.propertyName
+    val kDoc = config.kDoc
 
     override fun toString() = name
 
