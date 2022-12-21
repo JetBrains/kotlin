@@ -192,21 +192,29 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             }
         }
 
-        val typeDeclarations = mutableListOf<WasmTypeDeclaration>()
-        typeDeclarations.addAll(vTableGcTypes.elements)
-        typeDeclarations.addAll(gcTypes.elements)
-        typeDeclarations.addAll(classITableGcType.elements.distinct())
-        typeDeclarations.sortBy(::wasmTypeDeclarationOrderKey)
+        val recGroupTypes = mutableListOf<WasmTypeDeclaration>()
+        recGroupTypes.addAll(vTableGcTypes.elements)
+        recGroupTypes.addAll(this.gcTypes.elements)
+        recGroupTypes.addAll(classITableGcType.elements.distinct())
+        recGroupTypes.sortBy(::wasmTypeDeclarationOrderKey)
 
         val globals = mutableListOf<WasmGlobal>()
         globals.addAll(globalFields.elements)
         globals.addAll(globalVTables.elements)
         globals.addAll(globalClassITables.elements.distinct())
 
+        val allFunctionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + masterInitFunctionType
+
+        // Partition out function types that can't be recursive,
+        // we don't need to put them into a rec group
+        // so that they can be matched with function types from other Wasm modules.
+        val (potentiallyRecursiveFunctionTypes, nonRecursiveFunctionTypes) =
+            allFunctionTypes.partition { it.referencesTypeDeclarations() }
+        recGroupTypes.addAll(potentiallyRecursiveFunctionTypes)
+
         val module = WasmModule(
-            functionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + masterInitFunctionType,
-            gcTypes = typeDeclarations,
-            gcTypesInRecursiveGroup = true,
+            functionTypes = nonRecursiveFunctionTypes,
+            recGroupTypes = recGroupTypes,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
             definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>() + masterInitFunction,
