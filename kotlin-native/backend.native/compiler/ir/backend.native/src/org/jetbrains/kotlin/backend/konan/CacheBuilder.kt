@@ -73,8 +73,8 @@ class CacheBuilder(
                             cachedLibraries.entries.joinToString("\n        ") { "${it.key}: ${it.value}" })
                     configuration.report(CompilerMessageSeverity.LOGGING, "    cache dir: " +
                             libraryCacheDirectory.absolutePath)
-                    put(KonanConfigKeys.TARGET, konanConfig.target.toString())
-                    put(KonanConfigKeys.DEBUG, konanConfig.debug)
+
+                    setupCommonOptionsForCaches(konanConfig)
                     put(KonanConfigKeys.PRODUCE, CompilerOutputKind.STATIC_CACHE)
                     put(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE, libraryPath)
                     put(KonanConfigKeys.NODEFAULTLIBS, true)
@@ -84,17 +84,6 @@ class CacheBuilder(
                     put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
                     put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
                     put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
-
-                    put(KonanConfigKeys.PARTIAL_LINKAGE, konanConfig.partialLinkage)
-                    putIfNotNull(KonanConfigKeys.EXTERNAL_DEPENDENCIES, configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES))
-                    put(BinaryOptions.memoryModel, konanConfig.memoryModel)
-                    put(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
-                    put(BinaryOptions.stripDebugInfoFromNativeLibs, !konanConfig.useDebugInfoInNativeLibs)
-                    put(KonanConfigKeys.ALLOCATION_MODE, konanConfig.allocationMode)
-                    put(KonanConfigKeys.GARBAGE_COLLECTOR, konanConfig.gc)
-                    put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
-                    put(BinaryOptions.freezing, konanConfig.freezing)
-                    put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
                 }
                 caches[library] = libraryCache.absolutePath
             } catch (t: Throwable) {
