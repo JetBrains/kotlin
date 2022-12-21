@@ -515,6 +515,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.classId == StandardClassIds.Array
     }
 
+    override fun KotlinTypeMarker.isVArray(): Boolean {
+        require(this is ConeKotlinType)
+        return this.classId == StandardClassIds.VArray
+    }
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
 

@@ -90,7 +90,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         if (callableMember is FirFunction) {
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-                it.transformVarargTypeToArrayType()
+                it.transformVarargTypeToArrayType(session)
             }
         }
     }

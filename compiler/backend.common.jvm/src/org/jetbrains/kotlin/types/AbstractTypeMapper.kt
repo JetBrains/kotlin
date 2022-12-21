@@ -81,6 +81,10 @@ object AbstractTypeMapper {
                 return mapArrayType(type, sw, context, mode)
             }
 
+            if (type.isVArray()) {
+                return mapVArrayType(type, sw, context, mode)
+            }
+
             if (typeConstructor.isClassTypeConstructor()) {
                 return mapClassType(typeConstructor, mode, type, context, sw)
             }
@@ -142,7 +146,22 @@ object AbstractTypeMapper {
         type: SimpleTypeMarker,
         sw: Writer?,
         context: TypeMappingContext<Writer>,
-        mode: TypeMappingMode
+        mode: TypeMappingMode,
+    ) = mapArrayOrVArrayType(type, sw, context, mode) { it }
+
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapVArrayType(
+        type: SimpleTypeMarker,
+        sw: Writer?,
+        context: TypeMappingContext<Writer>,
+        mode: TypeMappingMode,
+    ) = mapArrayOrVArrayType(type, sw, context, mode) { it.dontWrapInlineClassesMode().dontBoxPrimitivesMode() }
+
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayOrVArrayType(
+        type: SimpleTypeMarker,
+        sw: Writer?,
+        context: TypeMappingContext<Writer>,
+        mode: TypeMappingMode,
+        modeProcessing: (TypeMappingMode) -> TypeMappingMode
     ): Type {
         val typeArgument = type.asArgumentList()[0]
         val (variance, memberType) = when {
@@ -157,7 +176,7 @@ object AbstractTypeMapper {
             arrayElementType = AsmTypes.OBJECT_TYPE
             sw?.writeClass(arrayElementType)
         } else {
-            arrayElementType = mapType(context, memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw)
+            arrayElementType = mapType(context, memberType, modeProcessing(mode.toGenericArgumentMode(variance, ofArray = true)), sw)
         }
         sw?.writeArrayEnd()
         return AsmUtil.getArrayType(arrayElementType)

@@ -54,8 +54,11 @@ fun IrType.isNullable(): Boolean =
 val IrType.isBoxedArray: Boolean
     get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.array.toSafe()
 
+val IrType.isVArray: Boolean
+    get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.vArray.toSafe()
+
 fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
-    if (isBoxedArray) {
+    if (isBoxedArray || isVArray) {
         when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
             is IrTypeProjection ->
                 argument.type

@@ -743,6 +743,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isArray(this)
     }
 
+    override fun KotlinTypeMarker.isVArray(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return KotlinBuiltIns.isVArray(this)
+    }
+
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
         require(this is KotlinType, this::errorMessage)
         return annotations.hasAnnotation(fqName)

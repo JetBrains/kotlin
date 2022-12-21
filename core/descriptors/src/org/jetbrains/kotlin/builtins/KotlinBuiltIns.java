@@ -692,6 +692,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClass(type, FqNames.array);
     }
 
+    public static boolean isVArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FqNames.vArray);
+    }
+
     public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FqNames.array) || getPrimitiveArrayType(descriptor) != null;
     }

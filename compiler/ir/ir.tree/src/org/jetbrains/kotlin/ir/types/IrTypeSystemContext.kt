@@ -443,6 +443,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean =
         (this as IrType).isArray() || isNullableArray()
 
+    override fun KotlinTypeMarker.isVArray(): Boolean =
+        (this as IrType).isVArray
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val symbol = this as IrClassifierSymbol
         return symbol is IrClassSymbol && symbol.owner.let {

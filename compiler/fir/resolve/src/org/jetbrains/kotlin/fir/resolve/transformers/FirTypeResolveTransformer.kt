@@ -136,8 +136,8 @@ open class FirTypeResolveTransformer(
                 .transformBackingField(this, data)
                 .transformAnnotations(this, data)
             if (property.isFromVararg == true) {
-                property.transformTypeToArrayType()
-                property.backingField?.transformTypeToArrayType()
+                property.transformTypeToArrayOrVArrayType(session)
+                property.backingField?.transformTypeToArrayOrVArrayType(session)
                 setAccessorTypesByPropertyType(property)
             }
 
@@ -220,7 +220,7 @@ open class FirTypeResolveTransformer(
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement = whileAnalysing(session, valueParameter) {
         valueParameter.transformReturnTypeRef(this, data)
         valueParameter.transformAnnotations(this, data)
-        valueParameter.transformVarargTypeToArrayType()
+        valueParameter.transformVarargTypeToArrayType(session)
         return valueParameter
     }
 

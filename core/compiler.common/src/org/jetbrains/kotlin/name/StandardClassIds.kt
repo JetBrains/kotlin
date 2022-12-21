@@ -34,6 +34,7 @@ object StandardClassIds {
     val Enum = "Enum".baseId()
     val Annotation = "Annotation".baseId()
     val Array = "Array".baseId()
+    val VArray = "VArray".baseId()
 
     val Boolean = "Boolean".baseId()
     val Char = "Char".baseId()

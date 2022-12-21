@@ -16,6 +16,8 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker
     fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean
 
+    fun KotlinTypeMarker.isVArray(): Boolean
+
     fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean
 
     fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean

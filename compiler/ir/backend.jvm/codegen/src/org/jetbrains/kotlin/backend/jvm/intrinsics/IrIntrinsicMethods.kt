@@ -45,6 +45,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private val intrinsicsMap = (
             listOf(
+                Key(FqName("kotlin.VArray"), null, "set", listOf(intFqn, FqName("T"))) to ArraySet,
+                Key(FqName("kotlin.VArray"), null, "get", listOf(intFqn)) to ArrayGet,
+                Key(FqName("kotlin.VArray"), null, "<init>", listOf(intFqn)) to NewArray,
                 Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
