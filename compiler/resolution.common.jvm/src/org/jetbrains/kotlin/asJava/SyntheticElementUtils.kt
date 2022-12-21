@@ -25,3 +25,12 @@ fun isSyntheticValuesOrValueOfMethod(method: PsiMethod): Boolean {
 
     return false
 }
+
+fun isGetEntriesMethod(method: PsiMethod): Boolean {
+    return with(method) {
+        name == "getEntries" &&
+                parameterList.parametersCount == 0 &&
+                hasModifierProperty(PsiModifier.PUBLIC) &&
+                hasModifierProperty(PsiModifier.STATIC)
+    }
+}
