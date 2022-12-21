@@ -891,6 +891,8 @@ class BodyGenerator(
                                 WasmImmediate.HeapType(WasmHeapType.Type(getReferenceGcType()))
                             WasmImmediateKind.TYPE_IDX ->
                                 WasmImmediate.TypeIdx(getReferenceGcType())
+                            WasmImmediateKind.MEMORY_IDX ->
+                                WasmImmediate.MemoryIdx(0)
 
                             else ->
                                 error("Immediate $imm is unsupported")
