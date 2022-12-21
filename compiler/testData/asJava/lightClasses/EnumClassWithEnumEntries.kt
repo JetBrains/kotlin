@@ -1,5 +1,7 @@
 // one.MyEnumClass
 // !LANGUAGE: +EnumEntries
+// IDEA tests don't support !LANGUAGE directive:
+// COMPILER_ARGUMENTS: -XXLanguage:+EnumEntries
 
 package one
 
