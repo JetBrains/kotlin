@@ -1,4 +1,4 @@
-// JVM backend has `a` visible in the `compute` finally block. It shouldn't be.
+// IGNORE_INLINER: IR
 // IGNORE_BACKEND: JVM
 // WITH_STDLIB
 // FILE: test.kt

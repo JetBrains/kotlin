@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.extractDeclarationWhereGivenElementWasInlined
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.util.isLambdaInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.isAdaptedFunctionReference
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.fileParentBeforeInline
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
@@ -17,9 +17,18 @@ import org.jetbrains.kotlin.codegen.inline.SourceMapCopier
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.inline.SourcePosition
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.util.fileEntry
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Label
 
@@ -190,32 +199,7 @@ class LineNumberMapper(
     }
 
     private fun getDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
-        val originalInlinedElement = ((inlinedElement as? IrAttributeContainer)?.attributeOwnerId ?: inlinedElement)
-        for (block in smapStack.map { it.inlinedBlock }.filter { it.isFunctionInlining() }) {
-            block.inlineCall.getAllArgumentsWithIr().forEach {
-                // pretty messed up thing, this is needed to get the original expression that was inlined
-                // it was changed a couple of times after all lowerings, so we must get `attributeOwnerId` to ensure that this is original
-                val actualArg = if (it.second == null) {
-                    val blockWithClass = it.first.defaultValue?.expression?.attributeOwnerId as? IrBlock
-                    blockWithClass?.statements?.firstOrNull() as? IrClass
-                } else {
-                    it.second
-                }
-
-                val originalActualArg = actualArg?.attributeOwnerId as? IrExpression
-                val extractedAnonymousFunction = if (originalActualArg?.isAdaptedFunctionReference() == true) {
-                    (originalActualArg as IrBlock).statements.last() as IrFunctionReference
-                } else {
-                    originalActualArg
-                }
-
-                if (extractedAnonymousFunction?.attributeOwnerId == originalInlinedElement) {
-                    return block.inlineDeclaration
-                }
-            }
-        }
-
-        return null
+        return smapStack.map { it.inlinedBlock }.extractDeclarationWhereGivenElementWasInlined(inlinedElement)
     }
 
     private fun IrInlinedFunctionBlock.isInvokeOnDefaultArg(): Boolean {

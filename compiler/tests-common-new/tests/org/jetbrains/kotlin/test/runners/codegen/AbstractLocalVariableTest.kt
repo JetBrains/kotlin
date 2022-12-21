@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -39,6 +39,14 @@ open class AbstractIrLocalVariableTest : AbstractLocalVariableTestBase<ClassicFr
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureDumpHandlersForCodegenTest()
+    }
+}
+
+open class AbstractIrLocalVariableBytecodeInlinerTest : AbstractIrLocalVariableTest()
+open class AbstractIrLocalVariableIrInlinerTest : AbstractIrLocalVariableTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useIrInliner()
     }
 }
 

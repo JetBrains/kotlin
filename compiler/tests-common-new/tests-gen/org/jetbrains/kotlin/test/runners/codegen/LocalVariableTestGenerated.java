@@ -80,6 +80,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("lambdaWithLambdaParameter.kt")
+    public void testLambdaWithLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/localVariables/lambdaWithLambdaParameter.kt");
+    }
+
+    @Test
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/localFun.kt");
@@ -170,9 +176,15 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
-    @TestMetadata("tryFinally6.kt")
-    public void testTryFinally6() throws Exception {
-        runTest("compiler/testData/debug/localVariables/tryFinally6.kt");
+    @TestMetadata("tryFinally6_1.kt")
+    public void testTryFinally6_1() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally6_1.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally6_2.kt")
+    public void testTryFinally6_2() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally6_2.kt");
     }
 
     @Test
@@ -392,6 +404,24 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
         @TestMetadata("mergeLvt.kt")
         public void testMergeLvt() throws Exception {
             runTest("compiler/testData/debug/localVariables/suspend/mergeLvt.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedInsideSuspendUnintercepted.kt")
+        public void testNestedInsideSuspendUnintercepted() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/nestedInsideSuspendUnintercepted.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedSuspendUnintercepted.kt")
+        public void testNestedSuspendUnintercepted() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/nestedSuspendUnintercepted.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedSuspendUninterceptedWithDeepLambdaCall.kt")
+        public void testNestedSuspendUninterceptedWithDeepLambdaCall() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/nestedSuspendUninterceptedWithDeepLambdaCall.kt");
         }
 
         @Test
