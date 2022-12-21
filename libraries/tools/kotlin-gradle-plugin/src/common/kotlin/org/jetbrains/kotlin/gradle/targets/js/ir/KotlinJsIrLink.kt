@@ -104,6 +104,13 @@ abstract class KotlinJsIrLink @Inject constructor(
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
             val newArgs = K2JSCompilerArguments()
+            // moduleName can start with @ for group of NPM packages
+            // but args parsing @ as start of argfile
+            // so WA we provide moduleName as one parameter
+            if (args.moduleName != null) {
+                args.freeArgs += "-ir-output-name=${args.moduleName}"
+                args.moduleName = null
+            }
             parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
             it.report(
                 StringMetrics.JS_OUTPUT_GRANULARITY,
