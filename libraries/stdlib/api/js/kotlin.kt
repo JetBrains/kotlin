@@ -6,7 +6,8 @@ public val kotlin.Char.code: kotlin.Int { get; }
 
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
-public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
+/*∆*/ public val @receiver:kotlin.internal.AccessibleLateinitPropertyLiteral
+/*∆*/ kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
@@ -1879,6 +1880,7 @@ public final class KotlinVersion : kotlin.Comparable<kotlin.KotlinVersion> {
     public open override fun toString(): kotlin.String
 
     public companion object of KotlinVersion {
+/*∆*/         @field:kotlin.jvm.JvmField
         public final val CURRENT: kotlin.KotlinVersion { get; }
 
         public const final val MAX_COMPONENT_VALUE: kotlin.Int = 255 { get; }
