@@ -148,4 +148,6 @@ private fun Project.registerVariantImplementations() {
         ConfigurationTimePropertiesAccessorG71.ConfigurationTimePropertiesAccessorVariantFactoryG71()
     factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
         MppTestReportHelperG71.MppTestReportHelperVariantFactoryG71()
+    factories[KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class] =
+        KotlinTestReportCompatibilityHelperG71.KotlinTestReportCompatibilityHelperVariantFactoryG71()
 }

@@ -13,6 +13,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinTestReportCompatibilityHelper
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -85,15 +87,21 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
             aggregate.description = description
             aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
-            aggregate.destinationDir = project.testReportsDir.resolve(reportName)
+            val compatibilityHelper = project.gradle
+                .variantImplementationFactory<KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory>()
+                .getInstance(project.objects)
+
+            compatibilityHelper.setDestinationDirectory(aggregate, project.testReportsDir.resolve(reportName))
 
             val isIdeaActive = project.readSystemPropertyAtConfigurationTime("idea.active").isPresent
 
             if (isIdeaActive) {
                 aggregate.extensions.extraProperties.set("idea.internal.test", true)
             }
+            aggregate.htmlReportFile.value(compatibilityHelper.getDestinationDirectory(aggregate).file("index.html")).disallowChanges()
             aggregate.usesService(testReportService)
             aggregate.testReportServiceProvider.value(testReportService).finalizeValueOnRead()
+            aggregate.testReportCompatibilityHelper.value(compatibilityHelper).finalizeValueOnRead()
 
             project.gradle.taskGraph.whenReady { graph ->
                 aggregate.maybeOverrideReporting(graph)

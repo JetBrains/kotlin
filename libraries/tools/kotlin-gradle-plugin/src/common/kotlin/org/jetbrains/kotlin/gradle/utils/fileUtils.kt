@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -114,3 +115,5 @@ fun contentEquals(file1: File, file2: File): Boolean {
         }
     }
 }
+
+internal fun RegularFile.toUri() = asFile.toPath().toUri()

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.GradleException
 import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -16,10 +17,10 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.*
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinTestReportCompatibilityHelper
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.File
-import java.net.URI
+import org.jetbrains.kotlin.gradle.utils.toUri
 
 /**
  * Aggregates tests reports for kotlin test tasks added by [registerTestTask].
@@ -77,6 +78,9 @@ abstract class KotlinTestReport : TestReport() {
     private val hasFailedTests: Boolean
         get() = testReportService.hasFailedTests(path)
 
+    @get:Internal
+    internal abstract val testReportCompatibilityHelper: Property<KotlinTestReportCompatibilityHelper>
+
     private fun computeAllParentTasksPaths(): List<String> {
         val allParents = mutableListOf<String>()
         var cur: KotlinTestReport? = this
@@ -130,15 +134,17 @@ abstract class KotlinTestReport : TestReport() {
     }
 
     private fun reportOn(task: AbstractTestTask) {
-        reportOn(task.binaryResultsDirectory)
+        testReportCompatibilityHelper.get().addTestResultsFrom(this, task)
     }
 
+    @get:Internal
+    abstract val htmlReportFile: RegularFileProperty
+
+    @Suppress("unused")
+    @Deprecated("Use `htmlReportFile` instead", ReplaceWith("htmlReportFile"))
+    @get:Internal
     open val htmlReportUrl: String?
-        @Internal get() = destinationDir?.let { asClickableFileUrl(it.resolve("index.html")) }
-
-    private fun asClickableFileUrl(path: File): String {
-        return URI("file", "", path.toURI().path, null, null).toString()
-    }
+        get() = htmlReportFile.orNull?.toUri().toString()
 
     @TaskAction
     fun checkFailedTests() {
@@ -157,9 +163,8 @@ abstract class KotlinTestReport : TestReport() {
     private fun getFailingTestsMessage(): String {
         val message = StringBuilder("There were failing tests.")
 
-        val reportUrl = htmlReportUrl
-        if (reportUrl != null) {
-            message.append(" See the report at: $reportUrl")
+        if (htmlReportFile.isPresent) {
+            message.append(" See the report at: ${htmlReportFile.get().toUri()}")
         }
         return message.toString()
     }
