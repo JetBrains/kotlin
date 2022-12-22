@@ -18,14 +18,14 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
         run {
             testClass<AbstractSymbolLightClassesForSourceTest> {
                 model(
-                    "asJava/lightClasses",
+                    "asJava/lightClasses/lightClasses",
                     pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 )
             }
 
             testClass<AbstractSymbolLightClassesForLibraryTest> {
                 model(
-                    "asJava/lightClasses",
+                    "asJava/lightClasses/lightClasses",
                     excludeDirs = listOf("compilationErrors"),
                     pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 )
@@ -33,14 +33,14 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
 
             testClass<AbstractSymbolLightClassesParentingForSourceTest> {
                 model(
-                    "asJava/lightClasses",
+                    "asJava/lightClasses/lightClasses",
                     pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 )
             }
 
             testClass<AbstractSymbolLightClassesParentingForLibraryTest> {
                 model(
-                    "asJava/lightClasses",
+                    "asJava/lightClasses/lightClasses",
                     excludeDirs = listOf("compilationErrors"),
                     pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 )
@@ -49,21 +49,21 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
 
         run {
             testClass<AbstractSymbolLightClassesLoadingForSourceTest> {
-                model("asJava/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("asJava/lightClasses/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSymbolLightClassesLoadingForLibraryTest> {
-                model("asJava/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("asJava/lightClasses/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
 
         run {
             testClass<AbstractSymbolLightClassesFacadeForSourceTest> {
-                model("asJava/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("asJava/lightClasses/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSymbolLightClassesFacadeForLibraryTest> {
-                model("asJava/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("asJava/lightClasses/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
     }

@@ -282,7 +282,11 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractCompilerLightClassTest> {
-                model("asJava/lightClasses", excludeDirs = listOf("local", "ideRegression"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "asJava/lightClasses/lightClasses",
+                    excludeDirs = listOf("local", "ideRegression"),
+                    pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME,
+                )
             }
 
             testClass<AbstractTypeBindingTest> {
