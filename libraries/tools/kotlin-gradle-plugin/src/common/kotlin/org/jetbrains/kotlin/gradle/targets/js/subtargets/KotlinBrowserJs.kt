@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
+import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
@@ -43,9 +44,9 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
+    private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
+    private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
+    private val dceConfigurations: MutableList<Action<KotlinJsDce>> = mutableListOf()
     private val distribution: Distribution = DefaultDistribution(project)
     private val propertiesProvider = PropertiesProvider(project)
     private val webpackMajorVersion
@@ -60,37 +61,37 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
-    override fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
+    override fun commonWebpackConfig(body: Action<KotlinWebpackConfig>) {
         webpackTaskConfigurations.add {
-            webpackConfigApplier(body)
+            it.webpackConfigApplier(body)
         }
         runTaskConfigurations.add {
-            webpackConfigApplier(body)
+            it.webpackConfigApplier(body)
         }
         testTask {
-            onTestFrameworkSet {
+            it.onTestFrameworkSet {
                 if (it is KotlinKarma) {
-                    it.webpackConfig.body()
+                    body.execute(it.webpackConfig)
                 }
             }
         }
     }
 
-    override fun runTask(body: KotlinWebpack.() -> Unit) {
+    override fun runTask(body: Action<KotlinWebpack>) {
         runTaskConfigurations.add(body)
     }
 
     @ExperimentalDistributionDsl
-    override fun distribution(body: Distribution.() -> Unit) {
-        distribution.body()
+    override fun distribution(body: Action<Distribution>) {
+        body.execute(distribution)
     }
 
-    override fun webpackTask(body: KotlinWebpack.() -> Unit) {
+    override fun webpackTask(body: Action<KotlinWebpack>) {
         webpackTaskConfigurations.add(body)
     }
 
     @ExperimentalDceDsl
-    override fun dceTask(body: KotlinJsDce.() -> Unit) {
+    override fun dceTask(body: Action<KotlinJsDce>) {
         dceConfigurations.add(body)
     }
 
@@ -275,7 +276,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         dceTaskProvider: TaskProvider<KotlinJsDceTask>,
         devDceTaskProvider: TaskProvider<KotlinJsDceTask>,
         mode: KotlinJsBinaryMode,
-        configurationActions: List<KotlinWebpack.() -> Unit>,
+        configurationActions: List<Action<KotlinWebpack>>,
         nodeJs: NodeJsRootExtension
     ) {
         dependsOn(
@@ -293,20 +294,24 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         dependsOn(actualDceTaskProvider)
 
-        entryProperty.set(
+        inputFilesDirectory.set(
             actualDceTaskProvider.flatMap { dceTask ->
                 compilation.compileTaskProvider.flatMap { compileTask ->
-                    dceTask.destinationDirectory.file(
-                        compileTask.outputFileProperty.map { it.name }
-                    )
+                    dceTask.destinationDirectory
                 }
+            }
+        )
+
+        entryModuleName.set(
+            compilation.compileTaskProvider.flatMap { compileTask ->
+                compileTask.outputFileProperty.map { it.nameWithoutExtension }
             }
         )
 
         resolveFromModulesFirst = true
 
         configurationActions.forEach { configure ->
-            configure()
+            configure.execute(this)
         }
     }
 
@@ -331,7 +336,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 it.dceOptions.devMode = true
             } else {
                 dceConfigurations.forEach { configure ->
-                    it.configure()
+                    configure.execute(it)
                 }
             }
 

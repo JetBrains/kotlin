@@ -84,7 +84,7 @@ class KotlinKarma(
         devtool = null,
         export = false,
         progressReporter = true,
-        progressReporterPathFilter = nodeRootPackageDir.absolutePath,
+        progressReporterPathFilter = nodeRootPackageDir,
         webpackMajorVersion = webpackMajorVersion,
         rules = project.objects.webpackRulesContainer(),
     )

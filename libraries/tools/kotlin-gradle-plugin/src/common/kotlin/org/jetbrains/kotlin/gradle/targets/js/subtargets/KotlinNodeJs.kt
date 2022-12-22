@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
@@ -24,16 +25,16 @@ abstract class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
 
     private val runTaskName = disambiguateCamelCased("run")
 
-    override fun runTask(body: NodeJsExec.() -> Unit) {
+    override fun runTask(body: Action<NodeJsExec>) {
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
     @ExperimentalDistributionDsl
-    override fun distribution(body: Distribution.() -> Unit) {
+    override fun distribution(body: Action<Distribution>) {
         TODO("Not yet implemented")
     }
 
-    override fun testTask(body: KotlinJsTest.() -> Unit) {
+    override fun testTask(body: Action<KotlinJsTest>) {
         super<KotlinJsSubTarget>.testTask(body)
     }
 

@@ -399,6 +399,30 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("webpack must consider changes in dependencies in up-to-date")
+    @GradleTest
+    fun testWebpackConsiderChangesInDependencies(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            projectPath.resolve("app/src/main/kotlin/App.kt").modify {
+                it.replace("require(\"css/main.css\")", "")
+            }
+
+            build("runWebpackResult") {
+                assertOutputContains("Sheldon: 73")
+            }
+
+            projectPath.resolve("base/src/main/kotlin/Base.kt").modify {
+                it.replace("73", "37")
+            }
+
+            build("runWebpackResult") {
+                assertOutputContains("Sheldon: 37")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
