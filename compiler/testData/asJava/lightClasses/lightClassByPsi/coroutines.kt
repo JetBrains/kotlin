@@ -1,4 +1,3 @@
-//RELEASE_COROUTINE_NEEDED
 class Foo {
   suspend fun doSomething(foo: Foo): Bar { TODO() }
 }
