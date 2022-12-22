@@ -41,7 +41,7 @@ object TypedEqualsApplicabilityChecker : DeclarationChecker {
             context.trace.report(
                 Errors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION.on(
                     annotationEntry,
-                    "parent class must be annotated by @AllowTypedEquals"
+                    "containing class must be annotated by @AllowTypedEquals"
                 )
             )
             return
