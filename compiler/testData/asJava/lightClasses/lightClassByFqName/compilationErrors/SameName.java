@@ -20,5 +20,4 @@ public final class A /* A*/ {
   public final void f(int, double);//  f(int, double)
 
   public final void f(int, double);//  f(int, double)
-
 }

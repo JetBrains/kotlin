@@ -12,5 +12,4 @@ public final class A /* p.A*/ {
   public final int getProperty();//  getProperty()
 
   public final void memberFun();//  memberFun()
-
 }

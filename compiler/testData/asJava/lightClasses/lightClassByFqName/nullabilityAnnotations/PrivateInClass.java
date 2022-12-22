@@ -8,5 +8,4 @@ public final class PrivateInClass /* PrivateInClass*/ {
   private final java.lang.String getNn();//  getNn()
 
   private final void setNn(java.lang.String);//  setNn(java.lang.String)
-
 }

@@ -7,26 +7,25 @@ public final class A /* A*/ {
 
   public  A();//  .ctor()
 
+  public static final class Companion /* A.Companion*/ {
+    @kotlin.jvm.JvmName()
+    public final void f4();//  f4()
 
-public static final class Companion /* A.Companion*/ {
-  @kotlin.jvm.JvmName()
-  public final void f4();//  f4()
+    @kotlin.jvm.JvmName(name = "realName")
+    public final void realName();//  realName()
 
-  @kotlin.jvm.JvmName(name = "realName")
-  public final void realName();//  realName()
+    @kotlin.jvm.JvmName(name = 1)
+    public final void f2();//  f2()
 
-  @kotlin.jvm.JvmName(name = 1)
-  public final void f2();//  f2()
+    @kotlin.jvm.JvmOverloads()
+    public final void f5();//  f5()
 
-  @kotlin.jvm.JvmOverloads()
-  public final void f5();//  f5()
+    @kotlin.jvm.JvmOverloads()
+    public final void f6();//  f6()
 
-  @kotlin.jvm.JvmOverloads()
-  public final void f6();//  f6()
+    @kotlin.jvm.JvmStatic()
+    public final void f3();//  f3()
 
-  @kotlin.jvm.JvmStatic()
-  public final void f3();//  f3()
-
-  private  Companion();//  .ctor()
-
-}}
+    private  Companion();//  .ctor()
+  }
+}

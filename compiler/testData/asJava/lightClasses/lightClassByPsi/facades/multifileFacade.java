@@ -10,5 +10,4 @@ public final class multifileFacade /* multifileFacade*/ {
   public static final int getX();//  getX()
 
   public static final int getY();//  getY()
-
 }

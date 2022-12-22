@@ -3,5 +3,4 @@ public final class A /* a.A*/ {
   public final void f();//  f()
 
   public  A();//  .ctor()
-
 }

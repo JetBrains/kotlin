@@ -4,5 +4,4 @@ public final class multifileFacade /* multifileFacade*/ {
   public static final int foo();//  foo()
 
   public static final int getX();//  getX()
-
 }

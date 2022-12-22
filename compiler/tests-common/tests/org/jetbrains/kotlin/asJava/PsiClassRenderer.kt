@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignature
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
 
@@ -45,37 +48,40 @@ class PsiClassRenderer private constructor(
             PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
     }
 
-    private fun renderClass(psiClass: PsiClass): String =
-        buildString {
-            val classWord = when {
-                psiClass.isAnnotationType -> "@interface"
-                psiClass.isInterface -> "interface"
-                psiClass.isEnum -> "enum"
-                else -> "class"
-            }
+    private fun PrettyPrinter.renderClass(psiClass: PsiClass) {
+        val classWord = when {
+            psiClass.isAnnotationType -> "@interface"
+            psiClass.isInterface -> "interface"
+            psiClass.isEnum -> "enum"
+            else -> "class"
+        }
 
-            append(psiClass.renderModifiers())
-            append("$classWord ")
-            append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
-            append(psiClass.typeParameters.renderTypeParams())
-            append(psiClass.extendsList.renderRefList("extends"))
-            append(psiClass.implementsList.renderRefList("implements"))
-            appendLine(" {")
-
+        append(psiClass.renderModifiers())
+        append("$classWord ")
+        append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
+        append(psiClass.typeParameters.renderTypeParams())
+        append(psiClass.extendsList.renderRefList("extends"))
+        append(psiClass.implementsList.renderRefList("implements"))
+        appendLine(" {")
+        withIndent {
             if (psiClass.isEnum) {
-                append(
-                    psiClass.fields
-                        .filterIsInstance<PsiEnumConstant>()
-                        .filter { membersFilter.includeEnumConstant(it) }
-                        .joinToString(",\n") { it.renderEnumConstant() }.prependDefaultIndent()
-                )
+                psiClass.fields
+                    .filterIsInstance<PsiEnumConstant>()
+                    .filter { membersFilter.includeEnumConstant(it) }
+                    .joinTo(this, ",\n") { it.renderEnumConstant() }
+
                 append(";\n\n")
             }
 
-            append(psiClass.renderMembers())
-
-            append("}")
+            renderMembers(psiClass)
         }
+
+        append("}")
+    }
+
+    private fun renderClass(psiClass: PsiClass): String = prettyPrint {
+        renderClass(psiClass)
+    }
 
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
     private fun PsiType.renderType(sb: StringBuffer) {
@@ -197,50 +203,49 @@ class PsiClassRenderer private constructor(
             .joinToString(separator = " ", postfix = " ")
             .takeIf { it.isNotBlank() }
             ?: ""
-        val initializingClass = initializingClass ?: return "$annotations$name"
 
-        return buildString {
+        val initializingClass = initializingClass ?: return "$annotations$name"
+        return prettyPrint {
             append(annotations)
             appendLine("$name {")
-            append(initializingClass.renderMembers())
+            renderMembers(initializingClass)
             append("}")
         }
     }
 
-    private fun PsiClass.renderMembers(): String {
-        return buildString {
-            appendSorted(
-                fields
-                    .filterNot { it is PsiEnumConstant }
-                    .filter { membersFilter.includeField(it) }
-                    .map { it.renderVar().prependDefaultIndent() + ";\n\n" }
-            )
+    private fun PrettyPrinter.renderMembers(psiClass: PsiClass) {
+        var wasRendered = false
+        val fields = psiClass.fields.filterNot { it is PsiEnumConstant }.filter { membersFilter.includeField(it) }
+        appendSorted(fields, wasRendered) {
+            it.renderVar() + ";"
+        }
 
-            appendSorted(
-                methods
-                    .filter { membersFilter.includeMethod(it) }
-                    .map { it.renderMethod().prependDefaultIndent() + "\n\n" }
-            )
+        fields.ifNotEmpty { wasRendered = true }
+        val methods = psiClass.methods.filter { membersFilter.includeMethod(it) }
+        appendSorted(methods, wasRendered) {
+            it.renderMethod()
+        }
 
-            appendSorted(
-                innerClasses
-                    .filter { membersFilter.includeClass(it) }
-                    .map {
-                        appendLine()
-                        if (renderInner)
-                            renderClass(it, renderInner)
-                        else
-                            "class ${it.name} ...\n\n".prependDefaultIndent()
-                    }
-            )
+        methods.ifNotEmpty { wasRendered = true }
+        val classes = psiClass.innerClasses.filter { membersFilter.includeClass(it) }
+        appendSorted(classes, wasRendered) {
+            if (renderInner)
+                renderClass(it, renderInner)
+            else
+                "class ${it.name} ..."
+        }
+
+        classes.ifNotEmpty { wasRendered = true }
+        if (wasRendered) {
+            appendLine()
         }
     }
 
-    private fun StringBuilder.appendSorted(list: List<String>) {
-        append(list.sorted().joinToString(""))
+    private fun <T> PrettyPrinter.appendSorted(list: List<T>, addPrefix: Boolean, render: (T) -> String) {
+        if (list.isEmpty()) return
+        val prefix = if (addPrefix) "\n\n" else ""
+        list.map(render).sorted().joinTo(this, separator = "\n\n", prefix = prefix)
     }
-
-    private fun String.prependDefaultIndent() = prependIndent("  ")
 
     private fun PsiAnnotation.renderAnnotation(): String {
 

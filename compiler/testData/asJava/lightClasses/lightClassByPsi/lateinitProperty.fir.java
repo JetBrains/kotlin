@@ -26,7 +26,6 @@ public class A /* A*/ {
   public final void setA(@org.jetbrains.annotations.NotNull() java.lang.String);//  setA(java.lang.String)
 
   public final void setD(@org.jetbrains.annotations.NotNull() java.lang.String);//  setD(java.lang.String)
-
 }
 
 public class B /* B*/ {
@@ -57,7 +56,6 @@ public class B /* B*/ {
   public final void setA$light_idea_test_case(@org.jetbrains.annotations.NotNull() java.lang.String);//  setA$light_idea_test_case(java.lang.String)
 
   public final void setD$light_idea_test_case(@org.jetbrains.annotations.NotNull() java.lang.String);//  setD$light_idea_test_case(java.lang.String)
-
 }
 
 public class C /* C*/ {
@@ -81,7 +79,6 @@ public class C /* C*/ {
   protected final void setC(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC(java.lang.String)
 
   public  C();//  .ctor()
-
 }
 
 public class D /* D*/ {
@@ -90,5 +87,4 @@ public class D /* D*/ {
   private java.lang.String b;
 
   public  D();//  .ctor()
-
 }

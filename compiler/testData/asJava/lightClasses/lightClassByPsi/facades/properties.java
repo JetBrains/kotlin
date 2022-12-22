@@ -171,5 +171,4 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final void setSubject(error.NonExistentClass);//  setSubject(error.NonExistentClass)
 
   public static final void setValue(error.NonExistentClass, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(error.NonExistentClass, kotlin.reflect.KProperty<?>, int)
-
 }

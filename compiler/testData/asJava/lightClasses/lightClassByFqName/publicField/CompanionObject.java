@@ -8,8 +8,7 @@ public final class C /* C*/ {
 
   public  C();//  .ctor()
 
-
-public static final class Companion /* C.Companion*/ {
-  private  Companion();//  .ctor()
-
-}}
+  public static final class Companion /* C.Companion*/ {
+    private  Companion();//  .ctor()
+  }
+}

@@ -10,5 +10,4 @@ public final class TestClass /* TestClass*/ {
   public final int getHello();//  getHello()
 
   public final void setHello(@Anno() int);//  setHello(int)
-
 }

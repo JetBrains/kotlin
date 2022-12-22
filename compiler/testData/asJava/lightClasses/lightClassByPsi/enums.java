@@ -15,7 +15,6 @@ public enum Direction /* Direction*/ {
   public static Direction[] values();//  values()
 
   private  Direction();//  .ctor()
-
 }
 
 public enum Color /* Color*/ {
@@ -36,23 +35,20 @@ public enum Color /* Color*/ {
   private  Color(int);//  .ctor(int)
 
   public final int getRgb();//  getRgb()
-
 }
 
 public enum ProtocolState /* ProtocolState*/ {
   WAITING {
-     WAITING();//  .ctor()
+   WAITING();//  .ctor()
 
-    @org.jetbrains.annotations.NotNull()
-    public ProtocolState signal();//  signal()
-
+  @org.jetbrains.annotations.NotNull()
+  public ProtocolState signal();//  signal()
   },
   TALKING {
-     TALKING();//  .ctor()
+   TALKING();//  .ctor()
 
-    @org.jetbrains.annotations.NotNull()
-    public ProtocolState signal();//  signal()
-
+  @org.jetbrains.annotations.NotNull()
+  public ProtocolState signal();//  signal()
   };
 
   @org.jetbrains.annotations.NotNull()
@@ -66,20 +62,16 @@ public enum ProtocolState /* ProtocolState*/ {
 
   private  ProtocolState();//  .ctor()
 
-
-
   class TALKING ...
 
-    class WAITING ...
-
-  }
+  class WAITING ...
+}
 
 public static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolState {
    WAITING();//  .ctor()
 
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
-
 }
 
 public static final class TALKING /* ProtocolState.TALKING*/ extends ProtocolState {
@@ -87,23 +79,20 @@ public static final class TALKING /* ProtocolState.TALKING*/ extends ProtocolSta
 
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
-
 }
 
 public enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<java.lang.Integer>, java.util.function.IntBinaryOperator {
   PLUS {
-     PLUS();//  .ctor()
+   PLUS();//  .ctor()
 
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.Integer apply(int, int);//  apply(int, int)
-
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
   },
   TIMES {
-     TIMES();//  .ctor()
+   TIMES();//  .ctor()
 
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.Integer apply(int, int);//  apply(int, int)
-
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
   };
 
   @org.jetbrains.annotations.NotNull()
@@ -116,20 +105,16 @@ public enum IntArithmetics /* IntArithmetics*/ implements java.util.function.Bin
 
   public int applyAsInt(int, int);//  applyAsInt(int, int)
 
-
-
   class PLUS ...
 
-    class TIMES ...
-
-  }
+  class TIMES ...
+}
 
 public static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
    PLUS();//  .ctor()
 
   @org.jetbrains.annotations.NotNull()
   public java.lang.Integer apply(int, int);//  apply(int, int)
-
 }
 
 public static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
@@ -137,7 +122,6 @@ public static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics
 
   @org.jetbrains.annotations.NotNull()
   public java.lang.Integer apply(int, int);//  apply(int, int)
-
 }
 
 public final class C /* C*/ {
@@ -148,5 +132,4 @@ public final class C /* C*/ {
   public final Direction getEnumConst();//  getEnumConst()
 
   public  C();//  .ctor()
-
 }

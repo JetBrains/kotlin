@@ -5,5 +5,4 @@ public final class JvmFieldKt /* JvmFieldKt*/ {
 
   @kotlin.jvm.JvmField()
   public static int b = 1 /* initializer type: int */;
-
 }

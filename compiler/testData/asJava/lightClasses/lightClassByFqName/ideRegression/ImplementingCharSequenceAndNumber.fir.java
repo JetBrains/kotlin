@@ -1,46 +1,45 @@
 public final class Container /* p1.Container*/ {
   public  Container();//  .ctor()
 
+  public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.Number {
+    @java.lang.Override()
+    public byte toByte();//  toByte()
 
+    @java.lang.Override()
+    public char toChar();//  toChar()
 
-public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.Number {
-  @java.lang.Override()
-  public byte toByte();//  toByte()
+    @java.lang.Override()
+    public double toDouble();//  toDouble()
 
-  @java.lang.Override()
-  public char toChar();//  toChar()
+    @java.lang.Override()
+    public float toFloat();//  toFloat()
 
-  @java.lang.Override()
-  public double toDouble();//  toDouble()
+    @java.lang.Override()
+    public int toInt();//  toInt()
 
-  @java.lang.Override()
-  public float toFloat();//  toFloat()
+    @java.lang.Override()
+    public long toLong();//  toLong()
 
-  @java.lang.Override()
-  public int toInt();//  toInt()
+    @java.lang.Override()
+    public short toShort();//  toShort()
 
-  @java.lang.Override()
-  public long toLong();//  toLong()
+    public  MyNumber();//  .ctor()
+  }
 
-  @java.lang.Override()
-  public short toShort();//  toShort()
+  public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
-  public  MyNumber();//  .ctor()
+    @java.lang.Override()
+    public char get(int);//  get(int)
 
-}public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
-  @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
+    public  MyString();//  .ctor()
 
-  @java.lang.Override()
-  public char get(int);//  get(int)
+    public error.NonExistentClass chars();//  chars()
 
-  public  MyString();//  .ctor()
+    public error.NonExistentClass codePoints();//  codePoints()
 
-  public error.NonExistentClass chars();//  chars()
-
-  public error.NonExistentClass codePoints();//  codePoints()
-
-  public int getLength();//  getLength()
-
-}}
+    public int getLength();//  getLength()
+  }
+}

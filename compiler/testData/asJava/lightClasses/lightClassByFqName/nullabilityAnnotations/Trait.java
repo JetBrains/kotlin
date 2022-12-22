@@ -34,5 +34,4 @@ public abstract interface Trait /* Trait*/ {
   public abstract void setNotNullVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVar(java.lang.String)
 
   public abstract void setNullableVar(@org.jetbrains.annotations.Nullable() java.lang.String);//  setNullableVar(java.lang.String)
-
 }

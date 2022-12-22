@@ -3,12 +3,10 @@ public final class Prop /* Prop*/ {
   private final java.lang.Object someProp;
 
   public  Prop();//  .ctor()
-
 }
 
 final class null /* null*/ {
   private  ();//  .ctor()
-
 }
 
 final class C /* C*/ {
@@ -23,7 +21,6 @@ final class C /* C*/ {
   public  C(int);//  .ctor(int)
 
   public final int getY();//  getY()
-
 }
 
 final class null /* null*/ {
@@ -32,7 +29,6 @@ final class null /* null*/ {
   public java.lang.String toString();//  toString()
 
   private  ();//  .ctor()
-
 }
 
 public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
@@ -46,7 +42,6 @@ public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
   public final java.lang.Runnable getX();//  getX()
 
   public  ValidPublicSupertype();//  .ctor()
-
 }
 
 final class null /* null*/ implements java.lang.Runnable {
@@ -54,7 +49,6 @@ final class null /* null*/ implements java.lang.Runnable {
   public void run();//  run()
 
   private  ();//  .ctor()
-
 }
 
 final class null /* null*/ implements java.lang.Runnable {
@@ -62,7 +56,6 @@ final class null /* null*/ implements java.lang.Runnable {
   public void run();//  run()
 
   private  ();//  .ctor()
-
 }
 
 public abstract interface I /* I*/ {
@@ -79,7 +72,6 @@ public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
   public final java.lang.Runnable getX();//  getX()
 
   public  InvalidPublicSupertype();//  .ctor()
-
 }
 
 final class null /* null*/ implements I, java.lang.Runnable {
@@ -87,7 +79,6 @@ final class null /* null*/ implements I, java.lang.Runnable {
   public void run();//  run()
 
   private  ();//  .ctor()
-
 }
 
 final class null /* null*/ implements I, java.lang.Runnable {
@@ -95,5 +86,4 @@ final class null /* null*/ implements I, java.lang.Runnable {
   public void run();//  run()
 
   private  ();//  .ctor()
-
 }

@@ -1,6 +1,5 @@
 public final class MyException /* MyException*/ extends java.lang.Exception {
   public  MyException();//  .ctor()
-
 }
 
 public final class C /* C*/ {
@@ -15,5 +14,4 @@ public final class C /* C*/ {
   public final void baz() throws java.lang.Throwable;//  baz()
 
   public  C();//  .ctor()
-
 }

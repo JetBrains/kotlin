@@ -8,5 +8,4 @@ public enum EnumNameOverride /* EnumNameOverride*/ implements Bar {
   public static EnumNameOverride[] values();//  values()
 
   private  EnumNameOverride();//  .ctor()
-
 }

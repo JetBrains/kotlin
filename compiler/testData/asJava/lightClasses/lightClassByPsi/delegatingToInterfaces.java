@@ -10,7 +10,6 @@ public abstract interface Base /* Base*/ {
   public abstract void printMessageLine();//  printMessageLine()
 
   public abstract void setY(int);//  setY(int)
-
 }
 
 public final class BaseImpl /* BaseImpl*/ implements Base {
@@ -23,7 +22,6 @@ public final class BaseImpl /* BaseImpl*/ implements Base {
   public void printMessage();//  printMessage()
 
   public void printMessageLine();//  printMessageLine()
-
 }
 
 public final class Derived /* Derived*/ implements Base {
@@ -40,5 +38,4 @@ public final class Derived /* Derived*/ implements Base {
   public void printMessageLine();//  printMessageLine()
 
   public void setY(int);//  setY(int)
-
 }

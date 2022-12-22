@@ -3,7 +3,5 @@ public abstract interface KtInterface /* KtInterface*/ {
 
   public abstract void withoutBody();//  withoutBody()
 
-
   class DefaultImpls ...
-
-  }
+}

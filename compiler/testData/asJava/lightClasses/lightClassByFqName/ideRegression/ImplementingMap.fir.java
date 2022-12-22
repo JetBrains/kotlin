@@ -3,5 +3,4 @@ public final class TypeHierarchyMap /* p1.TypeHierarchyMap*/<TValue>  implements
   public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Class<?>);//  containsKey(java.lang.Class<?>)
 
   public  TypeHierarchyMap();//  .ctor()
-
 }

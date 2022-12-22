@@ -13,5 +13,4 @@ static final class FirstEntry /* p.KotlinEnum.FirstEntry*/ extends p.KotlinEnum 
   public final int getVariable();//  getVariable()
 
   public final void firstEntryFun();//  firstEntryFun()
-
 }

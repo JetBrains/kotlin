@@ -11,5 +11,4 @@ public abstract @interface Anno /* Anno*/ {
   public abstract int[] ia2() default {1, 2, 3};//  ia2()
 
   public abstract java.lang.String value() default "a";//  value()
-
 }

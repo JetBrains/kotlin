@@ -9,5 +9,4 @@ public final class B /* p.B*/ implements p.I {
   public void g();//  g()
 
   public  B(@org.jetbrains.annotations.NotNull() p.I);//  .ctor(p.I)
-
 }

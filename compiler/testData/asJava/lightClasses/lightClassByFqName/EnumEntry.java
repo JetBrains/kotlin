@@ -12,5 +12,4 @@ public static final class FirstEntry /* p.KotlinEnum.FirstEntry*/ extends p.Kotl
   public final void firstEntryFun();//  firstEntryFun()
 
   public void abstractFun();//  abstractFun()
-
 }

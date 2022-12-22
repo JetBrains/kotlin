@@ -15,5 +15,4 @@ public final class Annotations /* p.Annotations*/ {
   public final void repeatables2();//  repeatables2()
 
   public  Annotations();//  .ctor()
-
 }

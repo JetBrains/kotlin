@@ -27,7 +27,6 @@ public final class User /* User*/ {
   public final int getAge();//  getAge()
 
   public int hashCode();//  hashCode()
-
 }
 
 public final class Person /* Person*/ {
@@ -57,5 +56,4 @@ public final class Person /* Person*/ {
   public final void setAge(int);//  setAge(int)
 
   public int hashCode();//  hashCode()
-
 }

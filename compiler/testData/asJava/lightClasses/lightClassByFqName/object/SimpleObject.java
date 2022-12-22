@@ -22,5 +22,4 @@ public final class A /* pack.A*/ {
   public final int getC();//  getC()
 
   public final void setV(@org.jetbrains.annotations.NotNull() java.lang.String);//  setV(java.lang.String)
-
 }

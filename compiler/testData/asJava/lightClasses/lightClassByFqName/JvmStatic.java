@@ -7,21 +7,20 @@ public final class A /* A*/ {
 
   public  A();//  .ctor()
 
+  public static final class B /* A.B*/ {
+    @org.jetbrains.annotations.NotNull()
+    public static final A.B INSTANCE;
 
+    @kotlin.jvm.JvmStatic()
+    public static final void g();//  g()
 
-public static final class B /* A.B*/ {
-  @org.jetbrains.annotations.NotNull()
-  public static final A.B INSTANCE;
+    private  B();//  .ctor()
+  }
 
-  @kotlin.jvm.JvmStatic()
-  public static final void g();//  g()
+  public static final class Companion /* A.Companion*/ {
+    @kotlin.jvm.JvmStatic()
+    public final void f();//  f()
 
-  private  B();//  .ctor()
-
-}public static final class Companion /* A.Companion*/ {
-  @kotlin.jvm.JvmStatic()
-  public final void f();//  f()
-
-  private  Companion();//  .ctor()
-
-}}
+    private  Companion();//  .ctor()
+  }
+}

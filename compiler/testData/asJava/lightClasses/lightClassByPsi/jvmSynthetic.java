@@ -8,5 +8,4 @@ public final class A /* A*/ {
   public final void setF(@org.jetbrains.annotations.NotNull() A);//  setF(A)
 
   public final void setX(int);//  setX(int)
-
 }

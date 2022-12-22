@@ -10,11 +10,10 @@ public final class ClassObjectField /* ClassObjectField*/ {
 
   public  ClassObjectField();//  .ctor()
 
+  public static final class Companion /* ClassObjectField.Companion*/ {
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.String getX();//  getX()
 
-public static final class Companion /* ClassObjectField.Companion*/ {
-  @org.jetbrains.annotations.Nullable()
-  public final java.lang.String getX();//  getX()
-
-  private  Companion();//  .ctor()
-
-}}
+    private  Companion();//  .ctor()
+  }
+}

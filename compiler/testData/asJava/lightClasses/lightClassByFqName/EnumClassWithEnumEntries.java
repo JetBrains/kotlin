@@ -13,5 +13,4 @@ public enum MyEnumClass /* one.MyEnumClass*/ {
   private  MyEnumClass();//  .ctor()
 
   public final int doo();//  doo()
-
 }

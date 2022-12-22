@@ -45,12 +45,10 @@ public abstract interface P /* P*/<T, K>  {
 
 public final class X /* X*/ {
   public  X();//  .ctor()
-
 }
 
 public final class Y /* Y*/ {
   public  Y();//  .ctor()
-
 }
 
 public final class klass /* klass*/ {
@@ -68,5 +66,4 @@ public final class klass /* klass*/ {
   public  klass();//  .ctor()
 
   public final @A0() int getX();//  getX()
-
 }

@@ -6,5 +6,4 @@ public final class TwoOverrides /* TwoOverrides*/ implements java.lang.Iterable<
   public java.lang.Void iterator();//  iterator()
 
   public  TwoOverrides();//  .ctor()
-
 }

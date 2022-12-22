@@ -4,5 +4,4 @@ public final class C /* p.C*/ extends p.A {
   protected int getAp();//  getAp()
 
   public  C();//  .ctor()
-
 }

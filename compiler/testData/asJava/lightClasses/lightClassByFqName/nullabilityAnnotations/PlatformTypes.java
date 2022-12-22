@@ -8,5 +8,4 @@ public final class PlatformTypes /* PlatformTypes*/ {
   public  PlatformTypes();//  .ctor()
 
   public final java.lang.String simplyPlatform();//  simplyPlatform()
-
 }

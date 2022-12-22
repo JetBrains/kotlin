@@ -16,10 +16,8 @@ public final class MyClass /* MyClass*/ {
 
   public static final void setProp2(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProp2(java.lang.String)
 
-
   class Companion ...
-
-  }
+}
 
 public static final class Companion /* MyClass.Companion*/ {
   @kotlin.jvm.JvmStatic()
@@ -34,5 +32,4 @@ public static final class Companion /* MyClass.Companion*/ {
   public final int getProp();//  getProp()
 
   public final void setProp2(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProp2(java.lang.String)
-
 }

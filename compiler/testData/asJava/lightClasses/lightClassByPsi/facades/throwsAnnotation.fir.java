@@ -1,6 +1,5 @@
 public final class MyException /* MyException*/ extends java.lang.Exception {
   public  MyException();//  .ctor()
-
 }
 
 public final class ThrowsAnnotationKt /* ThrowsAnnotationKt*/ {
@@ -10,5 +9,4 @@ public final class ThrowsAnnotationKt /* ThrowsAnnotationKt*/ {
 
   @kotlin.jvm.Throws(exceptionClasses = {java.lang.Throwable.class})
   public static final void baz() throws java.lang.Throwable;//  baz()
-
 }

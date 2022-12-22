@@ -30,16 +30,15 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 
   public void setSize(int);//  setSize(int)
 
+  public static final class Companion /* SmartSet.Companion*/ {
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public final <T> SmartSet<T> create();// <T>  create()
 
-public static final class Companion /* SmartSet.Companion*/ {
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  public final <T> SmartSet<T> create();// <T>  create()
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(java.util.Collection<? extends T>)
 
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  public final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(java.util.Collection<? extends T>)
-
-  private  Companion();//  .ctor()
-
-}}
+    private  Companion();//  .ctor()
+  }
+}
