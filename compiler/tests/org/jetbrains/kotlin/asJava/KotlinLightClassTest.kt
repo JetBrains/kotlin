@@ -14,7 +14,7 @@ import java.io.File
 class KotlinLightClassTest : KotlinAsJavaTestBase() {
     override fun getKotlinSourceRoots(): List<File> = listOf(
         File("compiler/testData/asJava/lightClasses/lightClassStructure/ClassObject.kt"),
-        File("compiler/testData/asJava/lightClasses/lightClasses/ideRegression/ImplementingMap.kt")
+        File("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingMap.kt")
     )
 
     private val key = Key.create<String>("testKey")

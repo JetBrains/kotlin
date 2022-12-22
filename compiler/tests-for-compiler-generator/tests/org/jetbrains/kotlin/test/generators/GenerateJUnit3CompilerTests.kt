@@ -283,7 +283,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractCompilerLightClassTest> {
                 model(
-                    "asJava/lightClasses/lightClasses",
+                    "asJava/lightClasses/lightClassByFqName",
                     excludeDirs = listOf("local", "ideRegression"),
                     pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME,
                 )
