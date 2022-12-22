@@ -181,11 +181,11 @@ class Executable constructor(
      * A task running this executable.
      * Returns null if the executables's target is not a host one (macosArm64, macosX64, linuxX64 or mingw64).
      */
-    val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
-        get() = runTaskName?.let { project.tasks.withType(AbstractExecTask::class.java).named(it) }
+    val runTaskProvider: TaskProvider<AbstractExecTask<*>>
+        get() = project.tasks.withType(AbstractExecTask::class.java).named(it)
 
     val runTask: AbstractExecTask<*>?
-        get() = runTaskProvider?.get()
+        get() = runTaskProvider.getOrNull()
 }
 
 class TestExecutable(
