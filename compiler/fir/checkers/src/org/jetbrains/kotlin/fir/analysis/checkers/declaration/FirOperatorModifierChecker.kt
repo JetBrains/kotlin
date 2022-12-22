@@ -183,25 +183,10 @@ private object OperatorFunctionChecks {
         checkFor(
             EQUALS,
             member,
-            object : Check {
-                override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
-                    val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return null
-                    val customEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
-
-                    if (function.overriddenFunctions(containingClassSymbol, context)
-                            .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
-                        || (customEqualsSupported && function.isTypedEqualsInValueClass(context.session))
-                    ) {
-                        return null
-                    }
-                    return buildString {
-                        append("must override ''equals()'' in Any")
-                        if (customEqualsSupported && containingClassSymbol.isInline) {
-                            val expectedParameterTypeRendered =
-                                containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable();
-                            append(" or define ''equals(other: ${expectedParameterTypeRendered}): Boolean''")
-                        }
-                    }
+            Checks.full("must override ''equals()'' in Any") { ctx, function ->
+                val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(ctx.session) ?: return@full true
+                function.overriddenFunctions(containingClassSymbol, ctx).any {
+                    it.containingClassLookupTag()?.classId == StandardClassIds.Any
                 }
             }
         )

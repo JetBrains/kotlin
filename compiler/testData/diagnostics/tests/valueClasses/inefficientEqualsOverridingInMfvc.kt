@@ -20,9 +20,30 @@ value class MFVC2(val x: Int, val y: Int) {
 
 @JvmInline
 value class MFVC3(val x: Int, val y: Int) {
-    override fun equals(other: Any?) = true
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?) = true
 
     fun equals(other: MFVC3) = true
+
+    override fun hashCode() = 0
+}
+
+@JvmInline
+@AllowTypedEquals
+value class MFVC4(val x: Int, val y: Int) {
+    override fun equals(other: Any?) = true
+
+    @TypedEquals
+    fun equals(other: MFVC4) = true
+
+    override fun hashCode() = 0
+}
+
+@JvmInline
+@AllowTypedEquals
+value class MFVC5(val x: Int, val y: Int) {
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?) = true
+
+    fun equals(other: MFVC5) = true
 
     override fun hashCode() = 0
 }

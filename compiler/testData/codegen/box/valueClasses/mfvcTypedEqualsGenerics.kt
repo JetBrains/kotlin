@@ -4,32 +4,40 @@
 // CHECK_BYTECODE_LISTING
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC1<T : Number>(val x: T, val other: Int) {
     fun equals(x: Int, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC1<*>) = true
 }
 
 class Generic<T, R>(val x: T, val y: R)
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC2<T, R>(val value: Generic<T, R>, val other: Int) {
     fun equals(value: MFVC1<Double>, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC2<*, *>) = true
 }
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC3<T>(val value: T, val other: Int) {
     fun equals(value: Int, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC3<*>) = true
 }
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC4<T>(val value: T, val other: Int) {
     fun equals(value: Any, other: Int) = false
+    @TypedEquals
     fun equals(other: MFVC4<*>) = true
 }
 
-
+@OptIn(AllowTypedEquals::class)
 fun box() = when {
     MFVC1(5.0, 100) != MFVC1(3, 100) -> "Fail 1.1"
     (MFVC1(5.0, 100) as Any) != MFVC1(3, 100) -> "Fail 1.2"

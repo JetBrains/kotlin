@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * A platform-, frontend-independent logic for generating synthetic members of data class: equals, hashCode, toString, componentN, and copy.
@@ -126,15 +126,9 @@ abstract class DataClassMembersGenerator(
             )
         }
 
-        private fun IrSimpleFunction.isTypedEqualsInValueClass() = name == OperatorNameConventions.EQUALS &&
-                returnType == context.irBuiltIns.booleanType && irClass.isValue
-                && valueParameters.size == 1 && valueParameters[0].type.classifierOrNull == irClass.symbol
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-
-        fun generateEqualsMethodBody(properties: List<IrProperty>) {
+        fun generateEqualsMethodBody(properties: List<IrProperty>, typedEqualsFunction: IrFunction?) {
             val irType = irClass.defaultType
 
-            val typedEqualsFunction = irClass.functions.singleOrNull { it.isTypedEqualsInValueClass() }
             if (irClass.isValue && typedEqualsFunction != null) {
                 +irIfThenReturnFalse(irNotIs(irOther(), irType))
                 val otherCasted = irImplicitCast(irOther(), irType)
@@ -345,16 +339,16 @@ abstract class DataClassMembersGenerator(
     }
 
     // Entry for psi2ir
-    fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
+    fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>, typedEquals: IrFunction?) {
         buildMember(function) {
-            generateEqualsMethodBody(properties.map { getIrProperty(it) })
+            generateEqualsMethodBody(properties.map { getIrProperty(it) }, typedEquals)
         }
     }
 
     // Entry for fir2ir
-    fun generateEqualsMethod(irFunction: IrFunction, properties: List<IrProperty>) {
+    fun generateEqualsMethod(irFunction: IrFunction, properties: List<IrProperty>, typedEquals: IrFunction?) {
         buildMember(irFunction) {
-            generateEqualsMethodBody(properties)
+            generateEqualsMethodBody(properties, typedEquals)
         }
     }
 

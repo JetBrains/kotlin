@@ -52,7 +52,7 @@ value class IC5(val a: String) {
 
 @JvmInline
 value class IC6(val a: String) {
-    fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: IC6): Boolean = true
+    fun <T> equals(other: IC6): Boolean = true
 }
 
 @JvmInline
@@ -62,10 +62,19 @@ value class IC7<T>(val a: String) {
 
 @JvmInline
 value class IC8<T>(val a: String) {
-    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC8<T><!>): Boolean = true
+    <!INAPPLICABLE_TYPED_EQUALS_ANNOTATION!>@TypedEquals<!>
+    fun equals(other: IC8<T>): Boolean = true
 }
 
 @JvmInline
 value class IC9<T>(val a: String) {
-    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC9<String><!>): Boolean = true
+    <!INAPPLICABLE_TYPED_EQUALS_ANNOTATION!>@TypedEquals<!>
+    fun equals(other: IC9<String>): Boolean = true
+}
+
+@JvmInline
+@AllowTypedEquals
+value class IC10(val a: String) {
+    @TypedEquals
+    fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: IC10): Boolean = true
 }

@@ -6,6 +6,7 @@ public interface I {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC1 {
     // source: 'inlineClassEqualsOverride.kt'
     private final field value: double
@@ -25,6 +26,7 @@ public final class IC1 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC2 {
     // source: 'inlineClassEqualsOverride.kt'
     private final field value: int
@@ -83,6 +85,7 @@ public final class IC4 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class IC5 {
     // source: 'inlineClassEqualsOverride.kt'
     private final field value: int
@@ -91,7 +94,7 @@ public final class IC5 {
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
-    public final static @org.jetbrains.annotations.NotNull method equals-impl0(p0: int, p1: int): java.lang.Void
+    public final static method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
@@ -110,6 +113,27 @@ public final class IC6 {
     public static method constructor-impl(p0: int): int
     public @org.jetbrains.annotations.NotNull method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Void
     public static @org.jetbrains.annotations.NotNull method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.Void
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+@kotlin.AllowTypedEquals
+public final class IC7 {
+    // source: 'inlineClassEqualsOverride.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): IC7
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public final static method equals-7wblu4g(p0: int, p1: int): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int

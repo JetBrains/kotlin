@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.toIrType
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.isTypedEquals
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -220,7 +216,13 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     components.irBuiltIns.booleanType,
                     otherParameterNeeded = true
                 )
-                irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
+                val typedEqualsIr = klass.declarations.firstOrNull { it is FirSimpleFunction && it.isTypedEquals }?.let {
+                    declarationStorage.getOrCreateIrFunction(
+                        it as FirSimpleFunction,
+                        classifierStorage.getIrClassSymbol(klass.symbol).owner
+                    )
+                }
+                irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties, typedEqualsIr)
                 irClass.declarations.add(equalsFunction)
             }
 

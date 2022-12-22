@@ -28,12 +28,14 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlin.util.hasTypedEqualsAnnotation
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -158,8 +160,11 @@ class DataClassMembersGenerator(
             irDataClassMembersGenerator.generateCopyFunction(function, constructorSymbol)
         }
 
-        override fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) =
-            irDataClassMembersGenerator.generateEqualsMethod(function, properties)
+        override fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
+            val typedEquals =
+                irClass.declarations.firstOrNull { it is IrFunction && it.descriptor.hasTypedEqualsAnnotation } as? IrFunction
+            irDataClassMembersGenerator.generateEqualsMethod(function, properties, typedEquals)
+        }
 
         override fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) =
             irDataClassMembersGenerator.generateHashCodeMethod(function, properties)

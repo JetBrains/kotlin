@@ -802,12 +802,13 @@ public class DefaultErrorMessages {
         MAP.put(MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER, "Default parameters are not supported in the primary constructor of a multi-field value class");
         MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
         MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
-        MAP.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections");
         MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
         MAP.put(VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Value classes cannot have context receivers");
         MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS, "Overriding ''equals'' from ''Any'' in value class without typed equals leads to boxing on every equality comparison");
+        MAP.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable: {0}", STRING);
+        MAP.put(INAPPLICABLE_ALLOW_TYPED_EQUALS_ANNOTATION, "@AllowTypedEquals is applicable for value classes only");
         MAP.put(ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, "Annotations on {0} of multi-field value class type are not supported", STRING);
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");

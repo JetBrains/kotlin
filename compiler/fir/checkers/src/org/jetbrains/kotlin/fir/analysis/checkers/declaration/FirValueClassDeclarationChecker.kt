@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isEquals
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -225,7 +222,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                         return@forEach
                     }
                     if (it.isEquals()) equalsFromAnyOverriding = it
-                    if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
+                    if (it.isTypedEquals) typedEquals = it
                 }
                 equalsFromAnyOverriding to typedEquals
             }
@@ -236,10 +233,6 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                         FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
                         context
                     )
-                }
-                val singleParameterReturnTypeRef = typedEquals.valueParameters.single().returnTypeRef
-                if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
-                    reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, context)
                 }
             }
 

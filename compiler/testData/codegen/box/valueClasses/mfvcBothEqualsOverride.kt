@@ -6,8 +6,9 @@
 var counter = 0
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC(val x: Int, val y: Int) {
-
+    @TypedEquals
     fun equals(other: MFVC): Boolean {
         counter++
         return x == other.x && this.y == other.y
@@ -27,6 +28,7 @@ value class MFVC(val x: Int, val y: Int) {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     val mfvc1 = MFVC(1, 2)
     val mfvc2 = MFVC(3, 4)

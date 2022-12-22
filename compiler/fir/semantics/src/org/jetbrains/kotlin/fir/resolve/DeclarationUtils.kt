@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
@@ -96,3 +97,6 @@ fun FirSimpleFunction.isEquals(): Boolean {
     val parameter = valueParameters.first()
     return parameter.returnTypeRef.isNullableAny
 }
+
+val FirSimpleFunction.isTypedEquals
+    get() = hasAnnotation(StandardClassIds.Annotations.TypedEquals)

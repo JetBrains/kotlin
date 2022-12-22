@@ -3,17 +3,18 @@
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 
-
 interface I {
     fun getVal(): Int
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC1(val x: Int) : I {
     override fun getVal(): Int {
         return x
     }
 
+    @TypedEquals
     fun equals(other: IC1): Boolean {
         return x == other.x
     }
@@ -31,11 +32,13 @@ value class IC1(val x: Int) : I {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC2(val y: Int) : I {
     override fun getVal(): Int {
         return y * 10
     }
 
+    @TypedEquals
     fun equals(other: IC2): Boolean {
         return y == other.y
     }
@@ -52,4 +55,5 @@ value class IC2(val y: Int) : I {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String = if (setOf(IC1(10), IC2(1)).size == 1) "OK" else "Fail"

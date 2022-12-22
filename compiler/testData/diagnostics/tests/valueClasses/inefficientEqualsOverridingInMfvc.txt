@@ -27,3 +27,24 @@ package
     public open override /*1*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
+
+@kotlin.jvm.JvmInline @kotlin.AllowTypedEquals public final value class MFVC4 {
+    public constructor MFVC4(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
+    @kotlin.TypedEquals public final fun equals(/*0*/ other: MFVC4): kotlin.Boolean
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmInline @kotlin.AllowTypedEquals public final value class MFVC5 {
+    public constructor MFVC5(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
+    public final fun equals(/*0*/ other: MFVC5): kotlin.Boolean
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+

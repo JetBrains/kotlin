@@ -1,5 +1,6 @@
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
+@kotlin.AllowTypedEquals
 public final class MFVC1 {
     // source: 'mfvcEqualsConsistency.kt'
     private final field x: int

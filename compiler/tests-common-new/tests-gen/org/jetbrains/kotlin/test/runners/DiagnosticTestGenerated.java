@@ -17955,6 +17955,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("allowTypedEqualsApplicability.kt")
+            public void testAllowTypedEqualsApplicability() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/allowTypedEqualsApplicability.kt");
+            }
+
+            @Test
             @TestMetadata("basicInlineClassDeclaration.kt")
             public void testBasicInlineClassDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclaration.kt");
@@ -18129,15 +18135,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("typedEqualsOperatorDeclarationCheck.kt")
-            public void testTypedEqualsOperatorDeclarationCheck() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inlineClasses/typedEqualsOperatorDeclarationCheck.kt");
-            }
-
-            @Test
-            @TestMetadata("typedEqualsOperatorModifierInInlineClass.kt")
-            public void testTypedEqualsOperatorModifierInInlineClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inlineClasses/typedEqualsOperatorModifierInInlineClass.kt");
+            @TestMetadata("typedEqualsDeclarationCheck.kt")
+            public void testTypedEqualsDeclarationCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/typedEqualsDeclarationCheck.kt");
             }
 
             @Test
@@ -33844,12 +33844,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("reservedMembersAndConstructsInsideMfvc.kt")
             public void testReservedMembersAndConstructsInsideMfvc() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/reservedMembersAndConstructsInsideMfvc.kt");
-            }
-
-            @Test
-            @TestMetadata("typedEqualsOperatorModifierInMfvc.kt")
-            public void testTypedEqualsOperatorModifierInMfvc() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/valueClasses/typedEqualsOperatorModifierInMfvc.kt");
             }
 
             @Test

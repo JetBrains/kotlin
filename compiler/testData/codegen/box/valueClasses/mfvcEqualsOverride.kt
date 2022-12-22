@@ -4,18 +4,21 @@
 // CHECK_BYTECODE_LISTING
 
 import kotlin.math.abs
-
+@OptIn(AllowTypedEquals::class)
 interface I {
     fun equals(param: MFVC): Boolean
 }
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC(val value: Int, val y: Int) : I {
+    @TypedEquals
     override fun equals(param: MFVC): Boolean {
         return abs(value - param.value) < 2
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     val a1Typed: MFVC = MFVC(1, 2)
     val b1Typed: MFVC = MFVC(2, 3)

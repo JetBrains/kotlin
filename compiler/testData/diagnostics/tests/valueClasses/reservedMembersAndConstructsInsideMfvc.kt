@@ -2,10 +2,7 @@
 // !LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
 // ALLOW_KOTLIN_PACKAGE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-
-package kotlin.jvm
-
-annotation class JvmInline
+// WITH_STDLIB
 
 @JvmInline
 value class IC1(val x: Any) {
@@ -56,7 +53,9 @@ value class IC5(val a: String) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class IC6(val a: String) {
+    @TypedEquals
     fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: IC6): Boolean = true
 }
 
@@ -105,7 +104,9 @@ value class MFVC5(val a: String, val b: String) {
 }
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC6(val a: String, val b: String) {
+    @TypedEquals
     fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: MFVC6): Boolean = true
 }
 
@@ -116,10 +117,19 @@ value class MFVC7<T>(val a: String, val b: String) {
 
 @JvmInline
 value class MFVC8<T>(val a: String, val b: String) {
-    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>MFVC8<T><!>): Boolean = true
+    <!INAPPLICABLE_TYPED_EQUALS_ANNOTATION!>@TypedEquals<!>
+    fun equals(other: MFVC8<T>): Boolean = true
 }
 
 @JvmInline
 value class MFVC9<T>(val a: String, val b: String) {
-    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>MFVC9<String><!>): Boolean = true
+    <!INAPPLICABLE_TYPED_EQUALS_ANNOTATION!>@TypedEquals<!>
+    fun equals(other: MFVC9<String>): Boolean = true
+}
+
+@JvmInline
+@AllowTypedEquals
+value class MFVC10(val a : String, val b: String) {
+    @TypedEquals
+    fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: MFVC10): Boolean = true
 }

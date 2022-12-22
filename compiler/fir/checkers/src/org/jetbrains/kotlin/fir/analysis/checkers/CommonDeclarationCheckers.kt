@@ -45,6 +45,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirContractChecker,
             FirFunctionParameterChecker,
             FirFunctionReturnChecker,
+            FirTypedEqualsApplicabilityChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
@@ -112,6 +113,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirValueClassDeclarationChecker,
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
+            FirAllowTypedEqualsApplicabilityChecker,
         )
 
     override val constructorCheckers: Set<FirConstructorChecker>

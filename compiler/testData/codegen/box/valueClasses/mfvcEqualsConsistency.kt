@@ -7,7 +7,9 @@ import java.lang.AssertionError
 import kotlin.math.abs
 
 @JvmInline
+@AllowTypedEquals
 value class MFVC1(val x: Int, val y: Int) {
+    @TypedEquals
     fun equals(other: MFVC1): Boolean {
         return abs(x - other.x) < 2 && abs(y - other.y) < 2
     }
@@ -23,6 +25,7 @@ value class MFVC2(val x: Int, val y: Int) {
     }
 }
 
+@OptIn(AllowTypedEquals::class)
 fun box(): String {
     val a1Typed: MFVC1 = MFVC1(1, 2)
     val b1Typed: MFVC1 = MFVC1(2, 3)

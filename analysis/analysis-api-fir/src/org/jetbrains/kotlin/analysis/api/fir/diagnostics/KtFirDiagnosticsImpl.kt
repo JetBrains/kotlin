@@ -1206,11 +1206,6 @@ internal class ReservedMemberInsideValueClassImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ReservedMemberInsideValueClass(), KtAbstractFirDiagnostic<KtFunction>
 
-internal class TypeArgumentOnTypedValueClassEqualsImpl(
-    override val firDiagnostic: KtPsiDiagnostic,
-    override val token: KtLifetimeToken,
-) : KtFirDiagnostic.TypeArgumentOnTypedValueClassEquals(), KtAbstractFirDiagnostic<KtTypeReference>
-
 internal class InnerClassInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
@@ -3314,6 +3309,17 @@ internal class InefficientEqualsOverridingInValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InefficientEqualsOverridingInValueClass(), KtAbstractFirDiagnostic<KtNamedFunction>
+
+internal class InapplicableTypedEqualsAnnotationImpl(
+    override val reason: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InapplicableTypedEqualsAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
+internal class InapplicableAllowTypedEqualsAnnotationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InapplicableAllowTypedEqualsAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
