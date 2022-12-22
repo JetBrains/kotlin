@@ -35,6 +35,9 @@ public operator fun String?.plus(other: Any?): String
  */
 public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>
 
+public fun <reified @PureReifiable T> vArrayOfNulls(size: Int): Array<T?>
+
+
 /**
  * Returns an array containing the specified elements.
  */

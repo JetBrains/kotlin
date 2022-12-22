@@ -56,6 +56,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
                 Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
                 Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "vArrayOfNulls", listOf(intFqn)) to NewArray,
                 Key(cloneableFqn, null, "clone", emptyList()) to Clone,
                 Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
                 Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,

@@ -60,6 +60,7 @@ abstract class IrBuiltIns {
 
     abstract val collectionClass: IrClassSymbol
     abstract val arrayClass: IrClassSymbol
+    abstract val vArrayClass: IrClassSymbol
     abstract val setClass: IrClassSymbol
     abstract val listClass: IrClassSymbol
     abstract val mapClass: IrClassSymbol
@@ -147,6 +148,8 @@ abstract class IrBuiltIns {
 
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
+
+    abstract val vArrayOfNulls: IrSimpleFunctionSymbol
 
     abstract val linkageErrorSymbol: IrSimpleFunctionSymbol
 

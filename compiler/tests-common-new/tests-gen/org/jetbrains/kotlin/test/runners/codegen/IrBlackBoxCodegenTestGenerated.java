@@ -1258,6 +1258,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("vArray.kt")
+        public void testVArray() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/vArray.kt");
+        }
+
+        @Test
         @TestMetadata("varargsWithJava.kt")
         public void testVarargsWithJava() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/varargsWithJava.kt");

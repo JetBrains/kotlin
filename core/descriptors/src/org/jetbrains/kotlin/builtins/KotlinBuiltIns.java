@@ -284,6 +284,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getVArray() {
+        return getBuiltInClassByName("VArray");
+    }
+
+    @NotNull
     public ClassDescriptor getPrimitiveArrayClassDescriptor(@NotNull PrimitiveType type) {
         return getBuiltInClassByName(type.getArrayTypeName().asString());
     }

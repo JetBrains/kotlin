@@ -212,7 +212,16 @@ class IrBuiltInsOverFir(
         addArrayMembers(typeParameter.defaultType)
         finalizeClassDefinition()
     }
+
+    private val vArray by createClass(kotlinIrPackage, IdSignatureValues.vArray) {
+        configureSuperTypes()
+        val typeParameter = addTypeParameter("T", anyNType)
+        addArrayMembers(typeParameter.defaultType)
+        finalizeClassDefinition()
+    }
+
     override val arrayClass: IrClassSymbol get() = array.klass
+    override val vArrayClass: IrClassSymbol get() = vArray.klass
 
     private val intRangeType by lazy { referenceClassByClassId(StandardClassIds.IntRange)!!.owner.defaultType }
     private val longRangeType by lazy { referenceClassByClassId(StandardClassIds.LongRange)!!.owner.defaultType }
@@ -376,6 +385,13 @@ class IrBuiltInsOverFir(
     override lateinit var checkNotNullSymbol: IrSimpleFunctionSymbol private set
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, Name.identifier("arrayOfNulls")).first {
+            it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 &&
+                    it.owner.valueParameters[0].type == intType
+        }
+    }
+
+    override val vArrayOfNulls: IrSimpleFunctionSymbol by lazy {
+        findFunctions(kotlinPackage, Name.identifier("vArrayOfNulls")).first {
             it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type == intType
         }

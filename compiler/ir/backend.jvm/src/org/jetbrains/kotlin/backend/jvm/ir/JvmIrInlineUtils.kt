@@ -68,7 +68,8 @@ fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
 }
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext): Boolean =
-    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor(context))
+    (!context.state.isInlineDisabled || typeParameters.any { it.isReified })
+            && (isInline || isInlineArrayConstructor(context) || isInlineVArrayConstructor(context))
 
 // Constructors can't be marked as inline in metadata, hence this hack.
 private fun IrFunction.isInlineArrayConstructor(context: JvmBackendContext): Boolean =
@@ -76,11 +77,19 @@ private fun IrFunction.isInlineArrayConstructor(context: JvmBackendContext): Boo
         it == context.irBuiltIns.arrayClass || it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
     }
 
+private fun IrFunction.isInlineVArrayConstructor(context: JvmBackendContext): Boolean =
+    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol == context.irBuiltIns.vArrayClass
+
+
 fun IrDeclaration.isInlineOnly(): Boolean =
     this is IrFunction && (
             (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
                     (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
             )
+
+fun IrFunction.isInlineOnly(): Boolean =
+    (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
+            (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
 
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
     this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
