@@ -186,7 +186,9 @@ internal class SymbolLightTypeParameter private constructor(
     }
 
     override fun hashCode(): Int = typeParameterDeclaration?.hashCode() ?: name.hashCode()
-    override fun isEquivalentTo(another: PsiElement): Boolean = basicIsEquivalentTo(this, another)
+    override fun isEquivalentTo(another: PsiElement): Boolean {
+        return basicIsEquivalentTo(this, another) || isOriginEquivalentTo(another)
+    }
 
     override fun getText(): String? = typeParameterDeclaration?.text
     override fun getTextRange(): TextRange? = typeParameterDeclaration?.textRange

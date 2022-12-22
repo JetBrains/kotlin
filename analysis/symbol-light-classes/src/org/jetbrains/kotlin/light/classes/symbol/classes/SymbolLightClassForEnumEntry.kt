@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
+import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -43,6 +44,10 @@ internal class SymbolLightClassForEnumEntry(
     override fun hashCode(): Int = enumConstant.hashCode()
 
     override fun toString(): String = "SymbolLightClassForEnumEntry:$name"
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
+    }
 
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(

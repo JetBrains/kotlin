@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
@@ -85,6 +82,10 @@ internal class SymbolLightFieldForProperty private constructor(
         withPropertySymbol { propertySymbol ->
             propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD, acceptAnnotationsWithoutUseSite = true)
         }
+    }
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
     }
 
     override fun isDeprecated(): Boolean = _isDeprecated

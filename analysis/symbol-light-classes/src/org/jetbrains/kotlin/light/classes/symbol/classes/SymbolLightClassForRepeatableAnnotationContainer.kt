@@ -62,6 +62,10 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
 
     override fun copy(): SymbolLightClassForRepeatableAnnotationContainer = SymbolLightClassForRepeatableAnnotationContainer(containerOwner)
 
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return isEquivalentToByName(another)
+    }
+
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightClassForRepeatableAnnotationContainer && other.containerOwner == containerOwner
 

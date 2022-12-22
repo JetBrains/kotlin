@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.descriptors.Modality
@@ -113,6 +114,10 @@ internal fun basicIsEquivalentTo(`this`: PsiElement?, that: PsiElement?): Boolea
 
     val thatMemberOrigin = (that as? KtLightMember<*>)?.lightMemberOrigin ?: return false
     return thisMemberOrigin.isEquivalentTo(thatMemberOrigin)
+}
+
+internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boolean {
+    return kotlinOrigin?.isEquivalentTo(that) == true
 }
 
 internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityType {

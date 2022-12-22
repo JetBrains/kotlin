@@ -154,8 +154,11 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     override fun getNavigationElement(): PsiElement = classOrObjectDeclaration ?: this
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
-        basicIsEquivalentTo(this, another) ||
-                another is PsiClass && qualifiedName != null && another.qualifiedName == qualifiedName
+        isEquivalentToByName(another) ||
+                isOriginEquivalentTo(another)
+
+    protected fun isEquivalentToByName(another: PsiElement?): Boolean = basicIsEquivalentTo(this, another) ||
+            another is PsiClass && qualifiedName != null && another.qualifiedName == qualifiedName
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

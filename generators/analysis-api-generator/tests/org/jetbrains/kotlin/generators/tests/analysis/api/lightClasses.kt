@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesEqualityTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.*
 import org.jetbrains.kotlin.light.classes.symbol.source.*
 
@@ -79,6 +80,12 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
 
             testClass<AbstractSymbolLightClassesStructureByFqNameForLibraryTest> {
                 model("structureByFqName", pattern = TestGeneratorUtil.KT)
+            }
+        }
+
+        run {
+            testClass<AbstractSymbolLightClassesEqualityTest> {
+                model("equivalentTo", pattern = TestGeneratorUtil.KT)
             }
         }
     }

@@ -24,6 +24,10 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
 
     override fun copy() = SymbolLightClassForInterfaceDefaultImpls(containingClass)
 
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return isEquivalentToByName(another)
+    }
+
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightClassForInterfaceDefaultImpls && other.containingClass == containingClass
 
