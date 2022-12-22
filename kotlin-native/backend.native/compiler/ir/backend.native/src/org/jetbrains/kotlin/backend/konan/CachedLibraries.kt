@@ -37,6 +37,7 @@ class CachedLibraries(
     enum class Kind { DYNAMIC, STATIC }
 
     sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String, val rootDirectory: String) {
+        val hash: ByteArray by lazy { File(rootDirectory).child(HASH_FILE_NAME).readBytes() }
         val bitcodeDependencies by lazy { computeBitcodeDependencies() }
         val binariesPaths by lazy { computeBinariesPaths() }
         val serializedInlineFunctionBodies by lazy { computeSerializedInlineFunctionBodies() }
@@ -232,6 +233,7 @@ class CachedLibraries(
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
+        const val HASH_FILE_NAME = "hash"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
