@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -114,3 +115,6 @@ fun getNonPrivateTraitMembersForDelegation(
     ) return null
     return traitMember
 }
+
+val DeclarationDescriptor.hasTypedEqualsAnnotation: Boolean
+    get() = annotations.hasAnnotation(StandardClassIds.Annotations.TypedEquals.asSingleFqName())

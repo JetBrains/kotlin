@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
     return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }

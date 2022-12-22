@@ -1119,10 +1119,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
-    abstract class TypeArgumentOnTypedValueClassEquals : KtFirDiagnostic<KtTypeReference>() {
-        override val diagnosticClass get() = TypeArgumentOnTypedValueClassEquals::class
-    }
-
     abstract class InnerClassInsideValueClass : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = InnerClassInsideValueClass::class
     }
@@ -2936,6 +2932,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InefficientEqualsOverridingInValueClass : KtFirDiagnostic<KtNamedFunction>() {
         override val diagnosticClass get() = InefficientEqualsOverridingInValueClass::class
+    }
+
+    abstract class InapplicableTypedEqualsAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = InapplicableTypedEqualsAnnotation::class
+        abstract val reason: String
     }
 
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {

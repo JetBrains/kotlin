@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -234,6 +233,12 @@ class MemoizedMultiFieldValueClassReplacements(
         return newConstructor
     }
 
+    private val IrFunction.isGeneratedTypedEquals: Boolean
+        get() = origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
+                && name == OperatorNameConventions.EQUALS
+                && valueParameters[0].type.erasedUpperBound == (parent as? IrClass)
+
+
     private fun IrFunction.makeMethodLikeRemappedParameters(function: IrFunction): List<RemappedParameter> {
         dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
         val newFlattenedParameters = makeAndAddGroupedValueParametersFrom(function, includeDispatcherReceiver = false, mapOf(), this)
@@ -256,7 +261,7 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isMultiFieldValueClassFieldGetter -> null
 
                 (function.parent as? IrClass)?.isMultiFieldValueClass == true -> when {
-                    function.isValueClassTypedEquals -> createStaticReplacement(function).also {
+                    function.isGeneratedTypedEquals || function.isTypedEquals -> createStaticReplacement(function).also {
                         it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
                     }
 
