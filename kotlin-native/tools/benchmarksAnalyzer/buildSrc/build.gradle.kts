@@ -44,9 +44,10 @@ tasks.validatePlugins.configure {
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
     kotlin.filter.exclude("**/FileCheckTest.kt")
+    // TODO: Consider moving required stuff from kotlin-native/build-tools/ to buildSrc/ here.
     kotlin.filter.exclude("**/bitcode/**")
+    kotlin.filter.exclude("**/cpp/**")
     kotlin.filter.exclude("**/testing/**")
-    kotlin.filter.exclude("**/CompilationDatabase.kt")
 
     kotlin.srcDir("../../../build-tools/src/main/kotlin")
     kotlin.srcDir("../../../performance/buildSrc/src/main/kotlin")
