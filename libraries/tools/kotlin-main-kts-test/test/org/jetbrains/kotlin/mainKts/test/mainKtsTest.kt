@@ -5,15 +5,17 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
-import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
+import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -24,20 +26,30 @@ import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
     withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
-        val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
-            evaluation = {
-                jvm {
-                    baseClassLoader(null)
-                }
-                constructorArgs(emptyArray<String>())
-                enableScriptsInstancesSharing()
-            }
-        )
-
-        BasicJvmScriptingHost().eval(
-            scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
-        )
+        evalFileWithConfigurations(scriptFile)
     }
+
+fun evalFileWithConfigurations(
+    scriptFile: File,
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+): ResultWithDiagnostics<EvaluationResult> {
+    val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
+        compilation = compilation,
+        evaluation = {
+            evaluation()
+            jvm {
+                baseClassLoader(null)
+            }
+            constructorArgs(emptyArray<String>())
+            enableScriptsInstancesSharing()
+        }
+    )
+
+    return BasicJvmScriptingHost().eval(
+        scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
+    )
+}
 
 
 const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
@@ -231,9 +243,32 @@ class MainKtsTest {
         assertSucceeded(res)
     }
 
+    @Test
+    fun testHelloSerialization() {
+        // the embeddable plugin is needed for this test, because embeddable compiler is used.
+        // furtunately appropriate gradle plugin can serve as an embeddable compiler plugin now
+        // so, the path to it is prepared in the build file
+        val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        val out = captureOut {
+            val res = evalFileWithConfigurations(
+                File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts"),
+                compilation = {
+                    compilerOptions(
+                        "-Xplugin", serializationPluginClasspath
+                    )
+                }
+            )
+            assertSucceeded(res)
+        }.lines()
+        assertEquals(
+            listOf("""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"),
+            out
+        )
+    }
+
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
         Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.severity.name + ": " + it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
             res is ResultWithDiagnostics.Success
         )
     }
