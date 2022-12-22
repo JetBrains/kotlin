@@ -23,7 +23,6 @@ class MppTestsIT : KGPBaseTest() {
             "new-mpp-lib-with-tests",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                warningMode = WarningMode.None, // some APIs were deprecated, remove this later
                 freeArgs = listOf("--continue"), // to ensure that all the tests are run
             )
         ) {
