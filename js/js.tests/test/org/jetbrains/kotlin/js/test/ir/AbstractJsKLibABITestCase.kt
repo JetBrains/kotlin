@@ -169,8 +169,8 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             buildBinaryNoIC(configuration, mainModuleKlibFile, allDependencies)
 
         val binariesDir = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
-        val binaries = compilationOutputs.writeAll(binariesDir, MAIN_MODULE_NAME, false, MAIN_MODULE_NAME, ModuleKind.PLAIN).map {
-            File(it)
+        val binaries = compilationOutputs.writeAll(binariesDir, MAIN_MODULE_NAME, false, MAIN_MODULE_NAME, ModuleKind.PLAIN).filter {
+            it.extension == "js"
         }
 
         executeAndCheckBinaries(MAIN_MODULE_NAME, binaries)

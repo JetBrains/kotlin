@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
+import java.nio.file.Files
 
 abstract class CompilationOutputs {
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
@@ -20,29 +21,35 @@ abstract class CompilationOutputs {
 
     abstract fun writeJsCode(outputJsFile: File, outputJsMapFile: File)
 
-    fun writeAll(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind): List<String> {
-        val writtenJsFiles = ArrayList<String>(dependencies.size + 1)
+    fun writeAll(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind): Collection<File> {
+        val writtenFiles = LinkedHashSet<File>(2 * (dependencies.size + 1) + 1)
 
-        val outputJsFile = outputDir.resolve("$outputName.js")
+        fun File.writeAsJsFile(out: CompilationOutputs) {
+            parentFile.mkdirs()
+            val jsMapFile = mapForJsFile
+            val jsFile = canonicalFile
+            out.writeJsCode(jsFile, jsMapFile)
 
-        outputJsFile.parentFile.mkdirs()
-        writeJsCode(outputJsFile, outputJsFile.mapForJsFile)
+            writtenFiles += jsFile
+            writtenFiles += jsMapFile
+        }
 
         dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name.js").let { depJsFile ->
-                depJsFile.parentFile.mkdirs()
-                content.writeJsCode(depJsFile, depJsFile.mapForJsFile)
-                writtenJsFiles += depJsFile.absolutePath
-            }
+            outputDir.resolve("$name.js").writeAsJsFile(content)
         }
 
-        writtenJsFiles += outputJsFile.absolutePath
+        val outputJsFile = outputDir.resolve("$outputName.js")
+        outputJsFile.writeAsJsFile(this)
 
         if (genDTS) {
-            outputJsFile.dtsForJsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
+            val dtsFile = outputJsFile.dtsForJsFile
+            dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
+            writtenFiles += dtsFile
         }
 
-        return writtenJsFiles
+        Files.walk(outputDir.toPath()).map { it.toFile() }.filter { it != outputDir && it !in writtenFiles }.forEach(File::delete)
+
+        return writtenFiles
     }
 
     fun getFullTsDefinition(moduleName: String, moduleKind: ModuleKind): String {
@@ -51,10 +58,10 @@ abstract class CompilationOutputs {
     }
 
     private val File.mapForJsFile
-        get() = resolveSibling("$name.map")
+        get() = resolveSibling("$name.map").canonicalFile
 
     private val File.dtsForJsFile
-        get() = resolveSibling("$nameWithoutExtension.d.ts")
+        get() = resolveSibling("$nameWithoutExtension.d.ts").canonicalFile
 }
 
 class CompilationOutputsBuilt(

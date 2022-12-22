@@ -272,14 +272,16 @@ class JsIrBackendFacade(
     }
 
     private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
-        val allJsFiles = writeAll(outputFile.parentFile, outputFile.nameWithoutExtension, false, moduleId, moduleKind)
+        val allJsFiles = writeAll(outputFile.parentFile, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
+            it.extension == "js"
+        }
 
-        val mainModuleFile = File(allJsFiles.last())
+        val mainModuleFile = allJsFiles.last()
         mainModuleFile.fixJsFile(outputFile, moduleId, moduleKind)
 
         dependencies.map { it.first }.zip(allJsFiles.dropLast(1)).forEach { (depModuleId, builtJsFilePath) ->
             val newFile = outputFile.augmentWithModuleName(depModuleId)
-            File(builtJsFilePath).fixJsFile(newFile, depModuleId, moduleKind)
+            builtJsFilePath.fixJsFile(newFile, depModuleId, moduleKind)
         }
     }
 

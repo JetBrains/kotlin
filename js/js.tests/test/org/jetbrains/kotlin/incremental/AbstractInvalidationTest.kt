@@ -227,7 +227,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         }
 
         private fun prepareExternalJsFiles(): MutableList<String> {
-            jsDir.invalidateDir()
             return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
                 file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
                     val externalModule = jsDir.resolve(file.name)
@@ -239,16 +238,16 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
 
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
-            val files = prepareExternalJsFiles()
-            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND)
+            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND).filter {
+                it.extension == "js"
+            }
             for (jsCodeFile in compiledJsFiles) {
-                val jsFile = File(jsCodeFile)
-                jsFile.writeAsJsModule(jsFile.readText(), "./${jsFile.name}")
+                jsCodeFile.writeAsJsModule(jsCodeFile.readText(), "./${jsCodeFile.name}")
             }
 
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
-                    files = files + compiledJsFiles,
+                    files = compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath },
                     testModuleName = "./$mainModuleName.js",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
