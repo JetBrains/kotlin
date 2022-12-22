@@ -92,7 +92,9 @@ class XcodeSimulatorExecutor(
     private fun getDeviceFor(simulatorRuntime: SimulatorRuntimeDescriptor): SimulatorDeviceDescriptor {
         val runtimeIdentifier = simulatorRuntime.identifier
         val deviceOrNull = {
-            getSimulatorDevices(simctl("list", "devices", "--json"))[runtimeIdentifier]
+            val simctlOut = simctl("list", "devices", "--json")
+            logger.info("List of devices: $simctlOut")
+            getSimulatorDevices(simctlOut)[runtimeIdentifier]
                     ?.find { it.deviceTypeIdentifier == deviceId && it.isAvailable == true }
         }
         // If the device already exists, nothing to do.
