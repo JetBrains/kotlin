@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractLightTreeFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractLoweredIrInterpreterTest
-import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterFir2IrTest
-import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterPsi2IrTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFir2IrTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
@@ -180,11 +180,11 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/asmLike")
             }
 
-            testClass<AbstractIrInterpreterAfterFir2IrTest> {
+            testClass<AbstractJvmIrInterpreterAfterFir2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
 
-            testClass<AbstractIrInterpreterAfterPsi2IrTest> {
+            testClass<AbstractJvmIrInterpreterAfterPsi2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
         }

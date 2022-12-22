@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/ir/interpreter")
 @TestDataPath("$PROJECT_ROOT")
-public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreterAfterFir2IrTest {
+public class JvmIrInterpreterAfterFir2IrTestGenerated extends AbstractJvmIrInterpreterAfterFir2IrTest {
     @Test
     @TestMetadata("abstract1.kt")
     public void testAbstract1() throws Exception {
