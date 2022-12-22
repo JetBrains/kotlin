@@ -884,6 +884,14 @@ public inline fun kotlin.Short.toUShort(): kotlin.UShort
 @kotlin.internal.InlineOnly
 public inline fun <T : kotlin.AutoCloseable?, R> T.use(block: (T) -> R): R
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+@kotlin.RequiresOptIn
+public final annotation class AllowTypedEquals : kotlin.Annotation {
+    public constructor AllowTypedEquals()
+}
+
 public interface Annotation {
 }
 
@@ -2920,6 +2928,13 @@ public final data class Triple<out A, out B, out C> : kotlin.io.Serializable {
     public open override fun hashCode(): kotlin.Int
 
     public open override fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.annotation.MustBeDocumented
+public final annotation class TypedEquals : kotlin.Annotation {
+    public constructor TypedEquals()
 }
 
 @kotlin.SinceKotlin(version = "1.5")
