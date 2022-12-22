@@ -1170,6 +1170,8 @@ internal abstract class FunctionGenerationContext(
         val anyMethod = (irFunction as IrSimpleFunction).findOverriddenMethodOfAny()
         val owner = (anyMethod ?: irFunction).parentAsClass
 
+        generationState.dependenciesTracker.add(owner, DependenciesTracker.UsageKind.IR_ONLY)
+
         val llvmMethod = when {
             !owner.isInterface -> {
                 // If this is a virtual method of the class - we can call via vtable.

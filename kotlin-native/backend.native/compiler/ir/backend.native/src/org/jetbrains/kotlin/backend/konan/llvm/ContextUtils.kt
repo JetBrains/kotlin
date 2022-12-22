@@ -356,7 +356,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
         if (llvmFunctionProto.origin != null) {
-            this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
+            this.dependenciesTracker.add(llvmFunctionProto.origin,
+                    kind = if (llvmFunctionProto.independent)
+                        DependenciesTracker.UsageKind.BITCODE_ONLY
+                    else DependenciesTracker.UsageKind.NATIVE_AND_BITCODE)
         }
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {

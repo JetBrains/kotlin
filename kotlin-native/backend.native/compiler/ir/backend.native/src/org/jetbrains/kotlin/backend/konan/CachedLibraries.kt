@@ -38,12 +38,14 @@ class CachedLibraries(
 
     sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String, val rootDirectory: String) {
         val bitcodeDependencies by lazy { computeBitcodeDependencies() }
+        val irLevelDependencies by lazy { computeIrLevelDependencies() }
         val binariesPaths by lazy { computeBinariesPaths() }
         val serializedInlineFunctionBodies by lazy { computeSerializedInlineFunctionBodies() }
         val serializedClassFields by lazy { computeSerializedClassFields() }
         val serializedEagerInitializedFiles by lazy { computeSerializedEagerInitializedFiles() }
 
         protected abstract fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency>
+        protected abstract fun computeIrLevelDependencies(): List<DependenciesTracker.UnresolvedDependency>
         protected abstract fun computeBinariesPaths(): List<String>
         protected abstract fun computeSerializedInlineFunctionBodies(): List<SerializedInlineFunctionReference>
         protected abstract fun computeSerializedClassFields(): List<SerializedClassFields>
@@ -60,6 +62,12 @@ class CachedLibraries(
             override fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency> {
                 val directory = File(path).absoluteFile.parentFile
                 val data = directory.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+                return DependenciesSerializer.deserialize(path, data)
+            }
+
+            override fun computeIrLevelDependencies(): List<DependenciesTracker.UnresolvedDependency> {
+                val directory = File(path).absoluteFile.parentFile
+                val data = directory.child(IR_LEVEL_DEPENDENCIES_FILE_NAME).readStrings()
                 return DependenciesSerializer.deserialize(path, data)
             }
 
@@ -94,8 +102,18 @@ class CachedLibraries(
                 }
             }
 
-            fun getFileDependencies(file: String) =
+            private val perFileIrLevelDependencies by lazy {
+                fileDirs.associate {
+                    val data = it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(IR_LEVEL_DEPENDENCIES_FILE_NAME).readStrings()
+                    it.name to DependenciesSerializer.deserialize(it.absolutePath, data)
+                }
+            }
+
+            fun getFileBitcodeDependencies(file: String) =
                     perFileBitcodeDependencies[file] ?: error("File $file is not found in cache $path")
+
+            fun getFileIrLevelDependencies(file: String) =
+                    perFileIrLevelDependencies[file] ?: error("File $file is not found in cache $path")
 
             fun getFileBinaryPath(file: String) =
                     File(path).child(file).child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(getArtifactName(target, file, kind.toCompilerOutputKind())).let {
@@ -104,6 +122,8 @@ class CachedLibraries(
                     }
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
+
+            override fun computeIrLevelDependencies() = perFileIrLevelDependencies.values.flatten()
 
             override fun computeBinariesPaths() = fileDirs.map {
                 it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(getArtifactName(target, it.name, kind.toCompilerOutputKind())).absolutePath
@@ -233,6 +253,7 @@ class CachedLibraries(
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
+        const val IR_LEVEL_DEPENDENCIES_FILE_NAME = "ir_only_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"

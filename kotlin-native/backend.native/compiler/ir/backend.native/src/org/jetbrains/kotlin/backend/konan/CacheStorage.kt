@@ -26,6 +26,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
         saveCacheBitcodeDependencies()
+        saveCacheIrLevelDependencies()
         saveInlineFunctionBodies()
         saveClassFields()
         saveEagerInitializedProperties()
@@ -34,6 +35,11 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     private fun saveCacheBitcodeDependencies() {
         outputFiles.bitcodeDependenciesFile!!.writeLines(
                 DependenciesSerializer.serialize(generationState.dependenciesTracker.immediateBitcodeDependencies))
+    }
+
+    private fun saveCacheIrLevelDependencies() {
+        outputFiles.irLevelDependenciesFile!!.writeLines(
+                DependenciesSerializer.serialize(generationState.dependenciesTracker.irLevelDependencies))
     }
 
     private fun saveInlineFunctionBodies() {
