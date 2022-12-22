@@ -25,7 +25,7 @@ interface TestVersions {
         const val G_8_0 = "8.0-20221126231700+0000"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
-        const val MAX_SUPPORTED = G_7_3
+        const val MAX_SUPPORTED = G_7_4
     }
 
     object Kotlin {
