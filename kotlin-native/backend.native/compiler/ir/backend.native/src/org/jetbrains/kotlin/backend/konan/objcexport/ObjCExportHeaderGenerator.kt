@@ -649,7 +649,7 @@ internal class ObjCExportTranslatorImpl(
                         when {
                             p is ReceiverParameterDescriptor -> "receiver"
                             method is PropertySetterDescriptor -> "value"
-                            else -> p.name.asString()
+                            else -> namer.getParameterName(p)
                         }
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"

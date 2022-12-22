@@ -61,6 +61,7 @@ interface ObjCExportNamer {
     fun getFileClassName(file: SourceFile): ClassOrProtocolName
     fun getClassOrProtocolName(descriptor: ClassDescriptor): ClassOrProtocolName
     fun getSelector(method: FunctionDescriptor): String
+    fun getParameterName(parameter: ParameterDescriptor): String
     fun getSwiftName(method: FunctionDescriptor): String
     fun getPropertyName(property: PropertyDescriptor): PropertyName
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
@@ -479,6 +480,8 @@ internal class ObjCExportNamerImpl(
         }
         append(objCName.asIdentifier(forSwift))
     }
+
+    override fun getParameterName(parameter: ParameterDescriptor): String = parameter.getObjCName().asString(forSwift = false)
 
     override fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
         assert(mapper.isBaseMethod(method))
