@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM_IR
+
 const val someStr = "123"
 const val otherStr = "other"
 

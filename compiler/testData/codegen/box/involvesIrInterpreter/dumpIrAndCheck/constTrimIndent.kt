@@ -1,4 +1,7 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
+
 const val trimIndent = "123".trimIndent()
 const val complexTrimIndent =
     """

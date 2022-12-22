@@ -23937,6 +23937,32 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegenK2")
+        @UseExtTestCaseGroupProvider()
+        @K2Pipeline()
+        public class InvolvesIrInterpreter {
+            @Test
+            public void testAllFilesPresentInInvolvesIrInterpreter() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegenK2")
+            @UseExtTestCaseGroupProvider()
+            @K2Pipeline()
+            public class DumpIrAndCheck {
+                @Test
+                public void testAllFilesPresentInDumpIrAndCheck() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/ir")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegenK2")

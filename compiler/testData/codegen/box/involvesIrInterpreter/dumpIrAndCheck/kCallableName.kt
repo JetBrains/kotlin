@@ -1,3 +1,6 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
+
 class A(val OK: Int, val somePropertyWithLongName: String) {
     fun foo() {}
 }

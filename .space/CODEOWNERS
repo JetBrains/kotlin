@@ -143,7 +143,6 @@
 /compiler/testData/ir/irJsText/ "Kotlin Compiler Core"
 /compiler/testData/ir/irText/ "Kotlin Compiler Core"
 /compiler/testData/ir/klibLayout/ "Kotlin Native"
-/compiler/testData/ir/loweredIr/interpreter/ "Kotlin JVM"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
 /compiler/testData/javaModules/ "Kotlin JVM"
 /compiler/testData/klibABI/ "Kotlin Native"

@@ -1,3 +1,6 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
+
 const val flag = true
 const val value = 10
 const val condition = if (flag) "True" else "Error"

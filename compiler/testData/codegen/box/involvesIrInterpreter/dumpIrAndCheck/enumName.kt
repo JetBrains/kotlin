@@ -1,3 +1,6 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
+
 enum class EnumClass {
     OK, VALUE, anotherValue, WITH_UNDERSCORE
 }

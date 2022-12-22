@@ -29,7 +29,10 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         for (file in files) {
-            if (file.content.contains("// IGNORE_LIGHT_ANALYSIS") || file.content.contains("// MODULE:")) {
+            if (file.content.contains("// IGNORE_LIGHT_ANALYSIS") ||
+                file.content.contains("// MODULE:") ||
+                file.content.contains("// TARGET_FRONTEND: FIR")
+            ) {
                 return
             }
         }

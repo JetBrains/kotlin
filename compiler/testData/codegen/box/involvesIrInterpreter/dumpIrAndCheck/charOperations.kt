@@ -1,4 +1,6 @@
+// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
+
 const val oneVal = '1'
 const val twoVal = '2'
 const val threeVal = '3'

@@ -1,4 +1,6 @@
+// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
+
 const val byteVal: UByte = 1u
 const val shortVal: UShort = 2u
 const val intVal: UInt = 3u

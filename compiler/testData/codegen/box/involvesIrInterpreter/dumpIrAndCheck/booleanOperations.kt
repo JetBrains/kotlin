@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM_IR
+
 const val trueVal = true
 const val falseVal = false
 

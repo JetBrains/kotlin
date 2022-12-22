@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractLightTreeFir2IrTextTest
-import org.jetbrains.kotlin.test.runners.ir.AbstractLoweredIrInterpreterTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFir2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -264,10 +263,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractFirLocalVariableTest> {
                 model("debug/localVariables")
-            }
-
-            testClass<AbstractLoweredIrInterpreterTest> {
-                model("ir/loweredIr")
             }
 
             testClass<AbstractFirDiagnosticsTestWithJvmIrBackend> {

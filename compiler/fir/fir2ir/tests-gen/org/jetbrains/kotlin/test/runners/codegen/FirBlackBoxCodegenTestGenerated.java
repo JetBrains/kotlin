@@ -264,12 +264,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("kt55108.kt")
-        public void testKt55108() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/kt55108.kt");
-        }
-
-        @Test
         @TestMetadata("mustBeDocumented.kt")
         public void testMustBeDocumented() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/mustBeDocumented.kt");
@@ -8293,12 +8287,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("foldingBinaryOpsUnsignedConst.kt")
         public void testFoldingBinaryOpsUnsignedConst() throws Exception {
             runTest("compiler/testData/codegen/box/constants/foldingBinaryOpsUnsignedConst.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53480.kt")
-        public void testKt53480() throws Exception {
-            runTest("compiler/testData/codegen/box/constants/kt53480.kt");
         }
 
         @Test
@@ -17124,12 +17112,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("referenceNameFromStaticInDifferentModule.kt")
-        public void testReferenceNameFromStaticInDifferentModule() throws Exception {
-            runTest("compiler/testData/codegen/box/evaluate/referenceNameFromStaticInDifferentModule.kt");
-        }
-
-        @Test
         @TestMetadata("rem.kt")
         public void testRem() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/rem.kt");
@@ -17139,18 +17121,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("simpleCallBinary.kt")
         public void testSimpleCallBinary() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/simpleCallBinary.kt");
-        }
-
-        @Test
-        @TestMetadata("stringConcatenationWithObject.kt")
-        public void testStringConcatenationWithObject() throws Exception {
-            runTest("compiler/testData/codegen/box/evaluate/stringConcatenationWithObject.kt");
-        }
-
-        @Test
-        @TestMetadata("thisPlusString.kt")
-        public void testThisPlusString() throws Exception {
-            runTest("compiler/testData/codegen/box/evaluate/thisPlusString.kt");
         }
 
         @Test
@@ -28102,6 +28072,170 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("serializableWithBridge.kt")
             public void testSerializableWithBridge() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableWithBridge.kt");
+            }
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvolvesIrInterpreter {
+        @Test
+        public void testAllFilesPresentInInvolvesIrInterpreter() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("kt53480.kt")
+        public void testKt53480() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt53480.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55108.kt")
+        public void testKt55108() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55108.kt");
+        }
+
+        @Test
+        @TestMetadata("referenceNameFromStaticInDifferentModule.kt")
+        public void testReferenceNameFromStaticInDifferentModule() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/referenceNameFromStaticInDifferentModule.kt");
+        }
+
+        @Test
+        @TestMetadata("stringConcatenationWithObject.kt")
+        public void testStringConcatenationWithObject() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenationWithObject.kt");
+        }
+
+        @Test
+        @TestMetadata("thisPlusString.kt")
+        public void testThisPlusString() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
+        }
+
+        @Test
+        @TestMetadata("useCorrectToString.kt")
+        public void testUseCorrectToString() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/useCorrectToString.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DumpIrAndCheck {
+            @Test
+            public void testAllFilesPresentInDumpIrAndCheck() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("booleanOperations.kt")
+            public void testBooleanOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/booleanOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("byteOperations.kt")
+            public void testByteOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/byteOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("charOperations.kt")
+            public void testCharOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/charOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("constTrimIndent.kt")
+            public void testConstTrimIndent() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/constTrimIndent.kt");
+            }
+
+            @Test
+            @TestMetadata("constTrimMargin.kt")
+            public void testConstTrimMargin() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/constTrimMargin.kt");
+            }
+
+            @Test
+            @TestMetadata("doubleOperations.kt")
+            public void testDoubleOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/doubleOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("enumName.kt")
+            public void testEnumName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/enumName.kt");
+            }
+
+            @Test
+            @TestMetadata("enumRecursiveName.kt")
+            public void testEnumRecursiveName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/enumRecursiveName.kt");
+            }
+
+            @Test
+            @TestMetadata("floatOperations.kt")
+            public void testFloatOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/floatOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("ifConstVal.kt")
+            public void testIfConstVal() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/ifConstVal.kt");
+            }
+
+            @Test
+            @TestMetadata("intOperations.kt")
+            public void testIntOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/intOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("kCallableName.kt")
+            public void testKCallableName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/kCallableName.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53272.kt")
+            public void testKt53272() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/kt53272.kt");
+            }
+
+            @Test
+            @TestMetadata("longOperations.kt")
+            public void testLongOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/longOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("shortOperations.kt")
+            public void testShortOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/shortOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("stdlibConst.kt")
+            public void testStdlibConst() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stdlibConst.kt");
+            }
+
+            @Test
+            @TestMetadata("stringOperations.kt")
+            public void testStringOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("unsignedConst.kt")
+            public void testUnsignedConst() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/unsignedConst.kt");
             }
         }
     }
