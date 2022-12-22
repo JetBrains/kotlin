@@ -1,9 +1,11 @@
 public final class MyClass /* MyClass*/ {
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String prop2;
+  private static java.lang.String prop2 = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   public static final MyClass.Companion Companion;
+
+  private static int prop = 4 /* initializer type: int */;
 
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
@@ -13,8 +15,6 @@ public final class MyClass /* MyClass*/ {
   public static final void setProp(int);//  setProp(int)
 
   public  MyClass();//  .ctor()
-
-  public static final void setProp2(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProp2(java.lang.String)
 
 
   class Companion ...

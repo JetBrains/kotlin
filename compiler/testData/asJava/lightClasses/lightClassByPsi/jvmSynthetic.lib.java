@@ -1,6 +1,8 @@
 public final class A /* A*/ {
   private int z;
 
+  public A f;
+
   public  A();//  .ctor()
 
   public final int getX();//  getX()

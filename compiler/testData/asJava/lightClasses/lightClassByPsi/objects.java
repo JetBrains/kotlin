@@ -28,9 +28,9 @@ public final class C /* C*/ {
 
 
   class Companion ...
-  
+
     class Factory ...
-  
+
   }
 
 public static final class Companion /* C.Companion*/ {
@@ -67,13 +67,14 @@ public static final class Factory /* C.Factory*/ {
 }
 
 public final class C1 /* C1*/ {
+  @org.jetbrains.annotations.NotNull()
   private static final C1.Companion Companion;
 
   public  C1();//  .ctor()
 
 
   class Companion ...
-  
+
   }
 
 private static final class Companion /* C1.Companion*/ {
@@ -87,7 +88,7 @@ public abstract interface I /* I*/ {
 
 
   class Companion ...
-  
+
   }
 
 public static final class Companion /* I.Companion*/ {
@@ -162,7 +163,7 @@ public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
 
 
   class Companion ...
-  
+
   }
 
 public static final class Companion /* ClassWithConstContainer.Companion*/ {
