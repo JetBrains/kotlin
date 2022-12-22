@@ -32,18 +32,17 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val shadows by configurations.creating {
-    isTransitive = false
-}
-configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testApi").extendsFrom(shadows)
+val embedded by configurations
+embedded.isTransitive = false
+configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.getByName("testApi").extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
-    shadows(project(":kotlinx-metadata"))
-    shadows(project(":core:metadata"))
-    shadows(project(":core:metadata.jvm"))
-    shadows(protobufLite())
+    embedded(project(":kotlinx-metadata"))
+    embedded(project(":core:metadata"))
+    embedded(project(":core:metadata.jvm"))
+    embedded(protobufLite())
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDependency("junit:junit"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
@@ -54,40 +53,26 @@ if (deployVersion != null) {
     publish()
 }
 
-val shadowJarTask = runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
-    callGroovy("manifestAttributes", manifest, project)
-    manifest.attributes["Implementation-Version"] = archiveVersion
-
+val runtimeJar = runtimeJarWithRelocation {
     from(mainSourceSet.output)
     exclude("**/*.proto")
-    configurations = listOf(shadows)
     relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
 }
 
-val test by tasks
-test.dependsOn("shadowJar")
-
 tasks.apiBuild {
-    inputJar.value(shadowJarTask.flatMap { it.archiveFile })
+    inputJar.value(runtimeJar.flatMap { it.archiveFile })
 }
 
 apiValidation {
     ignoredPackages.add("kotlinx.metadata.internal")
-    nonPublicMarkers.addAll(listOf(
-        "kotlinx.metadata.internal.IgnoreInApiDump",
-        "kotlinx.metadata.jvm.internal.IgnoreInApiDump"
-    ))
+    nonPublicMarkers.addAll(
+        listOf(
+            "kotlinx.metadata.internal.IgnoreInApiDump",
+            "kotlinx.metadata.jvm.internal.IgnoreInApiDump"
+        )
+    )
 }
 
-sourcesJar {
-    for (dependency in shadows.dependencies) {
-        if (dependency is ProjectDependency) {
-            val javaPlugin = dependency.dependencyProject.convention.findPlugin(JavaPluginConvention::class.java)
-            if (javaPlugin != null) {
-                from(javaPlugin.sourceSets["main"].allSource)
-            }
-        }
-    }
-}
+sourcesJar()
 
 javadocJar()

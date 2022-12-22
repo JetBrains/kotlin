@@ -16,50 +16,35 @@ sourceSets {
     "main" { projectDefault() }
 }
 
-val shadows by configurations.creating {
-    isTransitive = false
-}
-
-configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testApi").extendsFrom(shadows)
+val embedded by configurations
+embedded.isTransitive = false
+configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.getByName("testApi").extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
-    shadows(project(":kotlinx-metadata"))
-    shadows(project(":core:compiler.common"))
-    shadows(project(":core:metadata"))
-    shadows(project(":core:deserialization"))
-    shadows(project(":core:deserialization.common"))
-    shadows(project(":compiler:serialization"))
-    shadows(project(":kotlin-util-klib-metadata"))
-    shadows(project(":kotlin-util-klib"))
-    shadows(project(":kotlin-util-io"))
-    shadows(protobufLite())
+    embedded(project(":kotlinx-metadata"))
+    embedded(project(":core:compiler.common"))
+    embedded(project(":core:metadata"))
+    embedded(project(":core:deserialization"))
+    embedded(project(":core:deserialization.common"))
+    embedded(project(":compiler:serialization"))
+    embedded(project(":kotlin-util-klib-metadata"))
+    embedded(project(":kotlin-util-klib"))
+    embedded(project(":kotlin-util-io"))
+    embedded(protobufLite())
 }
 
 if (deployVersion != null) {
     publish()
 }
 
-runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
-    callGroovy("manifestAttributes", manifest, project)
-    manifest.attributes["Implementation-Version"] = archiveVersion
-
+runtimeJarWithRelocation {
     from(mainSourceSet.output)
     exclude("**/*.proto")
-    configurations = listOf(shadows)
     relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
 }
 
-sourcesJar {
-    for (dependency in shadows.dependencies) {
-        if (dependency is ProjectDependency) {
-            val javaPlugin = dependency.dependencyProject.convention.findPlugin(JavaPluginConvention::class.java)
-            if (javaPlugin != null) {
-                from(javaPlugin.sourceSets["main"].allSource)
-            }
-        }
-    }
-}
+sourcesJar()
 
 javadocJar()

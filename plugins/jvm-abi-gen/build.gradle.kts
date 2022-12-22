@@ -12,11 +12,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val shadows: Configuration by configurations.creating {
-    isTransitive = false
-}
-configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testApi").extendsFrom(shadows)
+val embedded by configurations
+embedded.isTransitive = false
+configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.getByName("testApi").extendsFrom(embedded)
 
 dependencies {
     // Should come before dependency on proguarded compiler because StringUtil methods are deleted from it
@@ -36,7 +35,7 @@ dependencies {
     // Note that kotlinx-metadata-jvm already includes kotlinx-metadata, core:metadata, core:metadata.jvm,
     // and protobuf-lite, so we only need to include kotlinx-metadata-jvm in the shadow jar.
     compileOnly(project(":kotlinx-metadata"))
-    shadows(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-jvm"))
+    embedded(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-jvm"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
@@ -50,14 +49,8 @@ optInToExperimentalCompilerApi()
 
 publish()
 
-noDefaultJar()
-
-val shadowJar = runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
-    callGroovy("manifestAttributes", manifest, project)
-    manifest.attributes["Implementation-Version"] = archiveVersion
-
+runtimeJarWithRelocation {
     from(mainSourceSet.output)
-    configurations = listOf(shadows)
     relocate("kotlinx.metadata", "org.jetbrains.kotlin.jvm.abi.kotlinx.metadata")
     mergeServiceFiles() // This is needed to relocate the services files for kotlinx.metadata
 }
@@ -69,7 +62,6 @@ javadocJar()
 projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":dist")
-    dependsOn(shadowJar)
 }
 
 testsJar()
