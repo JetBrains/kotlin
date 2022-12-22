@@ -173,43 +173,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
         val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
 
-        for (classpath in pluginClasspaths) {
-            if (!File(classpath).exists()) {
-                messageCollector.report(ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
-            }
-        }
-
-        if (pluginConfigurations.isNotEmpty()) {
-            var hasErrors = false
-            messageCollector.report(WARNING, "Argument -Xcompiler-plugin is experimental")
-            if (!arguments.useK2) {
-                hasErrors = true
-                messageCollector.report(
-                    ERROR,
-                    "-Xcompiler-plugin argument is allowed only for for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2"
-                )
-            }
-            if (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty()) {
-                hasErrors = true
-                val message = buildString {
-                    appendLine("Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax")
-                    appendLine("Legacy arguments:")
-                    if (pluginClasspaths.isNotEmpty()) {
-                        appendLine("  -Xplugin=${pluginClasspaths.joinToString(",")}")
-                    }
-                    pluginOptions.forEach {
-                        appendLine("  -P $it")
-                    }
-                    appendLine("Modern arguments:")
-                    pluginConfigurations.forEach {
-                        appendLine("  -Xcompiler-plugin=$it")
-                    }
-                }
-                messageCollector.report(ERROR, message)
-            }
-            if (hasErrors) {
-                return INTERNAL_ERROR
-            }
+        if (!checkPluginsArguments(messageCollector, arguments.useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+            return INTERNAL_ERROR
         }
 
         if (!arguments.disableDefaultScriptingPlugin) {
@@ -257,5 +222,51 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             messageCollector.report(LOGGING, "Exception on loading scripting plugin: $e")
             false
         }
+}
+
+fun checkPluginsArguments(
+    messageCollector: MessageCollector,
+    useK2: Boolean,
+    pluginClasspaths: List<String>,
+    pluginOptions: List<String>,
+    pluginConfigurations: MutableList<String>
+): Boolean {
+    var hasErrors = false
+
+    for (classpath in pluginClasspaths) {
+        if (!File(classpath).exists()) {
+            messageCollector.report(ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
+        }
+    }
+
+    if (pluginConfigurations.isNotEmpty()) {
+        messageCollector.report(WARNING, "Argument -Xcompiler-plugin is experimental")
+        if (!useK2) {
+            hasErrors = true
+            messageCollector.report(
+                ERROR,
+                "-Xcompiler-plugin argument is allowed only for for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2"
+            )
+        }
+        if (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty()) {
+            hasErrors = true
+            val message = buildString {
+                appendLine("Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax")
+                appendLine("Legacy arguments:")
+                if (pluginClasspaths.isNotEmpty()) {
+                    appendLine("  -Xplugin=${pluginClasspaths.joinToString(",")}")
+                }
+                pluginOptions.forEach {
+                    appendLine("  -P $it")
+                }
+                appendLine("Modern arguments:")
+                pluginConfigurations.forEach {
+                    appendLine("  -Xcompiler-plugin=$it")
+                }
+            }
+            messageCollector.report(ERROR, message)
+        }
+    }
+    return !hasErrors
 }
 

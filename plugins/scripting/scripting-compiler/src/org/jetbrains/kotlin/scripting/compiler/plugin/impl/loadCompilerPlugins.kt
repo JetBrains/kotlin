@@ -30,8 +30,7 @@ private val scriptCompilationDisabledCommandlineProcessors =
         ScriptingCommandLineProcessor::class.java.name
     )
 
-internal fun CompilerConfiguration.loadPlugins() {
-    val classLoader = CompilerConfiguration::class.java.classLoader
+internal fun CompilerConfiguration.loadPlugins(classLoader: ClassLoader = CompilerConfiguration::class.java.classLoader) {
     val registrars =
         classLoader.loadServices<ComponentRegistrar>(scriptCompilationDisabledPlugins, SCRIPT_COMPILATION_DISABLE_PLUGINS_PROPERTY)
     addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, registrars)

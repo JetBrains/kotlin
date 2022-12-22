@@ -5,6 +5,8 @@ plugins {
     kotlin("jvm")
 }
 
+val kotlinxSerializationGradlePluginClasspath by configurations.creating
+
 dependencies {
     testApi(project(":kotlin-main-kts"))
     testCompileOnly(project(":compiler:cli"))
@@ -13,6 +15,7 @@ dependencies {
     testApi(commonDependency("junit"))
     testApi(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
     testImplementation(project(":kotlin-compiler-embeddable"))
+    kotlinxSerializationGradlePluginClasspath(project(":kotlin-serialization")) { isTransitive = false }
 }
 
 sourceSets {
@@ -21,7 +24,11 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
-    dependsOn(":dist")
+    dependsOn(":dist", ":kotlin-serialization:jar")
+    val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
+    doFirst {
+        systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+    }
     workingDir = rootDir
 }
 

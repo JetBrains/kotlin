@@ -160,7 +160,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::defaultScriptExtension,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
-        K2JVMCompilerArguments::pluginClasspaths,
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
@@ -181,7 +180,10 @@ internal fun reportArgumentsIgnoredFromRefinement(
         K2JVMCompilerArguments::javaModulePath,
         K2JVMCompilerArguments::classpath,
         K2JVMCompilerArguments::noStdlib,
-        K2JVMCompilerArguments::noReflect
+        K2JVMCompilerArguments::noReflect,
+        K2JVMCompilerArguments::pluginClasspaths,
+        K2JVMCompilerArguments::pluginOptions,
+        K2JVMCompilerArguments::pluginConfigurations,
     )
 
 

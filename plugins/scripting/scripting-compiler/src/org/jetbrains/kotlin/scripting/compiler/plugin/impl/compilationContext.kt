@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
+import org.jetbrains.kotlin.cli.common.checkPluginsArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -199,13 +201,6 @@ internal fun createInitialConfigurations(
     val initialScriptCompilationConfiguration =
         scriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration)
 
-    kotlinCompilerConfiguration.add(
-        ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-        ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
-    )
-
-    kotlinCompilerConfiguration.loadPlugins()
-
     initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
         kotlinCompilerConfiguration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
     }
@@ -339,6 +334,22 @@ private fun createInitialCompilerConfiguration(
         configureJdkClasspathRoots()
 
         put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, true)
+
+        add(
+            ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+            ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+        )
+
+        val pluginClasspaths = baseArguments.pluginClasspaths?.asList().orEmpty()
+        val pluginOptions = baseArguments.pluginOptions?.asList().orEmpty()
+        val pluginConfigurations = baseArguments.pluginConfigurations.orEmpty().toMutableList()
+
+        checkPluginsArguments(messageCollector, false, pluginClasspaths, pluginOptions, pluginConfigurations)
+        if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
+            PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this)
+        } else {
+            loadPlugins()
+        }
     }
 }
 
