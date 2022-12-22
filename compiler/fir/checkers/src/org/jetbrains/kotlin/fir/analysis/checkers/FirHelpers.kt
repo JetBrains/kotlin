@@ -293,8 +293,8 @@ val FirValueParameter.hasValOrVar: Boolean
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
     type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
 
-fun FirMemberDeclaration.isInlineOnly(): Boolean =
-    isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+fun FirMemberDeclaration.isInlineOnly(session: FirSession): Boolean =
+    isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID, session)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)

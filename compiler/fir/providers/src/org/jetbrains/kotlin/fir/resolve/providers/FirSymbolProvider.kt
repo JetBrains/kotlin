@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -78,7 +80,8 @@ fun FirSymbolProvider.getClassDeclaredPropertySymbols(classId: ClassId, name: Na
 }
 
 inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(typeRef: FirTypeRef): T? {
-    val lookupTag = typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag ?: return null
+    val lookupTag = (typeRef.coneTypeSafe<ConeSimpleKotlinType>()?.fullyExpandedType(session) as? ConeLookupTagBasedType)?.lookupTag
+        ?: return null
     return getSymbolByLookupTag(lookupTag) as? T
 }
 

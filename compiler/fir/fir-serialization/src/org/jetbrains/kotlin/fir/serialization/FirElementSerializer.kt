@@ -907,7 +907,7 @@ class FirElementSerializer private constructor(
     private fun MutableVersionRequirementTable.serializeVersionRequirements(annotations: List<FirAnnotation>): List<Int> =
         annotations
             .filter {
-                it.toAnnotationClassId()?.asSingleFqName() == RequireKotlinConstants.FQ_NAME
+                it.toAnnotationClassId(session)?.asSingleFqName() == RequireKotlinConstants.FQ_NAME
             }
             .mapNotNull(::serializeVersionRequirementFromRequireKotlin)
             .map(::get)

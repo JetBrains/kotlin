@@ -45,7 +45,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
     )
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId) as? FirAnnotationCall
+        val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId, context.session) as? FirAnnotationCall
 
         if (!checkInheritance(declaration, throwsAnnotation, context, reporter)) return
 
@@ -123,7 +123,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
                         val annotation = if (overriddenFunction.isSubstitutionOrIntersectionOverride) {
                             null
                         } else {
-                            overriddenFunction.getAnnotationByClassId(throwsClassId) as? FirAnnotationCall
+                            overriddenFunction.getAnnotationByClassId(throwsClassId, context.session) as? FirAnnotationCall
                         }
                         getInheritedThrows(annotation, overriddenFunction)
                     }

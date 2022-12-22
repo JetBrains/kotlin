@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID)
+        val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && !declaration.isInline) {
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS, context)
         } else if (annotation == null && declaration.isInline && !declaration.isExpect) {

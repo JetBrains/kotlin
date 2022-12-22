@@ -275,7 +275,7 @@ class FirJvmSerializerExtension(
     }
 
     private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
-        if (!hasJvmFieldAnnotation) return false
+        if (!hasJvmFieldAnnotation(session)) return false
 
         val containerSymbol = (dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClassSymbol(session)
         // Note: companions are anyway forbidden in local classes

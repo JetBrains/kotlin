@@ -27,11 +27,12 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_CLASS_ID
 
 object FirOverloadsChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID) ?: return
+        val session = context.session
+        val annotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID, session) ?: return
         //todo need to have expect declaration here to check if it has default values
         if (declaration.isActual) return
 
-        val containingDeclaration = declaration.getContainingClassSymbol(context.session)
+        val containingDeclaration = declaration.getContainingClassSymbol(session)
         when {
             containingDeclaration?.classKind == ClassKind.INTERFACE ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_INTERFACE, context)

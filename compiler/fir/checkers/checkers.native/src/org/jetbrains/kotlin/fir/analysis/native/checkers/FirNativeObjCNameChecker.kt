@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -51,7 +52,7 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
 
     private fun checkDeclaration(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirValueParameter) return // those are checked with the FirFunction
-        val objCNames = declaration.symbol.getObjCNames().filterNotNull()
+        val objCNames = declaration.symbol.getObjCNames(context.session).filterNotNull()
         if (objCNames.isEmpty()) return
         if (declaration is FirCallableDeclaration && declaration.isOverride) {
             for (objCName in objCNames) {
@@ -115,20 +116,20 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun FirAnnotationContainer.getObjCName(): ObjCName? =
-        getAnnotationByClassId(objCNameClassId)?.let(::ObjCName)
+    private fun FirAnnotationContainer.getObjCName(session: FirSession): ObjCName? =
+        getAnnotationByClassId(objCNameClassId, session)?.let(::ObjCName)
 
-    private fun FirBasedSymbol<*>.getObjCName(): ObjCName? =
-        getAnnotationByClassId(objCNameClassId)?.let(::ObjCName)
+    private fun FirBasedSymbol<*>.getObjCName(session: FirSession): ObjCName? =
+        getAnnotationByClassId(objCNameClassId, session)?.let(::ObjCName)
 
-    fun FirBasedSymbol<*>.getObjCNames(): List<ObjCName?> = when (this) {
+    fun FirBasedSymbol<*>.getObjCNames(session: FirSession): List<ObjCName?> = when (this) {
         is FirFunctionSymbol<*> -> buildList {
-            add((this@getObjCNames as FirBasedSymbol<*>).getObjCName())
-            add(resolvedReceiverTypeRef?.getObjCName())
-            add(receiverParameter?.getObjCName())
-            valueParameterSymbols.forEach { add(it.getObjCName()) }
+            add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
+            add(resolvedReceiverTypeRef?.getObjCName(session))
+            add(receiverParameter?.getObjCName(session))
+            valueParameterSymbols.forEach { add(it.getObjCName(session)) }
         }
 
-        else -> listOf(getObjCName())
+        else -> listOf(getObjCName(session))
     }
 }

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -33,7 +32,8 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_I
 object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val jvmDefaultMode = context.session.jvmDefaultModeState
-        val defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID)
+        val session = context.session
+        val defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID, session)
 
         if (defaultAnnotation != null) {
             val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
@@ -53,7 +53,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                 }
             }
         } else {
-            val annotationNoCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID)
+            val annotationNoCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)
             if (annotationNoCompatibility != null) {
                 val source = annotationNoCompatibility.source
                 when {
@@ -77,7 +77,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                     }
                 }
             }
-            val annotationWithCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID)
+            val annotationWithCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session)
             if (annotationWithCompatibility != null) {
                 val source = annotationWithCompatibility.source
                 when {
@@ -121,7 +121,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
             unsubstitutedScope.processFunctionsByName(member.name) {}
             val overriddenFunctions = unsubstitutedScope.getDirectOverriddenFunctions(member.symbol)
 
-            if (overriddenFunctions.any { it.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID) != null }) {
+            if (overriddenFunctions.any { it.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID, context.session) != null }) {
                 reporter.reportOn(declaration.source, FirJvmErrors.JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, context)
             } else if (jvmDefaultMode.isEnabled) {
                 for (overriddenFunction in overriddenFunctions) {
@@ -146,10 +146,5 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
         } else {
             ArrayList<FirCallableSymbol<*>>(1).also { it.add(this) }
         }
-    }
-
-    fun FirCallableSymbol<*>.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode: JvmDefaultMode): Boolean {
-        // TODO: Fix support for all cases
-        return isCompiledToJvmDefault(jvmDefaultMode)
     }
 }

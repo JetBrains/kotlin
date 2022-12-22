@@ -95,19 +95,19 @@ internal class KtFirSymbolInfoProvider(
     }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.hasAnnotation(StandardClassIds.Annotations.JvmField)) return property.name
+        if (property.hasAnnotation(StandardClassIds.Annotations.JvmField, analysisSession.useSiteSession)) return property.name
         return Name.identifier(getJvmNameAsString(property, isSetter))
     }
 
     private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
         val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
-        val jvmNameFromProperty = property.getJvmNameFromAnnotation(useSiteTarget)
+        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.useSiteSession, useSiteTarget)
         if (jvmNameFromProperty != null) {
             return jvmNameFromProperty
         }
 
         val accessor = if (isSetter) property.setter else property.getter
-        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation()
+        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.useSiteSession)
         if (jvmNameFromAccessor != null) {
             return jvmNameFromAccessor
         }

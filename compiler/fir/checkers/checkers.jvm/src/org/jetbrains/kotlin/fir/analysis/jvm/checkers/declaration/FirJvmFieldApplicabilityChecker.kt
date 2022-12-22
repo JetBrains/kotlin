@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) ?: return
         val session = context.session
+        val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) ?: return
         val containingClassSymbol = declaration.containingClassLookupTag()?.toFirRegularClassSymbol(session)
 
         val problem = when {
@@ -57,7 +57,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
                 if (!session.languageVersionSettings.supportsFeature(LanguageFeature.JvmFieldInInterface)) {
                     INSIDE_COMPANION_OF_INTERFACE
                 } else {
-                    if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol)) {
+                    if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol, session)) {
                         NOT_PUBLIC_VAL_WITH_JVMFIELD
                     } else {
                         return
@@ -110,7 +110,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
         return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
     }
 
-    private fun isInterfaceCompanionWithPublicJvmFieldProperties(containingClass: FirRegularClassSymbol): Boolean {
+    private fun isInterfaceCompanionWithPublicJvmFieldProperties(containingClass: FirRegularClassSymbol, session: FirSession): Boolean {
         for (symbol in containingClass.declarationSymbols) {
             if (symbol !is FirPropertySymbol) continue
 
@@ -118,7 +118,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
                 return false
             }
 
-            if (!symbol.hasJvmFieldAnnotation()) {
+            if (!symbol.hasJvmFieldAnnotation(session)) {
                 return false
             }
         }
@@ -126,8 +126,8 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
         return true
     }
 
-    private fun FirPropertySymbol.hasJvmFieldAnnotation(): Boolean {
-        return getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) != null
+    private fun FirPropertySymbol.hasJvmFieldAnnotation(session: FirSession): Boolean {
+        return getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) != null
     }
 
     private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {

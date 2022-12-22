@@ -63,10 +63,13 @@ object FirOptInUsageBaseChecker {
     }
 
     // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
-    fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName: String? = null): Experimentality? {
+    fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(
+        session: FirSession,
+        annotatedOwnerClassName: String? = null
+    ): Experimentality? {
         lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         @OptIn(SymbolInternals::class)
-        return fir.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName)
+        return fir.loadExperimentalityForMarkerAnnotation(session, annotatedOwnerClassName)
     }
 
     fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
@@ -90,14 +93,14 @@ object FirOptInUsageBaseChecker {
             result.addIfNotNull(
                 annotationType.lookupTag.toFirRegularClassSymbol(
                     session
-                )?.loadExperimentalityForMarkerAnnotation(className)
+                )?.loadExperimentalityForMarkerAnnotation(session, className)
             )
             if (fromSupertype) {
                 if (annotationType.lookupTag.classId == OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID) {
                     val annotationClass = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
                     result.addIfNotNull(
                         annotationClass.extractClassFromArgument(session)
-                            ?.loadExperimentalityForMarkerAnnotation()?.copy(fromSupertype = true)
+                            ?.loadExperimentalityForMarkerAnnotation(session)?.copy(fromSupertype = true)
                     )
                 }
             }
@@ -159,12 +162,12 @@ object FirOptInUsageBaseChecker {
 
         fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
 
-        if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) != null) {
+        if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session) != null) {
             val accessibility = fir.checkSinceKotlinVersionAccessibility(context)
             if (accessibility is FirSinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                 accessibility.markerClasses.forEach {
                     it.lazyResolveToPhase(FirResolvePhase.STATUS)
-                    result.addIfNotNull(it.fir.loadExperimentalityForMarkerAnnotation())
+                    result.addIfNotNull(it.fir.loadExperimentalityForMarkerAnnotation(session))
                 }
             }
         }
@@ -241,8 +244,11 @@ object FirOptInUsageBaseChecker {
     }
 
     // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
-    private fun FirRegularClass.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName: String? = null): Experimentality? {
-        val experimental = getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID)
+    private fun FirRegularClass.loadExperimentalityForMarkerAnnotation(
+        session: FirSession,
+        annotatedOwnerClassName: String? = null
+    ): Experimentality? {
+        val experimental = getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session)
             ?: return null
 
         val levelArgument = experimental.findArgumentByName(LEVEL) as? FirQualifiedAccessExpression
@@ -321,11 +327,11 @@ object FirOptInUsageBaseChecker {
         annotationClassId: ClassId,
         fromSupertype: Boolean
     ): Boolean {
-        return getAnnotationByClassId(annotationClassId) != null || isAnnotatedWithOptIn(session, annotationClassId) ||
+        return getAnnotationByClassId(annotationClassId, session) != null || isAnnotatedWithOptIn(annotationClassId, session) ||
                 fromSupertype && isAnnotatedWithSubclassOptInRequired(session, annotationClassId)
     }
 
-    private fun FirAnnotationContainer.isAnnotatedWithOptIn(session: FirSession, annotationClassId: ClassId): Boolean {
+    private fun FirAnnotationContainer.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {
         for (annotation in annotations) {
             val coneType = annotation.annotationTypeRef.coneType as? ConeClassLikeType
             if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -35,6 +36,7 @@ class FirBuilderInferenceSession(
     resolutionContext: ResolutionContext,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
 ) : FirInferenceSessionForChainedResolve(resolutionContext) {
+    private val session = resolutionContext.session
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
     private var lambdaImplicitReceivers: MutableList<ImplicitExtensionReceiverValue> = mutableListOf()
 
@@ -72,7 +74,7 @@ class FirBuilderInferenceSession(
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false
             dispatchReceiver?.type?.containsStubType() == true -> true
-            extensionReceiver?.type?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation()
+            extensionReceiver?.type?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
             else -> false
         }
     }
@@ -272,4 +274,5 @@ class FirStubTypeTransformer(
 
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
 
-fun FirDeclaration.hasBuilderInferenceAnnotation(): Boolean = hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID)
+fun FirDeclaration.hasBuilderInferenceAnnotation(session: FirSession): Boolean =
+    hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID, session)

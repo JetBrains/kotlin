@@ -785,7 +785,7 @@ class Fir2IrDeclarationStorage(
             hasExplicitBackingField -> backingField?.visibility ?: status.visibility
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
-            hasJvmFieldAnnotation -> status.visibility
+            hasJvmFieldAnnotation(session) -> status.visibility
             else -> Visibilities.Private
         }
 

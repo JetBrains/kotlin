@@ -40,7 +40,9 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
         if (lastAnnotationCall == null || lastAnnotationCall.annotationTypeRef !== typeRef) {
             if (classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID || classId == OptInNames.OPT_IN_CLASS_ID) {
                 reporter.reportOn(source, OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, context)
-            } else if (symbol is FirRegularClassSymbol && symbol.fir.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID) != null) {
+            } else if (symbol is FirRegularClassSymbol &&
+                symbol.fir.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session) != null
+            ) {
                 reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
             }
         }

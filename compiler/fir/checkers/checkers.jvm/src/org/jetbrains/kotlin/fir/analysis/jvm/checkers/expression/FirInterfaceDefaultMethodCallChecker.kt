@@ -30,8 +30,9 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         val classId = symbol?.callableId?.classId ?: return
         if (classId.isLocal) return
 
+        val session = context.session
         fun getTypeSymbol(): FirRegularClassSymbol? {
-            return context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+            return session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
         }
 
         val supportsDefaults = !context.isJvm6()
@@ -49,11 +50,13 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
 
         if (typeSymbol == null) typeSymbol = getTypeSymbol() ?: return
 
-        val jvmDefaultMode = context.session.jvmDefaultModeState
-        if (typeSymbol.isInterface && (typeSymbol.origin is FirDeclarationOrigin.Java || symbol.isCompiledToJvmDefault(jvmDefaultMode))) {
+        val jvmDefaultMode = session.jvmDefaultModeState
+        if (typeSymbol.isInterface &&
+            (typeSymbol.origin is FirDeclarationOrigin.Java || symbol.isCompiledToJvmDefault(session, jvmDefaultMode))
+        ) {
             if (containingDeclaration.isInterface) {
                 val containingMember = context.findContainingMember()?.symbol
-                if (containingMember?.isCompiledToJvmDefault(jvmDefaultMode) == false) {
+                if (containingMember?.isCompiledToJvmDefault(session, jvmDefaultMode) == false) {
                     reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, context)
                     return
                 }

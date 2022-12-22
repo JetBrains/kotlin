@@ -21,16 +21,16 @@ class FirSerializableProperty(
     override val isConstructorParameterWithDefault: Boolean,
     declaresDefaultValue: Boolean
 ) : ISerializableProperty {
-    override val name: String = propertySymbol.serialNameValue ?: propertySymbol.name.asString()
+    override val name: String = propertySymbol.getSerialNameValue(session) ?: propertySymbol.name.asString()
 
     override val originalDescriptorName: Name
         get() = propertySymbol.name
 
-    override val optional: Boolean = !propertySymbol.serialRequired && declaresDefaultValue
+    override val optional: Boolean = !propertySymbol.getSerialRequired(session) && declaresDefaultValue
 
-    override val transient: Boolean = propertySymbol.hasSerialTransient || !propertySymbol.hasBackingField
+    override val transient: Boolean = propertySymbol.hasSerialTransient(session) || !propertySymbol.hasBackingField
 
-    val serializableWith: ConeKotlinType? = propertySymbol.serializableWith
+    val serializableWith: ConeKotlinType? = propertySymbol.getSerializableWith(session)
         ?: analyzeSpecialSerializers(session, propertySymbol.resolvedAnnotationsWithArguments)?.defaultType()
 }
 

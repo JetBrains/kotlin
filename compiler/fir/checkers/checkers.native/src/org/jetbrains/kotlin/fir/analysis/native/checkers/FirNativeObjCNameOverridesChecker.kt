@@ -44,9 +44,11 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
     ) {
         val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
         if (overriddenSymbols.isEmpty()) return
-        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(firTypeScope).getObjCNames() }
+        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(firTypeScope).getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
-            val containingDeclarations = overriddenSymbols.mapNotNull { it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) }
+            val containingDeclarations = overriddenSymbols.mapNotNull {
+                it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
+            }
             reporter.reportOn(
                 declarationToReport.source,
                 INCOMPATIBLE_OBJC_NAME_OVERRIDE,

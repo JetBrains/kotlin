@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -138,7 +137,7 @@ class FirSyntheticPropertiesScope private constructor(
             )
             delegateGetter = getter
             delegateSetter = matchingSetter
-            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, matchingSetter, session.firCachesFactory)
+            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, matchingSetter)
         }
         val syntheticSymbol = property.symbol
         (baseScope as? FirUnstableSmartcastTypeScope)?.apply {

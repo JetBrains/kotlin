@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -231,7 +229,7 @@ fun deserializeClassToSymbol(
 
         sourceElement = containerSource
 
-        replaceDeprecationsProvider(getDeprecationsProvider(session.firCachesFactory))
+        replaceDeprecationsProvider(getDeprecationsProvider(session))
 
         classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { idx ->
             moduleName = nameResolver.getString(idx)

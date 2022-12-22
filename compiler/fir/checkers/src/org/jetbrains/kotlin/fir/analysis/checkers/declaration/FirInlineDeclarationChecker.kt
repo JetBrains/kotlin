@@ -433,15 +433,16 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
     private fun checkNothingToInline(function: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (function.isExpect || function.isSuspend) return
         if (function.typeParameters.any { it.symbol.isReified }) return
+        val session = context.session
         val hasInlinableParameters =
             function.valueParameters.any { param ->
                 val type = param.returnTypeRef.coneType
                 !param.isNoinline && !type.isNullable
-                        && (type.isFunctionalType(context.session) || type.isSuspendFunctionType(context.session))
+                        && (type.isFunctionalType(session) || type.isSuspendFunctionType(session))
             }
         if (hasInlinableParameters) return
-        if (function.isInlineOnly()) return
-        if (function.returnTypeRef.needsMultiFieldValueClassFlattening(context.session)) return
+        if (function.isInlineOnly(session)) return
+        if (function.returnTypeRef.needsMultiFieldValueClassFlattening(session)) return
 
         reporter.reportOn(function.source, FirErrors.NOTHING_TO_INLINE, context)
     }

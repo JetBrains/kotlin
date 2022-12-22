@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -194,7 +193,9 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     private fun calculateDeprecations(classLikeDeclaration: FirClassLikeDeclaration) {
         if (classLikeDeclaration.deprecationsProvider == UnresolvedDeprecationProvider) {
-            classLikeDeclaration.replaceDeprecationsProvider(classLikeDeclaration.getDeprecationsProvider(session.firCachesFactory))
+            classLikeDeclaration.replaceDeprecationsProvider(
+                classLikeDeclaration.getDeprecationsProvider(session)
+            )
         }
     }
 

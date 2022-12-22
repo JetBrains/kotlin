@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -431,7 +429,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             this.containerSource = c.containerSource
             this.initializer = c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = false, c.session.firCachesFactory)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
@@ -514,7 +512,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             )
             annotations +=
                 c.annotationDeserializer.loadFunctionAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = false, c.session.firCachesFactory)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
@@ -594,7 +592,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             annotations +=
                 c.annotationDeserializer.loadConstructorAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
             containerSource = c.containerSource
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = false, c.session.firCachesFactory)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
             contextReceivers.addAll(createContextReceiversForClass(classProto))
         }.build().apply {

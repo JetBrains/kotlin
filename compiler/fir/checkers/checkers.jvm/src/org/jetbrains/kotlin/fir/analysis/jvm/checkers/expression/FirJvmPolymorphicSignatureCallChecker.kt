@@ -23,7 +23,7 @@ object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature)) return
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.getAnnotationByClassId(polymorphicSignatureClassId) == null) return
+        if (callableSymbol.getAnnotationByClassId(polymorphicSignatureClassId, context.session) == null) return
 
         for (valueArgument in expression.arguments) {
             if (valueArgument is FirVarargArgumentsExpression) {

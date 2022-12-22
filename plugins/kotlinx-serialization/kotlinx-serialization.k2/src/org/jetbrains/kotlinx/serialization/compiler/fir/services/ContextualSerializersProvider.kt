@@ -63,7 +63,9 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
     }
 
     private fun getKClassListFromFileAnnotation(file: FirFile, annotationClassId: ClassId): List<ConeKotlinType> {
-        val annotation = file.symbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(annotationClassId) ?: return emptyList()
+        val annotation = file.symbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(
+            annotationClassId, session
+        ) ?: return emptyList()
         val arguments = when (val argument = annotation.argumentMapping.mapping.values.firstOrNull()) {
             is FirArrayOfCall -> argument.arguments
             is FirVarargArgumentsExpression -> argument.arguments
@@ -79,7 +81,7 @@ context(CheckerContext)
 fun findTypeSerializerOrContextUnchecked(type: ConeKotlinType): FirClassSymbol<*>? {
     if (type.isTypeParameter) return null
     val annotations = type.fullyExpandedType(session).customAnnotations
-    annotations.serializableWith?.let { return it.toRegularClassSymbol(session) }
+    annotations.getSerializableWith(session)?.let { return it.toRegularClassSymbol(session) }
     val classSymbol = type.toRegularClassSymbol(session) ?: return null
     val currentFile = currentFile
     val provider = session.contextualSerializersProvider
@@ -98,12 +100,12 @@ fun findTypeSerializerOrContextUnchecked(type: ConeKotlinType): FirClassSymbol<*
  * if [annotations] contains @Contextual or @Polymorphic annotation
  */
 fun analyzeSpecialSerializers(session: FirSession, annotations: List<FirAnnotation>): FirClassSymbol<*>? = when {
-    annotations.hasAnnotation(SerializationAnnotations.contextualClassId) ||
-            annotations.hasAnnotation(SerializationAnnotations.contextualOnPropertyClassId) -> {
+    annotations.hasAnnotation(SerializationAnnotations.contextualClassId, session) ||
+            annotations.hasAnnotation(SerializationAnnotations.contextualOnPropertyClassId, session) -> {
         session.dependencySerializationInfoProvider.getClassFromSerializationPackage(SpecialBuiltins.Names.contextSerializer)
     }
     // can be annotation on type usage, e.g. List<@Polymorphic Any>
-    annotations.hasAnnotation(SerializationAnnotations.polymorphicClassId) -> {
+    annotations.hasAnnotation(SerializationAnnotations.polymorphicClassId, session) -> {
         session.dependencySerializationInfoProvider.getClassFromSerializationPackage(SpecialBuiltins.Names.polymorphicSerializer)
     }
 

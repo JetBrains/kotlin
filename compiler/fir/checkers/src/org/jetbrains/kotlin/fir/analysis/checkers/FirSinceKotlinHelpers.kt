@@ -64,7 +64,9 @@ private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSin
 
     // TODO: use-site targeted annotations
     fun FirDeclaration.consider() {
-        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin)?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion)
+        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
+            StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
+        )
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
             // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version
@@ -97,7 +99,7 @@ private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSin
 }
 
 private fun FirDeclaration.loadWasExperimentalMarkerClasses(session: FirSession): List<FirRegularClassSymbol> {
-    val wasExperimental = getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) ?: return emptyList()
+    val wasExperimental = getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session) ?: return emptyList()
     val annotationClasses = wasExperimental.findArgumentByName(OptInNames.WAS_EXPERIMENTAL_ANNOTATION_CLASS) ?: return emptyList()
     return annotationClasses.extractClassesFromArgument(session)
 }

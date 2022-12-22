@@ -57,9 +57,9 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
 
         fun isPropertySerializable(propertySymbol: FirPropertySymbol): Boolean {
             return when {
-                isInternalSerializable -> !propertySymbol.hasSerialTransient
+                isInternalSerializable -> !propertySymbol.hasSerialTransient(session)
                 propertySymbol.visibility == Visibilities.Private -> false
-                else -> (propertySymbol.isVar && propertySymbol.hasSerialTransient) || propertySymbol in primaryConstructorProperties
+                else -> (propertySymbol.isVar && propertySymbol.hasSerialTransient(session)) || propertySymbol in primaryConstructorProperties
             }
         }
 

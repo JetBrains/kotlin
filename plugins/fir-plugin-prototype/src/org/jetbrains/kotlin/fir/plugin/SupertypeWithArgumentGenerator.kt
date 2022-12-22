@@ -42,7 +42,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
     ): List<FirResolvedTypeRef> {
         if (resolvedSupertypes.any { it.type.classId == supertypeClassId }) return emptyList()
 
-        val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId) ?: return emptyList()
+        val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return emptyList()
         val getClassArgument = (annotation as? FirAnnotationCall)?.argument as? FirGetClassCall ?: return emptyList()
 
         val typeToResolve = buildUserTypeFromQualifierParts(isMarkedNullable = false) {

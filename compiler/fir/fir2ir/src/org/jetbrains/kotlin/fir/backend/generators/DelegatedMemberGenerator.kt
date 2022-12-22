@@ -334,14 +334,14 @@ class DelegatedMemberGenerator(
             val wrappedSymbol = wrapped.symbol as? S ?: return null
 
             @Suppress("UNCHECKED_CAST")
-            return (wrappedSymbol.unwrapCallRepresentative().fir as D).takeIf { !shouldSkipDelegationFor(it) }
+            return (wrappedSymbol.unwrapCallRepresentative().fir as D).takeIf { !shouldSkipDelegationFor(it, session) }
         }
 
-        private fun shouldSkipDelegationFor(unwrapped: FirCallableDeclaration): Boolean {
+        private fun shouldSkipDelegationFor(unwrapped: FirCallableDeclaration, session: FirSession): Boolean {
             // See org.jetbrains.kotlin.resolve.jvm.JvmDelegationFilter
             return (unwrapped is FirSimpleFunction && unwrapped.isDefaultJavaMethod()) ||
-                    unwrapped.hasAnnotation(JVM_DEFAULT_CLASS_ID) ||
-                    unwrapped.hasAnnotation(PLATFORM_DEPENDENT_CLASS_ID)
+                    unwrapped.hasAnnotation(JVM_DEFAULT_CLASS_ID, session) ||
+                    unwrapped.hasAnnotation(PLATFORM_DEPENDENT_CLASS_ID, session)
         }
 
         private fun FirSimpleFunction.isDefaultJavaMethod(): Boolean =

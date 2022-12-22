@@ -46,7 +46,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
         if (resolvedSupertypes.any { it.type.classId == kSerializerClassId || it.type.classId == generatedSerializerClassId }) return emptyList()
 
         return if (session.predicateBasedProvider.matches(serializerFor, classLikeDeclaration)) {
-            val getClassArgument = classLikeDeclaration.serializerFor ?: return emptyList()
+            val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return emptyList()
             val serializerConeType = resolveConeTypeFromArgument(getClassArgument)
 
             listOf(

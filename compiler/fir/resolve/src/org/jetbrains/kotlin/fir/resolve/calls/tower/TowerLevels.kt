@@ -391,7 +391,7 @@ class ScopeTowerLevel(
         processor: TowerScopeLevelProcessor<T>
     ) {
         val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
-        if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers) == null) {
+        if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
             return
         }
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()

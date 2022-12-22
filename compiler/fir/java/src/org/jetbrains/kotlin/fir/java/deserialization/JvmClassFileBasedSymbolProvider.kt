@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
@@ -158,7 +157,7 @@ class JvmClassFileBasedSymbolProvider(
             kotlinClass.byteContent,
         )
         symbol.fir.replaceAnnotations(annotations.toMutableOrEmpty())
-        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session.firCachesFactory))
+        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
     }
 
     private fun String?.toPath(): Path? {

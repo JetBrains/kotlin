@@ -98,7 +98,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         context: CheckerContext
     ) {
         with(FirOptInUsageBaseChecker) {
-            if (classSymbol.loadExperimentalityForMarkerAnnotation() == null) {
+            if (classSymbol.loadExperimentalityForMarkerAnnotation(context.session) == null) {
                 reporter.reportOn(
                     source,
                     FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER,

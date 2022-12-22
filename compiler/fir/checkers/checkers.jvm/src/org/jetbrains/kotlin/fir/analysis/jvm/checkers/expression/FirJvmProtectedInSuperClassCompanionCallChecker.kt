@@ -45,7 +45,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirQualifiedAccessCheck
             resolvedSymbol.visibility
         }
         if (visibility != Visibilities.Protected) return
-        if (resolvedSymbol.getAnnotationByClassId(JVM_STATIC_ANNOTATION_CLASS_ID) != null) return
+        if (resolvedSymbol.getAnnotationByClassId(JVM_STATIC_ANNOTATION_CLASS_ID, context.session) != null) return
         if (!dispatchClassSymbol.isCompanion) return
         val companionContainingClassSymbol =
             dispatchClassSymbol.getContainingDeclarationSymbol(context.session) as? FirRegularClassSymbol ?: return

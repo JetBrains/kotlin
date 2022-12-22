@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.ClassId
 
 fun DiagnosticReporter.reportIfHasAnnotation(
-declaration: FirDeclaration,
+    declaration: FirDeclaration,
     annotationClassId: ClassId,
     error: KtDiagnosticFactory0,
     context: CheckerContext
 ) {
-    val annotation = declaration.getAnnotationByClassId(annotationClassId)
+    val annotation = declaration.getAnnotationByClassId(annotationClassId, context.session)
     if (annotation != null) {
         reportOn(annotation.source, error, context)
     }

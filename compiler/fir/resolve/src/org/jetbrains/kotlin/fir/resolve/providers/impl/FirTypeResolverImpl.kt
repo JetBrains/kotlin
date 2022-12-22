@@ -467,7 +467,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
+                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session) } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
             StandardClassIds.SuspendFunctionN(typeRef.parametersCount)

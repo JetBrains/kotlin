@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -65,7 +64,7 @@ class FirJavaField @FirImplementationDetail constructor(
         get() = lazyInitializer.value
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
-        annotations.getDeprecationsProviderFromAnnotations(fromJava = true, moduleData.session.firCachesFactory)
+        annotations.getDeprecationsProviderFromAnnotations(moduleData.session, fromJava = true)
     }
 
     override val contextReceivers: List<FirContextReceiver>

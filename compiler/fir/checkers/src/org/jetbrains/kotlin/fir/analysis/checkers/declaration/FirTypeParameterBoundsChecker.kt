@@ -34,7 +34,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         checkFinalUpperBounds(declaration, containingDeclaration, context, reporter)
         checkExtensionFunctionTypeBound(declaration, context, reporter)
 
-        if ((containingDeclaration as? FirMemberDeclaration)?.isInlineOnly() != true) {
+        if ((containingDeclaration as? FirMemberDeclaration)?.isInlineOnly(context.session) != true) {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
         }
 

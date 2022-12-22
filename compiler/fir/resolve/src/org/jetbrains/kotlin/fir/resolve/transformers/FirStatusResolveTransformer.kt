@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -488,7 +487,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
     private fun calculateDeprecations(simpleFunction: FirCallableDeclaration) {
         if (simpleFunction.deprecationsProvider is UnresolvedDeprecationProvider) {
-            simpleFunction.replaceDeprecationsProvider(simpleFunction.getDeprecationsProvider(session.firCachesFactory))
+            simpleFunction.replaceDeprecationsProvider(simpleFunction.getDeprecationsProvider(session))
         }
     }
 }

@@ -35,7 +35,9 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
     private val jvmRecordUpdater = DelegatedConstructorCallTransformer(session)
 
     override fun updateSupertypesIfNeeded(firClass: FirClass, scopeSession: ScopeSession) {
-        if (!(firClass is FirRegularClass && firClass.isData && firClass.hasAnnotationSafe(StandardClassIds.Annotations.JvmRecord))) return
+        if (firClass !is FirRegularClass || !firClass.isData ||
+            !firClass.hasAnnotationSafe(StandardClassIds.Annotations.JvmRecord, session)
+        ) return
         var anyFound = false
         var hasExplicitSuperClass = false
         val newSuperTypeRefs = firClass.superTypeRefs.mapTo(mutableListOf()) {

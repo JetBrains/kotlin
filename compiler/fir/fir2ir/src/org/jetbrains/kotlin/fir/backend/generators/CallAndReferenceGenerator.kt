@@ -642,6 +642,7 @@ class CallAndReferenceGenerator(
 
     fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
         val coneType = annotation.annotationTypeRef.coneTypeSafe<ConeLookupTagBasedType>()
+            ?.fullyExpandedType(session) as? ConeLookupTagBasedType
         val type = coneType?.toIrType()
         val symbol = type?.classifierOrNull
         return annotation.convertWithOffsets { startOffset, endOffset ->
@@ -693,7 +694,7 @@ class CallAndReferenceGenerator(
         return buildAnnotationCall {
             useSiteTarget = this@toAnnotationCall.useSiteTarget
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
-            val symbol = annotationTypeRef.coneType.toSymbol(session) as? FirRegularClassSymbol ?: return null
+            val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol ?: return null
             val constructorSymbol = symbol.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return null
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
                 val parameter = it.fir

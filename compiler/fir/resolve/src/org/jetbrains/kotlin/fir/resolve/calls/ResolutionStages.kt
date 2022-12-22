@@ -401,7 +401,7 @@ object CheckDslScopeViolation : ResolutionStage() {
             val annotationClass =
                 annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toSymbol(context.session) as? FirClassSymbol
                     ?: continue
-            if (annotationClass.hasAnnotation(dslMarkerClassId)) {
+            if (annotationClass.hasAnnotation(dslMarkerClassId, context.session)) {
                 add(annotationClass.classId)
             }
         }
@@ -608,7 +608,7 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
         // TODO: convert type argument mapping to map [FirTypeParameterSymbol, FirTypedProjection?]
         if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
         for (parameter in argumentMapping.values) {
-            if (!parameter.hasBuilderInferenceAnnotation()) continue
+            if (!parameter.hasBuilderInferenceAnnotation(context.session)) continue
             val type = parameter.returnTypeRef.coneType
             val receiverType = type.receiverType(callInfo.session) ?: continue
             val dontUseBuilderInferenceIfPossible =
@@ -665,7 +665,8 @@ internal object ProcessDynamicExtensionAnnotation : ResolutionStage() {
         val argumentIsDynamic = extensionReceiver.type is ConeDynamicType
         val parameterIsDynamic = (candidate.symbol as? FirCallableSymbol)?.resolvedReceiverTypeRef?.type is ConeDynamicType
         if (parameterIsDynamic != argumentIsDynamic ||
-            parameterIsDynamic && !candidate.symbol.hasAnnotation(DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID)) {
+            parameterIsDynamic && !candidate.symbol.hasAnnotation(DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID, context.session)
+        ) {
             candidate.addDiagnostic(HiddenCandidate)
         }
     }

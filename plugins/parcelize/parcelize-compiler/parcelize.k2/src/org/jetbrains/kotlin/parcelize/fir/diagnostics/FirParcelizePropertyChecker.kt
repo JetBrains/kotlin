@@ -33,15 +33,16 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
 object FirParcelizePropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
+        val session = context.session
+        val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(session) ?: return
 
-        if (containingClassSymbol.isParcelize(context.session)) {
+        if (containingClassSymbol.isParcelize(session)) {
             val fromPrimaryConstructor = declaration.fromPrimaryConstructor ?: false
             if (
                 !fromPrimaryConstructor &&
                 (declaration.hasBackingField || declaration.delegate != null) &&
                 !declaration.hasIgnoredOnParcel() &&
-                !containingClassSymbol.hasCustomParceler(context.session)
+                !containingClassSymbol.hasCustomParceler(session)
             ) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED, context)
             }
@@ -50,9 +51,9 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
             }
         }
 
-        if (declaration.name == CREATOR_NAME && containingClassSymbol.isCompanion && declaration.hasJvmFieldAnnotation) {
+        if (declaration.name == CREATOR_NAME && containingClassSymbol.isCompanion && declaration.hasJvmFieldAnnotation(session)) {
             val outerClass = context.containingDeclarations.asReversed().getOrNull(1) as? FirRegularClass
-            if (outerClass != null && outerClass.symbol.isParcelize(context.session)) {
+            if (outerClass != null && outerClass.symbol.isParcelize(session)) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
             }
         }

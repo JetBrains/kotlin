@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 import kotlin.jvm.Volatile as JvmVolatile
 import kotlin.concurrent.Volatile

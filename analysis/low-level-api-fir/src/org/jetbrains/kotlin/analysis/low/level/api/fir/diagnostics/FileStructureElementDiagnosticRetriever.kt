@@ -60,11 +60,10 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
                 return true
             }
 
-            @Suppress("IntroduceWhenSubject")
             return when {
                 structureElementDeclaration !is FirRegularClass -> true
                 structureElementDeclaration == declaration -> true
-                declaration.hasAnnotation(StandardClassIds.Annotations.Suppress) -> {
+                declaration.hasAnnotation(StandardClassIds.Annotations.Suppress, context.session) -> {
                     useRegularComponents = false
                     true
                 }

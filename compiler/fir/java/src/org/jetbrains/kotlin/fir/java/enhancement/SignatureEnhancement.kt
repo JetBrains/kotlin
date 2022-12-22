@@ -169,7 +169,7 @@ class FirSignatureEnhancement(
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                     status = firElement.status
-                    deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter, session.firCachesFactory)
+                    deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                 }.symbol
             }
             else -> {
@@ -332,7 +332,7 @@ class FirSignatureEnhancement(
             }
             this.valueParameters += newValueParameters
             annotations += firMethod.annotations
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session.firCachesFactory)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true)
         }.build().apply {
             if (isJavaRecordComponent) {
                 this.isJavaRecordComponent = true

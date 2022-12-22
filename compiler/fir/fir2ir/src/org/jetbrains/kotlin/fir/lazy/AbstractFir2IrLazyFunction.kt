@@ -95,8 +95,8 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     }
 
     private fun hasJvmStaticAnnotation(): Boolean {
-        return fir.hasAnnotation(JVM_STATIC_CLASS_ID) ||
-                (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID) == true
+        return fir.hasAnnotation(JVM_STATIC_CLASS_ID, session) ||
+                (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID, session) == true
     }
 
     protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
