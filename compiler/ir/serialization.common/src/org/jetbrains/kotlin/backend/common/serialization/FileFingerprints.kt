@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js
+package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
-import org.jetbrains.kotlin.backend.common.serialization.cityHash128
-import org.jetbrains.kotlin.backend.common.serialization.cityHash128WithSeed
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import java.io.File
+import java.nio.ByteBuffer
 
 @JvmInline
 value class FingerprintHash(val hash: Hash128Bits) {
@@ -18,12 +16,26 @@ value class FingerprintHash(val hash: Hash128Bits) {
         return "${hash.lowBytes.toString(Character.MAX_RADIX)}$HASH_SEPARATOR${hash.highBytes.toString(Character.MAX_RADIX)}"
     }
 
+    fun toByteArray(): ByteArray {
+        val buffer = ByteBuffer.allocate(Long.SIZE_BYTES * 2)
+        buffer.putLong(hash.lowBytes.toLong())
+        buffer.putLong(Long.SIZE_BYTES, hash.highBytes.toLong())
+        return buffer.array()
+    }
+
     companion object {
         private const val HASH_SEPARATOR = "."
 
-        internal fun fromString(s: String): FingerprintHash? {
+        fun fromString(s: String): FingerprintHash? {
             val hashes = s.split(HASH_SEPARATOR).mapNotNull { it.toULongOrNull(Character.MAX_RADIX) }
             return hashes.takeIf { it.size == 2 }?.let { FingerprintHash(Hash128Bits(lowBytes = it[0], highBytes = it[1])) }
+        }
+
+        fun fromByteArray(bytes: ByteArray): FingerprintHash {
+            val buffer = ByteBuffer.wrap(bytes)
+            val lowBytes = buffer.getLong(0).toULong()
+            val highBytes = buffer.getLong(Long.SIZE_BYTES).toULong()
+            return FingerprintHash(Hash128Bits(lowBytes, highBytes))
         }
     }
 }
@@ -31,7 +43,7 @@ value class FingerprintHash(val hash: Hash128Bits) {
 @JvmInline
 value class SerializedIrFileFingerprint private constructor(val fileFingerprint: FingerprintHash) {
     companion object {
-        internal fun fromString(s: String): SerializedIrFileFingerprint? {
+        fun fromString(s: String): SerializedIrFileFingerprint? {
             return FingerprintHash.fromString(s)?.let { SerializedIrFileFingerprint(it) }
         }
 
@@ -92,7 +104,7 @@ value class SerializedKlibFingerprint(val klibFingerprint: FingerprintHash) {
             return combinedHash
         }
 
-        internal fun fromString(s: String): SerializedKlibFingerprint? {
+        fun fromString(s: String): SerializedKlibFingerprint? {
             return FingerprintHash.fromString(s)?.let { SerializedKlibFingerprint(it) }
         }
     }
@@ -104,14 +116,4 @@ value class SerializedKlibFingerprint(val klibFingerprint: FingerprintHash) {
     override fun toString(): String {
         return klibFingerprint.toString()
     }
-}
-
-private const val FILE_FINGERPRINTS_SEPARATOR = " "
-
-internal fun List<SerializedIrFileFingerprint>.joinIrFileFingerprints(): String {
-    return joinToString(FILE_FINGERPRINTS_SEPARATOR)
-}
-
-internal fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFingerprint> {
-    return split(FILE_FINGERPRINTS_SEPARATOR).mapNotNull(SerializedIrFileFingerprint::fromString)
 }

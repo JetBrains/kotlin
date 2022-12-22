@@ -25,10 +25,15 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
+        saveKlibContentsHash()
         saveCacheBitcodeDependencies()
         saveInlineFunctionBodies()
         saveClassFields()
         saveEagerInitializedProperties()
+    }
+
+    private fun saveKlibContentsHash() {
+        outputFiles.hashFile!!.writeBytes(generationState.klibHash.toByteArray())
     }
 
     private fun saveCacheBitcodeDependencies() {

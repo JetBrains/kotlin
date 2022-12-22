@@ -501,6 +501,8 @@ internal class KonanIrLinker(
                     ?: error("No file for $idSig")
         }
 
+        fun getKlibFileIndexOf(irFile: IrFile) = fileDeserializationStates.first { it.file == irFile }.fileIndex
+
         fun buildInlineFunctionReference(irFunction: IrFunction): SerializedInlineFunctionReference {
             val signature = irFunction.symbol.signature
                     ?: error("No signature for ${irFunction.render()}")

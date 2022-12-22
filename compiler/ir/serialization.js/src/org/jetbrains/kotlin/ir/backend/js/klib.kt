@@ -616,6 +616,17 @@ private fun getDescriptorForElement(
     element: PsiElement
 ): DeclarationDescriptor = BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, element)
 
+
+private const val FILE_FINGERPRINTS_SEPARATOR = " "
+
+private fun List<SerializedIrFileFingerprint>.joinIrFileFingerprints(): String {
+    return joinToString(FILE_FINGERPRINTS_SEPARATOR)
+}
+
+private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFingerprint> {
+    return split(FILE_FINGERPRINTS_SEPARATOR).mapNotNull(SerializedIrFileFingerprint::fromString)
+}
+
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,

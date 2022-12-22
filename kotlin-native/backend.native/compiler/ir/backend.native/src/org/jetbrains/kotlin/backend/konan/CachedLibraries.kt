@@ -103,6 +103,9 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
+            fun getFileHash(file: String) =
+                    File(path).child(file).child(HASH_FILE_NAME).readBytes()
+
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
             override fun computeBinariesPaths() = fileDirs.map {
@@ -232,6 +235,7 @@ class CachedLibraries(
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
+        const val HASH_FILE_NAME = "hash"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
