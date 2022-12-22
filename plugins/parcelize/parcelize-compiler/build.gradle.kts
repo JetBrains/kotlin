@@ -37,6 +37,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
 
     // FIR dependencies
+    testApi(project(":compiler:fir:plugin-utils"))
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))

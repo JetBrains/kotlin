@@ -6,33 +6,23 @@
 package org.jetbrains.kotlin.parcelize.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.plugin.SimpleFunctionBuildingContext
+import org.jetbrains.kotlin.fir.plugin.createConeType
+import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.isInt
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
@@ -58,23 +48,28 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
         require(owner is FirRegularClassSymbol)
-        val functionSymbol = when (callableId.callableName) {
+        val function = when (callableId.callableName) {
             DESCRIBE_CONTENTS_NAME -> {
                 val hasDescribeContentImplementation = owner.hasDescribeContentsImplementation() ||
                         lookupSuperTypes(owner, lookupInterfaces = false, deep = true, session).any {
                             it.fullyExpandedType(session).toRegularClassSymbol(session)?.hasDescribeContentsImplementation() ?: false
                         }
                 runIf(!hasDescribeContentImplementation) {
-                    generateDescribeContents(owner, callableId)
+                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.intType.type)
                 }
             }
             WRITE_TO_PARCEL_NAME -> {
                 val declaredFunctions = owner.declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>()
-                runIf(declaredFunctions.none { it.isWriteToParcel() }) { generateWriteToParcel(owner, callableId) }
+                runIf(declaredFunctions.none { it.isWriteToParcel() }) {
+                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.unitType.type) {
+                        valueParameter(DEST_NAME, PARCEL_ID.createConeType(session))
+                        valueParameter(FLAGS_NAME, session.builtinTypes.intType.type)
+                    }
+                }
             }
             else -> null
-        }
-        return listOfNotNull(functionSymbol)
+        } ?: return emptyList()
+        return listOf(function.symbol)
     }
 
     private fun FirRegularClassSymbol.hasDescribeContentsImplementation(): Boolean {
@@ -96,70 +91,17 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
         return true
     }
 
-    private fun generateDescribeContents(owner: FirRegularClassSymbol, callableId: CallableId): FirNamedFunctionSymbol {
-        return createFunction(owner, callableId) {
-            returnTypeRef = session.builtinTypes.intType
-        }
-    }
-
-    private fun generateWriteToParcel(owner: FirRegularClassSymbol, callableId: CallableId): FirNamedFunctionSymbol {
-        return createFunction(owner, callableId) {
-            val functionSymbol = this.symbol
-            returnTypeRef = session.builtinTypes.unitType
-
-            valueParameters += buildValueParameter {
-                moduleData = session.moduleData
-                origin = key.origin
-                name = DEST_NAME
-                containingFunctionSymbol = functionSymbol
-                returnTypeRef = buildResolvedTypeRef {
-                    type = ConeClassLikeTypeImpl(
-                        ConeClassLikeLookupTagImpl(PARCEL_ID),
-                        emptyArray(),
-                        isNullable = false
-                    )
-                }
-                symbol = FirValueParameterSymbol(name)
-                isCrossinline = false
-                isNoinline = false
-                isVararg = false
-            }
-
-            valueParameters += buildValueParameter {
-                moduleData = session.moduleData
-                origin = key.origin
-                name = FLAGS_NAME
-                containingFunctionSymbol = functionSymbol
-                returnTypeRef = session.builtinTypes.intType
-                symbol = FirValueParameterSymbol(name)
-                isCrossinline = false
-                isNoinline = false
-                isVararg = false
-            }
-        }
-    }
-
-    private inline fun createFunction(
+    private inline fun createMemberFunctionForParcelize(
         owner: FirRegularClassSymbol,
-        callableId: CallableId,
-        init: FirSimpleFunctionBuilder.() -> Unit
-    ): FirNamedFunctionSymbol {
-        val function = buildSimpleFunction {
-            moduleData = session.moduleData
-            origin = key.origin
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                if (owner.modality == Modality.FINAL) Modality.FINAL else Modality.OPEN,
-                EffectiveVisibility.Public
-            ).apply {
-                isOverride = true
-            }
-            name = callableId.callableName
-            symbol = FirNamedFunctionSymbol(callableId)
-            dispatchReceiverType = owner.defaultType()
+        name: Name,
+        returnType: ConeKotlinType,
+        crossinline init: SimpleFunctionBuildingContext.() -> Unit = {}
+    ): FirSimpleFunction {
+        return createMemberFunction(owner, key, name, returnType) {
+            modality = if (owner.modality == Modality.FINAL) Modality.FINAL else Modality.OPEN
+            status { isOverride = true }
             init()
         }
-        return function.symbol
     }
 
     @OptIn(SymbolInternals::class)
