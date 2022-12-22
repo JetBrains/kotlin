@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMap
 import org.jetbrains.kotlin.util.AttributeArrayOwner
@@ -54,6 +55,11 @@ object FirDeclarationDataRegistry : ConeTypeRegistry<FirDeclarationDataKey, Any>
         return DeclarationDataAccessor(generateAnyNullableAccessor(kClass), kClass)
     }
 
+    fun <K : FirDeclarationDataKey> symbolAccessor(key: K): SymbolDataAccessor {
+        val kClass = key::class
+        return SymbolDataAccessor(generateAnyNullableAccessor(kClass), kClass)
+    }
+
     fun <K : FirDeclarationDataKey, V : Any> attributesAccessor(key: K): ReadWriteProperty<FirDeclarationAttributes, V?> {
         val kClass = key::class
         return AttributeDataAccessor(generateNullableAccessor(kClass), kClass)
@@ -70,6 +76,16 @@ object FirDeclarationDataRegistry : ConeTypeRegistry<FirDeclarationDataKey, Any>
 
         operator fun <V> setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
             thisRef.attributes[key] = value
+        }
+    }
+
+    class SymbolDataAccessor(
+        private val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, *>,
+        val key: KClass<out FirDeclarationDataKey>
+    ) {
+        operator fun <V> getValue(thisRef: FirBasedSymbol<*>, property: KProperty<*>): V? {
+            @Suppress("UNCHECKED_CAST")
+            return dataAccessor.getValue(thisRef.fir.attributes, property) as? V
         }
     }
 

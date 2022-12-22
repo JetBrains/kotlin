@@ -85,5 +85,9 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
     return getSymbolByLookupTag(lookupTag) as? T
 }
 
+fun FirSymbolProvider.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+    return getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+}
+
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
 val FirSession.dependenciesSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor<FirDependenciesSymbolProvider>()
