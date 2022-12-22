@@ -3,7 +3,6 @@ public final class MyList /* MyList*/ implements java.util.List<java.lang.String
   public java.lang.String get(int);//  get(int)
 
   public  MyList();//  .ctor()
-
 }
 
 public abstract interface ASet /* ASet*/<T>  extends java.util.Collection<T>, kotlin.collections.MutableCollection<T>, kotlin.jvm.internal.markers.KMutableCollection {
@@ -13,7 +12,6 @@ public abstract class MySet /* MySet*/<T>  implements ASet<T> {
   public  MySet();//  .ctor()
 
   public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(java.lang.String)
-
 }
 
 public abstract class SmartSet /* SmartSet*/<T>  extends kotlin.collections.AbstractMutableSet<T> {
@@ -23,5 +21,4 @@ public abstract class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abst
   private  SmartSet();//  .ctor()
 
   public boolean add(T);//  add(T)
-
 }

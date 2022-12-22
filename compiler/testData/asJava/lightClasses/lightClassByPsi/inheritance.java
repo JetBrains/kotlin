@@ -1,11 +1,9 @@
 public abstract interface Intf /* Intf*/ {
   public abstract int v();//  v()
-
 }
 
 public abstract interface IntfWithProp /* IntfWithProp*/ extends Intf {
   public abstract int getX();//  getX()
-
 }
 
 public abstract class Base /* Base*/ {
@@ -31,7 +29,6 @@ public abstract class Base /* Base*/ {
   public int getY();//  getY()
 
   public void setY(int);//  setY(int)
-
 }
 
 public final class Derived /* Derived*/ extends Base implements IntfWithProp {
@@ -44,7 +41,6 @@ public final class Derived /* Derived*/ extends Base implements IntfWithProp {
   public int abs();//  abs()
 
   public int getX();//  getX()
-
 }
 
 public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
@@ -67,12 +63,10 @@ public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
   public int getX$light_idea_test_case();//  getX$light_idea_test_case()
 
   public int getY();//  getY()
-
 }
 
 final class Private /* Private*/ {
   public  Private();//  .ctor()
 
   public boolean getOverridesNothing();//  getOverridesNothing()
-
 }

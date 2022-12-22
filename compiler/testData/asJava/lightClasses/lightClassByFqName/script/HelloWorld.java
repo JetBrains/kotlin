@@ -2,5 +2,4 @@ public class HelloWorld /* HelloWorld*/ extends kotlin.script.templates.standard
   public  HelloWorld(java.lang.String[]);//  .ctor(java.lang.String[])
 
   public static final void main(java.lang.String[]);//  main(java.lang.String[])
-
 }

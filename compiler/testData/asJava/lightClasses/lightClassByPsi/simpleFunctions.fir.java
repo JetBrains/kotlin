@@ -20,12 +20,9 @@ public final class Foo /* Foo*/ {
 
   public void bar(int, @org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() Foo);//  bar(int, java.lang.Object, Foo)
 
-
   class Inner ...
-
-  }
+}
 
 public static final class Inner /* Foo.Inner*/ {
   public  Inner();//  .ctor()
-
 }

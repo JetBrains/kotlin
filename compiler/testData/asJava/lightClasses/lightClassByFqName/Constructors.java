@@ -8,5 +8,4 @@ public final class Constructors /* Constructors*/ {
   public  Constructors(int);//  .ctor(int)
 
   public final int getValInPrimary();//  getValInPrimary()
-
 }

@@ -14,5 +14,4 @@ public final class A /* A*/ {
   public  A();//  .ctor()
 
   public final void setC(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC(java.lang.String)
-
 }

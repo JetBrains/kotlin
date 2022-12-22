@@ -3,7 +3,5 @@ public class InnerClasses /* InnerClasses*/ extends kotlin.script.templates.stan
 
   public static final void main(java.lang.String[]);//  main(java.lang.String[])
 
-
   class Bar ...
-
-  }
+}

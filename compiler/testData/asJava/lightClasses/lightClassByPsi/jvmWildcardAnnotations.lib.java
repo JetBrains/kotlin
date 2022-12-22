@@ -1,23 +1,19 @@
 public final class OutPair /* OutPair*/<Final, Y>  {
   public  OutPair();//  .ctor()
-
 }
 
 public final class In /* In*/<Z>  {
   public  In();//  .ctor()
-
 }
 
 public class Open /* Open*/ {
   public  Open();//  .ctor()
-
 }
 
 public abstract interface B /* B*/ {
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
   public abstract In<Open> foo();//  foo()
-
 }
 
 public final class Container /* Container*/ {
@@ -45,27 +41,22 @@ public final class Container /* Container*/ {
   public final void simpleIn(@org.jetbrains.annotations.NotNull() In<? super java.lang.Object>);//  simpleIn(In<? super java.lang.Object>)
 
   public final void simpleOut(@org.jetbrains.annotations.NotNull() Out<? extends Final>);//  simpleOut(Out<? extends Final>)
-
 }
 
 public final class Inv /* Inv*/<E>  {
   public  Inv();//  .ctor()
-
 }
 
 public final class Out /* Out*/<T>  {
   public  Out();//  .ctor()
-
 }
 
 public abstract interface A /* A*/<T>  {
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
   public abstract Out<T> foo();//  foo()
-
 }
 
 public final class Final /* Final*/ {
   public  Final();//  .ctor()
-
 }

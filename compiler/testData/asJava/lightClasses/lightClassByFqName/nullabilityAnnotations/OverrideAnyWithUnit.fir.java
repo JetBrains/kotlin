@@ -3,5 +3,4 @@ public final class C /* C*/ implements Base {
   public void foo();//  foo()
 
   public  C();//  .ctor()
-
 }

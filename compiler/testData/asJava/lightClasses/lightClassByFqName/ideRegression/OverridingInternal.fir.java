@@ -8,5 +8,4 @@ public final class C /* p.C*/ {
   public int getAp();//  getAp()
 
   public int getIp();//  getIp()
-
 }

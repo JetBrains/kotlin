@@ -84,10 +84,8 @@ public final class C /* C*/ {
 
   public final boolean getP1();//  getP1()
 
-
   class Companion ...
-
-  }
+}
 
 public static final class Companion /* C.Companion*/ {
   @kotlin.jvm.JvmOverloads()
@@ -112,5 +110,4 @@ public static final class Companion /* C.Companion*/ {
   public final void foo123(int, double, @org.jetbrains.annotations.NotNull() java.lang.String);//  foo123(int, double, java.lang.String)
 
   private  Companion();//  .ctor()
-
 }

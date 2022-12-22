@@ -3,24 +3,23 @@ public class InnerClasses /* InnerClasses*/ extends kotlin.script.templates.stan
 
   public static final void main(java.lang.String[]);//  main(java.lang.String[])
 
+  public static final class Bar /* InnerClasses.Bar*/ {
+    private final int a;
 
-public static final class Bar /* InnerClasses.Bar*/ {
-  private final int a;
+    private final int b;
 
-  private final int b;
+    public  Bar(int);//  .ctor(int)
 
-  public  Bar(int);//  .ctor(int)
+    public final int getA();//  getA()
 
-  public final int getA();//  getA()
+    public final int getAPlusB();//  getAPlusB()
 
-  public final int getAPlusB();//  getAPlusB()
+    public final int getB();//  getB()
 
-  public final int getB();//  getB()
+    public static final class Baz /* InnerClasses.Bar.Baz*/ {
+      public  Baz();//  .ctor()
 
-
-public static final class Baz /* InnerClasses.Bar.Baz*/ {
-  public  Baz();//  .ctor()
-
-  public final void doSomething();//  doSomething()
-
-}}}
+      public final void doSomething();//  doSomething()
+    }
+  }
+}

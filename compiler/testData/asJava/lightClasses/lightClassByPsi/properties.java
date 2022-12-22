@@ -26,7 +26,7 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */ /* constant value A	B
   C
-  D'E"F\G$H */;
+D'E"F\G$H */;
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;
@@ -187,10 +187,8 @@ public final class Foo /* Foo*/ {
 
   public final void setSubject(error.NonExistentClass);//  setSubject(error.NonExistentClass)
 
-
   class Companion ...
-
-  }
+}
 
 public static final class Companion /* Foo.Companion*/ {
   private  Companion();//  .ctor()
@@ -202,7 +200,6 @@ public static final class Companion /* Foo.Companion*/ {
   public final int getProp7();//  getProp7()
 
   public final void setProp7(int);//  setProp7(int)
-
 }
 
 public final class MyProperty /* MyProperty*/<T>  {
@@ -211,7 +208,6 @@ public final class MyProperty /* MyProperty*/<T>  {
   public final int getValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(T, kotlin.reflect.KProperty<?>)
 
   public final void setValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(T, kotlin.reflect.KProperty<?>, int)
-
 }
 
 public final class Modifiers /* Modifiers*/ {
@@ -220,7 +216,6 @@ public final class Modifiers /* Modifiers*/ {
   public  Modifiers();//  .ctor()
 
   public final int getPlainField();//  getPlainField()
-
 }
 
 public abstract interface A /* A*/ {
@@ -229,7 +224,6 @@ public abstract interface A /* A*/ {
   public abstract int getInt2();//  getInt2()
 
   public abstract void setInt2$light_idea_test_case(int);//  setInt2$light_idea_test_case(int)
-
 }
 
 public final class Foo /* Foo*/ {
@@ -243,5 +237,4 @@ public final class Foo /* Foo*/ {
   public final Foo getMeNonNullFoo();//  getMeNonNullFoo()
 
   public  Foo();//  .ctor()
-
 }

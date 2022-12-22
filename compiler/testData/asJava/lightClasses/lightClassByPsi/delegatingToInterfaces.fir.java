@@ -10,7 +10,6 @@ public abstract interface Base /* Base*/ {
   public abstract void printMessageLine();//  printMessageLine()
 
   public abstract void setY(int);//  setY(int)
-
 }
 
 public final class BaseImpl /* BaseImpl*/ implements Base {
@@ -25,7 +24,6 @@ public final class BaseImpl /* BaseImpl*/ implements Base {
   public  BaseImpl(int);//  .ctor(int)
 
   public final int getX();//  getX()
-
 }
 
 public final class Derived /* Derived*/ implements Base {
@@ -39,5 +37,4 @@ public final class Derived /* Derived*/ implements Base {
   public void printMessageLine();//  printMessageLine()
 
   public  Derived(@org.jetbrains.annotations.NotNull() Base);//  .ctor(Base)
-
 }

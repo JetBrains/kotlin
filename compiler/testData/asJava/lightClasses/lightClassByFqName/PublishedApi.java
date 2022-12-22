@@ -5,5 +5,4 @@ public final class A /* A*/ {
   public  A();//  .ctor()
 
   public final void test();//  test()
-
 }

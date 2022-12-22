@@ -1,31 +1,25 @@
 public final class Inv /* Inv*/<E>  {
   public  Inv();//  .ctor()
-
 }
 
 public final class Out /* Out*/<T>  {
   public  Out();//  .ctor()
-
 }
 
 public final class OutPair /* OutPair*/<Final, Y>  {
   public  OutPair();//  .ctor()
-
 }
 
 public final class In /* In*/<Z>  {
   public  In();//  .ctor()
-
 }
 
 public final class Final /* Final*/ {
   public  Final();//  .ctor()
-
 }
 
 public class Open /* Open*/ {
   public  Open();//  .ctor()
-
 }
 
 public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
@@ -59,5 +53,4 @@ public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
   public static final void simpleIn(@org.jetbrains.annotations.NotNull() In<? super java.lang.Object>);//  simpleIn(In<? super java.lang.Object>)
 
   public static final void simpleOut(@org.jetbrains.annotations.NotNull() Out<? extends Final>);//  simpleOut(Out<? extends Final>)
-
 }

@@ -6,5 +6,4 @@ public final class C /* C*/ {
   public final void myFun(@org.jetbrains.annotations.NotNull() C, @org.jetbrains.annotations.NotNull() C);//  myFun(C, C)
 
   public  C();//  .ctor()
-
 }

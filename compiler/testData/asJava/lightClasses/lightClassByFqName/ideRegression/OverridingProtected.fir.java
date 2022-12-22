@@ -4,5 +4,4 @@ public final class C /* p.C*/ {
   public int af();//  af()
 
   public int getAp();//  getAp()
-
 }

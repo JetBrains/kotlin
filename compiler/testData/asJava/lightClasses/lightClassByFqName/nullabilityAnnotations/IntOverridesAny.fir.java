@@ -7,5 +7,4 @@ public final class C /* C*/ implements Tr {
   public  C();//  .ctor()
 
   public int getV();//  getV()
-
 }

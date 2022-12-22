@@ -36,16 +36,13 @@ public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
   @org.jetbrains.annotations.NotNull()
   public static final AnnoWithCompanion.Companion Companion;
 
-
   class Companion ...
-
-  }
+}
 
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
   private  Companion();//  .ctor()
 
   public final void foo();//  foo()
-
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
@@ -53,7 +50,6 @@ public abstract @interface Anno /* Anno*/ {
   public abstract Anno[] x() default {@Anno(p = "a"), @Anno(p = "b")};//  x()
 
   public abstract java.lang.String p() default "";//  p()
-
 }
 
 @Deprecated(message = "This anno is deprecated, use === instead", replaceWith = @ReplaceWith(expression = "this === other"))
@@ -69,14 +65,12 @@ public abstract @interface Fancy /* Fancy*/ {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface ReplaceWith /* ReplaceWith*/ {
   public abstract java.lang.String expression();//  expression()
-
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
   @Anno()
   public abstract java.lang.String x();//  x()
-
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
@@ -84,7 +78,6 @@ public abstract @interface Deprecated /* Deprecated*/ {
   public abstract ReplaceWith replaceWith() default @ReplaceWith(expression = "");//  replaceWith()
 
   public abstract java.lang.String message();//  message()
-
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
@@ -92,7 +85,6 @@ public abstract @interface Ann /* Ann*/ {
   public abstract java.lang.Class<? extends java.lang.Object> arg2();//  arg2()
 
   public abstract java.lang.Class<?> arg1();//  arg1()
-
 }
 
 @Anno()
@@ -109,7 +101,6 @@ public final class F /* F*/ implements java.lang.Runnable {
   public  F();//  .ctor()
 
   public final void setProp(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProp(java.lang.String)
-
 }
 
 public final class Foo /* Foo*/ {
@@ -127,13 +118,11 @@ public final class Foo /* Foo*/ {
 
   @org.jetbrains.annotations.Nullable()
   public final java.lang.String getX();//  getX()
-
 }
 
 @Ann(arg1 = kotlin.String.class, arg2 = kotlin.Int.class)
 public final class MyClass /* MyClass*/ {
   public  MyClass();//  .ctor()
-
 }
 
 public final class Example /* Example*/ {
@@ -158,7 +147,6 @@ public final class Example /* Example*/ {
   public final java.lang.String getQuux();//  getQuux()
 
   public  Example(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String)
-
 }
 
 public final class CtorAnnotations /* CtorAnnotations*/ {
@@ -181,5 +169,4 @@ public final class CtorAnnotations /* CtorAnnotations*/ {
   public final java.lang.String getZ();//  getZ()
 
   public  CtorAnnotations(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String, @Anno() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String)
-
 }

@@ -18,5 +18,4 @@ public class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.script.te
   public final void setTestPropVar(int);//  setTestPropVar(int)
 
   public static final void main(java.lang.String[]);//  main(java.lang.String[])
-
 }

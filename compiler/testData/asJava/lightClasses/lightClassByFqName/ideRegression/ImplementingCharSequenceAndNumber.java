@@ -1,38 +1,36 @@
 public final class Container /* p1.Container*/ {
   public  Container();//  .ctor()
 
+  public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.Number {
+    public  MyNumber();//  .ctor()
 
+    public byte toByte();//  toByte()
 
-public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.Number {
-  public  MyNumber();//  .ctor()
+    public char toChar();//  toChar()
 
-  public byte toByte();//  toByte()
+    public double toDouble();//  toDouble()
 
-  public char toChar();//  toChar()
+    public float toFloat();//  toFloat()
 
-  public double toDouble();//  toDouble()
+    public int toInt();//  toInt()
 
-  public float toFloat();//  toFloat()
+    public long toLong();//  toLong()
 
-  public int toInt();//  toInt()
+    public short toShort();//  toShort()
+  }
 
-  public long toLong();//  toLong()
+  public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
-  public short toShort();//  toShort()
+    public  MyString();//  .ctor()
 
-}public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
-  @org.jetbrains.annotations.NotNull()
-  public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
+    public char get(int);//  get(int)
 
-  public  MyString();//  .ctor()
+    public error.NonExistentClass chars();//  chars()
 
-  public char get(int);//  get(int)
+    public error.NonExistentClass codePoints();//  codePoints()
 
-  public error.NonExistentClass chars();//  chars()
-
-  public error.NonExistentClass codePoints();//  codePoints()
-
-  public int getLength();//  getLength()
-
-}}
-
+    public int getLength();//  getLength()
+  }
+}

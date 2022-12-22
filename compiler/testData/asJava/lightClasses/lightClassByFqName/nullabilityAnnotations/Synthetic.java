@@ -3,10 +3,9 @@ public final class Synthetic /* Synthetic*/ {
 
   public  Synthetic();//  .ctor()
 
+  public final class Inner /* Synthetic.Inner*/ {
+    public  Inner();//  .ctor()
 
-public final class Inner /* Synthetic.Inner*/ {
-  public  Inner();//  .ctor()
-
-  public final void test();//  test()
-
-}}
+    public final void test();//  test()
+  }
+}

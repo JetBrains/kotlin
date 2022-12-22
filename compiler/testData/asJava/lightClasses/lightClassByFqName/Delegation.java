@@ -7,5 +7,4 @@ public final class B /* p.B*/ implements p.I {
   public void f();//  f()
 
   public void g();//  g()
-
 }

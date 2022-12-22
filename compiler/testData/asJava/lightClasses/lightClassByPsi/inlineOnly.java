@@ -4,5 +4,4 @@ public final class A /* A*/ {
   private final void foo();//  foo()
 
   public  A();//  .ctor()
-
 }

@@ -5,14 +5,13 @@ public abstract interface TraitClassObjectField /* TraitClassObjectField*/ {
   @org.jetbrains.annotations.Nullable()
   public static final java.lang.String x = "" /* initializer type: java.lang.String */ /* constant value  */;
 
+  public static final class Companion /* TraitClassObjectField.Companion*/ {
+    @org.jetbrains.annotations.Nullable()
+    private static final java.lang.String y;
 
-public static final class Companion /* TraitClassObjectField.Companion*/ {
-  @org.jetbrains.annotations.Nullable()
-  private static final java.lang.String y;
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.String x = "" /* initializer type: java.lang.String */ /* constant value  */;
 
-  @org.jetbrains.annotations.Nullable()
-  public static final java.lang.String x = "" /* initializer type: java.lang.String */ /* constant value  */;
-
-  private  Companion();//  .ctor()
-
-}}
+    private  Companion();//  .ctor()
+  }
+}

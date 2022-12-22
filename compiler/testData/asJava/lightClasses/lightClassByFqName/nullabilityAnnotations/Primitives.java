@@ -40,5 +40,4 @@ public abstract interface Primitives /* Primitives*/ {
   public abstract long getLong();//  getLong()
 
   public abstract short getShort();//  getShort()
-
 }

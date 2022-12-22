@@ -13,5 +13,4 @@ public final class A /* p.A*/ {
   public final int getY();//  getY()
 
   public int hashCode();//  hashCode()
-
 }

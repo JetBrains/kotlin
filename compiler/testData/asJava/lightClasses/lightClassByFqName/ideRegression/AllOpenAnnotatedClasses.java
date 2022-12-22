@@ -10,17 +10,16 @@ public class C /* test.C*/ {
 
   public void g();//  g()
 
+  @test.AllOpen()
+  public static class H /* test.C.H*/ {
+    public  H();//  .ctor()
 
+    public void j();//  j()
+  }
 
-@test.AllOpen()
-public static class H /* test.C.H*/ {
-  public  H();//  .ctor()
+  public static final class D /* test.C.D*/ {
+    public  D();//  .ctor()
 
-  public void j();//  j()
-
-}public static final class D /* test.C.D*/ {
-  public  D();//  .ctor()
-
-  public final void z();//  z()
-
-}}
+    public final void z();//  z()
+  }
+}

@@ -3,5 +3,4 @@ public abstract interface Foo /* test.Foo*/ {
   public abstract java.lang.String foo();//  foo()
 
   public abstract int <no name provided>();//  <no name provided>()
-
 }

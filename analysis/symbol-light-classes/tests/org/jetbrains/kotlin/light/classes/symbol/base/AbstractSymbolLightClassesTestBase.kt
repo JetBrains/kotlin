@@ -103,11 +103,8 @@ abstract class AbstractSymbolLightClassesTestBase(
         testServices: TestServices,
         actual: String,
     ) {
-        if (currentResultPath().exists()) {
-            testServices.assertions.assertEqualsToFile(currentResultPath(), actual)
-        } else {
-            testServices.assertions.assertEqualsToFile(javaPath(), actual)
-        }
+        val path: Path = currentResultPath().takeIf { it.exists() } ?: javaPath()
+        testServices.assertions.assertEqualsToFile(path, actual)
     }
 
     private fun removeIgnoreFir(module: TestModule) {

@@ -23,5 +23,4 @@ public final class JvmNameKt /* JvmNameKt*/ {
   public static final void foo(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.String>);//  foo(java.util.List<java.lang.String>)
 
   public static final void setRwProp(int);//  setRwProp(int)
-
 }

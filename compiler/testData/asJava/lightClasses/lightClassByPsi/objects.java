@@ -25,13 +25,10 @@ public final class C /* C*/ {
 
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 
-
-
   class Companion ...
 
-    class Factory ...
-
-  }
+  class Factory ...
+}
 
 public static final class Companion /* C.Companion*/ {
   @kotlin.jvm.JvmStatic()
@@ -58,12 +55,10 @@ public static final class Companion /* C.Companion*/ {
   public final void bar();//  bar()
 
   public final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
-
 }
 
 public static final class Factory /* C.Factory*/ {
   private  Factory();//  .ctor()
-
 }
 
 public final class C1 /* C1*/ {
@@ -72,28 +67,22 @@ public final class C1 /* C1*/ {
 
   public  C1();//  .ctor()
 
-
   class Companion ...
-
-  }
+}
 
 private static final class Companion /* C1.Companion*/ {
   private  Companion();//  .ctor()
-
 }
 
 public abstract interface I /* I*/ {
   @org.jetbrains.annotations.NotNull()
   public static final I.Companion Companion;
 
-
   class Companion ...
-
-  }
+}
 
 public static final class Companion /* I.Companion*/ {
   private  Companion();//  .ctor()
-
 }
 
 public final class Obj /* Obj*/ implements java.lang.Runnable {
@@ -114,7 +103,6 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 
   public void run();//  run()
-
 }
 
 public final class ConstContainer /* ConstContainer*/ {
@@ -137,7 +125,6 @@ public final class ConstContainer /* ConstContainer*/ {
   public static final long oneLong = 1L /* initializer type: long */ /* constant value 1 */;
 
   private  ConstContainer();//  .ctor()
-
 }
 
 public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
@@ -161,12 +148,9 @@ public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
 
   public  ClassWithConstContainer();//  .ctor()
 
-
   class Companion ...
-
-  }
+}
 
 public static final class Companion /* ClassWithConstContainer.Companion*/ {
   private  Companion();//  .ctor()
-
 }

@@ -16,5 +16,4 @@ public final class A /* p.A*/ {
   public final int component1();//  component1()
 
   public final int getY();//  getY()
-
 }

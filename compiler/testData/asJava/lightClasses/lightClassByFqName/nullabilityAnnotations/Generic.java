@@ -9,5 +9,4 @@ public abstract interface Generic /* Generic*/<N, NN>  {
   public abstract NN b1(@org.jetbrains.annotations.Nullable() NN);//  b1(NN)
 
   public abstract N a(N);//  a(N)
-
 }

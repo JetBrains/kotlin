@@ -8,5 +8,4 @@ public final class C /* C*/ implements Tr {
   public java.lang.Integer getV();//  getV()
 
   public  C();//  .ctor()
-
 }

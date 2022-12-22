@@ -24,5 +24,4 @@ public final class LateinitPropertyKt /* LateinitPropertyKt*/ {
   public static final void setA(@org.jetbrains.annotations.NotNull() java.lang.String);//  setA(java.lang.String)
 
   public static final void setD(@org.jetbrains.annotations.NotNull() java.lang.String);//  setD(java.lang.String)
-
 }

@@ -25,5 +25,4 @@ public final class C /* C*/ {
   public final void foo(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.String>);//  foo(java.util.List<java.lang.String>)
 
   public final void setRwProp(int);//  setRwProp(int)
-
 }

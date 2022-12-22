@@ -8,5 +8,4 @@ public final class X /* X*/ {
   public final int getW();//  getW()
 
   public final void setV(int);//  setV(int)
-
 }

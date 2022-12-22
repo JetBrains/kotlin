@@ -6,5 +6,4 @@ public final class O /* O*/ {
   public static final void foo();//  foo()
 
   private  O();//  .ctor()
-
 }

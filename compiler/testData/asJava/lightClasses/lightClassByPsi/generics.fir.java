@@ -67,15 +67,12 @@ public abstract class C /* C*/<T>  {
   public final void setSMutableSetProp(@org.jetbrains.annotations.Nullable() java.util.Set<java.lang.String>);//  setSMutableSetProp(java.util.Set<java.lang.String>)
 
   public final void setSSetProp(@org.jetbrains.annotations.Nullable() java.util.Set<java.lang.String>);//  setSSetProp(java.util.Set<java.lang.String>)
-
 }
 
 public class K /* K*/<T extends K<? extends T>>  {
   public  K();//  .ctor()
-
 }
 
 public final class Sub /* Sub*/ extends K<K<?>> {
   public  Sub();//  .ctor()
-
 }
