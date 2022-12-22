@@ -223,12 +223,6 @@ public class SymbolLightClassesLoadingForLibraryTestGenerated extends AbstractSy
     }
 
     @Test
-    @TestMetadata("script.kts")
-    public void testScript() throws Exception {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/script.kts");
-    }
-
-    @Test
     @TestMetadata("simpleFunctions.kt")
     public void testSimpleFunctions() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/simpleFunctions.kt");
@@ -343,6 +337,34 @@ public class SymbolLightClassesLoadingForLibraryTestGenerated extends AbstractSy
         @TestMetadata("wildcardOptimization.kt")
         public void testWildcardOptimization() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/wildcardOptimization.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scripts {
+        @Test
+        public void testAllFilesPresentInScripts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("FunsPropsAndFields.kts")
+        public void testFunsPropsAndFields() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/FunsPropsAndFields.kts");
+        }
+
+        @Test
+        @TestMetadata("HelloWorld.kts")
+        public void testHelloWorld() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/HelloWorld.kts");
+        }
+
+        @Test
+        @TestMetadata("InnerClasses.kts")
+        public void testInnerClasses() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/InnerClasses.kts");
         }
     }
 }

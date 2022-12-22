@@ -74,6 +74,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationRepeatable.kt");
     }
 
+    @TestMetadata("CompanionObject.kt")
+    public void testCompanionObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");
+    }
+
     @TestMetadata("Constructors.kt")
     public void testConstructors() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
@@ -192,6 +197,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PublishedApi.kt");
+    }
+
+    @TestMetadata("SimpleObject.kt")
+    public void testSimpleObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SimpleObject.kt");
+    }
+
+    @TestMetadata("SimplePublicField.kt")
+    public void testSimplePublicField() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SimplePublicField.kt");
     }
 
     @TestMetadata("SpecialAnnotationsOnAnnotationClass.kt")
@@ -488,47 +503,6 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("VoidReturn.kt")
         public void testVoidReturn() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/VoidReturn.kt");
-        }
-    }
-
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/object")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Object extends AbstractCompilerLightClassTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInObject() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/object"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
-        }
-
-        @TestMetadata("SimpleObject.kt")
-        public void testSimpleObject() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/object/SimpleObject.kt");
-        }
-    }
-
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class PublicField extends AbstractCompilerLightClassTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInPublicField() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
-        }
-
-        @TestMetadata("CompanionObject.kt")
-        public void testCompanionObject() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField/CompanionObject.kt");
-        }
-
-        @TestMetadata("Simple.kt")
-        public void testSimple() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField/Simple.kt");
         }
     }
 

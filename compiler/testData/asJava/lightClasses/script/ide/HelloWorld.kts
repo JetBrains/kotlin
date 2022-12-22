@@ -1,3 +1,0 @@
-// HelloWorld
-
-println("Hello world!")
