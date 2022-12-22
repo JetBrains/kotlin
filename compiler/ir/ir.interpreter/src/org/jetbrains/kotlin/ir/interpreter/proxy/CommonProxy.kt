@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.proxy
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.state.Common
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
@@ -102,7 +99,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
             return when {
                 method.name == "toArray" && method.parameterTypes.isEmpty() -> {
                     val wrapper = this.state.superWrapperClass
-                    if (wrapper == null) arrayOf() else (wrapper as Collection<*>).toTypedArray()
+                    if (wrapper == null) arrayOf() else (wrapper.value as Collection<*>).toTypedArray()
                 }
                 else -> throw AssertionError("Cannot find method $method in ${this.state}")
             }
