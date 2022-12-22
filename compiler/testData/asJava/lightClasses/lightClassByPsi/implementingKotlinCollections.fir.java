@@ -1,12 +1,12 @@
+public abstract interface ASet /* ASet*/<T>  extends java.util.Collection<T>, kotlin.collections.MutableCollection<T>, kotlin.jvm.internal.markers.KMutableCollection {
+}
+
 public final class MyList /* MyList*/ implements java.util.List<java.lang.String>, kotlin.collections.List<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.String get(int);//  get(int)
 
   public  MyList();//  .ctor()
-}
-
-public abstract interface ASet /* ASet*/<T>  extends java.util.Collection<T>, kotlin.collections.MutableCollection<T>, kotlin.jvm.internal.markers.KMutableCollection {
 }
 
 public abstract class MySet /* MySet*/<T>  implements ASet<T> {

@@ -1,7 +1,3 @@
-public final class MyException /* MyException*/ extends java.lang.Exception {
-  public  MyException();//  .ctor()
-}
-
 public final class C /* C*/ {
   @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class, MyException.class})
   @org.jetbrains.annotations.NotNull()
@@ -15,4 +11,8 @@ public final class C /* C*/ {
 
   @kotlin.jvm.Throws(exceptionClasses = {kotlin.Throwable.class})
   public final void baz() throws java.lang.Throwable;//  baz()
+}
+
+public final class MyException /* MyException*/ extends java.lang.Exception {
+  public  MyException();//  .ctor()
 }

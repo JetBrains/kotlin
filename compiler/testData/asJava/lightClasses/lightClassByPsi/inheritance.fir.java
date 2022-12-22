@@ -1,9 +1,24 @@
-public abstract interface Intf /* Intf*/ {
-  public abstract int v();//  v()
-}
+public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
+  private final int x;
 
-public abstract interface IntfWithProp /* IntfWithProp*/ extends Intf {
-  public abstract int getX();//  getX()
+  private final int y;
+
+  private final int z;
+
+  @java.lang.Override()
+  protected final void v();//  v()
+
+  protected int getZ();//  getZ()
+
+  public  AnotherDerived(int, int, int);//  .ctor(int, int, int)
+
+  public abstract int getAbstractProp();//  getAbstractProp()
+
+  public abstract void noReturn(@org.jetbrains.annotations.NotNull() java.lang.String);//  noReturn(java.lang.String)
+
+  public int getX$light_idea_test_case();//  getX$light_idea_test_case()
+
+  public int getY();//  getY()
 }
 
 public abstract class Base /* Base*/ {
@@ -45,27 +60,12 @@ public final class Derived /* Derived*/ extends Base implements IntfWithProp {
   public int getX();//  getX()
 }
 
-public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
-  private final int x;
+public abstract interface Intf /* Intf*/ {
+  public abstract int v();//  v()
+}
 
-  private final int y;
-
-  private final int z;
-
-  @java.lang.Override()
-  protected final void v();//  v()
-
-  protected int getZ();//  getZ()
-
-  public  AnotherDerived(int, int, int);//  .ctor(int, int, int)
-
-  public abstract int getAbstractProp();//  getAbstractProp()
-
-  public abstract void noReturn(@org.jetbrains.annotations.NotNull() java.lang.String);//  noReturn(java.lang.String)
-
-  public int getX$light_idea_test_case();//  getX$light_idea_test_case()
-
-  public int getY();//  getY()
+public abstract interface IntfWithProp /* IntfWithProp*/ extends Intf {
+  public abstract int getX();//  getX()
 }
 
 final class Private /* Private*/ {
