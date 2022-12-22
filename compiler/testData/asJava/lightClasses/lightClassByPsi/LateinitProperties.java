@@ -88,3 +88,13 @@ public final class Custom /* Custom*/ {
   public  Custom();//  .ctor()
 
 }
+
+public final class LateinitPropertiesKt /* LateinitPropertiesKt*/ {
+  public static Custom topLevelLateinit;
+
+  @org.jetbrains.annotations.NotNull()
+  public static final Custom getTopLevelLateinit();//  getTopLevelLateinit()
+
+  public static final void setTopLevelLateinit(@org.jetbrains.annotations.NotNull() Custom);//  setTopLevelLateinit(Custom)
+
+}

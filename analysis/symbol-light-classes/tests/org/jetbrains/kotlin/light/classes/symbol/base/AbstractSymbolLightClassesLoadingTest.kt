@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.LightClassTestCommon
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.renderClass
 import org.jetbrains.kotlin.light.classes.symbol.base.service.withExtendedTypeRenderer
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.nio.file.Path
@@ -35,9 +35,9 @@ abstract class AbstractSymbolLightClassesLoadingTest(
     private fun getLightClassesFromFile(
         ktFile: KtFile,
         project: Project
-    ): List<KtLightClass> {
+    ): List<PsiClass> {
         val ktClasses = SyntaxTraverser.psiTraverser(ktFile).filter(KtClassOrObject::class.java).toList()
         val kotlinAsJavaSupport = KotlinAsJavaSupport.getInstance(project)
-        return ktClasses.mapNotNull(kotlinAsJavaSupport::getLightClass)
+        return ktClasses.mapNotNull(kotlinAsJavaSupport::getLightClass) + listOfNotNull(kotlinAsJavaSupport.getLightFacade(ktFile))
     }
 }
