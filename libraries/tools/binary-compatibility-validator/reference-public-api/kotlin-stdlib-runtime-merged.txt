@@ -264,6 +264,9 @@ public class kotlin/TypeCastException : java/lang/ClassCastException {
 	public fun <init> (Ljava/lang/String;)V
 }
 
+public abstract interface annotation class kotlin/TypedEquals : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/UByte : java/lang/Comparable {
 	public static final field Companion Lkotlin/UByte$Companion;
 	public static final field MAX_VALUE B
@@ -6224,4 +6227,3 @@ public final class kotlin/time/TimedValue {
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
-

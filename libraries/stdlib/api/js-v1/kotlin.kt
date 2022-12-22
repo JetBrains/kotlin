@@ -2927,6 +2927,13 @@ public final data class Triple<out A, out B, out C> : kotlin.io.Serializable {
     public open override fun toString(): kotlin.String
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.annotation.MustBeDocumented
+public final annotation class TypedEquals : kotlin.Annotation {
+    public constructor TypedEquals()
+}
+
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.jvm.JvmInline
