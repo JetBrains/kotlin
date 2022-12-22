@@ -6,22 +6,17 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
-import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.plugin.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
@@ -29,7 +24,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -186,167 +180,102 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         serializableClassSymbol: FirClassSymbol<*>,
         callableId: CallableId
     ): FirNamedFunctionSymbol {
-        val f = buildSimpleFunction {
-            moduleData = session.moduleData
-            symbol = FirNamedFunctionSymbol(callableId)
-            origin = SerializationPluginKey.origin
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            name = callableId.callableName
-            dispatchReceiverType = owner.defaultType()
-
-            typeParameters.addAll(serializableClassSymbol.typeParameterSymbols.map { newSimpleTypeParameter(session, symbol, it.name) })
-            val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
-
-            valueParameters.addAll(List(serializableClassSymbol.typeParameterSymbols.size) { i ->
-                newSimpleValueParameter(
-                    session,
-                    kSerializerId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).toFirResolvedTypeRef(),
-                    symbol,
-                    Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
-                )
-            })
-
-
-            returnTypeRef = buildResolvedTypeRef {
-                type = kSerializerId.constructClassLikeType(
+        val function = createMemberFunction(
+            owner,
+            SerializationPluginKey,
+            callableId.callableName,
+            returnTypeProvider = { typeParameters ->
+                val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
+                kSerializerId.constructClassLikeType(
                     arrayOf(serializableClassSymbol.constructType(parametersAsArguments, false)),
                     isNullable = false
                 )
             }
+        ) {
+            serializableClassSymbol.typeParameterSymbols.forEachIndexed { i, typeParameterSymbol ->
+                typeParameter(typeParameterSymbol.name)
+                valueParameter(
+                    Name.identifier("${SerialEntityNames.typeArgPrefix}$i"),
+                    { typeParameters ->
+                        kSerializerId.constructClassLikeType(arrayOf(typeParameters[i].toConeType()), false)
+                    }
+                )
+            }
         }
-        return f.symbol
+
+        return function.symbol
     }
 
-    @OptIn(SymbolInternals::class)
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
         val owner = context?.owner ?: return emptyList()
         if (!owner.isSerializer) return emptyList()
         if (callableId.callableName != SerialEntityNames.SERIAL_DESC_FIELD_NAME) return emptyList()
 
         val target = getFromSupertype(callableId, owner) { it.getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() }
-        val original = target.fir
-        val copy = buildPropertyCopy(original) {
-            symbol = FirPropertySymbol(callableId)
-            origin = SerializationPluginKey.origin
-            status = original.status.copy(modality = Modality.FINAL)
-            getter = buildPropertyAccessor {
-                status = original.status.copy(modality = Modality.FINAL)
-                symbol = FirPropertyAccessorSymbol()
-                origin = SerializationPluginKey.origin
-                moduleData = session.moduleData
-                isGetter = true
-                returnTypeRef = original.returnTypeRef
-                dispatchReceiverType = owner.defaultType()
-                propertySymbol = this@buildPropertyCopy.symbol
-            }
-        }
-        return listOf(copy.symbol)
+        val property = createMemberProperty(
+            owner,
+            SerializationPluginKey,
+            callableId.callableName,
+            target.resolvedReturnType
+        )
+
+        return listOf(property.symbol)
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val owner = context.owner
-        val defaultObjectConstructor = buildPrimaryConstructor(
-            owner, isInner = false, SerializationPluginKey, status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Private,
-                Modality.FINAL,
-                EffectiveVisibility.PrivateInClass
-            )
-        )
+
+        val result = mutableListOf<FirConstructorSymbol>()
+        result += createDefaultPrivateConstructor(owner, SerializationPluginKey).symbol
+
         if (owner.name == SerialEntityNames.SERIALIZER_CLASS_NAME && owner.typeParameterSymbols.isNotEmpty()) {
-            val parameterizedConstructor = buildConstructor {
-                moduleData = session.moduleData
-                origin = SerializationPluginKey.origin
-                returnTypeRef = defaultObjectConstructor.returnTypeRef
-                symbol = FirConstructorSymbol(owner.classId)
-                dispatchReceiverType = defaultObjectConstructor.dispatchReceiverType
-                status = FirResolvedDeclarationStatusImpl(
-                    Visibilities.Private,
-                    Modality.FINAL,
-                    EffectiveVisibility.PrivateInFile // accessed from a companion
-                )
-                valueParameters.addAll(owner.typeParameterSymbols.mapIndexed { i, typeParam ->
-                    newSimpleValueParameter(
-                        session,
-                        kSerializerId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).toFirResolvedTypeRef(),
-                        symbol,
-                        Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
+            result += createConstructor(owner, SerializationPluginKey) {
+                visibility = Visibilities.Private
+                owner.typeParameterSymbols.forEachIndexed { i, typeParam ->
+                    valueParameter(
+                        name = Name.identifier("${SerialEntityNames.typeArgPrefix}$i"),
+                        type = kSerializerId.constructClassLikeType(arrayOf(typeParam.toConeType()), false)
                     )
-                })
-            }
-            return listOf(defaultObjectConstructor.symbol, parameterizedConstructor.symbol)
+                }
+            }.symbol
         }
-        return listOf(defaultObjectConstructor.symbol)
+        return result
     }
 
     private fun generateSerializerImplClass(owner: FirRegularClassSymbol): FirClassLikeSymbol<*> {
         val hasTypeParams = owner.typeParameterSymbols.isNotEmpty()
         val serializerKind = if (hasTypeParams) ClassKind.CLASS else ClassKind.OBJECT
-        val serializerFirClass = buildRegularClass {
-            moduleData = session.moduleData
-            origin = SerializationPluginKey.origin
-            classKind = serializerKind
-            scopeProvider = session.kotlinScopeProvider
-            name = SerialEntityNames.SERIALIZER_CLASS_NAME
-            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(name))
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            // TODO: add deprecate hidden
-//            annotations = listOf(Annotations.create(listOf(KSerializerDescriptorResolver.createDeprecatedHiddenAnnotation(thisDescriptor.module))))
+        val serializerFirClass = createNestedClass(owner, SerialEntityNames.SERIALIZER_CLASS_NAME, SerializationPluginKey, serializerKind) {
+            for (parameter in owner.typeParameterSymbols) {
+                typeParameter(parameter.name)
+            }
+            superType { typeParameters ->
+                generatedSerializerId.constructClassLikeType(
+                    arrayOf(
+                        owner.constructType(
+                            typeParameters.map { it.toConeType() }.toTypedArray(),
+                            isNullable = false
+                        )
+                    ),
+                    isNullable = false
+                )
+            }
+        }
+        // TODO: add deprecate hidden
+        // serializerFirClass.replaceAnnotations(listOf(Annotations.create(listOf(KSerializerDescriptorResolver.createDeprecatedHiddenAnnotation(thisDescriptor.module)))))
 
-
-            typeParameters.addAll(owner.typeParameterSymbols.map { param ->
-                newSimpleTypeParameter(session, symbol, param.name)
-            })
-
-            val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
-            superTypeRefs += generatedSerializerId.constructClassLikeType(
-                arrayOf(
-                    owner.constructType(
-                        parametersAsArguments,
-                        isNullable = false
-                    )
-                ), isNullable = false
-            ).toFirResolvedTypeRef()
-        }.also { it.initLocalAttributeIfNeeded(owner) }
         return serializerFirClass.symbol
     }
 
     private fun generateCompanionDeclaration(owner: FirRegularClassSymbol): FirRegularClassSymbol? {
         if (owner.companionObjectSymbol != null) return null
-        val regularClass = buildRegularClass {
-            moduleData = session.moduleData
-            origin = SerializationPluginKey.origin
-            classKind = ClassKind.OBJECT
-            scopeProvider = session.kotlinScopeProvider
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            ).apply {
-                isCompanion = true
-            }
-            name = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(name))
-            superTypeRefs += session.builtinTypes.anyType
+        val companion = createCompanionObject(owner, SerializationPluginKey) {
             if (with(session) { owner.companionNeedsSerializerFactory }) {
                 val serializerFactoryClassId = ClassId(SerializationPackages.internalPackageFqName, SERIALIZER_FACTORY_INTERFACE_NAME)
-                superTypeRefs += serializerFactoryClassId.constructClassLikeType(emptyArray(), false).toFirResolvedTypeRef()
+                superType(serializerFactoryClassId.constructClassLikeType(emptyArray(), false))
             }
-        }.also { it.initLocalAttributeIfNeeded(owner) }
-        return regularClass.symbol
-    }
-
-    private fun FirRegularClass.initLocalAttributeIfNeeded(owner: FirRegularClassSymbol) {
-        if (owner.isLocal) {
-            this.containingClassForLocalAttr = owner.toLookupTag()
         }
+        return companion.symbol
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {

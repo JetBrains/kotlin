@@ -16,7 +16,9 @@ FILE: classWithGenericParameters.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun <T, V> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|kotlinx/serialization/KSerializer<GenericBox<T, V>>|
 
-            private constructor(): R|GenericBox.Companion|
+            private constructor(): R|GenericBox.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -32,9 +34,11 @@ FILE: classWithGenericParameters.kt
 
             public final fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|GenericBox.$serializer<T, V>|
+            private constructor<T, V>(): R|GenericBox.$serializer<T, V>| {
+                super<R|kotlin/Any|>()
+            }
 
-            private constructor(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
+            private constructor<T, V>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
 
         }
 

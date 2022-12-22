@@ -30,7 +30,9 @@ FILE: privatePropertiesSerialization.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Parent>|
 
-            private constructor(): R|Parent.Companion|
+            private constructor(): R|Parent.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -44,7 +46,9 @@ FILE: privatePropertiesSerialization.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Parent.$serializer|
+            private constructor(): R|Parent.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -57,7 +61,9 @@ FILE: privatePropertiesSerialization.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Derived>|
 
-            private constructor(): R|Derived.Companion|
+            private constructor(): R|Derived.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -71,7 +77,9 @@ FILE: privatePropertiesSerialization.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Derived.$serializer|
+            private constructor(): R|Derived.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 

@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":compiler:cli-common"))

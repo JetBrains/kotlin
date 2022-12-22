@@ -19,7 +19,9 @@ FILE: multipleProperties.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<SomeClass>|
 
-            private constructor(): R|SomeClass.Companion|
+            private constructor(): R|SomeClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -33,7 +35,9 @@ FILE: multipleProperties.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|SomeClass.$serializer|
+            private constructor(): R|SomeClass.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 

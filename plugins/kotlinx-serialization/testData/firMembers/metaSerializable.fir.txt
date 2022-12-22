@@ -31,7 +31,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Project1>|
 
-            private constructor(): R|Project1.Companion|
+            private constructor(): R|Project1.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -45,7 +47,9 @@ FILE: metaSerializable.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Project1.$serializer|
+            private constructor(): R|Project1.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -64,7 +68,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Project2>|
 
-            private constructor(): R|Project2.Companion|
+            private constructor(): R|Project2.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -78,7 +84,9 @@ FILE: metaSerializable.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Project2.$serializer|
+            private constructor(): R|Project2.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -94,7 +102,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Wrapper>|
 
-            private constructor(): R|Wrapper.Companion|
+            private constructor(): R|Wrapper.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -108,7 +118,9 @@ FILE: metaSerializable.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Wrapper.$serializer|
+            private constructor(): R|Wrapper.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -127,7 +139,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Project3>|
 
-            private constructor(): R|Project3.Companion|
+            private constructor(): R|Project3.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -141,7 +155,9 @@ FILE: metaSerializable.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Project3.$serializer|
+            private constructor(): R|Project3.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -160,7 +176,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Project4>|
 
-            private constructor(): R|Project4.Companion|
+            private constructor(): R|Project4.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -181,7 +199,9 @@ FILE: metaSerializable.kt
             public final companion object Companion : R|kotlin/Any| {
                 public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.A>|
 
-                private constructor(): R|TestSealed.A.Companion|
+                private constructor(): R|TestSealed.A.Companion| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -195,7 +215,9 @@ FILE: metaSerializable.kt
 
                 public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-                private constructor(): R|TestSealed.A.$serializer|
+                private constructor(): R|TestSealed.A.$serializer| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -212,7 +234,9 @@ FILE: metaSerializable.kt
             public final companion object Companion : R|kotlin/Any| {
                 public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.B>|
 
-                private constructor(): R|TestSealed.B.Companion|
+                private constructor(): R|TestSealed.B.Companion| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -226,7 +250,9 @@ FILE: metaSerializable.kt
 
                 public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-                private constructor(): R|TestSealed.B.$serializer|
+                private constructor(): R|TestSealed.B.$serializer| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -235,7 +261,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed>|
 
-            private constructor(): R|TestSealed.Companion|
+            private constructor(): R|TestSealed.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -256,7 +284,9 @@ FILE: metaSerializable.kt
             public final companion object Companion : R|kotlin/Any| {
                 public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.A>|
 
-                private constructor(): R|TestAbstract.A.Companion|
+                private constructor(): R|TestAbstract.A.Companion| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -270,7 +300,9 @@ FILE: metaSerializable.kt
 
                 public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-                private constructor(): R|TestAbstract.A.$serializer|
+                private constructor(): R|TestAbstract.A.$serializer| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -287,7 +319,9 @@ FILE: metaSerializable.kt
             public final companion object Companion : R|kotlin/Any| {
                 public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.B>|
 
-                private constructor(): R|TestAbstract.B.Companion|
+                private constructor(): R|TestAbstract.B.Companion| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -301,7 +335,9 @@ FILE: metaSerializable.kt
 
                 public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-                private constructor(): R|TestAbstract.B.$serializer|
+                private constructor(): R|TestAbstract.B.$serializer| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 
@@ -310,7 +346,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract>|
 
-            private constructor(): R|TestAbstract.Companion|
+            private constructor(): R|TestAbstract.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -334,7 +372,9 @@ FILE: metaSerializable.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<TestEnum>|
 
-            private constructor(): R|TestEnum.Companion|
+            private constructor(): R|TestEnum.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -348,7 +388,9 @@ FILE: metaSerializable.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|TestEnum.$serializer|
+            private constructor(): R|TestEnum.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
