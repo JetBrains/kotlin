@@ -302,7 +302,7 @@ __attribute__((swift_name("suspendFunctionChild1")))
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-- (void)invokeP1:(NSString *)s completionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(p1:completionHandler:)")));
+- (void)invokeP1:(NSString *)p1 completionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(p1:completionHandler:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1269,8 +1269,8 @@ __attribute__((swift_name("ObjCNameAKt")))
 @interface KtObjCNameAKt : KtBase
 + (NSString *)withUserId:(NSString *)userId __attribute__((swift_name("with(userId:)")));
 + (BOOL)supportsFeatures:(BOOL)features __attribute__((swift_name("supports(_:)")));
-+ (NSString *)scanForPeripheralsWithServices:(int32_t)serviceUUIDs options:(NSString *)options __attribute__((swift_name("scanForPeripherals(withServices:options:)")));
-+ (NSString *)registerForConnectionEventsWithOptions:(NSString *)options __attribute__((swift_name("registerForConnectionEvents(options:)")));
++ (NSString *)scanForPeripheralsWithServices:(int32_t)withServices options:(NSString *)options __attribute__((swift_name("scanForPeripherals(withServices:options:)")));
++ (NSString *)registerForConnectionEventsWithOptions:(NSString *)withOptions __attribute__((swift_name("registerForConnectionEvents(options:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1286,14 +1286,14 @@ __attribute__((swift_name("MySwiftArray")))
 @interface KtMyObjCArray : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)indexOfObject:(int32_t)element __attribute__((swift_name("index(of:)")));
+- (int32_t)indexOfObject:(int32_t)object __attribute__((swift_name("index(of:)")));
 @property (readonly) int32_t count __attribute__((swift_name("count")));
 @end
 
 __attribute__((swift_name("ObjCNameI1")))
 @protocol KtObjCNameI1
 @required
-- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
+- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)otherParam __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
 @property (readonly) int32_t someOtherValue __attribute__((swift_name("someOtherValue")));
 @end
 
@@ -1302,7 +1302,7 @@ __attribute__((swift_name("SwiftNameC2")))
 @interface KtObjCNameC2 : KtBase <KtObjCNameI1>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
+- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)otherParam __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
 @property int32_t someOtherValue __attribute__((swift_name("someOtherValue")));
 @end
 
@@ -1342,7 +1342,7 @@ __attribute__((swift_name("ObjCNameC4")))
 @interface KtObjCNameC4 : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)fooObjCReceiver:(int32_t)receiver objCParam:(int32_t)param __attribute__((swift_name("foo(objCReceiver:objCParam:)")));
+- (int32_t)fooObjCReceiver:(int32_t)receiver objCParam:(int32_t)objCParam __attribute__((swift_name("foo(objCReceiver:objCParam:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1374,6 +1374,13 @@ __attribute__((swift_name("ObjCNameSwiftEnum.Companion")))
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) KtObjCNameObjCEnumCompanion *shared __attribute__((swift_name("shared")));
 - (int32_t)foo __attribute__((swift_name("foo()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ObjCAvoidPreprocessorName")))
+@interface KtObjCAvoidPreprocessorName : KtBase
+- (instancetype)initWithTime:(int32_t)time __attribute__((swift_name("init(time:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) int32_t time __attribute__((swift_name("time")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -2184,16 +2191,16 @@ __attribute__((swift_name("TransformIntToString")))
 @interface KtTransformIntToString : KtBase <KtTransform, KtTransformIntString>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)mapValue:(KtInt *)intValue __attribute__((swift_name("map(value:)")));
-- (NSString *)mapIntValue:(int32_t)intValue __attribute__((swift_name("map(intValue:)")));
+- (NSString *)mapValue:(KtInt *)value __attribute__((swift_name("map(value:)")));
+- (NSString *)mapIntValue:(int32_t)value __attribute__((swift_name("map(intValue:)")));
 @end
 
 __attribute__((swift_name("TransformIntToDecimalString")))
 @interface KtTransformIntToDecimalString : KtTransformIntToString
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)mapValue:(KtInt *)intValue __attribute__((swift_name("map(value:)")));
-- (NSString *)mapIntValue:(int32_t)intValue __attribute__((swift_name("map(intValue:)")));
+- (NSString *)mapValue:(KtInt *)value __attribute__((swift_name("map(value:)")));
+- (NSString *)mapIntValue:(int32_t)value __attribute__((swift_name("map(intValue:)")));
 @end
 
 __attribute__((swift_name("TransformIntToLong")))

@@ -82,3 +82,5 @@ enum class ObjCNameKotlinEnum {
         fun foo(): Int = 0
     }
 }
+
+class ObjCAvoidPreprocessorName(@property:ObjCName("time") @ObjCName("time") val __TIME__: Int)
