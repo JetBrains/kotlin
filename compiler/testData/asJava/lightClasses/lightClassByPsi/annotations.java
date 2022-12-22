@@ -38,7 +38,7 @@ public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
 
 
   class Companion ...
-  
+
   }
 
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
@@ -130,7 +130,7 @@ public final class Foo /* Foo*/ {
 
 }
 
-@Ann(arg1 = String::class, arg2 = Int::class)
+@Ann(arg1 = kotlin.String.class, arg2 = kotlin.Int.class)
 public final class MyClass /* MyClass*/ {
   public  MyClass();//  .ctor()
 
@@ -158,5 +158,28 @@ public final class Example /* Example*/ {
   public final java.lang.String getQuux();//  getQuux()
 
   public  Example(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String)
+
+}
+
+public final class CtorAnnotations /* CtorAnnotations*/ {
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.String x;
+
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.String y;
+
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.String z;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getX();//  getX()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getY();//  getY()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getZ();//  getZ()
+
+  public  CtorAnnotations(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String, @Anno() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String)
 
 }

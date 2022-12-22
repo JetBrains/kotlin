@@ -3,13 +3,22 @@ public final class Foo /* Foo*/ {
   private final Foo b;
 
   @org.jetbrains.annotations.NotNull()
+  private final MyProperty delegatedProp2$delegate;
+
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.Object arrayConst;
 
   @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
+  private java.lang.Object privateVarWithGet;
+
+  @org.jetbrains.annotations.NotNull()
   private java.lang.String name;
+
+  @org.jetbrains.annotations.NotNull()
+  private java.lang.String noAccessors;
 
   @org.jetbrains.annotations.NotNull()
   private java.lang.String protectedWithPrivateSet;
@@ -43,8 +52,6 @@ public final class Foo /* Foo*/ {
 
   private final error.NonExistentClass delegatedProp$delegate;
 
-  private final error.NonExistentClass delegatedProp2$delegate;
-
   private final error.NonExistentClass lazyProp$delegate;
 
   private final error.NonExistentClass privateDelegated$delegate;
@@ -63,11 +70,7 @@ public final class Foo /* Foo*/ {
 
   private int privateVarWithPrivateSet;
 
-  private java.lang.Object privateVarWithGet;
-
   private java.lang.String internalVarPrivateSet;
-
-  private java.lang.String noAccessors;
 
   private static final error.NonExistentClass contextBean;
 
@@ -186,7 +189,7 @@ public final class Foo /* Foo*/ {
 
 
   class Companion ...
-  
+
   }
 
 public static final class Companion /* Foo.Companion*/ {
@@ -226,5 +229,19 @@ public abstract interface A /* A*/ {
   public abstract int getInt2();//  getInt2()
 
   public abstract void setInt2$light_idea_test_case(int);//  setInt2$light_idea_test_case(int)
+
+}
+
+public final class Foo /* Foo*/ {
+  @org.jetbrains.annotations.NotNull()
+  public final Foo getFoo();//  getFoo()
+
+  @org.jetbrains.annotations.NotNull()
+  public final Foo getFoo2();//  getFoo2()
+
+  @org.jetbrains.annotations.NotNull()
+  public final Foo getMeNonNullFoo();//  getMeNonNullFoo()
+
+  public  Foo();//  .ctor()
 
 }
