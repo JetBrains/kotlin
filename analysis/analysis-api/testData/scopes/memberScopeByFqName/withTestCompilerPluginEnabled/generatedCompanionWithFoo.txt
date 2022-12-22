@@ -144,6 +144,6 @@ KtConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: Private
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -5,29 +5,20 @@
 
 package org.jetbrains.kotlin.fir.plugin.generators
 
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.plugin.createConeType
+import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -60,33 +51,13 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
+        val owner = context?.owner ?: return emptyList()
         val argumentClassId = serializeMethodNames[callableId.callableName] ?: return emptyList()
-        val dispatchReceiverClassId = callableId.classId ?: return emptyList()
-        val function = buildSimpleFunction {
-            moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = Key.origin
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
-            returnTypeRef = session.builtinTypes.unitType
-            dispatchReceiverType = dispatchReceiverClassId.toSimpleConeType()
-            symbol = FirNamedFunctionSymbol(callableId)
-            valueParameters += buildValueParameter {
-                moduleData = session.moduleData
-                containingFunctionSymbol = this@buildSimpleFunction.symbol
-                resolvePhase = FirResolvePhase.BODY_RESOLVE
-                origin = Key.origin
-                returnTypeRef = buildResolvedTypeRef {
-                    type = argumentClassId.toSimpleConeType()
-                }
-                name = X_NAME
-                symbol = FirValueParameterSymbol(name)
-                isCrossinline = false
-                isNoinline = false
-                isVararg = false
-            }
-            body = buildBlock {}
-                .apply { replaceTypeRef(session.builtinTypes.unitType) }
-            name = callableId.callableName
+
+        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.unitType.type) {
+            valueParameter(X_NAME, argumentClassId.createConeType(session))
+        }.apply {
+            replaceBody(buildBlock {}.apply { replaceTypeRef(session.builtinTypes.unitType) })
         }
         return listOf(function.symbol)
     }

@@ -13,7 +13,9 @@ FILE: localClassWithCompanionObject.kt
                 public final companion object Companion : R|kotlin/Any| {
                     public final fun foo(): R|kotlin/Int|
 
-                    public constructor(): R|SomeClass.Nested.Companion|
+                    private constructor(): R|SomeClass.Nested.Companion| {
+                        super<R|kotlin/Any|>()
+                    }
 
                 }
 
@@ -22,7 +24,9 @@ FILE: localClassWithCompanionObject.kt
             public final companion object Companion : R|kotlin/Any| {
                 public final fun foo(): R|kotlin/Int|
 
-                public constructor(): R|SomeClass.Companion|
+                private constructor(): R|SomeClass.Companion| {
+                    super<R|kotlin/Any|>()
+                }
 
             }
 

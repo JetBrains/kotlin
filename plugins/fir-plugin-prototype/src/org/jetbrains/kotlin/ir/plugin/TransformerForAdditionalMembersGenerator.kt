@@ -22,6 +22,6 @@ class TransformerForAdditionalMembersGenerator(context: IrPluginContext) : Abstr
     }
 
     override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey): IrBody? {
-        return generateBodyForDefaultConstructor(constructor)
+        return constructor.body
     }
 }

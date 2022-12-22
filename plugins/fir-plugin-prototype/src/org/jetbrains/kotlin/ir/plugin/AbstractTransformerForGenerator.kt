@@ -58,13 +58,12 @@ abstract class AbstractTransformerForGenerator(
 
     final override fun visitConstructor(declaration: IrConstructor) {
         val origin = declaration.origin
-        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey)) {
+        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey) || declaration.body != null) {
             if (visitBodies) {
                 visitElement(declaration)
             }
             return
         }
-        require(declaration.body == null)
         declaration.body = generateBodyForConstructor(declaration, origin.pluginKey)
     }
 

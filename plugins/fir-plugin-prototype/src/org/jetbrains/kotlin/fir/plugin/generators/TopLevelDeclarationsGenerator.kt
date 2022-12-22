@@ -5,26 +5,18 @@
 
 package org.jetbrains.kotlin.fir.plugin.generators
 
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.plugin.fqn
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.constructStarProjectedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -45,32 +37,8 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         if (context != null) return emptyList()
         val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
-        val function = buildSimpleFunction {
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            moduleData = session.moduleData
-            origin = Key.origin
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            returnTypeRef = session.builtinTypes.stringType
-            symbol = FirNamedFunctionSymbol(callableId)
-            valueParameters += buildValueParameter {
-                containingFunctionSymbol = this@buildSimpleFunction.symbol
-                resolvePhase = FirResolvePhase.BODY_RESOLVE
-                moduleData = session.moduleData
-                origin = Key.origin
-                returnTypeRef = buildResolvedTypeRef {
-                    type = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(matchedClassSymbol.classId), emptyArray(), isNullable = false)
-                }
-                name = Name.identifier("value")
-                symbol = FirValueParameterSymbol(name)
-                isCrossinline = false
-                isNoinline = false
-                isVararg = false
-            }
-            name = callableId.callableName
+        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.stringType.type) {
+            valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())
         }
         return listOf(function.symbol)
     }
