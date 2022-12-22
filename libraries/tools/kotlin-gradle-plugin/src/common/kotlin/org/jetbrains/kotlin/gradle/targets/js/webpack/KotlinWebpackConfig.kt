@@ -8,8 +8,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -164,8 +162,22 @@ data class KotlinWebpackConfig(
         var proxy: MutableMap<String, Any>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
-        var client: Client? = null
+        var client: Client? = null,
+        var historyApiFallback: Any? /* HistoryApiFallback | Boolean */ = null
     ) : Serializable {
+        data class HistoryApiFallback(
+            var rewrites: MutableList<Rewrite>? = null,
+            var disableDotRule: Boolean? = null,
+            var index: String? = null,
+            var verbose: Boolean? = null,
+            var htmlAcceptHeaders: MutableList<String>? = null,
+        ) : Serializable {
+            data class Rewrite(
+                var from: String,
+                var to: String
+            ) : Serializable
+        }
+
         data class Client(
             var overlay: Any /* Overlay | Boolean */
         ) : Serializable {
