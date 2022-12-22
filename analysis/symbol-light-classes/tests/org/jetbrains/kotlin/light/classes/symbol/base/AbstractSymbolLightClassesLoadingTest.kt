@@ -23,19 +23,15 @@ abstract class AbstractSymbolLightClassesLoadingTest(
 ) : AbstractSymbolLightClassesTestBase(configurator) {
 
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
-        val lightClasses = ktFiles.flatMap { getLightClassesFromFile(it, project) }
+        val lightClasses = ktFiles.flatMap { getLightClassesFromFile(it) }
         if (lightClasses.isEmpty()) return LightClassTestCommon.NOT_GENERATED_DIRECTIVE
         return withExtendedTypeRenderer(testDataFile) {
             lightClasses.joinToString("\n\n") { it.renderClass() }
         }
     }
 
-    private fun getLightClassesFromFile(
-        ktFile: KtFile,
-        project: Project
-    ): List<PsiClass> {
+    private fun getLightClassesFromFile(ktFile: KtFile): List<PsiClass> {
         val ktClasses = SyntaxTraverser.psiTraverser(ktFile).filter(KtClassOrObject::class.java).toList()
-        val kotlinAsJavaSupport = KotlinAsJavaSupport.getInstance(project)
-        return ktClasses.mapNotNull(kotlinAsJavaSupport::getLightClass) + listOfNotNull(kotlinAsJavaSupport.getLightFacade(ktFile))
+        return ktClasses.plus(ktFile).flatMap { it.toLightElements() }.filterIsInstance<PsiClass>()
     }
 }

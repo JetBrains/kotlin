@@ -223,6 +223,12 @@ public class SymbolLightClassesLoadingForSourceTestGenerated extends AbstractSym
     }
 
     @Test
+    @TestMetadata("script.kts")
+    public void testScript() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/script.kts");
+    }
+
+    @Test
     @TestMetadata("simpleFunctions.kt")
     public void testSimpleFunctions() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/simpleFunctions.kt");
@@ -250,5 +256,93 @@ public class SymbolLightClassesLoadingForSourceTestGenerated extends AbstractSym
     @TestMetadata("wildcardOptimization.kt")
     public void testWildcardOptimization() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/wildcardOptimization.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/facades")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Facades {
+        @Test
+        public void testAllFilesPresentInFacades() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("coroutines.kt")
+        public void testCoroutines() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/coroutines.kt");
+        }
+
+        @Test
+        @TestMetadata("importAliases.kt")
+        public void testImportAliases() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/importAliases.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineOnly.kt")
+        public void testInlineOnly() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/inlineOnly.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/jvmField.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmName.kt")
+        public void testJvmName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/jvmName.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmWildcardAnnotations.kt")
+        public void testJvmWildcardAnnotations() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/jvmWildcardAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("lateinitProperty.kt")
+        public void testLateinitProperty() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/lateinitProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("multifileFacade.kt")
+        public void testMultifileFacade() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/multifileFacade.kt");
+        }
+
+        @Test
+        @TestMetadata("multifileFacadeJvmName.kt")
+        public void testMultifileFacadeJvmName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/multifileFacadeJvmName.kt");
+        }
+
+        @Test
+        @TestMetadata("properties.kt")
+        public void testProperties() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/properties.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleFunctions.kt")
+        public void testSimpleFunctions() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/simpleFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("throwsAnnotation.kt")
+        public void testThrowsAnnotation() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/throwsAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("wildcardOptimization.kt")
+        public void testWildcardOptimization() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/wildcardOptimization.kt");
+        }
     }
 }

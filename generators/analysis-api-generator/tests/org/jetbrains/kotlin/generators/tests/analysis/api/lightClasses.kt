@@ -56,16 +56,6 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
                 model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
-
-        run {
-            testClass<AbstractSymbolLightClassesFacadeForSourceTest> {
-                model("asJava/lightClasses/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractSymbolLightClassesFacadeForLibraryTest> {
-                model("asJava/lightClasses/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-        }
     }
 
     testGroup(
