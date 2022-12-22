@@ -180,7 +180,7 @@ abstract class AbstractSymbolLightClassesStructureTest(
         appendLine()
     }
 
-    override fun getRenderResult(ktFile: KtFile, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         throw UnsupportedOperationException()
     }
 }

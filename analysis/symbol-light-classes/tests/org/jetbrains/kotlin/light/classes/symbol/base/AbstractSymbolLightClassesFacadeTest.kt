@@ -23,7 +23,7 @@ abstract class AbstractSymbolLightClassesFacadeTest(
     override val currentExtension: String,
     override val stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
-    override fun getRenderResult(ktFile: KtFile, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         val lightClasses = getFacades(project)
         if (lightClasses.isEmpty()) return LightClassTestCommon.NOT_GENERATED_DIRECTIVE
         return withExtendedTypeRenderer((testDataFile)) {
@@ -37,8 +37,6 @@ abstract class AbstractSymbolLightClassesFacadeTest(
         val kotlinAsJavaSupport = KotlinAsJavaSupport.getInstance(project)
         val scope = GlobalSearchScope.allScope(project)
         val facades = kotlinAsJavaSupport.getFacadeNames(FqName.ROOT, scope).sorted()
-        return facades
-            .flatMap { facadeName -> kotlinAsJavaSupport.getFacadeClasses(FqName(facadeName), scope) }
-            .filterIsInstance<KtLightClass>()
+        return facades.flatMap { facadeName -> kotlinAsJavaSupport.getFacadeClasses(FqName(facadeName), scope) }
     }
 }

@@ -33,7 +33,7 @@ abstract class AbstractSymbolLightClassesParentingTest(
         lightClass?.accept(createLightAnnotationVisitor(testServices.assertions))
     }
 
-    override fun getRenderResult(ktFile: KtFile, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         throw IllegalStateException("This test is not rendering light elements")
     }
 

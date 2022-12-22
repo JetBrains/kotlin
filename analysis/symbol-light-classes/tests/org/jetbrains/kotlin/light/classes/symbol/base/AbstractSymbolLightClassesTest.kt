@@ -17,7 +17,7 @@ abstract class AbstractSymbolLightClassesTest(
     override val currentExtension: String,
     override val stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
-    override fun getRenderResult(ktFile: KtFile, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         return LightClassTestCommon.getActualLightClassText(
             testDataFile.toFile(),
             { fqName -> findLightClass(fqName, project) },
