@@ -70,7 +70,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
 
         val file = task.inputFileProperty.get().asFile.toString()
 
-        val args = mutableListOf(
+        val args = nodeJsArgs + mutableListOf(
             "--require",
             npmProject.require("source-map-support/register.js")
         ).apply {
@@ -95,7 +95,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
         val dryRunArgs = if (platformType == KotlinPlatformType.wasm)
             null
         else {
-            mutableListOf(
+            nodeJsArgs + mutableListOf(
                 "--require",
                 npmProject.require("source-map-support/register.js")
             ).apply {
