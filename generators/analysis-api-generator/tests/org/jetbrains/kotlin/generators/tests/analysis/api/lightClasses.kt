@@ -49,11 +49,11 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
 
         run {
             testClass<AbstractSymbolLightClassesLoadingForSourceTest> {
-                model("asJava/lightClasses/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSymbolLightClassesLoadingForLibraryTest> {
-                model("asJava/lightClasses/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
 
