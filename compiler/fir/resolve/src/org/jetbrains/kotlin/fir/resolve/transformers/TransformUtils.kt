@@ -41,9 +41,9 @@ internal fun FirCallableDeclaration.transformTypeToArrayOrVArrayType(session: Fi
     replaceReturnTypeRef(
         buildResolvedTypeRef {
             source = returnTypeRef.source
+            val useVArray = returnType.toRegularClassSymbol(session)?.isInlineOrValueClass() == true && !returnType.isUnsignedType
             val outProjection = ConeKotlinTypeProjectionOut(returnType)
-            type = if (returnType.toRegularClassSymbol(session)?.isInlineOrValueClass() == true)
-                outProjection.createVArrayType() else outProjection.createArrayType()
+            type = if (useVArray) outProjection.createVArrayType() else outProjection.createArrayType()
             annotations += returnTypeRef.annotations
             // ? do we really need replacing source of nested delegatedTypeRef ?
             delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
