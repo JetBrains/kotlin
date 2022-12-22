@@ -1,9 +1,4 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface SimpleAnn /* SimpleAnn*/ {
-  public abstract java.lang.String value();//  value()
-}
-
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Ann /* Ann*/ {
   public abstract SimpleAnn[] t();//  t()
 
@@ -28,4 +23,9 @@ public final class Derived /* Derived*/ implements Base {
   public void foo(@Ann(x = 2, y = "324", z = Ann.class, e = {byte.class, Base.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value="687"), @SimpleAnn(value="78")}) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
 
   public  Derived(@org.jetbrains.annotations.NotNull() Base);//  .ctor(Base)
+}
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface SimpleAnn /* SimpleAnn*/ {
+  public abstract java.lang.String value();//  value()
 }

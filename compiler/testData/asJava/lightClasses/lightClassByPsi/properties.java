@@ -1,3 +1,23 @@
+public abstract interface A /* A*/ {
+  protected abstract int getInt1();//  getInt1()
+
+  public abstract int getInt2();//  getInt2()
+
+  public abstract void setInt2$light_idea_test_case(int);//  setInt2$light_idea_test_case(int)
+}
+
+public static final class Companion /* Foo.Companion*/ {
+  private  Companion();//  .ctor()
+
+  public final int getF1();//  getF1()
+
+  public final int getProp3();//  getProp3()
+
+  public final int getProp7();//  getProp7()
+
+  public final void setProp7(int);//  setProp7(int)
+}
+
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   private final Foo b;
@@ -190,42 +210,6 @@ D'E"F\G$H */;
   class Companion ...
 }
 
-public static final class Companion /* Foo.Companion*/ {
-  private  Companion();//  .ctor()
-
-  public final int getF1();//  getF1()
-
-  public final int getProp3();//  getProp3()
-
-  public final int getProp7();//  getProp7()
-
-  public final void setProp7(int);//  setProp7(int)
-}
-
-public final class MyProperty /* MyProperty*/<T>  {
-  public  MyProperty();//  .ctor()
-
-  public final int getValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(T, kotlin.reflect.KProperty<?>)
-
-  public final void setValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(T, kotlin.reflect.KProperty<?>, int)
-}
-
-public final class Modifiers /* Modifiers*/ {
-  private final int plainField;
-
-  public  Modifiers();//  .ctor()
-
-  public final int getPlainField();//  getPlainField()
-}
-
-public abstract interface A /* A*/ {
-  protected abstract int getInt1();//  getInt1()
-
-  public abstract int getInt2();//  getInt2()
-
-  public abstract void setInt2$light_idea_test_case(int);//  setInt2$light_idea_test_case(int)
-}
-
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public final Foo getFoo();//  getFoo()
@@ -237,4 +221,20 @@ public final class Foo /* Foo*/ {
   public final Foo getMeNonNullFoo();//  getMeNonNullFoo()
 
   public  Foo();//  .ctor()
+}
+
+public final class Modifiers /* Modifiers*/ {
+  private final int plainField;
+
+  public  Modifiers();//  .ctor()
+
+  public final int getPlainField();//  getPlainField()
+}
+
+public final class MyProperty /* MyProperty*/<T>  {
+  public  MyProperty();//  .ctor()
+
+  public final int getValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(T, kotlin.reflect.KProperty<?>)
+
+  public final void setValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(T, kotlin.reflect.KProperty<?>, int)
 }

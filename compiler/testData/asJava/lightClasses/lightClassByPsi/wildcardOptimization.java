@@ -1,27 +1,3 @@
-public final class Inv /* Inv*/<E>  {
-  public  Inv();//  .ctor()
-}
-
-public final class Out /* Out*/<T>  {
-  public  Out();//  .ctor()
-}
-
-public final class OutPair /* OutPair*/<Final, Y>  {
-  public  OutPair();//  .ctor()
-}
-
-public final class In /* In*/<Z>  {
-  public  In();//  .ctor()
-}
-
-public final class Final /* Final*/ {
-  public  Final();//  .ctor()
-}
-
-public class Open /* Open*/ {
-  public  Open();//  .ctor()
-}
-
 public final class Container /* Container*/ {
   @org.jetbrains.annotations.NotNull()
   public final In<Final> notDeepIn();//  notDeepIn()
@@ -99,4 +75,28 @@ public final class Container /* Container*/ {
   public final void outOfArrayOpen(@org.jetbrains.annotations.NotNull() Out<Open[]>);//  outOfArrayOpen(Out<Open[]>)
 
   public final void outOfArrayOutOpen(@org.jetbrains.annotations.NotNull() Out<? extends Open[]>);//  outOfArrayOutOpen(Out<? extends Open[]>)
+}
+
+public final class Final /* Final*/ {
+  public  Final();//  .ctor()
+}
+
+public final class In /* In*/<Z>  {
+  public  In();//  .ctor()
+}
+
+public final class Inv /* Inv*/<E>  {
+  public  Inv();//  .ctor()
+}
+
+public class Open /* Open*/ {
+  public  Open();//  .ctor()
+}
+
+public final class Out /* Out*/<T>  {
+  public  Out();//  .ctor()
+}
+
+public final class OutPair /* OutPair*/<Final, Y>  {
+  public  OutPair();//  .ctor()
 }

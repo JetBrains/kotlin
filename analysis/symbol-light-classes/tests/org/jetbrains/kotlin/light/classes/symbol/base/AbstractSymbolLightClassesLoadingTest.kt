@@ -26,7 +26,7 @@ abstract class AbstractSymbolLightClassesLoadingTest(
         val lightClasses = ktFiles.flatMap { getLightClassesFromFile(it) }
         if (lightClasses.isEmpty()) return LightClassTestCommon.NOT_GENERATED_DIRECTIVE
         return withExtendedTypeRenderer(testDataFile) {
-            lightClasses.joinToString("\n\n") { it.renderClass() }
+            lightClasses.sortedBy { it.name }.joinToString("\n\n") { it.renderClass() }
         }
     }
 

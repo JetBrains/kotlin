@@ -1,7 +1,7 @@
-public final class Foo /* c.b.a.Foo*/ {
-  public  Foo();//  .ctor()
+public final class $$$$$$$ /* null*/ {
+  public  $$$$$$$();//  .ctor()
 
-  public final void bar();//  bar()
+  class G$G$ ...
 }
 
 public static final class A$B /* null*/ {
@@ -16,10 +16,10 @@ public final class C$D /* null*/ {
   public  C$D();//  .ctor()
 }
 
-public final class $$$$$$$ /* null*/ {
-  public  $$$$$$$();//  .ctor()
+public final class Foo /* c.b.a.Foo*/ {
+  public  Foo();//  .ctor()
 
-  class G$G$ ...
+  public final void bar();//  bar()
 }
 
 public final class G$G$ /* null*/ {
