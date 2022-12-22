@@ -68,7 +68,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     if (sharedCompilationData != null) {
         val refinesPaths = sharedCompilationData.refinesPaths.files
         if (refinesPaths.isNotEmpty()) {
-            addArg("-Xrefines-paths", refinesPaths.joinToString(separator = ",") { it.absolutePath })
+            add("-Xrefines-paths=${refinesPaths.joinToString(separator = ",") { it.absolutePath }}")
         }
     }
 
