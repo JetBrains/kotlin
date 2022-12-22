@@ -1,5 +1,3 @@
-// CHECK_BY_JAVA_FILE
-
 class X {
     @get:JvmSynthetic
     var v = 1

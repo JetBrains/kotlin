@@ -1,5 +1,4 @@
 //RELEASE_COROUTINE_NEEDED
-//CHECK_BY_JAVA_FILE
 class Foo {
   suspend fun doSomething(foo: Foo): Bar { TODO() }
 }
