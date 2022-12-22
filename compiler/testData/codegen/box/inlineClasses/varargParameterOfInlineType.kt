@@ -58,3 +58,15 @@ fun box(): String {
 
     return "OK"
 }
+
+// CHECK_BYTECODE_TEXT
+// 1 public final static varargs foo1\(\[I\)I
+// 1 public final static varargs bar1\(\[LICInt;\)LICInt;
+// 1 public final static varargs foo2\(\[Ljava/lang/Integer;\)Ljava/lang/Integer;
+// 1 public final static varargs bar2\(\[LICIntNullable;\)LICIntNullable;
+// 1 public final static varargs foo3\(\[Ljava/lang/String;\)Ljava/lang/String;
+// 1 public final static varargs bar3\(\[Ljava/lang/String;\)Ljava/lang/String;
+// 1 public final static varargs foo4\(\[Ljava/lang/String;\)Ljava/lang/String;
+// 1 public final static varargs bar4\(\[LICStringNullable;\)LICStringNullable;
+// 1 public final static varargs foo5\(\[I\)I
+// 1 public final static varargs bar5\(\[LICICInt;\)LICICInt;
