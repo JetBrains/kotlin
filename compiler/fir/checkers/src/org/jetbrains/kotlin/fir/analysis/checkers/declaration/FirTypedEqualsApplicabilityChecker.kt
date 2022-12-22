@@ -50,7 +50,7 @@ object FirTypedEqualsApplicabilityChecker : FirFunctionChecker() {
             reporter.reportOn(
                 typedEqualsAnnotation.source,
                 FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION,
-                "parent class must be annotated by @AllowTypedEquals",
+                "containing class must be annotated by @AllowTypedEquals",
                 context
             )
             return
