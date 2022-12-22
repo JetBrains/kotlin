@@ -188,7 +188,7 @@ internal abstract class JvmValueClassAbstractLowering(
             function,
             replacement,
             when {
-                function.isValueClassTypedEquals -> InlineClassAbi.mangledNameFor(
+                function.isTypedEquals -> InlineClassAbi.mangledNameFor(
                     function,
                     mangleReturnTypes = false,
                     useOldMangleRules = false

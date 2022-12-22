@@ -8,6 +8,7 @@ import kotlin.math.abs
 
 @JvmInline
 value class MFVC1(val x: Int, val y: Int) {
+    @TypedEquals
     fun equals(other: MFVC1): Boolean {
         return abs(x - other.x) < 2 && abs(y - other.y) < 2
     }

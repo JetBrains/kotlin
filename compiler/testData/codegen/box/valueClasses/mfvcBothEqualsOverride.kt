@@ -7,7 +7,7 @@ var counter = 0
 
 @JvmInline
 value class MFVC(val x: Int, val y: Int) {
-
+    @TypedEquals
     fun equals(other: MFVC): Boolean {
         counter++
         return x == other.x && this.y == other.y

@@ -1569,12 +1569,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS) { firDiagnostic ->
-        TypeArgumentOnTypedValueClassEqualsImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS) { firDiagnostic ->
         InnerClassInsideValueClassImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4220,6 +4214,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS) { firDiagnostic ->
         InefficientEqualsOverridingInValueClassImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION) { firDiagnostic ->
+        InapplicableTypedEqualsAnnotationImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

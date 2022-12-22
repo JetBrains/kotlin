@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.isTypedEqualsInValueClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,9 +50,6 @@ object OperatorModifierChecker {
 
                 functionDescriptor.name == OperatorNameConventions.PROVIDE_DELEGATE ->
                     checkSupportsFeature(LanguageFeature.OperatorProvideDelegate, languageVersionSettings, diagnosticHolder, modifier)
-
-                functionDescriptor.isTypedEqualsInValueClass() ->
-                    checkSupportsFeature(LanguageFeature.CustomEqualsInValueClasses, languageVersionSettings, diagnosticHolder, modifier)
             }
 
             if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values &&

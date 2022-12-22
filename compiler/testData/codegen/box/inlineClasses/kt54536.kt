@@ -4,7 +4,8 @@
 
 @JvmInline
 value class A(val x: Int) {
-    operator fun equals(other: A) = x % 5 == other.x % 5
+    @TypedEquals
+    fun equals(other: A) = x % 5 == other.x % 5
 }
 
 @JvmInline
