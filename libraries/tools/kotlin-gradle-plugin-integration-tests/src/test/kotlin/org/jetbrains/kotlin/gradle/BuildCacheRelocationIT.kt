@@ -84,7 +84,12 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             firstProject,
             secondProject,
             listOf("assemble"),
-            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:compileProductionExecutableKotlinJs")
+            listOf(
+                ":libraryProject:compileKotlinJs",
+                ":mainProject:compileKotlinJs",
+                ":mainProject:compileProductionExecutableKotlinJs",
+                ":mainProject:browserProductionWebpack"
+            )
         )
     }
 
@@ -299,6 +304,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         firstProject.build(*tasksToExecute.toTypedArray()) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
         }
+
+        firstProject.build("clean")
 
         secondProject.build(*tasksToExecute.toTypedArray()) {
             assertTasksFromCache(*cacheableTasks.toTypedArray())

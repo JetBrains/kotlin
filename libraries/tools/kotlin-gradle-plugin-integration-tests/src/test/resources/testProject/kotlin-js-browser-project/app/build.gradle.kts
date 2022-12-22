@@ -52,3 +52,16 @@ kotlin {
         }
     }
 }
+
+rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+    val kotlinNodeJs = rootProject.extensions.getByType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
+
+    tasks.register<Exec>("runWebpackResult") {
+        dependsOn(tasks.named("browserProductionWebpack"))
+
+        executable(kotlinNodeJs.requireConfigured().nodeExecutable)
+
+        workingDir = File("${buildDir}").resolve("distributions")
+        args("./${project.name}.js")
+    }
+}

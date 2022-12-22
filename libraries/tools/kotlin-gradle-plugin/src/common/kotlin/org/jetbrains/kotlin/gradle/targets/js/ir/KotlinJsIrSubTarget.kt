@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
@@ -43,10 +44,10 @@ abstract class KotlinJsIrSubTarget(
     protected val taskGroupName = "Kotlin $disambiguationClassifier"
 
     @ExperimentalDistributionDsl
-    override fun distribution(body: Distribution.() -> Unit) {
+    override fun distribution(body: Action<Distribution>) {
         target.binaries
             .all {
-                it.distribution.body()
+                body.execute(it.distribution)
             }
     }
 
@@ -79,7 +80,7 @@ abstract class KotlinJsIrSubTarget(
         produceLibrary
     }
 
-    override fun testTask(body: KotlinJsTest.() -> Unit) {
+    override fun testTask(body: Action<KotlinJsTest>) {
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
