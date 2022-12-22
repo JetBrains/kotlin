@@ -151,6 +151,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             MppTestReportHelper.MppTestReportHelperVariantFactory::class,
             DefaultMppTestReportHelperVariantFactory()
         )
+
+        factories.putIfAbsent(
+            KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class,
+            DefaultKotlinTestReportCompatibilityHelperVariantFactory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
