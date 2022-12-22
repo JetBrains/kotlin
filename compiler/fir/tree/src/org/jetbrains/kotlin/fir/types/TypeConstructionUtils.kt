@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -41,3 +41,32 @@ fun ClassId.constructClassLikeType(
     return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), typeArguments, isNullable, attributes)
 }
 
+fun FirClassifierSymbol<*>.constructType(
+    typeArguments: Array<ConeTypeProjection>,
+    isNullable: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
+): ConeLookupTagBasedType {
+    return when (this) {
+        is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable, attributes)
+        is FirClassLikeSymbol<*> -> constructType(typeArguments, isNullable, attributes)
+    }
+}
+
+fun FirClassLikeSymbol<*>.constructType(
+    typeArguments: Array<ConeTypeProjection>,
+    isNullable: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
+): ConeClassLikeType {
+    return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
+}
+
+fun FirClassSymbol<*>.constructStarProjectedType(
+    typeParameterNumber: Int = typeParameterSymbols.size,
+    isNullable: Boolean = false
+): ConeClassLikeType {
+    return ConeClassLikeTypeImpl(
+        toLookupTag(),
+        Array(typeParameterNumber) { ConeStarProjection },
+        isNullable
+    )
+}
