@@ -16,14 +16,14 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
         "compiler/testData",
     ) {
         run {
-            testClass<AbstractSymbolLightClassesForSourceTest> {
+            testClass<AbstractSymbolLightClassesByFqNameForSourceTest> {
                 model(
                     "asJava/lightClasses/lightClassByFqName",
                     pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 )
             }
 
-            testClass<AbstractSymbolLightClassesForLibraryTest> {
+            testClass<AbstractSymbolLightClassesByFqNameForLibraryTest> {
                 model(
                     "asJava/lightClasses/lightClassByFqName",
                     excludeDirs = listOf("compilationErrors"),
@@ -48,11 +48,11 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
         }
 
         run {
-            testClass<AbstractSymbolLightClassesLoadingForSourceTest> {
+            testClass<AbstractSymbolLightClassesByPsiForSourceTest> {
                 model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractSymbolLightClassesLoadingForLibraryTest> {
+            testClass<AbstractSymbolLightClassesByPsiForLibraryTest> {
                 model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }

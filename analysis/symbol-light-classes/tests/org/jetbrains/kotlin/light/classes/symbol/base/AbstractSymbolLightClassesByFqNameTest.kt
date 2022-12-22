@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.nio.file.Path
 
-abstract class AbstractSymbolLightClassesTest(
+abstract class AbstractSymbolLightClassesByFqNameTest(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
     override val stopIfCompilationErrorDirectivePresent: Boolean,

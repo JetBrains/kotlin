@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName")
 @TestDataPath("$PROJECT_ROOT")
-public class SymbolLightClassesForSourceTestGenerated extends AbstractSymbolLightClassesForSourceTest {
+public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSymbolLightClassesByFqNameForSourceTest {
     @Test
     public void testAllFilesPresentInLightClassByFqName() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName"), Pattern.compile("^([^.]+)\\.kt$"), null, true);

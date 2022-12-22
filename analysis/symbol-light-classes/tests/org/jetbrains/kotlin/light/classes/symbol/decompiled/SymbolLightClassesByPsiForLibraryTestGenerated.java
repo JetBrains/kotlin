@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.source;
+package org.jetbrains.kotlin.light.classes.symbol.decompiled;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi")
 @TestDataPath("$PROJECT_ROOT")
-public class SymbolLightClassesLoadingForSourceTestGenerated extends AbstractSymbolLightClassesLoadingForSourceTest {
+public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymbolLightClassesByPsiForLibraryTest {
     @Test
     public void testAllFilesPresentInLightClassByPsi() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);

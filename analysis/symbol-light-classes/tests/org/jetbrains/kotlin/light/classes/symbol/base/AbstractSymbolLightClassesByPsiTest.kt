@@ -9,19 +9,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.asJava.LightClassTestCommon
+import org.jetbrains.kotlin.asJava.renderClass
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.light.classes.symbol.base.service.withExtendedTypeRenderer
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.nio.file.Path
 
-abstract class AbstractSymbolLightClassesLoadingTest(
+abstract class AbstractSymbolLightClassesByPsiTest(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
     override val stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
-
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         val lightClasses = ktFiles.flatMap { getLightClassesFromFile(it) }
         if (lightClasses.isEmpty()) return LightClassTestCommon.NOT_GENERATED_DIRECTIVE
