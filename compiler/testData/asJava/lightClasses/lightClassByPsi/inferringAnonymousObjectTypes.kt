@@ -1,4 +1,3 @@
-// CHECK_BY_JAVA_FILE
 class Prop {
     private val someProp = object { }
 }

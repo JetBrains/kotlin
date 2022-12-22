@@ -1,4 +1,3 @@
-// CHECK_BY_JAVA_FILE
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
 annotation class A0
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
