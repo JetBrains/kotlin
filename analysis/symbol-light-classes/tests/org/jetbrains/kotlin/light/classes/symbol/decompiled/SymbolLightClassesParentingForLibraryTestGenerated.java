@@ -79,6 +79,12 @@ public class SymbolLightClassesParentingForLibraryTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("CompanionObject.kt")
+    public void testCompanionObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("Constructors.kt")
     public void testConstructors() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
@@ -220,6 +226,18 @@ public class SymbolLightClassesParentingForLibraryTestGenerated extends Abstract
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PublishedApi.kt");
+    }
+
+    @Test
+    @TestMetadata("SimpleObject.kt")
+    public void testSimpleObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SimpleObject.kt");
+    }
+
+    @Test
+    @TestMetadata("SimplePublicField.kt")
+    public void testSimplePublicField() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SimplePublicField.kt");
     }
 
     @Test
@@ -475,44 +493,6 @@ public class SymbolLightClassesParentingForLibraryTestGenerated extends Abstract
         @TestMetadata("VoidReturn.kt")
         public void testVoidReturn() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/VoidReturn.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/object")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Object {
-        @Test
-        public void testAllFilesPresentInObject() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/object"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("SimpleObject.kt")
-        public void testSimpleObject() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/object/SimpleObject.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField")
-    @TestDataPath("$PROJECT_ROOT")
-    public class PublicField {
-        @Test
-        public void testAllFilesPresentInPublicField() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("CompanionObject.kt")
-        public void testCompanionObject() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField/CompanionObject.kt");
-        }
-
-        @Test
-        @TestMetadata("Simple.kt")
-        public void testSimple() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/publicField/Simple.kt");
         }
     }
 
