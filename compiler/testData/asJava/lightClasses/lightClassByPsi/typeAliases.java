@@ -14,3 +14,6 @@ public final class O /* O*/ {
   private  O();//  .ctor()
 
 }
+
+public final class TypeAliasesKt /* TypeAliasesKt*/ {
+}

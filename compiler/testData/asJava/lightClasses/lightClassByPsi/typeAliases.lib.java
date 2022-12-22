@@ -1,1 +1,2 @@
-// NOT_GENERATED
+public final class TypeAliasesKt /* TypeAliasesKt*/ {
+}
