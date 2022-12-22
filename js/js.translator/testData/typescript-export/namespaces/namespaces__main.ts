@@ -7,9 +7,9 @@ function box(): string {
     const c2 = new C2("2");
     const c3 = new C3("3");
 
-    const res1 = JS_TESTS.foo.bar.baz.f(c1, c2, c3);
-    const res2 = JS_TESTS.a.b.f(c1, c2, c3);
-    const res3 = JS_TESTS.f(c1, c2, c3);
+    const res1 = JS_TESTS.foo.bar.baz.f1(c1, c2, c3);
+    const res2 = JS_TESTS.a.b.f2(c1, c2, c3);
+    const res3 = JS_TESTS.f3(c1, c2, c3);
 
     if (res1 !== "foo.bar.baz.f(C1(value=1), C2(value=2), C3(value=3))")
         return "Fail 1: " + res1;
