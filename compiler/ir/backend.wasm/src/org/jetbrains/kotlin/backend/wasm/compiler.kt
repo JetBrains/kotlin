@@ -33,7 +33,8 @@ import java.io.File
 
 class WasmCompilerResult(
     val wat: String?,
-    val js: String,
+    val jsUninstantiatedWrapper: String,
+    val jsWrapper: String,
     val wasm: ByteArray,
     val sourceMap: String?
 )
@@ -86,10 +87,11 @@ fun compileToLoweredIr(
 fun compileWasm(
     allModules: List<IrModuleFragment>,
     backendContext: WasmBackendContext,
+    baseFileName: String,
     emitNameSection: Boolean = false,
     allowIncompleteImplementations: Boolean = false,
     generateWat: Boolean = false,
-    sourceMapFileName: String? = null,
+    generateSourceMaps: Boolean = false,
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
@@ -105,12 +107,14 @@ fun compileWasm(
         null
     }
 
-    val js = compiledWasmModule.generateJs()
+    val jsUninstantiatedWrapper = compiledWasmModule.generateAsyncJsWrapper("./$baseFileName.wasm")
+    val jsWrapper = generateEsmExportsWrapper("./$baseFileName.uninstantiated.mjs")
 
     val os = ByteArrayOutputStream()
 
+    val sourceMapFileName = "$baseFileName.map".takeIf { generateSourceMaps }
     val sourceLocationMappings =
-        if (sourceMapFileName != null) mutableListOf<SourceLocationMapping>() else null
+        if (generateSourceMaps) mutableListOf<SourceLocationMapping>() else null
 
     val wasmIrToBinary =
         WasmIrToBinary(
@@ -128,7 +132,8 @@ fun compileWasm(
 
     return WasmCompilerResult(
         wat = wat,
-        js = js,
+        jsUninstantiatedWrapper = jsUninstantiatedWrapper,
+        jsWrapper = jsWrapper,
         wasm = byteArray,
         sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings)
     )
@@ -167,46 +172,43 @@ private fun generateSourceMap(
     return sourceMapBuilder.build()
 }
 
-fun WasmCompiledModuleFragment.generateJs(): String {
-    //language=js
-    val runtime = """
-    const externrefBoxes = new WeakMap();
-    // ref must be non-null
-    function tryGetOrSetExternrefBox(ref, ifNotCached) {
-        if (typeof ref !== 'object') return ifNotCached;
-        const cachedBox = externrefBoxes.get(ref);
-        if (cachedBox !== void 0) return cachedBox;
-        externrefBoxes.set(ref, ifNotCached);
-        return ifNotCached;
-    }    """.trimIndent()
+fun WasmCompiledModuleFragment.generateAsyncJsWrapper(wasmFilePath: String): String {
+    val jsCodeBody = jsFuns.joinToString(",\n") {
+        "${it.importName.toJsStringLiteral()} : ${it.jsCode}"
+    }
+
+    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
 
     val imports = jsModuleImports
         .toList()
         .sorted()
-        .joinToString("\n") {
+        .joinToString("") {
             val moduleSpecifier = it.toJsStringLiteral()
-            "  $moduleSpecifier: await import($moduleSpecifier),"
+            "        $moduleSpecifier: imports[$moduleSpecifier] ?? await import($moduleSpecifier),\n"
         }
 
-    val jsCodeBody = jsFuns.joinToString(",\n") {
-        "${it.importName.toJsStringLiteral()} : ${it.jsCode}"
-    }
-    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
-    val importObject = """
-const _import_object = { 
-${imports} 
-  js_code: { 
-${jsCodeBodyIndented}
-  }
-};
-"""
-
-    return runtime + importObject
+    //language=js
+    return """
+const externrefBoxes = new WeakMap();
+// ref must be non-null
+function tryGetOrSetExternrefBox(ref, ifNotCached) {
+    if (typeof ref !== 'object') return ifNotCached;
+    const cachedBox = externrefBoxes.get(ref);
+    if (cachedBox !== void 0) return cachedBox;
+    externrefBoxes.set(ref, ifNotCached);
+    return ifNotCached;
 }
 
-fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
-    externalJs + """
-    
+const js_code = {
+$jsCodeBodyIndented
+}
+
+// Placed here to give access to it from externals (js_code)
+let wasmInstance;
+let require; 
+let wasmExports;
+
+export async function instantiate(imports={}, runInitializer=true) {
     const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
     const isD8 = !isNodeJs && (typeof d8 !== 'undefined');
     const isBrowser = !isNodeJs && !isD8 && (typeof window !== 'undefined');
@@ -215,8 +217,12 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
       throw "Supported JS engine not detected";
     }
     
-    let wasmInstance;
-    let require; // Placed here to give access to it from externals (js_code)
+    const wasmFilePath = ${wasmFilePath.toJsStringLiteral()};
+    const importObject = {
+        js_code,
+$imports
+    };
+    
     if (isNodeJs) {
       const module = await import(/* webpackIgnore: true */'node:module');
       require = module.default.createRequire(import.meta.url);
@@ -225,31 +231,40 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
       const url = require('url');
       const filepath = url.fileURLToPath(import.meta.url);
       const dirpath = path.dirname(filepath);
-      const wasmBuffer = fs.readFileSync(path.resolve(dirpath, '$wasmFilePath'));
+      const wasmBuffer = fs.readFileSync(path.resolve(dirpath, wasmFilePath));
       const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, _import_object);
+      wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
     }
     
     if (isD8) {
-      const wasmBuffer = read('$wasmFilePath', 'binary');
+      const wasmBuffer = read(wasmFilePath, 'binary');
       const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, _import_object);
+      wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
     }
     
     if (isBrowser) {
-      wasmInstance = (await WebAssembly.instantiateStreaming(fetch('$wasmFilePath'), _import_object)).instance;
+      wasmInstance = (await WebAssembly.instantiateStreaming(fetch(wasmFilePath), importObject)).instance;
     }
     
-    const wasmExports = wasmInstance.exports;
-    wasmExports.__init();
-    export default wasmExports;
-    """.trimIndent()
+    wasmExports = wasmInstance.exports;
+    if (runInitializer) {
+        wasmExports.__init();
+    }
+
+    return { instance: wasmInstance,  exports: wasmExports };
+}
+"""
+}
+
+fun generateEsmExportsWrapper(asyncWrapperFileName: String): String = /*language=js */ """
+import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
+export default (await instantiate()).exports;
+"""
 
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String,
-    sourceMapFileName: String?
+    fileNameBase: String
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -257,10 +272,10 @@ fun writeCompilationResult(
     }
     File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
 
-    val jsWithLoader = generateJsWasmLoader("./$fileNameBase.wasm", result.js)
-    File(dir, "$fileNameBase.mjs").writeText(jsWithLoader)
+    File(dir, "$fileNameBase.uninstantiated.mjs").writeText(result.jsUninstantiatedWrapper)
+    File(dir, "$fileNameBase.mjs").writeText(result.jsWrapper)
 
-    if (sourceMapFileName != null) {
-        File(dir, sourceMapFileName).writeText(result.sourceMap!!)
+    if (result.sourceMap != null) {
+        File(dir, "$fileNameBase.map").writeText(result.sourceMap)
     }
 }
