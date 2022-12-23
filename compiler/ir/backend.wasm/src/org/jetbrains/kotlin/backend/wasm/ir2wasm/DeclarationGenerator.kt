@@ -67,29 +67,24 @@ class DeclarationGenerator(
             return
         }
 
-        val wasmImportModule = declaration.getWasmImportAnnotation()?.let { importPair ->
-            if (importPair.declarationName.isEmpty())
-                WasmImportPair(importPair.moduleName, declaration.name.asString())
-            else
-                importPair
-        }
+        val wasmImportModule = declaration.getWasmImportDescriptor()
 
         val jsCode = declaration.getJsFunAnnotation()
             // TODO: Why are we importing declarations by with raw declaration.name.asString() jsCode?
             ?: if (declaration.isExternal && wasmImportModule == null) declaration.name.asString() else null
 
-        val importedName: WasmImportPair? = when {
+        val importedName: WasmImportDescriptor? = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
                 context.addJsModuleImport(wasmImportModule.moduleName)
-                WasmImportPair(wasmImportModule.moduleName, wasmImportModule.declarationName)
+                wasmImportModule
             }
             jsCode != null -> {
                 // TODO: check consistency (currently fails with generated __convertKotlinClosureToJsClosure)
                 // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
                 val jsCodeName = jsCodeName(declaration)
                 context.addJsFun(jsCodeName, jsCode)
-                WasmImportPair("js_code", jsCodeName(declaration))
+                WasmImportDescriptor("js_code", jsCodeName(declaration))
             }
             else -> {
                 null

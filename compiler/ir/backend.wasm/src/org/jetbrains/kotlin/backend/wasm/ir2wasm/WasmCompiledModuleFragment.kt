@@ -58,7 +58,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     class JsCodeSnippet(val importName: String, val jsCode: String)
 
     val jsFuns = mutableListOf<JsCodeSnippet>()
-    val jsModuleImports = mutableListOf<String>()
+    val jsModuleImports = mutableSetOf<String>()
 
     class FunWithPriority(val function: WasmFunction, val priority: String)
 

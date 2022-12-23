@@ -319,7 +319,7 @@ class WasmIrToText : SExpressionBuilder() {
         }
     }
 
-    private fun WasmImportPair.appendImportPair() {
+    private fun WasmImportDescriptor.appendImportPair() {
         sameLineList("import") {
             toWatString(moduleName)
             toWatString(declarationName)
