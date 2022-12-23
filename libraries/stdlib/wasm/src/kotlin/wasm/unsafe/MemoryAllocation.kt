@@ -13,13 +13,13 @@ import kotlin.wasm.internal.unsafeGetScratchRawMemory
  * WebAssembly linear memory allocator.
  */
 @UnsafeWasmApi
-public interface MemoryAllocator {
+public abstract class MemoryAllocator {
     /**
-     * Allocate a block of linear memory of given [size] in bytes.
+     * Allocate a block of uninitialized linear memory of given [size] in bytes.
      *
      * @return an address of allocated memory. It is guaranteed to be a multiple of 8.
      */
-    fun allocate(size: Int): Ptr
+    public abstract fun allocate(size: Int): Pointer
 }
 
 /**
@@ -39,8 +39,9 @@ public interface MemoryAllocator {
  *
  * WARNING! Addresses leaked outside of [block] scope become invalid and can be overridden.
  *
- * WARNING! Nested call [withScopedMemoryAllocator] will throw [IllegalStateException] will be trown.
- *          Standard library may use this allocator to facilitaty JS interop. For example to copy String.
+ * WARNING! Nested calls to [withScopedMemoryAllocator] will throw [IllegalStateException].
+ *          The standard library may use this allocator for JS interop bindings. For example,
+ *          it may use it to copy strings.
  *
  * WARNING! Accessing allocator outside of the [block] scope will throw [IllegalStateException].
  */
@@ -67,14 +68,15 @@ internal var inScopedMemoryAllocatorBlock: Boolean = false
 
 @PublishedApi
 @UnsafeWasmApi
-internal class ScopedMemoryAllocator : MemoryAllocator {
+internal class ScopedMemoryAllocator : MemoryAllocator() {
     private var destroyed = false
     private var availableAddress: ULong = unsafeGetScratchRawMemory().toULong()
 
-    override fun allocate(size: Int): Ptr {
+    override fun allocate(size: Int): Pointer {
         check(!destroyed) { "ScopedMemoryAllocator is destroyed when out of scope" }
 
         // Pad available address to align it to 8
+        // 8 is a max alignment number currently needed for Wasm component model canonical ABI
         val align = 8uL
         val result = (availableAddress + align - 1uL) and (align - 1uL).inv()
         check(result % 8uL == 0uL)
