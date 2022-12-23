@@ -69,6 +69,8 @@ abstract class BasicWasmBoxTest(
             val jsFilesAfter = mutableListOf<String>()
             val mjsFiles = mutableListOf<String>()
 
+            var entryMjs: String? = "test.mjs"
+
             inputFiles.forEach {
                 val name = it.fileName
                 when {
@@ -81,8 +83,13 @@ abstract class BasicWasmBoxTest(
                     name.endsWith(".js") ->
                         jsFilesBefore += name
 
-                    name.endsWith(".mjs") ->
+                    name.endsWith(".mjs") -> {
                         mjsFiles += name
+                        val fileName = File(name).name
+                        if (fileName == "entry.mjs") {
+                            entryMjs = fileName
+                        }
+                    }
                 }
             }
 
@@ -136,10 +143,12 @@ abstract class BasicWasmBoxTest(
             )
 
             val generateWat = debugMode >= DebugMode.DEBUG
+            val baseFileName = "index"
 
             val compilerResult = compileWasm(
                 allModules = allModules,
                 backendContext = backendContext,
+                baseFileName = baseFileName,
                 emitNameSection = true,
                 allowIncompleteImplementations = false,
                 generateWat = generateWat,
@@ -150,6 +159,7 @@ abstract class BasicWasmBoxTest(
             val compilerResultWithDCE = compileWasm(
                 allModules = allModules,
                 backendContext = backendContext,
+                baseFileName = baseFileName,
                 emitNameSection = true,
                 allowIncompleteImplementations = true,
                 generateWat = generateWat,
@@ -189,6 +199,7 @@ abstract class BasicWasmBoxTest(
                     val path = dir.absolutePath
                     println(" ------ $name Wat  file://$path/index.wat")
                     println(" ------ $name Wasm file://$path/index.wasm")
+                    println(" ------ $name JS   file://$path/index.uninstantiated.mjs")
                     println(" ------ $name JS   file://$path/index.mjs")
                     println(" ------ $name Test file://$path/test.mjs")
                     val projectName = "kotlin"
@@ -221,7 +232,7 @@ abstract class BasicWasmBoxTest(
                     )
                 }
 
-                writeCompilationResult(res, dir, "index", sourceMapFileName = null)
+                writeCompilationResult(res, dir, baseFileName)
                 File(dir, "test.mjs").writeText(testJs)
 
                 for (mjsPath: String in mjsFiles) {
@@ -234,7 +245,7 @@ abstract class BasicWasmBoxTest(
                         "--experimental-wasm-gc",
                         *jsFilesBefore.map { File(it).absolutePath }.toTypedArray(),
                         "--module",
-                        "./test.mjs",
+                        "./${entryMjs}",
                         *jsFilesAfter.map { File(it).absolutePath }.toTypedArray(),
                         workingDirectory = dir
                     )
