@@ -4,14 +4,14 @@ FILE: danglingAnnotationsClassLevel.kt
             super<R|kotlin/Any|>()
         }
 
-        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
     public? final? class B : R|kotlin/Any| {
         public? constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
-        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
     public? final? class Outer : R|kotlin/Any| {
         public? constructor(): R|Outer| {
@@ -23,7 +23,7 @@ FILE: danglingAnnotationsClassLevel.kt
                 super<R|kotlin/Any|>()
             }
 
-            @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+            @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public? final? fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }

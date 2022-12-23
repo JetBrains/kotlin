@@ -82,6 +82,10 @@ open class RawFirBuilder(
         return file.accept(Visitor(), Unit) as FirFile
     }
 
+    fun buildAnnotationCall(annotation: KtAnnotationEntry): FirAnnotationCall {
+        return Visitor().visitAnnotationEntry(annotation, Unit) as FirAnnotationCall
+    }
+
     fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
         return reference.accept(Visitor(), Unit) as FirTypeRef
     }
@@ -817,7 +821,8 @@ open class RawFirBuilder(
             val argumentList = buildArgumentList {
                 source = valueArgumentList?.toFirSourceElement()
                 for (argument in valueArguments) {
-                    val argumentExpression = disabledLazyMode { argument.toFirExpression() }
+                    val argumentExpression =
+                        buildOrLazyExpression((argument as? PsiElement)?.toFirSourceElement()) { argument.toFirExpression() }
                     arguments += when (argument) {
                         is KtLambdaArgument -> buildLambdaArgumentExpression {
                             source = argument.toFirSourceElement()
@@ -853,7 +858,8 @@ open class RawFirBuilder(
                     }
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
-                        val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
+                        val delegateExpression =
+                            disabledLazyMode { { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate") }
                         container.superTypeRefs += type
                         val delegateSource =
                             superTypeListEntry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
@@ -963,7 +969,7 @@ open class RawFirBuilder(
                                     ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                             superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                         }
-                        superTypeCallEntry?.extractArgumentsTo(this)
+                        disabledLazyMode { superTypeCallEntry?.extractArgumentsTo(this) }
                     }
                 }
                 if (this == null && owner !is KtEnumEntry) {
@@ -1689,7 +1695,7 @@ open class RawFirBuilder(
                         this.superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                     }
                 }
-                extractArgumentsTo(this)
+                disabledLazyMode { extractArgumentsTo(this) }
             }
         }
 
