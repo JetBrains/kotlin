@@ -1,5 +1,5 @@
 FILE: annotated.kt
-    @Target(AnnotationTarget#.EXPRESSION#, AnnotationTarget#.LOCAL_VARIABLE#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
+    @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention(LAZY_EXPRESSION) public? final? annotation class Ann : R|kotlin/Annotation| {
         public? constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }

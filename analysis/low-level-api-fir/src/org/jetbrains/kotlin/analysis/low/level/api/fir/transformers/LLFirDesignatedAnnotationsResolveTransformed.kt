@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
@@ -25,6 +26,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         if (!designationIterator.hasNext()) {
             val declaration = designation.target
             if (declaration is FirRegularClass || declaration is FirTypeAlias) {
+                FirLazyBodiesCalculator.calculateCompilerAnnotations(declaration)
                 declaration.transform<FirDeclaration, Nothing?>(this, null)
             }
             return
