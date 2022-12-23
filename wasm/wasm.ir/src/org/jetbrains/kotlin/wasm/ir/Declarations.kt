@@ -51,13 +51,13 @@ sealed class WasmFunction(
     class Imported(
         name: String,
         type: WasmSymbolReadOnly<WasmFunctionType>,
-        val importPair: WasmImportPair
+        val importPair: WasmImportDescriptor
     ) : WasmFunction(name, type)
 }
 
 class WasmMemory(
     val limits: WasmLimits,
-    val importPair: WasmImportPair? = null,
+    val importPair: WasmImportDescriptor? = null,
 ) : WasmNamedModuleField()
 
 sealed class WasmDataMode {
@@ -81,7 +81,7 @@ class WasmData(
 class WasmTable(
     var limits: WasmLimits = WasmLimits(1u, null),
     val elementType: WasmType,
-    val importPair: WasmImportPair? = null
+    val importPair: WasmImportDescriptor? = null
 ) : WasmNamedModuleField() {
 
     sealed class Value {
@@ -108,7 +108,7 @@ class WasmElement(
 
 class WasmTag(
     val type: WasmFunctionType,
-    val importPair: WasmImportPair? = null
+    val importPair: WasmImportDescriptor? = null
 ) : WasmNamedModuleField() {
     init {
         assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
@@ -127,7 +127,7 @@ class WasmGlobal(
     val type: WasmType,
     val isMutable: Boolean,
     val init: List<WasmInstr>,
-    val importPair: WasmImportPair? = null
+    val importPair: WasmImportDescriptor? = null
 ) : WasmNamedModuleField()
 
 sealed class WasmExport<T : WasmNamedModuleField>(
@@ -199,7 +199,7 @@ data class WasmLimits(
     val maxSize: UInt?
 )
 
-data class WasmImportPair(
+data class WasmImportDescriptor(
     val moduleName: String,
     val declarationName: String
 )

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -178,7 +178,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     fun processExternalSimpleFunction(function: IrSimpleFunction) {
         // Skip JS interop adapters form WasmImport.
         // It needs to keep original signature to interop with other Wasm modules.
-        if (function.getWasmImportAnnotation() != null)
+        if (function.getWasmImportDescriptor() != null)
             return
 
         val jsFun = function.getJsFunAnnotation()

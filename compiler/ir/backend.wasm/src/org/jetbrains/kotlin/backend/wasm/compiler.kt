@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -179,13 +180,26 @@ fun WasmCompiledModuleFragment.generateJs(): String {
         return ifNotCached;
     }    """.trimIndent()
 
+    val imports = jsModuleImports
+        .toList()
+        .sorted()
+        .joinToString("\n") {
+            val moduleSpecifier = it.toJsStringLiteral()
+            "  $moduleSpecifier: await import($moduleSpecifier),"
+        }
 
-    val jsModuleImports = jsModuleImports.joinToString("\n") { """  "$it": await import("$it"),""" }
-
-    val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
+    val jsCodeBody = jsFuns.joinToString(",\n") {
+        "${it.importName.toJsStringLiteral()} : ${it.jsCode}"
+    }
     val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
-    val importObject =
-        "\nconst _import_object = { $jsModuleImports \n  js_code: { \n$jsCodeBodyIndented\n }};\n"
+    val importObject = """
+const _import_object = { 
+${imports} 
+  js_code: { 
+${jsCodeBodyIndented}
+  }
+};
+"""
 
     return runtime + importObject
 }
