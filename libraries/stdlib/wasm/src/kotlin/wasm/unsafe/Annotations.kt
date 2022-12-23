@@ -7,5 +7,5 @@ package kotlin.wasm.unsafe
 
 import kotlin.annotation.AnnotationTarget.*
 
-@RequiresOptIn("Unsafe WebAssembly APIs that expose linear memory")
-public annotation class UnsafeWasmApi
+@RequiresOptIn("Unsafe WebAssembly linear memory APIs")
+public annotation class UnsafeWasmMemoryApi

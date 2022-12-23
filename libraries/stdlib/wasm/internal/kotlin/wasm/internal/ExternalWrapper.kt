@@ -7,7 +7,7 @@ package kotlin.wasm.internal
 
 import kotlin.wasm.internal.reftypes.anyref
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
-import kotlin.wasm.unsafe.UnsafeWasmApi
+import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 
 internal external interface ExternalInterfaceType
 
@@ -192,7 +192,7 @@ internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
     val stringLength = srcArray.len()
     val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
 
-    @OptIn(UnsafeWasmApi::class)
+    @OptIn(UnsafeWasmMemoryApi::class)
     withScopedMemoryAllocator { allocator ->
         val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
 
@@ -239,7 +239,7 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
         return dstArray.createString()
     }
 
-    @OptIn(UnsafeWasmApi::class)
+    @OptIn(UnsafeWasmMemoryApi::class)
     withScopedMemoryAllocator { allocator ->
         val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
         val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)

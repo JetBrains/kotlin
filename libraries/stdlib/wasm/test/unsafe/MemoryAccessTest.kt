@@ -3,7 +3,7 @@ package test.wasm.unsafe
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
 
-@OptIn(UnsafeWasmApi::class)
+@OptIn(UnsafeWasmMemoryApi::class)
 class MemoryAccessTestTest {
     @Test
     fun testScopedAllocator() {
