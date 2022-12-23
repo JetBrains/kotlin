@@ -73,7 +73,7 @@ class DeclarationGenerator(
             // TODO: Why are we importing declarations by with raw declaration.name.asString() jsCode?
             ?: if (declaration.isExternal && wasmImportModule == null) declaration.name.asString() else null
 
-        val importedName: WasmImportDescriptor? = when {
+        val importedName = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
                 context.addJsModuleImport(wasmImportModule.moduleName)
