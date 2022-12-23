@@ -9,23 +9,30 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
 
 internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(designation: FirDesignation) {
+        calculateAnnotations(designation.target)
         designation.target.transform<FirElement, PersistentList<FirRegularClass>>(
             FirLazyBodiesCalculatorTransformer,
             designation.path.toPersistentList(),
@@ -33,7 +40,26 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateLazyBodies(firFile: FirFile) {
+        calculateAnnotations(firFile)
         firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
+    }
+
+    fun calculateAnnotations(firElement: FirElementWithResolvePhase) {
+        calculateAnnotations(firElement, firElement.moduleData.session)
+    }
+
+    fun calculateAnnotations(firElement: FirElement, session: FirSession) {
+        firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
+            FirLazyAnnotationTransformer,
+            FirLazyAnnotationTransformerData(session)
+        )
+    }
+
+    fun calculateCompilerAnnotations(firElement: FirElementWithResolvePhase) {
+        firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
+            FirLazyAnnotationTransformer,
+            FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)
+        )
     }
 
     private fun replaceValueParameterDefaultValues(valueParameters: List<FirValueParameter>, newValueParameters: List<FirValueParameter>) {
@@ -43,6 +69,13 @@ internal object FirLazyBodiesCalculator {
                 valueParameter.replaceDefaultValue(newValueParameter.defaultValue)
             }
         }
+    }
+
+    fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession) {
+        require(needCalculatingAnnotationCall(annotationCall))
+        val builder = RawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
+        val newAnnotationCall = builder.buildAnnotationCall(annotationCall.psi as KtAnnotationEntry)
+        annotationCall.replaceArgumentList(newAnnotationCall.argumentList)
     }
 
     fun calculateLazyBodiesForFunction(designation: FirDesignation) {
@@ -169,6 +202,86 @@ internal object FirLazyBodiesCalculator {
                 || firProperty.initializer is FirLazyExpression
                 || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
                 || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
+
+    fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =
+        firAnnotationCall.argumentList.arguments.any { it is FirLazyExpression }
+}
+
+private enum class FirLazyAnnotationTransformerScope {
+    ALL_ANNOTATIONS,
+    COMPILER_ONLY;
+}
+
+private data class FirLazyAnnotationTransformerData(
+    val session: FirSession,
+    val compilerAnnotationsOnly: FirLazyAnnotationTransformerScope = FirLazyAnnotationTransformerScope.ALL_ANNOTATIONS
+)
+
+private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
+    private val COMPILATOR_ANNOTATION_NAMES: Set<Name> = setOf(
+        Deprecated,
+        DeprecatedSinceKotlin,
+        WasExperimental,
+        JvmRecord,
+        SinceKotlin,
+    ).mapTo(mutableSetOf()) { it.shortClassName }
+
+    private fun canBeCompilerAnnotation(annotationCall: FirAnnotationCall, session: FirSession): Boolean {
+        val annotationTypeRef = annotationCall.annotationTypeRef
+        if (annotationTypeRef !is FirUserTypeRef) return false
+        if (session.registeredPluginAnnotations.annotations.isNotEmpty()) return true
+        val name = annotationTypeRef.qualifier.last().name
+        return name in COMPILATOR_ANNOTATION_NAMES
+    }
+
+    override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
+        element.transformChildren(this, data)
+        return element
+    }
+
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: FirLazyAnnotationTransformerData): FirStatement {
+        if ((data.compilerAnnotationsOnly == FirLazyAnnotationTransformerScope.ALL_ANNOTATIONS || canBeCompilerAnnotation(
+                annotationCall,
+                data.session,
+            )) && FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotationCall)
+        ) {
+            FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotationCall, data.session)
+        }
+        super.transformAnnotationCall(annotationCall, data)
+        return annotationCall
+    }
+
+    override fun transformErrorAnnotationCall(
+        errorAnnotationCall: FirErrorAnnotationCall,
+        data: FirLazyAnnotationTransformerData
+    ): FirStatement {
+        transformAnnotationCall(errorAnnotationCall, data)
+        return errorAnnotationCall
+    }
+
+    override fun transformExpression(expression: FirExpression, data: FirLazyAnnotationTransformerData): FirStatement {
+        if (expression is FirLazyExpression) {
+            return expression
+        }
+        return super.transformExpression(expression, data)
+    }
+
+    override fun transformBlock(block: FirBlock, data: FirLazyAnnotationTransformerData): FirStatement {
+        if (block is FirLazyBlock) {
+            return block
+        }
+        return super.transformBlock(block, data)
+    }
+
+    override fun transformDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        data: FirLazyAnnotationTransformerData
+    ): FirStatement {
+        if (delegatedConstructorCall is FirLazyDelegatedConstructorCall) {
+            return delegatedConstructorCall
+        }
+        return super.transformDelegatedConstructorCall(delegatedConstructorCall, data)
+    }
 }
 
 private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirRegularClass>>() {

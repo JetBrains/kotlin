@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElement
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 /**
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
@@ -51,6 +54,11 @@ internal class LLFirDesignatedTypeResolverTransformer(
 
         checkIsResolved(designation.target)
         (designation.target as? FirDeclaration)?.let { checkClassMembersAreResolved(it) }
+    }
+
+    override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
+        FirLazyBodiesCalculator.calculateAnnotations(typeRef, session)
+        return super.transformTypeRef(typeRef, data)
     }
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
