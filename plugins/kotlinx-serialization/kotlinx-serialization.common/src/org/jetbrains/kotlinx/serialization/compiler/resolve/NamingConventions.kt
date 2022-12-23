@@ -249,6 +249,7 @@ fun findStandardKotlinTypeSerializerName(typeName: String?): String? {
         "kotlin.DoubleArray" -> "DoubleArraySerializer"
         "kotlin.BooleanArray" -> "BooleanArraySerializer"
         "kotlin.time.Duration" -> "DurationSerializer"
+        "kotlin.text.Regex" -> "RegexSerializer"
         "java.lang.Boolean" -> "BooleanSerializer"
         "java.lang.Byte" -> "ByteSerializer"
         "java.lang.Short" -> "ShortSerializer"
