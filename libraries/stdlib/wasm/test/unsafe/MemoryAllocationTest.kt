@@ -20,14 +20,14 @@ class MemoryAllocationTest {
     @Test
     fun testScopedAllocator() {
         val sizes = listOf<Int>(1, 1, 2, 3, 8, 10, 305, 12_747, 31_999)
-        val allocations = mutableListOf<Int>()
+        val allocations = mutableListOf<Pointer>()
         withScopedMemoryAllocator { a ->
             for (size in sizes) {
                 allocations += a.allocate(size)
             }
         }
 
-        val allocations2 = mutableListOf<Int>()
+        val allocations2 = mutableListOf<Pointer>()
         withScopedMemoryAllocator { a ->
             for (size in sizes) {
                 allocations2 += a.allocate(size)
@@ -48,20 +48,22 @@ class MemoryAllocationTest {
         assertTrue(allocations.distinct().size == allocations.size)
 
         // Allocations do not intersect
-        for (i1 in 0 until sizes.size) {
-            for (i2 in 0 until sizes.size) {
-                if (i1 == i2) {
-                    break
-                }
+        for (i1 in 0..<sizes.size) {
+            for (i2 in (i1 + 1)..<sizes.size) {
                 val a1 = allocations[i1]
                 val a2 = allocations[i2]
+                val size1 = sizes[i1]
                 val size2 = sizes[i2]
-                assertTrue(a1 !in (a2 ..< a2 + size2))
+                assertTrue(a1 !in a2..<a2 + size2)
+                assertTrue(a1 + size1 - 1 !in a2..<a2 + size2)
             }
         }
+    }
 
+    @Test
+    fun testScopedAllocatorGrowsMemory() {
         // Allocations past current memory size should grow memory
-        val memSizes = mutableListOf<Int>(wasmMemorySize())
+        val memSizes = mutableListOf<Pointer>(wasmMemorySize())
         withScopedMemoryAllocator { a ->
             var allocatedAddress = a.allocate(pageSize)
             var allocationSize = pageSize
@@ -105,7 +107,8 @@ class MemoryAllocationTest {
                     leakedAllocator = allocator
                     throw Error()
                 }
-            } catch (e: Throwable) {}
+            } catch (e: Throwable) {
+            }
             leakedAllocator?.allocate(10)
         }
 
@@ -118,8 +121,4 @@ class MemoryAllocationTest {
             foo().allocate(10)
         }
     }
-
-    private fun Int.alignTo(align: Int) =
-        (this + align - 1) and (align - 1).inv()
-
 }
