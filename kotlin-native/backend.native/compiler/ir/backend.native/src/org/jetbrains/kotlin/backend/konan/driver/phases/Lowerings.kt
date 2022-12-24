@@ -194,7 +194,8 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOf<Abstra
         convertToNativeGeneration(autoboxPhase),
 )
 
-private val fileLoweringActions = setOf<Action<IrFile, NativeGenerationState>>(nativeStateDumper, nativeStateIrValidator)
+private val fileLoweringActions: Set<Action<IrFile, NativeGenerationState>> get() =
+    setOf<Action<IrFile, NativeGenerationState>>(nativeStateDumper, nativeStateIrValidator)
 
 /**
  * Simplify porting of lowerings from static driver (where lowerings were executed in one big Context)
