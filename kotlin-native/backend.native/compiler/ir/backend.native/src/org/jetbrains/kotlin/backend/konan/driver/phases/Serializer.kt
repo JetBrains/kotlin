@@ -58,7 +58,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
             exportKDoc = context.shouldExportKDoc(),
             !expectActualLinker, includeOnlyModuleContent = true)
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
-    val neededLibraries = config.librariesWithDependencies(input.moduleDescriptor)
+    val neededLibraries = config.librariesWithDependencies()
     SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
 }
 

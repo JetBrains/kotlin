@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.driver.runPhaseInParentContext
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -194,21 +193,19 @@ private fun PhaseEngine<NativeGenerationState>.lowerDependencies(inputModule: Ir
     inputModule.files.clear()
 
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
-    context.context.librariesWithDependencies
+    // TODO: Does the order of files really matter with the new MM?
+    context.config.librariesWithDependencies()
             .reversed()
             .forEach {
                 val libModule = context.context.irModules[it.libraryName]
                 if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
                     return@forEach
-
-                inputModule.files += libModule.files
-                runAllLowerings(inputModule)
-                inputModule.files.clear()
+                runAllLowerings(libModule)
             }
 
     // Save all files for codegen in reverse topological order.
     // This guarantees that libraries initializers are emitted in correct order.
-    context.context.librariesWithDependencies
+    context.config.librariesWithDependencies()
             .forEach {
                 val libModule = context.context.irModules[it.libraryName]
                 if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))

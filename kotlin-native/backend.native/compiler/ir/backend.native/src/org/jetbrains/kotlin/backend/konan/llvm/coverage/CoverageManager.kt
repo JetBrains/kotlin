@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,7 +18,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 /**
  * "Umbrella" class of all the of the code coverage related logic.
  */
-internal class CoverageManager(val generationState: NativeGenerationState) {
+internal class CoverageManager(
+        val generationState: NativeGenerationState
+) {
     private val context = generationState.context
     private val config = generationState.config
 
@@ -62,11 +63,14 @@ internal class CoverageManager(val generationState: NativeGenerationState) {
             filesRegionsInfo.flatMap { it.functions }.firstOrNull { it.function == irFunction }
 
     private val coveredModules: Set<ModuleDescriptor> by lazy {
-        val coveredUserCode = if (shouldCoverSources) setOf(context.moduleDescriptor) else emptySet()
+        val coveredSources = if (shouldCoverSources) {
+            context.sourcesModules
+        } else {
+            emptySet()
+        }
         val coveredLibs = context.irModules.filter { it.key in librariesToCover }.values
                 .map { it.descriptor }.toSet()
-        val coveredIncludedLibs = if (shouldCoverSources) context.getIncludedLibraryDescriptors().toSet() else emptySet()
-        coveredLibs + coveredUserCode + coveredIncludedLibs
+        coveredLibs + coveredSources
     }
 
     private fun fileCoverageFilter(file: IrFile) =

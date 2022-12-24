@@ -9,7 +9,9 @@ import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.isCache
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -111,7 +113,8 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,
-            frontendOutput.moduleDescriptor,
+            frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
+            frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
             psiToIrOutput.irModule.irBuiltins,
             psiToIrOutput.irModules,
             psiToIrOutput.irLinker,

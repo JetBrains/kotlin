@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.library.toUnresolvedLibraries
 internal fun ModuleDescriptor.getExportedDependencies(konanConfig: KonanConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries((konanConfig.resolve.exportedLibraries + konanConfig.resolve.includedLibraries).toSet())
 
-internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> =
-        moduleDescriptor.getIncludedLibraryDescriptors(config)
-
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(konanConfig: KonanConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(konanConfig.resolve.includedLibraries.toSet())
 

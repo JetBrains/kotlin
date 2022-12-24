@@ -76,7 +76,7 @@ internal class DependenciesTrackerImpl(private val generationState: NativeGenera
     private val usedNativeDependencies = mutableSetOf<KotlinLibrary>()
     private val usedBitcodeOfFile = mutableSetOf<LibraryFile>()
 
-    private val allLibraries by lazy { context.librariesWithDependencies.toSet() }
+    private val allLibraries by lazy { context.config.librariesWithDependencies().toSet() }
 
     private fun findStdlibFile(fqName: FqName, fileName: String): LibraryFile {
         val stdlib = (context.standardLlvmSymbolsOrigin as? DeserializedKlibModuleOrigin)?.library
@@ -276,7 +276,7 @@ internal class DependenciesTrackerImpl(private val generationState: NativeGenera
 
         val allBitcodeDependencies: List<DependenciesTracker.ResolvedDependency> = run {
             val allBitcodeDependencies = mutableMapOf<KonanLibrary, DependenciesTracker.ResolvedDependency>()
-            for (library in context.librariesWithDependencies) {
+            for (library in context.config.librariesWithDependencies()) {
                 if (context.config.cachedLibraries.getLibraryCache(library) == null || library == context.config.libraryToCache?.klib)
                     allBitcodeDependencies[library] = DependenciesTracker.ResolvedDependency.wholeModule(library)
             }

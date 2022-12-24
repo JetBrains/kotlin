@@ -152,7 +152,7 @@ internal fun PsiToIrContext.psiToIr(
             while (true) {
                 // context.config.librariesWithDependencies could change at each iteration.
                 val dependencies = moduleDescriptor.allDependencyModules.filter {
-                    config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
+                    config.librariesWithDependencies().contains(it.konanLibrary)
                 }
 
                 fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {

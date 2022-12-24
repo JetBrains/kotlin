@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
@@ -51,9 +48,13 @@ internal class NativeMapping : DefaultMapping() {
     val loweredInlineClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
 }
 
+/**
+ * Backend context.
+ */
 internal class Context(
         config: KonanConfig,
-        val moduleDescriptor: ModuleDescriptor,
+        val sourcesModules: Set<ModuleDescriptor>,
+        override val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<String, IrModuleFragment>,
         val irLinker: KonanIrLinker,
@@ -61,10 +62,6 @@ internal class Context(
 ) : KonanBackendContext(config) {
 
     override val ir: KonanIr = KonanIr(this, symbols)
-
-    override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
-        moduleDescriptor.builtIns as KonanBuiltIns
-    }
 
     override val configuration get() = config.configuration
 
@@ -95,10 +92,6 @@ internal class Context(
     }
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
-
-    val librariesWithDependencies by lazy {
-        config.librariesWithDependencies(moduleDescriptor)
-    }
 
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
