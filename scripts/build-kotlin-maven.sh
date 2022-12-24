@@ -52,4 +52,4 @@ cp -R build/repo/. build/repo-reproducible
 find build/repo-reproducible -name "maven-metadata.xml*" -exec rm -rf {} \;
 # Each file has own timestamp that would affect zip file hash if not aligned
 find build/repo-reproducible -exec touch -t "198001010000" {} \;
-cd build/repo-reproducible && zip -rX reproducible-maven-$DEPLOY_VERSION.zip . && cd -
+cd build/repo-reproducible && find . -type f | sort | zip -X reproducible-maven-$DEPLOY_VERSION.zip -@ && cd -
