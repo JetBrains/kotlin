@@ -142,4 +142,20 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
             needPrimitiveBoxing, false, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
             genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
         )
+
+    fun mapTypeAliases(
+        genericArgumentMode: TypeMappingMode? = null
+    ): TypeMappingMode =
+        TypeMappingMode(
+            needPrimitiveBoxing,
+            needInlineClassWrapping,
+            isForAnnotationParameter,
+            skipDeclarationSiteWildcards,
+            skipDeclarationSiteWildcardsIfPossible,
+            genericArgumentMode ?: this.genericArgumentMode,
+            kotlinCollectionsToJavaCollections,
+            genericContravariantArgumentMode,
+            genericInvariantArgumentMode,
+            mapTypeAliases = true
+        )
 }

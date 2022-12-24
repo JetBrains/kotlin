@@ -9,26 +9,23 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 fun TypeSystemCommonBackendContext.getOptimalModeForValueParameter(
-    type: KotlinTypeMarker,
-    isForUast: Boolean = false,
-): TypeMappingMode = getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = true, isForUast)
+    type: KotlinTypeMarker
+): TypeMappingMode = getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = true)
 
 fun TypeSystemCommonBackendContext.getOptimalModeForReturnType(
     type: KotlinTypeMarker,
-    isAnnotationMethod: Boolean,
-    isForUast: Boolean = false,
+    isAnnotationMethod: Boolean
 ): TypeMappingMode {
     return if (isAnnotationMethod)
         TypeMappingMode.VALUE_FOR_ANNOTATION
     else
-        getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false, isForUast)
+        getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
 }
 
 @OptIn(TypeMappingModeInternals::class)
 private fun TypeSystemCommonBackendContext.getOptimalModeForSignaturePart(
     type: KotlinTypeMarker,
-    canBeUsedInSupertypePosition: Boolean,
-    isForUast: Boolean = false,
+    canBeUsedInSupertypePosition: Boolean
 ): TypeMappingMode {
     if (type.argumentsCount() == 0) return TypeMappingMode.DEFAULT
 
@@ -36,7 +33,7 @@ private fun TypeSystemCommonBackendContext.getOptimalModeForSignaturePart(
     if (isInlineClassType && shouldUseUnderlyingType(type)) {
         val underlyingType = computeUnderlyingType(type)
         if (underlyingType != null) {
-            return getOptimalModeForSignaturePart(underlyingType, canBeUsedInSupertypePosition, isForUast).dontWrapInlineClassesMode()
+            return getOptimalModeForSignaturePart(underlyingType, canBeUsedInSupertypePosition).dontWrapInlineClassesMode()
         }
     }
 
@@ -48,17 +45,15 @@ private fun TypeSystemCommonBackendContext.getOptimalModeForSignaturePart(
 
     val invariantArgumentMode =
         if (canBeUsedInSupertypePosition)
-            getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false, isForUast)
+            getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
         else
             null
 
     return TypeMappingMode(
         skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
         skipDeclarationSiteWildcardsIfPossible = true,
-        genericArgumentMode = if (isForUast) TypeMappingMode.GENERIC_ARGUMENT_UAST else null,
         genericContravariantArgumentMode = contravariantArgumentMode,
         genericInvariantArgumentMode = invariantArgumentMode,
-        needInlineClassWrapping = !isInlineClassType,
-        mapTypeAliases = isForUast
+        needInlineClassWrapping = !isInlineClassType
     )
 }
