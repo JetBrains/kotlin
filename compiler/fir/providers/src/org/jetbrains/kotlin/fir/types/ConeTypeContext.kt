@@ -338,6 +338,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker?): Boolean {
         require(this is ConeTypeParameterLookupTag)
+        this.typeParameterSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         return this.bounds().any { typeRef ->
             typeRef.coneType.contains { it.typeConstructor() == this.getTypeConstructor() }
                     && (selfConstructor == null || typeRef.coneType.typeConstructor() == selfConstructor)

@@ -127,6 +127,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("typeParameterBounds.kt")
+    public void testTypeParameterBounds() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterBounds.kt");
+    }
+
+    @Test
     @TestMetadata("typeParameterOfNonLocalFunction.kt")
     public void testTypeParameterOfNonLocalFunction() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfNonLocalFunction.kt");
