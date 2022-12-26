@@ -20,6 +20,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ENABLED_KAPT(OR, SAFE),
     ENABLED_DAGGER(OR, SAFE),
     ENABLED_DATABINDING(OR, SAFE),
+    ENABLED_KOVER(OR, SAFE),
 
     ENABLED_COMPILER_PLUGIN_ALL_OPEN(OR, SAFE),
     ENABLED_COMPILER_PLUGIN_NO_ARG(OR, SAFE),

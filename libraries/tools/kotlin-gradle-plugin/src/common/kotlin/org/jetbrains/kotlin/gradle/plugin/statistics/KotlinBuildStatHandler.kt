@@ -98,6 +98,9 @@ class KotlinBuildStatHandler {
                     val dependencies = configuration.dependencies
 
                     when (configurationName) {
+                        "KoverEngineConfig" -> {
+                            sessionLogger.report(BooleanMetrics.ENABLED_KOVER, true)
+                        }
                         "kapt" -> {
                             sessionLogger.report(BooleanMetrics.ENABLED_KAPT, true)
                             for (dependency in dependencies) {
