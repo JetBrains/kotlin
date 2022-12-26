@@ -701,6 +701,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("recursiveTypeParameter.kt")
+    public void testRecursiveTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/recursiveTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("resolveCallInSuperConstructorParam.kt")
     public void testResolveCallInSuperConstructorParam() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/resolveCallInSuperConstructorParam.kt");

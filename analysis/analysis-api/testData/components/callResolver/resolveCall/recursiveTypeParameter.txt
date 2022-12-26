@@ -1,0 +1,49 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classIdIfNonLocal: RunnerModule
+          classKind: CLASS
+          companionObject: null
+          contextReceivers: []
+          isData: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: FINAL
+          name: RunnerModule
+          origin: SOURCE
+          superTypes: [
+            AbstractModule
+          ]
+          symbolKind: TOP_LEVEL
+          typeParameters: []
+          visibility: Public
+        type = RunnerModule
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = builder
+            receiverType = null
+            returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+            symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /AbstractModule.install
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      CoroutineModule.builder() -> (KtVariableLikeSignature:
+        name = builder
+        receiverType = null
+        returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+        symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+        callableIdIfNonLocal = null)
+    }
