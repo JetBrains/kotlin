@@ -230,7 +230,12 @@ private fun KotlinType.hasReferenceOtherThan(allowedTypeParameterDescriptors: Se
             declarationDescriptor !in allowedTypeParameterDescriptors ||
                     declarationDescriptor.upperBounds.any { it.hasReferenceOtherThan(allowedTypeParameterDescriptors) }
         }
-        else -> arguments.any { it.type.hasReferenceOtherThan(allowedTypeParameterDescriptors) }
+        else -> arguments.any { typeProjection ->
+            // A star projection type (lazily) built by type parameter will be yet another type with a star projection,
+            // resulting in stack overflow if we keep checking allowed type parameter descriptors
+            !typeProjection.isStarProjection &&
+                    typeProjection.type.hasReferenceOtherThan(allowedTypeParameterDescriptors)
+        }
     }
 }
 
