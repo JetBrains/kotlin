@@ -263,7 +263,8 @@ fun StatementGenerator.generateCallReceiver(
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
             contextReceiverValues = when (ktDefaultElement) {
                 is KtConstructorDelegationCall, is KtSuperTypeCallEntry -> contextReceivers.mapNotNull {
-                    generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it as ContextClassReceiver)
+                    if (it is ContextClassReceiver) generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it)
+                    else generateReceiverOrNull(ktDefaultElement, it)
                 }
                 else -> contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
             }
