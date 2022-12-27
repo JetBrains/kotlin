@@ -54,6 +54,17 @@ interface DependenciesTracker {
     val bitcodeToLink: List<KonanLibrary>
 }
 
+/**
+ * Result of dependency tracking during LLVM module production.
+ * Elements of this class should be easily serializable/deserializable,
+ * so the late compiler phases could be easily executed separately.
+ */
+data class DependenciesTrackingResult(
+        val nativeDependenciesToLink: List<KonanLibrary>,
+        val allNativeDependencies: List<KonanLibrary>,
+        val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
+)
+
 private sealed class FileOrigin {
     object CurrentFile : FileOrigin() // No dependency should be added.
 

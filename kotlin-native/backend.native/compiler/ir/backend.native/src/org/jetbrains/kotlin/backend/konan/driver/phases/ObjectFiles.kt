@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.konan.BitcodeCompiler
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ObjectFile
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.konan.TempFiles
 
-internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, String, List<ObjectFile>>(
+internal data class ObjectFilesPhaseInput(
+        val bitcodeFileName: String,
+        val temporaryFiles: TempFiles
+)
+
+internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<PhaseContext, ObjectFilesPhaseInput, List<ObjectFile>>(
         name = "ObjectFiles",
         description = "Bitcode to object file",
         outputIfNotEnabled = { _, _, _, _ -> emptyList() }
-) { context, bitcodeFileName ->
-    BitcodeCompiler(context).makeObjectFiles(bitcodeFileName)
+) { context, input ->
+    BitcodeCompiler(context, input.temporaryFiles).makeObjectFiles(input.bitcodeFileName)
 }

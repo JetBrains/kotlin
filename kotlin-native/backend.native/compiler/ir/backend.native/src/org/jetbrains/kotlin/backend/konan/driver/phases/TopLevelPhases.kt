@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
@@ -48,14 +49,17 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
-    useContext(backendContext) { backendEngine ->
+    val moduleCompilationOutputs = useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(irModule)
-        fragments.forEach { (generationState, fragment) ->
+        fragments.map { (generationState, fragment) ->
             backendEngine.useContext(generationState) { generationStateEngine ->
-                generationStateEngine.runLowerAndCompile(fragment)
+                generationStateEngine.compileModule(fragment)
             }
         }
+    }
+    moduleCompilationOutputs.forEach {
+        compileAndLink(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
     }
 }
 
@@ -103,20 +107,23 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
     sequenceOf(nativeGenerationState to input)
 }
 
+internal data class ModuleCompilationOutput(
+        val bitcodeFile: String,
+        val dependenciesTrackingResult: DependenciesTrackingResult,
+        // Passing tempFiles and output files through this file looks silly and incorrect.
+        // TODO: Refactor these classes and remove them from here.
+        val temporaryFiles: TempFiles,
+        val outputFiles: OutputFiles,
+)
+
 /**
- * Performs all the hard work:
  * 1. Runs IR lowerings
  * 2. Runs LTO.
  * 3. Translates IR to LLVM IR.
  * 4. Optimizes it.
  * 5. Serializes it to a bitcode file.
- * 6. Compiles bitcode to an object file.
- * 7. Performs binary linkage.
- * ... And stores additional cache info.
- *
- * TODO: Split into more granular phases with explicit inputs and outputs.
  */
-internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment): ModuleCompilationOutput {
     if (context.config.produce.isCache) {
         runPhase(BuildAdditionalCacheInfoPhase, module)
     }
@@ -128,17 +135,40 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrMod
         runPhase(SaveAdditionalCacheInfoPhase)
     }
     val bitcodeFile = runPhase(WriteBitcodeFilePhase, context.llvm.module)
-    val objectFiles = runPhase(ObjectFilesPhase, bitcodeFile)
-    runPhase(LinkerPhase, objectFiles)
+    val dependenciesTrackingResult = DependenciesTrackingResult(
+            context.dependenciesTracker.bitcodeToLink,
+            context.dependenciesTracker.allNativeDependencies,
+            context.dependenciesTracker.allBitcodeDependencies,
+    )
+    return ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
+}
+
+internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
+        moduleCompilationOutput: ModuleCompilationOutput,
+        linkerOutputFile: String,
+        outputFiles: OutputFiles,
+        temporaryFiles: TempFiles,
+        isCoverageEnabled: Boolean,
+) {
+    val objectFiles = runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, temporaryFiles))
+    val linkerPhaseInput = LinkerPhaseInput(linkerOutputFile, objectFiles, moduleCompilationOutput.dependenciesTrackingResult,
+            outputFiles, temporaryFiles, isCoverageEnabled = isCoverageEnabled)
+    runPhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {
-        runPhase(FinalizeCachePhase)
+        runPhase(FinalizeCachePhase, outputFiles)
     }
 }
 
+
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
     runAllLowerings(module)
-    lowerDependencies()
-    mergeDependencies(module)
+    val dependenciesToCompile = findDependenciesToCompile()
+    // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+    // TODO: Does the order of files really matter with the new MM?
+    dependenciesToCompile.reversed().forEach { irModule ->
+        runAllLowerings(irModule)
+    }
+    mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
     runPhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
@@ -185,35 +215,14 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(CodegenPhase, CodegenInput(module, lifetimes))
 }
 
-/**
- * Lowers and links to [inputModule] dependencies of the current compilation target.
- */
-private fun PhaseEngine<NativeGenerationState>.lowerDependencies() {
-    // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
-    // TODO: Does the order of files really matter with the new MM?
-    context.config.librariesWithDependencies()
-            .reversed()
-            .forEach {
-                val libModule = context.context.irModules[it.libraryName]
-                if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
-                    return@forEach
-                runAllLowerings(libModule)
-            }
+private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
+    return context.config.librariesWithDependencies()
+            .mapNotNull { context.context.irModules[it.libraryName] }
+            .filter { !context.llvmModuleSpecification.containsModule(it) }
 }
 
-private fun PhaseEngine<NativeGenerationState>.mergeDependencies(inputModule: IrModuleFragment) {
-    val files = mutableListOf<IrFile>()
-    files += inputModule.files
-    inputModule.files.clear()
-    // Save all files for codegen in reverse topological order.
-    // This guarantees that libraries initializers are emitted in correct order.
-    context.config.librariesWithDependencies()
-            .forEach {
-                val libModule = context.context.irModules[it.libraryName]
-                if (libModule == null || !context.llvmModuleSpecification.containsModule(libModule))
-                    return@forEach
-
-                inputModule.files += libModule.files
-            }
-    inputModule.files += files
+// Save all files for codegen in reverse topological order.
+// This guarantees that libraries initializers are emitted in correct order.
+private fun mergeDependencies(targetModule: IrModuleFragment, dependencies: List<IrModuleFragment>) {
+    targetModule.files.addAll(0, dependencies.flatMap { it.files })
 }

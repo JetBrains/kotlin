@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.konan.CacheStorage
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -25,6 +27,9 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
     }
 }
 
+/**
+ * It is naturally a part of "produce LLVM module", so using NativeGenerationState context should be OK.
+ */
 internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "SaveAdditionalCacheInfo",
         description = "Save additional cache info (inline functions bodies and fields of classes)"
@@ -33,10 +38,10 @@ internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nativ
     CacheStorage(context).saveAdditionalCacheInfo()
 }
 
-internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, OutputFiles>(
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
-) { context, _ ->
+) { _, outputFiles ->
     //  TODO: Explicit parameter
-    CacheStorage(context).renameOutput()
+    CacheStorage.renameOutput(outputFiles)
 }

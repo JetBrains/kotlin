@@ -5,13 +5,24 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Linker
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.ObjectFile
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.konan.TempFiles
 
-internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<ObjectFile>>(
+data class LinkerPhaseInput(
+        val outputFile: String,
+        val objectFiles: List<ObjectFile>,
+        val dependenciesTrackingResult: DependenciesTrackingResult,
+        val outputFiles: OutputFiles,
+        val temporaryFiles: TempFiles,
+        val isCoverageEnabled: Boolean,
+)
+
+internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPhaseInput>(
         name = "Linker",
         description = "Linker"
-) { context, objectFiles ->
-    Linker(context).link(objectFiles)
+) { context, input ->
+    val linker = Linker(context, input.isCoverageEnabled, input.temporaryFiles, input.outputFiles)
+    linker.link(input.outputFile, input.objectFiles, input.dependenciesTrackingResult)
 }

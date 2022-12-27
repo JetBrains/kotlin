@@ -101,17 +101,13 @@ internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<Nativ
 internal val VerifyBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(
         name = "VerifyBitcode",
         description = "Verify bitcode",
-        op = { _, llvmModule ->
-            verifyModule(llvmModule)
-        }
+        op = { _, llvmModule -> verifyModule(llvmModule) }
 )
 
 internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(
         name = "PrintBitcode",
         description = "Print bitcode",
-        op = { _, llvmModule ->
-                LLVMDumpModule(llvmModule)
-        }
+        op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )
 
 internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing(llvmModule: LLVMModuleRef) {
