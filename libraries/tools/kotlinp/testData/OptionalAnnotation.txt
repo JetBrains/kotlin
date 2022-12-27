@@ -1,3 +1,12 @@
+// test/D.class
+// ------------------------------------------
+public final annotation class test/D : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
 // test/OptionalAnnotationKt.class
 // ------------------------------------------
 package {

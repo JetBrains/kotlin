@@ -85,6 +85,11 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged/");
         }
 
+        @TestMetadata("optionalExpectationWithActual")
+        public void testOptionalExpectationWithActual() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual/");
+        }
+
         @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -95,6 +100,19 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
 
             public void testAllFilesPresentInMultifilePartChanged() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            }
+        }
+
+        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OptionalExpectationWithActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInOptionalExpectationWithActual() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
