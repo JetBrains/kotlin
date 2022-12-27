@@ -27,7 +27,7 @@ enum class KotlinJsCompilerType {
 }
 
 val KotlinJsCompilerType.lowerName
-    get() = name.toLowerCase()
+    get() = name.toLowerCase(Locale.ENGLISH)
 
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.lowerName)
