@@ -879,6 +879,11 @@ public inline fun kotlin.Long.toUShort(): kotlin.UShort
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toUShort(): kotlin.UShort
 
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <T : kotlin.AutoCloseable?, R> T.use(block: (T) -> R): R
+
 public interface Annotation {
 }
 
@@ -923,6 +928,12 @@ public open class AssertionError : kotlin.Error {
 
     @kotlin.SinceKotlin(version = "1.4")
     public constructor AssertionError(message: kotlin.String?, cause: kotlin.Throwable?)
+}
+
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.ExperimentalStdlibApi
+public interface AutoCloseable {
+    public abstract fun close(): kotlin.Unit
 }
 
 public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
