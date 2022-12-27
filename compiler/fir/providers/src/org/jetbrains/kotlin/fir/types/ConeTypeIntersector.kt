@@ -17,8 +17,15 @@ object ConeTypeIntersector {
             1 -> return types.single()
         }
 
-        val inputTypes = mutableListOf<ConeKotlinType>()
-        flatIntersectionTypes(types, inputTypes)
+        val inputTypes = mutableListOf<ConeKotlinType>().apply {
+            for (inputType in types) {
+                if (inputType is ConeIntersectionType) {
+                    addAll(inputType.intersectedTypes)
+                } else {
+                    add(inputType)
+                }
+            }
+        }
 
         /**
          * resultNullability. Value description:
@@ -81,21 +88,6 @@ object ConeTypeIntersector {
                 any { other -> other !== candidate && predicate(candidate, other) }
             ) {
                 iterator.remove()
-            }
-        }
-    }
-
-    private fun flatIntersectionTypes(
-        inputTypes: List<ConeKotlinType>,
-        typeCollector: MutableList<ConeKotlinType>
-    ) {
-        for (inputType in inputTypes) {
-            if (inputType is ConeIntersectionType) {
-                for (type in inputType.intersectedTypes) {
-                    typeCollector += type
-                }
-            } else {
-                typeCollector += inputType
             }
         }
     }
