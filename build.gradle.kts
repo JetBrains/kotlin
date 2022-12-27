@@ -949,7 +949,7 @@ configure<IdeaModel> {
 }
 
 val disableVerificationTasks = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-    .forUseAtConfigurationTime().orNull?.toBoolean() ?: false
+    .orNull?.toBoolean() ?: false
 if (disableVerificationTasks) {
     logger.info("Verification tasks are disabled because `kotlin.build.disable.verification.tasks` is true")
     gradle.taskGraph.whenReady {

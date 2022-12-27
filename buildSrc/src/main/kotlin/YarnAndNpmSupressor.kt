@@ -66,7 +66,7 @@ private fun tasksGraphString(taskGraph: TaskExecutionGraph, ident: String = "", 
 val Project.checkYarnAndNPMSuppressed: Action<TaskExecutionGraph> get() {
     return Action<TaskExecutionGraph> {
         val disableNpmYarnCheck = providers.gradleProperty("kotlin.build.disable.npmyarn.suppress.check")
-            .forUseAtConfigurationTime().orNull?.toBoolean() ?: false
+            .orNull?.toBoolean() ?: false
 
         if (disableNpmYarnCheck) return@Action
 

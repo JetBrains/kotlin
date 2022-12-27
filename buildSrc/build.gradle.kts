@@ -145,6 +145,8 @@ dependencies {
     val slackApiVersion = "1.2.0"
     val metadataVersion = "0.0.1-dev-10"
 
+    // See https://github.com/gradle/gradle/issues/22510
+    implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:2.4.1")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
