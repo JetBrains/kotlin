@@ -8,6 +8,9 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmModuleCompilation
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmModuleCompilation
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
@@ -35,13 +38,14 @@ private fun LLVMCoverageRegion.populateFrom(region: Region, regionId: Int, files
  * See http://llvm.org/docs/CoverageMappingFormat.html for the format description.
  */
 internal class LLVMCoverageWriter(
-        private val generationState: NativeGenerationState,
+        private val llvmDeclarations: LlvmDeclarations,
+        private val llvm: LlvmModuleCompilation,
         private val filesRegionsInfo: List<FileRegionInfo>
 ) {
     fun write() {
         if (filesRegionsInfo.isEmpty()) return
 
-        val module = generationState.llvm.module
+        val module = llvm.module
         val filesIndex = filesRegionsInfo.mapIndexed { index, fileRegionInfo -> fileRegionInfo.file to index }.toMap()
 
         val coverageGlobal = memScoped {
@@ -54,8 +58,8 @@ internal class LLVMCoverageWriter(
                         fileIds.toCValues(), fileIds.size.signExtend(),
                         regions.toCValues(), regions.size.signExtend())
 
-                val functionName = generationState.llvmDeclarations.forFunction(functionRegions.function).llvmValue.name
-                val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(generationState.llvm.module),
+                val functionName = llvmDeclarations.forFunction(functionRegions.function).llvmValue.name
+                val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(llvm.module),
                         functionName, functionRegions.structuralHash, functionCoverage)!!
 
                 Pair(functionMappingRecord, functionCoverage)
@@ -70,6 +74,6 @@ internal class LLVMCoverageWriter(
 
             retval
         }
-        generationState.llvm.usedGlobals.add(coverageGlobal)
+        llvm.usedGlobals.add(coverageGlobal)
     }
 }

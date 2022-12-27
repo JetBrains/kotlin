@@ -135,8 +135,4 @@ internal class PhaseEngine<C : PhaseContext>(
     fun <Output, P : AbstractNamedCompilerPhase<C, Unit, Output>> runPhase(
             phase: P,
     ): Output = runPhase(phase, Unit)
-
-    fun actionStateBefore(phase: AnyNamedPhase): ActionState = ActionState(phaseConfig, phase, phaserState.phaseCount, BeforeOrAfter.BEFORE)
-
-    fun actionStateAfter(phase: AnyNamedPhase): ActionState = ActionState(phaseConfig, phase, phaserState.phaseCount, BeforeOrAfter.AFTER)
 }

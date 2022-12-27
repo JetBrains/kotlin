@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmModuleCompilation
 import org.jetbrains.kotlin.backend.konan.llvm.getBasicBlocks
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getInstructions
-import org.jetbrains.kotlin.backend.konan.llvm.name
 
 private fun filterLoads(block: LLVMBasicBlockRef, variable: LLVMValueRef) = getInstructions(block)
         .mapNotNull { LLVMIsALoadInst(it) }
@@ -32,10 +33,10 @@ private fun process(function: LLVMValueRef, currentThreadTLV: LLVMValueRef) {
             }
 }
 
-internal fun removeMultipleThreadDataLoads(generationState: NativeGenerationState) {
-    val currentThreadTLV = generationState.llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
+internal fun removeMultipleThreadDataLoads(llvm: LlvmModuleCompilation) {
+    val currentThreadTLV = llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
 
-    getFunctions(generationState.llvm.module)
+    getFunctions(llvm.module)
             .filter { it.name?.startsWith("kfun:") == true }
             .filterNot { LLVMIsDeclaration(it) == 1 }
             .forEach { process(it, currentThreadTLV) }

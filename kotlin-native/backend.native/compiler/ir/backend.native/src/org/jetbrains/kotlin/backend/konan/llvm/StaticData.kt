@@ -7,10 +7,19 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 
+internal interface StaticDataI {
+    val module: LLVMModuleRef
+    fun getGlobal(name: String): StaticData.Global?
+}
+
+
 /**
  * Provides utilities to create static data.
  */
-internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm) {
+internal open class StaticData(
+        override val module: LLVMModuleRef,
+        private val llvm: LlvmModuleCompilation,
+) : StaticDataI {
 
     /**
      * Represents the LLVM global variable.
@@ -38,7 +47,7 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm
                 return llvmGlobal
             }
 
-            fun create(staticData: StaticData, type: LLVMTypeRef, name: String, isExported: Boolean): Global {
+            fun create(staticData: StaticDataI, type: LLVMTypeRef, name: String, isExported: Boolean): Global {
                 val isUnnamed = (name == "") // LLVM will select the unique index and represent the global as `@idx`.
                 if (isUnnamed && isExported) {
                     throw IllegalArgumentException("unnamed global can't be exported")
@@ -48,7 +57,7 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm
                 return Global(llvmGlobal)
             }
 
-            fun get(staticData: StaticData, name: String): Global? {
+            fun get(staticData: StaticDataI, name: String): Global? {
                 val llvmGlobal = LLVMGetNamedGlobal(staticData.module, name) ?: return null
                 return Global(llvmGlobal)
             }
@@ -114,7 +123,7 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm
         return global
     }
 
-    fun getGlobal(name: String): Global? {
+    override fun getGlobal(name: String): Global? {
         return Global.get(this, name)
     }
 

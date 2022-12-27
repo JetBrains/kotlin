@@ -123,7 +123,7 @@ internal open class LlvmFunctionSignature(
             isVararg = false,
     )
 
-    val llvmFunctionType by lazy {
+    val llvmFunctionType: LLVMTypeRef by lazy {
         functionType(returnType.llvmType, isVararg, parameterTypes.map { it.llvmType })
     }
 

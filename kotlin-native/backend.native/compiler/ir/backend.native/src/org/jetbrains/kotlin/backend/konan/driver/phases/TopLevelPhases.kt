@@ -131,6 +131,8 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
         runPhase(EntryPointPhase, module)
     }
     runBackendCodegen(module)
+    val llvm = context.llvm
+    runBitcodePostProcessing(llvm, enableCoveragePhase = false)
     if (context.config.produce.isCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
@@ -181,7 +183,6 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
         runPhase(PrintBitcodePhase, llvmModule)
     }
     runPhase(LinkBitcodeDependenciesPhase)
-    runBitcodePostProcessing(llvmModule)
 }
 
 /**

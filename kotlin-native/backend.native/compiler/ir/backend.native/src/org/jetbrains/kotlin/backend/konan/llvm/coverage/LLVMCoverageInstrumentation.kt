@@ -8,7 +8,6 @@ import llvm.LLVMConstBitCast
 import llvm.LLVMCreatePGOFunctionNameVar
 import llvm.LLVMInstrProfIncrement
 import llvm.LLVMValueRef
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.ir.IrElement

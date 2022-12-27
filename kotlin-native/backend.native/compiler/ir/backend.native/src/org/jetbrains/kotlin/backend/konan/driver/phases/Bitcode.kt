@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
+import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.changePhaserStateType
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.checkLlvmModuleExternalCalls
@@ -15,6 +17,8 @@ import org.jetbrains.kotlin.backend.konan.createLTOFinalPipelineConfig
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.insertAliasToEntryPoint
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmModuleCompilation
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmModuleCompilationOwner
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
@@ -26,64 +30,63 @@ import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadData
  * TODO: Use explicit input (LLVMModule) and output (File)
  *  after static driver removal.
  */
-
-internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef, String>(
+internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef, String>(
         "WriteBitcodeFile",
         "Write bitcode file",
         outputIfNotEnabled = { _, _, _, _ -> error("WriteBitcodeFile be disabled") }
 ) { context, llvmModule ->
     val output = context.tempFiles.nativeBinaryFileName
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
-    insertAliasToEntryPoint(context)
+    insertAliasToEntryPoint(context, llvmModule)
     LLVMWriteBitcodeToFile(llvmModule, output)
     output
 }
 
-internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+private val CheckExternalCallsPhase = makeLlvmProcessingPhase<PhaseContext>(
         name = "CheckExternalCalls",
         description = "Check external calls")
-{ context, _ ->
-    checkLlvmModuleExternalCalls(context)
+{ _, input ->
+    checkLlvmModuleExternalCalls(input)
 }
 
-internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+private val RewriteExternalCallsCheckerGlobals = makeLlvmProcessingPhase<PhaseContext>(
         name = "RewriteExternalCallsCheckerGlobals",
         description = "Rewrite globals for external calls checker after optimizer run"
-) { context, _ ->
-    addFunctionsListSymbolForChecker(context)
+) { _, input ->
+    addFunctionsListSymbolForChecker(input)
 }
 
-internal val BitcodeOptimizationPhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef>(
+private val BitcodeOptimizationPhase = makeLlvmProcessingPhase<PhaseContext>(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
-) { context, llvmModule ->
-    val config = createLTOFinalPipelineConfig(context)
-    LlvmOptimizationPipeline(config, llvmModule, context).use {
+) { context, input ->
+    val llvmPipelineConfig = createLTOFinalPipelineConfig(context, input.targetTriple, closedWorld = input.closedWorld)
+    LlvmOptimizationPipeline(llvmPipelineConfig, input.module, context).use {
         it.run()
     }
 }
 
-internal val CoveragePhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+private val CoveragePhase = makeLlvmProcessingPhase<PhaseContext>(
         name = "Coverage",
         description = "Produce coverage information",
-        op = { context, _ -> runCoveragePass(context) }
+        op = { context, input -> runCoveragePass(context, input) }
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(
+private val RemoveRedundantSafepointsPhase = makeLlvmProcessingPhase<PhaseContext>(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",
-        op = { context, llvmModule ->
+        op = { context, llvm ->
             RemoveRedundantSafepointsPass().runOnModule(
-                    module = llvmModule,
+                    module = llvm.module,
                     isSafepointInliningAllowed = context.shouldInlineSafepoints()
             )
         }
 )
 
-internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+private val OptimizeTLSDataLoadsPhase = makeLlvmProcessingPhase<PhaseContext>(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
-        op = { context, _ -> removeMultipleThreadDataLoads(context) }
+        op = { _, input -> removeMultipleThreadDataLoads(input) }
 )
 
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -110,20 +113,37 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LL
         op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )
 
-internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing(llvmModule: LLVMModuleRef) {
+private fun <C: PhaseContext> makeLlvmProcessingPhase(
+        name: String,
+        description: String,
+        op: (C, LlvmModuleCompilation) -> Unit
+): SimpleNamedCompilerPhase<C, LlvmModuleCompilation, LlvmModuleCompilation> = createSimpleNamedCompilerPhase(
+                name,
+                description,
+                postactions = setOf(::llvmIrDumpCallback),
+                outputIfNotEnabled = { _, _, _, llvm -> llvm },
+                    op = { context: C, llvm ->
+                        op(context, llvm)
+                        llvm
+                    }
+        )
+
+internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodePostProcessing(llvm: LlvmModuleCompilation, enableCoveragePhase: Boolean) {
     val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
     if (checkExternalCalls) {
-        runPhase(CheckExternalCallsPhase)
+        runPhase(CheckExternalCallsPhase, llvm)
     }
-    runPhase(BitcodeOptimizationPhase, llvmModule)
-    runPhase(CoveragePhase)
+    runPhase(BitcodeOptimizationPhase, llvm)
+    if (enableCoveragePhase) {
+        runPhase(CoveragePhase, llvm)
+    }
     if (context.config.memoryModel == MemoryModel.EXPERIMENTAL) {
-        runPhase(RemoveRedundantSafepointsPhase, llvmModule)
+        runPhase(RemoveRedundantSafepointsPhase, llvm)
     }
     if (context.config.optimizationsEnabled) {
-        runPhase(OptimizeTLSDataLoadsPhase)
+        runPhase(OptimizeTLSDataLoadsPhase, llvm)
     }
     if (checkExternalCalls) {
-        runPhase(RewriteExternalCallsCheckerGlobals)
+        runPhase(RewriteExternalCallsCheckerGlobals, llvm)
     }
 }

@@ -116,7 +116,11 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
  * In case of debug we do almost nothing (that's why we need [createLTOPipelineConfigForRuntime]),
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
-internal fun createLTOFinalPipelineConfig(context: NativeGenerationState): LlvmPipelineConfig {
+internal fun createLTOFinalPipelineConfig(
+        context: PhaseContext,
+        targetTriple: String,
+        closedWorld: Boolean
+): LlvmPipelineConfig {
     val config = context.config
     val target = config.target
     val configurables: Configurables = config.platform.configurables
@@ -145,7 +149,7 @@ internal fun createLTOFinalPipelineConfig(context: NativeGenerationState): LlvmP
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
     // to reduce size of a bitcode with global dce.
-    val internalize = context.llvmModuleSpecification.isFinal
+    val internalize = closedWorld
     // Hidden visibility makes symbols internal when linking the binary.
     // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
     // similar to DCE enabled by internalize but later:
@@ -163,7 +167,7 @@ internal fun createLTOFinalPipelineConfig(context: NativeGenerationState): LlvmP
     }
 
     return LlvmPipelineConfig(
-            context.llvm.targetTriple,
+            targetTriple,
             cpuModel,
             cpuFeatures,
             optimizationLevel,

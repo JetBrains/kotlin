@@ -6,6 +6,9 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmModuleCompilation
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmModuleCompilation
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,10 +22,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
  * "Umbrella" class of all the of the code coverage related logic.
  */
 internal class CoverageManager(
-        val generationState: NativeGenerationState
+        private val context: Context,
 ) {
-    private val context = generationState.context
-    private val config = generationState.config
+    private val config = context.config
 
     private val shouldCoverSources: Boolean =
             config.shouldCoverSources
@@ -32,21 +34,12 @@ internal class CoverageManager(
 
     private val llvmProfileFilenameGlobal = "__llvm_profile_filename"
 
-    private val defaultOutputFilePath: String by lazy {
-        "${generationState.outputFile}.profraw"
-    }
-
-    private val outputFileName: String =
-            config.configuration.get(KonanConfigKeys.PROFRAW_PATH)
-                    ?.let { File(it).absolutePath }
-                    ?: defaultOutputFilePath
-
     val enabled: Boolean =
             shouldCoverSources || librariesToCover.isNotEmpty()
 
     init {
         if (enabled && !checkRestrictions()) {
-            generationState.reportCompilationError("Coverage is not supported for ${config.target}.")
+            context.reportCompilationError("Coverage is not supported for ${config.target}.")
         }
     }
 
@@ -89,7 +82,11 @@ internal class CoverageManager(
     /**
      * @return [LLVMCoverageInstrumentation] instance if [irFunction] should be covered.
      */
-    fun tryGetInstrumentation(irFunction: IrFunction?, callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit) =
+    fun tryGetInstrumentation(
+            generationState: NativeGenerationState,
+            irFunction: IrFunction?,
+            callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit
+    ) =
             if (enabled && irFunction != null) {
                 getFunctionRegions(irFunction)?.let { LLVMCoverageInstrumentation(generationState, it, callSitePlacer) }
             } else {
@@ -99,17 +96,21 @@ internal class CoverageManager(
     /**
      * Add __llvm_coverage_mapping to the LLVM module.
      */
-    fun writeRegionInfo() {
+    fun writeRegionInfo(generationState: NativeGenerationState) {
         if (enabled) {
-            LLVMCoverageWriter(generationState, filesRegionsInfo).write()
+            LLVMCoverageWriter(generationState.llvmDeclarations, generationState.llvm, filesRegionsInfo).write()
         }
     }
 
-    /**
-     * Add passes that should be executed after main LLVM optimization pipeline.
-     */
-    fun addLateLlvmPasses(passManager: LLVMPassManagerRef) {
-        if (enabled) {
+    companion object {
+        /**
+         * Add passes that should be executed after main LLVM optimization pipeline.
+         */
+        fun addLateLlvmPasses(context: PhaseContext, passManager: LLVMPassManagerRef) {
+            val outputFileName: String =
+                    context.config.configuration.get(KonanConfigKeys.PROFRAW_PATH)
+                            ?.let { File(it).absolutePath }
+                            ?: context.reportCompilationError("File for profraw is not specified")
             // It's a late pass since DCE can kill __llvm_profile_filename global.
             LLVMAddInstrProfPass(passManager, outputFileName)
         }
@@ -127,11 +128,10 @@ internal class CoverageManager(
         }
 }
 
-internal fun runCoveragePass(generationState: NativeGenerationState) {
-    if (!generationState.coverage.enabled) return
+internal fun runCoveragePass(context: PhaseContext, llvm: LlvmModuleCompilation) {
     val passManager = LLVMCreatePassManager()!!
-    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, generationState.llvm.targetTriple)
-    generationState.coverage.addLateLlvmPasses(passManager)
-    LLVMRunPassManager(passManager, generationState.llvm.module)
+    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, llvm.targetTriple)
+    CoverageManager.addLateLlvmPasses(context, passManager)
+    LLVMRunPassManager(passManager, llvm.module)
     LLVMDisposePassManager(passManager)
 }

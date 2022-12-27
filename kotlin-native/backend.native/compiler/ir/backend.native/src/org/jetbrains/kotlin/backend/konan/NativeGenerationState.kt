@@ -43,7 +43,7 @@ internal class NativeGenerationState(
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?
-) : BasicPhaseContext(config) {
+) : BasicPhaseContext(config), LlvmModuleCompilationOwner {
     private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
     val outputFiles = OutputFiles(outputPath, config.target, config.produce)
     val tempFiles = run {
@@ -92,12 +92,12 @@ internal class NativeGenerationState(
 
     val llvmContext = LLVMContextCreate()!!
     val runtime by runtimeDelegate
-    val llvm by llvmDelegate
+    override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
-    val coverage by lazy { CoverageManager(this) }
+    val coverage by lazy { CoverageManager() }
 
     lateinit var objCExport: ObjCExport
 

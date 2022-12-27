@@ -20,9 +20,7 @@ private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
 }
 
 
-private class CallsChecker(generationState: NativeGenerationState, goodFunctions: List<String>) {
-    private val llvm = generationState.llvm
-    private val context = generationState.context
+private class CallsChecker(private val llvm: LlvmModuleCompilation, goodFunctions: List<String>) {
     private val goodFunctionsExact = goodFunctions.filterNot { it.endsWith("*") }.toSet()
     private val goodFunctionsByPrefix = goodFunctions.filter { it.endsWith("*") }.map { it.substring(0, it.length - 1) }.sorted()
 
@@ -162,32 +160,27 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
 private const val functionListGlobal = "Kotlin_callsCheckerKnownFunctions"
 private const val functionListSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCount"
 
-internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState) {
-    val llvm = generationState.llvm
-    val staticData = llvm.staticData
-
-
+internal fun checkLlvmModuleExternalCalls(llvm: LlvmModuleCompilation) {
     val ignoredFunctions = (llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
 
-    val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
+    val goodFunctions = llvm.staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {
             LLVMGetInitializer(LLVMGetOperand(it, 0))!!.getAsCString()
         }.toList()
     } ?: emptyList()
 
-    val checker = CallsChecker(generationState, goodFunctions)
+    val checker = CallsChecker(llvm, goodFunctions)
     getFunctions(llvm.module)
             .filter { !it.isExternalFunction() && it !in ignoredFunctions }
             .forEach(checker::processFunction)
     // otherwise optimiser can inline it
-    staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true);
-    staticData.getGlobal(functionListSizeGlobal)?.setExternallyInitialized(true);
-    generationState.verifyBitCode()
+    llvm.staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true);
+    llvm.staticData.getGlobal(functionListSizeGlobal)?.setExternallyInitialized(true);
+    llvm.verify()
 }
 
 // this should be a separate pass, to handle DCE correctly
-internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationState) {
-    val llvm = generationState.llvm
+internal fun addFunctionsListSymbolForChecker(llvm: LlvmModuleCompilation) {
     val staticData = llvm.staticData
 
     val functions = getFunctions(llvm.module)
@@ -201,5 +194,5 @@ internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationS
     staticData.getGlobal(functionListSizeGlobal)
             ?.setInitializer(llvm.constInt32(functions.size))
             ?: throw IllegalStateException("$functionListSizeGlobal global not found")
-    generationState.verifyBitCode()
+    llvm.verify()
 }

@@ -5,15 +5,26 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.toKStringFromUtf8
+import llvm.LLVMGetModuleIdentifier
+import llvm.LLVMPrintModuleToFile
+import llvm.size_tVar
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmModuleCompilation
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmModuleCompilationOwner
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal fun irValidationCallback(state: ActionState, element: IrElement, context: Context) {
     if (!context.config.needVerifyIr) return
@@ -59,6 +70,19 @@ internal fun <C : PhaseContext, Input, Output> SimpleNamedCompilerPhase<C, Input
 
     override fun phaseBody(context: C, input: Input): Output =
             this@copy.phaseBody(context, input)
+}
+
+internal fun <C: PhaseContext> llvmIrDumpCallback(state: ActionState, llvm: LlvmModuleCompilation, context: C) {
+    if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
+        val moduleName: String = memScoped {
+            val sizeVar = alloc<size_tVar>()
+            LLVMGetModuleIdentifier(llvm.module, sizeVar.ptr)!!.toKStringFromUtf8()
+        }
+        val output = context.tempFiles.create("$moduleName.${state.phase.name}", ".ll")
+        if (LLVMPrintModuleToFile(llvm.module, output.absolutePath, null) != 0) {
+            error("Can't dump LLVM IR to ${output.absolutePath}")
+        }
+    }
 }
 
 // Actions:

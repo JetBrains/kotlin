@@ -27,11 +27,6 @@ private val filePhaseActions = setOfNotNull(
         defaultDumper,
         ::fileValidationCallback.takeIf { validateAll }
 )
-private val modulePhaseActions = setOfNotNull(
-        defaultDumper,
-        ::llvmIrDumpCallback,
-        ::moduleValidationCallback.takeIf { validateAll }
-)
 
 private fun makeKonanFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
@@ -39,13 +34,6 @@ private fun makeKonanFileLoweringPhase(
         description: String,
         prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
-
-private fun makeKonanModuleLoweringPhase(
-        lowering: (Context) -> FileLoweringPass,
-        name: String,
-        description: String,
-        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
-) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
         op: (Context, IrFile) -> Unit,
@@ -61,12 +49,6 @@ internal fun makeKonanFileOpPhase(
             }
         },
         actions = filePhaseActions
-)
-
-internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase(
-        ::PropertyAccessorInlineLowering,
-        name = "PropertyAccessorInline",
-        description = "Property accessor inline lowering"
 )
 
 /* IrFile phases */
@@ -345,13 +327,6 @@ internal val autoboxPhase = makeKonanFileLoweringPhase(
         name = "Autobox",
         description = "Autoboxing of primitive types",
 //        prerequisite = setOf(bridgesPhase, coroutinesPhase)
-)
-
-internal val unboxInlinePhase = makeKonanModuleLoweringPhase(
-        ::UnboxInlineLowering,
-        name = "UnboxInline",
-        description = "Unbox functions inline lowering",
-//        prerequisite = setOf(autoboxPhase, redundantCoercionsCleaningPhase)
 )
 
 internal val expressionBodyTransformPhase = makeKonanFileLoweringPhase(

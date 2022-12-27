@@ -17,7 +17,10 @@ private fun ConstPointer.add(index: LLVMValueRef): ConstPointer {
     return constPointer(LLVMConstGEP(llvm, cValuesOf(index), 1)!!)
 }
 
-internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: Llvm, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
+internal class KotlinStaticData(
+        override val generationState: NativeGenerationState,
+        override val llvm: Llvm, module: LLVMModuleRef
+) : ContextUtils, StaticData(module, llvm) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
 
     // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.

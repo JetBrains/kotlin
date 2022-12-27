@@ -422,7 +422,7 @@ internal class CodeGeneratorVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log{"visitModule                    : ${ir2string(declaration)}"}
 
-        generationState.coverage.collectRegions(declaration)
+        context.coverage.collectRegions(declaration)
 
         initializeCachedBoxes(generationState)
         declaration.acceptChildrenVoid(this)
@@ -433,10 +433,10 @@ internal class CodeGeneratorVisitor(
 
             codegen.objCDataGenerator?.finishModule()
 
-            generationState.coverage.writeRegionInfo()
+            generationState.coverage.writeRegionInfo(generationState)
             overrideRuntimeGlobals()
-            appendLlvmUsed("llvm.used", llvm.usedFunctions + llvm.usedGlobals)
-            appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
+            llvm.appendGlobal("llvm.used", llvm.usedFunctions + llvm.usedGlobals)
+            llvm.appendGlobal("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produce.isNativeLibrary) {
                 context.cAdapterExportedElements?.let { appendCAdapters(it) }
             }
@@ -708,7 +708,7 @@ internal class CodeGeneratorVisitor(
                 this(functionGenerationContext, null, llvmFunction)
 
         val coverageInstrumentation: LLVMCoverageInstrumentation? =
-                generationState.coverage.tryGetInstrumentation(declaration) { function, args -> functionGenerationContext.call(function, args) }
+                generationState.coverage.tryGetInstrumentation(generationState, declaration) { function, args -> functionGenerationContext.call(function, args) }
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
             if (declaration == null || target == declaration) {
@@ -2866,7 +2866,7 @@ internal class CodeGeneratorVisitor(
                 // Provide an optional handle for calling .ctors, if standard constructors mechanism
                 // is not available on the platform (i.e. WASM, embedded).
                 LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMExternalLinkage)
-                appendLlvmUsed("llvm.used", listOf(globalCtorFunction))
+                llvm.appendGlobal("llvm.used", listOf(globalCtorFunction))
             }
         }
     }

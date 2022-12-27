@@ -78,11 +78,5 @@ internal fun PhaseConfigurationService.konanPhasesConfig(config: KonanConfig) {
         disableUnless(functionsWithoutBoundCheck, config.involvesCodegen)
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
-        if (!config.optimizationsEnabled) {
-            // Inline accessors only in optimized builds due to separate compilation and possibility to get broken
-            // debug information.
-            disable(propertyAccessorInlinePhase)
-            disable(unboxInlinePhase)
-        }
     }
 }

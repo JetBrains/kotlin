@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -260,42 +258,44 @@ internal class InitializersGenerationState {
     }
 }
 
-internal class ConstInt1(llvm: Llvm, val value: Boolean) : ConstValue {
+internal class ConstInt1(llvm: LlvmModuleCompilation, val value: Boolean) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int1Type, if (value) 1 else 0, 1)!!
 }
 
-internal class ConstInt8(llvm: Llvm, val value: Byte) : ConstValue {
+internal class ConstInt8(llvm: LlvmModuleCompilation, val value: Byte) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
 }
 
-internal class ConstInt16(llvm: Llvm, val value: Short) : ConstValue {
+internal class ConstInt16(llvm: LlvmModuleCompilation, val value: Short) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int16Type, value.toLong(), 1)!!
 }
 
-internal class ConstChar16(llvm: Llvm, val value: Char) : ConstValue {
+internal class ConstChar16(llvm: LlvmModuleCompilation, val value: Char) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int16Type, value.code.toLong(), 1)!!
 }
 
-internal class ConstInt32(llvm: Llvm, val value: Int) : ConstValue {
+internal class ConstInt32(llvm: LlvmModuleCompilation, val value: Int) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int32Type, value.toLong(), 1)!!
 }
 
-internal class ConstInt64(llvm: Llvm, val value: Long) : ConstValue {
+internal class ConstInt64(llvm: LlvmModuleCompilation, val value: Long) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int64Type, value, 1)!!
 }
 
-internal class ConstFloat32(llvm: Llvm, val value: Float) : ConstValue {
+internal class ConstFloat32(llvm: LlvmModuleCompilation, val value: Float) : ConstValue {
     override val llvm = LLVMConstReal(llvm.floatType, value.toDouble())!!
 }
 
-internal class ConstFloat64(llvm: Llvm, val value: Double) : ConstValue {
+internal class ConstFloat64(llvm: LlvmModuleCompilation, val value: Double) : ConstValue {
     override val llvm = LLVMConstReal(llvm.doubleType, value)!!
 }
 
 @Suppress("FunctionName", "PropertyName", "PrivatePropertyName")
-internal class Llvm(private val generationState: NativeGenerationState, val module: LLVMModuleRef) : RuntimeAware {
-    private val context = generationState.context
-    val llvmContext = generationState.llvmContext
+internal class Llvm(
+        private val generationState: NativeGenerationState,
+        module: LLVMModuleRef,
+) : LlvmModuleCompilation, RuntimeAware {
+    private val context: PhaseContext = generationState.context
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LlvmCallable {
         if (LLVMGetNamedFunction(module, name) != null) {
@@ -312,18 +312,6 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
         attributesCopier.addFunctionAttributes(function)
 
         return LlvmCallable(function, attributesCopier)
-    }
-
-    private fun importGlobal(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
-        if (LLVMGetNamedGlobal(module, name) != null) {
-            throw IllegalArgumentException("global $name already exists")
-        }
-
-        val externalGlobal = LLVMGetNamedGlobal(otherModule, name)!!
-        val globalType = getGlobalType(externalGlobal)
-        val global = LLVMAddGlobal(module, globalType, name)!!
-
-        return global
     }
 
     private fun importMemset(): LlvmCallable {
@@ -376,13 +364,13 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()
 
-    val staticData = KotlinStaticData(generationState, this, module)
+    override val staticData = KotlinStaticData(generationState, this, module)
 
     private val target = context.config.target
 
     override val runtime get() = generationState.runtime
 
-    val targetTriple = runtime.target
+    override val targetTriple = runtime.target
 
     init {
         LLVMSetDataLayout(module, runtime.dataLayout)
@@ -469,26 +457,12 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
         }
     }
 
-    val usedFunctions = mutableListOf<LLVMValueRef>()
-    val usedGlobals = mutableListOf<LLVMValueRef>()
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
-
-    val runtimeAnnotationMap by lazy {
-        staticData.getGlobal("llvm.global.annotations")
-                ?.getInitializer()
-                ?.let { getOperands(it) }
-                ?.groupBy(
-                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
-                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
-                )
-                ?.filterKeys { it != "" }
-                ?: emptyMap()
-    }
 
 
     private object lazyRtFunction {
@@ -501,48 +475,6 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
             override fun getValue(thisRef: Llvm, property: KProperty<*>): LlvmCallable = value
         }
     }
-
-    val int1Type = LLVMInt1TypeInContext(llvmContext)!!
-    val int8Type = LLVMInt8TypeInContext(llvmContext)!!
-    val int16Type = LLVMInt16TypeInContext(llvmContext)!!
-    val int32Type = LLVMInt32TypeInContext(llvmContext)!!
-    val int64Type = LLVMInt64TypeInContext(llvmContext)!!
-    val floatType = LLVMFloatTypeInContext(llvmContext)!!
-    val doubleType = LLVMDoubleTypeInContext(llvmContext)!!
-    val vector128Type = LLVMVectorType(floatType, 4)!!
-    val voidType = LLVMVoidTypeInContext(llvmContext)!!
-    val int8PtrType = pointerType(int8Type)
-    val int8PtrPtrType = pointerType(int8PtrType)
-
-    fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
-
-    fun struct(vararg elements: ConstValue) = Struct(structType(elements.map { it.llvmType }), *elements)
-
-    private fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
-            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
-
-    fun constInt1(value: Boolean) = ConstInt1(this, value)
-    fun constInt8(value: Byte) = ConstInt8(this, value)
-    fun constInt16(value: Short) = ConstInt16(this, value)
-    fun constChar16(value: Char) = ConstChar16(this, value)
-    fun constInt32(value: Int) = ConstInt32(this, value)
-    fun constInt64(value: Long) = ConstInt64(this, value)
-    fun constFloat32(value: Float) = ConstFloat32(this, value)
-    fun constFloat64(value: Double) = ConstFloat64(this, value)
-
-    fun int1(value: Boolean): LLVMValueRef = constInt1(value).llvm
-    fun int8(value: Byte): LLVMValueRef = constInt8(value).llvm
-    fun int16(value: Short): LLVMValueRef = constInt16(value).llvm
-    fun char16(value: Char): LLVMValueRef = constChar16(value).llvm
-    fun int32(value: Int): LLVMValueRef = constInt32(value).llvm
-    fun int64(value: Long): LLVMValueRef = constInt64(value).llvm
-    fun float32(value: Float): LLVMValueRef = constFloat32(value).llvm
-    fun float64(value: Double): LLVMValueRef = constFloat64(value).llvm
-
-    val kNullInt8Ptr by lazy { LLVMConstNull(int8PtrType)!! }
-    val kNullInt32Ptr by lazy { LLVMConstNull(pointerType(int32Type))!! }
-    val kImmInt32Zero by lazy { int32(0) }
-    val kImmInt32One by lazy { int32(1) }
 
     val memsetFunction = importMemset()
 

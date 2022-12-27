@@ -4,29 +4,15 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
-import org.jetbrains.kotlin.backend.common.phaser.ActionState
-import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.cexport.produceCAdapterBitcode
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
-import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -68,27 +54,13 @@ val CompilerOutputKind.isCache: Boolean
 val KonanConfig.involvesCodegen: Boolean
     get() = produce != CompilerOutputKind.LIBRARY && !omitFrameworkBinary
 
-internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: NativeGenerationState) {
-    module.let{}
-    if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
-        val moduleName: String = memScoped {
-            val sizeVar = alloc<size_tVar>()
-            LLVMGetModuleIdentifier(context.llvm.module, sizeVar.ptr)!!.toKStringFromUtf8()
-        }
-        val output = context.tempFiles.create("$moduleName.${state.phase.name}", ".ll")
-        if (LLVMPrintModuleToFile(context.llvm.module, output.absolutePath, null) != 0) {
-            error("Can't dump LLVM IR to ${output.absolutePath}")
-        }
-    }
-}
-
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(
             generationState.config.clang,
             generationState.messageCollector,
             generationState.inVerbosePhase
     ).forEach {
-        parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePath)
+        parseAndLinkBitcodeFile(generationState, generationState.llvmContext, generationState.llvm.module, it.absolutePath)
     }
 }
 
@@ -155,19 +127,18 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
     val optimizedRuntimeModules = RuntimeLinkageStrategy.pick(generationState, runtimeModules).run()
 
     (optimizedRuntimeModules + additionalModules).forEach {
-        val failed = llvmLinkModules2(generationState, generationState.llvm.module, it)
+        val failed = llvmLinkModules2(generationState, generationState.llvmContext, generationState.llvm.module, it)
         if (failed != 0) {
             error("Failed to link ${it.getName()}")
         }
     }
 }
 
-internal fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
-    val config = generationState.config
+internal fun insertAliasToEntryPoint(phaseContext: PhaseContext, module: LLVMModuleRef) {
+    val config = phaseContext.config
     val nomain = config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
-    val module = generationState.llvm.module
     val entryPointName = config.entryPointName
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
             ?: error("Module doesn't contain `$entryPointName`")
@@ -194,18 +165,18 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState) {
 
 }
 
-private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
-    val parsedModule = parseBitcodeFile(generationState.llvmContext, path)
-    if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
+private fun parseAndLinkBitcodeFile(phaseContext: PhaseContext, llvmContext: LLVMContextRef, llvmModule: LLVMModuleRef, path: String) {
+    val parsedModule = parseBitcodeFile(llvmContext, path)
+    if (!phaseContext.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
-    val failed = llvmLinkModules2(generationState, llvmModule, parsedModule)
+    val failed = llvmLinkModules2(phaseContext, llvmContext, llvmModule, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $path")
     }
 }
 
-private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
+private fun embedAppleLinkerOptionsToBitcode(llvm: LlvmModuleCompilation, config: KonanConfig) {
     fun findEmbeddableOptions(options: List<String>): List<List<String>> {
         val result = mutableListOf<List<String>>()
         val iterator = options.iterator()
@@ -223,5 +194,5 @@ private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
     val optionsToEmbed = findEmbeddableOptions(config.platform.configurables.linkerKonanFlags) +
             llvm.dependenciesTracker.allNativeDependencies.flatMap { findEmbeddableOptions(it.linkerOpts) }
 
-    embedLlvmLinkOptions(llvm.llvmContext, llvm.module, optionsToEmbed)
+    embedLlvmLinkOptions(llvm, optionsToEmbed)
 }
