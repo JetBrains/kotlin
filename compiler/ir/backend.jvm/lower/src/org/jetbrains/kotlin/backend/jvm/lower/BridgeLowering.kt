@@ -591,6 +591,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         } else {
             from.valueParameters.map { it.copyWithTypeErasure(this, visibleTypeParameters) }
         }
+        contextReceiverParametersCount = from.contextReceiverParametersCount
     }
 
     private fun IrValueParameter.copyWithTypeErasure(
