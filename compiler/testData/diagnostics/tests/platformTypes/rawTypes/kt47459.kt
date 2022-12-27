@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // FILE: MapObjectManager.java
 abstract class MapObjectManager<C extends MapObjectManager.Collection> {
