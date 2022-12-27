@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 package modifiers
 
 public class PublicClass public constructor()

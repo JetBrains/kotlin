@@ -22,11 +22,11 @@ package modifiers;
 
 @kotlin.Metadata()
 public final class Modifiers {
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.Transient()
-    private final transient java.lang.String transientField = "";
     @org.jetbrains.annotations.NotNull()
+    private final transient java.lang.String transientField = "";
     @kotlin.jvm.Volatile()
+    @org.jetbrains.annotations.NotNull()
     private volatile java.lang.String volatileField = "";
 
     public Modifiers() {
@@ -51,21 +51,21 @@ public final class Modifiers {
     public final strictfp void strictFp() {
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a, int n) {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads() {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         return null;
@@ -128,11 +128,11 @@ public class PublicClassProtectedConstructor {
     }
 
     @kotlin.Metadata()
-    public static abstract interface ProtectedInterface {
+    static abstract interface PrivateInterface {
     }
 
     @kotlin.Metadata()
-    static abstract interface PrivateInterface {
+    public static abstract interface ProtectedInterface {
     }
 }
 
@@ -156,18 +156,17 @@ public abstract class SealedClass {
     }
 
     @kotlin.Metadata()
-    public static final class One extends modifiers.SealedClass {
+    public static final class Four extends modifiers.SealedClass.Three {
 
-        public One() {
+        public Four() {
             super();
         }
     }
 
     @kotlin.Metadata()
-    public static class Two extends modifiers.SealedClass {
+    public static final class One extends modifiers.SealedClass {
 
-        public Two() {
-            super();
+        public One() {
         }
     }
 
@@ -180,10 +179,9 @@ public abstract class SealedClass {
     }
 
     @kotlin.Metadata()
-    public static final class Four extends modifiers.SealedClass.Three {
+    public static class Two extends modifiers.SealedClass {
 
-        public Four() {
-            super();
+        public Two() {
         }
     }
 }
