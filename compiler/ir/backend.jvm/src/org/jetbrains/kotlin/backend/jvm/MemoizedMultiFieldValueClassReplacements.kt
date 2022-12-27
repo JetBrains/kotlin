@@ -223,7 +223,7 @@ class MemoizedMultiFieldValueClassReplacements(
     private val IrFunction.isGeneratedTypedEquals: Boolean
         get() = origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
                 && name == OperatorNameConventions.EQUALS
-                && valueParameters[0].type.classFqName == (parent as? IrClass)?.fqNameWhenAvailable
+                && valueParameters[0].type.erasedUpperBound == (parent as? IrClass)
 
 
     /**
