@@ -10,7 +10,7 @@ import java.util.Properties
 plugins {
     kotlin
     groovy
-    `kotlin-dsl`
+    id("org.gradle.kotlin.kotlin-dsl")
     id("gradle-plugin-dependency-configuration")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
