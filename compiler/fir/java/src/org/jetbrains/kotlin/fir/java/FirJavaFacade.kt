@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -24,21 +23,15 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
@@ -181,57 +174,12 @@ abstract class FirJavaFacade(
 
         // 1. Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
-        // 3. Enhance super types - may refer to type parameter bounds, take default nullability from annotations
+        // 3. (will happen lazily in FirJavaClass.superTypeRefs) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
+
         firJavaClass.setAnnotationsFromJava(session, javaClass, javaTypeParameterStack)
-
         enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
-
-        val enhancedSuperTypes = buildList {
-            val purelyImplementedSupertype = firJavaClass.getPurelyImplementedSupertype()
-            val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
-            firJavaClass.superTypeRefs.mapNotNullTo(this) { superType ->
-                enhancement.enhanceSuperType(superType).takeUnless {
-                    purelyImplementedSupertypeClassId != null && it.coneType.classId == purelyImplementedSupertypeClassId
-                }
-            }
-            purelyImplementedSupertype?.let {
-                add(buildResolvedTypeRef { type = it })
-            }
-        }
-        firJavaClass.replaceSuperTypeRefs(enhancedSuperTypes)
         firJavaClass.replaceDeprecationsProvider(firJavaClass.getDeprecationsProvider(session))
         return firJavaClass
-    }
-
-    private fun FirJavaClass.getPurelyImplementedSupertype(): ConeKotlinType? {
-        val purelyImplementedClassIdFromAnnotation = annotations
-            .firstOrNull { it.classId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
-            ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirConstExpression<*>) }
-            ?.let { it.value as? String }
-            ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
-            ?.let { ClassId.topLevel(FqName(it)) }
-        val purelyImplementedClassId = purelyImplementedClassIdFromAnnotation
-            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(symbol.classId)
-            ?: return null
-        val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(purelyImplementedClassId) ?: return null
-        val superTypeParameterSymbols = superTypeSymbol.typeParameterSymbols ?: return null
-        val typeParameters = this.typeParameters
-        val supertypeParameterCount = superTypeParameterSymbols.size
-        val typeParameterCount = typeParameters.size
-        val parametersAsTypeProjections = when {
-            typeParameterCount == supertypeParameterCount ->
-                typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isNullable = false) }
-            typeParameterCount == 1 && supertypeParameterCount > 1 && purelyImplementedClassIdFromAnnotation == null -> {
-                val projection = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isNullable = false)
-                (1..supertypeParameterCount).map { projection }
-            }
-            else -> return null
-        }
-        return ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(purelyImplementedClassId),
-            parametersAsTypeProjections.toTypedArray(),
-            isNullable = false
-        )
     }
 
     private fun createFirJavaClass(
