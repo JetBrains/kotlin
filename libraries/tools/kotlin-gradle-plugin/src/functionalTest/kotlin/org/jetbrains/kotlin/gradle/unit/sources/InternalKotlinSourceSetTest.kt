@@ -117,7 +117,7 @@ class InternalKotlinSourceSetTest {
         }
 
         val kotlin = project.multiplatformExtension
-        
+
         with(kotlin.sourceSets) {
             val commonMain = getByName("commonMain")
             val commonTest = getByName("commonTest")

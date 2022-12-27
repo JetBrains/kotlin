@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.regression
 
 import org.gradle.api.Project
@@ -83,8 +85,9 @@ class KT31459JvmMainClassesTest {
     /**
      * Returns names of all tasks that given task directly depends on
      */
-    private val Task.directDependencies: Set<String> get() = taskDependencies
-        .getDependencies(null)
-        .map { it.name }
-        .toSet()
+    private val Task.directDependencies: Set<String>
+        get() = taskDependencies
+            .getDependencies(null)
+            .map { it.name }
+            .toSet()
 }

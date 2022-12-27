@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.regression
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
@@ -25,16 +24,16 @@ class CommonizerTaskTests {
         const val JVM_ECOSYSTEM_PLUGIN_ID = "jvm-ecosystem"
     }
 
-    private val kotlin = subproject.applyMultiplatformPlugin().apply {
-        linuxX64()
-        linuxArm64()
-
-        targets.flatMap { it.compilations }
-            .filterIsInstance<KotlinNativeCompilation>()
-            .forEach { compilation -> compilation.cinterops.create("dummy") }
-    }
-
     init {
+        subproject.applyMultiplatformPlugin().apply {
+            linuxX64()
+            linuxArm64()
+
+            targets.flatMap { it.compilations }
+                .filterIsInstance<KotlinNativeCompilation>()
+                .forEach { compilation -> compilation.cinterops.create("dummy") }
+        }
+
         rootProject.enableCInteropCommonization()
         subproject.enableCInteropCommonization()
 

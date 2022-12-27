@@ -10,7 +10,7 @@ import kotlin.test.fail
 
 internal class TestDiagnosticsReporter : KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter {
 
-    class ErrorDiagnosticException(val diagnostic: KotlinAndroidSourceSetLayoutChecker.Diagnostic) :
+    class ErrorDiagnosticException(diagnostic: KotlinAndroidSourceSetLayoutChecker.Diagnostic) :
         KotlinAndroidSourceSetLayoutChecker.ProjectMisconfiguredException(diagnostic.message)
 
     private val _errors = mutableListOf<KotlinAndroidSourceSetLayoutChecker.Diagnostic>()

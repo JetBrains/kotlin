@@ -2,7 +2,7 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("invisible_reference", "invisible_member", "FunctionName")
+@file:Suppress("FunctionName", "DuplicatedCode")
 
 package org.jetbrains.kotlin.gradle.unit
 
@@ -260,7 +260,7 @@ internal class CompilationSpecificPluginPath {
         override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = kotlinCompilation.isApplicablePredicate()
 
         override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> =
-            kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
+            kotlinCompilation.target.project.provider { emptyList() }
 
         override fun getCompilerPluginId(): String = id
 

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.relativeTo
 import kotlin.test.Test
@@ -122,7 +121,7 @@ class KotlinCompileTaskSourcesTest {
 
         /* Check sources of linuxArm64 compile task */
         val linuxArm64CompileTask = kotlin.linuxArm64().compilations.getByName("main")
-            .compileTaskProvider.get() as KotlinNativeCompile
+            .compileTaskProvider.get()
 
         assertEquals(
             setOf(commonMainSourceFile, jvmAndLinuxMainSourceFile, linuxArm64MainSourceFile).relativeTo(project),

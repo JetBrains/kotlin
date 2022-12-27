@@ -23,12 +23,6 @@ fun Task.assertDependsOn(other: Task) {
     }
 }
 
-fun Task.assertNotDependsOn(other: Task) {
-    if (isDependsOn(other)) {
-        fail("Expected ${this.path} to *not* depend on ${other.path}")
-    }
-}
-
 fun Task.assertNoCircularTaskDependencies() {
     data class TaskAndDependants(
         val task: Task,
@@ -38,7 +32,7 @@ fun Task.assertNoCircularTaskDependencies() {
     val visited = mutableSetOf<Task>()
     val queue = ArrayDeque(taskDependencies.getDependencies(this).map { TaskAndDependants(it, listOf(this)) })
 
-    while(queue.isNotEmpty()) {
+    while (queue.isNotEmpty()) {
         val (task, dependants) = queue.removeFirst()
         if (task in visited) {
             val dependencyChain = dependants.joinToString(" -> ") { it.name }

@@ -90,10 +90,9 @@ class MppPublicationTest {
         val jvmComponent = kotlinComponent.variants.first { it.name == "jvm" }
         val jvmSourcesElementsAttributes = jvmComponent.attributesOfUsageContext("jvmSourcesElements-published")
 
-        val extraExpectedAttributes = mapOf(
-            "org.jetbrains.kotlin.platform.type" to "jvm",  // target disambiguation attribute
-            "org.gradle.libraryelements" to "jar"           // is set by default by kgp, when it sets usage as `java-runtime-jars`
-                                                            // see [KotlinUsages.producerApiUsage]
+        val extraExpectedAttributes = mapOf(               // target disambiguation attribute
+            "org.jetbrains.kotlin.platform.type" to "jvm", // is set by default by kgp, when it sets usage as `java-runtime-jars`
+            "org.gradle.libraryelements" to "jar"          // see [KotlinUsages.producerApiUsage]
         )
 
         val expectedAttributes = javaSourcesElementsAttributes.toMapOfStrings() + extraExpectedAttributes
@@ -121,7 +120,7 @@ class MppPublicationTest {
                     .attributesOfUsageContext("${targetName}SourcesElements-published")
             }
 
-        for ( (targetName, sourceElements) in sourcesElements) {
+        for ((targetName, sourceElements) in sourcesElements) {
             assertTrue(
                 message = "Sources Elements of target $targetName doesn't have 'userAttribute'"
             ) { sourceElements.attributes.toMapOfStrings().containsKey("userAttribute") }

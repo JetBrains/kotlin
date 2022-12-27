@@ -43,11 +43,11 @@ class DisabledCInteropCommonizationWarningTest {
 
         assertTrue(
             "[" +
-                "cinterop:compilation/compileKotlinLinuxArm64/dummy1, " +
-                "cinterop:compilation/compileKotlinLinuxArm64/dummy2, " +
-                "cinterop:compilation/compileKotlinLinuxX64/dummy1, " +
-                "cinterop:compilation/compileKotlinLinuxX64/dummy2" +
-                "]" in warningMessage,
+                    "cinterop:compilation/compileKotlinLinuxArm64/dummy1, " +
+                    "cinterop:compilation/compileKotlinLinuxArm64/dummy2, " +
+                    "cinterop:compilation/compileKotlinLinuxX64/dummy1, " +
+                    "cinterop:compilation/compileKotlinLinuxX64/dummy2" +
+                    "]" in warningMessage,
             "Expected affected cinterops being mentioned in the warning message. Found\n\n$warningMessage"
         )
 

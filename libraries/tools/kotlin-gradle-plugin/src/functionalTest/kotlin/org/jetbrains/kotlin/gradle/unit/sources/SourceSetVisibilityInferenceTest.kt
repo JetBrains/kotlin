@@ -40,7 +40,7 @@ class SourceSetVisibilityInferenceTest {
     }
 
     @Test
-    fun testFailureWithNoAssociation(): Unit {
+    fun testFailureWithNoAssociation() {
         val jvm = kotlin.jvm()
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")

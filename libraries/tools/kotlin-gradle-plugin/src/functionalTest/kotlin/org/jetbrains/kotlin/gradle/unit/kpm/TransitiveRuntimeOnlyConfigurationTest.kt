@@ -7,8 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.unit.kpm
 
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.provideDelegate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

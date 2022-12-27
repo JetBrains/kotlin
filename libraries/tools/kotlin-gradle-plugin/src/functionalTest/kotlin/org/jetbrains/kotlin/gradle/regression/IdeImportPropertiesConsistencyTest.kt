@@ -83,7 +83,7 @@ class IdeImportPropertiesConsistencyTest {
             isHmppValueUsedInCli, isHmppValueUsedInIde,
             """
                 project.isKotlinGranularMetadataEnabled: $isHmppValueUsedInCli
-                GradleImportProperties.IS_HMPP_ENABLED: ${isHmppValueUsedInIde}
+                GradleImportProperties.IS_HMPP_ENABLED: $isHmppValueUsedInIde
             """.trimIndent()
         )
 

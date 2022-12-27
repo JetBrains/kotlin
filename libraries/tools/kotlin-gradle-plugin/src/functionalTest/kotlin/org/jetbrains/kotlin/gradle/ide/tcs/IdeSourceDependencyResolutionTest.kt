@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.ide.tcs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency

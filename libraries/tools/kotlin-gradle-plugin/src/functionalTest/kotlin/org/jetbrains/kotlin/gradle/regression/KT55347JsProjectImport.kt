@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.regression
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
@@ -19,7 +21,7 @@ class KT55347JsProjectImport {
     private fun `GranularMetadataTransformation should be accessible in pure js projects`(jsCompiler: KotlinJsCompilerType) {
         val project = buildProject { plugins.apply("org.jetbrains.kotlin.js") }
         val kotlin = project.kotlinExtension as KotlinJsProjectExtension
-        with (kotlin) {
+        with(kotlin) {
             js(jsCompiler) {
                 nodejs()
             }
