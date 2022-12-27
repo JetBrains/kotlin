@@ -1,18 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test: JS KLIB ABI compatibility / no IC" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
+  <configuration default="false" name="Test: KLIB ABI compatibility Native / cache everywhere" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="--stacktrace" />
+      <option name="scriptParameters" value="--stacktrace -Pkotlin.internal.native.test.cacheMode=STATIC_EVERYWHERE" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value=":js:js.tests:test" />
+          <option value=":native:native.tests:klibAbiTest" />
           <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsKLibABINoICTestCaseGenerated&quot;" />
+          <option value="&quot;org.jetbrains.kotlin.konan.blackboxtest.KlibABITestGenerated&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
