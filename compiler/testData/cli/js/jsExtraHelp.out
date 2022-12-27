@@ -50,6 +50,7 @@ where advanced options include:
   -Xwasm-enable-array-range-checks
                              Turn on range checks for the array access functions
   -Xwasm-enable-asserts      Turn on asserts
+  -Xwasm-generate-wat        Generate wat file
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
   -Xallow-any-scripts-in-source-roots
                              Allow to compile any scripts along with regular Kotlin sources

@@ -336,6 +336,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xwasm-enable-asserts", description = "Turn on asserts")
     var wasmEnableAsserts: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xwasm-generate-wat", description = "Generate wat file")
+    var wasmGenerateWat: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xuse-deprecated-legacy-compiler",
         description = "Use deprecated legacy compiler without error"
