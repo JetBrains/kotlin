@@ -114,6 +114,33 @@ fun testFloat() {
     null2Float(null)
 }
 
+@JsFun("(x) => { if (x !== 123.5) throw 'error' }")
+external fun notNullNumber(x: Number)
+
+@JsFun("(x) => { if (x !== 123.5) throw 'error' }")
+external fun nullNumber(x: Number?)
+
+@JsFun("(x) => { if (x !== null) throw 'error' }")
+external fun null2Number(x: Number?)
+
+@JsFun("(x) => { if (x !== 123) throw 'error' }")
+external fun byte2Number(x: Number)
+
+@JsFun("(x) => { if (x !== 123) throw 'error' }")
+external fun notNullByte2Number(x: Number?)
+
+@JsFun("(x) => { if (x !== null) throw 'error' }")
+external fun nullByte2Number(x: Number?)
+
+fun testNumber() {
+    notNullNumber(123.5)
+    nullNumber(123.5)
+    null2Number(null)
+    byte2Number(123)
+    notNullByte2Number(123)
+    nullByte2Number(null)
+}
+
 fun box(): String {
     testString()
     testExterRef()
@@ -122,5 +149,6 @@ fun box(): String {
     testBoolean()
     testShort()
     testFloat()
+    testNumber()
     return "OK"
 }

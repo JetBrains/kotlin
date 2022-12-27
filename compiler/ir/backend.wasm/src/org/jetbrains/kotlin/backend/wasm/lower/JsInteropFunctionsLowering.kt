@@ -65,6 +65,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         return (newDeclarations ?: listOf(declaration)) + additionalDeclarations
     }
 
+    private fun doubleIfNumber(possiblyNumber: IrType): IrType {
+        val isNullable = possiblyNumber.isNullable()
+        val notNullType = possiblyNumber.makeNotNull()
+        if (notNullType != builtIns.numberType) return possiblyNumber
+        return if (isNullable) builtIns.doubleType.makeNullable() else builtIns.doubleType
+    }
+
     /**
      *  external fun foo(x: KotlinType): KotlinType
      *
@@ -78,6 +85,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         // [ComplexExternalDeclarationsToTopLevelFunctionsLowering]
         if (function.valueParameters.any { it.defaultValue != null })
             return null
+
+        // Patch function types for Number parameters as double
+        function.returnType = doubleIfNumber(function.returnType)
 
         val valueParametersAdapters = function.valueParameters.map {
             it.type.kotlinToJsAdapterIfNeeded(isReturn = false)
@@ -193,6 +203,16 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         }
 
         val notNullType = makeNotNull()
+
+        if (notNullType == builtIns.numberType) {
+            return NullOrAdapter(
+                CombineAdapter(
+                    FunctionBasedAdapter(adapters.kotlinDoubleToExternRefAdapter.owner),
+                    FunctionBasedAdapter(adapters.numberToDoubleAdapter.owner)
+                )
+            )
+        }
+
         val primitiveToExternRefAdapter = when (notNullType) {
             builtIns.byteType -> adapters.kotlinByteToExternRefAdapter.owner
             builtIns.shortType -> adapters.kotlinShortToExternRefAdapter.owner
@@ -222,6 +242,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.stringType -> return FunctionBasedAdapter(adapters.kotlinToJsStringAdapter.owner)
             builtIns.booleanType -> return FunctionBasedAdapter(adapters.kotlinBooleanToExternRefAdapter.owner)
             builtIns.anyType -> return FunctionBasedAdapter(adapters.kotlinToJsAnyAdapter.owner)
+            builtIns.numberType -> return FunctionBasedAdapter(adapters.numberToDoubleAdapter.owner)
 
             builtIns.byteType,
             builtIns.shortType,

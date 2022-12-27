@@ -287,6 +287,7 @@ class WasmSymbols(
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
         val kotlinToJsAnyAdapter = getInternalFunction("kotlinToJsAnyAdapter")
+        val numberToDoubleAdapter = getInternalFunction("numberToDoubleAdapter")
 
         val jsCheckIsNullOrUndefinedAdapter = getInternalFunction("jsCheckIsNullOrUndefinedAdapter")
 
