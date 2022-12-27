@@ -149,6 +149,26 @@ fun testFloat() {
     check(null2Float() == null)
 }
 
+
+@JsFun("() => 123.5")
+external fun notNullNumber(): Number
+
+@JsFun("() => null")
+external fun notNull2Number(): Number
+
+@JsFun("() => 123.5")
+external fun nullNumber(): Number?
+
+@JsFun("() => null")
+external fun null2Number(): Number?
+
+fun testNumber() {
+    check(notNullNumber() == 123.5)
+    check(notNull2Number() == 0.0)
+    check(nullNumber() == 123.5)
+    check(null2Number() == null)
+}
+
 fun box(): String {
     testString()
     testExterRef()
@@ -157,5 +177,6 @@ fun box(): String {
     testBoolean()
     testShort()
     testFloat()
+    testNumber()
     return "OK"
 }

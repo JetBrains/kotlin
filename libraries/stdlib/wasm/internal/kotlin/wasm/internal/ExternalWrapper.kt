@@ -261,6 +261,9 @@ private val jsEmptyString by lazy(::getJsEmptyString)
 private val jsTrue by lazy(::getJsTrue)
 private val jsFalse by lazy(::getJsFalse)
 
+internal fun numberToDoubleAdapter(x: Number): Double =
+    x.toDouble()
+
 internal fun kotlinToJsAnyAdapter(x: Any?): ExternalInterfaceType? =
     if (x == null) null else anyToExternRef(x)
 
