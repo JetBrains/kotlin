@@ -120,4 +120,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ASSERTS =
             CompilerConfigurationKey.create("enable asserts");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
+            CompilerConfigurationKey.create("generate wat file");
 }
