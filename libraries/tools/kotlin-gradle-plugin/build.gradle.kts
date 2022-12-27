@@ -217,7 +217,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 useJUnit()
 
                 dependencies {
-                    implementation(project)
+                    implementation(project())
                     implementation("com.android.tools.build:gradle:7.2.1")
                     implementation("com.android.tools.build:gradle-api:7.2.1")
                     compileOnly("com.android.tools:common:30.2.1")
