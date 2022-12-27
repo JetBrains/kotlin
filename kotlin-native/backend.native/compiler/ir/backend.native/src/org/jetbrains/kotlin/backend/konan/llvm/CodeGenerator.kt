@@ -63,7 +63,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
         LLVMCreateLocation(LLVMGetModuleContext(llvm.module), locationInfo.line, locationInfo.column, locationInfo.scope)
 
     val objCDataGenerator = when {
-        context.config.target.family.isAppleFamily -> ObjCDataGenerator(this)
+        minimalContext.config.target.family.isAppleFamily -> ObjCDataGenerator(this)
         else -> null
     }
 
@@ -177,7 +177,7 @@ internal inline fun generateFunction(
         block: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
     val function = addLlvmFunctionWithDefaultAttributes(
-            codegen.context,
+            codegen.minimalContext,
             codegen.llvm.module,
             name,
             functionType
@@ -212,7 +212,7 @@ internal inline fun generateFunctionNoRuntime(
         code: FunctionGenerationContext.() -> Unit,
 ): LLVMValueRef {
     val function = addLlvmFunctionWithDefaultAttributes(
-            codegen.context,
+            codegen.minimalContext,
             codegen.llvm.module,
             name,
             functionType
@@ -258,7 +258,7 @@ internal class StackLocalsManagerImpl(
     fun isEmpty() = stackLocals.isEmpty()
 
     private fun FunctionGenerationContext.createRootSetSlot() =
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
+            if (minimalContext.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
 
     override fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef = with(functionGenerationContext) {
         val type = llvmDeclarations.forClass(irClass).bodyType
@@ -392,7 +392,7 @@ internal abstract class FunctionGenerationContextBuilder<T : FunctionGenerationC
     constructor(functionType: LLVMTypeRef, functionName: String, codegen: CodeGenerator) :
             this(
                     addLlvmFunctionWithDefaultAttributes(
-                            codegen.context,
+                            codegen.minimalContext,
                             codegen.llvm.module,
                             functionName,
                             functionType
@@ -460,13 +460,13 @@ internal abstract class FunctionGenerationContext(
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
     protected open val needCleanupLandingpadAndLeaveFrame: Boolean
         get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true ||     // Exported to foreign code
-                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
+                (!stackLocalsManager.isEmpty() && minimalContext.memoryModel != MemoryModel.EXPERIMENTAL) ||
                 switchToRunnable
 
     private var setCurrentFrameIsCalled: Boolean = false
 
     private val switchToRunnable: Boolean =
-            context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
+            minimalContext.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -495,7 +495,7 @@ internal abstract class FunctionGenerationContext(
     init {
         irFunction?.let {
             if (!irFunction.isExported()) {
-                if (!context.config.producePerFileCache || irFunction !in generationState.calledFromExportedInlineFunctions)
+                if (!minimalContext.config.producePerFileCache || irFunction !in generationState.calledFromExportedInlineFunctions)
                     LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage) // (Cannot do this before the function body is created)
             }
         }
@@ -607,12 +607,12 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun checkGlobalsAccessible(exceptionHandler: ExceptionHandler) {
-        if (context.memoryModel == MemoryModel.STRICT)
+        if (minimalContext.memoryModel == MemoryModel.STRICT)
             call(llvm.checkGlobalsAccessible, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        if (context.memoryModel == MemoryModel.STRICT)
+        if (minimalContext.memoryModel == MemoryModel.STRICT)
             store(value, address)
         else
             call(llvm.updateReturnRefFunction, listOf(address, value))
@@ -620,7 +620,7 @@ internal abstract class FunctionGenerationContext(
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean) {
         if (onStack) {
-            if (context.memoryModel == MemoryModel.STRICT)
+            if (minimalContext.memoryModel == MemoryModel.STRICT)
                 store(value, address)
             else
                 call(llvm.updateStackRefFunction, listOf(address, value))
@@ -632,7 +632,7 @@ internal abstract class FunctionGenerationContext(
     //-------------------------------------------------------------------------//
 
     fun switchThreadState(state: ThreadState) {
-        check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
+        check(minimalContext.memoryModel == MemoryModel.EXPERIMENTAL) {
             "Thread state switching is allowed in the new MM only."
         }
         check(!forbidRuntime) {
@@ -645,7 +645,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun switchThreadStateIfExperimentalMM(state: ThreadState) {
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+        if (minimalContext.memoryModel == MemoryModel.EXPERIMENTAL) {
             switchThreadState(state)
         }
     }
@@ -791,7 +791,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun unreachable(): LLVMValueRef? {
-        if (context.config.debug) {
+        if (minimalContext.config.debug) {
             call(llvm.llvmTrap, emptyList())
         }
         val res = LLVMBuildUnreachable(builder)
@@ -920,7 +920,7 @@ internal abstract class FunctionGenerationContext(
     ): ExceptionHandler {
         val lpBlock = basicBlockInFunction("filteringExceptionHandler", position()?.start)
 
-        val wrapExceptionMode = context.config.target.family.isAppleFamily &&
+        val wrapExceptionMode = minimalContext.config.target.family.isAppleFamily &&
                 foreignExceptionMode == ForeignExceptionMode.Mode.OBJC_WRAP
 
         appendingTo(lpBlock) {
@@ -1053,7 +1053,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        if (!context.shouldOptimize())
+        if (!minimalContext.shouldOptimize())
             call(llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
@@ -1102,7 +1102,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?): DILocationRef? {
-        if (!context.shouldContainLocationDebugInfo()) return null
+        if (!minimalContext.shouldContainLocationDebugInfo()) return null
         update(currentBlock, startLocationInfo, endLocation)
         val debugLocation = codegen.generateLocationInfo(startLocationInfo)
         currentPositionHolder.setBuilderDebugLocation(debugLocation)
@@ -1126,7 +1126,7 @@ internal abstract class FunctionGenerationContext(
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
         val typeInfoOrMetaPtr = structGep(objPtr, 0  /* typeInfoOrMeta_ */)
 
-        val memoryOrder = if (context.config.targetHasAddressDependency) {
+        val memoryOrder = if (minimalContext.config.targetHasAddressDependency) {
             /**
              * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
              * Check comment in ObjHeader::type_info for details.
@@ -1158,7 +1158,7 @@ internal abstract class FunctionGenerationContext(
         // See details in ClassLayoutBuilder.
         return if (context.ghaEnabled()
                 && context.globalHierarchyAnalysisResult.bitsPerColor <= ClassGlobalHierarchyInfo.MAX_BITS_PER_COLOR
-                && context.config.produce != CompilerOutputKind.FRAMEWORK) {
+                && minimalContext.config.produce != CompilerOutputKind.FRAMEWORK) {
             // All interface tables are small and no unknown interface inheritance.
             fastPath()
         } else {
@@ -1308,7 +1308,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun resetDebugLocation() {
-        if (!context.shouldContainLocationDebugInfo()) return
+        if (!minimalContext.shouldContainLocationDebugInfo()) return
         currentPositionHolder.resetBuilderDebugLocation()
     }
 
@@ -1399,7 +1399,7 @@ internal abstract class FunctionGenerationContext(
             } else {
                 check(!setCurrentFrameIsCalled)
             }
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
+            if (minimalContext.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
                 call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
             resetDebugLocation()
@@ -1529,12 +1529,12 @@ internal abstract class FunctionGenerationContext(
         }
 
         fun resetBuilderDebugLocation() {
-            if (!context.shouldContainLocationDebugInfo()) return
+            if (!minimalContext.shouldContainLocationDebugInfo()) return
             LLVMBuilderResetDebugLocation(builder)
         }
 
         fun setBuilderDebugLocation(debugLocation: DILocationRef?) {
-            if (!context.shouldContainLocationDebugInfo()) return
+            if (!minimalContext.shouldContainLocationDebugInfo()) return
             LLVMBuilderSetDebugLocation(builder, debugLocation)
         }
     }
@@ -1595,7 +1595,7 @@ internal abstract class FunctionGenerationContext(
             call(llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
         }
-        if (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
+        if (!stackLocalsManager.isEmpty() && minimalContext.memoryModel != MemoryModel.EXPERIMENTAL) {
             stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
         }
     }

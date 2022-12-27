@@ -65,7 +65,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     val objcRetainAutoreleasedReturnValueMarker: LLVMValueRef? by lazy {
         // See emitAutoreleasedReturnValueMarker in Clang.
-        val asmString = codegen.context.config.target.getARCRetainAutoreleasedReturnValueMarker() ?: return@lazy null
+        val asmString = codegen.minimalContext.config.target.getARCRetainAutoreleasedReturnValueMarker() ?: return@lazy null
         val asmStringBytes = asmString.toByteArray()
         LLVMGetInlineAsm(
                 Ty = functionType(llvm.voidType, false),

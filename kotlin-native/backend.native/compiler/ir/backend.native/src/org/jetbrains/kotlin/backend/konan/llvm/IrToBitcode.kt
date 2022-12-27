@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -52,7 +53,7 @@ internal enum class FieldStorageKind {
 }
 
 // TODO: maybe unannotated singleton objects shall be accessed from main thread only as well?
-internal fun IrField.storageKind(context: Context): FieldStorageKind {
+internal fun IrField.storageKind(context: PhaseContext): FieldStorageKind {
     // TODO: Is this correct?
     val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
     val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
@@ -372,8 +373,8 @@ internal class CodeGeneratorVisitor(
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
                             scopeState.topLevelFields
-                                    .filter { it.storageKind(context) != FieldStorageKind.THREAD_LOCAL }
-                                    .filterNot { context.shouldBeInitializedEagerly(it) }
+                                    .filter { it.storageKind(minimalContext) != FieldStorageKind.THREAD_LOCAL }
+                                    .filterNot { minimalContext.shouldBeInitializedEagerly(it) }
                                     .forEach { initGlobalField(it) }
                             ret(null)
                         }
@@ -389,8 +390,8 @@ internal class CodeGeneratorVisitor(
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
                             scopeState.topLevelFields
-                                    .filter { it.storageKind(context) == FieldStorageKind.THREAD_LOCAL }
-                                    .filterNot { context.shouldBeInitializedEagerly(it) }
+                                    .filter { it.storageKind(minimalContext) == FieldStorageKind.THREAD_LOCAL }
+                                    .filterNot { minimalContext.shouldBeInitializedEagerly(it) }
                                     .forEach { initThreadLocalField(it) }
                             ret(null)
                         }
@@ -2310,7 +2311,7 @@ internal class CodeGeneratorVisitor(
             val result = evaluateExpression(expression.result, resultSlot)
 
             functionGenerationContext.appendingTo(bbDispatch) {
-                if (context.config.indirectBranchesAreAllowed)
+                if (minimalContext.config.indirectBranchesAreAllowed)
                     functionGenerationContext.indirectBr(suspensionPointId, resumePoints)
                 else {
                     val bbElse = functionGenerationContext.basicBlock("else", null) {

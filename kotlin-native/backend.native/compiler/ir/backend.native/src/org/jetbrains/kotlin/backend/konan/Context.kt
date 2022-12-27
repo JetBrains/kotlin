@@ -106,8 +106,6 @@ internal class Context(
 
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
-    val memoryModel = config.memoryModel
-
     val stdlibModule
         get() = this.builtIns.any.module
 

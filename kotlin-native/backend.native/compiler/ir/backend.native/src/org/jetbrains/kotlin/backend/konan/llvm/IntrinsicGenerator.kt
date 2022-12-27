@@ -143,7 +143,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private val codegen = environment.codegen
 
-    private val context = codegen.context
+    private val context = codegen.minimalContext
 
     private val IrCall.llvmReturnType: LLVMTypeRef
         get() = LLVMGetReturnType(codegen.getLlvmFunctionType(symbol.owner))!!
@@ -290,7 +290,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             args.single()
 
     private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
-            llvm.int1(context.memoryModel == MemoryModel.EXPERIMENTAL)
+            llvm.int1(minimalContext.memoryModel == MemoryModel.EXPERIMENTAL)
 
     private fun FunctionGenerationContext.emitGetNativeNullPtr(): LLVMValueRef =
             llvm.kNullInt8Ptr
@@ -733,6 +733,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         llvm.int64Type -> llvm.int64(value.toLong())
         llvm.floatType -> llvm.float32(value.toFloat())
         llvm.doubleType -> llvm.float64(value.toDouble())
-        else -> context.reportCompilationError("Unexpected primitive type: $type")
+        else -> minimalContext.reportCompilationError("Unexpected primitive type: $type")
     }
 }

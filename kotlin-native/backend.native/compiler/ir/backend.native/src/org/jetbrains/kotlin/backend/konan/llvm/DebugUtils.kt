@@ -58,7 +58,7 @@ internal object DWARF {
 fun KonanConfig.debugInfoVersion(): Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
 
 internal class DebugInfo(override val generationState: NativeGenerationState) : ContextUtils {
-    private val config = context.config
+    private val config = minimalContext.config
 
     val builder: DIBuilderRef = LLVMCreateDIBuilder(llvm.module)!!
     val compilationUnit: DIScopeOpaqueRef

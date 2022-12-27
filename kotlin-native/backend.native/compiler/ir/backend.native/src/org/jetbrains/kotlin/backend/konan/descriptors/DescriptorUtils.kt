@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
@@ -256,7 +257,7 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
         (this.parent as IrDeclaration).findTopLevelDeclaration()
 }
 
-internal fun IrClass.isFrozen(context: Context): Boolean {
+internal fun IrClass.isFrozen(context: PhaseContext): Boolean {
     val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
     return when {
         !context.config.freezing.freezeImplicit -> false

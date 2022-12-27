@@ -35,4 +35,7 @@ interface ConfigChecks {
     fun shouldInlineSafepoints() = !config.target.needSmallBinary()
 
     fun useLazyFileInitializers() = config.propertyLazyInitialization
+
+    val memoryModel: MemoryModel
+            get() = config.memoryModel
 }

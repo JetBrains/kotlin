@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal fun addLlvmFunctionWithDefaultAttributes(
-        context: Context,
+        context: PhaseContext,
         module: LLVMModuleRef,
         name: String,
         type: LLVMTypeRef
@@ -25,7 +24,7 @@ internal fun addLlvmFunctionWithDefaultAttributes(
  * Mimics parts of clang's `CodeGenModule::getDefaultFunctionAttributes`
  * that are required for Kotlin/Native compiler.
  */
-private fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LLVMValueRef) {
+private fun addDefaultLlvmFunctionAttributes(context: PhaseContext, llvmFunction: LLVMValueRef) {
     if (shouldEnforceFramePointer(context)) {
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction, context)
@@ -35,7 +34,7 @@ private fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LLV
 /**
  * Set target cpu and its features to make LLVM generate correct machine code.
  */
-private fun addTargetCpuAndFeaturesAttributes(context: Context, llvmFunction: LLVMValueRef) {
+private fun addTargetCpuAndFeaturesAttributes(context: PhaseContext, llvmFunction: LLVMValueRef) {
     context.config.platform.targetCpu?.let {
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "target-cpu", it)
     }
@@ -44,7 +43,7 @@ private fun addTargetCpuAndFeaturesAttributes(context: Context, llvmFunction: LL
     }
 }
 
-private fun shouldEnforceFramePointer(context: Context): Boolean {
+private fun shouldEnforceFramePointer(context: PhaseContext): Boolean {
     // TODO: do we still need it?
     if (!context.shouldOptimize()) {
         return true
@@ -56,7 +55,7 @@ private fun shouldEnforceFramePointer(context: Context): Boolean {
     }
 }
 
-private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: Context) {
+private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: PhaseContext) {
     val target = context.config.target
 
     // Matches Clang behaviour.

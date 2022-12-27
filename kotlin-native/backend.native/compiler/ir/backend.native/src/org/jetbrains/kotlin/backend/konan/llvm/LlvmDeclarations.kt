@@ -165,7 +165,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val typeInfoSymbolName = if (declaration.isExported()) {
             declaration.computeTypeInfoSymbolName()
         } else {
-            if (!context.config.producePerFileCache)
+            if (!minimalContext.config.producePerFileCache)
                 "${MangleConstant.CLASS_PREFIX}:$internalName"
             else {
                 val containerName = (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
@@ -196,7 +196,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
                 }
             } else {
-                if (!context.config.producePerFileCache || declaration !in generationState.constructedFromExportedInlineFunctions)
+                if (!minimalContext.config.producePerFileCache || declaration !in generationState.constructedFromExportedInlineFunctions)
                     LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
@@ -294,7 +294,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
-            val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
+            val storage = if (declaration.storageKind(minimalContext) == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm))
             } else {
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), isExported = false)
@@ -337,7 +337,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     }
                 }
             } else {
-                if (!context.config.producePerFileCache)
+                if (!minimalContext.config.producePerFileCache)
                     "${MangleConstant.FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
@@ -348,7 +348,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
             val proto = LlvmFunctionProto(declaration, symbolName, this)
             val llvmFunction = addLlvmFunctionWithDefaultAttributes(
-                    context,
+                    minimalContext,
                     llvm.module,
                     symbolName,
                     proto.llvmFunctionType

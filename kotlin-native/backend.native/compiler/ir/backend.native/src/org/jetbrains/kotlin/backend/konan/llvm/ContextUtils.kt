@@ -10,6 +10,7 @@ import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -132,6 +133,9 @@ internal interface ContextUtils : RuntimeAware {
     val generationState: NativeGenerationState
 
     val context: Context
+        get() = generationState.context
+
+    val minimalContext: PhaseContext
         get() = generationState.context
 
     override val runtime: Runtime

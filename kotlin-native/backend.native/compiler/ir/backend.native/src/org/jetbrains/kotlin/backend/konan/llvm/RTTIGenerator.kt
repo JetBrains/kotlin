@@ -53,7 +53,7 @@ internal class RTTIGenerator(
 
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        if (irClass.isFrozen(context))
+        if (irClass.isFrozen(minimalContext))
            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
@@ -393,7 +393,7 @@ internal class RTTIGenerator(
             runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
-        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
+        minimalContext.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
             parseBitcodeFile(llvm.llvmContext, it)
         }
     }
@@ -418,7 +418,7 @@ internal class RTTIGenerator(
 
     private fun makeExtendedInfo(irClass: IrClass): ConstPointer {
         // TODO: shall we actually do that?
-        if (context.shouldOptimize())
+        if (minimalContext.shouldOptimize())
             return NullPointer(runtime.extendedTypeInfoType)
 
         val className = irClass.fqNameForIrSerialization.toString()

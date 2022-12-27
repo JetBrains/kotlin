@@ -137,7 +137,8 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerAndCompile(module: IrMod
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
     runAllLowerings(module)
-    lowerDependencies(module)
+    lowerDependencies()
+    mergeDependencies(module)
     runCodegen(module)
     runPhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
@@ -187,11 +188,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
 /**
  * Lowers and links to [inputModule] dependencies of the current compilation target.
  */
-private fun PhaseEngine<NativeGenerationState>.lowerDependencies(inputModule: IrModuleFragment) {
-    val files = mutableListOf<IrFile>()
-    files += inputModule.files
-    inputModule.files.clear()
-
+private fun PhaseEngine<NativeGenerationState>.lowerDependencies() {
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM?
     context.config.librariesWithDependencies()
@@ -202,7 +199,12 @@ private fun PhaseEngine<NativeGenerationState>.lowerDependencies(inputModule: Ir
                     return@forEach
                 runAllLowerings(libModule)
             }
+}
 
+private fun PhaseEngine<NativeGenerationState>.mergeDependencies(inputModule: IrModuleFragment) {
+    val files = mutableListOf<IrFile>()
+    files += inputModule.files
+    inputModule.files.clear()
     // Save all files for codegen in reverse topological order.
     // This guarantees that libraries initializers are emitted in correct order.
     context.config.librariesWithDependencies()
@@ -213,6 +215,5 @@ private fun PhaseEngine<NativeGenerationState>.lowerDependencies(inputModule: Ir
 
                 inputModule.files += libModule.files
             }
-
     inputModule.files += files
 }

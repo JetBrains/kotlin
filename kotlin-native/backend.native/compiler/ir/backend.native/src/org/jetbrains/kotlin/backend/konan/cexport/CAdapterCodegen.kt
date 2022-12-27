@@ -75,7 +75,7 @@ internal class CAdapterCodegen(
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 // Produce type getter.
                 val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
-                    context,
+                        minimalContext,
                     llvm.module,
                     "${cname}_type",
                     kGetTypeFuncType

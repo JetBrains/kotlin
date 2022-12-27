@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
  */
 internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
-    val context = codegen.context
     val llvm = codegen.llvm
 
     fun finishModule() {
