@@ -97,6 +97,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
@@ -609,7 +610,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             // TODO: expect -> actual mapping
             val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
-            val metadataVersion = GenerationState.metadataVersion(configuration)
+            val metadataVersion = configuration.metadataVersion()
 
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,

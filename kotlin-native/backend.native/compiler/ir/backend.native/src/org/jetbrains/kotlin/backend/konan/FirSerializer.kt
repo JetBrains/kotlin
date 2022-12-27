@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.utils.toMetadataVersion
 
 internal fun PhaseContext.firSerializer(
         input: Fir2IrOutput
@@ -30,7 +30,7 @@ internal fun PhaseContext.firSerializer(
     val firFilesBySourceFile = input.firFiles.associateBy { it.sourceFile }
     val metadataVersion =
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-                    ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
+                    ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
 
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder) // FIXME KT-55603
     return serializeNativeModule(

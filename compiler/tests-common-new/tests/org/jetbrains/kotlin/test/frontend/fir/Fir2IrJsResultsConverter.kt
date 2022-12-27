@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -51,6 +49,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.utils.metadataVersion
 
 class Fir2IrJsResultsConverter(
     testServices: TestServices
@@ -76,7 +75,7 @@ class Fir2IrJsResultsConverter(
 
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val metadataVersion = GenerationState.metadataVersion(configuration, module.languageVersionSettings)
+        val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
 
         // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
         val diagnosticsMap = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade.runCheckers()
