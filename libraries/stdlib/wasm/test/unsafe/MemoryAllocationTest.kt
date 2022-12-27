@@ -3,6 +3,9 @@ package test.wasm.unsafe
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
 
+@JsFun("(a, b) => a + b")
+private external fun jsConcatStrings(a: String, b: String): String
+
 @OptIn(UnsafeWasmMemoryApi::class)
 class MemoryAllocationTest {
     val pageSize = 65_536
@@ -84,14 +87,102 @@ class MemoryAllocationTest {
     }
 
     @Test
-    fun testScopedAllocatorThrows() {
-        assertFailsWith<IllegalStateException> {
-            withScopedMemoryAllocator {
-                withScopedMemoryAllocator {
-                }
+    fun nestedAllocators() {
+        val sizes = listOf<Int>(1, 1, 2, 3, 8, 10, 305, 12_747, 31_999)
+        lateinit var allocations1: List<Int>
+        lateinit var allocations1_1: List<Int>
+        lateinit var allocations1_2: List<Int>
+        lateinit var allocations2: List<Int>
+
+        withScopedMemoryAllocator { allocator0 ->
+            allocations1 = sizes.map { size -> allocator0.allocate(size) }
+            withScopedMemoryAllocator { allocator0_0 ->
+                allocations1_1 = sizes.map { size -> allocator0_0.allocate(size) }
+            }
+            withScopedMemoryAllocator { allocator0_1 ->
+                allocations1_2 = sizes.map { size -> allocator0_1.allocate(size) }
             }
         }
+        withScopedMemoryAllocator { allocator0 ->
+            allocations2 = sizes.map { size -> allocator0.allocate(size) }
+        }
 
+        // Check that all allocations happened and distinct
+        listOf(
+            allocations1,
+            allocations1_1,
+            allocations1_2,
+            allocations2
+        ).forEach { allocation ->
+            assertEquals(allocation.size, sizes.size)
+            assertEquals(allocation.distinct().size, allocation.size)
+        }
+
+        // Impl detail: sibling scopes use the same memory
+        assertEquals(allocations1, allocations2)
+        assertEquals(allocations1_1, allocations1_2)
+
+        // Impl detaiol: allocator in child scope allocates new memory
+        assertTrue(allocations1.max() < allocations1_1.min())
+    }
+
+    @Test
+    fun testJsIntropInsideAllocations() {
+        withScopedMemoryAllocator { allocator ->
+            assertEquals(jsConcatStrings("str1", "str2"), "str1str2")
+            allocator.allocate(10)
+        }
+    }
+
+    @Test
+    fun testNestedAllocatorThrows() {
+        var leakedAllocator1: MemoryAllocator? = null
+        var leakedAllocator2: MemoryAllocator? = null
+        var leakedAllocator3: MemoryAllocator? = null
+
+        withScopedMemoryAllocator { allocator1 ->
+            leakedAllocator1 = allocator1
+            allocator1.allocate(100)
+            // 2-level nesting
+            withScopedMemoryAllocator { allocator2 ->
+                leakedAllocator2 = allocator2
+                allocator2.allocate(100)
+                assertFailsWith<IllegalStateException> {
+                    allocator1.allocate(100)
+                }
+                // 3-level nesting
+                withScopedMemoryAllocator { allocator3 ->
+                    leakedAllocator3 = allocator3
+                    allocator3.allocate(100)
+                    assertFailsWith<IllegalStateException> {
+                        allocator1.allocate(100)
+                    }
+                    assertFailsWith<IllegalStateException> {
+                        allocator2.allocate(100)
+                    }
+                    allocator3.allocate(100)
+                }
+                assertFailsWith<IllegalStateException> {
+                    leakedAllocator3?.allocate(100)
+                }
+                // now it is legal to use allocator1 since we're in its immediate scope
+                allocator2.allocate(100)
+            }
+            assertFailsWith<IllegalStateException> {
+                leakedAllocator2?.allocate(100)
+            }
+            allocator1.allocate(100)
+        }
+
+        for (leakedAllocator in listOf(leakedAllocator1, leakedAllocator2, leakedAllocator3)) {
+            assertFailsWith<IllegalStateException> {
+                leakedAllocator?.allocate(100)
+            }
+        }
+    }
+
+    @Test
+    fun testScopedAllocatorThrows() {
         assertFailsWith<IllegalStateException> {
             var leakedAllocator: MemoryAllocator? = null
             withScopedMemoryAllocator { allocator ->

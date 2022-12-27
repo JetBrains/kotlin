@@ -39,9 +39,9 @@ public abstract class MemoryAllocator {
  *
  * WARNING! Addresses leaked outside of [block] scope become invalid and can be overridden.
  *
- * WARNING! Nested calls to [withScopedMemoryAllocator] will throw [IllegalStateException].
- *          The standard library may use this allocator for JS interop bindings. For example,
- *          it may use it to copy strings.
+ * WARNING! Nested call to [withScopedMemoryAllocator] will temporarily disable allocator from outer scope
+ *   for the duration of the call. Calling [MemoryAllocator.allocate] on disabled allocator
+ *   will throw [IllegalStateException].
  *
  * WARNING! Accessing allocator outside of the [block] scope will throw [IllegalStateException].
  */
@@ -49,31 +49,42 @@ public abstract class MemoryAllocator {
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
 ): T {
-    check(!inScopedMemoryAllocatorBlock) { "Calls to withScopedMemoryAllocator can't be nested" }
-    inScopedMemoryAllocatorBlock = true
-    val allocator = ScopedMemoryAllocator()
+    val allocator =
+        currentAllocator?.createChild() ?:
+            ScopedMemoryAllocator(unsafeGetScratchRawMemory(), parent = null)
+    currentAllocator = allocator
+
     val result = try {
         block(allocator)
     } finally {
-        inScopedMemoryAllocatorBlock = false
         allocator.destroy()
+        currentAllocator = allocator.parent
     }
     return result
 }
 
+@PublishedApi
+@UnsafeWasmMemoryApi
+internal var currentAllocator: ScopedMemoryAllocator? = null
 
 @PublishedApi
 @UnsafeWasmMemoryApi
-internal var inScopedMemoryAllocatorBlock: Boolean = false
-
-@PublishedApi
-@UnsafeWasmMemoryApi
-internal class ScopedMemoryAllocator : MemoryAllocator() {
+internal class ScopedMemoryAllocator(
+    startAddress: Pointer,
+    // Allocator from parent scope or null for top-level scope.
+    @PublishedApi
+    internal var parent: ScopedMemoryAllocator?,
+) : MemoryAllocator() {
+    // true if allocator is out of scope
     private var destroyed = false
-    private var availableAddress: ULong = unsafeGetScratchRawMemory().toULong()
+    // true if child allocator is active
+    private var suspended = false
+    // all memory is available starting from this address
+    private var availableAddress: ULong = startAddress.toULong()
 
     override fun allocate(size: Int): Pointer {
         check(!destroyed) { "ScopedMemoryAllocator is destroyed when out of scope" }
+        check(!suspended) { "ScopedMemoryAllocator is suspended when nested allocators are used" }
 
         // Pad available address to align it to 8
         // 8 is a max alignment number currently needed for Wasm component model canonical ABI
@@ -103,8 +114,16 @@ internal class ScopedMemoryAllocator : MemoryAllocator() {
         return result.toInt()
     }
 
-    fun destroy() {
+    @PublishedApi
+    internal fun createChild(): ScopedMemoryAllocator {
+        suspended = true
+        return ScopedMemoryAllocator(availableAddress.toInt(), parent = this)
+    }
+
+    @PublishedApi
+    internal fun destroy() {
         destroyed = true
+        parent?.suspended = false
     }
 }
 

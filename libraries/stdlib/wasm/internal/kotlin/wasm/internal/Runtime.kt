@@ -21,6 +21,7 @@ internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLen
 
 // Returns starting address of unused linear memory.
 @ExcludedFromCodegen
+@PublishedApi
 internal fun unsafeGetScratchRawMemory(): Int =
     implementedAsIntrinsic
 
