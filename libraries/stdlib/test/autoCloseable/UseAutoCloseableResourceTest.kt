@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.jdk7.test
+package test.autoCloseable
 
-import test.platformNull
-import java.io.*
 import kotlin.test.*
 
 class UseAutoCloseableResourceTest {
@@ -18,10 +16,12 @@ class UseAutoCloseableResourceTest {
 
         override fun close() {
             if (faultyClose)
-                throw IOException("Close failed")
+                throw ResourceCloseException("Close failed")
             isClosed = true
         }
     }
+
+    class ResourceCloseException(message: String) : Exception(message)
 
 
     @Test fun success() {
@@ -35,7 +35,7 @@ class UseAutoCloseableResourceTest {
         val e = assertFails {
             Resource(faultyClose = true).use { it.isClosed }
         }
-        assertTrue(e is IOException)
+        assertTrue(e is ResourceCloseException)
     }
 
     @Test fun opFailsCloseSuccess() {
@@ -43,7 +43,7 @@ class UseAutoCloseableResourceTest {
             Resource().use { error("op fail") }
         }
         assertTrue(e is IllegalStateException)
-        assertTrue(e.suppressed.isEmpty())
+        assertTrue(e.suppressedExceptions.isEmpty())
     }
 
     @Test fun opFailsCloseFails() {
@@ -51,7 +51,7 @@ class UseAutoCloseableResourceTest {
             Resource(faultyClose = true).use { error("op fail") }
         }
         assertTrue(e is IllegalStateException)
-        assertTrue(e.suppressed.single() is IOException)
+        assertTrue(e.suppressedExceptions.single() is ResourceCloseException)
     }
 
     @Test fun opFailsCloseFailsTwice() {
@@ -63,9 +63,9 @@ class UseAutoCloseableResourceTest {
             }
         }
         assertTrue(e is IllegalStateException)
-        val suppressed = e.suppressed
+        val suppressed = e.suppressedExceptions
         assertEquals(2, suppressed.size)
-        assertTrue(suppressed.all { it is IOException })
+        assertTrue(suppressed.all { it is ResourceCloseException })
     }
 
     @Test fun nonLocalReturnInBlock() {
@@ -99,18 +99,8 @@ class UseAutoCloseableResourceTest {
             resource.use { requireNotNull(it) }
         }
         assertTrue(e is IllegalArgumentException)
-        assertTrue(e.suppressed.isEmpty())
+        assertTrue(e.suppressedExceptions.isEmpty())
     }
-
-    @Test fun platformResourceOpFails() {
-        val resource = platformNull<Resource>()
-        val e = assertFails {
-            resource.use { requireNotNull(it) }
-        }
-        assertTrue(e is IllegalArgumentException)
-        assertTrue(e.suppressed.isEmpty())
-    }
-
 
     @Test
     fun contractCallsInPlace() {
