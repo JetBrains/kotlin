@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -155,7 +154,7 @@ private fun IrSymbol.guessName(): String? {
             }
             effectiveSignature.guessName(nameSegmentsToPickUp)
         }
-        ?: (owner as? IrDeclaration)?.nameForIrSerialization?.asString()
+        ?: (owner as? IrDeclarationWithName)?.name?.asString()
 }
 
 private fun Appendable.signature(symbol: IrSymbol): Appendable {

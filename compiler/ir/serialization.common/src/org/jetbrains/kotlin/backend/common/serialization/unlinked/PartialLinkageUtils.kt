@@ -56,7 +56,7 @@ internal object PartialLinkageUtils {
                 onSyntheticBuiltInFunction = SyntheticBuiltInFunctions,
                 onIrBased = { Real(it.module.name) },
                 onLazyIrBased = { Real(it.containingDeclaration.name) },
-                onError = { error("Can't determine module for $declaration, ${declaration.nameForIrSerialization}") }
+                onError = { error("Can't determine module for $declaration, name=${(declaration as? IrDeclarationWithName)?.name}") }
             )
         }
     }
@@ -108,7 +108,7 @@ internal object PartialLinkageUtils {
                 onSyntheticBuiltInFunction = SyntheticBuiltInFunctions,
                 onIrBased = ::IrBased,
                 onLazyIrBased = ::LazyIrBased,
-                onError = { error("Can't determine file for $declaration, ${declaration.nameForIrSerialization}") }
+                onError = { error("Can't determine file for $declaration, name=${(declaration as? IrDeclarationWithName)?.name}") }
             )
         }
     }
