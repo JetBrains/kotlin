@@ -44,6 +44,9 @@ val ConeKotlinType.isArrayType: Boolean
 val ConeKotlinType.isNonPrimitiveArray: Boolean
     get() = this is ConeClassLikeType && lookupTag.classId == StandardClassIds.Array
 
+val ConeKotlinType.isVArray: Boolean
+    get() = this is ConeClassLikeType && lookupTag.classId == StandardClassIds.VArray
+
 val ConeKotlinType.isPrimitiveArray: Boolean
     get() = this is ConeClassLikeType && lookupTag.classId in StandardClassIds.primitiveArrayTypeByElementType.values
 
