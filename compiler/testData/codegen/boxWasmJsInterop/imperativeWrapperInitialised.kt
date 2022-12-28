@@ -12,11 +12,19 @@ external fun inc2(x: Int): Int
 @WasmImport("./bar.mjs", "inc3")
 external fun inc3(x: Int): Int
 
+@WasmImport("./bar.mjs", "giveMeNumber")
+external fun giveMeNumber(x: Boolean)
+
 @JsExport
 fun myBox(): String {
     if (inc1(5) != 6) return "KFail1"
     if (inc2(5) != 6) return "KFail2"
     if (inc3(5) != 6) return "KFail3"
+
+    // Test that booleans are translated as i32
+    giveMeNumber(true)
+    giveMeNumber(false)
+
     return "OK"
 }
 
@@ -37,7 +45,14 @@ let inc = x => x + 1;
 let imports = {
     "foo": { inc1 : inc },
     "~!@#\$%^&*()_+\`-={}|[]\\\\:\\\";'<>?,./" : { inc2 : inc },
-    "./bar.mjs" : { inc3 : inc },
+    "./bar.mjs" : {
+        inc3 : inc,
+        giveMeNumber(x) {
+            if (typeof x !== 'number') {
+                throw "Not a number!";
+            }
+        },
+    },
 }
 
 let { exports } = await instantiate(imports);
