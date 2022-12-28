@@ -105,7 +105,6 @@ fun compileIr(
         moduleDescriptor,
         irBuiltIns,
         symbolTable,
-        allModules.first(),
         exportedDeclarations,
         keep,
         configuration,

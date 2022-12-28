@@ -601,7 +601,6 @@ class GenerateIrRuntime {
             module.descriptor,
             irBuiltIns,
             symbolTable,
-            module,
             additionalExportedDeclarationNames = emptySet(),
             keep = emptySet(),
             configuration

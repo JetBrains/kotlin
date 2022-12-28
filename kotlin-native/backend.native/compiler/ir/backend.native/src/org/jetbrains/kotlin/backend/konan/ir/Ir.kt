@@ -41,7 +41,7 @@ object KonanNameConventions {
 }
 
 // This is what Context collects about IR.
-internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context>(context, irModule) {
+internal class KonanIr(context: Context): Ir<Context>(context) {
     override var symbols: KonanSymbols by Delegates.notNull()
 }
 

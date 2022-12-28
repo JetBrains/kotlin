@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -83,7 +81,7 @@ internal class Context(
         irModules = psiToIrOutput.irModules
         irModule = psiToIrOutput.irModule
         expectDescriptorToSymbol = psiToIrOutput.expectDescriptorToSymbol
-        ir = KonanIr(this, psiToIrOutput.irModule)
+        ir = KonanIr(this)
         ir.symbols = psiToIrOutput.symbols
         if (psiToIrOutput.irLinker is KonanIrLinker) {
             irLinker = psiToIrOutput.irLinker
@@ -158,7 +156,7 @@ internal class Context(
                 throw Error("Another IrModule in the context.")
             }
             field = module!!
-            ir = KonanIr(this, module)
+            ir = KonanIr(this)
         }
 
     override lateinit var ir: KonanIr
