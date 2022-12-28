@@ -8,6 +8,7 @@ package kotlin.wasm.unsafe
 import kotlin.wasm.internal.WasmOp
 import kotlin.wasm.internal.implementedAsIntrinsic
 import kotlin.wasm.internal.unsafeGetScratchRawMemory
+import kotlin.contracts.*
 
 /**
  * WebAssembly linear memory allocator.
@@ -51,6 +52,7 @@ public abstract class MemoryAllocator {
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
 ): T {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     val allocator = createAllocatorInTheNewScope()
     val result = try {
         block(allocator)

@@ -89,10 +89,10 @@ class MemoryAllocationTest {
     @Test
     fun nestedAllocators() {
         val sizes = listOf<Int>(1, 1, 2, 3, 8, 10, 305, 12_747, 31_999)
-        lateinit var allocations1: List<Int>
-        lateinit var allocations1_1: List<Int>
-        lateinit var allocations1_2: List<Int>
-        lateinit var allocations2: List<Int>
+        var allocations1: List<Int>
+        var allocations1_1: List<Int>
+        var allocations1_2: List<Int>
+        var allocations2: List<Int>
 
         withScopedMemoryAllocator { allocator0 ->
             allocations1 = sizes.map { size -> allocator0.allocate(size) }
