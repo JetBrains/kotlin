@@ -6,8 +6,8 @@
 package kotlin.wasm
 
 /**
- * Imports function from given [module] with given optional [name].
- * Declaration name will be used if [name] argument is not provided.
+ * Imports a function from the given [module] with the given optional [name].
+ * The declaration name will be used if the [name] argument is not provided.
  *
  * Can only be used on top-level external functions.
  *
