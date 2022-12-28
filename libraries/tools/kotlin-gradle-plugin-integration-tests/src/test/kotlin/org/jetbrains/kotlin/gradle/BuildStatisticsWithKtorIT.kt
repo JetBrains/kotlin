@@ -48,18 +48,22 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                 routing {
                     get("/ready") {
+                        System.err.println("KTOR DEBUG: ready")
                         call.respond(HttpStatusCode.OK)
                     }
                     post("/badRequest") {
+                        System.err.println("KTOR DEBUG: bad request")
                         call.respond(HttpStatusCode.BadRequest, "Some reason")
                     }
                     post("/put") {
                         val body = call.receive<String>()
+                        System.err.println("KTOR DEBUG: put, body: $body")
                         requests.add(body)
                         call.respond(HttpStatusCode.OK)
                     }
                     get("/validate") {
                         try {
+                            System.err.println("KTOR DEBUG: validate")
                             call.respond(status = HttpStatusCode.OK, requests.poll(2, TimeUnit.SECONDS))
                         } catch (e: Exception) {
                             call.respond(status = HttpStatusCode.NotFound, e.message ?: e::class)
