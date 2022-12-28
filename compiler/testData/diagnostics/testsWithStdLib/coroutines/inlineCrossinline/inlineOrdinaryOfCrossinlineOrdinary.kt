@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_COROUTINES

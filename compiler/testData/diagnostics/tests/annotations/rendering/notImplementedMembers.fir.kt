@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.VALUE_PARAMETER,  AnnotationTarget.PROPERTY)

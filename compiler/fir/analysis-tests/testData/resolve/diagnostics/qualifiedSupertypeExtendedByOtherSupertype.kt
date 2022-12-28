@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: -QualifiedSupertypeMayBeExtendedByOtherSupertype
 interface IBase<T> {
     fun foo() {}

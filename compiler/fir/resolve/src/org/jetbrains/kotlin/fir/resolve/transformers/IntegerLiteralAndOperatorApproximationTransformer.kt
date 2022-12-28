@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -50,7 +51,8 @@ class IntegerLiteralAndOperatorApproximationTransformer(
     private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, TO_U_LONG)}
 
     private fun findConversionFunction(receiverType: FirImplicitBuiltinTypeRef, name: Name): FirNamedFunctionSymbol {
-        return receiverType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)!!.getFunctions(name).single()
+        return receiverType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)!!
+            .getFunctions(name).single()
     }
 
     override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): E {

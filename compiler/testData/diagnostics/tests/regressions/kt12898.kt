@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 
 interface B<T : S?, S : Any> {
     val t: T

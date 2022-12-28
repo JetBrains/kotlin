@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 interface One {
     public fun foo(): Any?

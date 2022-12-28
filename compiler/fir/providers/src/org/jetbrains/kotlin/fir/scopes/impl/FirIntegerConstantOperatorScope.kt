@@ -35,7 +35,8 @@ class FirIntegerConstantOperatorScope(
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
         }.type
-        baseType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: error("Scope for $baseType not found")
+        baseType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
+            ?: error("Scope for $baseType not found")
     }
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()

@@ -633,7 +633,8 @@ object FirExpectActualResolver {
         scopeSession: ScopeSession,
         session: FirSession = moduleData.session
     ): Collection<FirBasedSymbol<*>> {
-        val scope = defaultType().scope(useSiteSession = session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        val scope = defaultType()
+            .scope(useSiteSession = session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
             ?: return emptyList()
         return mutableListOf<FirBasedSymbol<*>>().apply {
             for (name in scope.getCallableNames()) {
@@ -660,7 +661,13 @@ object FirExpectActualResolver {
     }
 
     private fun FirClassSymbol<*>.getMembers(name: Name, scopeSession: ScopeSession): Collection<FirCallableSymbol<*>> {
-        val scope = defaultType().scope(useSiteSession = moduleData.session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        val scope = defaultType()
+            .scope(
+                useSiteSession = moduleData.session,
+                scopeSession,
+                FakeOverrideTypeCalculator.DoNothing,
+                requiredPhase = FirResolvePhase.STATUS
+            )
             ?: return emptyList()
         return mutableListOf<FirCallableSymbol<*>>().apply {
             scope.getMembersTo(this, name)

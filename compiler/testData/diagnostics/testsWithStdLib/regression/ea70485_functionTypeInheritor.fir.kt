@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class O : Function2<Int, String, Unit> {
     override fun invoke(p1: Int, p2: String) {
     }

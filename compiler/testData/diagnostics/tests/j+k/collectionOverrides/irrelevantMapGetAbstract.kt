@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: Dict.java
 
 public abstract class Dict<K, V> {
