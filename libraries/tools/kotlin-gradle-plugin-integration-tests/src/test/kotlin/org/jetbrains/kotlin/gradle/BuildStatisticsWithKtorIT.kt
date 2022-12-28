@@ -47,6 +47,9 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 val requests = ArrayBlockingQueue<String>(10)
 
                 routing {
+                    get("/ready") {
+                        call.respond(HttpStatusCode.OK)
+                    }
                     post("/badRequest") {
                         call.respond(HttpStatusCode.BadRequest, "Some reason")
                     }
@@ -65,8 +68,16 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                 }
             }.start()
+            waitForServer(port)
             action(port)
             server.stop(1000, 1000)
+        }
+
+        private fun waitForServer(port: Int) {
+            val connection = URL("http://localhost:$port/ready").openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            connection.connect()
+            assertEquals(200, connection.responseCode)
         }
 
         private fun getEmptyPort(): ServerSocket {
