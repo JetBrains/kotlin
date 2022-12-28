@@ -17,16 +17,8 @@ class SourceCodeAnalysisException(val source: KtSourceElement, override val caus
     override val message get() = cause.classNameAndMessage
 }
 
-inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
-    return try {
-        block()
-    } catch (throwable: Throwable) {
-        throw throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element)
-    }
-}
 
-@PublishedApi
-internal fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
+fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
     is SourceCodeAnalysisException -> this
     is IndexNotReadyException -> this
     is ControlFlowException -> this
@@ -49,21 +41,7 @@ class FileAnalysisException(
         }
 }
 
-inline fun <R> withFileAnalysisExceptionWrapping(
-    filePath: String?,
-    fileSource: AbstractKtSourceElement?,
-    crossinline linesMapping: (Int) -> Pair<Int, Int>?,
-    block: () -> R,
-): R {
-    return try {
-        block()
-    } catch (throwable: Throwable) {
-        throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(filePath, fileSource) { linesMapping(it) }
-    }
-}
-
-@PublishedApi
-internal fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
+fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     filePath: String?,
     fileSource: AbstractKtSourceElement?,
     linesMapping: (Int) -> Pair<Int, Int>?,
