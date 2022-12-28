@@ -44,13 +44,13 @@ public final class Container /* Container*/ {
 
   public final void invIn(@org.jetbrains.annotations.NotNull() Out<? extends Inv<? super Final>>);//  invIn(Out<? extends Inv<? super Final>>)
 
-  public final void invInAny(@org.jetbrains.annotations.NotNull() Out<? extends Inv<? super java.lang.Object>>);//  invInAny(Out<? extends Inv<? super java.lang.Object>>)
+  public final void invInAny(@org.jetbrains.annotations.NotNull() Out<Inv<? super java.lang.Object>>);//  invInAny(Out<Inv<? super java.lang.Object>>)
 
   public final void invInOutFinal(@org.jetbrains.annotations.NotNull() Inv<In<Out<? extends Final>>>);//  invInOutFinal(Inv<In<Out<? extends Final>>>)
 
   public final void invInOutOpen(@org.jetbrains.annotations.NotNull() Inv<In<Out<? extends Open>>>);//  invInOutOpen(Inv<In<Out<? extends Open>>>)
 
-  public final void invInv(@org.jetbrains.annotations.NotNull() Out<? extends Inv<Open>>);//  invInv(Out<? extends Inv<Open>>)
+  public final void invInv(@org.jetbrains.annotations.NotNull() Out<Inv<Open>>);//  invInv(Out<Inv<Open>>)
 
   public final void invOpen(@org.jetbrains.annotations.NotNull() Inv<Open>);//  invOpen(Inv<Open>)
 
@@ -70,7 +70,7 @@ public final class Container /* Container*/ {
 
   public final void outIn(@org.jetbrains.annotations.NotNull() Out<? extends In<? super Final>>);//  outIn(Out<? extends In<? super Final>>)
 
-  public final void outInAny(@org.jetbrains.annotations.NotNull() Out<? extends In<java.lang.Object>>);//  outInAny(Out<? extends In<java.lang.Object>>)
+  public final void outInAny(@org.jetbrains.annotations.NotNull() Out<In<java.lang.Object>>);//  outInAny(Out<In<java.lang.Object>>)
 
   public final void outOfArrayOpen(@org.jetbrains.annotations.NotNull() Out<Open[]>);//  outOfArrayOpen(Out<Open[]>)
 
