@@ -62,6 +62,8 @@ ext.configureFrontendIr = { Project project ->
             if (project.kotlinBuildProperties.useFirForLibraries) {
                 freeCompilerArgs += "-Xuse-k2"
                 allWarningsAsErrors = false
+            } else if (project.kotlinBuildProperties.useFir) {
+                freeCompilerArgs += "-Xskip-prerelease-check"
             }
             if (project.properties.renderDiagnosticNames) {
                 freeCompilerArgs += "-Xrender-internal-diagnostic-names"

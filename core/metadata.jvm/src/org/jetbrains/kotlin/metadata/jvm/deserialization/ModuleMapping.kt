@@ -53,7 +53,7 @@ class ModuleMapping private constructor(
             debugName: String,
             skipMetadataVersionCheck: Boolean,
             isJvmPackageNameSupported: Boolean,
-            metadataVersionFromLanguageVersion: JvmMetadataVersion,
+            metadataVersionFromLanguageVersion: JvmMetadataVersion = JvmMetadataVersion.INSTANCE,
             reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit,
         ): ModuleMapping {
             if (bytes == null) {

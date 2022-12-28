@@ -172,14 +172,18 @@ fun Project.configureKotlinCompilationOptions() {
             kotlinOptions {
                 freeCompilerArgs += jvmCompilerArgs
 
-                if (useJvmFir && project.path !in projectsWithDisabledFirBootstrap) {
-                    freeCompilerArgs += "-Xuse-k2"
-                    freeCompilerArgs += "-Xabi-stability=stable"
-                    if (useFirLT) {
-                        freeCompilerArgs += "-Xuse-fir-lt"
-                    }
-                    if (useFirIC) {
-                        freeCompilerArgs += "-Xuse-fir-ic"
+                if (useJvmFir) {
+                    if (project.path !in projectsWithDisabledFirBootstrap) {
+                        freeCompilerArgs += "-Xuse-k2"
+                        freeCompilerArgs += "-Xabi-stability=stable"
+                        if (useFirLT) {
+                            freeCompilerArgs += "-Xuse-fir-lt"
+                        }
+                        if (useFirIC) {
+                            freeCompilerArgs += "-Xuse-fir-ic"
+                        }
+                    } else {
+                        freeCompilerArgs += "-Xskip-prerelease-check"
                     }
                 }
                 if (renderDiagnosticNames) {
