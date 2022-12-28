@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -58,7 +59,8 @@ internal class KtFirPropertySetterSymbol(
             val containingClassScope = firSymbol.dispatchReceiverType?.scope(
                 session,
                 firResolveSession.getScopeSessionFor(session),
-                FakeOverrideTypeCalculator.DoNothing
+                FakeOverrideTypeCalculator.DoNothing,
+                requiredPhase = FirResolvePhase.STATUS,
             ) ?: return false
             val overriddenProperties = containingClassScope.getDirectOverriddenProperties(propertySymbol)
             overriddenProperties.any { it.isVar }

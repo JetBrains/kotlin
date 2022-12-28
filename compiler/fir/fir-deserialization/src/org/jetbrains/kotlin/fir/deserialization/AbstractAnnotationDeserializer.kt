@@ -207,7 +207,8 @@ abstract class AbstractAnnotationDeserializer(
                 val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir ?: return@lazy null
 
                 val classScope =
-                    firAnnotationClass.defaultType().scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing)
+                    firAnnotationClass.defaultType()
+                        .scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
                         ?: error("Null scope for $classId")
 
                 val constructor =

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -49,8 +48,8 @@ class FirDelegatedMemberScope(
     }
 
     private fun buildScope(delegateField: FirField): FirTypeScope? {
-        delegateField.lazyResolveToPhase(FirResolvePhase.TYPES)
-        return delegateField.returnTypeRef.coneType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        return delegateField.returnTypeRef.coneType
+            .scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
     }
 
     private fun collectFunctionsFromSpecificField(

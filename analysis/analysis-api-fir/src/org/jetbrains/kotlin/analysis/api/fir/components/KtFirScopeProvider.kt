@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -85,6 +85,7 @@ internal class KtFirScopeProvider(
     override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         return memberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope { fir ->
+                fir.lazyResolveToPhase(FirResolvePhase.STATUS)
                 val firSession = analysisSession.useSiteSession
                 fir.unsubstitutedScope(
                     firSession,
@@ -124,6 +125,7 @@ internal class KtFirScopeProvider(
             ?: return delegatedMemberScopeCache.getOrPut(classSymbol) { getEmptyScope() }
         return delegatedMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope { fir ->
+                fir.lazyResolveToPhase(FirResolvePhase.STATUS)
                 val delegateFields = fir.delegateFields
                 if (delegateFields.isNotEmpty()) {
                     val firSession = analysisSession.useSiteSession
@@ -170,7 +172,8 @@ internal class KtFirScopeProvider(
         val firTypeScope = type.coneType.scope(
             firSession,
             scopeSession,
-            FakeOverrideTypeCalculator.Forced
+            FakeOverrideTypeCalculator.Forced,
+            requiredPhase = FirResolvePhase.STATUS,
         ) ?: return null
         return KtCompositeTypeScope(
             listOfNotNull(

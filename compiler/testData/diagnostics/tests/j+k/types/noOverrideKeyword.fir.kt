@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !SKIP_JAVAC
 // SKIP_TXT
 // !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated

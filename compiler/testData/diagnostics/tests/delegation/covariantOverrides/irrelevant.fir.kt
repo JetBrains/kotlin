@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 interface IBase1 {
     fun foo(): Any
 }

@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 interface FirElement {
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R
 

@@ -192,7 +192,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     } else {
         FakeOverrideTypeCalculator.DoNothing
     }
-    val scope = scope(session, scopeSession, fakeOverrideTypeCalculator) ?: return null
+    val scope = scope(session, scopeSession, fakeOverrideTypeCalculator, requiredPhase = null) ?: return null
     var declaredInvoke: FirNamedFunctionSymbol? = null
     scope.processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
         if (functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size) {

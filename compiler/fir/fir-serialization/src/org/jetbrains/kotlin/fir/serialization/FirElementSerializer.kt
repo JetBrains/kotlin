@@ -151,7 +151,7 @@ class FirElementSerializer private constructor(
         }
 
         fun FirClass.nestedClassifiers(): List<FirClassifierSymbol<*>> {
-            val scope = defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: return emptyList()
+            val scope = defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null) ?: return emptyList()
             return buildList {
                 scope.getClassifierNames().mapNotNullTo(this) { scope.getSingleClassifier(it) }
             }
@@ -226,7 +226,7 @@ class FirElementSerializer private constructor(
 
     private fun FirClass.declarations(): List<FirCallableDeclaration> = buildList {
         val memberScope =
-            defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+            defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
                 ?: error("Null scope for $this")
 
         fun addDeclarationIfNeeded(symbol: FirCallableSymbol<*>) {
