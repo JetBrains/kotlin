@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: JA.java
 public interface JA<E> {
     public E getFoo();

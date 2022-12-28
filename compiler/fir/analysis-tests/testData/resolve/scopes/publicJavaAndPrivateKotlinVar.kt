@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // SCOPE_DUMP: C:getName;setName;name, D:getName;setName;name
 // FILE: A.java
 public interface A {
