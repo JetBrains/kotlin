@@ -1,5 +1,6 @@
 import abitestutils.abiTest
 import abitestutils.TestBuilder
+import abitestutils.TestMode.NATIVE_CACHE_STATIC_EVERYWHERE
 
 fun box() = abiTest {
     success("PublicTopLevelClass") { PublicTopLevelClass_valueParameter(null) }
@@ -105,5 +106,12 @@ private inline fun TestBuilder.unlinkedConstructorSymbol(signature: String, noin
 }
 
 private inline fun TestBuilder.unlinkedSymbol(signature: String, functionName: String, noinline block: () -> Unit) {
-    expectFailure(linkage("Function '$functionName' can not be called: Function uses unlinked class symbol '$signature'"), block)
+    // Need to slightly adjust the expected IR linkage error message. Reason: When Lazy IR is used the type of the
+    // symbol is determined more accurately.
+    val symbolKind = if ("InnerClass" in functionName && testMode == NATIVE_CACHE_STATIC_EVERYWHERE)
+        "inner class"
+    else
+        "class"
+
+    expectFailure(linkage("Function '$functionName' can not be called: Function uses unlinked $symbolKind symbol '$signature'"), block)
 }

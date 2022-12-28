@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal object PartialLinkageUtils {
@@ -29,6 +32,41 @@ internal object PartialLinkageUtils {
         is IdSignature.AccessorSignature -> accessorSignature.guessName(nameSegmentsToPickUp)
 
         else -> null
+    }
+
+    fun IrDeclarationWithName.computeClassId(): ClassId? = when (val parent = parent) {
+        is IrPackageFragment -> ClassId(parent.fqName, name)
+        is IrDeclarationWithName -> parent.computeClassId()?.createNestedClassId(name)
+        else -> null
+    }
+
+    /**
+     * Check if the outermost lazy IR class containing [this] declaration is private. If it is, which normally should not happen
+     * because the lazy IR declaration referenced from non-lazy IR is always expected to be exported from its module and thus
+     * to be non-private, then consider [this] as the effectively missing declaration.
+     *
+     * Such behaviour conforms with behavior that can be observed with no lazy IR usage. Consider the case:
+     * 1. Module A.v1:
+     *      public class A {
+     *          fun foo(): String // ID signature: "/A.foo|123"
+     *      }
+     * 2. Module A.v2:
+     *      private class A {
+     *          fun foo(): String // private ID signature (as the containing class is private)
+     *      }
+     * 3. Module B -> A.v1:
+     *      fun bar() {
+     *          val a = A()
+     *          a.foo() // IR call references a function symbol with ID signature: "/A.foo|123"
+     *      }
+     * 4. Module App -> A.v2, B
+     *      // Invocation of `A.foo()` inside `fun bar()` is replaced by the IR linkage error. That's
+     *      // because no declaration found for symbol "/A.foo|123" during the IR linkage phase.
+     */
+    fun IrLazyDeclarationBase.isEffectivelyMissingLazyIrDeclaration(): Boolean {
+        val nearestClass = this as? IrClass ?: parentClassOrNull ?: return false
+        val outermostClass = generateSequence(nearestClass) { it.parentClassOrNull }.last()
+        return outermostClass.visibility == DescriptorVisibilities.PRIVATE
     }
 
     /** For fast check if a declaration is in the module */

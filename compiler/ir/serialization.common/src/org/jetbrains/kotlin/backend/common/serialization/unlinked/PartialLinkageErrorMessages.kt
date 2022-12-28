@@ -11,16 +11,15 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassi
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExpressionKind.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.UNKNOWN_NAME
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.computeClassId
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.guessName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
@@ -144,23 +143,44 @@ private fun IrSymbol.guessName(): String? {
     fun IrElement.isCompanionWithDefaultName() = this is IrClass && isCompanion && name == DEFAULT_NAME_FOR_COMPANION_OBJECT
 
     return signature
-        ?.let { effectiveSignature ->
+        // First, try to guess name by the signature. This is the most reliable way, especially when the declaration itself is missing
+        // and the symbol owner is just an IR stub, which is always a direct child of the auxiliary package fragment.
+        ?.let { signature ->
             val nameSegmentsToPickUp = when {
-                effectiveSignature is AccessorSignature -> 2 // property_name.accessor_name
+                signature is AccessorSignature -> 2 // property_name.accessor_name
                 this is IrConstructorSymbol -> if (owner.parent.isCompanionWithDefaultName()) 3 else 2 // class_name.<init> or class_name.Companion.<init>
                 this is IrEnumEntrySymbol -> 2 // enum_class_name.entry_name
                 owner.isCompanionWithDefaultName() -> 2 // class_name.Companion
                 else -> 1
             }
-            effectiveSignature.guessName(nameSegmentsToPickUp)
+            signature.guessName(nameSegmentsToPickUp)
         }
-        ?: (owner as? IrDeclarationWithName)?.name?.asString()
+        ?: (owner as? IrDeclarationWithName)
+            // Lazy IR may not have signatures. Let's try to extract name from the declaration itself.
+            ?.let { owner ->
+                when (owner) {
+                    is IrSimpleFunction -> listOfNotNull(owner.correspondingPropertySymbol?.owner?.name, owner.name)
+                    is IrConstructor -> {
+                        val parent = owner.parentClassOrNull
+                        when {
+                            parent == null || parent.isAnonymousObject -> listOf(owner.name)
+                            parent.isCompanionWithDefaultName() -> listOfNotNull(parent.parentClassOrNull?.name, parent.name, owner.name)
+                            else -> listOf(parent.name, owner.name)
+                        }
+                    }
+                    is IrEnumEntry -> listOfNotNull(owner.parentClassOrNull?.name, owner.name)
+                    else -> listOf(owner.name)
+                }.joinToString(".")
+            }
 }
 
-private fun Appendable.signature(symbol: IrSymbol): Appendable {
+private fun Appendable.symbolName(symbol: IrSymbol): Appendable {
     var file: String? = null
+
     val symbolRepresentation = symbol.signature?.render()
         ?: symbol.privateSignature?.let {
+            // Try to extract symbol name from private signature if no public signature is available.
+            // This could happen during visiting local IR entities declared inside function body.
             when (it) {
                 is FileSignature -> null // Avoid printing FileSignature.
                 is CompositeSignature -> {
@@ -173,6 +193,10 @@ private fun Appendable.signature(symbol: IrSymbol): Appendable {
                 }
                 else -> it.render()
             }
+        }
+        ?: (symbol.owner as? IrDeclarationWithName)?.let { lazyIrDeclaration ->
+            // Lazy IR declaration might not have any signature at all. So let's print anything helpful at least.
+            lazyIrDeclaration.computeClassId()?.let { "$it|?" /* We don't know the exact hash and mask to print them here. */ }
         }
         ?: UNKNOWN_SYMBOL
 
@@ -238,7 +262,7 @@ private fun Appendable.cause(cause: Unusable): Appendable =
     }
 
 private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
-    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol)
+    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").symbolName(symbol)
 
 private fun Appendable.noEnclosingClass(symbol: IrClassSymbol): Appendable =
     declarationKindName(symbol, capitalized = true).append(" lacks enclosing class")
@@ -247,7 +271,7 @@ private fun Appendable.unlinkedSymbol(
     rootCause: Unusable.MissingClassifier,
     cause: Unusable.DueToOtherClassifier? = null
 ): Appendable {
-    append("unlinked ").declarationKind(rootCause.symbol, capitalized = false).append(" symbol ").signature(rootCause.symbol)
+    append("unlinked ").declarationKind(rootCause.symbol, capitalized = false).append(" symbol ").symbolName(rootCause.symbol)
     if (cause != null) through(cause)
     return this
 }
