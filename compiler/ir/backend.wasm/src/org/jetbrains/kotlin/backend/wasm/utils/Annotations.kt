@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.wasm.ir.WasmImportPair
+import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
 
-fun IrFunction.getWasmImportDescriptor(): WasmImportPair? {
+fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val annotation = getAnnotation(FqName("kotlin.wasm.WasmImport"))
         ?: return null
 
     @Suppress("UNCHECKED_CAST")
-    return WasmImportPair(
+    return WasmImportDescriptor(
         (annotation.getValueArgument(0) as IrConst<String>).value,
         (annotation.getValueArgument(1) as? IrConst<String>)?.value ?: this.name.asString()
     )
