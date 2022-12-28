@@ -19,6 +19,8 @@ class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean)
     }
 
     fun isCompatible(metadataVersionFromLanguageVersion: JvmMetadataVersion): Boolean {
+        // Special case for bootstrap: 1.8 can read 2.0
+        if (major == 2 && minor == 0 && INSTANCE.major == 1 && INSTANCE.minor == 8) return true
         // * Compiler of deployVersion X (INSTANCE) with LV Y (metadataVersionFromLanguageVersion)
         //   * can read metadata with version <= max(X+1, Y)
         val forwardCompatibility = if (isStrictSemantics) INSTANCE else INSTANCE_NEXT

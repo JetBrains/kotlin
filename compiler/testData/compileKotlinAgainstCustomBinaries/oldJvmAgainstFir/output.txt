@@ -1,10 +1,8 @@
-error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
-$TMP_DIR$/library.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.0.0, expected version is $ABI_VERSION$.
-compiler/testData/compileKotlinAgainstCustomBinaries/oldJvmAgainstFir/source.kt:4:5: error: unresolved reference: get
+error: pre-release classes were found in dependencies. Remove them from the classpath, recompile with a release compiler or use '-Xskip-prerelease-check' to suppress errors
+compiler/testData/compileKotlinAgainstCustomBinaries/oldJvmAgainstFir/source.kt:4:5: error: class 'lib.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
     get { Box("OK").value }
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/oldJvmAgainstFir/source.kt:4:11: error: class 'lib.Box' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.0.0, expected version is $ABI_VERSION$.
-The class is loaded from $TMP_DIR$/library.jar!/lib/Box.class
+compiler/testData/compileKotlinAgainstCustomBinaries/oldJvmAgainstFir/source.kt:4:11: error: class 'lib.Box' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
     get { Box("OK").value }
           ^
 COMPILATION_ERROR
