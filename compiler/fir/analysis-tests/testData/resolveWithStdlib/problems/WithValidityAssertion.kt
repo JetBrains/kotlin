@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 import kotlin.reflect.KProperty
 import kotlin.properties.ReadOnlyProperty
 

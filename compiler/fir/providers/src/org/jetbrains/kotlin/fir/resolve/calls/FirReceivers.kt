@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
@@ -41,7 +42,7 @@ interface ReceiverValue : Receiver {
     val receiverExpression: FirExpression
 
     fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue
@@ -70,9 +71,9 @@ open class ExpressionReceiverValue(
             receiverExpr = receiverExpr.arguments.firstOrNull()
         }
         if (receiverExpr is FirSmartCastExpression) {
-            return receiverExpr.smartcastScope(useSiteSession, scopeSession)
+            return receiverExpr.smartcastScope(useSiteSession, scopeSession, requiredPhase = FirResolvePhase.STATUS)
         }
-        return type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        return type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
     }
 }
 
@@ -91,7 +92,8 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 
     val originalType: ConeKotlinType = type
 
-    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    var implicitScope: FirTypeScope? =
+        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
         private set
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
@@ -132,7 +134,8 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
                 typeRef = smartcastType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
             }
         }
-        implicitScope = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        implicitScope =
+            type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
     }
 
     abstract fun createSnapshot(): ImplicitReceiverValue<S>

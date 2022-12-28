@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -92,7 +89,12 @@ class MemberScopeTowerLevel(
             ?.takeIf { it.isStable }
             ?.originalExpression?.typeRef
             ?.coneType
-            ?.scope(session, scopeSession, bodyResolveComponents.returnTypeCalculator.fakeOverrideTypeCalculator)
+            ?.scope(
+                session,
+                scopeSession,
+                bodyResolveComponents.returnTypeCalculator.fakeOverrideTypeCalculator,
+                requiredPhase = FirResolvePhase.STATUS
+            )
         if (scopeWithoutSmartcast == null) {
             consumeCandidates(output, candidates)
         } else {
@@ -123,7 +125,12 @@ class MemberScopeTowerLevel(
             if (dispatchReceiverType.isRaw()) {
                 typeForSyntheticScope = dispatchReceiverType.convertToNonRawVersion()
                 useSiteForSyntheticScope =
-                    typeForSyntheticScope.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+                    typeForSyntheticScope.scope(
+                        session,
+                        scopeSession,
+                        FakeOverrideTypeCalculator.DoNothing,
+                        requiredPhase = FirResolvePhase.STATUS
+                    )
                         ?: error("No scope for flexible type scope, while it's not null for $dispatchReceiverType")
             } else {
                 typeForSyntheticScope = dispatchReceiverType

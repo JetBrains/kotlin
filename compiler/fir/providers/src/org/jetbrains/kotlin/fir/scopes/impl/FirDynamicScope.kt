@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.moduleData
@@ -59,7 +61,7 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
     override fun getClassifierNames(): Set<Name> = emptySet()
 
     private val anyTypeScope by lazy {
-        session.builtinTypes.anyType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+        session.builtinTypes.anyType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
     }
 
     override fun processFunctionsByName(

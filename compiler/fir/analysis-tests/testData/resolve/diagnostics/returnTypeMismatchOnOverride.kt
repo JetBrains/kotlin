@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 open class A {
     open fun test(): Number = 10
 }

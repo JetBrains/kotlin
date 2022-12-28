@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // WITH_EXTENDED_CHECKERS
 class A {
     <!VALUE_CLASS_NOT_TOP_LEVEL!>inline<!> inner class B(val x: Int)

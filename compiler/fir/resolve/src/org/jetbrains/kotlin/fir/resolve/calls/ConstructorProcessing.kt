@@ -176,7 +176,12 @@ private fun processConstructors(
             is FirTypeAliasSymbol -> {
                 matchedSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
                 val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-                val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
+                val basicScope = type.scope(
+                    session,
+                    bodyResolveComponents.scopeSession,
+                    FakeOverrideTypeCalculator.DoNothing,
+                    requiredPhase = FirResolvePhase.STATUS
+                )
 
                 val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 

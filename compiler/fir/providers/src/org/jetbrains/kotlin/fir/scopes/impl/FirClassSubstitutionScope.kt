@@ -116,6 +116,7 @@ class FirClassSubstitutionScope(
 
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
@@ -175,6 +176,7 @@ class FirClassSubstitutionScope(
 
     fun createSubstitutionOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
         val constructor = original.fir
 
         val symbolForOverride = FirConstructorSymbol(original.callableId)
@@ -221,6 +223,7 @@ class FirClassSubstitutionScope(
 
     fun createSubstitutionOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
@@ -279,7 +282,6 @@ class FirClassSubstitutionScope(
     )
 
     private fun createSubstitutedData(member: FirCallableDeclaration, symbolForOverride: FirBasedSymbol<*>): SubstitutedData {
-        member.lazyResolveToPhase(FirResolvePhase.TYPES)
         val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
             session,
             member as FirTypeParameterRefsOwner,
@@ -293,7 +295,6 @@ class FirClassSubstitutionScope(
 
         val newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers.substitute(substitutor)
 
-        member.lazyResolveToPhase(FirResolvePhase.STATUS)
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val fakeOverrideSubstitution = runIf(returnType == null) { FakeOverrideSubstitution(substitutor, member.symbol) }
         val newReturnType = returnType?.substitute(substitutor)
@@ -309,10 +310,10 @@ class FirClassSubstitutionScope(
 
     fun createSubstitutionOverrideField(original: FirFieldSymbol): FirFieldSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
-        member.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         // TODO: do we have fields with implicit type?
         val newReturnType = returnType?.substitute() ?: return original
@@ -322,10 +323,10 @@ class FirClassSubstitutionScope(
 
     fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
         val member = original.fir as FirSyntheticProperty
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
-        member.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val fakeOverrideSubstitution = runIf(returnType == null) { FakeOverrideSubstitution(substitutor, original) }
         val newReturnType = returnType?.substitute()

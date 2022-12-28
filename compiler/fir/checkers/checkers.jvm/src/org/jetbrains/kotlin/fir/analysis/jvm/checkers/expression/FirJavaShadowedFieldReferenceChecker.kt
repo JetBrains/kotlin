@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.isSubclassOf
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -39,7 +42,7 @@ object FirJavaShadowedFieldReferenceChecker : FirCallableReferenceAccessChecker(
 
         val dispatchReceiver = expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression } ?: return
         val scope = dispatchReceiver.typeRef.coneType.scope(
-            session, context.sessionHolder.scopeSession, FakeOverrideTypeCalculator.DoNothing
+            session, context.sessionHolder.scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.TYPES
         ) ?: return
 
         var shadowingPropertyClassId: ClassId? = null

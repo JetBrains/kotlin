@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 class Item(val name: String, val rating: Int): Comparable<Item> {
     public override fun compareTo(other: Item): Int {
