@@ -206,12 +206,13 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 
             val classDescriptor = typeAliasDescriptor.classDescriptor
             val contextReceiverParameters = classDescriptor?.let {
-                constructor.contextReceiverParameters.map {
+                constructor.contextReceiverParameters.mapIndexed { index, contextReceiver ->
                     DescriptorFactory.createContextReceiverParameterForClass(
                         classDescriptor,
-                        substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT),
-                        (it.value as ImplicitContextReceiver).customLabelName,
-                        Annotations.EMPTY
+                        substitutorForUnderlyingClass.safeSubstitute(contextReceiver.type, Variance.INVARIANT),
+                        (contextReceiver.value as ImplicitContextReceiver).customLabelName,
+                        Annotations.EMPTY,
+                        index
                     )
                 }
             } ?: emptyList()

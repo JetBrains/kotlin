@@ -133,19 +133,13 @@ internal class ClassMemberGenerator(
                     val thisParameter =
                         conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
 
-                    val receiver = IrGetValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        thisParameter.type,
-                        thisParameter.symbol,
-                    )
-
                     for (index in containingClass.contextReceivers.indices) {
                         val irValueParameter = valueParameters[index]
                         body.statements.add(
                             IrSetFieldImpl(
                                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                                 contextReceiverFields[index].symbol,
-                                receiver,
+                                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParameter.type, thisParameter.symbol),
                                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
                                 components.irBuiltIns.unitType,
                             )

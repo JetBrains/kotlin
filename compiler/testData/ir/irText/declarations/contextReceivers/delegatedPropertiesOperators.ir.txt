@@ -86,13 +86,13 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
   CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Result
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]
-    CONSTRUCTOR visibility:public <> (<this>:kotlin.Int) returnType:<root>.Result [primary]
-      VALUE_PARAMETER name:<this> index:0 type:kotlin.Int
+    CONSTRUCTOR visibility:public <> (_context_receiver_0:kotlin.Int) returnType:<root>.Result [primary]
+      VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result' type=<root>.Result origin=null
-          value: GET_VAR '<this>: kotlin.Int declared in <root>.Result.<init>' type=kotlin.Int origin=null
+          value: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.Result.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [delegated,var]
       FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]
@@ -149,8 +149,8 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
               $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Result declared in <root>.box'
-                  CONSTRUCTOR_CALL 'public constructor <init> (<this>: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
-                    <this>: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> (_context_receiver_0: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
+                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
       CALL 'public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'val result: <root>.Result [val] declared in <root>.box' type=<root>.Result origin=null
         <set-?>: CONST String type=kotlin.String value="OK"

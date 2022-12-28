@@ -13,9 +13,9 @@ class Context {
 
 class Test {
   private /* final field */ val contextReceiverField0: Context
-  constructor(<this>: Context) /* primary */ {
+  constructor(_context_receiver_0: Context) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = <this>
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
   }

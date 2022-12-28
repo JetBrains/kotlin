@@ -860,6 +860,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("kt52791.kt")
+            public void testKt52791() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/kt52791.kt");
+            }
+
+            @Test
             @TestMetadata("lazy.kt")
             public void testLazy() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/lazy.kt");

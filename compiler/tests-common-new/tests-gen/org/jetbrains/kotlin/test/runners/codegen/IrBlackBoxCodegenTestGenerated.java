@@ -17216,6 +17216,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("multiple.kt")
+        public void testMultiple() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/multiple.kt");
+        }
+
+        @Test
         @TestMetadata("propertyWithContext.kt")
         public void testPropertyWithContext() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/propertyWithContext.kt");
