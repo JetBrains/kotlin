@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 
@@ -25,22 +26,38 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
         packageAccessedHandler: PackageAccessHandler?,
-        storageManager: StorageManager
-    ) = packageFragmentNames.flatMap {
-        val fqName = FqName(it)
-        val parts = library.packageMetadataParts(fqName.asString())
-        val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
-        parts.map { partName ->
-            if (isBuiltInModule)
-                BuiltInKlibMetadataDeserializedPackageFragment(
-                    fqName,
-                    library,
-                    packageAccessedHandler,
-                    storageManager,
-                    moduleDescriptor,
-                    partName
-                ) else
-                KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
+        storageManager: StorageManager,
+        configuration: DeserializationConfiguration
+    ): List<KlibMetadataDeserializedPackageFragment> {
+        val libraryHeader = (packageAccessedHandler ?: SimplePackageAccessHandler).loadModuleHeader(library)
+
+        return packageFragmentNames.flatMap {
+            val fqName = FqName(it)
+            val containerSource = KlibDeserializedContainerSource(libraryHeader, configuration, fqName)
+            val parts = library.packageMetadataParts(fqName.asString())
+            val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
+            parts.map { partName ->
+                if (isBuiltInModule)
+                    BuiltInKlibMetadataDeserializedPackageFragment(
+                        fqName,
+                        library,
+                        packageAccessedHandler,
+                        storageManager,
+                        moduleDescriptor,
+                        partName,
+                        containerSource
+                    )
+                else
+                    KlibMetadataDeserializedPackageFragment(
+                        fqName,
+                        library,
+                        packageAccessedHandler,
+                        storageManager,
+                        moduleDescriptor,
+                        partName,
+                        containerSource
+                    )
+            }
         }
     }
 

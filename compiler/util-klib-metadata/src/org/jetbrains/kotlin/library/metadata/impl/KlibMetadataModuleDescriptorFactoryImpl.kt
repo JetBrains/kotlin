@@ -106,7 +106,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
-            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager
+            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager, configuration
         )
 
         // TODO: this is native specific. Move to a child class.
