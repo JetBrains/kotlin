@@ -1,5 +1,5 @@
-import abitestutils.TestMode.NATIVE_CACHE_STATIC_EVERYWHERE
 import abitestutils.abiTest
+import abitestutils.TestMode.NATIVE_CACHE_STATIC_EVERYWHERE
 
 fun box() = abiTest {
     /**

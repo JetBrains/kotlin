@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Usable
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstantObject
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -58,9 +59,18 @@ internal class ClassifierExplorer(private val stubGenerator: MissingDeclarationS
         if (!isBound) {
             stubGenerator.getDeclaration(this) // Generate a stub and bind the symbol immediately.
             return exploredSymbols.registerUnusable(this, MissingClassifier(this))
-        } else if ((owner as? IrLazyDeclarationBase)?.descriptor is NotFoundClasses.MockClassDescriptor) {
-            // In case of Lazy IR the declaration is present, but wraps a special descriptor.
-            return exploredSymbols.registerUnusable(this, MissingClassifier(this))
+        }
+
+        (owner as? IrLazyClass)?.let { lazyIrClass ->
+            val isEffectivelyMissingClassifier =
+                /* Lazy IR declaration is present but wraps a special "not found" class descriptor. */
+                lazyIrClass.descriptor is NotFoundClasses.MockClassDescriptor
+                        /* The outermost class containing the lazy IR declaration is private, which normally should not happen
+                         * because the declaration is exported from the module. */
+                        || lazyIrClass.isEffectivelyMissingLazyIrDeclaration()
+
+            if (isEffectivelyMissingClassifier)
+                return exploredSymbols.registerUnusable(this, MissingClassifier(this))
         }
 
         if (!visitedSymbols.add(this)) {

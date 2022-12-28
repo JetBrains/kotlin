@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -459,10 +461,17 @@ internal class PartiallyLinkedIrTreePatcher(
                 stubGenerator.getDeclaration(symbol)
             }
 
-            val origin = (symbol.owner as? IrDeclaration)?.origin ?: return null
+            when (val owner = symbol.owner) {
+                is IrDeclaration -> {
+                    if (owner.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION
+                        || (owner as? IrLazyDeclarationBase)?.isEffectivelyMissingLazyIrDeclaration() == true
+                    ) {
+                        return ExpressionUsesMissingDeclaration(this, symbol)
+                    }
+                }
 
-            if (origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
-                return ExpressionUsesMissingDeclaration(this, symbol)
+                else -> return null // Not a declaration.
+            }
 
             val partialLinkageCase = when (symbol) {
                 is IrClassifierSymbol -> symbol.explore()?.let { ExpressionUsesPartiallyLinkedClassifier(this, it) }
