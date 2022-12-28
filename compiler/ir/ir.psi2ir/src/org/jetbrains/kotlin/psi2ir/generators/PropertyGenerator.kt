@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.hasBackingField
 
 class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
@@ -76,8 +77,11 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrProperty {
         val irPropertyType = propertyDescriptor.type.toIrType()
         return generateSyntheticPropertyWithInitializer(ktDeclarationContainer, propertyDescriptor, generateSyntheticAccessors) {
-            if (irValueParameter == null || context.configuration.skipBodies) null
-            else {
+            if (irValueParameter == null)
+                null
+            else if (context.configuration.skipBodies && !DescriptorUtils.isAnnotationClass(propertyDescriptor.containingDeclaration))
+                null
+            else
                 context.irFactory.createExpressionBody(
                     IrGetValueImpl(
                         ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
@@ -86,7 +90,6 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
                     )
                 )
-            }
         }
     }
 
