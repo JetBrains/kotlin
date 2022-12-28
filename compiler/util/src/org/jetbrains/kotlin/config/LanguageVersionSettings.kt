@@ -312,7 +312,7 @@ enum class LanguageFeature(
     ExplicitBackingFields(sinceVersion = null, kind = UNSTABLE_FEATURE),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null),
     JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = null, kind = UNSTABLE_FEATURE),
-    JsAllowValueClassesInExternals(sinceVersion = null, kind = UNSTABLE_FEATURE),
+    JsAllowValueClassesInExternals(sinceVersion = null, kind = OTHER),
     ContextReceivers(sinceVersion = null),
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
