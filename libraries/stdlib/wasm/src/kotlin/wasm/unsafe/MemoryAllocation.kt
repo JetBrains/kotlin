@@ -23,7 +23,7 @@ public abstract class MemoryAllocator {
 }
 
 /**
- * Run a [block] of code, providing it a temporary [MemoryAllocator] as an argument, and return its result.
+ * Runs the [block] of code, providing it a temporary [MemoryAllocator] as an argument, and returns the result of this block.
  *
  * Free all memory allocated with provided allocator after running the [block].
  *
