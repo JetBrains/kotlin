@@ -278,7 +278,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall)
         try {
-            return whileAnalysing(qualifiedAccessOrAnnotationCall) {
+            return whileAnalysing(context.session, qualifiedAccessOrAnnotationCall) {
                 block()
             }
         } finally {
@@ -293,7 +293,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addGetClassCall(getClassCall)
         try {
-            return whileAnalysing(getClassCall) {
+            return whileAnalysing(context.session, getClassCall) {
                 block()
             }
         } finally {
@@ -308,7 +308,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addDeclaration(declaration)
         try {
-            return whileAnalysing(declaration) {
+            return whileAnalysing(context.session, declaration) {
                 block()
             }
         } finally {

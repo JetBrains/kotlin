@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -20,8 +26,6 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.util.*
-import kotlin.collections.ArrayList
 
 // TODO: rewrite
 fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
@@ -133,7 +137,8 @@ fun FirDeclarationStatus.copy(
     }
 }
 
-inline fun <R> whileAnalysing(element: FirElement, block: () -> R) = org.jetbrains.kotlin.util.whileAnalysing(element.source, block)
+inline fun <R> whileAnalysing(@Suppress("UNUSED_PARAMETER") session: FirSession, element: FirElement, block: () -> R) =
+    org.jetbrains.kotlin.util.whileAnalysing(element.source, block)
 
 inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R): R {
     return org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping(
