@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker() {
     private val CONCURRENT_HASH_MAP_CALLABLE_ID = CallableId(
         ClassId.fromString("java/util/concurrent/ConcurrentHashMap"),
-        Name.identifier("contains")
+        OperatorNameConventions.CONTAINS
     )
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
