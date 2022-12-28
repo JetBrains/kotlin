@@ -164,7 +164,7 @@ internal class Context(
     override lateinit var ir: KonanIr
 
     override val irBuiltIns
-        get() = ir.irModule.irBuiltins
+        get() = irModule!!.irBuiltins
 
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)

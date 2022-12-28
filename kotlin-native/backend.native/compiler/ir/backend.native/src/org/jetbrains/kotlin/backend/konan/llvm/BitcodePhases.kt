@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         name = "CreateLLVMDeclarations",
         description = "Map IR declarations to LLVM",
-        op = { context, _ -> context.generationState.llvmDeclarations = createLlvmDeclarations(context.generationState, context.ir.irModule) }
+        op = { context, _ -> context.generationState.llvmDeclarations = createLlvmDeclarations(context.generationState, context.irModule!!) }
 )
 
 internal val RTTIPhase = makeKonanModuleOpPhase(
