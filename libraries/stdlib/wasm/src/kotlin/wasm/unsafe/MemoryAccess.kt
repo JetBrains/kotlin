@@ -14,7 +14,7 @@ import kotlin.wasm.internal.implementedAsIntrinsic
  */
 typealias Pointer = Int
 
-/** Load a Byte (8 bit) value from linear memory at address [pointer]. */
+/** Load a Byte (8 bit) value from linear memory at the address specified by [pointer]. */
 @WasmOp(WasmOp.I32_LOAD8_S)
 @UnsafeWasmMemoryApi
 public fun loadByte(pointer: Pointer): Byte =
