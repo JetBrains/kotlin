@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -21,9 +21,6 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -119,16 +116,11 @@ class KlibBasedSymbolProvider(
                 val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
 
                 return ClassMetadataFindResult.NoMetadata { symbol ->
-                    val source = object : DeserializedContainerSource {
-                        override val incompatibility: IncompatibleVersionErrorData<*>? = null
-                        override val isPreReleaseInvisible =
-                            deserializationConfiguration.reportErrorsOnPreReleaseDependencies &&
-                                    (moduleHeaders[resolvedLibrary]!!.flags and 1) != 0
-                        override val abiStability = DeserializedContainerAbiStability.STABLE
-                        override val presentableString = "Package '${classId.packageFqName}'"
-
-                        override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
-                    }
+                    val source = KlibDeserializedContainerSource(
+                        moduleHeaders[resolvedLibrary]!!,
+                        deserializationConfiguration,
+                        classId.packageFqName
+                    )
 
                     deserializeClassToSymbol(
                         classId,
