@@ -25,7 +25,7 @@ public abstract class MemoryAllocator {
 /**
  * Runs the [block] of code, providing it a temporary [MemoryAllocator] as an argument, and returns the result of this block.
  *
- * Free all memory allocated with provided allocator after running the [block].
+ * Frees all memory allocated with the provided allocator after running the [block].
  *
  * This function is intened to facilitate the exchange of values with outside world through linear memory.
  * For example:
