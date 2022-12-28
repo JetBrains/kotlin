@@ -246,10 +246,12 @@ public class DescriptorFactory {
             @NotNull ClassDescriptor owner,
             @Nullable KotlinType receiverParameterType,
             @Nullable Name customLabelName,
-            @NotNull Annotations annotations
+            @NotNull Annotations annotations,
+            int index
     ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ContextClassReceiver(owner, receiverParameterType, customLabelName, null), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ContextClassReceiver(owner, receiverParameterType, customLabelName, null),
+                                                     annotations, NameUtils.contextReceiverName(index));
     }
 }

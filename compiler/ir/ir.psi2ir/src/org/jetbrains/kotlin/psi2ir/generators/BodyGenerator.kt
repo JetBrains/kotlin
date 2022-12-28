@@ -370,18 +370,18 @@ class BodyGenerator(
         irBlockBody: IrBlockBody
     ) {
         val thisAsReceiverParameter = classDescriptor.thisAsReceiverParameter
-        val receiver = IrGetValueImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            thisAsReceiverParameter.type.toIrType(),
-            context.symbolTable.referenceValue(thisAsReceiverParameter)
-        )
         for ((index, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
             val irValueParameter = irConstructor.valueParameters[index]
             irBlockBody.statements.add(
                 IrSetFieldImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     context.additionalDescriptorStorage.getSyntheticField(receiverDescriptor.value).symbol,
-                    receiver,
+                    IrGetValueImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        thisAsReceiverParameter.type.toIrType(),
+                        context.symbolTable.referenceValue(thisAsReceiverParameter)
+                    ),
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
                     context.irBuiltIns.unitType
                 )

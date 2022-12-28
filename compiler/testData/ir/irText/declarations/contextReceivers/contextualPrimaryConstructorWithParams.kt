@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 
 class O(val o: String)

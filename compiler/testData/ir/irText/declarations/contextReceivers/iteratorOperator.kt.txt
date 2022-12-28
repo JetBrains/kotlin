@@ -87,9 +87,9 @@ data class CounterConfig {
 
 class CounterIterator : Iterator<Int> {
   private /* final field */ val contextReceiverField0: CounterConfig
-  constructor(<this>: CounterConfig, counter: Counter) /* primary */ {
+  constructor(_context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = <this>
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
   }
@@ -117,7 +117,7 @@ class CounterIterator : Iterator<Int> {
 
 operator fun Counter.iterator(_context_receiver_0: CounterConfig): CounterIterator {
   return with<CounterConfig, CounterIterator>(receiver = _context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
-    return CounterIterator(<this> = $this$with, counter = <this>)
+    return CounterIterator(_context_receiver_0 = $this$with, counter = <this>)
   }
 )
 }

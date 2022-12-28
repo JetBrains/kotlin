@@ -33,9 +33,9 @@ class Delegate {
 
 class Result {
   private /* final field */ val contextReceiverField0: Int
-  constructor(<this>: Int) /* primary */ {
+  constructor(_context_receiver_0: Int) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = <this>
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
   }
@@ -53,7 +53,7 @@ class Result {
 
 fun box(): String {
   val result: Result = with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
-    return Result(<this> = $this$with)
+    return Result(_context_receiver_0 = $this$with)
   }
 )
   result.<set-s>(<set-?> = "OK")

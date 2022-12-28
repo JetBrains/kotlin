@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
@@ -310,17 +311,23 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return CollectionsKt.emptyList();
             }
             List<KtContextReceiver> contextReceivers = classOrObject.getContextReceivers();
-            List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
-                    .map(contextReceiver -> {
+            List<ReceiverParameterDescriptor> contextReceiverDescriptors =
+                    IntStream.range(0, contextReceivers.size())
+                    .mapToObj(index -> {
+                        KtContextReceiver contextReceiver = contextReceivers.get(index);
                         KtTypeReference typeReference = contextReceiver.typeReference();
                         if (typeReference == null) return null;
                         KotlinType kotlinType =
                                 c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
+                        Name label = contextReceiver.labelNameAsName() != null
+                                    ? contextReceiver.labelNameAsName()
+                                    : Name.identifier("_context_receiver_" + index);
                         return DescriptorFactory.createContextReceiverParameterForClass(
                                 this,
                                 kotlinType,
                                 contextReceiver.labelNameAsName(),
-                                Annotations.Companion.getEMPTY()
+                                Annotations.Companion.getEMPTY(),
+                                index
                         );
                     })
                     .filter(Objects::nonNull)

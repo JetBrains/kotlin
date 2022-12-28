@@ -192,14 +192,14 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
   CLASS CLASS name:CounterIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CounterIterator
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final]
-    CONSTRUCTOR visibility:public <> (<this>:<root>.CounterConfig, counter:<root>.Counter) returnType:<root>.CounterIterator [primary]
-      VALUE_PARAMETER name:<this> index:0 type:<root>.CounterConfig
+    CONSTRUCTOR visibility:public <> (_context_receiver_0:<root>.CounterConfig, counter:<root>.Counter) returnType:<root>.CounterIterator [primary]
+      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.CounterConfig
       VALUE_PARAMETER name:counter index:1 type:<root>.Counter
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator' type=<root>.CounterIterator origin=null
-          value: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterIterator.<init>' type=<root>.CounterConfig origin=null
+          value: GET_VAR '_context_receiver_0: <root>.CounterConfig declared in <root>.CounterIterator.<init>' type=<root>.CounterConfig origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CounterIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.Int>]'
     PROPERTY name:counter visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:counter type:<root>.Counter visibility:private [final]
@@ -272,8 +272,8 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.CounterConfig
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.CounterIterator declared in <root>.iterator'
-                  CONSTRUCTOR_CALL 'public constructor <init> (<this>: <root>.CounterConfig, counter: <root>.Counter) [primary] declared in <root>.CounterIterator' type=<root>.CounterIterator origin=null
-                    <this>: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.iterator.<anonymous>' type=<root>.CounterConfig origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> (_context_receiver_0: <root>.CounterConfig, counter: <root>.Counter) [primary] declared in <root>.CounterIterator' type=<root>.CounterIterator origin=null
+                    _context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.iterator.<anonymous>' type=<root>.CounterConfig origin=null
                     counter: GET_VAR '<this>: <root>.Counter declared in <root>.iterator' type=<root>.Counter origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
