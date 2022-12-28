@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -36,7 +35,7 @@ object KonanNameConventions {
 }
 
 // This is what Context collects about IR.
-internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context>(context, irModule) {
+internal class KonanIr(context: Context): Ir<Context>(context) {
     override var symbols: KonanSymbols by Delegates.notNull()
 }
 

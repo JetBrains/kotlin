@@ -43,7 +43,6 @@ import java.util.concurrent.ConcurrentHashMap
 class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
-    irModuleFragment: IrModuleFragment,
     val symbolTable: SymbolTable,
     val phaseConfig: PhaseConfig,
     val generatorExtensions: JvmGeneratorExtensions,
@@ -85,7 +84,7 @@ class JvmBackendContext(
 
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, state.languageVersionSettings)
 
-    override val ir = JvmIr(irModuleFragment, this.symbolTable)
+    override val ir = JvmIr(this.symbolTable)
 
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
 
@@ -270,9 +269,8 @@ class JvmBackendContext(
         get() = false
 
     inner class JvmIr(
-        irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable
-    ) : Ir<JvmBackendContext>(this, irModuleFragment) {
+    ) : Ir<JvmBackendContext>(this) {
         override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
 
         override fun unfoldInlineClassType(irType: IrType): IrType? {

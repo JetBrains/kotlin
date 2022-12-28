@@ -69,7 +69,6 @@ import org.junit.Test
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
-import kotlin.io.path.createTempFile
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 @OptIn(ExperimentalPathApi::class)
@@ -601,7 +600,6 @@ class GenerateIrRuntime {
             module.descriptor,
             irBuiltIns,
             symbolTable,
-            module,
             additionalExportedDeclarationNames = emptySet(),
             keep = emptySet(),
             configuration

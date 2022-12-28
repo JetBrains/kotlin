@@ -39,7 +39,6 @@ class JsIrCompilerWithIC(
             mainModule.descriptor,
             irBuiltIns,
             symbolTable,
-            mainModule,
             exportedDeclarations,
             keep = emptySet(),
             configuration = configuration,
