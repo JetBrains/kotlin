@@ -10029,12 +10029,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("enumEntriesAmbiguity.kt")
-            public void testEnumEntriesAmbiguity() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/enum/enumEntriesAmbiguity.kt");
-            }
-
-            @Test
             @TestMetadata("enumEntryCannotHaveClassObject.kt")
             public void testEnumEntryCannotHaveClassObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
@@ -10320,6 +10314,22 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("wrongUnitializedEnumCompanion.kt")
             public void testWrongUnitializedEnumCompanion() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/wrongUnitializedEnumCompanion.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/enum/entries")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Entries {
+                @Test
+                public void testAllFilesPresentInEntries() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum/entries"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("enumEntriesAmbiguity.kt")
+                public void testEnumEntriesAmbiguity() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/enumEntriesAmbiguity.kt");
+                }
             }
 
             @Nested
