@@ -87,7 +87,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(klass) {
+    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -248,7 +248,7 @@ class FirElementSerializer private constructor(
                     useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER && isSetter
         }
 
-    fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? = whileAnalysing(property) {
+    fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? = whileAnalysing(session, property) {
         if (!extension.shouldSerializeProperty(property)) return null
 
         val builder = ProtoBuf.Property.newBuilder()
@@ -356,7 +356,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(function) {
+    fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
         if (!extension.shouldSerializeFunction(function)) return null
 
         val builder = ProtoBuf.Function.newBuilder()
@@ -450,7 +450,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun typeAliasProto(typeAlias: FirTypeAlias): ProtoBuf.TypeAlias.Builder? = whileAnalysing(typeAlias) {
+    private fun typeAliasProto(typeAlias: FirTypeAlias): ProtoBuf.TypeAlias.Builder? = whileAnalysing(session, typeAlias) {
         if (!extension.shouldSerializeTypeAlias(typeAlias)) return null
 
         val builder = ProtoBuf.TypeAlias.newBuilder()
@@ -497,14 +497,14 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun enumEntryProto(enumEntry: FirEnumEntry): ProtoBuf.EnumEntry.Builder = whileAnalysing(enumEntry) {
+    private fun enumEntryProto(enumEntry: FirEnumEntry): ProtoBuf.EnumEntry.Builder = whileAnalysing(session, enumEntry) {
         val builder = ProtoBuf.EnumEntry.newBuilder()
         builder.name = getSimpleNameIndex(enumEntry.name)
         extension.serializeEnumEntry(enumEntry, builder)
         return builder
     }
 
-    private fun constructorProto(constructor: FirConstructor): ProtoBuf.Constructor.Builder = whileAnalysing(constructor) {
+    private fun constructorProto(constructor: FirConstructor): ProtoBuf.Constructor.Builder = whileAnalysing(session, constructor) {
         val builder = ProtoBuf.Constructor.newBuilder()
 
         val local = createChildSerializer(constructor)
@@ -543,7 +543,7 @@ class FirElementSerializer private constructor(
     private fun valueParameterProto(
         parameter: FirValueParameter,
         additionalAnnotations: List<FirAnnotation> = emptyList()
-    ): ProtoBuf.ValueParameter.Builder = whileAnalysing(parameter) {
+    ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val declaresDefaultValue = parameter.defaultValue != null // TODO: || parameter.isActualParameterWithAnyExpectedDefault
@@ -580,7 +580,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun typeParameterProto(typeParameter: FirTypeParameter): ProtoBuf.TypeParameter.Builder = whileAnalysing(typeParameter) {
+    private fun typeParameterProto(typeParameter: FirTypeParameter): ProtoBuf.TypeParameter.Builder = whileAnalysing(session, typeParameter) {
         val builder = ProtoBuf.TypeParameter.newBuilder()
 
         builder.id = getTypeParameterId(typeParameter)
