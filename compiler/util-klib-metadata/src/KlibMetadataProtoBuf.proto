@@ -25,7 +25,7 @@ option optimize_for = LITE_RUNTIME;
 message Header {
   required string module_name = 1;
   /*
-    0x1 = preRelease
+    Possible values are listed in KlibMetadataHeaderFlags class.
   */
   optional int32 flags = 2;
   optional org.jetbrains.kotlin.metadata.StringTable strings = 4;

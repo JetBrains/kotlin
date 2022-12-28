@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectCla
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -255,7 +256,7 @@ fun serializeKlibHeader(
     header.moduleName = moduleDescriptor.name.asString()
 
     if (languageVersionSettings.isPreRelease()) {
-        header.flags = 1
+        header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
     }
 
     fragmentNames.forEach {
