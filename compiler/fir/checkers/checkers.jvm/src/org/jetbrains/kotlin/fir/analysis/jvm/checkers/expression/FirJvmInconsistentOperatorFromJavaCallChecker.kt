@@ -41,14 +41,15 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker() 
     )
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+        // Filter out non-operators
+        if (expression.origin != FirFunctionCallOrigin.Operator) return
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() as? FirNamedFunctionSymbol ?: return
+        // Filter out non-contains
         if (callableSymbol.name != OperatorNameConventions.CONTAINS) return
         val valueParameterSymbol = callableSymbol.valueParameterSymbols.singleOrNull() ?: return
         val type = valueParameterSymbol.resolvedReturnTypeRef.coneType.lowerBoundIfFlexible()
+        // Filter out handrolled contains with non-Any type
         if (!type.isAny && !type.isNullableAny) return
-
-        if (expression.origin != FirFunctionCallOrigin.Operator || expression.origin.ordinal != 2) return
-
         callableSymbol.check(expression.calleeReference.source, context, reporter)
     }
 
@@ -59,6 +60,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker() 
             return true
         }
 
+        // Check explicitly overridden contains
         val containingClass = containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return false
         val overriddenFunctions = overriddenFunctions(containingClass, context)
         for (overriddenFunction in overriddenFunctions) {
