@@ -30,17 +30,19 @@ public abstract class MemoryAllocator {
  * This function is intened to facilitate the exchange of values with outside world through linear memory.
  * For example:
  *
- *    val buffer_size = ...
- *    withScopedMemoryAllocator { allocator ->
- *        val buffer_address = allocator.allocate(buffer_size)
- *        importedWasmFunctionThatWritesToBuffer(buffer_address, buffer_size)
- *        return readDataFromBufferIntoManagedKotlinMemory(buffer_address, buffer_size)
- *    }
+ * ```
+ * val buffer_size = ...
+ * withScopedMemoryAllocator { allocator ->
+ *     val buffer_address = allocator.allocate(buffer_size)
+ *     importedWasmFunctionThatWritesToBuffer(buffer_address, buffer_size)
+ *     return readDataFromBufferIntoManagedKotlinMemory(buffer_address, buffer_size)
+ * }
+ * ```
  *
- * WARNING! Addresses leaked outside of [block] scope become invalid and can be overridden.
+ * WARNING! Addresses allocated inside the [block] function become invalid after exiting the function.
  *
  * WARNING! A nested call to [withScopedMemoryAllocator] will temporarily disable the allocator from the outer scope
- *   for the duration of the call. Calling [MemoryAllocator.allocate] on disabled allocator
+ *   for the duration of the call. Calling [MemoryAllocator.allocate] on a disabled allocator
  *   will throw [IllegalStateException].
  *
  * WARNING! Accessing the allocator outside of the [block] scope will throw [IllegalStateException].
@@ -49,11 +51,7 @@ public abstract class MemoryAllocator {
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
 ): T {
-    val allocator =
-        currentAllocator?.createChild() ?:
-            ScopedMemoryAllocator(unsafeGetScratchRawMemory(), parent = null)
-    currentAllocator = allocator
-
+    val allocator = createAllocatorInTheNewScope()
     val result = try {
         block(allocator)
     } finally {
@@ -62,6 +60,16 @@ public inline fun <T> withScopedMemoryAllocator(
     }
     return result
 }
+
+@PublishedApi
+@UnsafeWasmMemoryApi
+internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
+    val allocator = currentAllocator?.createChild() ?:
+        ScopedMemoryAllocator(unsafeGetScratchRawMemory(), parent = null)
+    currentAllocator = allocator
+    return allocator
+}
+
 
 @PublishedApi
 @UnsafeWasmMemoryApi
