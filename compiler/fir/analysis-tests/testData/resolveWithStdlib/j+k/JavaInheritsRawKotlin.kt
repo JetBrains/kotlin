@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: Derived.kt
 
 class Derived : Some()
