@@ -7,21 +7,18 @@ package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolveContractViolationErrorHandler
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
-        useAdditionalService { FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar() }
+        enableLazyResolvePhaseChecking()
 
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
@@ -32,15 +29,7 @@ abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest()
         useAfterAnalysisCheckers(
             ::FirIdenticalChecker,
             ::FirFailingTestSuppressor,
-            ::DisableLazyResolveChecksAfterAnalysisChecker,
         )
-
-        firHandlersStep {
-            useHandlers(
-                ::FirResolveContractViolationErrorHandler,
-            )
-        }
-
 
         useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
     }

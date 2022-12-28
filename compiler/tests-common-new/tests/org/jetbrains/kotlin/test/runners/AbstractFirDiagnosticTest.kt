@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.coerce
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LIGHT_TREE
@@ -31,23 +33,14 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
-        useAdditionalService { FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar() }
-
-        useAfterAnalysisCheckers(
-            ::DisableLazyResolveChecksAfterAnalysisChecker,
-        )
-
-        firHandlersStep {
-            useHandlers(
-                ::FirResolveContractViolationErrorHandler,
-            )
-        }
+        enableLazyResolvePhaseChecking()
     }
 }
 
@@ -179,6 +172,22 @@ class FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar : Fir
     @OptIn(org.jetbrains.kotlin.fir.SessionConfiguration::class)
     override fun registerAdditionalComponent(session: FirSession) {
         session.register(FirLazyDeclarationResolver::class, lazyResolver)
+    }
+}
+
+fun TestConfigurationBuilder.enableLazyResolvePhaseChecking() {
+    useAdditionalServices(
+        service<FirSessionComponentRegistrar>(::FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar.coerce())
+    )
+
+    useAfterAnalysisCheckers(
+        ::DisableLazyResolveChecksAfterAnalysisChecker,
+    )
+
+    configureFirHandlersStep {
+        useHandlers(
+            ::FirResolveContractViolationErrorHandler,
+        )
     }
 }
 
