@@ -680,7 +680,7 @@ internal class TestProcessor (val context: Context) {
 
     private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.packageFragmentDescriptor.module.let {
         // Process test annotations in source libraries too.
-        it == context.moduleDescriptor || it in context.getIncludedLibraryDescriptors()
+        it in context.sourcesModules
     }
 
     fun process(irFile: IrFile) {

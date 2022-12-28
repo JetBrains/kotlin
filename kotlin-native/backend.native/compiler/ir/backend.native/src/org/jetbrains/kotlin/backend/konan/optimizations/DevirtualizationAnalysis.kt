@@ -55,7 +55,7 @@ internal object DevirtualizationAnalysis {
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    fun computeRootSet(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
+    fun computeRootSet(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
             : List<DataFlowIR.FunctionSymbol> {
 
         fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
@@ -97,7 +97,7 @@ internal object DevirtualizationAnalysis {
         // At this point all function references are lowered except those leaking to the native world.
         // Conservatively assume them belonging of the root set.
         val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
-        context.irModule!!.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -128,6 +128,7 @@ internal object DevirtualizationAnalysis {
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
 
     internal class DevirtualizationAnalysisImpl(val context: Context,
+                                                val irModule: IrModuleFragment,
                                                 val moduleDFG: ModuleDFG,
                                                 val externalModulesDFG: ExternalModulesDFG) {
 
@@ -234,7 +235,21 @@ internal object DevirtualizationAnalysis {
         private fun IntArray.getEdge(v: Int, id: Int) = this[this[v] + id]
         private fun IntArray.edgeCount(v: Int) = this[v + 1] - this[v]
 
-        inner class TypeHierarchy(val allTypes: Array<DataFlowIR.Type.Declared>) {
+        interface TypeHierarchy {
+            val allTypes: Array<DataFlowIR.Type.Declared>
+
+            fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet
+        }
+
+        object EmptyTypeHierarchy : TypeHierarchy {
+            override val allTypes: Array<DataFlowIR.Type.Declared> = emptyArray()
+
+            override fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
+                return BitSet()
+            }
+        }
+
+        inner class TypeHierarchyImpl(override val allTypes: Array<DataFlowIR.Type.Declared>) : TypeHierarchy {
             private val typesSubTypes = Array(allTypes.size) { mutableListOf<DataFlowIR.Type.Declared>() }
             private val allInheritors = Array(allTypes.size) { BitSet() }
 
@@ -256,7 +271,7 @@ internal object DevirtualizationAnalysis {
                 allTypes.forEach { processType(it) }
             }
 
-            fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
+            override fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
                 val typeId = type.index
                 val inheritors = allInheritors[typeId]
                 if (!inheritors.isEmpty || type == DataFlowIR.Type.Virtual) return inheritors
@@ -432,8 +447,8 @@ internal object DevirtualizationAnalysis {
             val allTypes = Array<DataFlowIR.Type.Declared>(allDeclaredTypes.size) { DataFlowIR.Type.Virtual }
             for (type in allDeclaredTypes)
                 allTypes[type.index] = type
-            val typeHierarchy = TypeHierarchy(allTypes)
-            val rootSet = computeRootSet(context, moduleDFG, externalModulesDFG)
+            val typeHierarchy = TypeHierarchyImpl(allTypes)
+            val rootSet = computeRootSet(context, irModule, moduleDFG, externalModulesDFG)
 
             val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
 
@@ -695,7 +710,7 @@ internal object DevirtualizationAnalysis {
         // and by that we're only holding references to two out of three of them.
         private fun buildConstraintGraph(nodesMap: MutableMap<DataFlowIR.Node, Node>,
                                          functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                         typeHierarchy: TypeHierarchy,
+                                         typeHierarchy: TypeHierarchyImpl,
                                          rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphBuildResult {
             val precursor = buildConstraintGraphPrecursor(nodesMap, functions, typeHierarchy, rootSet)
@@ -728,7 +743,7 @@ internal object DevirtualizationAnalysis {
 
         private fun buildConstraintGraphPrecursor(nodesMap: MutableMap<DataFlowIR.Node, Node>,
                                                   functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                  typeHierarchy: TypeHierarchy,
+                                                  typeHierarchy: TypeHierarchyImpl,
                                                   rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphPrecursor {
             val constraintGraphBuilder = ConstraintGraphBuilder(nodesMap, functions, typeHierarchy, rootSet, true)
@@ -765,7 +780,7 @@ internal object DevirtualizationAnalysis {
 
         private inner class ConstraintGraphBuilder(val functionNodesMap: MutableMap<DataFlowIR.Node, Node>,
                                                    val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                   val typeHierarchy: TypeHierarchy,
+                                                   val typeHierarchy: TypeHierarchyImpl,
                                                    val rootSet: List<DataFlowIR.FunctionSymbol>,
                                                    val useTypes: Boolean) {
 
@@ -962,9 +977,9 @@ internal object DevirtualizationAnalysis {
                     symbol.parameters.forEachIndexed { index, type ->
                         val resolvedType = type.type.resolved()
                         val node = if (!resolvedType.isFinal)
-                                       constraintGraph.virtualNode // TODO: OBJC-INTEROP-GENERATED-CLASSES
-                                   else
-                                       concreteClass(resolvedType)
+                            constraintGraph.virtualNode // TODO: OBJC-INTEROP-GENERATED-CLASSES
+                        else
+                            concreteClass(resolvedType)
                         addEdge(node, parameters[index])
                     }
                 }
@@ -1308,8 +1323,8 @@ internal object DevirtualizationAnalysis {
     class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
                          val typeHierarchy: DevirtualizationAnalysisImpl.TypeHierarchy)
 
-    fun run(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
-            DevirtualizationAnalysisImpl(context, moduleDFG, externalModulesDFG).analyze()
+    fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
+            DevirtualizationAnalysisImpl(context, irModule, moduleDFG, externalModulesDFG).analyze()
 
     fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                      devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
@@ -1331,8 +1346,8 @@ internal object DevirtualizationAnalysis {
 
         fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(value: IrExpression, tempName: String, type: IrType): IrVariable {
             val temporary = IrVariableImpl(
-                value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
-                Name.identifier(tempName), type, isVar = false, isConst = false, isLateinit = false
+                    value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
+                    Name.identifier(tempName), type, isVar = false, isConst = false, isLateinit = false
             ).apply {
                 this.initializer = value
             }
@@ -1361,7 +1376,7 @@ internal object DevirtualizationAnalysis {
             if (actualType.boxFunction == null && targetType.boxFunction == null) return null
             if (actualType.boxFunction != null && targetType.boxFunction != null) {
                 assert (actualType.type.resolved() == targetType.type.resolved())
-                        { "Inconsistent types: ${actualType.type} and ${targetType.type}" }
+                { "Inconsistent types: ${actualType.type} and ${targetType.type}" }
                 return null
             }
             if (actualType.boxFunction == null)

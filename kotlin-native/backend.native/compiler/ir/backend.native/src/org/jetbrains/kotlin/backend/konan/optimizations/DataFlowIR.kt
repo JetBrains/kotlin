@@ -240,7 +240,7 @@ internal object DataFlowIR {
             : Call(constructor, arguments, constructedType, irCallSite)
 
         open class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>,
-                                   val receiverType: Type, returnType: Type, override val irCallSite: IrCall?)
+                               val receiverType: Type, returnType: Type, override val irCallSite: IrCall?)
             : Call(callee, arguments, returnType, irCallSite)
 
         class VtableCall(callee: FunctionSymbol, receiverType: Type, val calleeVtableIndex: Int,
@@ -430,7 +430,7 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: Context, val irModule: IrModuleFragment, val module: Module) {
+    class SymbolTable(val context: Context, val module: Module) {
 
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
@@ -454,7 +454,7 @@ internal object DataFlowIR {
         var privateTypeIndex = 1 // 0 for [Virtual]
         var privateFunIndex = 0
 
-        init {
+        fun populateWith(irModule: IrModuleFragment) {
             irModule.accept(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
@@ -492,11 +492,11 @@ internal object DataFlowIR {
             val placeToClassTable = true
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (irClass.isExported())
-                           Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract, null,
-                                   module, symbolTableIndex, irClass, takeName { name })
-                       else
-                           Type.Private(privateTypeIndex++, isFinal, isAbstract, null,
-                                   module, symbolTableIndex, irClass, takeName { name })
+                Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract, null,
+                        module, symbolTableIndex, irClass, takeName { name })
+            else
+                Type.Private(privateTypeIndex++, isFinal, isAbstract, null,
+                        module, symbolTableIndex, irClass, takeName { name })
 
             classMap[irClass] = type
 
@@ -642,8 +642,8 @@ internal object DataFlowIR {
             functionMap[it] = symbol
 
             symbol.parameters = function.allParameters.map { it.type }
-                            .map { mapTypeToFunctionParameter(it) }
-                            .toTypedArray()
+                    .map { mapTypeToFunctionParameter(it) }
+                    .toTypedArray()
             symbol.returnParameter = mapTypeToFunctionParameter(function.returnType)
 
             return symbol

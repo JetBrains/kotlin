@@ -152,7 +152,7 @@ internal fun PsiToIrContext.psiToIr(
             while (true) {
                 // context.config.librariesWithDependencies could change at each iteration.
                 val dependencies = moduleDescriptor.allDependencyModules.filter {
-                    config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
+                    config.librariesWithDependencies().contains(it.konanLibrary)
                 }
 
                 fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
@@ -251,11 +251,9 @@ internal fun PsiToIrContext.psiToIr(
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
 
-    return PsiToIrOutput(
-            modules,
-            mainModule,
-            expectDescriptorToSymbol,
-            symbols,
-            if (isProducingLibrary) null else irDeserializer as KonanIrLinker
-    )
+    return if (isProducingLibrary) {
+        PsiToIrOutput.ForKlib(mainModule, symbols, expectDescriptorToSymbol)
+    } else {
+        PsiToIrOutput.ForBackend(modules, mainModule, symbols, irDeserializer as KonanIrLinker)
+    }
 }

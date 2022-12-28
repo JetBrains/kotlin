@@ -240,7 +240,7 @@ internal object StaticInitializersOptimization {
         }
 
         private val IrFunction.calledInitializer get() =
-                (body?.statements?.get(0) as? IrCall)?.symbol?.owner?.takeIf { it.isStaticInitializer }?.parent as IrDeclarationContainer?
+            (body?.statements?.get(0) as? IrCall)?.symbol?.owner?.takeIf { it.isStaticInitializer }?.parent as IrDeclarationContainer?
 
         private fun intraproceduralAnalysis(
                 node: CallGraphNode,
@@ -520,7 +520,7 @@ internal object StaticInitializersOptimization {
         }
     }
 
-    fun removeRedundantCalls(context: Context, callGraph: CallGraph, rootSet: Set<IrFunction>) {
+    fun removeRedundantCalls(context: Context, irModule: IrModuleFragment, callGraph: CallGraph, rootSet: Set<IrFunction>) {
         val analysisResult = InterproceduralAnalysis(context, callGraph, rootSet).analyze()
 
         var numberOfFunctionsWithGlobalInitializerCall = 0
@@ -532,7 +532,7 @@ internal object StaticInitializersOptimization {
         var numberOfCallSitesWithExtractedGlobalInitializerCall = 0
         var numberOfCallSitesWithExtractedThreadLocalInitializerCall = 0
 
-        context.irModule!!.transformChildren(object : IrElementTransformer<IrBuilderWithScope?> {
+        irModule.transformChildren(object : IrElementTransformer<IrBuilderWithScope?> {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope?): IrStatement {
                 return super.visitDeclaration(declaration, context.createIrBuilder(declaration.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET))
             }
@@ -574,7 +574,7 @@ internal object StaticInitializersOptimization {
             }
         }, data = null)
 
-        context.irModule!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irModule.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 val body = declaration.body ?: return declaration
                 val statements = (body as IrBlockBody).statements

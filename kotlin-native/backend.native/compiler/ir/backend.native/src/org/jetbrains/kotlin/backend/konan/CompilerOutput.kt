@@ -78,19 +78,19 @@ val CompilerOutputKind.isCache: Boolean
 val KonanConfig.involvesCodegen: Boolean
     get() = produce != CompilerOutputKind.LIBRARY && !omitFrameworkBinary
 
-internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
-    module.let{}
-    if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
-        val moduleName: String = memScoped {
-            val sizeVar = alloc<size_tVar>()
-            LLVMGetModuleIdentifier(context.generationState.llvm.module, sizeVar.ptr)!!.toKStringFromUtf8()
-        }
-        val output = context.generationState.tempFiles.create("$moduleName.${state.phase.name}", ".ll")
-        if (LLVMPrintModuleToFile(context.generationState.llvm.module, output.absolutePath, null) != 0) {
-            error("Can't dump LLVM IR to ${output.absolutePath}")
-        }
-    }
-}
+//internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
+//    module.let{}
+//    if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
+//        val moduleName: String = memScoped {
+//            val sizeVar = alloc<size_tVar>()
+//            LLVMGetModuleIdentifier(context.generationState.llvm.module, sizeVar.ptr)!!.toKStringFromUtf8()
+//        }
+//        val output = context.generationState.tempFiles.create("$moduleName.${state.phase.name}", ".ll")
+//        if (LLVMPrintModuleToFile(context.generationState.llvm.module, output.absolutePath, null) != 0) {
+//            error("Can't dump LLVM IR to ${output.absolutePath}")
+//        }
+//    }
+//}
 
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(

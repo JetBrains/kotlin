@@ -470,6 +470,7 @@ internal object EscapeAnalysis {
 
     private class InterproceduralAnalysis(
             val context: Context,
+            val generationState: NativeGenerationState,
             val callGraph: CallGraph,
             val intraproceduralAnalysisResults: Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult>,
             val externalModulesDFG: ExternalModulesDFG,
@@ -729,7 +730,7 @@ internal object EscapeAnalysis {
                         ?: (node as? DataFlowIR.Node.Variable)
                                 ?.values?.singleOrNull()?.let { arrayLengthOf(it.node) }
 
-        private val pointerSize = context.generationState.runtime.pointerSize
+        private val pointerSize = generationState.runtime.pointerSize
 
         private fun arrayItemSizeOf(irClass: IrClass): Int? = when (irClass.symbol) {
             symbols.array -> pointerSize
@@ -1796,14 +1797,20 @@ internal object EscapeAnalysis {
         }
     }
 
-    fun computeLifetimes(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
-                         callGraph: CallGraph, lifetimes: MutableMap<IrElement, Lifetime>) {
+    fun computeLifetimes(
+            context: Context,
+            generationState: NativeGenerationState,
+            moduleDFG: ModuleDFG,
+            externalModulesDFG: ExternalModulesDFG,
+            callGraph: CallGraph,
+            lifetimes: MutableMap<IrElement, Lifetime>
+    ) {
         assert(lifetimes.isEmpty())
 
         try {
             val intraproceduralAnalysisResult =
                     IntraproceduralAnalysis(context, moduleDFG, externalModulesDFG, callGraph).analyze()
-            InterproceduralAnalysis(context, callGraph, intraproceduralAnalysisResult, externalModulesDFG, lifetimes,
+            InterproceduralAnalysis(context, generationState, callGraph, intraproceduralAnalysisResult, externalModulesDFG, lifetimes,
                     // TODO: This is a bit conservative, but for more aggressive option some support from runtime is
                     // needed (namely, determining that a pointer is from the stack; this is easy for x86 or x64,
                     //         but what about all other platforms?).
@@ -1811,7 +1818,7 @@ internal object EscapeAnalysis {
             ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
-                        """
+                    """
                         Please try to disable escape analysis and rerun the build. To do it add the following snippet to the gradle script:
 
                             kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {

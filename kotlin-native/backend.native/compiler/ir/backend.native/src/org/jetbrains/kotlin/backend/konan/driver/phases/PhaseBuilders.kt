@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
@@ -13,24 +14,31 @@ import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
 internal fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
         name: String,
         description: String,
+        preactions: Set<Action<Input, Context>> = emptySet(),
+        postactions: Set<Action<Output, Context>> = emptySet(),
         outputIfNotEnabled: (PhaseConfigurationService, PhaserState<Input>, Context, Input) -> Output,
-        phaseBody: (Context, Input) -> Output
-): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(name, description) {
+        op: (Context, Input) -> Output
+): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
+        name,
+        description,
+        preactions = preactions,
+        postactions = postactions,
+) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
             outputIfNotEnabled(phaseConfig, phaserState, context, input)
 
     override fun phaseBody(context: Context, input: Input): Output =
-            phaseBody(context, input)
+            op(context, input)
 }
 
 internal fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
         name: String,
         description: String,
-        phaseBody: (Context, Input) -> Unit
+        op: (Context, Input) -> Unit
 ): SimpleNamedCompilerPhase<Context, Input, Unit> = object : SimpleNamedCompilerPhase<Context, Input, Unit>(name, description) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input) {}
 
     override fun phaseBody(context: Context, input: Input): Unit =
-            phaseBody(context, input)
+            op(context, input)
 }
 

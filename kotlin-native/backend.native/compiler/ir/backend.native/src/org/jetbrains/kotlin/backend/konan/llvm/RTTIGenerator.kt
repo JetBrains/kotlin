@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
-internal class RTTIGenerator(override val generationState: NativeGenerationState) : ContextUtils {
+internal class RTTIGenerator(
+        override val generationState: NativeGenerationState,
+        private val referencedFunctions: Set<IrFunction>?,
+) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
     private val safeAcyclicFieldTypes = setOf(
@@ -51,7 +54,7 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
         if (irClass.isFrozen(context))
-           result = result or TF_IMMUTABLE
+            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
             if (checkAcyclicClass(irClass)) {
@@ -292,7 +295,7 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
         // TODO: compile-time resolution limits binary compatibility.
         val vtableEntries = context.getLayoutBuilder(irClass).vtableEntries.map {
             val implementation = it.implementation
-            if (implementation == null || implementation.isExternalObjCClassMethod() || context.referencedFunctions?.contains(implementation) == false) {
+            if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
                 NullPointer(llvm.int8Type)
             } else {
                 implementation.entryPointAddress
@@ -373,7 +376,7 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
                     else {
                         val vtableEntries = iface.interfaceVTableEntries.map { ifaceFunction ->
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
-                            if (impl == null || context.referencedFunctions?.contains(impl) == false)
+                            if (impl == null || referencedFunctions?.contains(impl) == false)
                                 NullPointer(llvm.int8Type)
                             else impl.entryPointAddress
                         }
@@ -563,7 +566,7 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
                 writableTypeInfo = writableTypeInfo,
                 associatedObjects = null,
                 processObjectInMark = genProcessObjectInMark(bodyType),
-              ), vtable)
+        ), vtable)
 
         typeInfoWithVtableGlobal.setInitializer(typeInfoWithVtable)
         typeInfoWithVtableGlobal.setConstant(true)

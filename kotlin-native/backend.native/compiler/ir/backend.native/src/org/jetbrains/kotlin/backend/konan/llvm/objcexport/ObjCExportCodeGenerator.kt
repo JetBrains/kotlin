@@ -218,7 +218,8 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
 
-    val rttiGenerator = RTTIGenerator(generationState)
+    // TODO: pass referenced functions explicitly
+    val rttiGenerator = RTTIGenerator(generationState, referencedFunctions = null)
 
     fun dispose() {
         rttiGenerator.dispose()
