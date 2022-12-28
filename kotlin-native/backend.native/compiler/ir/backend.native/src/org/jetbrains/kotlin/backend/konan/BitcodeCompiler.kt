@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 
@@ -12,11 +14,14 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
-internal class BitcodeCompiler(val generationState: NativeGenerationState) {
+internal class BitcodeCompiler(
+        private val context: PhaseContext,
+        private val temporaryFiles: TempFiles,
+) {
 
-    private val config = generationState.config
+    private val config = context.config
     private val platform = config.platform
-    private val optimize = generationState.shouldOptimize()
+    private val optimize = context.shouldOptimize()
     private val debug = config.debug
 
     private val overrideClangOptions =
@@ -28,11 +33,11 @@ internal class BitcodeCompiler(val generationState: NativeGenerationState) {
 
     private fun runTool(vararg command: String) =
             Command(*command)
-                    .logWith(generationState::log)
+                    .logWith(context::log)
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
-            generationState.tempFiles.create(name, suffix).absolutePath
+            temporaryFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {
@@ -58,19 +63,19 @@ internal class BitcodeCompiler(val generationState: NativeGenerationState) {
         }
         val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
                 ?: mutableListOf<String>().apply {
-            addNonEmpty(configurables.clangFlags)
-            addNonEmpty(listOf("-triple", targetTriple.toString()))
-            if (configurables is ZephyrConfigurables) {
-                addNonEmpty(configurables.constructClangCC1Args())
-            }
-            addNonEmpty(when {
-                optimize -> configurables.clangOptFlags
-                debug -> configurables.clangDebugFlags
-                else -> configurables.clangNooptFlags
-            })
-            addNonEmpty(BitcodeEmbedding.getClangOptions(config))
-            addNonEmpty(configurables.currentRelocationMode(generationState).translateToClangCc1Flag())
-        }
+                    addNonEmpty(configurables.clangFlags)
+                    addNonEmpty(listOf("-triple", targetTriple.toString()))
+                    if (configurables is ZephyrConfigurables) {
+                        addNonEmpty(configurables.constructClangCC1Args())
+                    }
+                    addNonEmpty(when {
+                        optimize -> configurables.clangOptFlags
+                        debug -> configurables.clangDebugFlags
+                        else -> configurables.clangNooptFlags
+                    })
+                    addNonEmpty(BitcodeEmbedding.getClangOptions(config))
+                    addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+                }
         if (configurables is AppleConfigurables) {
             targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
         } else {

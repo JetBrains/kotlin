@@ -328,8 +328,8 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     // This is an alternative to .isObjCClass that doesn't need to walk up all the class heirarchy,
     // rather it only looks at immediate super class symbols.
     private fun IrClass.hasInteropSuperClass() = this.superTypes
-        .mapNotNull { it.classOrNull }
-        .any { it.isInterop() }
+            .mapNotNull { it.classOrNull }
+            .any { it.isInterop() }
 
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean {
         return !clazz.hasInteropSuperClass() && clazz !is IrLazyClass
@@ -736,7 +736,7 @@ internal class KonanIrLinker(
             }
 
             val signature = function.symbol.signature ?: descriptorSignatures[function.descriptor]
-                    ?: error("No signature for ${function.render()}")
+            ?: error("No signature for ${function.render()}")
             val inlineFunctionReference = inlineFunctionReferences[signature]
                     ?: error("No inline function reference for ${function.render()}, sig = ${signature.render()}")
             val fileDeserializationState = fileDeserializationStates[inlineFunctionReference.file]
@@ -924,7 +924,7 @@ internal class KonanIrLinker(
         private val fileMap = mutableMapOf<PackageFragmentDescriptor, IrFile>()
 
         private fun getIrFile(packageFragment: PackageFragmentDescriptor): IrFile = fileMap.getOrPut(packageFragment) {
-            IrFileImpl(NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName), packageFragment).also {
+            IrFileImpl(NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName), packageFragment, moduleFragment).also {
                 moduleFragment.files.add(it)
             }
         }

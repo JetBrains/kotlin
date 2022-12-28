@@ -182,7 +182,7 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
     // otherwise optimiser can inline it
     staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true);
     staticData.getGlobal(functionListSizeGlobal)?.setExternallyInitialized(true);
-    generationState.verifyBitCode()
+    verifyModule(llvm.module)
 }
 
 // this should be a separate pass, to handle DCE correctly
@@ -201,5 +201,5 @@ internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationS
     staticData.getGlobal(functionListSizeGlobal)
             ?.setInitializer(llvm.constInt32(functions.size))
             ?: throw IllegalStateException("$functionListSizeGlobal global not found")
-    generationState.verifyBitCode()
+    verifyModule(llvm.module)
 }

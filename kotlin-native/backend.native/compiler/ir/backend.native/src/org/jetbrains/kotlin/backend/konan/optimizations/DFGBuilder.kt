@@ -161,7 +161,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
     private val module = DataFlowIR.Module(irModule.descriptor)
-    private val symbolTable = DataFlowIR.SymbolTable(context, irModule, module)
+    private val symbolTable = DataFlowIR.SymbolTable(context, module)
 
     // Possible values of a returnable block.
     private val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
@@ -172,6 +172,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val expressionValuesExtractor = ExpressionValuesExtractor(context, returnableBlockValues, suspendableExpressionValues)
 
     fun build(): ModuleDFG {
+        symbolTable.populateWith(irModule)
+
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
         irModule.accept(object : IrElementVisitorVoid {
 
@@ -548,8 +550,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         values = mutableListOf(),
                         type   = symbolTable.mapType(irVariable.type),
                         kind   = if (catchParameters.contains(irVariable))
-                                     DataFlowIR.VariableKind.CatchParameter
-                                 else DataFlowIR.VariableKind.Ordinary
+                            DataFlowIR.VariableKind.CatchParameter
+                        else DataFlowIR.VariableKind.Ordinary
                 )
                 scope.nodes += node
                 variables[irVariable] = Scoped(node, scope)

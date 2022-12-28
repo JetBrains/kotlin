@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
 import org.jetbrains.kotlin.backend.konan.DirectedGraphNode
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.FunctionSymbol.Declared)
     : DirectedGraphNode<DataFlowIR.FunctionSymbol.Declared> {
@@ -53,6 +54,7 @@ internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared
 
 internal class CallGraphBuilder(
         val context: Context,
+        val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val externalModulesDFG: ExternalModulesDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
@@ -77,7 +79,7 @@ internal class CallGraphBuilder(
     private val functionStack = mutableListOf<HandleFunctionParams>()
 
     fun build(): CallGraph {
-        val rootSet = DevirtualizationAnalysis.computeRootSet(context, moduleDFG, externalModulesDFG)
+        val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG, externalModulesDFG)
         for (symbol in rootSet) {
             val function = moduleDFG.functions[symbol]
             if (function == null)

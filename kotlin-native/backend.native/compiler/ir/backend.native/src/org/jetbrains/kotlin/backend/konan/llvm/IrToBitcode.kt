@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocatio
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDA
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -83,8 +86,8 @@ internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
 internal fun IrField.shouldBeFrozen(context: Context): Boolean =
         this.storageKind(context) == FieldStorageKind.SHARED_FROZEN
 
-internal class RTTIGeneratorVisitor(generationState: NativeGenerationState) : IrElementVisitorVoid {
-    val generator = RTTIGenerator(generationState)
+internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>?) : IrElementVisitorVoid {
+    val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)
 
@@ -201,7 +204,11 @@ private interface CodeContext {
 
 //-------------------------------------------------------------------------//
 
-internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, val lifetimes: Map<IrElement, Lifetime>) : IrElementVisitorVoid {
+internal class CodeGeneratorVisitor(
+        val generationState: NativeGenerationState,
+        val irBuiltins: IrBuiltIns,
+        val lifetimes: Map<IrElement, Lifetime>
+) : IrElementVisitorVoid {
     private val context = generationState.context
     private val llvm = generationState.llvm
     private val debugInfo: DebugInfo
@@ -338,8 +345,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
             return block()
         }
     }
-    private fun appendCAdapters() {
-        val elements = context.cAdapterExportedElements
+    private fun appendCAdapters(elements: CAdapterExportedElements) {
         CAdapterCodegen(codegen, generationState).buildAllAdaptersRecursively(elements)
         // TODO: It is not a part of IrToBitcode. Maybe move it somewhere?
         CAdapterApiExporter(generationState, elements).makeGlobalStruct()
@@ -442,7 +448,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
             appendLlvmUsed("llvm.used", llvm.usedFunctions + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produce.isNativeLibrary) {
-                appendCAdapters()
+                context.cAdapterExportedElements?.let { appendCAdapters(it) }
             }
         }
 
@@ -899,12 +905,17 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         declaration.backingField?.acceptVoid(this)
     }
 
-    //-------------------------------------------------------------------------//
+    private fun needGlobalInit(field: IrField): Boolean {
+        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return field.isStatic
+        // TODO: add some smartness here. Maybe if package of the field is in never accessed
+        // assume its global init can be actually omitted.
+        return true
+    }
 
     override fun visitField(declaration: IrField) {
         context.log{"visitField                     : ${ir2string(declaration)}"}
         debugFieldDeclaration(declaration)
-        if (context.needGlobalInit(declaration)) {
+        if (needGlobalInit(declaration)) {
             val type = declaration.type.toLLVMType(llvm)
             val globalPropertyAccess = generationState.llvmDeclarations.forStaticField(declaration).storageAddressAccess
             val initializer = declaration.initializer?.expression
@@ -1684,7 +1695,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         when {
             !value.symbol.owner.isStatic -> {
                 fieldAddress = fieldPtrOfClass(evaluateExpression(value.receiver!!), value.symbol.owner)
-                alignment = context.generationState.llvmDeclarations.forField(value.symbol.owner).alignment
+                alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
             }
             value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
                 // TODO: probably can be removed, as they are inlined.
@@ -1762,7 +1773,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 functionGenerationContext.call(llvm.checkLifetimesConstraint, listOf(thisPtr, valueToAssign))
             }
             address = fieldPtrOfClass(thisPtr, value.symbol.owner)
-            alignment = context.generationState.llvmDeclarations.forField(value.symbol.owner).alignment
+            alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
         } else {
             assert(value.receiver == null)
             if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
@@ -2537,7 +2548,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateOperatorCall           : origin:${ir2string(callee)}"}
         val function = callee.symbol.owner
-        val ib = context.irModule!!.irBuiltins
+        val ib = context.irBuiltIns
 
         with(functionGenerationContext) {
             val functionSymbol = function.symbol

@@ -62,11 +62,14 @@ internal class CoverageManager(val generationState: NativeGenerationState) {
             filesRegionsInfo.flatMap { it.functions }.firstOrNull { it.function == irFunction }
 
     private val coveredModules: Set<ModuleDescriptor> by lazy {
-        val coveredUserCode = if (shouldCoverSources) setOf(context.moduleDescriptor) else emptySet()
+        val coveredSources = if (shouldCoverSources) {
+            context.sourcesModules
+        } else {
+            emptySet()
+        }
         val coveredLibs = context.irModules.filter { it.key in librariesToCover }.values
                 .map { it.descriptor }.toSet()
-        val coveredIncludedLibs = if (shouldCoverSources) context.getIncludedLibraryDescriptors().toSet() else emptySet()
-        coveredLibs + coveredUserCode + coveredIncludedLibs
+        coveredLibs + coveredSources
     }
 
     private fun fileCoverageFilter(file: IrFile) =

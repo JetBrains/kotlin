@@ -339,7 +339,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
-            val alignmnet = declaration.requiredAlignment(context)
+            val alignmnet = declaration.requiredAlignment(llvm)
             val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
             } else {

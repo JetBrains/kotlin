@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -36,68 +37,36 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
             else -> TODO("${context.config.produce} should not reach native linker stage")
         }
 
-internal class CacheStorage(val generationState: NativeGenerationState) {
-    private val config = generationState.config
-    private val outputFiles = generationState.outputFiles
-
-    fun renameOutput() {
-        // For caches the output file is a directory. It might be created by someone else,
-        // we have to delete it in order for the next renaming operation to succeed.
-        // TODO: what if the directory is not empty?
-        java.io.File(outputFiles.mainFileName).delete()
-        if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
-            outputFiles.tempCacheDirectory.deleteRecursively()
-    }
-
-    fun saveAdditionalCacheInfo() {
-        outputFiles.prepareTempDirectories()
-        saveCacheBitcodeDependencies()
-        saveInlineFunctionBodies()
-        saveClassFields()
-        saveEagerInitializedProperties()
-    }
-
-    private fun saveCacheBitcodeDependencies() {
-        outputFiles.bitcodeDependenciesFile!!.writeLines(
-                DependenciesSerializer.serialize(generationState.dependenciesTracker.immediateBitcodeDependencies))
-    }
-
-    private fun saveInlineFunctionBodies() {
-        outputFiles.inlineFunctionBodiesFile!!.writeBytes(
-                InlineFunctionBodyReferenceSerializer.serialize(generationState.inlineFunctionBodies))
-    }
-
-    private fun saveClassFields() {
-        outputFiles.classFieldsFile!!.writeBytes(
-                ClassFieldsSerializer.serialize(generationState.classFields))
-    }
-
-    private fun saveEagerInitializedProperties() {
-        outputFiles.eagerInitializedPropertiesFile!!.writeBytes(
-                EagerInitializedPropertySerializer.serialize(generationState.eagerInitializedFiles))
-    }
-}
-
 // TODO: We have a Linker.kt file in the shared module.
-internal class Linker(val generationState: NativeGenerationState) {
-    private val config = generationState.config
+internal class Linker(
+        private val context: PhaseContext,
+        private val isCoverageEnabled: Boolean = false,
+        private val tempFiles: TempFiles,
+        private val outputFiles: OutputFiles,
+) {
+
+    private val config = context.config
     private val platform = config.platform
-    private val linkerOutput = determineLinkerOutput(generationState)
+    private val linkerOutput = determineLinkerOutput(context)
     private val linker = platform.linker
     private val target = config.target
-    private val optimize = generationState.shouldOptimize()
+    private val optimize = context.shouldOptimize()
     private val debug = config.debug || config.lightDebug
 
-    fun link(objectFiles: List<ObjectFile>) {
-        val nativeDependencies = generationState.dependenciesTracker.nativeDependenciesToLink
+    fun link(
+            outputFile: String,
+            objectFiles: List<ObjectFile>,
+            dependenciesTrackingResult: DependenciesTrackingResult
+    ) {
+        val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
         val includedBinariesLibraries = config.libraryToCache?.let { listOf(it.klib) }
                 ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
         val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
 
-        val libraryProvidedLinkerFlags = generationState.dependenciesTracker.allNativeDependencies.map { it.linkerOpts }.flatten()
+        val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten()
 
-        runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
+        runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, dependenciesTrackingResult)
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -117,11 +86,13 @@ internal class Linker(val generationState: NativeGenerationState) {
         return result
     }
 
-    private fun runLinker(objectFiles: List<ObjectFile>,
-                          includedBinaries: List<String>,
-                          libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
-        val outputFiles = generationState.outputFiles
-
+    private fun runLinker(
+            outputFile: String,
+            objectFiles: List<ObjectFile>,
+            includedBinaries: List<String>,
+            libraryProvidedLinkerFlags: List<String>,
+            dependenciesTrackingResult: DependenciesTrackingResult,
+    ): ExecutableFile {
         val additionalLinkerArgs: List<String>
         val executable: String
 
@@ -137,7 +108,7 @@ internal class Linker(val generationState: NativeGenerationState) {
             }
             executable = outputFiles.nativeBinaryFile
         } else {
-            val framework = File(generationState.outputFile)
+            val framework = File(outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
             val dylibRelativePath = when (target.family) {
                 Family.IOS,
@@ -152,10 +123,9 @@ internal class Linker(val generationState: NativeGenerationState) {
             executable = dylibPath.absolutePath
         }
 
-        val needsProfileLibrary = generationState.coverage.enabled
         val mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC
 
-        val linkerInput = determineLinkerInput(objectFiles, linkerOutput)
+        val linkerInput = determineLinkerInput(objectFiles, linkerOutput, dependenciesTrackingResult)
         try {
             File(executable).delete()
             val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
@@ -172,12 +142,12 @@ internal class Linker(val generationState: NativeGenerationState) {
                     debug = debug,
                     kind = linkerOutput,
                     outputDsymBundle = outputFiles.symbolicInfoFile,
-                    needsProfileLibrary = needsProfileLibrary,
+                    needsProfileLibrary = isCoverageEnabled,
                     mimallocEnabled = mimallocEnabled,
                     sanitizer = config.sanitizer
             )
             (linkerInput.preLinkCommands + finalOutputCommands).forEach {
-                it.logWith(generationState::log)
+                it.logWith(context::log)
                 it.execute()
             }
         } catch (e: KonanExternalToolFailure) {
@@ -191,7 +161,7 @@ internal class Linker(val generationState: NativeGenerationState) {
                         Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
                         """.trimIndent()
                     else ""
-            generationState.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
+            context.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
         }
         return executable
     }
@@ -205,8 +175,12 @@ internal class Linker(val generationState: NativeGenerationState) {
         return isStaticLibrary && enabled && nonEmptyCaches
     }
 
-    private fun determineLinkerInput(objectFiles: List<ObjectFile>, linkerOutputKind: LinkerOutputKind): LinkerInput {
-        val caches = determineCachesToLink(generationState)
+    private fun determineLinkerInput(
+            objectFiles: List<ObjectFile>,
+            linkerOutputKind: LinkerOutputKind,
+            dependenciesTrackingResult: DependenciesTrackingResult,
+    ): LinkerInput {
+        val caches = determineCachesToLink(context, dependenciesTrackingResult)
         // Since we have several linker stages that involve caching,
         // we should detect cache usage early to report errors correctly.
         val cachingInvolved = caches.static.isNotEmpty() || caches.dynamic.isNotEmpty()
@@ -216,7 +190,7 @@ internal class Linker(val generationState: NativeGenerationState) {
                 LinkerInput(objectFiles, CachesToLink(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
             }
             shouldPerformPreLink(caches, linkerOutputKind) -> {
-                val preLinkResult = generationState.tempFiles.create("withStaticCaches", ".o").absolutePath
+                val preLinkResult = tempFiles.create("withStaticCaches", ".o").absolutePath
                 val preLinkCommands = linker.preLinkCommands(objectFiles + caches.static, preLinkResult)
                 LinkerInput(listOf(preLinkResult), CachesToLink(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
             }
@@ -234,19 +208,17 @@ private class LinkerInput(
 
 private class CachesToLink(val static: List<String>, val dynamic: List<String>)
 
-private fun determineCachesToLink(generationState: NativeGenerationState): CachesToLink {
+private fun determineCachesToLink(
+        context: PhaseContext,
+        dependenciesTrackingResult: DependenciesTrackingResult,
+): CachesToLink {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()
 
-    generationState.dependenciesTracker.allCachedBitcodeDependencies.forEach { dependency ->
+    dependenciesTrackingResult.allCachedBitcodeDependencies.forEach { dependency ->
         val library = dependency.library
-        val currentBinaryContainsLibrary = generationState.llvmModuleSpecification.containsLibrary(library)
-        val cache = generationState.config.cachedLibraries.getLibraryCache(library)
+        val cache = context.config.cachedLibraries.getLibraryCache(library)
                 ?: error("Library $library is expected to be cached")
-
-        // Consistency check. Generally guaranteed by implementation.
-        if (currentBinaryContainsLibrary)
-            error("Library ${library.libraryName} is found in both cache and current binary")
 
         val list = when (cache.kind) {
             CachedLibraries.Kind.DYNAMIC -> dynamicCaches

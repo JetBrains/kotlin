@@ -66,14 +66,15 @@ internal fun PsiToIrContext.psiToIr(
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
-    val libraryToCacheModule = config.libraryToCache?.klib?.let {
+    val libraryToCache = config.libraryToCache
+    val libraryToCacheModule = libraryToCache?.klib?.let {
         moduleDescriptor.allDependencyModules.single { module -> module.konanLibrary == it }
     }
 
     val stdlibIsCached = stdlibModule.konanLibrary?.let { config.cachedLibraries.isLibraryCached(it) } == true
     val stdlibIsBeingCached = libraryToCacheModule == stdlibModule
     require(!(stdlibIsCached && stdlibIsBeingCached)) { "The cache for stdlib is already built" }
-    val kFunctionImplIsBeingCached = stdlibIsBeingCached && config.libraryToCache?.strategy.containsKFunctionImpl
+    val kFunctionImplIsBeingCached = stdlibIsBeingCached && libraryToCache?.strategy.containsKFunctionImpl
     val shouldUseLazyFunctionClasses = (stdlibIsCached || stdlibIsBeingCached) && !kFunctionImplIsBeingCached
 
     val stubGenerator = DeclarationStubGeneratorImpl(
@@ -152,7 +153,7 @@ internal fun PsiToIrContext.psiToIr(
             while (true) {
                 // context.config.librariesWithDependencies could change at each iteration.
                 val dependencies = moduleDescriptor.allDependencyModules.filter {
-                    config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
+                    config.librariesWithDependencies().contains(it.konanLibrary)
                 }
 
                 fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
@@ -251,11 +252,13 @@ internal fun PsiToIrContext.psiToIr(
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
 
-    return PsiToIrOutput(
-            modules,
-            mainModule,
-            expectDescriptorToSymbol,
-            symbols,
-            if (isProducingLibrary) null else irDeserializer as KonanIrLinker
-    )
+    return if (isProducingLibrary) {
+        PsiToIrOutput.ForKlib(mainModule, symbols, expectDescriptorToSymbol)
+    } else if (libraryToCache == null) {
+        PsiToIrOutput.ForBackend(modules, mainModule, symbols, irDeserializer as KonanIrLinker)
+    } else {
+        val libraryName = libraryToCache.klib.libraryName
+        val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
+        PsiToIrOutput.ForBackend(modules.filterKeys { it != libraryName }, libraryModule, symbols, irDeserializer as KonanIrLinker)
+    }
 }

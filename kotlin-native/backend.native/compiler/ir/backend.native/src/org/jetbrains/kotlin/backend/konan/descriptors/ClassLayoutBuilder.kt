@@ -263,8 +263,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
     }
 }
 
-internal fun IrField.requiredAlignment(context: Context) : Int {
-    val llvm = context.generationState.llvm
+internal fun IrField.requiredAlignment(llvm: Llvm): Int {
     val llvmType = type.toLLVMType(llvm)
     val abiAlignment = if (llvmType == llvm.vector128Type) {
         8 // over-aligned objects are not supported now, and this worked somehow, so let's keep it as it for now
@@ -284,10 +283,10 @@ internal fun IrField.requiredAlignment(context: Context) : Int {
 
 
 internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
-    private fun IrField.toFieldInfo(): FieldInfo {
+    private fun IrField.toFieldInfo(llvm: Llvm): FieldInfo {
         val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
         require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
-        return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(context))
+        return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
     }
 
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
@@ -441,7 +440,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         if (mappedField == fieldInfo.irField)
             fieldInfo
         else
-            mappedField!!.toFieldInfo()
+            mappedField!!.toFieldInfo(llvm)
     }
 
     private var fields: List<FieldInfo>? = null
@@ -452,7 +451,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         val superClass = irClass.getSuperClassNotAny()
         val superFields = if (superClass != null) context.getLayoutBuilder(superClass).getFieldsInternal(llvm) else emptyList()
 
-        val declaredFields = getDeclaredFields()
+        val declaredFields = getDeclaredFields(llvm)
         val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
             declaredFields
         else
@@ -504,7 +503,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     /**
      * Fields declared in the class.
      */
-    fun getDeclaredFields(): List<FieldInfo> {
+    fun getDeclaredFields(llvm: Llvm): List<FieldInfo> {
         val outerThisField = if (irClass.isInner)
             context.innerClassesSupport.getOuterThisField(irClass)
         else null
@@ -517,7 +516,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
                 "No IR and no cache for ${irClass.render()}"
             }
-            return moduleDeserializer.deserializeClassFields(irClass, outerThisField?.toFieldInfo())
+            return moduleDeserializer.deserializeClassFields(irClass, outerThisField?.toFieldInfo(llvm))
         }
 
         val declarations = irClass.declarations.toMutableList()
@@ -527,8 +526,8 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
         return declarations.mapNotNull {
             when (it) {
-                is IrField -> it.takeIf { it.isReal && !it.isStatic }?.toFieldInfo()
-                is IrProperty -> it.takeIf { it.isReal }?.backingField?.takeIf { !it.isStatic }?.toFieldInfo()
+                is IrField -> it.takeIf { it.isReal && !it.isStatic }?.toFieldInfo(llvm)
+                is IrProperty -> it.takeIf { it.isReal }?.backingField?.takeIf { !it.isStatic }?.toFieldInfo(llvm)
                 else -> null
             }
         }

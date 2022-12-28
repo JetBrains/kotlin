@@ -239,9 +239,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val shortModuleName: String?
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
 
-    fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
-
-        if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
+    fun librariesWithDependencies(): List<KonanLibrary> {
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
     }
 

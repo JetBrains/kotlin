@@ -116,36 +116,40 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
  * In case of debug we do almost nothing (that's why we need [createLTOPipelineConfigForRuntime]),
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
-internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState): LlvmPipelineConfig {
-    val config = generationState.config
+internal fun createLTOFinalPipelineConfig(
+        context: PhaseContext,
+        targetTriple: String,
+        closedWorld: Boolean
+): LlvmPipelineConfig {
+    val config = context.config
     val target = config.target
     val configurables: Configurables = config.platform.configurables
-    val cpuModel = getCpuModel(generationState)
-    val cpuFeatures = getCpuFeatures(generationState)
+    val cpuModel = getCpuModel(context)
+    val cpuFeatures = getCpuFeatures(context)
     val optimizationLevel: LlvmOptimizationLevel = when {
-        generationState.shouldOptimize() -> LlvmOptimizationLevel.AGGRESSIVE
-        generationState.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
+        context.shouldOptimize() -> LlvmOptimizationLevel.AGGRESSIVE
+        context.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
         else -> LlvmOptimizationLevel.DEFAULT
     }
     val sizeLevel: LlvmSizeLevel = when {
         // We try to optimize code as much as possible on embedded targets.
         target is KonanTarget.ZEPHYR ||
                 target == KonanTarget.WASM32 -> LlvmSizeLevel.AGGRESSIVE
-        generationState.shouldOptimize() -> LlvmSizeLevel.NONE
-        generationState.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
+        context.shouldOptimize() -> LlvmSizeLevel.NONE
+        context.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
         else -> LlvmSizeLevel.NONE
     }
     val codegenOptimizationLevel: LLVMCodeGenOptLevel = when {
-        generationState.shouldOptimize() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive
-        generationState.shouldContainDebugInfo() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelNone
+        context.shouldOptimize() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive
+        context.shouldContainDebugInfo() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelNone
         else -> LLVMCodeGenOptLevel.LLVMCodeGenLevelDefault
     }
-    val relocMode: LLVMRelocMode = configurables.currentRelocationMode(generationState).translateToLlvmRelocMode()
+    val relocMode: LLVMRelocMode = configurables.currentRelocationMode(context).translateToLlvmRelocMode()
     val codeModel: LLVMCodeModel = LLVMCodeModel.LLVMCodeModelDefault
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
     // to reduce size of a bitcode with global dce.
-    val internalize = generationState.llvmModuleSpecification.isFinal
+    val internalize = closedWorld
     // Hidden visibility makes symbols internal when linking the binary.
     // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
     // similar to DCE enabled by internalize but later:
@@ -157,13 +161,13 @@ internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState
     // Null value means that LLVM should use default inliner params
     // for the provided optimization and size level.
     val inlineThreshold: Int? = when {
-        generationState.shouldOptimize() -> tryGetInlineThreshold(generationState)
-        generationState.shouldContainDebugInfo() -> null
+        context.shouldOptimize() -> tryGetInlineThreshold(context)
+        context.shouldContainDebugInfo() -> null
         else -> null
     }
 
     return LlvmPipelineConfig(
-            generationState.llvm.targetTriple,
+            targetTriple,
             cpuModel,
             cpuFeatures,
             optimizationLevel,

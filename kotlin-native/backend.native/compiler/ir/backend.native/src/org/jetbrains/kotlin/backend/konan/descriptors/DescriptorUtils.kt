@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
-import org.jetbrains.kotlin.backend.konan.llvm.longName
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -277,5 +276,8 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall or @ObjCMethod annotation")
 }
+
+private val IrFunction.longName: String
+    get() = "${(parent as? IrClass)?.name?.asString() ?: "<root>"}.${(this as? IrSimpleFunction)?.name ?: "<init>"}"
 
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR

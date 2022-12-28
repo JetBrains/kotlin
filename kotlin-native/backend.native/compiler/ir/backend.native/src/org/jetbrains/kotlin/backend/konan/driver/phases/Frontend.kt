@@ -76,7 +76,3 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
         FrontendPhaseOutput.ShouldNotGenerateCode
     }
 }
-
-internal fun <T : FrontendContext> PhaseEngine<T>.runFrontend(environment: KotlinCoreEnvironment): FrontendPhaseOutput {
-    return this.runPhase(FrontendPhase, environment)
-}

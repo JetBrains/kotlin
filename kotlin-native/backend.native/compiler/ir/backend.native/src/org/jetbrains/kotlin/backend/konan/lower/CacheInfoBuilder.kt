@@ -37,7 +37,7 @@ internal class CacheInfoBuilder(
                 if (!declaration.isInterface && !declaration.isLocal
                         && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
                 ) {
-                    val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields()
+                    val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields(generationState.llvm)
                     generationState.classFields.add(moduleDeserializer.buildClassFields(declaration, declaredFields))
                 }
             }

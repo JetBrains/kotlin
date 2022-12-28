@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
@@ -78,15 +79,14 @@ val CompilerOutputKind.isCache: Boolean
 val KonanConfig.involvesCodegen: Boolean
     get() = produce != CompilerOutputKind.LIBRARY && !omitFrameworkBinary
 
-internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
-    module.let{}
-    if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
+internal fun llvmIrDumpCallback(state: ActionState, module: LLVMModuleRef, config: KonanConfig, temporaryFiles: TempFiles) {
+    if (state.phase.name in config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
         val moduleName: String = memScoped {
             val sizeVar = alloc<size_tVar>()
-            LLVMGetModuleIdentifier(context.generationState.llvm.module, sizeVar.ptr)!!.toKStringFromUtf8()
+            LLVMGetModuleIdentifier(module, sizeVar.ptr)!!.toKStringFromUtf8()
         }
-        val output = context.generationState.tempFiles.create("$moduleName.${state.phase.name}", ".ll")
-        if (LLVMPrintModuleToFile(context.generationState.llvm.module, output.absolutePath, null) != 0) {
+        val output = temporaryFiles.create("$moduleName.${state.phase.name}", ".ll")
+        if (LLVMPrintModuleToFile(module, output.absolutePath, null) != 0) {
             error("Can't dump LLVM IR to ${output.absolutePath}")
         }
     }
