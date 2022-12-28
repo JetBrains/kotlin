@@ -10314,9 +10314,39 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("entriesPropertyAsExtensionClash.kt")
+                public void testEntriesPropertyAsExtensionClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyAsExtensionClash.kt");
+                }
+
+                @Test
+                @TestMetadata("entriesPropertyImportedClash.kt")
+                public void testEntriesPropertyImportedClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClash.kt");
+                }
+
+                @Test
+                @TestMetadata("entriesPropertyInCompanionClash.kt")
+                public void testEntriesPropertyInCompanionClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyInCompanionClash.kt");
+                }
+
+                @Test
+                @TestMetadata("entriesPropertyWithJvmStaticClash.kt")
+                public void testEntriesPropertyWithJvmStaticClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyWithJvmStaticClash.kt");
+                }
+
+                @Test
                 @TestMetadata("enumEntriesAmbiguity.kt")
                 public void testEnumEntriesAmbiguity() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/enumEntriesAmbiguity.kt");
+                }
+
+                @Test
+                @TestMetadata("genericEntriesPropertyClash.kt")
+                public void testGenericEntriesPropertyClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/genericEntriesPropertyClash.kt");
                 }
             }
 
