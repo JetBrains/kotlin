@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolveContractViolationErrorHandler
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 
 open class AbstractFirPluginBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTest() {
@@ -34,6 +35,8 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     useAfterAnalysisCheckers(
         ::DisableLazyResolveChecksAfterAnalysisChecker,
     )
+
+    useAdditionalService { FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar() }
 
     firHandlersStep {
         useHandlers(

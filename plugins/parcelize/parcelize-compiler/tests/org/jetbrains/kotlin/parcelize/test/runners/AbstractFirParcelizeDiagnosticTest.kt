@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolveContractViolationErrorHandler
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.runners.FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
+        useAdditionalService { FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar() }
 
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES

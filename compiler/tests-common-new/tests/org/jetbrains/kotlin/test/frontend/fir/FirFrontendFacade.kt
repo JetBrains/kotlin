@@ -74,7 +74,9 @@ open class FirFrontendFacade(
         }
     }
 
-    open fun registerExtraComponents(session: FirSession) {}
+    fun registerExtraComponents(session: FirSession) {
+        testServices.firSessionComponentRegistrar?.registerAdditionalComponent(session)
+    }
 
     override fun analyze(module: TestModule): FirOutputArtifact {
         val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)

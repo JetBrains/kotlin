@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
@@ -38,6 +37,8 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
+        useAdditionalService { FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar() }
+
         useAfterAnalysisCheckers(
             ::DisableLazyResolveChecksAfterAnalysisChecker,
         )
@@ -72,7 +73,7 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside() {
 // `baseDir` is used in Kotlin plugin from IJ infra
 fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     baseDir: String = ".",
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacadeForDiagnosticTests
+    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade
 ) {
     globalDefaults {
         frontend = FrontendKinds.FIR
@@ -172,11 +173,12 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     }
 }
 
-class FirFrontendFacadeForDiagnosticTests(testServices: TestServices) : FirFrontendFacade(testServices) {
+class FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar : FirSessionComponentRegistrar() {
     private val lazyResolver = FirCompilerLazyDeclarationResolverWithPhaseChecking()
 
     @OptIn(org.jetbrains.kotlin.fir.SessionConfiguration::class)
-    override fun registerExtraComponents(session: FirSession) {
+    override fun registerAdditionalComponent(session: FirSession) {
         session.register(FirLazyDeclarationResolver::class, lazyResolver)
     }
 }
+
