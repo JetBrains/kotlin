@@ -31,7 +31,6 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
 
     val objHeaderType = getStructType("ObjHeader")
     val objHeaderPtrType = pointerType(objHeaderType)
-    val objHeaderPtrPtrType = pointerType(objHeaderType)
     val arrayHeaderType = getStructType("ArrayHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")

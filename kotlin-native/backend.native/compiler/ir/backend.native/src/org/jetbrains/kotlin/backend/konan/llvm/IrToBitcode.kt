@@ -71,20 +71,20 @@ internal fun IrField.storageKind(context: PhaseContext): FieldStorageKind {
     }
 }
 
-internal fun IrField.needsGCRegistration(context: Context) =
+internal fun IrField.needsGCRegistration(context: PhaseContext) =
         context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
                 type.binaryTypeIsReference() && // only for references
                 (hasNonConstInitializer || // which are initialized from heap object
                         !isFinal) // or are not final
 
 
-internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
+internal fun IrField.isGlobalNonPrimitive(context: PhaseContext) = when  {
         type.computePrimitiveBinaryTypeOrNull() != null -> false
         else -> storageKind(context) == FieldStorageKind.GLOBAL
     }
 
 
-internal fun IrField.shouldBeFrozen(context: Context): Boolean =
+internal fun IrField.shouldBeFrozen(context: PhaseContext): Boolean =
         this.storageKind(context) == FieldStorageKind.SHARED_FROZEN
 
 internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>?) : IrElementVisitorVoid {

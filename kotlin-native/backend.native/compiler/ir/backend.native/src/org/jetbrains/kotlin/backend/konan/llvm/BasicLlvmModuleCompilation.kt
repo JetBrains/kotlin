@@ -32,11 +32,6 @@ internal class BasicLlvmModuleCompilation(
 
     override fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
-    fun struct(vararg elements: ConstValue) = Struct(structType(elements.map { it.llvmType }), *elements)
-
-    private fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
-            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
-
     override val kNullInt8Ptr by lazy { LLVMConstNull(int8PtrType)!! }
     override val kNullInt32Ptr by lazy { LLVMConstNull(pointerType(int32Type))!! }
     override val kImmInt32Zero by lazy { int32(0) }

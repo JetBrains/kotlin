@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import kotlinx.cinterop.toCValues
 import llvm.*
 
 
@@ -76,4 +77,9 @@ internal interface LlvmModuleCompilation {
     val kNullInt32Ptr: LLVMValueRef
     val kImmInt32Zero: LLVMValueRef
     val kImmInt32One: LLVMValueRef
+
+    fun struct(vararg elements: ConstValue) = Struct(structType(elements.map { it.llvmType }), *elements)
+
+    private fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
+            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
 }

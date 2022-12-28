@@ -460,7 +460,6 @@ internal class Llvm(
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
-    val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
 
