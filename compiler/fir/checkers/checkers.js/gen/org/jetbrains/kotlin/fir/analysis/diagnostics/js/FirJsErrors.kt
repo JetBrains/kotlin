@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 /*
  * This file was generated automatically
@@ -15,6 +17,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.*
  */
 
 object FirJsErrors {
+    // Declarations
+    val EXPORTED_NAME_CLASH by error2<KtDeclaration, String, FirBasedSymbol<*>>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
     }

@@ -183,6 +183,11 @@ public final class AnnotationsUtils {
         return descriptor.getAnnotations().findAnnotation(JS_EXPORT);
     }
 
+    @Nullable
+    public static AnnotationDescriptor getJsExportIgnoreAnnotation(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor.getAnnotations().findAnnotation(JS_EXPORT_IGNORE);
+    }
+
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isExpect()) return true;
         if (isEffectivelyExternalMember(descriptor)) return true;

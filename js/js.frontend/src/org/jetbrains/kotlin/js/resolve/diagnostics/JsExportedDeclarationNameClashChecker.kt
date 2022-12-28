@@ -28,7 +28,11 @@ class JsExportedDeclarationNameClashChecker : DeclarationChecker {
     private val alreadyUsedExportedNames = mutableMapOf<ExportedName, Pair<KtDeclaration, DeclarationDescriptor>>()
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (!descriptor.hasJsExport()) return
+        if (!descriptor.isTopLevelInPackage() || descriptor.hasJsExportIgnore()) return
+
+        val containingFile = descriptor.containingDeclaration as? PackageFragmentDescriptor
+
+        if (!descriptor.hasJsExport() && containingFile?.hasJsExport() != true) return
 
         val trace = context.trace
         val exportedName = descriptor.calculateExportedName()
@@ -45,6 +49,7 @@ class JsExportedDeclarationNameClashChecker : DeclarationChecker {
     }
 
     private fun DeclarationDescriptor.hasJsExport(): Boolean = AnnotationsUtils.getJsExportAnnotation(this) != null
+    private fun DeclarationDescriptor.hasJsExportIgnore(): Boolean = AnnotationsUtils.getJsExportIgnoreAnnotation(this) != null
 
     private fun DeclarationDescriptor.calculateExportedName(): ExportedName {
         return ExportedName(module, getKotlinOrJsName())
