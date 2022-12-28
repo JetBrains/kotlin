@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
+import org.jetbrains.kotlin.util.wrapIntoSourceCodeAnalysisExceptionIfNeeded
 
 // TODO: rewrite
 fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
@@ -137,16 +139,40 @@ fun FirDeclarationStatus.copy(
     }
 }
 
-inline fun <R> whileAnalysing(@Suppress("UNUSED_PARAMETER") session: FirSession, element: FirElement, block: () -> R) =
-    org.jetbrains.kotlin.util.whileAnalysing(element.source, block)
+inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
+    return try {
+        block()
+    } catch (throwable: Throwable) {
+        session.exceptionHandler.handleExceptionOnElementAnalysis(element, throwable)
+    }
+}
 
 inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R): R {
-    return org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping(
-        file.sourceFile?.path,
-        file.source,
-        { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) },
-        block,
-    )
+    return try {
+        block()
+    } catch (throwable: Throwable) {
+        file.moduleData.session.exceptionHandler.handleExceptionOnFileAnalysis(file, throwable)
+    }
+}
+
+abstract class FirExceptionHandler : FirSessionComponent {
+    abstract fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing
+    abstract fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing
+}
+
+val FirSession.exceptionHandler: FirExceptionHandler by FirSession.sessionComponentAccessor()
+
+object FirCliExceptionHandler : FirExceptionHandler() {
+    override fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing {
+        throw throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element.source)
+    }
+
+    override fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing {
+        throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(
+            file.sourceFile?.path,
+            file.source
+        ) { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) }
+    }
 }
 
 @JvmInline
