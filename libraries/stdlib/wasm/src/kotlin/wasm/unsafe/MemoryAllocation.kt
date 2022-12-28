@@ -43,7 +43,7 @@ public abstract class MemoryAllocator {
  *   for the duration of the call. Calling [MemoryAllocator.allocate] on disabled allocator
  *   will throw [IllegalStateException].
  *
- * WARNING! Accessing allocator outside of the [block] scope will throw [IllegalStateException].
+ * WARNING! Accessing the allocator outside of the [block] scope will throw [IllegalStateException].
  */
 @UnsafeWasmMemoryApi
 public inline fun <T> withScopedMemoryAllocator(
