@@ -15,7 +15,7 @@ import kotlin.wasm.internal.unsafeGetScratchRawMemory
 @UnsafeWasmMemoryApi
 public abstract class MemoryAllocator {
     /**
-     * Allocate a block of uninitialized linear memory of given [size] in bytes.
+     * Allocates a block of uninitialized linear memory of the given [size] in bytes.
      *
      * @return an address of allocated memory. It is guaranteed to be a multiple of 8.
      */
