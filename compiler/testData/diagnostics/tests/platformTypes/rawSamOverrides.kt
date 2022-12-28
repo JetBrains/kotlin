@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // (failed) attempt to reproduce exception in
 // http://stackoverflow.com/questions/42571812/unsupportedoperationexception-while-building-a-kotlin-project-in-idea
