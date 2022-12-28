@@ -28,14 +28,21 @@ import org.jetbrains.kotlin.name.ClassId
 
 fun FirSmartCastExpression.smartcastScope(
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    requiredPhase: FirResolvePhase? = null,
 ): FirTypeScope? {
     val smartcastType = smartcastTypeWithoutNullableNothing?.coneType ?: smartcastType.coneType
-    val smartcastScope = smartcastType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    val smartcastScope = smartcastType.scope(
+        useSiteSession,
+        scopeSession,
+        FakeOverrideTypeCalculator.DoNothing,
+        requiredPhase = FirResolvePhase.STATUS
+    )
     if (isStable) {
         return smartcastScope
     }
-    val originalScope = originalExpression.typeRef.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    val originalScope = originalExpression.typeRef.coneType
+        .scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase)
         ?: return smartcastScope
 
     if (smartcastScope == null) {
@@ -55,14 +62,15 @@ fun ConeClassLikeType.delegatingConstructorScope(
 fun ConeKotlinType.scope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
+    fakeOverrideTypeCalculator: FakeOverrideTypeCalculator,
+    requiredPhase: FirResolvePhase?,
 ): FirTypeScope? {
-    val scope = scope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS) ?: return null
+    val scope = scope(useSiteSession, scopeSession, requiredPhase) ?: return null
     if (fakeOverrideTypeCalculator == FakeOverrideTypeCalculator.DoNothing) return scope
     return FirScopeWithFakeOverrideTypeCalculator(scope, fakeOverrideTypeCalculator)
 }
 
-private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession, requiredPhase: FirResolvePhase): FirTypeScope? {
+private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession, requiredPhase: FirResolvePhase?): FirTypeScope? {
     return when (this) {
         is ConeErrorType -> null
         is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredPhase, lookupTag)
@@ -99,13 +107,15 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
 private fun ConeClassLikeType.classScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    requiredPhase: FirResolvePhase,
+    requiredPhase: FirResolvePhase?,
     memberOwnerLookupTag: ConeClassLikeLookupTag
 ): FirTypeScope? {
     val fullyExpandedType = fullyExpandedType(useSiteSession)
     val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
 
-    fir.symbol.lazyResolveToPhase(requiredPhase)
+    if (requiredPhase != null) {
+        fir.symbol.lazyResolveToPhase(requiredPhase)
+    }
 
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)

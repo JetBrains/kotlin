@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 abstract class Base<T>(val x: T) {
     abstract fun foo(): T
 }

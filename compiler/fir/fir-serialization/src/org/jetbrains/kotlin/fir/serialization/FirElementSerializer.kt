@@ -217,7 +217,7 @@ class FirElementSerializer private constructor(
 
     private fun FirClass.declarations(): List<FirCallableDeclaration> = buildList {
         val memberScope =
-            defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+            defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
                 ?: error("Null scope for $this")
 
         fun addDeclarationIfNeeded(symbol: FirCallableSymbol<*>) {

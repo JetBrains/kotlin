@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 class A : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>Double.() -> Unit<!> {
     override fun invoke(p1: Double) {}
