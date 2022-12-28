@@ -110,6 +110,14 @@ class XcodeSimulatorExecutor(
         val out = simctl("create", deviceType.name, deviceType.identifier, runtimeIdentifier)
         logger.info("Create device $deviceId: simctl output is: $out")
 
+        // Return freshly created device if it fits
+        deviceOrNull()?.let { return it }
+
+        // Looks like device is unavailable. This may happen if
+        // `~/Library/Developer/CoreSimulator/RuntimeMap.plist` has empty preferred runtimes
+        logger.info("Runtimes are available but devices can't use it. Download runtimes again with Xcode")
+        downloadRuntimeFor(simulatorOsName(target.family))
+
         return checkNotNull(deviceOrNull()) { "Unable to get or create simulator device $deviceId for $target with runtime ${simulatorRuntime.name}" }
     }
 
