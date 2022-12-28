@@ -37,3 +37,12 @@ fun box(): String {
 
     return "OK"
 }
+
+// CHECK_BYTECODE_TEXT
+// 1 LOCALVARIABLE aInt \[I
+// 1 LOCALVARIABLE aStr \[Ljava/lang/String;
+// 1 LOCALVARIABLE aUByte \[B
+// 1 LOCALVARIABLE aULongNullable \[Lkotlin/ULong;
+// 1 LOCALVARIABLE aICDoubleNullable \[Ljava/lang/Double;
+// 1 LOCALVARIABLE aICChar \[C
+// 1 LOCALVARIABLE aMFVC \[LMFVC;
