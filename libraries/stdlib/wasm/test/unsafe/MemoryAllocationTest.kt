@@ -45,7 +45,7 @@ class MemoryAllocationTest {
         assertEquals(allocations, allocations2)
 
         // Allocations are aligned
-        assertTrue(allocations.all { it % 8 == 0 })
+        assertTrue(allocations.all { it.toInt() % 8 == 0 })
 
         // Allocations are different
         assertTrue(allocations.distinct().size == allocations.size)
@@ -53,12 +53,12 @@ class MemoryAllocationTest {
         // Allocations do not intersect
         for (i1 in 0..<sizes.size) {
             for (i2 in (i1 + 1)..<sizes.size) {
-                val a1 = allocations[i1]
-                val a2 = allocations[i2]
-                val size1 = sizes[i1]
-                val size2 = sizes[i2]
+                val a1 = allocations[i1].toInt().toUInt()
+                val a2 = allocations[i2].toInt().toUInt()
+                val size1 = sizes[i1].toInt().toUInt()
+                val size2 = sizes[i2].toInt().toUInt()
                 assertTrue(a1 !in a2..<a2 + size2)
-                assertTrue(a1 + size1 - 1 !in a2..<a2 + size2)
+                assertTrue(a1 + size1 - 1u !in a2..<a2 + size2)
             }
         }
     }
@@ -66,13 +66,13 @@ class MemoryAllocationTest {
     @Test
     fun testScopedAllocatorGrowsMemory() {
         // Allocations past current memory size should grow memory
-        val memSizes = mutableListOf<Pointer>(wasmMemorySize())
+        val memSizes = mutableListOf<Int>(wasmMemorySize())
         withScopedMemoryAllocator { a ->
             var allocatedAddress = a.allocate(pageSize)
             var allocationSize = pageSize
 
             repeat(10) {
-                var currPagesUsed = (allocatedAddress + allocationSize + 1) / pageSize
+                var currPagesUsed = (allocatedAddress.toInt() + allocationSize + 1) / pageSize
                 var currPagesAvailable = wasmMemorySize()
                 assertTrue(currPagesAvailable > currPagesUsed)
                 // Allocate 10 pages past max page
@@ -89,10 +89,10 @@ class MemoryAllocationTest {
     @Test
     fun nestedAllocators() {
         val sizes = listOf<Int>(1, 1, 2, 3, 8, 10, 305, 12_747, 31_999)
-        var allocations1: List<Int>
-        var allocations1_1: List<Int>
-        var allocations1_2: List<Int>
-        var allocations2: List<Int>
+        var allocations1: List<Pointer>
+        var allocations1_1: List<Pointer>
+        var allocations1_2: List<Pointer>
+        var allocations2: List<Pointer>
 
         withScopedMemoryAllocator { allocator0 ->
             allocations1 = sizes.map { size -> allocator0.allocate(size) }
@@ -123,7 +123,9 @@ class MemoryAllocationTest {
         assertEquals(allocations1_1, allocations1_2)
 
         // Impl detaiol: allocator in child scope allocates new memory
-        assertTrue(allocations1.max() < allocations1_1.min())
+        val max1: UInt = allocations1.maxOf { it.toInt().toUInt() }
+        val min1_1: UInt = allocations1_1.minOf { it.toInt().toUInt() }
+        assertTrue(max1 < min1_1)
     }
 
     @Test

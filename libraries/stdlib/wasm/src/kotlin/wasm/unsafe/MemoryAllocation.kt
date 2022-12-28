@@ -80,7 +80,7 @@ internal var currentAllocator: ScopedMemoryAllocator? = null
 @PublishedApi
 @UnsafeWasmMemoryApi
 internal class ScopedMemoryAllocator(
-    startAddress: Pointer,
+    startAddress: Int,
     // Allocator from parent scope or null for top-level scope.
     @PublishedApi
     internal var parent: ScopedMemoryAllocator?,
@@ -121,7 +121,7 @@ internal class ScopedMemoryAllocator(
 
         check(availableAddress < wasmMemorySize().toULong() * WASM_PAGE_SIZE_IN_BYTES.toULong())
 
-        return result.toInt()
+        return result.toInt().toPointer()
     }
 
     @PublishedApi

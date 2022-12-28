@@ -9,29 +9,30 @@ class MemoryAccessTestTest {
     fun testScopedAllocator() {
         withScopedMemoryAllocator { a ->
             val size = 16
-            val addr = a.allocate(size)
+            val pointer = a.allocate(size)
+            val addr = pointer.toInt()
 
             fun fillWith(value: Byte) {
                 for (ptr in addr..<addr + size) {
-                    storeByte(ptr, value)
+                    ptr.toPointer().storeByte(value)
                 }
             }
 
             fun fillWith(value: Short) {
                 for (ptr in addr..<addr + size step 2) {
-                    storeShort(ptr, value)
+                    ptr.toPointer().storeShort(value)
                 }
             }
 
             fun fillWith(value: Int) {
                 for (ptr in addr..<addr + size step 4) {
-                    storeInt(ptr, value)
+                    ptr.toPointer().storeInt(value)
                 }
             }
 
             fun fillWith(value: Long) {
                 for (ptr in addr..<addr + size step 8) {
-                    storeLong(ptr, value)
+                    ptr.toPointer().storeLong(value)
                 }
             }
 
@@ -46,16 +47,16 @@ class MemoryAccessTestTest {
                 assertEquals(ints.size, size / 4)
                 assertEquals(longs.size, size / 8)
                 for (i in 0..<size) {
-                    assertEquals(loadByte(addr + i), bytes[i])
+                    assertEquals((pointer + i).loadByte(), bytes[i])
                 }
                 for (i in 0..<size / 2) {
-                    assertEquals(loadShort(addr + i * 2), shorts[i])
+                    assertEquals((pointer + i * 2).loadShort(), shorts[i])
                 }
                 for (i in 0..<size / 4) {
-                    assertEquals(loadInt(addr + i * 4), ints[i])
+                    assertEquals((pointer + i * 4).loadInt(), ints[i])
                 }
                 for (i in 0..<size / 8) {
-                    assertEquals(loadLong(addr + i * 8), longs[i])
+                    assertEquals((pointer + i * 8).loadLong(), longs[i])
                 }
             }
 

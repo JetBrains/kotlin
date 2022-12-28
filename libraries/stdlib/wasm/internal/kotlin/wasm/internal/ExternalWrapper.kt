@@ -194,7 +194,7 @@ internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
 
     @OptIn(UnsafeWasmMemoryApi::class)
     withScopedMemoryAllocator { allocator ->
-        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).toInt()
 
         var result: ExternalInterfaceType? = null
         var srcStartIndex = 0
@@ -242,7 +242,7 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     @OptIn(UnsafeWasmMemoryApi::class)
     withScopedMemoryAllocator { allocator ->
         val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
-        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).toInt()
 
         var srcStartIndex = 0
         while (srcStartIndex < stringLength - maxStringLength) {
