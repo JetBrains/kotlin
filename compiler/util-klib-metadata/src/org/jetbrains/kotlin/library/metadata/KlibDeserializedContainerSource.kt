@@ -20,7 +20,7 @@ class KlibDeserializedContainerSource private constructor(
 
     constructor(header: Header, configuration: DeserializationConfiguration, packageFqName: FqName) : this(
         configuration.reportErrorsOnPreReleaseDependencies &&
-                (header.flags and 1) != 0,
+                (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
         "Package '$packageFqName'"
     )
 
