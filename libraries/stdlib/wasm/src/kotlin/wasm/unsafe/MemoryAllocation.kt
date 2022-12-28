@@ -39,7 +39,7 @@ public abstract class MemoryAllocator {
  *
  * WARNING! Addresses leaked outside of [block] scope become invalid and can be overridden.
  *
- * WARNING! Nested call to [withScopedMemoryAllocator] will temporarily disable allocator from outer scope
+ * WARNING! A nested call to [withScopedMemoryAllocator] will temporarily disable the allocator from the outer scope
  *   for the duration of the call. Calling [MemoryAllocator.allocate] on disabled allocator
  *   will throw [IllegalStateException].
  *
