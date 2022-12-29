@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -61,14 +60,6 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
     return lookupTags.mapNotNull { it.toSymbol(useSiteSession) as? FirClassSymbol<*> }
 }
 
-private fun <T> SmartSet<T>.toSmartList(): SmartList<T> {
-    return SmartList<T>().also {
-        for (element in this) {
-            it.add(element)
-        }
-    }
-}
-
 fun lookupSuperTypes(
     symbols: List<FirClassifierSymbol<*>>,
     lookupInterfaces: Boolean,
@@ -76,13 +67,13 @@ fun lookupSuperTypes(
     useSiteSession: FirSession,
     substituteTypes: Boolean,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
-): List<ConeClassLikeType> {
+): SmartSet<ConeClassLikeType> {
     return SmartSet.create<ConeClassLikeType>().also {
         val visitedSymbols = SmartSet.create<FirClassifierSymbol<*>>()
         for (symbol in symbols) {
             symbol.collectSuperTypes(it, visitedSymbols, deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
         }
-    }.toSmartList()
+    }
 }
 
 fun lookupSuperTypes(
@@ -92,10 +83,10 @@ fun lookupSuperTypes(
     useSiteSession: FirSession,
     substituteTypes: Boolean,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
-): List<ConeClassLikeType> {
+): SmartSet<ConeClassLikeType> {
     return SmartSet.create<ConeClassLikeType>().also {
         klass.symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
-    }.toSmartList()
+    }
 }
 
 fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
@@ -138,10 +129,10 @@ fun lookupSuperTypes(
     deep: Boolean,
     useSiteSession: FirSession,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
-): List<ConeClassLikeType> {
+): SmartSet<ConeClassLikeType> {
     return SmartSet.create<ConeClassLikeType>().also {
         symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, false, useSiteSession, supertypeSupplier)
-    }.toSmartList()
+    }
 }
 
 inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSessionKey<ID, FS> {

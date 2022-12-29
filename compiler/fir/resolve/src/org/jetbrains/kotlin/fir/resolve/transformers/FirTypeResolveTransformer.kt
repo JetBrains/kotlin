@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.toSmartList
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -308,7 +309,7 @@ open class FirTypeResolveTransformer(
                 deep = true,
                 substituteTypes = true,
                 useSiteSession = session
-            ).asReversed()
+            ).toSmartList().asReversed()
             for (superType in superTypes) {
                 superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->
                     val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
