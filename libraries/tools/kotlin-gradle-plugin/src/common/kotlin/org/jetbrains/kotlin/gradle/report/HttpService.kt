@@ -48,6 +48,7 @@ class HttpReportServiceImpl(
             if (invalidUrl) {
                 return
             }
+            log.info("Send statistic for ${data::class.java} to $url")
             val connection = try {
                 URL(url).openConnection() as HttpURLConnection
             } catch (e: IOException) {
@@ -78,6 +79,6 @@ class HttpReportServiceImpl(
                 connection.disconnect()
             }
         }
-        log.debug("Report statistic by http takes $elapsedTime ms")
+        log.info("Report statistic by http takes $elapsedTime ms")
     }
 }
