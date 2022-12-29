@@ -32,7 +32,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private val designation: FirDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val lockProvider: LLFirLockProvider,
+    @Suppress("unused") private val lockProvider: LLFirLockProvider,
     private val firProviderInterceptor: FirProviderInterceptor?,
 ) : LLFirLazyTransformer {
 
@@ -79,9 +79,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
                 checkCanceled()
                 val resolver = DesignatedFirSupertypeResolverVisitor(nowVisit)
                 nowVisit.firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-                lockProvider.withLock(nowVisit.firFile) {
-                    nowVisit.firFile.accept(resolver, null)
-                }
+                nowVisit.firFile.accept(resolver, null)
                 resolver.declarationTransformer.ensureDesignationPassed()
                 visited[nowVisit.target] = nowVisit
             }
@@ -116,12 +114,10 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         val filesToDesignations = visited.groupBy { it.firFile }
         for (designationsPerFile in filesToDesignations) {
             checkCanceled()
-            lockProvider.withLock(designationsPerFile.key) {
-                val session = designationsPerFile.key.llFirResolvableSession
-                    ?: error("When FirFile exists for the declaration, the session should be resolvevablable")
-                session.moduleComponents.sessionInvalidator.withInvalidationOnException(session) {
-                    applyToFileSymbols(designationsPerFile.value)
-                }
+            val session = designationsPerFile.key.llFirResolvableSession
+                ?: error("When FirFile exists for the declaration, the session should be resolvevablable")
+            session.moduleComponents.sessionInvalidator.withInvalidationOnException(session) {
+                applyToFileSymbols(designationsPerFile.value)
             }
         }
     }
