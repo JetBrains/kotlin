@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
 
@@ -236,9 +233,3 @@ private fun handleExceptionFromResolve(
         withFirEntry("firDeclarationToResolve", firDeclarationToResolve)
     }
 }
-
-private fun KtDeclaration.getContainingEnumEntryAsMemberOfEnumEntry(): KtEnumEntry? {
-    val body = parent as? KtClassBody ?: return null
-    return body.parent as? KtEnumEntry
-}
-
