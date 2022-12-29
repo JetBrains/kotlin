@@ -78,7 +78,7 @@ internal class KtFirScopeProvider(
                 body(firSymbol.fir)
             }
             is KtFirEnumEntrySymbol -> {
-                firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+                firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 val initializer = firSymbol.fir.initializer ?: return null
                 check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer.javaClass}" }
                 body(initializer.anonymousObject)
