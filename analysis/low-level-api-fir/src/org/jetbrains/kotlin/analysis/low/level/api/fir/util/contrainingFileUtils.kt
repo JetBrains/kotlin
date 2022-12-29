@@ -22,7 +22,7 @@ fun FirElementWithResolvePhase.getContainingFile(): FirFile? {
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
         is FirValueParameter -> containingFunctionSymbol.fir.getContainingFile()
         is FirCallableDeclaration -> provider.getFirCallableContainerFile(symbol)
-        is FirClassLikeDeclaration -> provider.getFirClassifierContainerFile(symbol)
+        is FirClassLikeDeclaration -> provider.getFirClassifierContainerFileIfAny(symbol)
         is FirDanglingModifierList -> {
             val ktFile = psi?.containingFile as? KtFile
                 ?: error("File for dangling modifier list cannot be null")
