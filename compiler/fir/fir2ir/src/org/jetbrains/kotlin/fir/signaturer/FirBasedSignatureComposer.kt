@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.signaturer
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -93,6 +94,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
+            if (declaration is FirField && declaration.source?.kind == KtFakeSourceElementKind.ClassDelegationField) return null
             if (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
 

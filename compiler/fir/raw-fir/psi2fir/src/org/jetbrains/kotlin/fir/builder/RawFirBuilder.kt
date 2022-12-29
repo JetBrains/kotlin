@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import com.intellij.util.AstLoadingFilter
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
@@ -863,10 +863,11 @@ open class RawFirBuilder(
                             origin = FirDeclarationOrigin.Synthetic
                             name = NameUtils.delegateFieldName(delegateFieldsMap.size)
                             returnTypeRef = type
-                            symbol = FirFieldSymbol(CallableId(name))
+                            symbol = FirFieldSymbol(CallableId(this@RawFirBuilder.context.currentClassId, name))
                             isVar = false
                             status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                             initializer = delegateExpression
+                            dispatchReceiverType = currentDispatchReceiverType()
                         }
                         delegateFieldsMap[index] = delegateField.symbol
                     }
