@@ -8,6 +8,8 @@ You must have:
 * Linux or macOS.
 * Docker installed.
 * 14 GB memory available and configured in Docker.
+* To get reproducible artifacts, [umask](https://en.wikipedia.org/wiki/Umask) command without parameters should 
+produce `0022` or `022` output.
 
 ## Set environment variables
 
