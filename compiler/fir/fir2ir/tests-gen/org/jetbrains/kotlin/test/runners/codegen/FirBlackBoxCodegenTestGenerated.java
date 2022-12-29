@@ -1264,6 +1264,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("vArrayReifiedGeneric.kt")
+        public void testVArrayReifiedGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/vArrayReifiedGeneric.kt");
+        }
+
+        @Test
         @TestMetadata("varargsWithJava.kt")
         public void testVarargsWithJava() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/varargsWithJava.kt");
