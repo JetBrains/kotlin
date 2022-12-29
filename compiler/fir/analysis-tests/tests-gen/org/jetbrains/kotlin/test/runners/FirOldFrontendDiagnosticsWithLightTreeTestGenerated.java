@@ -27018,6 +27018,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("kt55705.kt")
+                public void testKt55705() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt55705.kt");
+                }
+
+                @Test
+                @TestMetadata("kt55705Initial.kt")
+                public void testKt55705Initial() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt55705Initial.kt");
+                }
+
+                @Test
                 @TestMetadata("numberOfDefaults.kt")
                 public void testNumberOfDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/numberOfDefaults.kt");

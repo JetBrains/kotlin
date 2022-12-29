@@ -51,7 +51,8 @@ class CandidateFactory private constructor(
         dispatchReceiverValue: ReceiverValue? = null,
         importedQualifierForStatic: FirExpression? = null,
         givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
-        objectsByName: Boolean = false
+        objectsByName: Boolean = false,
+        isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     ): Candidate {
         @Suppress("NAME_SHADOWING")
         val symbol = symbol.unwrapIntegerOperatorSymbolIfNeeded(callInfo)
@@ -72,7 +73,8 @@ class CandidateFactory private constructor(
                 ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiverValue.isCandidateFromCompanionObjectTypeScope()
                 // The following cases are not applicable for companion objects.
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
-            }
+            },
+            isFromOriginalTypeInPresenceOfSmartCast,
         )
 
         // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.ConeIntegerOperatorConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.ConeEquivalentCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -23,6 +20,7 @@ object NativeCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         val specificityComparator = TypeSpecificityComparator.NONE
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
+            FilteringOutOriginalInPresenceOfSmartCastConeCallConflictResolver,
             ConeEquivalentCallConflictResolver(specificityComparator, components, transformerComponents),
             ConeIntegerOperatorConflictResolver(specificityComparator, components, transformerComponents)
         )
