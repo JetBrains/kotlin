@@ -362,5 +362,6 @@ internal object DependenciesSerializer {
 data class DependenciesTrackingResult(
         val nativeDependenciesToLink: List<KonanLibrary>,
         val allNativeDependencies: List<KonanLibrary>,
-        val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
+        val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>,
+        val immediateBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>,
 )

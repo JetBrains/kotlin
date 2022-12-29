@@ -10,6 +10,8 @@ import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.checkLlvmModuleExternalCalls
 import org.jetbrains.kotlin.backend.konan.createLTOFinalPipelineConfig
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -19,24 +21,24 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
+import org.jetbrains.kotlin.konan.TemporaryFilesService
+import java.io.File
+
+data class WriteBitcodeFilePhaseInput(
+        val llvmModule: LLVMModuleRef,
+        val outputFile: File
+)
 
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
- *
- * TODO: Use explicit input (LLVMModule) and output (File)
- *  after static driver removal.
  */
-
-internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef, String>(
+internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeGenerationState, WriteBitcodeFilePhaseInput>(
         "WriteBitcodeFile",
         "Write bitcode file",
-        outputIfNotEnabled = { _, _, _, _ -> error("WriteBitcodeFile be disabled") }
-) { context, llvmModule ->
-    val output = context.tempFiles.nativeBinaryFileName
+) { context, (module, outputFile) ->
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
     insertAliasToEntryPoint(context)
-    LLVMWriteBitcodeToFile(llvmModule, output)
-    output
+    LLVMWriteBitcodeToFile(module, outputFile.absolutePath)
 }
 
 internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -86,16 +88,32 @@ internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<NativeGe
         op = { context, _ -> removeMultipleThreadDataLoads(context) }
 )
 
-internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
-        name = "CStubs",
-        description = "C stubs compilation",
-        op = { context, _ -> produceCStubs(context) }
+internal class CStubsPhaseInput(
+        val stubs: Map<String, List<CStub>>,
+        val tempFiles: TemporaryFilesService
 )
 
-internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, CStubsPhaseInput, List<File>>(
+        name = "CStubs",
+        description = "C stubs compilation",
+        outputIfNotEnabled = { _, _, _, _ -> emptyList() },
+        op = { context, input ->
+            compileCStubs(
+                    input.stubs,
+                    context.config.clang,
+                    context.config.target,
+                    context.messageCollector,
+                    context.inVerbosePhase,
+                    input.tempFiles
+            )
+        }
+)
+
+
+internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<File>>(
         name = "LinkBitcodeDependencies",
         description = "Link bitcode dependencies",
-        op = { context, _ -> linkBitcodeDependencies(context) }
+        op = { context, input -> linkBitcodeDependencies(context, input) }
 )
 
 internal val VerifyBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(

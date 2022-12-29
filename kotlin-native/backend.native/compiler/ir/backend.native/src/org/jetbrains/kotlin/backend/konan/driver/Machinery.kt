@@ -134,6 +134,6 @@ internal class PhaseEngine<C : PhaseContext>(
 
 
     fun <Output, P : AbstractNamedCompilerPhase<C, Unit, Output>> runPhase(
-            phase: P,
-    ): Output = runPhase(phase, Unit)
+            phase: P, disable: Boolean = false
+    ): Output = runPhase(phase, Unit, disable = disable)
 }

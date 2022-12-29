@@ -1,11 +1,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
-import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.TemporaryFilesService
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -41,8 +39,8 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
 internal class Linker(
         private val context: PhaseContext,
         private val isCoverageEnabled: Boolean = false,
-        private val tempFiles: TempFiles,
-        private val outputFiles: OutputFiles,
+        private val tempFiles: TemporaryFilesService,
+        private val outputFiles: LinkerOutputFiles,
 ) {
 
     private val config = context.config
@@ -190,7 +188,7 @@ internal class Linker(
                 LinkerInput(objectFiles, CachesToLink(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
             }
             shouldPerformPreLink(caches, linkerOutputKind) -> {
-                val preLinkResult = tempFiles.create("withStaticCaches", ".o").absolutePath
+                val preLinkResult = tempFiles.create("withStaticCaches.o").absolutePath
                 val preLinkCommands = linker.preLinkCommands(objectFiles + caches.static, preLinkResult)
                 LinkerInput(listOf(preLinkResult), CachesToLink(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
             }

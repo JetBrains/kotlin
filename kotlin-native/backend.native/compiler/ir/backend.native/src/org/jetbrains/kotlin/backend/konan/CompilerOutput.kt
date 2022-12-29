@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.cexport.produceCAdapterBitcode
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.io.File
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -92,15 +94,6 @@ val KonanConfig.involvesCodegen: Boolean
 //    }
 //}
 
-internal fun produceCStubs(generationState: NativeGenerationState) {
-    generationState.cStubsManager.compile(
-            generationState.config.clang,
-            generationState.messageCollector,
-            generationState.inVerbosePhase
-    ).forEach {
-        parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePath)
-    }
-}
 
 private val BaseKotlinLibrary.isStdlib: Boolean
     get() = uniqueName == KONAN_STDLIB_NAME
@@ -184,23 +177,14 @@ internal fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
     LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
 }
 
-internal fun linkBitcodeDependencies(generationState: NativeGenerationState) {
+internal fun linkBitcodeDependencies(generationState: NativeGenerationState, additionalBitcodeFiles: List<File>) {
     val config = generationState.config
-    val tempFiles = generationState.tempFiles
     val produce = config.produce
 
-    val generatedBitcodeFiles =
-            if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
-                produceCAdapterBitcode(
-                        config.clang,
-                        tempFiles.cAdapterCppName,
-                        tempFiles.cAdapterBitcodeName)
-                listOf(tempFiles.cAdapterBitcodeName)
-            } else emptyList()
     if (produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework) {
         embedAppleLinkerOptionsToBitcode(generationState.llvm, config)
     }
-    linkAllDependencies(generationState, generatedBitcodeFiles)
+    linkAllDependencies(generationState, additionalBitcodeFiles.map { it.absolutePath })
 
 }
 

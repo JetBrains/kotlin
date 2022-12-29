@@ -9,16 +9,13 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import java.io.File
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
@@ -51,15 +48,33 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
     val moduleCompilationOutputs = useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
-        val fragments = backendEngine.splitIntoFragments(irModule)
-        fragments.map { (generationState, fragment) ->
-            backendEngine.useContext(generationState) { generationStateEngine ->
-                generationStateEngine.compileModule(fragment)
+        val chunks = backendEngine.prepareChunks(irModule)
+        chunks.map { chunk ->
+            val config = context.config
+            val outputFiles = OutputFiles(chunk.outputPath, config.target, config.produce)
+            val tempFiles = run {
+                val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
+                    val singleFileStrategy = chunk.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
+                    if (singleFileStrategy == null)
+                        it
+                    else File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).absolutePath
+                }
+                TempFiles(pathToTempDir)
             }
+            val generationState = NativeGenerationState(config, backendContext, chunk.cacheDeserializationStrategy, outputFiles, tempFiles)
+            if (generationState.shouldLinkRuntimeNativeLibraries) {
+                chunk.filesReferencedByNativeRuntime.forEach {
+                    generationState.dependenciesTracker.add(it)
+                }
+            }
+            val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
+                generationStateEngine.compileModule(chunk.irModule)
+            }
+            val objectFiles = runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, ))
         }
     }
     moduleCompilationOutputs.forEach {
-        compileAndLink(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
+        link(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
     }
 }
 
@@ -71,9 +86,17 @@ private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Bool
             it is IrClass && isReferencedByNativeRuntime(it.declarations)
         }
 
-private fun PhaseEngine<out Context>.splitIntoFragments(
-        input: IrModuleFragment,
-): Sequence<Pair<NativeGenerationState, IrModuleFragment>> = if (context.config.producePerFileCache) {
+/**
+ * Input for each backend job.
+ */
+internal data class BackendCompilationChunk(
+        val irModule: IrModuleFragment,
+        val outputPath: String,
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val filesReferencedByNativeRuntime: List<IrFile>,
+)
+
+private fun PhaseEngine<out Context>.prepareChunks(input: IrModuleFragment): Sequence<BackendCompilationChunk> = if (context.config.producePerFileCache) {
     val module = input
     val files = module.files.toList()
     val stdlibIsBeingCached = module.descriptor == context.stdlibModule
@@ -82,33 +105,22 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             ?.filter { isReferencedByNativeRuntime(it.declarations) }.orEmpty()
 
     files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
-        val generationState = NativeGenerationState(
-                context.config,
-                context,
-                CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
-        )
+        val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
         val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
-        if (generationState.shouldDefineFunctionClasses)
+        if (stdlibIsBeingCached && cacheDeserializationStrategy.containsKFunctionImpl)
             fragment.files += functionInterfaceFiles
-
-        if (generationState.shouldLinkRuntimeNativeLibraries) {
-            filesReferencedByNativeRuntime.forEach {
-                generationState.dependenciesTracker.add(it)
-            }
-        }
-
         fragment.files.filterIsInstance<IrFileImpl>().forEach {
             it.module = fragment
         }
-        generationState to fragment
+        val outputPath = context.config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: context.config.outputPath
+        BackendCompilationChunk(fragment, outputPath, cacheDeserializationStrategy, filesReferencedByNativeRuntime)
     }
 } else {
-    val nativeGenerationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
-    sequenceOf(nativeGenerationState to input)
+    sequenceOf(BackendCompilationChunk(input, context.config.outputPath, context.config.libraryToCache?.strategy, emptyList()))
 }
 
 internal data class ModuleCompilationOutput(
-        val bitcodeFile: String,
+        val bitcodeFile: File,
         val dependenciesTrackingResult: DependenciesTrackingResult,
         // Passing tempFiles and output files through this file looks silly and incorrect.
         // TODO: Refactor these classes and remove them from here.
@@ -124,35 +136,38 @@ internal data class ModuleCompilationOutput(
  * 5. Serializes it to a bitcode file.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment): ModuleCompilationOutput {
-    if (context.config.produce.isCache) {
-        runPhase(BuildAdditionalCacheInfoPhase, module)
-    }
+    val cacheAdditionalInfo = runPhase(BuildAdditionalCacheInfoPhase, module, disable = !context.config.produce.isCache)
     if (context.config.produce == CompilerOutputKind.PROGRAM) {
         runPhase(EntryPointPhase, module)
     }
     runBackendCodegen(module)
     val llvm = context.llvm
     runBitcodePostProcessing(llvm.module)
-    if (context.config.produce.isCache) {
-        runPhase(SaveAdditionalCacheInfoPhase)
-    }
-    val bitcodeFile = runPhase(WriteBitcodeFilePhase, context.llvm.module)
     val dependenciesTrackingResult = DependenciesTrackingResult(
             context.dependenciesTracker.bitcodeToLink,
             context.dependenciesTracker.allNativeDependencies,
             context.dependenciesTracker.allBitcodeDependencies,
+            context.dependenciesTracker.immediateBitcodeDependencies,
     )
+
+    if (context.config.produce.isCache) {
+        val cacheDirectory: File =
+        val input = SaveAdditionalCacheInfoPhaseInput(cacheAdditionalInfo, dependenciesTrackingResult, )
+        runPhase(SaveAdditionalCacheInfoPhase, input)
+    }
+    val bitcodeFile: File = context.tempFiles.create("module.bc")
+    runPhase(WriteBitcodeFilePhase, WriteBitcodeFilePhaseInput(context.llvm.module, bitcodeFile))
     return ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
+internal fun <C : PhaseContext> PhaseEngine<C>.link(
+        objectFiles: List<ObjectFile>,
         moduleCompilationOutput: ModuleCompilationOutput,
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
         isCoverageEnabled: Boolean,
 ) {
-    val objectFiles = runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, temporaryFiles))
     val linkerPhaseInput = LinkerPhaseInput(linkerOutputFile, objectFiles, moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles, temporaryFiles, isCoverageEnabled = isCoverageEnabled)
     runPhase(LinkerPhase, linkerPhaseInput)
@@ -160,7 +175,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         runPhase(FinalizeCachePhase, outputFiles)
     }
 }
-
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
     runAllLowerings(module)
@@ -172,7 +186,19 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     }
     mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
-    runPhase(CStubsPhase)
+
+    val cAdapterBitcode = runPhase(CExportApiPhase, CExportApiPhaseInput(
+            context.context.cAdapterExportedElements!!,
+            cAdapterHeader = context.tempFiles.create("api.h"),
+            cAdapterDef = context.tempFiles.create("api.def"),
+            cAdapterCpp = context.tempFiles.create("api.cpp"),
+            cAdapterBitcode = context.tempFiles.create("api.bc"),
+    ), disable = !context.config.produce.isNativeLibrary)
+
+    val cStubsBitcode = runPhase(CStubsPhase, CStubsPhaseInput(
+            context.cStubsManager.build(), tempFiles = context.tempFiles
+    ))
+
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
     //  Motivation: possibility to run LTO on bitcode level after separate IR compilation.
     val llvmModule = context.llvm.module
@@ -182,7 +208,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     if (context.shouldPrintBitCode()) {
         runPhase(PrintBitcodePhase, llvmModule)
     }
-    runPhase(LinkBitcodeDependenciesPhase)
+    runPhase(LinkBitcodeDependenciesPhase, cAdapterBitcode + cStubsBitcode)
 }
 
 /**

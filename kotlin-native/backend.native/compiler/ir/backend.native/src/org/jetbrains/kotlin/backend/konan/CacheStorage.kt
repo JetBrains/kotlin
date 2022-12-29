@@ -5,49 +5,54 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 
-internal class CacheStorage(private val generationState: NativeGenerationState) {
-    private val outputFiles = generationState.outputFiles
+internal class CacheStorage(private val outputFiles: CacheOutputs) {
 
     companion object {
-        fun renameOutput(outputFiles: OutputFiles) {
+        fun renameOutput(outputFiles: CacheOutputs) {
             // For caches the output file is a directory. It might be created by someone else,
             // we have to delete it in order for the next renaming operation to succeed.
             // TODO: what if the directory is not empty?
             java.io.File(outputFiles.mainFileName).delete()
-            if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
+            if (!outputFiles.tempCacheDirectory.renameTo(outputFiles.mainFile))
                 outputFiles.tempCacheDirectory.deleteRecursively()
         }
     }
 
-    fun saveAdditionalCacheInfo() {
+    fun saveAdditionalCacheInfo(cacheAdditionalInfo: CacheAdditionalInfo?, dependenciesTrackingResult: DependenciesTrackingResult) {
         outputFiles.prepareTempDirectories()
-        saveCacheBitcodeDependencies()
-        saveInlineFunctionBodies()
-        saveClassFields()
-        saveEagerInitializedProperties()
+        cacheAdditionalInfo?.let {
+            saveInlineFunctionBodies(it.inlineFunctionBodies)
+            saveClassFields(it.classFields)
+            saveEagerInitializedProperties(it.eagerInitializedFiles)
+        }
+        saveCacheBitcodeDependencies(dependenciesTrackingResult.immediateBitcodeDependencies)
     }
 
-    private fun saveCacheBitcodeDependencies() {
-        outputFiles.bitcodeDependenciesFile!!.writeLines(
-                DependenciesSerializer.serialize(generationState.dependenciesTracker.immediateBitcodeDependencies))
+    private fun saveCacheBitcodeDependencies(immediateBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>) {
+        outputFiles.bitcodeDependenciesFile.writeLines(DependenciesSerializer.serialize(immediateBitcodeDependencies))
     }
 
-    private fun saveInlineFunctionBodies() {
-        outputFiles.inlineFunctionBodiesFile!!.writeBytes(
-                InlineFunctionBodyReferenceSerializer.serialize(generationState.inlineFunctionBodies))
+    private fun saveInlineFunctionBodies(inlineFunctionBodies: List<SerializedInlineFunctionReference>) {
+        outputFiles.inlineFunctionBodiesFile.writeBytes(InlineFunctionBodyReferenceSerializer.serialize(inlineFunctionBodies))
     }
 
-    private fun saveClassFields() {
-        outputFiles.classFieldsFile!!.writeBytes(
-                ClassFieldsSerializer.serialize(generationState.classFields))
+    private fun saveClassFields(classFields: List<SerializedClassFields>) {
+        outputFiles.classFieldsFile.writeBytes(ClassFieldsSerializer.serialize(classFields))
     }
 
-    private fun saveEagerInitializedProperties() {
-        outputFiles.eagerInitializedPropertiesFile!!.writeBytes(
-                EagerInitializedPropertySerializer.serialize(generationState.eagerInitializedFiles))
+    private fun saveEagerInitializedProperties(eagerInitializedFiles: List<SerializedEagerInitializedFile>) {
+        outputFiles.eagerInitializedPropertiesFile.writeBytes(EagerInitializedPropertySerializer.serialize(eagerInitializedFiles))
     }
 }
+
+
+data class CacheAdditionalInfo(
+        val inlineFunctionBodies: List<SerializedInlineFunctionReference> = emptyList(),
+        val classFields: List<SerializedClassFields> = emptyList(),
+        val eagerInitializedFiles: List<SerializedEagerInitializedFile> = emptyList(),
+)

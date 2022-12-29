@@ -15,14 +15,17 @@
  */
 package org.jetbrains.kotlin.konan
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.*
+import java.io.File
+
+interface TemporaryFilesService {
+    fun create(name: String): File
+}
 
 /**
  * Creates and stores temporary compiler outputs
  * If pathToTemporaryDir is given and is not empty then temporary outputs will be preserved
  */
-class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
+class TempFiles(pathToTemporaryDir: String? = null) : TemporaryFilesService {
     fun dispose() {
         if (deleteOnExit) {
             // Note: this can throw an exception if a file deletion is failed for some reason (e.g. OS is Windows and the file is in use).
@@ -30,16 +33,7 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
         }
     }
 
-    private val outputName = File(outputPath).name
-    val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
-
-    val nativeBinaryFile    by lazy { create(outputName,".kt.bc") }
-    val cAdapterCpp         by lazy { create("api", ".cpp") }
-    val cAdapterBitcode     by lazy { create("api", ".bc") }
-
-    val nativeBinaryFileName    get() = nativeBinaryFile.absolutePath
-    val cAdapterCppName         get() = cAdapterCpp.absolutePath
-    val cAdapterBitcodeName     get() = cAdapterBitcode.absolutePath
+    private val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
 
     private val dir by lazy {
         if (deleteOnExit) {
@@ -54,14 +48,14 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
             throw IllegalArgumentException("Given file is not a directory: $path")
         }
         return File(path).apply {
-            if (!exists) { mkdirs() }
+            if (!exists()) { mkdirs() }
         }
     }
 
     /**
-     * Create file named {name}{suffix} inside temporary dir
+     * Create file named [name] inside temporary dir
      */
-    fun create(prefix: String, suffix: String = ""): File =
-            File(dir, "$prefix$suffix")
+    override fun create(name: String): File =
+            File(dir, name)
 }
 

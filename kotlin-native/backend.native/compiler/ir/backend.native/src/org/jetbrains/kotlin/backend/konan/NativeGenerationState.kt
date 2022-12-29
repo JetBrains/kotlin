@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.TempFiles
-import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.TemporaryFilesService
+import java.io.File
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -42,24 +40,12 @@ internal class NativeGenerationState(
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val outputFiles: OutputFiles,
+        val tempFiles: TemporaryFilesService,
 ) : BasicPhaseContext(config) {
-    private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
-    val outputFiles = OutputFiles(outputPath, config.target, config.produce)
-    val tempFiles = run {
-        val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
-            val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
-            if (singleFileStrategy == null)
-                it
-            else File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
-        }
-        TempFiles(outputFiles.outputName, pathToTempDir)
-    }
     val outputFile = outputFiles.mainFileName
 
-    val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
-    val classFields = mutableListOf<SerializedClassFields>()
-    val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
     val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
@@ -94,7 +80,7 @@ internal class NativeGenerationState(
     val runtime by runtimeDelegate
     val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
-    val cStubsManager = CStubsManager(config.target, this)
+    val cStubsManager = CStubsManager(this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
     val coverage by lazy { CoverageManager(this) }
@@ -119,7 +105,6 @@ internal class NativeGenerationState(
             LLVMDisposeModule(runtime.llvmModule)
         }
         LLVMContextDispose(llvmContext)
-        tempFiles.dispose()
 
         isDisposed = true
     }
