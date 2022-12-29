@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -167,6 +168,8 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             args.add("-output")
             args.add(output.path)
             args.add("-meta-info")
+            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
+            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
         } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add("-classpath")

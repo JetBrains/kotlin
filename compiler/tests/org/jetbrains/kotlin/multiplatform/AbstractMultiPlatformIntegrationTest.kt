@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.multiplatform
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -65,6 +66,8 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             if (jsSrc != null) {
                 appendLine()
                 appendLine("-- JS --")
+                // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
+                CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
                 appendLine(K2JSCompiler().compile(jsSrc, commonSrc, "-Xuse-deprecated-legacy-compiler", "-output", jsDest!!))
             }
 
