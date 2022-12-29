@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -51,6 +52,8 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
             main = K2JsArgumentConstants.NO_CALL
             freeArgs = ktFiles
             useDeprecatedLegacyCompiler = true
+            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
+            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
         }
 
         val env = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)

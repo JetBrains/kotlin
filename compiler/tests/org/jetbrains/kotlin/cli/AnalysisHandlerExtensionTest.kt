@@ -11,6 +11,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -70,6 +71,12 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             listOf("-Xuse-deprecated-legacy-compiler", "-output", tmpdir.resolve("out.js").absolutePath)
         else
             listOf("-d", tmpdir.resolve("out").absolutePath)
+
+        if (compiler is K2JSCompiler) {
+            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
+            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
+        }
+
         val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)
         assertEquals(expectedExitCode, exitCode, output)
     }
