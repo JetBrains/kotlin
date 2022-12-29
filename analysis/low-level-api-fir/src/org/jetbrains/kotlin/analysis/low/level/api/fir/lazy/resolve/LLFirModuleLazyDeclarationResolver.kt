@@ -69,31 +69,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         else -> throwUnexpectedFirElementError(this)
     }
 
-    private fun lazyResolveFileDeclaration(
-        firFile: FirFile,
-        toPhase: FirResolvePhase,
-        scopeSession: ScopeSession,
-        collector: FirTowerDataContextCollector? = null,
-    ) {
-        val fromPhase = firFile.resolvePhase
-        try {
-            if (toPhase == FirResolvePhase.RAW_FIR) return
-            resolveFileToImports(firFile)
-            if (toPhase == FirResolvePhase.IMPORTS) return
-            if (firFile.resolvePhase >= toPhase) return
-            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile) {
-                lazyResolveFileDeclarationWithoutLock(
-                    firFile = firFile,
-                    toPhase = toPhase,
-                    collector = collector,
-                    scopeSession = scopeSession,
-                )
-            }
-        } catch (e: Exception) {
-            handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, firFile, fromPhase, toPhase)
-        }
-    }
-
     private fun resolveFileToImports(firFile: FirFile) {
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
         moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile) {
@@ -106,59 +81,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         checkCanceled()
         firFile.transform<FirElement, Any?>(FirImportResolveTransformer(firFile.moduleData.session), null)
         firFile.replaceResolvePhase(FirResolvePhase.IMPORTS)
-
     }
 
-    private fun lazyResolveFileDeclarationWithoutLock(
-        firFile: FirFile,
-        toPhase: FirResolvePhase,
-        scopeSession: ScopeSession,
-        collector: FirTowerDataContextCollector? = null,
-    ) {
-        if (toPhase == FirResolvePhase.RAW_FIR) return
-        resolveFileToImportsWithoutLock(firFile)
-        if (toPhase == FirResolvePhase.IMPORTS) return
-        checkCanceled()
-
-        val validForResolveDeclarations = buildList {
-            add(firFile.annotationsContainer)
-            firFile.declarations.filterTo(this) { it.isValidForResolve() }
-        }.filter { it.resolvePhase < toPhase }
-
-
-        if (validForResolveDeclarations.isEmpty()) return
-        val designations = validForResolveDeclarations.map {
-            FirDesignationWithFile(path = emptyList(), target = it, firFile = firFile)
-        }
-
-        var currentPhase = FirResolvePhase.IMPORTS
-        while (currentPhase < toPhase) {
-            currentPhase = currentPhase.next
-            checkCanceled()
-
-            val transformersToApply = designations.filter { designation ->
-                designation.target.resolvePhase < currentPhase
-            }
-
-            if (transformersToApply.isEmpty()) continue
-
-            moduleComponents.globalResolveComponents.phaseRunner.runPhaseWithCustomResolve(currentPhase) {
-                for (curDesignation in transformersToApply) {
-                    checkCanceled()
-                    LLFirLazyTransformerExecutor.execute(
-                        phase = currentPhase,
-                        designation = curDesignation,
-                        scopeSession = scopeSession,
-                        phaseRunner = moduleComponents.globalResolveComponents.phaseRunner,
-                        lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                        towerDataContextCollector = collector,
-                        firProviderInterceptor = null,
-                    )
-                }
-            }
-            firFile.replaceResolvePhase(currentPhase)
-        }
-    }
 
     private fun fastTrackForImportsPhase(target: FirElementWithResolvePhase): Boolean {
         val provider = target.moduleData.session.firProvider
@@ -202,31 +126,37 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 return
             }
         }
-        if (target is FirFile) {
-            lazyResolveFileDeclaration(target, toPhase, scopeSession)
-            return
-        }
 
-        val designation = declarationDesignationToResolve(target) ?: return
-        if (!designation.target.isValidForResolve()) return
-        if (designation.target.resolvePhase >= toPhase) return
-
-        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile) {
-            runLazyDesignatedResolveWithoutLock(
-                designation = designation,
-                scopeSession = scopeSession,
-                toPhase = toPhase,
-            )
+        for (designation in declarationDesignationsToResolve(target)) {
+            if (!designation.target.isValidForResolve()) continue
+            if (designation.target.resolvePhase >= toPhase) continue
+            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile) {
+                runLazyDesignatedResolveWithoutLock(
+                    designation = designation,
+                    scopeSession = scopeSession,
+                    toPhase = toPhase,
+                )
+            }
         }
     }
 
-    private fun declarationDesignationToResolve(target: FirElementWithResolvePhase): FirDesignationWithFile? {
+    private fun declarationDesignationsToResolve(target: FirElementWithResolvePhase): List<FirDesignationWithFile> {
         return when (target) {
-            is FirPropertyAccessor -> declarationDesignationToResolve(target.propertySymbol.fir)
-            is FirBackingField -> declarationDesignationToResolve(target.propertySymbol.fir)
-            is FirTypeParameter -> declarationDesignationToResolve(target.containingDeclarationSymbol.fir)
-            is FirValueParameter -> declarationDesignationToResolve(target.containingFunctionSymbol.fir)
-            else -> target.tryCollectDesignationWithFile()
+            is FirPropertyAccessor -> declarationDesignationsToResolve(target.propertySymbol.fir)
+            is FirBackingField -> declarationDesignationsToResolve(target.propertySymbol.fir)
+            is FirTypeParameter -> declarationDesignationsToResolve(target.containingDeclarationSymbol.fir)
+            is FirValueParameter -> declarationDesignationsToResolve(target.containingFunctionSymbol.fir)
+            is FirFile -> {
+                val validForResolveDeclarations = buildList {
+                    add(target.annotationsContainer)
+                    target.declarations.filterTo(this) { it.isValidForResolve() }
+                }
+
+                validForResolveDeclarations.map {
+                    FirDesignationWithFile(path = emptyList(), target = it, firFile = target)
+                }
+            }
+            else -> listOfNotNull(target.tryCollectDesignationWithFile())
         }
     }
 
