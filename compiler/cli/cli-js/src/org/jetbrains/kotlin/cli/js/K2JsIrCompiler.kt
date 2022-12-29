@@ -307,8 +307,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.irProduceJs) {
             val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND] ?: error("cannot get 'module kind' from configuration")
 
-            messageCollector.report(INFO, "Produce executable: $outputDirPath")
-            messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
+            messageCollector.report(LOGGING, "Produce executable: $outputDirPath")
+            messageCollector.report(LOGGING, "Cache directory: ${arguments.cacheDirectory}")
 
             if (icCaches.isNotEmpty()) {
                 val beforeIc2Js = System.currentTimeMillis()
@@ -324,13 +324,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.irPerModule, outJsProgram = false)
                 outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
 
-                messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+                messageCollector.report(LOGGING, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
                 for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-                    messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                    messageCollector.report(LOGGING, "  $event: ${(duration / 1e6).toInt()}ms")
                 }
 
                 for (module in rebuiltModules) {
-                    messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
+                    messageCollector.report(LOGGING, "IC module builder rebuilt JS for module [${File(module).name}]")
                 }
 
                 return OK
@@ -396,7 +396,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
                 val outputs = ir2JsTransformer.compileAndTransformIrNew()
 
-                messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
+                messageCollector.report(LOGGING, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
                 outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
             } catch (e: CompilationException) {
@@ -655,11 +655,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // TODO: Use JS IR IC infrastructure for WASM?
         val icCaches = if (!arguments.wasm && cacheDirectory != null) {
-            messageCollector.report(INFO, "")
-            messageCollector.report(INFO, "Building cache:")
-            messageCollector.report(INFO, "to: $outputDir")
-            messageCollector.report(INFO, "cache directory: $cacheDirectory")
-            messageCollector.report(INFO, libraries.toString())
+            messageCollector.report(LOGGING, "")
+            messageCollector.report(LOGGING, "Building cache:")
+            messageCollector.report(LOGGING, "to: $outputDir")
+            messageCollector.report(LOGGING, "cache directory: $cacheDirectory")
+            messageCollector.report(LOGGING, libraries.toString())
 
             val start = System.currentTimeMillis()
 
@@ -675,9 +675,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
 
             val artifacts = cacheUpdater.actualizeCaches()
-            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+            messageCollector.report(LOGGING, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
             for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
-                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                messageCollector.report(LOGGING, "  $event: ${(duration / 1e6).toInt()}ms")
             }
 
             var libIndex = 0
@@ -693,13 +693,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
                     else -> "fully rebuilt" to srcFiles
                 }
-                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
+                messageCollector.report(LOGGING, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
                 var fileIndex = 0
                 for ((srcFile, stat) in showFiles) {
                     val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
                     val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
                     // Use index, because MessageCollector ignores already reported messages
-                    messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
+                    messageCollector.report(LOGGING, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
                 }
             }
 

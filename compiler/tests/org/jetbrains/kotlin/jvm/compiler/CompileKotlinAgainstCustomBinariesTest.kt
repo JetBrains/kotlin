@@ -129,7 +129,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         val result =
             when (compiler) {
-                is K2JSCompiler -> compileJsKlib(libraryName, additionalOptions = libraryOptions)
+                is K2JSCompiler -> compileJsLibrary(libraryName, additionalOptions = libraryOptions)
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
@@ -308,18 +308,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
 //    https://youtrack.jetbrains.com/issue/KT-54905
-//    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
-//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
-//    }
+    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
+    }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
 //    https://youtrack.jetbrains.com/issue/KT-54905
-//    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
-//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
-//    }
+    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
+    }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
@@ -329,9 +329,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestKotlinLibraryWithWrongMetadataVersion("library", null)
     }
 
-    fun testWrongMetadataVersionJs() {
-        doTestKotlinLibraryWithWrongMetadataVersionJs("library")
-    }
+//    There is not metadata version checks in JS IR compiler
+//    TODO: Discuss adding metadata version checks inside JS IR compiler
+//    fun testWrongMetadataVersionJs() {
+//        doTestKotlinLibraryWithWrongMetadataVersionJs("library")
+//    }
 
     fun testWrongMetadataVersionBadMetadata() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", { name, value ->
