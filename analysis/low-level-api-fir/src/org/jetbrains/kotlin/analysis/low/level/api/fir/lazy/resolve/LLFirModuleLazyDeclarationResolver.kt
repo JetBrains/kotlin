@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProviderInterceptor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -69,7 +69,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         else -> throwUnexpectedFirElementError(this)
     }
 
-    private fun resolveFileToImports(firFile: FirFile) {
+    private fun resolveContainingFileToImports(target: FirElementWithResolvePhase) {
+        if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
+        val firFile = target.getContainingFile() ?: return
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
         moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile) {
             resolveFileToImportsWithoutLock(firFile)
@@ -81,19 +83,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         checkCanceled()
         firFile.transform<FirElement, Any?>(FirImportResolveTransformer(firFile.moduleData.session), null)
         firFile.replaceResolvePhase(FirResolvePhase.IMPORTS)
-    }
-
-
-    private fun fastTrackForImportsPhase(target: FirElementWithResolvePhase): Boolean {
-        val provider = target.moduleData.session.firProvider
-        val firFile = when (target) {
-            is FirFile -> target
-            is FirCallableDeclaration -> provider.getFirCallableContainerFile(target.symbol)
-            is FirClassLikeDeclaration -> provider.getFirClassifierContainerFile(target.symbol)
-            else -> null
-        } ?: return false
-        resolveFileToImports(firFile)
-        return true
     }
 
     /**
@@ -121,11 +110,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         toPhase: FirResolvePhase,
     ) {
         if (target.resolvePhase >= toPhase) return
-        if (toPhase == FirResolvePhase.IMPORTS) {
-            if (fastTrackForImportsPhase(target)) {
-                return
-            }
-        }
+        resolveContainingFileToImports(target)
+        if (toPhase == FirResolvePhase.IMPORTS) return
 
         for (designation in declarationDesignationsToResolve(target)) {
             if (!designation.target.isValidForResolve()) continue
@@ -166,10 +152,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
-        if (toPhase == FirResolvePhase.RAW_FIR) return
-        resolveFileToImportsWithoutLock(designation.firFile)
-        if (toPhase == FirResolvePhase.IMPORTS) return
-
         val declarationResolvePhase = designation.target.resolvePhase
         if (declarationResolvePhase >= toPhase) return
 
