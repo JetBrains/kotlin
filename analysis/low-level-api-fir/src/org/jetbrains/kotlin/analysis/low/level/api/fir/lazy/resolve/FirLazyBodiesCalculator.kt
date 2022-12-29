@@ -218,7 +218,7 @@ private data class FirLazyAnnotationTransformerData(
 )
 
 private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
-    private val COMPILATOR_ANNOTATION_NAMES: Set<Name> = setOf(
+    private val COMPILER_ANNOTATION_NAMES: Set<Name> = setOf(
         Deprecated,
         DeprecatedSinceKotlin,
         WasExperimental,
@@ -231,7 +231,7 @@ private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTr
         if (annotationTypeRef !is FirUserTypeRef) return false
         if (session.registeredPluginAnnotations.annotations.isNotEmpty()) return true
         val name = annotationTypeRef.qualifier.last().name
-        return name in COMPILATOR_ANNOTATION_NAMES
+        return name in COMPILER_ANNOTATION_NAMES
     }
 
     override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
@@ -240,11 +240,9 @@ private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTr
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: FirLazyAnnotationTransformerData): FirStatement {
-        if ((data.compilerAnnotationsOnly == FirLazyAnnotationTransformerScope.ALL_ANNOTATIONS || canBeCompilerAnnotation(
-                annotationCall,
-                data.session,
-            )) && FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotationCall)
-        ) {
+        val shouldCalculate = data.compilerAnnotationsOnly == FirLazyAnnotationTransformerScope.ALL_ANNOTATIONS ||
+                canBeCompilerAnnotation(annotationCall, data.session)
+        if (shouldCalculate && FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotationCall)) {
             FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotationCall, data.session)
         }
         super.transformAnnotationCall(annotationCall, data)
