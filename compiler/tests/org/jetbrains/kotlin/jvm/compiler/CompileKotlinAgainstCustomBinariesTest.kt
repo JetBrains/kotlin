@@ -134,11 +134,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
 
-        if (compiler is K2JSCompiler) {
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
-        }
-
         compileKotlin(
             "source.kt",
             usageDestination,
