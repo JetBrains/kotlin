@@ -481,7 +481,7 @@ fun case_17(a: Int?, b: Int = if (a != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotli
 }
 
 // TESTCASE NUMBER: 18
-fun case_18(a: Int?, b: Int = if (false || a != null || false) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!> else 0) {
+fun case_18(a: Int?, b: Int = <!TYPE_MISMATCH!>if (false || a != null || false) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!> else 0<!>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>.equals(null)
