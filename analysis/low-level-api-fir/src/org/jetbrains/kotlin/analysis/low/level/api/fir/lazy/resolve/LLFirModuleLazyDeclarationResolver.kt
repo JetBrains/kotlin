@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
@@ -17,12 +16,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProviderInterceptor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ktDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
@@ -30,15 +28,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.util.SourceCodeAnalysisException
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
 
@@ -69,6 +61,12 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             }
             false
         }
+    }
+
+    private fun FirElementWithResolvePhase.isValidForResolve() = when (this) {
+        is FirDeclaration -> isValidForResolve()
+        is FirFileAnnotationsContainer -> true
+        else -> throwUnexpectedFirElementError(this)
     }
 
     private fun lazyResolveFileDeclaration(
@@ -198,97 +196,37 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
-        if (toPhase == FirResolvePhase.RAW_FIR) return
+        if (target.resolvePhase >= toPhase) return
         if (toPhase == FirResolvePhase.IMPORTS) {
             if (fastTrackForImportsPhase(target)) {
                 return
             }
         }
-        when (target) {
-            is FirSyntheticPropertyAccessor -> {
-                lazyResolve(target.delegate, scopeSession, toPhase)
-                return
-            }
-
-            is FirBackingField -> {
-                lazyResolve(target.propertySymbol.fir, scopeSession, toPhase)
-                return
-            }
-
-            is FirFile -> {
-                lazyResolveFileDeclaration(target, toPhase, scopeSession)
-                return
-            }
-            else -> {}
-        }
-
-        if (target is FirDeclaration && !target.isValidForResolve()) return
-        if (target.resolvePhase >= toPhase) return
-
-        val requestedDeclarationDesignation = target.tryCollectDesignationWithFile()
-
-        val designation: FirDesignationWithFile
-        val neededPhase: FirResolvePhase
-
-        if (target is FirDanglingModifierList) {
-            neededPhase = toPhase
-            val ktFile = target.psi?.containingFile as? KtFile
-                ?: error("File for dangling modifier list cannot be null")
-            designation = FirDesignationWithFile(
-                emptyList(),
-                target,
-                moduleComponents.cache.getCachedFirFile(ktFile) ?: error("Fir file for dandling modifier list cannot be null")
-            )
-        } else if (requestedDeclarationDesignation != null) {
-            designation = requestedDeclarationDesignation
-            neededPhase = toPhase
-        } else {
-            val possiblyLocalDeclaration = (target as FirDeclaration).getKtDeclarationForFirElement()
-            val nonLocalDeclaration = possiblyLocalDeclaration.getNonLocalContainingOrThisDeclaration()
-                ?: error("Container for local declaration cannot be null")
-            val isLocalDeclarationResolveRequested =
-                possiblyLocalDeclaration != nonLocalDeclaration
-            val isValueParameterInsidePrimaryConstructor = target is FirValueParameter
-                    && possiblyLocalDeclaration is KtPrimaryConstructor
-
-            val declarationToResolve: FirDeclaration
-
-            if (isLocalDeclarationResolveRequested && !isValueParameterInsidePrimaryConstructor) {
-                val enumEntry = possiblyLocalDeclaration.getContainingEnumEntryAsMemberOfEnumEntry() ?: return
-
-                declarationToResolve = enumEntry.findSourceNonLocalFirDeclaration(
-                    moduleComponents.firFileBuilder,
-                    target.moduleData.session.firProvider,
-                )
-                neededPhase = FirResolvePhase.BODY_RESOLVE
-            } else {
-                declarationToResolve = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
-                    moduleComponents.firFileBuilder,
-                    target.moduleData.session.firProvider,
-                )
-                neededPhase = toPhase
-            }
-
-            if (declarationToResolve.resolvePhase >= neededPhase) return
-            if (!declarationToResolve.isValidForResolve()) return
-
-            designation = declarationToResolve.collectDesignationWithFile()
-        }
-
-        if (designation.target.resolvePhase >= neededPhase) return
-
-        if (neededPhase == FirResolvePhase.IMPORTS) {
-            resolveFileToImports(designation.firFile)
+        if (target is FirFile) {
+            lazyResolveFileDeclaration(target, toPhase, scopeSession)
             return
         }
+
+        val designation = declarationDesignationToResolve(target) ?: return
+        if (!designation.target.isValidForResolve()) return
+        if (designation.target.resolvePhase >= toPhase) return
 
         moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile) {
             runLazyDesignatedResolveWithoutLock(
                 designation = designation,
                 scopeSession = scopeSession,
-                toPhase = neededPhase,
+                toPhase = toPhase,
             )
-            designation.target
+        }
+    }
+
+    private fun declarationDesignationToResolve(target: FirElementWithResolvePhase): FirDesignationWithFile? {
+        return when (target) {
+            is FirPropertyAccessor -> declarationDesignationToResolve(target.propertySymbol.fir)
+            is FirBackingField -> declarationDesignationToResolve(target.propertySymbol.fir)
+            is FirTypeParameter -> declarationDesignationToResolve(target.containingDeclarationSymbol.fir)
+            is FirValueParameter -> declarationDesignationToResolve(target.containingFunctionSymbol.fir)
+            else -> target.tryCollectDesignationWithFile()
         }
     }
 
