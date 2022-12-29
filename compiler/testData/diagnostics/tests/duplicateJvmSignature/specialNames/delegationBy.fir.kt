@@ -1,5 +1,5 @@
 interface Foo
 
 class Bar(f: Foo) : Foo by f {
-    val `$$delegate_0`: Foo? = null
+    val <!REDECLARATION!>`$$delegate_0`<!>: Foo? = null
 }
