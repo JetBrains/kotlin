@@ -568,13 +568,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.unsafeGetScratchRawMemory -> {
-                // TODO: This drops size of the allocated segment. Instead we can check that it's in bounds for better error messages.
-                body.buildDrop()
                 body.buildConstI32Symbol(context.scratchMemAddr)
-            }
-
-            wasmSymbols.unsafeGetScratchRawMemorySize -> {
-                body.buildConstI32Symbol(WasmSymbol(context.scratchMemSizeInBytes))
             }
 
             wasmSymbols.wasmArrayCopy -> {
@@ -891,6 +885,8 @@ class BodyGenerator(
                                 WasmImmediate.HeapType(WasmHeapType.Type(getReferenceGcType()))
                             WasmImmediateKind.TYPE_IDX ->
                                 WasmImmediate.TypeIdx(getReferenceGcType())
+                            WasmImmediateKind.MEMORY_IDX ->
+                                WasmImmediate.MemoryIdx(0)
 
                             else ->
                                 error("Immediate $imm is unsupported")

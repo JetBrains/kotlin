@@ -69,9 +69,7 @@ sealed class WasmImmediate {
 
     class ValTypeVector(val value: List<WasmType>) : WasmImmediate()
 
-    class MemoryIdx(val value: WasmSymbol<WasmMemory>) : WasmImmediate() {
-        constructor(value: WasmMemory) : this(WasmSymbol(value))
-    }
+    class MemoryIdx(val value: Int) : WasmImmediate()
 
     class DataIdx(val value: WasmSymbol<Int>) : WasmImmediate() {
         constructor(value: Int) : this(WasmSymbol(value))

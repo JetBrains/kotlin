@@ -19,14 +19,10 @@ internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLen
     }
 }
 
-// Returns a pointer into a temporary scratch segment in the raw wasm memory. Aligned by 4.
-// Note: currently there is single such segment for a whole wasm module, so use with care.
+// Returns starting address of unused linear memory.
 @ExcludedFromCodegen
-internal fun unsafeGetScratchRawMemory(sizeBytes: Int): Int =
-    implementedAsIntrinsic
-
-@ExcludedFromCodegen
-internal fun unsafeGetScratchRawMemorySize(): Int =
+@PublishedApi
+internal fun unsafeGetScratchRawMemory(): Int =
     implementedAsIntrinsic
 
 // Assumes there is enough space at the destination, fails with wasm trap otherwise.
