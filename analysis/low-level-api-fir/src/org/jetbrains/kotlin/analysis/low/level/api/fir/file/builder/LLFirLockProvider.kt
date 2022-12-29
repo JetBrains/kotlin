@@ -27,13 +27,3 @@ internal class LLFirLockProvider {
 }
 
 private const val DEFAULT_LOCKING_INTERVAL = 50L
-
-/**
- * Runs [resolve] function (which is considered to do some resolve on [firFile]) under a lock for [firFile]
- */
-internal inline fun <R> LLFirLockProvider.runCustomResolveUnderLock(
-    firFile: FirFile,
-    body: () -> R
-): R {
-    return withLock(key = firFile, lockingIntervalMs = DEFAULT_LOCKING_INTERVAL, body)
-}
