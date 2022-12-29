@@ -32,7 +32,7 @@ class FirJsExportedDeclarationNameClashChecker : FirBasicDeclarationChecker() {
     private val alreadyUsedExportedNames = mutableMapOf<ExportedName, FirDeclaration>()
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.isLocalMember || declaration.hasJsExportIgnoreAnnotation()) return
+        if (declaration.isLocalMember || declaration.hasJsExportIgnoreAnnotation() || declaration is FirFile) return
 
         val containingFile = context.containingDeclarations.lastOrNull() as? FirFile
 
