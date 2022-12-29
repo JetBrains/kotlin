@@ -6,6 +6,8 @@
 package kotlin.wasm.internal
 
 import kotlin.wasm.internal.reftypes.anyref
+import kotlin.wasm.unsafe.withScopedMemoryAllocator
+import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 
 internal external interface ExternalInterfaceType
 
@@ -188,20 +190,23 @@ internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
 
     val srcArray = x.chars
     val stringLength = srcArray.len()
-    val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
+    val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
 
-    val memBuffer = unsafeGetScratchRawMemory(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+    @OptIn(UnsafeWasmMemoryApi::class)
+    withScopedMemoryAllocator { allocator ->
+        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).address.toInt()
 
-    var result: ExternalInterfaceType? = null
-    var srcStartIndex = 0
-    while (srcStartIndex < stringLength - maxStringLength) {
-        unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, maxStringLength, memBuffer)
-        result = importStringFromWasm(memBuffer, maxStringLength, result)
-        srcStartIndex += maxStringLength
+        var result: ExternalInterfaceType? = null
+        var srcStartIndex = 0
+        while (srcStartIndex < stringLength - maxStringLength) {
+            unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, maxStringLength, memBuffer)
+            result = importStringFromWasm(memBuffer, maxStringLength, result)
+            srcStartIndex += maxStringLength
+        }
+
+        unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
+        return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
     }
-
-    unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
-    return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
 }
 
 internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
@@ -225,25 +230,31 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
 )
 internal external fun jsExportStringToWasm(src: ExternalInterfaceType, srcOffset: Int, srcLength: Int, dstAddr: Int)
 
+private const val STRING_INTEROP_MEM_BUFFER_SIZE = 65_536 // 1 page 4KiB
+
 internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)
     val dstArray = WasmCharArray(stringLength)
     if (stringLength == 0) {
         return dstArray.createString()
     }
-    val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
 
-    val memBuffer = unsafeGetScratchRawMemory(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+    @OptIn(UnsafeWasmMemoryApi::class)
+    withScopedMemoryAllocator { allocator ->
+        val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
+        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).address.toInt()
 
-    var srcStartIndex = 0
-    while (srcStartIndex < stringLength - maxStringLength) {
-        jsExportStringToWasm(x, srcStartIndex, maxStringLength, memBuffer)
-        unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, maxStringLength, dstArray)
-        srcStartIndex += maxStringLength
+        var srcStartIndex = 0
+        while (srcStartIndex < stringLength - maxStringLength) {
+            jsExportStringToWasm(x, srcStartIndex, maxStringLength, memBuffer)
+            unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, maxStringLength, dstArray)
+            srcStartIndex += maxStringLength
+        }
+
+        jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
+        unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
     }
 
-    jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
-    unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
     return dstArray.createString()
 }
 

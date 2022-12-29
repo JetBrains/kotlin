@@ -65,7 +65,6 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val initFunctions = mutableListOf<FunWithPriority>()
 
     val scratchMemAddr = WasmSymbol<Int>()
-    val scratchMemSizeInBytes = 65_536
 
     val stringPoolSize = WasmSymbol<Int>()
 
@@ -127,11 +126,8 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             currentDataSectionAddress += typeInfoElement.sizeInBytes
         }
 
-        // Reserve some memory to pass complex exported types (like strings). It's going to be accessible through 'unsafeGetScratchRawMemory'
-        // runtime call from stdlib.
         currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
         scratchMemAddr.bind(currentDataSectionAddress)
-        currentDataSectionAddress += scratchMemSizeInBytes
 
         bind(classIds.unbound, klassIds)
         interfaceId.unbound.onEachIndexed { index, entry -> entry.value.bind(index) }
@@ -176,9 +172,10 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
         val typeInfoSize = currentDataSectionAddress
         val memorySizeInPages = (typeInfoSize / 65_536) + 1
-        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), memorySizeInPages.toUInt()))
+        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null /* "unlimited" */))
 
         // Need to export the memory in order to pass complex objects to the host language.
+        // Export name "memory" is a WASI ABI convention.
         exports += WasmExport.Memory("memory", memory)
 
         val importedFunctions = functions.elements.filterIsInstance<WasmFunction.Imported>()

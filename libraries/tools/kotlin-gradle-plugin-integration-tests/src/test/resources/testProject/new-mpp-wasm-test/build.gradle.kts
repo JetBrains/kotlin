@@ -14,7 +14,9 @@ with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootPr
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.apply(rootProject)) {
-    version = "10.9.194"
+    // Test that we can set the version and it is a String.
+    // But use the default version since update this place every time anyway.
+    version = (version as String)
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.apply(rootProject)) {
