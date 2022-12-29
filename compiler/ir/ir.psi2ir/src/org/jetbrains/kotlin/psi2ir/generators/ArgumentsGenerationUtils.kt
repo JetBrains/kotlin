@@ -95,7 +95,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 receiver.declarationDescriptor.extensionReceiverParameter!!.type.toIrType()
             is ContextReceiver -> {
                 val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters.find {
-                    it.value == receiver
+                    it.value == receiver.original
                 } ?: error("Unknown receiver: $receiver")
                 receiverParameter.type.toIrType()
             }
@@ -133,7 +133,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 }
                 is ContextReceiver -> {
                     val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters
-                        .single { it.value == receiver }
+                        .single { it.value == receiver.original }
                     IrGetValueImpl(
                         defaultStartOffset, defaultStartOffset, irReceiverType,
                         context.symbolTable.referenceValueParameter(receiverParameter)
