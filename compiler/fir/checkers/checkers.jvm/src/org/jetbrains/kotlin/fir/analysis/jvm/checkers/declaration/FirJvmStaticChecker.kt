@@ -199,6 +199,8 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
+        // KT-39868: @JvmStatic needs to be applied for protected members in companion objects.
+        if (declaration is FirMemberDeclaration && declaration.visibility == Visibilities.Protected) return
         if (
             declaration is FirProperty && declaration.isConst ||
             declaration.hasAnnotationNamedAs(StandardClassIds.Annotations.JvmField)
