@@ -282,6 +282,7 @@ enum class LanguageFeature(
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
     InlineLateinit(KOTLIN_1_9, kind = OTHER), // KT-23814
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
+    AllowJvmStaticOnProtectedCompanionObjectProperties(KOTLIN_1_9, kind = BUG_FIX), // KT-39868
 
 
     // Disabled for indefinite time. See KT-53751

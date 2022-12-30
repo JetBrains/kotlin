@@ -71,12 +71,13 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
                 declaration is KtPropertyAccessor ||
                 declaration is KtParameter
             ) {
-                checkDeclaration(declaration, descriptor, context.trace)
+                checkDeclaration(context, declaration, descriptor, context.trace)
             }
         }
     }
 
     private fun checkDeclaration(
+        context: DeclarationCheckerContext,
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
         diagnosticHolder: DiagnosticSink
@@ -112,16 +113,22 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
         }
 
-        if (descriptor is PropertyDescriptor) checkJvmStaticOnConstOrJvmField(declaration, descriptor, diagnosticHolder)
+        if (descriptor is PropertyDescriptor) checkJvmStaticOnConstOrJvmField(context, declaration, descriptor, diagnosticHolder)
     }
 
     private fun checkJvmStaticOnConstOrJvmField(
+        context: DeclarationCheckerContext,
         declaration: KtDeclaration,
         descriptor: PropertyDescriptor,
         diagnosticHolder: DiagnosticSink
     ) {
         // KT-39868: @JvmStatic needs to be applied for protected members in companion objects.
-        if (descriptor.visibility.delegate == Visibilities.Protected) return
+        if (
+            context.languageVersionSettings.supportsFeature(LanguageFeature.AllowJvmStaticOnProtectedCompanionObjectProperties) &&
+            descriptor.visibility.delegate == Visibilities.Protected
+        ) {
+            return
+        }
         // We only need to report it if the declaration is a constant or has the JvmField property.
         if (descriptor.isConst || descriptor.hasJvmFieldAnnotation()) {
             diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_CONST_OR_JVM_FIELD.on(declaration))

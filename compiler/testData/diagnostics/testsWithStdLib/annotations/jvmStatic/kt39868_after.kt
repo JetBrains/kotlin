@@ -1,3 +1,4 @@
+// !LANGUAGE: +AllowJvmStaticOnProtectedCompanionObjectProperties
 // FIR_IDENTICAL
 
 // KT-39868: @JvmStatic needs to be applied for protected members in companion objects.
