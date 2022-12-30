@@ -10,7 +10,7 @@ open class A {
 
         @JvmStatic
         @JvmField
-        protected val z = 1
+        protected var z = 1
     }
 }
 
@@ -20,6 +20,8 @@ class B : A() {
     fun box(): String {
         if (x != 1) return "fail"
         if (z != 1) return "fail2"
+        z = 2
+        if (z != 2) return "fail3"
         return "OK"
     }
 }
