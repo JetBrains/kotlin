@@ -32,8 +32,11 @@ internal class LLFirLazyTransformerExecutor {
                 lockProvider,
                 towerDataContextCollector,
                 firProviderInterceptor,
-            )
-            lazyTransformer.transformDeclaration(phaseRunner)
+            ) ?: return
+
+            lockProvider.withLock(designation, phase) {
+                lazyTransformer.transformDeclaration(phaseRunner)
+            }
         }
     }
 }

@@ -112,13 +112,11 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         for (designation in declarationDesignationsToResolve(target)) {
             if (!designation.target.isValidForResolve()) continue
             if (designation.target.resolvePhase >= toPhase) continue
-            moduleComponents.globalResolveComponents.lockProvider.withLock(designation.firFile) {
-                runLazyDesignatedResolveWithoutLock(
-                    designation = designation,
-                    scopeSession = scopeSession,
-                    toPhase = toPhase,
-                )
-            }
+            lazyResolveDesignation(
+                designation = designation,
+                scopeSession = scopeSession,
+                toPhase = toPhase,
+            )
         }
     }
 
@@ -143,7 +141,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 
 
-    private fun runLazyDesignatedResolveWithoutLock(
+    private fun lazyResolveDesignation(
         designation: FirDesignationWithFile,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,

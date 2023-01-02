@@ -20,12 +20,12 @@ internal object LazyTransformerFactory {
         lockProvider: LLFirLockProvider,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
-    ): LLFirLazyTransformer = when (phase) {
+    ): LLFirLazyTransformer? = when (phase) {
         FirResolvePhase.COMPANION_GENERATION -> LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
             designation = designation,
             session = designation.firFile.moduleData.session,
         )
-        FirResolvePhase.SEALED_CLASS_INHERITORS -> LLFirLazyTransformer.DUMMY
+        FirResolvePhase.SEALED_CLASS_INHERITORS -> null
         FirResolvePhase.SUPER_TYPES -> LLFirDesignatedSupertypeResolverTransformer(
             designation = designation,
             session = designation.firFile.moduleData.session,
