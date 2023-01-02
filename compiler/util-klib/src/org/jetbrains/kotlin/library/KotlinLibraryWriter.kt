@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.properties.Properties
 
 interface BaseWriter {
-    val versions: KotlinLibraryVersioning
     fun addLinkDependencies(libraries: List<KotlinLibrary>)
     fun addManifestAddend(properties: Properties)
     fun commit()

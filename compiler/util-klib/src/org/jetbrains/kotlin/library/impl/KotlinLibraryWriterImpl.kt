@@ -36,7 +36,6 @@ open class BaseWriterImpl(
 
     val klibFile = libraryLayout.libFile.canonicalFile
     val manifestProperties = Properties()
-    override val versions: KotlinLibraryVersioning = _versions
 
     init {
         // TODO: figure out the proper policy here.
