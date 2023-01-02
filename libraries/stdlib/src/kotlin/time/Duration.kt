@@ -642,6 +642,17 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
     /** Returns the absolute value of this value. The returned value is always non-negative. */
     public val absoluteValue: Duration get() = if (isNegative()) -this else this
+    
+    @SinceKotlin("1.9")
+    @ExperimentalTime
+    /**
+     * Returns the sign of this duration:
+     *   - `-1` if the duration is negative (the other timestamp is earlier),
+     *   - `0` if the duration is zero (equals exacely 0 seconds),
+     *   - `1` if the duration is positive (the other timestamp is later)
+     */
+    public val sign: Int
+        get() = value.sing
 
     override fun compareTo(other: Duration): Int {
         val compareBits = this.rawValue xor other.rawValue
