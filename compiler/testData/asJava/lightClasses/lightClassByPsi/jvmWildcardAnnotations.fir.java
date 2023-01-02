@@ -25,7 +25,7 @@ public final class Container /* Container*/ {
   public final void deepOpen(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  deepOpen(Out<? extends Out<? extends Out<? extends Open>>>)
 
   @org.jetbrains.annotations.NotNull()
-  public final OutPair<Final, OutPair<Out<Final>, Out<? extends Final>>> falseTrueFalse();//  falseTrueFalse()
+  public final OutPair<Final, OutPair<Out<Final>, Out<Final>>> falseTrueFalse();//  falseTrueFalse()
 
   @org.jetbrains.annotations.NotNull()
   public final OutPair<Open, ? extends OutPair<Open,? extends Out<Open>>> combination();//  combination()

@@ -63,7 +63,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
             useSiteSession: FirSession,
             token: KtLifetimeToken,
         ): KtAnnotationsList {
-            return if (firSymbol.resolvedAnnotationsWithArguments.isEmpty()) {
+            return if (firSymbol.annotations.isEmpty()) {
                 KtEmptyAnnotationsList(token)
             } else {
                 KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)
