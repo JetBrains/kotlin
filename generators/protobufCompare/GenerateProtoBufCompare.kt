@@ -92,9 +92,10 @@ class GenerateProtoBufCompare {
     fun generate(): String {
         val sb = StringBuilder()
         val p = Printer(sb)
-        p.println(File("license/COPYRIGHT.txt").readText())
+        p.println(File("license/COPYRIGHT_HEADER.txt").readText())
+        p.println()
         p.println("@file:Suppress(\"UNUSED_PARAMETER\")")
-        p.println("")
+        p.println()
         p.println("package org.jetbrains.kotlin.incremental")
         p.println()
 
