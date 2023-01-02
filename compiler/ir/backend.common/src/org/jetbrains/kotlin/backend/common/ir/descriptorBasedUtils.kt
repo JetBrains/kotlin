@@ -20,6 +20,6 @@ val IrDeclaration.isProperExpect: Boolean
     get() = this is IrClass && isExpect ||
             this is IrFunction && isExpect ||
             this is IrProperty && isExpect ||
-            (this is IrClass || this is IrFunction || this is IrProperty || this is IrConstructor || this is IrEnumEntry)
+            (this is IrClass || this is IrFunction || this is IrProperty || this is IrEnumEntry || this is IrTypeParameter)
             && (this.parent as? IrDeclaration)?.isProperExpect ?: false
 
