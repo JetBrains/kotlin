@@ -9,16 +9,14 @@ import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIter
 import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
 import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
+import org.jetbrains.kotlin.generators.builtins.numbers.GenerateFloorDivMod
+import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
 import org.jetbrains.kotlin.generators.builtins.progressionIterators.GenerateProgressionIterators
 import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
-import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
-import org.jetbrains.kotlin.generators.builtins.numbers.GenerateFloorDivMod
 import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
 import org.jetbrains.kotlin.generators.builtins.unsigned.generateUnsignedTypes
-import org.xml.sax.InputSource
 import java.io.File
 import java.io.PrintWriter
-import javax.xml.xpath.XPathFactory
 
 fun assertExists(file: File) {
     if (!file.exists()) error("Output dir does not exist: ${file.absolutePath}")
@@ -38,7 +36,8 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected open fun getMultifileClassName(): String? = null
 
     fun generate() {
-        out.println(readCopyrightNoticeFromProfile(File(".idea/copyright/apache.xml")))
+        out.println(File("license/COPYRIGHT_HEADER.txt").readText())
+        out.println()
         // Don't include generator class name in the message: these are built-in sources,
         // and we don't want to scare users with any internal information about our project
         out.println("// Auto-generated file. DO NOT EDIT!")
@@ -53,17 +52,6 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
 
         generateBody()
     }
-}
-
-fun readCopyrightNoticeFromProfile(copyrightProfile: File): String {
-    val template = copyrightProfile.reader().use { reader ->
-        XPathFactory.newInstance().newXPath().evaluate("/component/copyright/option[@name='notice']/@value", InputSource(reader))
-    }
-    val yearTemplate = "&#36;today.year"
-    val year = java.time.LocalDate.now().year.toString()
-    assert(yearTemplate in template)
-
-    return template.replace(yearTemplate, year).lines().joinToString("", prefix = "/*\n", postfix = " */\n") { " * $it\n" }
 }
 
 fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit) {
