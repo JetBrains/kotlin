@@ -444,7 +444,7 @@ class KotlinKarma(
 
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
-            listOf(
+            nodeJsArgs + listOf(
                 npmProject.require("kotlin-test-js-runner/karma-debug-runner.js"),
                 karmaConfigAbsolutePath
             )

@@ -106,6 +106,10 @@ constructor(
         }
     }
 
+    @Input
+    val nodeJsArgs: MutableList<String> =
+        mutableListOf()
+
     override val nodeModulesRequired: Boolean
         @Internal get() = testFramework!!.nodeModulesRequired
 
@@ -173,8 +177,6 @@ constructor(
         environment.forEach { (key, value) ->
             forkOptions.environment(key, value)
         }
-
-        val nodeJsArgs = mutableListOf<String>()
 
         return testFramework!!.createTestExecutionSpec(
             task = this,

@@ -20,6 +20,7 @@ kotlin {
             testTask {
                 environment("hello", "hello")
                 environment("NODE_PATH", projectDir.absolutePath)
+                nodeJsArgs.add("--title=KGP_CUSTOM_NODEJS_TITLE")
             }
         }
     }
