@@ -170,7 +170,6 @@ private data class Operation(
     val expressionString: String
         get() {
             val receiver = castValueParenthesized("a", typeA)
-            println(name)
             return when {
                 name == BuiltInOperatorNames.EQEQEQ && parameterTypes.all { it == "Any?" } ->
                     "if (a is Proxy && b is Proxy) a.state === b.state else a === b"
