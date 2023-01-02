@@ -15194,6 +15194,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("nestedLambda.kt")
+                public void testNestedLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/nestedLambda.kt");
+                }
+
+                @Test
                 @TestMetadata("noCoercion.kt")
                 public void testNoCoercion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/noCoercion.kt");
