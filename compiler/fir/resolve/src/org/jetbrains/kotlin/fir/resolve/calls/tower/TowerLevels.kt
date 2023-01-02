@@ -60,7 +60,8 @@ abstract class TowerScopeLevel {
             importedQualifierForStatic: FirExpression?,
             givenExtensionReceiverOptions: List<ReceiverValue>,
             scope: FirScope,
-            objectsByName: Boolean = false
+            objectsByName: Boolean = false,
+            isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
         )
     }
 }
@@ -161,12 +162,16 @@ class MemberScopeTowerLevel(
             candidatesFromSmartcast.forEach { put(it, true) }
         }
 
+        val candidates = mutableListOf<MemberWithBaseScope<T>>()
+
+        // The code below is assumed to be for sake of optimization only.
+        // It helps to avoid creating candidates both for some member in the original type and for its override in the smart cast
+        // when they are both visible.
+        // But semantically it should be OK to declare `val candidates` as `candidatesMapping.keys.toList()`
         val overridableGroups = session.overrideService.createOverridableGroups(
             candidatesFromOriginalType + candidatesFromSmartcast,
             FirIntersectionScopeOverrideChecker(session)
         )
-
-        val candidates = mutableListOf<MemberWithBaseScope<T>>()
         for (group in overridableGroups) {
             val visibleCandidates = group.filter {
                 visibilityChecker.isVisible(it.member.fir, callInfo, dispatchReceiverValue, importedQualifierForStatic = null)
@@ -175,7 +180,7 @@ class MemberScopeTowerLevel(
             val visibleCandidatesFromSmartcast = visibleCandidates.filter { candidatesMapping.getValue(it) }
             candidates += visibleCandidatesFromSmartcast.ifEmpty { group }
         }
-        consumeCandidates(output, candidates)
+        consumeCandidates(output, candidates, candidatesMapping)
     }
 
     private fun <T : FirCallableSymbol<*>> FirTypeScope.collectCandidates(
@@ -198,16 +203,22 @@ class MemberScopeTowerLevel(
 
     private fun <T : FirCallableSymbol<*>> consumeCandidates(
         output: TowerScopeLevelProcessor<T>,
-        candidatesWithScope: List<MemberWithBaseScope<T>>
+        candidatesWithScope: List<MemberWithBaseScope<T>>,
+        // The map is not null only if there's a smart cast type on a dispatch receiver
+        // and candidates are present both in smart cast and original types.
+        // isFromSmartCast[candidate] == true iff exactly that member is present in smart cast type
+        isFromSmartCast: Map<MemberWithBaseScope<T>, Boolean>? = null
     ) {
-        for ((candidate, scope) in candidatesWithScope) {
+        for (candidateWithScope in candidatesWithScope) {
+            val (candidate, scope) = candidateWithScope
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
                 output.consumeCandidate(
                     candidate,
                     dispatchReceiverValue,
                     importedQualifierForStatic = null,
                     givenExtensionReceiverOptions,
-                    scope
+                    scope,
+                    isFromOriginalTypeInPresenceOfSmartCast = isFromSmartCast != null && !isFromSmartCast.getValue(candidateWithScope)
                 )
             }
         }
