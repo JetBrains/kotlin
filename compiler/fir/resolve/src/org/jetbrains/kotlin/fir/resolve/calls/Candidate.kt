@@ -37,7 +37,9 @@ class Candidate(
     override val callInfo: CallInfo,
     val originScope: FirScope?,
     val importedQualifierForStatic: FirExpression? = null,
-    val isFromCompanionObjectTypeScope: Boolean = false
+    val isFromCompanionObjectTypeScope: Boolean = false,
+    // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
+    val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
 ) : AbstractCandidate() {
 
     var systemInitialized: Boolean = false

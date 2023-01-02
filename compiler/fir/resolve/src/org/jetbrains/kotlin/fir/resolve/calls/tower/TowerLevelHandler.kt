@@ -78,7 +78,8 @@ private class TowerScopeLevelProcessor(
         importedQualifierForStatic: FirExpression?,
         givenExtensionReceiverOptions: List<ReceiverValue>,
         scope: FirScope,
-        objectsByName: Boolean
+        objectsByName: Boolean,
+        isFromOriginalTypeInPresenceOfSmartCast: Boolean
     ) {
         resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
@@ -89,7 +90,8 @@ private class TowerScopeLevelProcessor(
                 dispatchReceiverValue,
                 importedQualifierForStatic,
                 givenExtensionReceiverOptions,
-                objectsByName
+                objectsByName,
+                isFromOriginalTypeInPresenceOfSmartCast
             ), candidateFactory.context
         )
     }
