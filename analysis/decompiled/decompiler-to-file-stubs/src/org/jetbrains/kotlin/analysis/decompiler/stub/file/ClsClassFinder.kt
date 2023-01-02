@@ -29,8 +29,7 @@ object ClsClassFinder {
      * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
      */
     fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = null): Boolean {
-        // Don't crash on invalid files (EA-97751)
-        if (!file.isValid || fileContent?.size == 0 || !file.exists()) {
+        if (!file.isValidAndExists(fileContent)) {
             return false
         }
 
@@ -65,4 +64,17 @@ object ClsClassFinder {
         return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
                 header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
     }
+
+    fun isMultifileClassPartFile(file: VirtualFile, fileContent: ByteArray? = null): Boolean {
+        if (!file.isValidAndExists(fileContent)) {
+            return false
+        }
+        val clsKotlinBinaryClassCache = ClsKotlinBinaryClassCache.getInstance()
+        val headerData = clsKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file, fileContent)
+        return headerData?.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+    }
+
+    // Don't crash on invalid files (EA-97751)
+    private fun VirtualFile.isValidAndExists(fileContent: ByteArray? = null): Boolean =
+        this.isValid && fileContent?.size != 0 && this.exists()
 }
