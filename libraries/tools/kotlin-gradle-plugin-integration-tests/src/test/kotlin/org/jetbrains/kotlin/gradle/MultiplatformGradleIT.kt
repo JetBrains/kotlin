@@ -356,6 +356,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
             options = defaultBuildOptions().copy(
                 androidGradlePluginVersion = AGPVersion.v4_2_0,
                 androidHome = KtTestUtil.findAndroidSdk().also { acceptAndroidSdkLicenses(it) },
+                // Workaround for a deprecation warning from AGP
+                // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
+                warningMode = WarningMode.None,
             ),
         ) {
             assertSuccessful()

@@ -1626,7 +1626,12 @@ class NewMultiplatformIT : BaseGradleIT() {
         build(
             "assembleDebug",
             // https://issuetracker.google.com/issues/152187160
-            options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
+            options = defaultBuildOptions().copy(
+                androidGradlePluginVersion = AGPVersion.v4_2_0,
+                // Workaround for a deprecation warning from AGP
+                // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
+                warningMode = WarningMode.None,
+            )
         ) {
             assertSuccessful()
             assertNotContains(
