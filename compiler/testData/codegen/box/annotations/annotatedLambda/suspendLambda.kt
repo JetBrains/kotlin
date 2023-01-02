@@ -38,8 +38,10 @@ fun testClass(clazz: Class<*>, name: String) {
 
 }
 
+suspend fun dummy() {}
+
 fun box(): String {
-    testClass(foo0(@Ann("OK") { }), "1")
-    testClass(foo0() @Ann("OK") { }, "2")
+    testClass(foo0(@Ann("OK") { dummy(); dummy() }), "1")
+    testClass(foo0() @Ann("OK") { dummy(); dummy() }, "2")
     return "OK"
 }

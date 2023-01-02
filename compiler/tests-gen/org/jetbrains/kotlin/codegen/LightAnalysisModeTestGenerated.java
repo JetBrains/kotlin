@@ -10471,6 +10471,59 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/whenUnit.kt");
             }
 
+            @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Lambda extends AbstractLightAnalysisModeTest {
+                @TestMetadata("class.kt")
+                public void ignoreClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/class.kt");
+                }
+
+                @TestMetadata("function.kt")
+                public void ignoreFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/function.kt");
+                }
+
+                @TestMetadata("inlineLambda.kt")
+                public void ignoreInlineLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/inlineLambda.kt");
+                }
+
+                @TestMetadata("lambda.kt")
+                public void ignoreLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/lambda.kt");
+                }
+
+                @TestMetadata("object.kt")
+                public void ignoreObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/object.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void ignoreSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/simple.kt");
+                }
+
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInLambda() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("indy.kt")
+                public void testIndy() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/indy.kt");
+                }
+
+                @TestMetadata("startCoroutine.kt")
+                public void testStartCoroutine() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/startCoroutine.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

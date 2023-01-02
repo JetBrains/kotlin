@@ -21,14 +21,24 @@ class TailCallOptimizationCheckerClass {
         }
     }
 
-    fun checkNoStateMachineIn(method: String) {
-        stackTrace.find { it?.methodName?.startsWith(method) == true }?.let { error("tail-call optimization miss: method at " + it + " has state-machine " +
-                                                                                            stackTrace.joinToString(separator = "\n")) }
+    private fun findStackTraceElement(method: String, className: String?): StackTraceElement? {
+        val list = stackTrace.filter { it?.methodName == method }
+        if (className != null) {
+            return list.find { it?.className?.endsWith(className) == true }
+        } else {
+            return list.firstOrNull()
+        }
     }
 
-    fun checkStateMachineIn(method: String) {
-        stackTrace.find { it?.methodName?.startsWith(method) == true } ?: error("tail-call optimization hit: method " + method + " has no state-machine " +
-                                                                                        stackTrace.joinToString(separator = "\n"))
+    fun checkNoStateMachineIn(method: String, className: String? = null) {
+        findStackTraceElement(method, className)?.let {
+            error("tail-call optimization miss: method at $it has state-machine " + stackTrace.joinToString(separator = "\n"))
+        }
+    }
+
+    fun checkStateMachineIn(method: String, className: String? = null) {
+        findStackTraceElement(method, className)
+            ?: error("tail-call optimization hit: method $method has no state-machine " + stackTrace.joinToString(separator = "\n"))
     }
 }
 

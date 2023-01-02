@@ -76,12 +76,14 @@ private class DispatchedContinuation<T>(
     }
 }
 
-fun box(): String {
-    if (builder(false, 0) { "OK" } != "OK") return "fail 4"
-    if (builder(true, 1) { suspendHere() } != "OK") return "fail 5"
+suspend fun dummy() {}
 
-    if (builder(false, 0) { throw RuntimeException("OK") } != "Exception: OK") return "fail 6"
-    if (builder(true, 1) { suspendWithException() } != "Exception: OK") return "fail 7"
+fun box(): String {
+    if (builder(false, 0) { dummy(); "OK" } != "OK") return "fail 4"
+    if (builder(true, 1) { dummy(); suspendHere() } != "OK") return "fail 5"
+
+    if (builder(false, 0) { dummy(); throw RuntimeException("OK") } != "Exception: OK") return "fail 6"
+    if (builder(true, 1) { dummy(); suspendWithException() } != "Exception: OK") return "fail 7"
 
     return "OK"
 }

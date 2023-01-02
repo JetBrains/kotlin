@@ -27,10 +27,13 @@ fun builder2(c: suspend () -> Unit) {
     continuation.resume(Unit)
 }
 
+suspend fun dummy() {}
+
 fun box(): String {
 
     try {
         builder1 {
+            dummy()
             suspendHere()
         }
         return "fail 1"
@@ -39,6 +42,7 @@ fun box(): String {
 
     try {
         builder2 {
+            dummy()
             suspendHere()
         }
         return "fail 3"
@@ -50,6 +54,7 @@ fun box(): String {
 
     try {
         builder1 {
+            dummy()
             result = "fail 5"
         }
         return "fail 6"
@@ -58,6 +63,7 @@ fun box(): String {
 
     try {
         builder2 {
+            dummy()
             result = "fail 8"
         }
         return "fail 9"

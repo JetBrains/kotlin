@@ -5,7 +5,7 @@ import kotlin.coroutines.*
 
 @RestrictsSuspension
 interface Marker {
-    fun restricted()
+    suspend fun restricted()
 }
 
 var lambda: Any? = null
@@ -15,7 +15,10 @@ fun acceptsRestricted(c: suspend Marker.() -> Unit) {
 }
 
 fun box(): String {
-    acceptsRestricted {}
+    acceptsRestricted {
+        restricted()
+        restricted()
+    }
     @Suppress("INVISIBLE_REFERENCE")
     return if (lambda is kotlin.coroutines.jvm.internal.RestrictedSuspendLambda) "OK"
     else "FAIL"

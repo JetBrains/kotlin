@@ -59,14 +59,16 @@ fun assertExtensionWithArgFun(lambda: suspend Long.(x: Any) -> Date) {
     )
 }
 
+suspend fun dummy() {}
+
 fun box(): String {
     assertGenericSuper("kotlin.jvm.functions.Function1<kotlin.coroutines.Continuation<? super kotlin.Unit>, java.lang.Object>", unitFun)
     assertGenericSuper("kotlin.jvm.functions.Function1<kotlin.coroutines.Continuation<? super java.lang.Integer>, java.lang.Object>", intFun)
-    assertStringParamFun { x: String -> }
-    assertListFun { l: List<String> -> l }
-    assertMutableListFun { l -> null!! }
-    assertFunWithIn { x -> }
-    assertExtensionFun { }
-    assertExtensionWithArgFun { x -> Date() }
+    assertStringParamFun { x: String -> dummy(); dummy() }
+    assertListFun { l: List<String> -> dummy(); dummy() }
+    assertMutableListFun { l -> dummy(); dummy(); null!! }
+    assertFunWithIn { x -> dummy(); dummy() }
+    assertExtensionFun { dummy(); dummy() }
+    assertExtensionWithArgFun { x -> dummy(); dummy(); Date() }
     return "OK"
 }

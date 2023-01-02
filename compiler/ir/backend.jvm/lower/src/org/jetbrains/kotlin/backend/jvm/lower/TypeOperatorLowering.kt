@@ -54,7 +54,9 @@ import java.lang.invoke.LambdaMetafactory
 internal val typeOperatorLowering = makeIrFilePhase(
     ::TypeOperatorLowering,
     name = "TypeOperatorLowering",
-    description = "Lower IrTypeOperatorCalls to (implicit) casts and instanceof checks"
+    description = "Lower IrTypeOperatorCalls to (implicit) casts and instanceof checks",
+    // SuspendLambdaPhase replaces indy-metafactory calls with mapped suspend function types.
+    prerequisite = setOf(suspendLambdaPhase)
 )
 
 private class TypeOperatorLowering(private val backendContext: JvmBackendContext) :

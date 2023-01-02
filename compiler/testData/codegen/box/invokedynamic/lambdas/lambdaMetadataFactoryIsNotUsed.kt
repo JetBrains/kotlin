@@ -7,9 +7,10 @@
 // JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory
 
+suspend fun dummy() {}
 
 fun box(): String {
-    suspend {}
+    suspend { dummy(); dummy() }
 
     fun (a: Any, b: Any, c: Any, d: Any, e: Any, f: Any, g: Any, h: Any, i: Any, j: Any, k: Any, l: Any, m: Any, n: Any, o: Any,
          p: Any, q: Any, r: Any, s: Any, t: Any, u: Any, v: Any, w: Any) = "one too many"
