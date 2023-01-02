@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -101,7 +103,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 diagnostic = ConeVisibilityError(symbol)
             }
 
-            val deprecation = symbol.getDeprecation(session, useSiteFile)
+            val deprecation = getDeprecationForType(symbol)
             if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
                 symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
                 diagnostic = null
@@ -146,6 +148,16 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 TypeResolutionResult.Unresolved
             }
             else -> error("Unexpected")
+        }
+    }
+
+    private fun getDeprecationForType(symbol: FirBasedSymbol<*>): DeprecationInfo? {
+        val apiVersion = session.languageVersionSettings.apiVersion
+        symbol.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+        return when (symbol) {
+            is FirClassLikeSymbol<*> -> symbol.fir.deprecationsProvider.getDeprecationsInfo(apiVersion)?.forUseSite()
+            is FirEnumEntrySymbol -> symbol.fir.deprecationsProvider.getDeprecationsInfo(apiVersion)?.forUseSite()
+            else -> null
         }
     }
 
