@@ -2,7 +2,7 @@
 // FIR_DUMP
 
 enum class Ambiguous {
-    first, <!DEPRECATED_DECLARATION_OF_ENUM_ENTRY!>entries;<!>
+    first, entries;
 }
 
 val e = Ambiguous.entries

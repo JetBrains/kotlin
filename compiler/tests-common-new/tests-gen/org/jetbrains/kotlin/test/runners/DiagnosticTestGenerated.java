@@ -10360,6 +10360,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 public void testGenericEntriesPropertyClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/genericEntriesPropertyClash.kt");
                 }
+
+                @Test
+                @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsic.kt")
+                public void testRedeclarationOfEnumEntriesNameWithIntrinsic() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsic.kt");
+                }
             }
 
             @Nested
