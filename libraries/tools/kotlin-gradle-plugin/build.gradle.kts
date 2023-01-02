@@ -29,6 +29,7 @@ kotlin.sourceSets.all {
 }
 
 dependencies {
+    commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":kotlin-gradle-plugin-model"))
     commonApi(project(":kotlin-tooling-core"))

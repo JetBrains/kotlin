@@ -15,6 +15,7 @@ kotlin.sourceSets.configureEach {
 }
 
 dependencies {
+    api(platform(project(":kotlin-gradle-plugins-bom")))
     compileOnly(kotlinStdlib())
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
 }

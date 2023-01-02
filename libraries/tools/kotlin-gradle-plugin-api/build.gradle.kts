@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-annotations"))
     commonApi(project(":native:kotlin-native-utils"))
     commonApi(project(":kotlin-project-model"))

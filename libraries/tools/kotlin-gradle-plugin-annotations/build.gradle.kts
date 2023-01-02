@@ -10,6 +10,7 @@ publish()
 standardPublicJars()
 
 dependencies {
+    api(platform(project(":kotlin-gradle-plugins-bom")))
     compileOnly(kotlinStdlib())
 }
 
