@@ -119,8 +119,8 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun shouldRunAnnotationResolve(name: Name): Boolean {
-        if (annotationsFromPlugins.isNotEmpty()) return true
-        return name in REQUIRED_ANNOTATION_NAMES
+        if (metaAnnotationsFromPlugins.isNotEmpty()) return true
+        return name in REQUIRED_ANNOTATION_NAMES || annotationsFromPlugins.any { it.shortName() == name }
     }
 
     private fun FirResolvedTypeRef.requiredToSave(): Boolean {
