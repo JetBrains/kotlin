@@ -38,7 +38,8 @@ fun main() {
 fun generateMap(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
-    p.println(File("license/COPYRIGHT.txt").readText())
+    p.println(File("license/COPYRIGHT_HEADER.txt").readText())
+    p.println()
     p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\", \"UNCHECKED_CAST\")")
     p.println()
     p.println("package org.jetbrains.kotlin.ir.interpreter.builtins")
