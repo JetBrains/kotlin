@@ -10362,6 +10362,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("nameShadowingOfExternallyDefinedEntries.kt")
+                public void testNameShadowingOfExternallyDefinedEntries() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/nameShadowingOfExternallyDefinedEntries.kt");
+                }
+
+                @Test
                 @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsic.kt")
                 public void testRedeclarationOfEnumEntriesNameWithIntrinsic() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsic.kt");

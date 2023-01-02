@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassValueReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 object CustomEnumEntriesMigrationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -26,6 +28,8 @@ object CustomEnumEntriesMigrationCallChecker : CallChecker {
             resolvedCall.isCallViaCompanionOnEnumClassQualifier(descriptor)
         ) {
             context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY.on(reportOn))
+        } else if (descriptor.isCallToExternalEntriesInsideEnum(reportOn)) {
+            context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM.on(reportOn))
         }
     }
 
@@ -42,5 +46,11 @@ object CustomEnumEntriesMigrationCallChecker : CallChecker {
         if (grandParent !is ClassDescriptor || !DescriptorUtils.isEnumClass(grandParent)) return false
 
         return dispatchReceiver.isQualifierFor(grandParent)
+    }
+
+    private fun PropertyDescriptor.isCallToExternalEntriesInsideEnum(contextExpression: PsiElement): Boolean {
+        return !DescriptorUtils.isEnumClass(this.containingDeclaration) &&
+                contextExpression.parent !is KtDotQualifiedExpression &&
+                contextExpression.parentsWithSelf.any { it is KtClass && it.isEnum() }
     }
 }
