@@ -661,7 +661,7 @@ class BodyResolveContext(
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
                 withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
-                    if (mode is ResolutionMode.LambdaResolution) {
+                    if (mode is ResolutionMode.LambdaResolution && mode.expectedReturnTypeRef == null) {
                         withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
                     } else {
                         f()

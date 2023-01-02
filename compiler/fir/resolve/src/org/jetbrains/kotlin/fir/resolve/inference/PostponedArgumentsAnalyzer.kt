@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.shouldReturnUnit
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -152,7 +151,6 @@ class PostponedArgumentsAnalyzer(
             candidate,
             results,
             completionMode,
-            expectedTypeForReturnArguments,
             ::substitute
         )
         return results
@@ -164,7 +162,6 @@ class PostponedArgumentsAnalyzer(
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
         completionMode: ConstraintSystemCompletionMode,
-        expectedReturnType: ConeKotlinType? = null,
         substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis()
     ) {
         val (returnArguments, inferenceSession) = results
@@ -174,7 +171,9 @@ class PostponedArgumentsAnalyzer(
 
         val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
         var hasExpressionInReturnArguments = false
-        val lambdaReturnType = lambda.returnType.let(substitute)
+        val returnTypeRef = lambda.atom.returnTypeRef.let {
+            it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substitute(lambda.returnType))
+        }
         returnArguments.forEach {
             val haveSubsystem = c.addSubsystemFromExpression(it)
             // If the lambda returns Unit, the last expression is not returned and should not be constrained.
@@ -186,7 +185,7 @@ class PostponedArgumentsAnalyzer(
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
             if (it == lastExpression && !haveSubsystem &&
-                (expectedReturnType?.isUnitOrFlexibleUnit == true || lambda.atom.shouldReturnUnit(returnArguments))
+                (returnTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments))
             ) return@forEach
 
             hasExpressionInReturnArguments = true
@@ -194,8 +193,8 @@ class PostponedArgumentsAnalyzer(
                 candidate.resolveArgumentExpression(
                     builder,
                     it,
-                    lambdaReturnType,
-                    lambda.atom.returnTypeRef, // TODO: proper ref
+                    returnTypeRef.type,
+                    returnTypeRef,
                     checkerSink,
                     context = resolutionContext,
                     isReceiver = false,
@@ -204,10 +203,10 @@ class PostponedArgumentsAnalyzer(
             }
         }
 
-        if (!hasExpressionInReturnArguments && !lambdaReturnType.isUnitOrFlexibleUnit) {
+        if (!hasExpressionInReturnArguments && !returnTypeRef.type.isUnitOrFlexibleUnit) {
             builder.addSubtypeConstraint(
                 components.session.builtinTypes.unitType.type,
-                lambdaReturnType,
+                returnTypeRef.type,
                 ConeLambdaArgumentConstraintPosition(lambda.atom)
             )
         }
