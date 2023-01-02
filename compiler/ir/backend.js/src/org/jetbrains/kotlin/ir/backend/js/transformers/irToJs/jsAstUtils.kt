@@ -194,8 +194,9 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
-        val callRef = if (klass.isInterface && target.body != null) {
-            JsNameRef(Namer.CALL_FUNCTION, JsNameRef(context.getNameForStaticDeclaration(target)))
+        val callRef = if (klass.isInterface) {
+            val nameForStaticDeclaration = context.getNameForStaticDeclaration(target)
+            JsNameRef(Namer.CALL_FUNCTION, JsNameRef(nameForStaticDeclaration))
         } else {
             val qualifierName = context.getNameForClass(klass).makeRef()
             val targetName = context.getNameForMemberFunction(target)
