@@ -12,6 +12,7 @@ private val k0 = 0xc3a5c85c97cb3127U
 private val k1 = 0xb492b66fbe98f273U
 private val k2 = 0x9ae16a3b2f90404fU
 private val kMul = 0x9ddfea08eb382d69UL
+private val kGoldenRatio = 0x9e3779b97f4a7c15UL
 
 private fun toLongLE(b: ByteArray, i: Int): Long {
     return (b[i + 7].toLong() shl 56) +
@@ -214,3 +215,124 @@ public fun cityHash64(s: ByteArray, pos: Int = 0, len: Int = s.size): ULong {
 @OptIn(ExperimentalUnsignedTypes::class)
 fun String.cityHash64(): Long =
     cityHash64(this.toByteArray()).toLong()
+
+data class Hash128Bits(val lowBytes: ULong = k0, val highBytes: ULong = k1) {
+    private infix fun ULong.combineHash(other: ULong) = other xor (this + kGoldenRatio + (other shl 12) + (other shr 4))
+
+    fun combineWith(other: Hash128Bits): Hash128Bits {
+        return Hash128Bits(highBytes combineHash other.lowBytes, lowBytes combineHash other.highBytes)
+    }
+}
+
+private fun cityMurmur(seed: Hash128Bits, s: ByteArray, pos: Int = 0, len: Int = s.size): Hash128Bits {
+    var pos = pos
+    var len = len
+
+    var (a, b) = seed
+    var c: ULong
+    var d: ULong
+
+    if (len <= 16) {
+        a = shiftMix(a * k1) * k1;
+        c = b * k1 + hashLen0to16(s, pos, len)
+        d = shiftMix(a + (if (len >= 8) fetch64(s, pos) else c))
+    } else {
+        c = hashLen16(fetch64(s, pos + len - 8) + k1, a)
+        d = hashLen16(b + len.toULong(), c + fetch64(s, pos + len - 16))
+        a += d
+        do {
+            a = a xor shiftMix(fetch64(s, pos) * k1) * k1
+            a *= k1
+            b = b xor a
+            c = c xor shiftMix(fetch64(s, pos + 8) * k1) * k1
+            c *= k1
+            d = d xor c
+            pos += 16
+            len -= 16
+        } while (len > 16)
+    }
+    a = hashLen16(a, c)
+    b = hashLen16(d, b)
+    return Hash128Bits(a xor b, hashLen16(b, a))
+}
+
+@OptIn(ExperimentalUnsignedTypes::class)
+fun cityHash128WithSeed(seed: Hash128Bits, s: ByteArray, pos: Int = 0, len: Int = s.size): Hash128Bits {
+    if (len < 128) {
+        return cityMurmur(seed, s, pos, len);
+    }
+
+    var pos = pos
+    var len = len
+
+    var v = ULongArray(2)
+    var w = ULongArray(2)
+
+    var (x, y) = seed
+
+    var z = len.toULong() * k1
+    v[0] = rotate(y xor k1, 49) * k1 + fetch64(s, pos)
+    v[1] = rotate(v[0], 42) * k1 + fetch64(s, pos + 8)
+    w[0] = rotate(y + z, 35) * k1 + x
+    w[1] = rotate(x + fetch64(s, pos + 88), 53) * k1
+
+    do {
+        x = rotate(x + y + v[0] + fetch64(s, pos + 8), 37) * k1
+        y = rotate(y + v[1] + fetch64(s, pos + 48), 42) * k1
+        x = x xor w[1]
+        y += v[0] + fetch64(s, pos + 40)
+        z = rotate(z + w[0], 33) * k1
+        v = weakHashLen32WithSeeds(s, pos, v[1] * k1, x + w[0])
+        w = weakHashLen32WithSeeds(s, pos + 32, z + w[1], y + fetch64(s, pos + 16))
+        run {
+            val swap = z
+            z = x
+            x = swap
+        }
+        pos += 64
+
+        x = rotate(x + y + v[0] + fetch64(s, pos + 8), 37) * k1
+        y = rotate(y + v[1] + fetch64(s, pos + 48), 42) * k1
+        x = x xor w[1]
+        y += v[0] + fetch64(s, pos + 40)
+        z = rotate(z + w[0], 33) * k1
+        v = weakHashLen32WithSeeds(s, pos, v[1] * k1, x + w[0])
+        w = weakHashLen32WithSeeds(s, pos + 32, z + w[1], y + fetch64(s, pos + 16))
+        run {
+            val swap = z
+            z = x
+            x = swap
+        }
+        pos += 64
+        len -= 128
+    } while (len >= 128)
+    x += rotate(v[0] + z, 49) * k0
+    y = y * k0 + rotate(w[1], 37)
+    z = z * k0 + rotate(w[0], 27)
+    w[0] *= 9UL
+    v[0] *= k0
+
+    var tailDone = 0
+    while (tailDone < len) {
+        tailDone += 32
+        y = rotate(x + y, 42) * k0 + v[1]
+        w[0] += fetch64(s, pos + len - tailDone + 16)
+        x = x * k0 + w[0]
+        z += w[1] + fetch64(s, pos + len - tailDone)
+        w[1] += v[0]
+        v = weakHashLen32WithSeeds(s, pos + len - tailDone, v[0] + z, v[1])
+        v[0] *= k0
+    }
+
+    x = hashLen16(x, v[0])
+    y = hashLen16(y + z, w[0])
+    return Hash128Bits(hashLen16(x + v[1], w[1]) + y, hashLen16(x + w[1], y + v[1]))
+}
+
+fun cityHash128(s: ByteArray, pos: Int = 0, len: Int = s.size): Hash128Bits {
+    return if (len >= 16) {
+        cityHash128WithSeed(Hash128Bits(fetch64(s, pos), fetch64(s, pos + 8) + k0), s, pos + 16, len - 16)
+    } else {
+        cityHash128WithSeed(Hash128Bits(k0, k1), s, pos, len)
+    }
+}

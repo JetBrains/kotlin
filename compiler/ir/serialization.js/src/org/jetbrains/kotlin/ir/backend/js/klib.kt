@@ -87,6 +87,12 @@ val KotlinLibrary.isBuiltIns: Boolean
 val KotlinLibrary.jsOutputName: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)
 
+val KotlinLibrary.serializedIrFileFingerprints: List<SerializedIrFileFingerprint>?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS)?.parseSerializedIrFileFingerprints()
+
+val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT)?.let { SerializedKlibFingerprint.fromString(it) }
+
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
 
@@ -336,7 +342,7 @@ fun getIrModuleInfoForSourceFiles(
         icData = null,
         friendModules = friendModules,
     )
-    val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null,null, mapping)
+    val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null, null, mapping)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
     (irBuiltIns as IrBuiltInsOverDescriptors).functionFactory =
         IrDescriptorBasedFunctionFactory(
@@ -689,6 +695,10 @@ fun serializeModuleIntoKlib(
         if (containsErrorCode) {
             p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
         }
+
+        val fingerprints = fullSerializedIr.files.sortedBy { it.path }.map { SerializedIrFileFingerprint(it) }
+        p.setProperty(KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS, fingerprints.joinIrFileFingerprints())
+        p.setProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT, SerializedKlibFingerprint(fingerprints).klibFingerprint.toString())
     }
 
     buildKotlinLibrary(
@@ -707,6 +717,8 @@ fun serializeModuleIntoKlib(
 }
 
 const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
+const val KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS = "serializedIrFileFingerprints"
+const val KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT = "serializedKlibFingerprint"
 
 fun KlibMetadataIncrementalSerializer.serializeScope(
     ktFile: KtFile,
@@ -806,5 +818,5 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): L
 fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<KotlinFileSerializedData> =
     getSerializedData(newSources.map(::KtPsiSourceFile))
 
-val CompilerConfiguration.incrementalDataProvider : IncrementalDataProvider?
+val CompilerConfiguration.incrementalDataProvider: IncrementalDataProvider?
     get() = get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
