@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertNull
 
@@ -21,7 +23,12 @@ class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
         project(
             "multiplatformAndroidSourceSetLayout2",
             gradleVersion,
-            defaultBuildOptions.copy(androidVersion = agpVersion),
+            defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                // Workaround for a deprecation warning from AGP
+                // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
+                warningMode = if (AGPVersion.fromString(agpVersion) <= AGPVersion.v7_1_0) WarningMode.None else WarningMode.Fail,
+            ),
             buildJdk = jdkVersion.location
         ) {
             build("test") {

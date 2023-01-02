@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.AbstractConfigurationCacheIT
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -15,7 +16,10 @@ import org.junit.jupiter.api.DisplayName
 @AndroidGradlePluginTests
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        androidVersion = AGP_42
+        androidVersion = AGP_42,
+        // Workaround for a deprecation warning from AGP
+        // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
+        warningMode = WarningMode.None,
     )
 
     @DisplayName("works in android plus kapt project")

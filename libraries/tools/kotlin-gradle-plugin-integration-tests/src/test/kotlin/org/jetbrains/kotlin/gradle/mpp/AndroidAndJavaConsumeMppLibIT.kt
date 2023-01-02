@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.embedProject
@@ -122,7 +123,10 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
         val producerBuildOptions = defaultBuildOptions().copy(
             javaHome = jdk11Home,
             androidHome = KtTestUtil.findAndroidSdk(),
-            androidGradlePluginVersion = producerAgpVersion
+            androidGradlePluginVersion = producerAgpVersion,
+            // Workaround for a deprecation warning from AGP
+            // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
+            warningMode = if (producerAgpVersion <= AGPVersion.v7_1_0) WarningMode.None else WarningMode.Fail,
         )
         producerBuildOptions.androidHome?.let { acceptAndroidSdkLicenses(it) }
 
