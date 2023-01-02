@@ -19,22 +19,6 @@ fun box() = abiTest {
      */
     fun adjustForLazyIr(declaration: String) = if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) "Expression" else declaration
 
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFoo() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFooInline() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFooAsAny() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFooAsAnyInline() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBar() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBarInline() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBarAsAny() }
-    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBarAsAnyInline() }
-    expectFailure(linkage("Function 'getObjectToEnumFoo' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Foo'")) { getObjectToEnumFoo() }
-    expectFailure(linkage("Function 'getObjectToEnumFooInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Foo'")) { getObjectToEnumFooInline() }
-    expectFailure(linkage("Constructor 'Foo.<init>' can not be called: No constructor found for symbol '/ObjectToEnum.Foo.<init>'")) { getObjectToEnumFooAsAny() }
-    expectFailure(linkage("Constructor 'Foo.<init>' can not be called: No constructor found for symbol '/ObjectToEnum.Foo.<init>'")) { getObjectToEnumFooAsAnyInline() }
-    expectFailure(linkage("Function 'getObjectToEnumBar' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBar() }
-    expectFailure(linkage("Function 'getObjectToEnumBarInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBarInline() }
-    expectFailure(linkage("Can not get instance of singleton 'Bar': No class found for symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBarAsAny() }
-    expectFailure(linkage("Can not get instance of singleton 'Bar': No class found for symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBarAsAnyInline() }
     expectFailure(linkage("Function 'getClassToEnumFoo' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Foo'")) { getClassToEnumFoo() }
     expectFailure(linkage("Function 'getClassToEnumFooInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Foo'")) { getClassToEnumFooInline() }
     expectFailure(linkage("Constructor 'Foo.<init>' can not be called: No constructor found for symbol '/ClassToEnum.Foo.<init>'")) { getClassToEnumFooAsAny() }
@@ -47,12 +31,165 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'getClassToEnumBazInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Baz'")) { getClassToEnumBazInline() }
     expectFailure(linkage("Constructor 'ClassToEnum.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getClassToEnumBazAsAny() }
     expectFailure(linkage("Constructor 'ClassToEnum.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getClassToEnumBazAsAnyInline() }
+
+    expectFailure(linkage("Function 'getObjectToEnumFoo' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Foo'")) { getObjectToEnumFoo() }
+    expectFailure(linkage("Function 'getObjectToEnumFooInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Foo'")) { getObjectToEnumFooInline() }
+    expectFailure(linkage("Constructor 'Foo.<init>' can not be called: No constructor found for symbol '/ObjectToEnum.Foo.<init>'")) { getObjectToEnumFooAsAny() }
+    expectFailure(linkage("Constructor 'Foo.<init>' can not be called: No constructor found for symbol '/ObjectToEnum.Foo.<init>'")) { getObjectToEnumFooAsAnyInline() }
+    expectFailure(linkage("Function 'getObjectToEnumBar' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBar() }
+    expectFailure(linkage("Function 'getObjectToEnumBarInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBarInline() }
+    expectFailure(linkage("Can not get instance of singleton 'Bar': No class found for symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBarAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'Bar': No class found for symbol '/ObjectToEnum.Bar'")) { getObjectToEnumBarAsAnyInline() }
+
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFoo() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFooInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFooAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Foo': No enum entry found for symbol '/EnumToClass.Foo'")) { getEnumToClassFooAsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBar() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBarInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBarAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Bar': No enum entry found for symbol '/EnumToClass.Bar'")) { getEnumToClassBarAsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Baz': No enum entry found for symbol '/EnumToClass.Baz'")) { getEnumToClassBaz() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Baz': No enum entry found for symbol '/EnumToClass.Baz'")) { getEnumToClassBazInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Baz': No enum entry found for symbol '/EnumToClass.Baz'")) { getEnumToClassBazAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Baz': No enum entry found for symbol '/EnumToClass.Baz'")) { getEnumToClassBazAsAnyInline() }
+
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFoo() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFooInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFooAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFooAsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Bar': No enum entry found for symbol '/EnumToObject.Bar'")) { getEnumToObjectBar() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Bar': No enum entry found for symbol '/EnumToObject.Bar'")) { getEnumToObjectBarInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Bar': No enum entry found for symbol '/EnumToObject.Bar'")) { getEnumToObjectBarAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Bar': No enum entry found for symbol '/EnumToObject.Bar'")) { getEnumToObjectBarAsAnyInline() }
+
     expectFailure(linkage("Constructor 'ClassToObject.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getClassToObject() }
     expectFailure(linkage("Constructor 'ClassToObject.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getClassToObjectInline() }
     expectFailure(linkage("Constructor 'ClassToObject.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getClassToObjectAsAny() }
     expectFailure(linkage("Constructor 'ClassToObject.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getClassToObjectAsAnyInline() }
+
     expectFailure(linkage("Can not get instance of singleton 'ObjectToClass': 'ObjectToClass' is class while object is expected")) { getObjectToClass() }
     expectFailure(linkage("Can not get instance of singleton 'ObjectToClass': 'ObjectToClass' is class while object is expected")) { getObjectToClassInline() }
     expectFailure(linkage("Can not get instance of singleton 'ObjectToClass': 'ObjectToClass' is class while object is expected")) { getObjectToClassAsAny() }
     expectFailure(linkage("Can not get instance of singleton 'ObjectToClass': 'ObjectToClass' is class while object is expected")) { getObjectToClassAsAnyInline() }
+
+    expectFailure(linkage("Constructor 'ClassToInterface.<init>' can not be called: No constructor found for symbol '/ClassToInterface.<init>'")) { getClassToInterface() }
+    expectFailure(linkage("Constructor 'ClassToInterface.<init>' can not be called: No constructor found for symbol '/ClassToInterface.<init>'")) { getClassToInterfaceInline() }
+    expectFailure(linkage("Constructor 'ClassToInterface.<init>' can not be called: No constructor found for symbol '/ClassToInterface.<init>'")) { getClassToInterfaceAsAny() }
+    expectFailure(linkage("Constructor 'ClassToInterface.<init>' can not be called: No constructor found for symbol '/ClassToInterface.<init>'")) { getClassToInterfaceAsAnyInline() }
+
+    // TODO: check if constructor really makes a delegated call to super class constructor
+//    expectFailure(linkage("?")) { getInterfaceToClass() }
+//    expectFailure(linkage("?")) { getInterfaceToClassInline() }
+//    expectFailure(linkage("?")) { getInterfaceToClassAsAny() }
+//    expectFailure(linkage("?")) { getInterfaceToClassAsAnyInline() }
+
+    // TODO: the tests below shoud fail, same reason as above
+//    expectFailure(linkage("?")) { getInterfaceToClassImpl() }
+//    expectFailure(linkage("?")) { getInterfaceToClassImplInline() }
+//    expectFailure(linkage("?")) { getInterfaceToClassImplAsAny() }
+//    expectFailure(linkage("?")) { getInterfaceToClassImplAsAnyInline() }
+//
+//    expectFailure(linkage("?")) { getInterfaceToClassNestedImpl() }
+//    expectFailure(linkage("?")) { getInterfaceToClassNestedImplInline() }
+//    expectFailure(linkage("?")) { getInterfaceToClassNestedImplAsAny() }
+//    expectFailure(linkage("?")) { getInterfaceToClassNestedImplAsAnyInline() }
+
+    expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1().toString() }
+    expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1Inline().toString() }
+    expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1AsAny().toString() }
+    expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1AsAnyInline().toString() }
+
+    expectSuccess("NestedObjectToCompanion2.Foo") { getNestedObjectToCompanion2().toString() }
+    expectSuccess("NestedObjectToCompanion2.Foo") { getNestedObjectToCompanion2Inline().toString() }
+    expectSuccess("NestedObjectToCompanion2.Foo") { getNestedObjectToCompanion2AsAny().toString() }
+    expectSuccess("NestedObjectToCompanion2.Foo") { getNestedObjectToCompanion2AsAnyInline().toString() }
+
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1().toString() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1Inline().toString() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1AsAny().toString() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1AsAnyInline().toString() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1Name() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1NameShort() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1NameInline() }
+    expectSuccess("CompanionToNestedObject1.Companion") { getCompanionToNestedObject1NameShortInline() }
+
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2().toString() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2Inline().toString() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2AsAny().toString() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2AsAnyInline().toString() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2Name() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2NameShort() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2NameInline() }
+    expectSuccess("CompanionToNestedObject2.Foo") { getCompanionToNestedObject2NameShortInline() }
+
+    expectSuccess("Foo") { getCompanionAndNestedObjectsSwap() }
+    expectSuccess("Foo") { getCompanionAndNestedObjectsSwapInline() }
+
+    // TODO: check absence of the required dispatch receiver in constructor of inner class
+//    expectFailure(linkage("?")) { getNestedToInnerName() }
+//    expectFailure(linkage("?")) { getNestedToInnerNameInline() }
+    expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectName() }
+    expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectNameInline() }
+    expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionName() }
+    expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionNameInline() }
+//    expectFailure(linkage("?")) { getNestedToInnerNestedName() }
+//    expectFailure(linkage("?")) { getNestedToInnerNestedNameInline() }
+//    expectFailure(linkage("?")) { getNestedToInnerInnerName() }
+//    expectFailure(linkage("?")) { getNestedToInnerInnerNameInline() }
+
+    // TODO: check presence of excessive dispatch receiver in constructor of nested class
+//    expectFailure(linkage("?")) { getInnerToNestedName() }
+//    expectFailure(linkage("?")) { getInnerToNestedNameInline() }
+//    expectFailure(linkage("?")) { getInnerToNestedObjectName() }
+//    expectFailure(linkage("?")) { getInnerToNestedObjectNameInline() }
+//    expectFailure(linkage("?")) { getInnerToNestedCompanionName() }
+//    expectFailure(linkage("?")) { getInnerToNestedCompanionNameInline() }
+//    expectFailure(linkage("?")) { getInnerToNestedNestedName() }
+//    expectFailure(linkage("?")) { getInnerToNestedNestedNameInline() }
+//    expectFailure(linkage("?")) { getInnerToNestedInnerName() }
+//    expectFailure(linkage("?")) { getInnerToNestedInnerNameInline() }
+
+    expectFailure(linkage("Constructor 'AnnotationClassWithChangedParameterType.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithChangedParameterType.<init>'")) { getAnnotationClassWithChangedParameterType() }
+    expectFailure(linkage("Constructor 'AnnotationClassWithChangedParameterType.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithChangedParameterType.<init>'")) { getAnnotationClassWithChangedParameterTypeInline() }
+    expectSuccess(-3) { getAnnotationClassThatBecomesRegularClass().x }
+    expectSuccess(-4) { getAnnotationClassThatBecomesRegularClassInline().x }
+    expectSuccess(-5) { getAnnotationClassWithParameterThatBecomesRegularClass().x.x }
+    expectSuccess(-6) { getAnnotationClassWithParameterThatBecomesRegularClassInline().x.x }
+    expectFailure(linkage("Function 'getAnnotationClassThatDisappears' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears'")) { getAnnotationClassThatDisappears() }
+    expectFailure(linkage("Function 'getAnnotationClassThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears'")) { getAnnotationClassThatDisappearsInline() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassThatDisappearsAsAny() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassThatDisappearsAsAnyInline() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappears() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsInline() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsAsAny() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsAsAnyInline() }
+
+    // TODO: handle unlinked constructor call in annotation
+//    expectSuccess("HolderOfAnnotationClassWithChangedParameterType") { getHolderOfAnnotationClassWithChangedParameterType().toString() }
+//    expectSuccess("HolderOfAnnotationClassWithChangedParameterType") { getHolderOfAnnotationClassWithChangedParameterTypeInline().toString() }
+    // TODO: handle non-annotation class appearing in annotation
+    expectSuccess("HolderOfAnnotationClassThatBecomesRegularClass") { getHolderOfAnnotationClassThatBecomesRegularClass().toString() }
+    expectSuccess("HolderOfAnnotationClassThatBecomesRegularClass") { getHolderOfAnnotationClassThatBecomesRegularClassInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesRegularClass") { getHolderOfAnnotationClassWithParameterThatBecomesRegularClass().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesRegularClass") { getHolderOfAnnotationClassWithParameterThatBecomesRegularClassInline().toString() }
+    // TODO: handle unlinked constructor call in annotation
+//    expectSuccess("HolderOfAnnotationClassThatDisappears") { getHolderOfAnnotationClassThatDisappears().toString() }
+//    expectSuccess("HolderOfAnnotationClassThatDisappears") { getHolderOfAnnotationClassThatDisappearsInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatDisappears") { getHolderOfAnnotationClassWithParameterThatDisappears().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatDisappears") { getHolderOfAnnotationClassWithParameterThatDisappearsInline().toString() }
+
+    expectSuccess { getValueToClass(); "OK" }
+    expectSuccess { getValueToClassInline(); "OK" }
+    expectSuccess { getValueToClassAsAny(); "OK" }
+    expectSuccess { getValueToClassAsAnyInline(); "OK" }
+
+    expectSuccess { getClassToValue(); "OK" }
+    expectSuccess { getClassToValueInline(); "OK" }
+    expectSuccess { getClassToValueAsAny(); "OK" }
+    expectSuccess { getClassToValueAsAnyInline(); "OK" }
+
+    expectFailure(linkage("Function 'component1' can not be called: No function found for symbol '/DataToClass.component1'")) { getSumFromDataClass() }
+
+    expectSuccess { getFunctionalInterfaceToInterface(); "OK" }
 }

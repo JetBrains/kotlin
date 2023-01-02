@@ -1,6 +1,7 @@
-class EnumToClass {
-    class Foo
-    object Bar
+enum class ClassToEnum {
+    Foo,
+    Bar,
+    Baz
 }
 
 enum class ObjectToEnum {
@@ -8,11 +9,128 @@ enum class ObjectToEnum {
     Bar
 }
 
-enum class ClassToEnum {
-    Foo,
-    Bar,
-    Baz
+class EnumToClass {
+    class Foo
+    object Bar
+    inner class Baz
+}
+
+object EnumToObject {
+    class Foo
+    object Bar
 }
 
 object ClassToObject
 class ObjectToClass
+
+interface ClassToInterface
+class InterfaceToClass
+
+class NestedObjectToCompanion1 {
+    companion object {
+        fun name() = "NestedObjectToCompanion1.Companion"
+        override fun toString() = name()
+    }
+}
+
+class NestedObjectToCompanion2 {
+    companion object Foo {
+        fun name() = "NestedObjectToCompanion2.Foo"
+        override fun toString() = name()
+    }
+}
+
+class CompanionToNestedObject1 {
+    object Companion {
+        fun name() = "CompanionToNestedObject1.Companion"
+        override fun toString() = name()
+    }
+}
+
+class CompanionToNestedObject2 {
+    object Foo {
+        fun name() = "CompanionToNestedObject2.Foo"
+        override fun toString() = name()
+    }
+}
+
+class CompanionAndNestedObjectsSwap {
+    object Foo {
+        fun name() = "Foo"
+    }
+
+    companion object Bar {
+        fun name() = "Bar"
+    }
+}
+
+class NestedClassContainer {
+    fun name() = "NestedClassContainer"
+
+    inner class NestedToInner {
+        fun name() = this@NestedClassContainer.name() + ".NestedToInner"
+        override fun toString() = name()
+
+        inner class /*object*/ Object {
+            fun name() = this@NestedToInner.name() + ".Object"
+            override fun toString() = name()
+        }
+
+        inner class /*companion object*/ Companion {
+            fun name() = this@NestedToInner.name() + ".Companion"
+            override fun toString() = name()
+        }
+
+        inner class /*class*/ Nested {
+            fun name() = this@NestedToInner.name() + ".Nested"
+            override fun toString() = name()
+        }
+
+        inner class Inner {
+            fun name() = this@NestedToInner.name() + ".Inner"
+            override fun toString() = name()
+        }
+    }
+}
+
+class InnerClassContainer {
+    fun name() = "InnerClassContainer"
+
+    class InnerToNested {
+        fun name() = "InnerClassContainer.InnerToNested"
+        override fun toString() = name()
+
+        object Object {
+            fun name() = "InnerClassContainer.InnerToNested.Companion"
+            override fun toString() = name()
+        }
+
+        companion object Companion {
+            fun name() = "InnerClassContainer.InnerToNested.Companion"
+            override fun toString() = name()
+        }
+
+        class Nested {
+            fun name() = "InnerClassContainer.InnerToNested.Nested"
+            override fun toString() = name()
+        }
+
+        inner class Inner {
+            fun name() = this@InnerToNested.name() + ".Inner"
+            override fun toString() = name()
+        }
+    }
+}
+
+annotation class AnnotationClassWithChangedParameterType(val x: /*Int*/ String)
+/*annotation*/ class AnnotationClassThatBecomesRegularClass(val x: Int)
+//annotation class AnnotationClassThatDisappears(val x: Int)
+
+class ValueToClass(val x: Int)
+value class ClassToValue(val x: Int)
+
+/*data*/ class DataToClass(val x: Int, val y: Int)
+
+/*fun*/ interface FunctionalInterfaceToInterface {
+    fun work()
+}
