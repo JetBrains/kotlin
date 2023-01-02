@@ -672,7 +672,7 @@ class CacheUpdater(
         val compilerForIC = compilerInterfaceFactory.createCompilerForIC(mainModuleFragment, compilerConfiguration)
 
         // Load declarations referenced during `context` initialization
-        loadedIr.linker.loadUnboundSymbols(true)
+        loadedIr.linker.loadUnboundSymbols()
 
         val dirtyFiles = dirtyFileExports.entries.associateTo(HashMap(dirtyFileExports.size)) { it.key to HashSet(it.value.keys) }
 
@@ -756,7 +756,7 @@ fun rebuildCacheForDirtyFiles(
     val compilerWithIC = JsIrCompilerWithIC(currentIrModule, configuration, JsGenerationGranularity.PER_MODULE, exportedDeclarations)
 
     // Load declarations referenced during `context` initialization
-    jsIrLinker.loadUnboundSymbols(true)
+    jsIrLinker.loadUnboundSymbols()
 
     val fragments = compilerWithIC.compile(irModules.values, dirtyIrFiles, mainArguments).map { it() }
 

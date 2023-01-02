@@ -30,12 +30,10 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-internal fun JsIrLinker.loadUnboundSymbols(checkNoUnbound: Boolean) {
+internal fun JsIrLinker.loadUnboundSymbols() {
     ExternalDependenciesGenerator(symbolTable, listOf(this)).generateUnboundSymbolsAsDependencies()
     postProcess()
-    if (checkNoUnbound) {
-        checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
-    }
+    checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 }
 
 internal class JsIrLinkerLoader(
@@ -130,7 +128,7 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        jsIrLinker.loadUnboundSymbols(false)
+        jsIrLinker.loadUnboundSymbols()
         return LoadedJsIr(jsIrLinker, irModules)
     }
 }
