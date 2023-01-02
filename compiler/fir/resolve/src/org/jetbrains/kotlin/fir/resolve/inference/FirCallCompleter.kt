@@ -184,7 +184,7 @@ class FirCallCompleter(
                     )
                 }
             }
-            !expectedType.isUnitOrFlexibleUnit || !mayBeCoercionToUnitApplied -> {
+            !expectedType.isUnitOrFlexibleUnit || (!mayBeCoercionToUnitApplied && !expectedTypeMismatchIsReportedInChecker) -> {
                 system.addSubtypeConstraint(initialType, expectedType, expectedTypeConstraintPosition)
             }
             system.notFixedTypeVariables.isEmpty() -> return
