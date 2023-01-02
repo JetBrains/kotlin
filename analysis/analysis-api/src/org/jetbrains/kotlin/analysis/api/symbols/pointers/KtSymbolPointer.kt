@@ -33,7 +33,7 @@ public abstract class KtSymbolPointer<out S : KtSymbol> {
     public abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
 
     /**
-     * @return **true** if [other] pointer should be restored to the same symbol
+     * @return **true** if [other] pointer can be restored to the same symbol
      */
     public open fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other
 }
