@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <T> materialize(): T = TODO()
 
 fun implicitCoercion() {
