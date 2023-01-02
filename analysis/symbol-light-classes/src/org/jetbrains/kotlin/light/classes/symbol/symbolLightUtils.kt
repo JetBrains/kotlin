@@ -256,7 +256,7 @@ internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeFo
 internal inline fun <T : KtSymbol> compareSymbolPointers(
     left: KtSymbolPointer<T>,
     right: KtSymbolPointer<T>,
-): Boolean = left.pointsToTheSameSymbolAs(right)
+): Boolean = left === right || left.pointsToTheSameSymbolAs(right)
 
 internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
     ktModule: KtModule,
