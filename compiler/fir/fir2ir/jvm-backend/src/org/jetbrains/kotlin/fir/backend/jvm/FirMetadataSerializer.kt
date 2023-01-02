@@ -61,7 +61,10 @@ fun makeFirMetadataSerializerForIrClass(
         serializationBindings,
         firSerializerExtension,
         approximator,
-        makeElementSerializer(irClass.metadata, components.session, components.scopeSession, firSerializerExtension, approximator, parent)
+        makeElementSerializer(
+            irClass.metadata, components.session, components.scopeSession, firSerializerExtension, approximator, parent,
+            context.state.configuration.languageVersionSettings,
+        )
     )
 }
 
@@ -102,7 +105,10 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         serializationBindings,
         firSerializerExtension,
         approximator,
-        makeElementSerializer(metadata, session, scopeSession, firSerializerExtension, approximator, parent)
+        makeElementSerializer(
+            metadata, session, scopeSession, firSerializerExtension, approximator, parent,
+            configuration.languageVersionSettings,
+        )
     )
 }
 
@@ -162,7 +168,8 @@ internal fun makeElementSerializer(
     scopeSession: ScopeSession,
     serializerExtension: FirJvmSerializerExtension,
     approximator: AbstractTypeApproximator,
-    parent: MetadataSerializer?
+    parent: MetadataSerializer?,
+    languageVersionSettings: LanguageVersionSettings
 ): FirElementSerializer? =
     when (metadata) {
         is FirMetadataSource.Class -> FirElementSerializer.create(
@@ -170,17 +177,20 @@ internal fun makeElementSerializer(
             metadata.fir,
             serializerExtension,
             (parent as? FirMetadataSerializer)?.serializer,
-            approximator
+            approximator,
+            languageVersionSettings,
         )
         is FirMetadataSource.File -> FirElementSerializer.createTopLevel(
             session, scopeSession,
             serializerExtension,
-            approximator
+            approximator,
+            languageVersionSettings,
         )
         is FirMetadataSource.Function -> FirElementSerializer.createForLambda(
             session, scopeSession,
             serializerExtension,
-            approximator
+            approximator,
+            languageVersionSettings,
         )
         else -> null
     }

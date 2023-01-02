@@ -143,7 +143,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
         for (localVariable in localVariables) {
             val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable, approximator)
-            val serializer = DescriptorSerializer.createForLambda(this)
+            val serializer = DescriptorSerializer.createForLambda(this, languageVersionSettings)
             proto.addExtension(extension, serializer.propertyProto(propertyDescriptor)?.build() ?: continue)
         }
     }

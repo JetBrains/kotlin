@@ -145,7 +145,8 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
                 CompatibilityMode.CURRENT,
                 skipExpect,
                 false,
-                emptyList()
+                emptyList(),
+                myEnvironment.configuration.languageVersionSettings,
             ).serializedIrModule(irModuleFragment)
 
         val moduleDescriptor = irModuleFragment.descriptor

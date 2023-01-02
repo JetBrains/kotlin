@@ -284,7 +284,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         DescriptorSerializer serializer =
-                DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
+                DescriptorSerializer.createForLambda(
+                        new JvmSerializerExtension(v.getSerializationBindings(), state),
+                        state.getLanguageVersionSettings()
+                );
 
         ProtoBuf.Function.Builder builder = serializer.functionProto(freeLambdaDescriptor);
         if (builder == null) return;

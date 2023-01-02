@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureClashTracker
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -23,6 +24,7 @@ class JsIrModuleSerializer(
     val skipExpects: Boolean,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>,
+    private val languageVersionSettings: LanguageVersionSettings,
     shouldCheckSignaturesOnUniqueness: Boolean = true
 ) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
@@ -39,6 +41,7 @@ class JsIrModuleSerializer(
             compatibilityMode = compatibilityMode,
             skipExpects = skipExpects,
             normalizeAbsolutePaths = normalizeAbsolutePaths,
-            sourceBaseDirs = sourceBaseDirs
+            sourceBaseDirs = sourceBaseDirs,
+            languageVersionSettings = languageVersionSettings,
         )
 }

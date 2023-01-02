@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,9 +26,10 @@ class JvmIrSerializerSession(
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
+    languageVersionSettings: LanguageVersionSettings,
     skipExpects: Boolean = false,
 ) : IrFileSerializer(
-    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT,
+    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT, languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     skipExpects, normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
 ) {

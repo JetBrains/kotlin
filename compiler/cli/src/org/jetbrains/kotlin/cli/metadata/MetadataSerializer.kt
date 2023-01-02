@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -50,12 +52,16 @@ open class MetadataSerializer(
 
         performanceManager.notifyGenerationStarted()
         val destDir = checkNotNull(environment.destDir)
-        performSerialization(environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir, environment.project)
+        performSerialization(
+            environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir, environment.project,
+            environment.configuration.languageVersionSettings
+        )
         performanceManager.notifyGenerationFinished()
     }
 
     protected open fun performSerialization(
-        files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File, project: Project?
+        files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File, project: Project?,
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         val packageTable = hashMapOf<FqName, PackageParts>()
 
@@ -89,14 +95,17 @@ open class MetadataSerializer(
                         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
                             ?: error("No descriptor found for class ${classOrObject.fqName}")
                         val destFile = File(destDir, getClassFilePath(ClassId(packageFqName, classDescriptor.name)))
-                        PackageSerializer(listOf(classDescriptor), emptyList(), packageFqName, destFile, project).run()
+                        PackageSerializer(
+                            listOf(classDescriptor), emptyList(), packageFqName, destFile,
+                            languageVersionSettings, project,
+                        ).run()
                     }
                 })
             }
 
             if (members.isNotEmpty()) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
-                PackageSerializer(emptyList(), members, packageFqName, destFile, project).run()
+                PackageSerializer(emptyList(), members, packageFqName, destFile, languageVersionSettings, project).run()
 
                 packageTable.getOrPut(packageFqName) {
                     PackageParts(packageFqName.asString())
@@ -130,13 +139,14 @@ open class MetadataSerializer(
         private val members: Collection<DeclarationDescriptor>,
         private val packageFqName: FqName,
         private val destFile: File,
+        private val languageVersionSettings: LanguageVersionSettings,
         private val project: Project? = null
     ) {
         private val proto = ProtoBuf.PackageFragment.newBuilder()
         private val extension = createSerializerExtension()
 
         fun run() {
-            val serializer = DescriptorSerializer.createTopLevel(extension, project)
+            val serializer = DescriptorSerializer.createTopLevel(extension, languageVersionSettings, project)
             serializeClasses(classes, serializer, project)
             serializeMembers(members, serializer)
             serializeStringTable()
@@ -147,7 +157,7 @@ open class MetadataSerializer(
             for (descriptor in DescriptorSerializer.sort(classes)) {
                 if (descriptor !is ClassDescriptor || descriptor.kind == ClassKind.ENUM_ENTRY) continue
 
-                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, project)
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, languageVersionSettings, project)
                 serializeClasses(
                     descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS),
                     serializer,

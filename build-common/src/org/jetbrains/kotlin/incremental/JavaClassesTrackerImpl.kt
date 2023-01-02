@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.psi.PsiJavaFile
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -34,7 +35,8 @@ val CONVERTING_JAVA_CLASSES_TO_PROTO = PerformanceCounter.create("Converting Jav
 
 class JavaClassesTrackerImpl(
         private val cache: IncrementalJvmCache,
-        private val untrackedJavaClasses: Set<ClassId>
+        private val untrackedJavaClasses: Set<ClassId>,
+        private val languageVersionSettings: LanguageVersionSettings,
 ) : JavaClassesTracker {
     private val classToSourceSerialized: MutableMap<ClassId, SerializedJavaClassWithSource> = hashMapOf()
 
@@ -65,7 +67,7 @@ class JavaClassesTrackerImpl(
                     "Duplicated JavaClassDescriptor $classId reported to IC"
                 }
                 classToSourceSerialized[classId] = CONVERTING_JAVA_CLASSES_TO_PROTO.time {
-                    classDescriptor.convertToProto()
+                    classDescriptor.convertToProto(languageVersionSettings)
                 }
             }
         }
@@ -85,12 +87,14 @@ private val JavaClassDescriptor.javaSourceFile: File?
             ?.psi?.containingFile?.takeIf { it is PsiJavaFile }
             ?.virtualFile?.path?.let(::File)
 
-fun JavaClassDescriptor.convertToProto(): SerializedJavaClassWithSource {
+fun JavaClassDescriptor.convertToProto(languageVersionSettings: LanguageVersionSettings): SerializedJavaClassWithSource {
     val file = javaSourceFile.sure { "convertToProto should only be called for source based classes" }
 
     val extension = JavaClassesSerializerExtension()
     val classProto = try {
-        DescriptorSerializer.create(this, extension, null).classProto(this).build()
+        DescriptorSerializer.create(
+            this, extension, null, languageVersionSettings
+        ).classProto(this).build()
     } catch (e: Exception) {
         throw IllegalStateException(
             "Error during writing proto for descriptor: ${DescriptorRenderer.DEBUG_TEXT.render(this)}\n" +

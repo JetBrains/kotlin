@@ -185,14 +185,14 @@ object KotlinJavascriptSerializationUtil {
             for (descriptor in descriptors) {
                 if (descriptor !is ClassDescriptor || skip(descriptor)) continue
 
-                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, project)
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, languageVersionSettings, project)
                 serializeClasses(descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer)
                 val classProto = serializer.classProto(descriptor).build() ?: error("Class not serialized: $descriptor")
                 builder.addClass_(classProto)
             }
         }
 
-        val serializer = DescriptorSerializer.createTopLevel(extension)
+        val serializer = DescriptorSerializer.createTopLevel(extension, languageVersionSettings)
         serializeClasses(classDescriptors, serializer)
 
         val stringTable = extension.stringTable

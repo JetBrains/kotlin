@@ -48,6 +48,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
                 compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = normalizeAbsolutePaths,
                 sourceBaseDirs = relativePathBase,
+                languageVersionSettings = config.languageVersionSettings,
         ).serializedIrModule(ir)
     }
 

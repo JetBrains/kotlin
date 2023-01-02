@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -51,8 +52,9 @@ class DescriptorSerializer private constructor(
     val typeTable: MutableTypeTable,
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
+    private val languageVersionSettings: LanguageVersionSettings,
     val plugins: List<DescriptorSerializerPlugin> = emptyList(),
-    val typeAttributeTranslators: TypeAttributeTranslators? = null
+    val typeAttributeTranslators: TypeAttributeTranslators? = null,
 ) {
     private val contractSerializer = ContractSerializer()
 
@@ -66,7 +68,8 @@ class DescriptorSerializer private constructor(
     private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
         DescriptorSerializer(
             descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
-            serializeTypeTableToFunction = false, typeAttributeTranslators = typeAttributeTranslators
+            serializeTypeTableToFunction = false, typeAttributeTranslators = typeAttributeTranslators,
+            languageVersionSettings = languageVersionSettings,
         )
 
     val stringTable: DescriptorAwareStringTable
@@ -86,6 +89,8 @@ class DescriptorSerializer private constructor(
     fun classProto(classDescriptor: ClassDescriptor): ProtoBuf.Class.Builder = withNewMetDefinitelyNotNullType {
         val builder = ProtoBuf.Class.newBuilder()
 
+        val hasEnumEntries = classDescriptor.kind == ClassKind.ENUM_CLASS &&
+                languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
         val flags = Flags.getClassFlags(
             // Since 1.4.30 isInline & isValue are the same flag. To distinguish them we generate @JvmInline annotation.
             // See ClassDescriptor.isInlineClass() function.
@@ -94,7 +99,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(classDescriptor.modality),
             ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
             classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect,
-            classDescriptor.isValueClass(), classDescriptor.isFun
+            classDescriptor.isValueClass(), classDescriptor.isFun, hasEnumEntries,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -861,16 +866,21 @@ class DescriptorSerializer private constructor(
 
     companion object {
         @JvmStatic
-        fun createTopLevel(extension: SerializerExtension, project: Project? = null): DescriptorSerializer =
+        fun createTopLevel(
+            extension: SerializerExtension, languageVersionSettings: LanguageVersionSettings,
+            project: Project? = null
+        ): DescriptorSerializer =
             DescriptorSerializer(
                 null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false,
-                typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) }
+                typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) },
+                languageVersionSettings = languageVersionSettings,
             )
 
         @JvmStatic
-        fun createForLambda(extension: SerializerExtension): DescriptorSerializer =
+        fun createForLambda(extension: SerializerExtension, languageVersionSettings: LanguageVersionSettings): DescriptorSerializer =
             DescriptorSerializer(
-                null, Interner(), extension, MutableTypeTable(), versionRequirementTable = null, serializeTypeTableToFunction = true
+                null, Interner(), extension, MutableTypeTable(), versionRequirementTable = null,
+                serializeTypeTableToFunction = true, languageVersionSettings = languageVersionSettings,
             )
 
         @JvmStatic
@@ -878,13 +888,14 @@ class DescriptorSerializer private constructor(
             descriptor: ClassDescriptor,
             extension: SerializerExtension,
             parentSerializer: DescriptorSerializer?,
+            languageVersionSettings: LanguageVersionSettings,
             project: Project? = null
         ): DescriptorSerializer {
             val container = descriptor.containingDeclaration
             val parent = if (container is ClassDescriptor)
-                parentSerializer ?: create(container, extension, null, project)
+                parentSerializer ?: create(container, extension, null, languageVersionSettings, project)
             else
-                createTopLevel(extension)
+                createTopLevel(extension, languageVersionSettings)
             val plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty()
             val typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) }
 
@@ -899,6 +910,7 @@ class DescriptorSerializer private constructor(
                 if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
+                languageVersionSettings,
                 plugins,
                 typeAttributeTranslators
             )

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -21,6 +22,7 @@ class JsIrFileSerializer(
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     compatibilityMode: CompatibilityMode,
     skipExpects: Boolean,
+    languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>
@@ -29,6 +31,7 @@ class JsIrFileSerializer(
     declarationTable,
     expectDescriptorToSymbol,
     compatibilityMode,
+    languageVersionSettings,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     skipExpects = skipExpects,
     normalizeAbsolutePaths = normalizeAbsolutePaths,

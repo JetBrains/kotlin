@@ -53,7 +53,9 @@ internal fun PhaseContext.firSerializer(
                 firFile,
                 input.session,
                 input.scopeSession,
-                FirNativeKLibSerializerExtension(input.session, metadataVersion, FirElementAwareSerializableStringTable()))
+                FirNativeKLibSerializerExtension(input.session, metadataVersion, FirElementAwareSerializableStringTable()),
+                configuration.languageVersionSettings,
+        )
     }
 }
 
@@ -82,7 +84,8 @@ internal fun PhaseContext.serializeNativeModule(
                     skipExpects = !expectActualLinker,
                     CompatibilityMode.CURRENT,
                     normalizeAbsolutePaths = absolutePathNormalization,
-                    sourceBaseDirs = sourceBaseDirs
+                    sourceBaseDirs = sourceBaseDirs,
+                    languageVersionSettings = configuration.languageVersionSettings,
             ).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor

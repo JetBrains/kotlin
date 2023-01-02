@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -622,6 +621,7 @@ fun serializeModuleIntoKlib(
             skipExpects = !configuration.expectActualLinker,
             normalizeAbsolutePaths = absolutePathNormalization,
             sourceBaseDirs = sourceBaseDirs,
+            configuration.languageVersionSettings,
             signatureClashChecks
         ).serializedIrModule(moduleFragment)
 

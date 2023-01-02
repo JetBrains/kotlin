@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -49,7 +50,9 @@ fun JvmModuleProtoBuf.Module.Builder.addDataFromCompiledModule(
                     }
                 }.orEmpty()
 
-    val serializer = DescriptorSerializer.createTopLevel(JvmOptionalAnnotationSerializerExtension(stringTable))
+    val serializer = DescriptorSerializer.createTopLevel(
+        JvmOptionalAnnotationSerializerExtension(stringTable), state.configuration.languageVersionSettings,
+    )
     for (descriptor in optionalAnnotationClassDescriptors) {
         addOptionalAnnotationClass(serializer.classProto(descriptor))
     }

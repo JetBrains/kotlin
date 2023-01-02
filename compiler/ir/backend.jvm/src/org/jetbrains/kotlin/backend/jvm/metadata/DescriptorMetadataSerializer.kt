@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -32,18 +33,25 @@ class DescriptorMetadataSerializer(
     parent: MetadataSerializer?
 ) : MetadataSerializer {
     private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.defaultTypeMapper)
-    private val serializer: DescriptorSerializer? =
+    private val serializer: DescriptorSerializer? = run {
+        val languageVersionSettings = context.state.configuration.languageVersionSettings
         when (val metadata = irClass.metadata) {
             is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
+                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer,
+                languageVersionSettings, context.state.project,
             )
             is DescriptorMetadataSource.Script -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
+                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer,
+                languageVersionSettings, context.state.project,
             )
-            is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension, context.state.project)
-            is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
+            is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(
+                serializerExtension, languageVersionSettings,
+                context.state.project
+            )
+            is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension, languageVersionSettings)
             else -> null
         }
+    }
 
     override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
         val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]

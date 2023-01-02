@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -87,7 +88,8 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
         bindingContext: BindingContext,
         module: ModuleDescriptor,
         destDir: File,
-        project: Project?
+        project: Project?,
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
@@ -101,7 +103,8 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
                 packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) + createCloneable(module),
                 packageView.fragments.flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) },
                 packageView.fqName,
-                File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName))
+                File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName)),
+                languageVersionSettings,
             ).run()
         }
     }

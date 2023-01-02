@@ -535,7 +535,8 @@ class GenerateIrRuntime {
             CompatibilityMode.CURRENT,
             skipExpects = true,
             normalizeAbsolutePaths = false,
-            emptyList()
+            emptyList(),
+            configuration.languageVersionSettings,
         ).serializedIrModule(module)
         return serializedIr
     }

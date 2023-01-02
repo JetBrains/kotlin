@@ -58,7 +58,7 @@ abstract class KlibMetadataSerializer(
         )
         return SerializerContext(
             extension,
-            DescriptorSerializer.createTopLevel(extension, project)
+            DescriptorSerializer.createTopLevel(extension, languageVersionSettings, project)
         )
     }
 
@@ -73,7 +73,7 @@ abstract class KlibMetadataSerializer(
         with(serializerContext) {
             val previousSerializer = classSerializer
 
-            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, project)
+            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, languageVersionSettings, project)
             val classProto = classSerializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
             //builder.addClass(classProto)
 

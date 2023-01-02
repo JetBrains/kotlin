@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -17,9 +18,14 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
-fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: ScopeSession, serializerExtension: FirKLibSerializerExtension): ProtoBuf.PackageFragment {
+fun serializeSingleFirFile(
+    file: FirFile, session: FirSession, scopeSession: ScopeSession,
+    serializerExtension: FirKLibSerializerExtension,
+    languageVersionSettings: LanguageVersionSettings,
+): ProtoBuf.PackageFragment {
     val approximator = TypeApproximatorForMetadataSerializer(session)
-    val packageSerializer = FirElementSerializer.createTopLevel(session, scopeSession, serializerExtension, approximator)
+    val packageSerializer = FirElementSerializer.createTopLevel(session, scopeSession, serializerExtension, approximator,
+                                                                languageVersionSettings)
 
     // TODO: typealiases (see klib serializer)
     // TODO: split package fragment (see klib serializer)
@@ -30,7 +36,8 @@ fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: Sco
     fun List<FirDeclaration>.makeClassesProtoWithNested(): List<Pair<ProtoBuf.Class, Int>> =
         // TODO: filter out expects
         filterIsInstance<FirClass>().sortedBy { it.classId.asFqNameString() }.flatMap {
-            val classSerializer = FirElementSerializer.create(session, scopeSession, it, serializerExtension, null, approximator)
+            val classSerializer = FirElementSerializer.create(session, scopeSession, it, serializerExtension, null,
+                approximator, languageVersionSettings)
             val index = classSerializer.stringTable.getFqNameIndex(it)
             listOf(classSerializer.classProto(it).build() to index) + it.declarations.makeClassesProtoWithNested()
         }

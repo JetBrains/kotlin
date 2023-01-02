@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
@@ -167,18 +168,22 @@ open class IncrementalJvmCompilerRunner(
 
     private var dirtyClasspathChanges: Collection<FqName> = emptySet()
 
-    private val psiFileProvider = object {
-        val messageCollector = BufferingMessageCollector()
+    private val messageCollector = BufferingMessageCollector()
+    private val compilerConfiguration: CompilerConfiguration by lazy {
+        val filterMessageCollector = FilteringMessageCollector(messageCollector) { !it.isError }
+        CompilerConfiguration().apply {
+            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, filterMessageCollector)
+            configureJdkClasspathRoots()
+        }
+    }
 
+    private val psiFileProvider = object {
         fun javaFile(file: File): PsiFile? =
             psiFileFactory.createFileFromText(file.nameWithoutExtension, JavaLanguage.INSTANCE, file.readText())
 
         private val psiFileFactory: PsiFileFactory by lazy {
             val rootDisposable = Disposer.newDisposable()
-            val configuration = CompilerConfiguration()
-            val filterMessageCollector = FilteringMessageCollector(messageCollector, { !it.isError })
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, filterMessageCollector)
-            configuration.configureJdkClasspathRoots()
+            val configuration = compilerConfiguration
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             val project = environment.project
             PsiFileFactory.getInstance(project)
@@ -203,8 +208,8 @@ open class IncrementalJvmCompilerRunner(
         return try {
             calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots, withAbiSnapshot)
         } finally {
-            psiFileProvider.messageCollector.flush(messageCollector)
-            psiFileProvider.messageCollector.clear()
+            this.messageCollector.flush(messageCollector)
+            this.messageCollector.clear()
         }
     }
 
@@ -473,7 +478,10 @@ open class IncrementalJvmCompilerRunner(
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)
             if (usePreciseJavaTracking) {
-                val changesTracker = JavaClassesTrackerImpl(caches.platformCache, changedUntrackedJavaClasses.toSet())
+                val changesTracker = JavaClassesTrackerImpl(
+                    caches.platformCache, changedUntrackedJavaClasses.toSet(),
+                    compilerConfiguration.languageVersionSettings,
+                )
                 changedUntrackedJavaClasses.clear()
                 register(JavaClassesTracker::class.java, changesTracker)
             }

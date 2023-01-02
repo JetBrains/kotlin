@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization.encodings
 
 import org.jetbrains.kotlin.backend.common.serialization.IrFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -33,15 +35,17 @@ value class ClassFlags(val flags: Long) {
     val isFun: Boolean get() = IrFlags.IS_FUN_INTERFACE.get(flags.toInt())
 
     companion object {
-        fun encode(clazz: IrClass): Long {
+        fun encode(clazz: IrClass, languageVersionSettings: LanguageVersionSettings): Long {
             return clazz.run {
                 val hasAnnotation = annotations.isNotEmpty()
                 val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = ProtoEnumFlags.classKind(kind, isCompanion)
 
+                val hasEnumEntries = kind == ProtoBuf.Class.Kind.ENUM_CLASS &&
+                        languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
                 val flags = IrFlags.getClassFlags(
-                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun
+                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun, hasEnumEntries
                 )
 
                 flags.toLong()

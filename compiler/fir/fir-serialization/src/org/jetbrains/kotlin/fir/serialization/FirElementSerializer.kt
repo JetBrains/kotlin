@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -64,6 +65,7 @@ class FirElementSerializer private constructor(
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
     private val typeApproximator: AbstractTypeApproximator,
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     private val contractSerializer = FirContractSerializer()
 
@@ -94,6 +96,8 @@ class FirElementSerializer private constructor(
 
         val regularClass = klass as? FirRegularClass
         val modality = regularClass?.modality ?: Modality.FINAL
+
+        val hasEnumEntries = klass.classKind == ClassKind.ENUM_CLASS && languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
         val flags = Flags.getClassFlags(
             klass.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.Local),
@@ -104,7 +108,8 @@ class FirElementSerializer private constructor(
             regularClass?.isExternal == true,
             regularClass?.isExpect == true,
             regularClass?.isInline == true,
-            regularClass?.isFun == true
+            regularClass?.isFun == true,
+            hasEnumEntries,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -880,7 +885,7 @@ class FirElementSerializer private constructor(
         FirElementSerializer(
             session, scopeSession, declaration, Interner(typeParameters), extension,
             typeTable, versionRequirementTable, serializeTypeTableToFunction = false,
-            typeApproximator
+            typeApproximator, languageVersionSettings
         )
 
     val stringTable: FirElementAwareStringTable
@@ -1010,12 +1015,14 @@ class FirElementSerializer private constructor(
             scopeSession: ScopeSession,
             extension: FirSerializerExtension,
             typeApproximator: AbstractTypeApproximator,
+            languageVersionSettings: LanguageVersionSettings,
         ): FirElementSerializer =
             FirElementSerializer(
                 session, scopeSession, null,
                 Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
-                typeApproximator
+                typeApproximator,
+                languageVersionSettings,
             )
 
         @JvmStatic
@@ -1024,12 +1031,14 @@ class FirElementSerializer private constructor(
             scopeSession: ScopeSession,
             extension: FirSerializerExtension,
             typeApproximator: AbstractTypeApproximator,
+            languageVersionSettings: LanguageVersionSettings,
         ): FirElementSerializer =
             FirElementSerializer(
                 session, scopeSession, null,
                 Interner(), extension, MutableTypeTable(),
                 versionRequirementTable = null, serializeTypeTableToFunction = true,
-                typeApproximator
+                typeApproximator,
+                languageVersionSettings,
             )
 
         @JvmStatic
@@ -1040,13 +1049,17 @@ class FirElementSerializer private constructor(
             extension: FirSerializerExtension,
             parentSerializer: FirElementSerializer?,
             typeApproximator: AbstractTypeApproximator,
+            languageVersionSettings: LanguageVersionSettings,
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
                 val parentClass = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)!!.fir as FirRegularClass
-                parentSerializer ?: create(session, scopeSession, parentClass, extension, null, typeApproximator)
+                parentSerializer ?: create(
+                    session, scopeSession, parentClass, extension, null, typeApproximator,
+                    languageVersionSettings,
+                )
             } else {
-                createTopLevel(session, scopeSession, extension, typeApproximator)
+                createTopLevel(session, scopeSession, extension, typeApproximator, languageVersionSettings)
             }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
@@ -1065,7 +1078,8 @@ class FirElementSerializer private constructor(
                     MutableVersionRequirementTable()
                 },
                 serializeTypeTableToFunction = false,
-                typeApproximator
+                typeApproximator,
+                languageVersionSettings,
             )
             for (typeParameter in klass.typeParameters) {
                 if (typeParameter !is FirTypeParameter) continue

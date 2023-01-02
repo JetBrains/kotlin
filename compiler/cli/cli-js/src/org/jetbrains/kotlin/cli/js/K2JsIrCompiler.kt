@@ -637,7 +637,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     firFile,
                     session,
                     scopeSession,
-                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable())
+                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
+                    configuration.languageVersionSettings,
                 )
             }
         }
