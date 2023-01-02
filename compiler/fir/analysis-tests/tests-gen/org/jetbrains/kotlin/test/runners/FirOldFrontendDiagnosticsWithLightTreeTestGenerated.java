@@ -27372,6 +27372,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("kt55722.kt")
+                public void testKt55722() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt55722.kt");
+                }
+
+                @Test
+                @TestMetadata("kt55722Initial.kt")
+                public void testKt55722Initial() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt55722Initial.kt");
+                }
+
+                @Test
                 @TestMetadata("numberOfDefaults.kt")
                 public void testNumberOfDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/numberOfDefaults.kt");
@@ -34695,9 +34707,27 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("kt56283.kt")
+            public void testKt56283() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/kt56283.kt");
+            }
+
+            @Test
             @TestMetadata("lackOfInvisibleSetterOfJavaClassInSamePackage.kt")
             public void testLackOfInvisibleSetterOfJavaClassInSamePackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/lackOfInvisibleSetterOfJavaClassInSamePackage.kt");
+            }
+
+            @Test
+            @TestMetadata("moreSpecificProtected.kt")
+            public void testMoreSpecificProtected() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/moreSpecificProtected.kt");
+            }
+
+            @Test
+            @TestMetadata("moreSpecificProtectedSimple.kt")
+            public void testMoreSpecificProtectedSimple() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/moreSpecificProtectedSimple.kt");
             }
 
             @Test
@@ -34800,6 +34830,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("protectedVisibilityAndSmartcast_overrideSameType.kt")
             public void testProtectedVisibilityAndSmartcast_overrideSameType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedVisibilityAndSmartcast_overrideSameType.kt");
+            }
+
+            @Test
+            @TestMetadata("smartCastAndSuppressedVisibility.kt")
+            public void testSmartCastAndSuppressedVisibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/smartCastAndSuppressedVisibility.kt");
             }
         }
 

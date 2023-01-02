@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -59,7 +56,8 @@ abstract class TowerScopeLevel {
             dispatchReceiverValue: ReceiverValue?,
             givenExtensionReceiverOptions: List<ReceiverValue>,
             scope: FirScope,
-            objectsByName: Boolean = false
+            objectsByName: Boolean = false,
+            isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
         )
     }
 }
@@ -87,9 +85,7 @@ class MemberScopeTowerLevel(
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
-        val scopeWithoutSmartcast = (dispatchReceiverValue.receiverExpression as? FirSmartCastExpression)
-            ?.takeIf { it.isStable }
-            ?.originalExpression?.typeRef
+        val scopeWithoutSmartcast = getOriginalReceiverExpressionIfStableSmartCast()?.typeRef
             ?.coneType
             ?.scope(
                 session,
@@ -169,12 +165,16 @@ class MemberScopeTowerLevel(
             candidatesFromSmartcast.forEach { put(it, true) }
         }
 
+        val candidates = mutableListOf<MemberWithBaseScope<T>>()
+
+        // The code below is assumed to be for sake of optimization only.
+        // It helps to avoid creating candidates both for some member in the original type and for its override in the smart cast
+        // when they are both visible.
+        // But semantically it should be OK to declare `val candidates` as `candidatesMapping.keys.toList()`
         val overridableGroups = session.overrideService.createOverridableGroups(
             candidatesFromOriginalType + candidatesFromSmartcast,
             FirIntersectionScopeOverrideChecker(session)
         )
-
-        val candidates = mutableListOf<MemberWithBaseScope<T>>()
         for (group in overridableGroups) {
             val visibleCandidates = group.filter {
                 visibilityChecker.isVisible(it.member.fir, callInfo, dispatchReceiverValue)
@@ -183,7 +183,7 @@ class MemberScopeTowerLevel(
             val visibleCandidatesFromSmartcast = visibleCandidates.filter { candidatesMapping.getValue(it) }
             candidates += visibleCandidatesFromSmartcast.ifEmpty { group }
         }
-        consumeCandidates(output, candidates)
+        consumeCandidates(output, candidates, candidatesMapping)
     }
 
     private fun <T : FirCallableSymbol<*>> FirTypeScope.collectCandidates(
@@ -206,19 +206,38 @@ class MemberScopeTowerLevel(
 
     private fun <T : FirCallableSymbol<*>> consumeCandidates(
         output: TowerScopeLevelProcessor<T>,
-        candidatesWithScope: List<MemberWithBaseScope<T>>
+        candidatesWithScope: List<MemberWithBaseScope<T>>,
+        // The map is not null only if there's a smart cast type on a dispatch receiver
+        // and candidates are present both in smart cast and original types.
+        // isFromSmartCast[candidate] == true iff exactly that member is present in smart cast type
+        isFromSmartCast: Map<MemberWithBaseScope<T>, Boolean>? = null
     ) {
-        for ((candidate, scope) in candidatesWithScope) {
+        for (candidateWithScope in candidatesWithScope) {
+            val (candidate, scope) = candidateWithScope
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
+                val isFromOriginalTypeInPresenceOfSmartCast = isFromSmartCast != null && !isFromSmartCast.getValue(candidateWithScope)
+
+                val dispatchReceiverToUse = when {
+                    isFromOriginalTypeInPresenceOfSmartCast ->
+                        getOriginalReceiverExpressionIfStableSmartCast()?.let(::ExpressionReceiverValue)
+                    else -> dispatchReceiverValue
+                }
+
                 output.consumeCandidate(
                     candidate,
-                    dispatchReceiverValue,
+                    dispatchReceiverToUse,
                     givenExtensionReceiverOptions,
-                    scope
+                    scope,
+                    isFromOriginalTypeInPresenceOfSmartCast = isFromOriginalTypeInPresenceOfSmartCast
                 )
             }
         }
     }
+
+    private fun getOriginalReceiverExpressionIfStableSmartCast() =
+        (dispatchReceiverValue.receiverExpression as? FirSmartCastExpression)
+            ?.takeIf { it.isStable }
+            ?.originalExpression
 
     override fun processFunctionsByName(
         info: CallInfo,
