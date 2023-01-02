@@ -34,7 +34,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
         moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList {
         val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
-        val context = moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
+        val context = moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
             PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
         }
         return withSourceCodeAnalysisExceptionUnwrapping {
