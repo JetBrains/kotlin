@@ -37,7 +37,7 @@ fun buildDecompiledTextForClassFile(
     )
 
     return when (classHeader.kind) {
-        KotlinClassHeader.Kind.FILE_FACADE ->
+        KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ->
             buildText(resolver.resolveDeclarationsInFacade(classId.asSingleFqName()))
         KotlinClassHeader.Kind.CLASS -> {
             buildText(listOfNotNull(resolver.resolveTopLevelClass(classId)))
