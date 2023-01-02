@@ -46,6 +46,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         }
 
         @Test
+        @TestMetadata("externalSerialierJava.kt")
+        public void testExternalSerialierJava() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerialierJava.kt");
+        }
+
+        @Test
         @TestMetadata("expectActual.kt")
         public void testExpectActual() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");

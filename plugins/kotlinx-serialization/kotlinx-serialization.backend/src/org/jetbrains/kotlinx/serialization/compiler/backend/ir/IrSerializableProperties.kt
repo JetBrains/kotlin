@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -74,7 +74,7 @@ internal fun serializablePropertiesForIrBackend(
         if (irClass.isInternalSerializable) !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)
         else !DescriptorVisibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)) || primaryParamsAsProps.contains(
             it
-        ))
+        )) && it.getter?.returnType != null // For some reason, some properties from Java (like java.net.URL.hostAddress) do not have getter. Let's ignore them, as they never have worked properly in K1 either.
 
     val (primaryCtorSerializableProps, bodySerializableProps) = properties
         .asSequence()
