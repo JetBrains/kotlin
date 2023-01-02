@@ -1,0 +1,38 @@
+STEP 0:
+    modifications:
+        U : ClassA.0.kt -> ClassA.kt
+        U : ClassB.0.kt -> ClassB.kt
+        U : Interface.0.kt -> Interface.kt
+    added file: ClassA.kt, ClassB.kt, Interface.kt
+STEP 1:
+    updated exports: ClassB.kt
+STEP 2:
+    modifications:
+        U : Interface.2.kt -> Interface.kt
+    modified ir: Interface.kt
+STEP 3:
+    modifications:
+        U : ClassB.3.kt -> ClassB.kt
+    modified ir: ClassB.kt
+    updated exports: ClassB.kt
+STEP 4:
+    modifications:
+        U : Interface.4.kt -> Interface.kt
+    modified ir: Interface.kt
+STEP 5:
+    updated exports: Interface.kt, ClassB.kt
+STEP 6:
+    modifications:
+        U : ClassB.6.kt -> ClassB.kt
+    modified ir: ClassB.kt
+    updated exports: Interface.kt
+STEP 7:
+    modifications:
+        U : ClassB.7.kt -> ClassB.kt
+    modified ir: ClassB.kt
+STEP 8:
+    modifications:
+        U : ClassA.8.kt -> ClassA.kt
+    modified ir: ClassA.kt
+STEP 9..10:
+    updated exports: ClassA.kt
