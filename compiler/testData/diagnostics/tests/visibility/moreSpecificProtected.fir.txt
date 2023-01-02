@@ -1,0 +1,171 @@
+FILE: moreSpecificProtected.fir.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+    }
+    public abstract interface M1 : R|kotlin/Any| {
+    }
+    public abstract interface M2 : R|kotlin/Any| {
+    }
+    public abstract interface M2Sub : R|M2| {
+    }
+    public abstract interface M3 : R|kotlin/Any| {
+    }
+    public abstract interface M3Sub : R|M3| {
+    }
+    public abstract interface M4 : R|kotlin/Any| {
+    }
+    public abstract interface M5 : R|kotlin/Any| {
+    }
+    public abstract interface M5Sub : R|M5| {
+    }
+    public abstract interface M5SubSub : R|M5Sub| {
+    }
+    public abstract interface M6 : R|kotlin/Any| {
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(a1: R|Base|, a2: R|Base|): R|M1| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        protected open fun foo(a1: R|Base|, a2: R|Derived|): R|M2| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        protected open fun foo(a1: R|Derived|, a2: R|Derived|): R|M3| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        public final fun baz(a1: R|Base|, a2: R|Base|): R|M4| {
+            ^baz R|kotlin/TODO|()
+        }
+
+        protected open fun baz(a1: R|Derived|, a2: R|Derived|): R|M5| {
+            ^baz R|kotlin/TODO|()
+        }
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final val fromB: R|kotlin/Any| = R|kotlin/Any.Any|()
+            public get(): R|kotlin/Any|
+
+        protected open override fun foo(a1: R|Base|, a2: R|Derived|): R|M2Sub| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        protected open override fun baz(a1: R|Derived|, a2: R|Derived|): R|M5Sub| {
+            ^baz R|kotlin/TODO|()
+        }
+
+        public final fun f(a: R|A|, b: R|B|, c: R|C|, d: R|Derived|): R|kotlin/Unit| {
+            R|<local>/a|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M1|>(checkType@fun R|CheckTypeInv<M1>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/_|<R|M1|>()
+            }
+            )
+            R|<local>/b|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/_|<R|M3|>()
+            }
+            )
+            R|<local>/c|.R|/B.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M2Sub|>(checkType@fun R|CheckTypeInv<M2Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/_|<R|M2Sub|>()
+            }
+            )
+            R|<local>/a|.R|/A.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M4|>(checkType@fun R|CheckTypeInv<M4>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/_|<R|M4|>()
+            }
+            )
+            R|<local>/b|.R|/B.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M5Sub|>(checkType@fun R|CheckTypeInv<M5Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/_|<R|M5Sub|>()
+            }
+            )
+            R|<local>/c|.R|/C.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M6|>(checkType@fun R|CheckTypeInv<M6>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/_|<R|M6|>()
+            }
+            )
+            when (R|<local>/a|) {
+                ($subj$ is R|C|) ->  {
+                    R|<local>/a|.R|/C.fromC|
+                    R|<local>/a|.R|/B.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M2Sub|>(checkType@fun R|CheckTypeInv<M2Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_|<R|M2Sub|>()
+                    }
+                    )
+                    R|<local>/a|.R|/C.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M6|>(checkType@fun R|CheckTypeInv<M6>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_|<R|M6|>()
+                    }
+                    )
+                }
+                ($subj$ is R|B|) ->  {
+                    R|<local>/a|.R|/B.fromB|
+                    R|<local>/a|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_|<R|M3|>()
+                    }
+                    )
+                    R|<local>/a|.R|/B.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M5Sub|>(checkType@fun R|CheckTypeInv<M5Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_|<R|M5Sub|>()
+                    }
+                    )
+                }
+            }
+
+            when (R|<local>/b|) {
+                ($subj$ is R|C|) ->  {
+                    R|<local>/b|.R|/C.fromC|
+                    R|<local>/b|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|M2Sub|>()
+                    }
+                    )
+                    R|<local>/b|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_|<R|M3|>()
+                    }
+                    )
+                    R|<local>/b|.R|/B.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M5Sub|>(checkType@fun R|CheckTypeInv<M5Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|M6|>()
+                    }
+                    )
+                    R|<local>/b|.R|/B.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M5Sub|>(checkType@fun R|CheckTypeInv<M5Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        this@R|special/anonymous|.R|/_|<R|M5Sub|>()
+                    }
+                    )
+                }
+            }
+
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        public final val fromC: R|kotlin/Any| = R|kotlin/Any.Any|()
+            public get(): R|kotlin/Any|
+
+        protected open override fun foo(a1: R|Derived|, a2: R|Derived|): R|M3Sub| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        protected open override fun baz(a1: R|Derived|, a2: R|Derived|): R|M5SubSub| {
+            ^baz R|kotlin/TODO|()
+        }
+
+        public final fun baz(a1: R|Derived|, a2: R|Base|): R|M6| {
+            ^baz R|kotlin/TODO|()
+        }
+
+    }

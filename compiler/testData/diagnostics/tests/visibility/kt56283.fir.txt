@@ -1,0 +1,51 @@
+FILE: kt56283.fir.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(foo: R|Base|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val foo: R|Base| = R|<local>/foo|
+            protected get(): R|Base|
+
+        protected open fun bar(): R|Base| {
+            ^bar R|/Base.Base|()
+        }
+
+        public final fun f(other: R|A|): R|kotlin/Unit| {
+            R|<local>/other|.R|/A.foo|
+            R|<local>/other|.R|/A.bar|()
+            when (R|<local>/other|) {
+                ($subj$ is R|B|) ->  {
+                    R|<local>/other|.R|/A.foo|
+                    R|<local>/other|.R|/A.bar|()
+                }
+            }
+
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(foo: R|Derived|): R|B| {
+            super<R|A|>(R|<local>/foo|)
+        }
+
+        protected open override val foo: R|Derived| = R|<local>/foo|
+            protected get(): R|Derived|
+
+        protected open override fun bar(): R|Derived| {
+            ^bar R|/Derived.Derived|()
+        }
+
+    }
