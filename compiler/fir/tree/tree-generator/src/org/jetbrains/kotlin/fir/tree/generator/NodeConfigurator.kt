@@ -76,8 +76,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
 
-        elementWithResolvePhase.configure {
-            +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true; isVolatile = true }
+        elementWithResolveState.configure {
+            +field("resolveState", resolveState, withReplace = true).apply { isMutable = true; isVolatile = true }
             +field("moduleData", firModuleDataType)
             shouldBeAbstractClass()
         }

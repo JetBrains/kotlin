@@ -9,7 +9,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import java.util.concurrent.locks.ReentrantLock
@@ -21,7 +21,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private val globalLock = ReentrantLock()
 
     private val locksForImports = ContainerUtil.createConcurrentSoftMap<FirFile, ReentrantLock>()
-    private val locks = ContainerUtil.createConcurrentSoftMap<FirElementWithResolvePhase, ReentrantLock>()
+    private val locks = ContainerUtil.createConcurrentSoftMap<FirElementWithResolveState, ReentrantLock>()
 
     private val superTypesLock = ReentrantLock()
     private val statusLock = ReentrantLock()

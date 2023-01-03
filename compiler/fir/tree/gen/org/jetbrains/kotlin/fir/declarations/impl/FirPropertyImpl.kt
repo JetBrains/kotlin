@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 internal class FirPropertyImpl(
     override val source: KtSourceElement?,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -167,8 +167,8 @@ internal class FirPropertyImpl(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {

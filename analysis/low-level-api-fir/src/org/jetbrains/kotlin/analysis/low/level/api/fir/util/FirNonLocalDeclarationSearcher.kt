@@ -78,13 +78,13 @@ object FirElementFinder {
 
             override fun visitRegularClass(regularClass: FirRegularClass) {
                 // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
-                val oldResolvePhase = regularClass.resolvePhase
+                val oldResolvePhase = regularClass.resolveState
                 val oldList = regularClass.superTypeRefs.toList()
 
                 try {
                     super.visitRegularClass(regularClass)
                 } catch (e: ConcurrentModificationException) {
-                    val newResolvePhase = regularClass.resolvePhase
+                    val newResolvePhase = regularClass.resolveState
                     val newList = regularClass.superTypeRefs.toList()
 
                     throw IllegalStateException(

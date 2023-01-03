@@ -281,7 +281,7 @@ class FirSignatureEnhancement(
                 }.apply {
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
-                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                    resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
                     origin = FirDeclarationOrigin.Enhancement
                     this.typeParameters += firMethod.typeParameters
                 }
@@ -304,7 +304,7 @@ class FirSignatureEnhancement(
                     this.name = name!!
                     status = firMethod.status
                     symbol = FirNamedFunctionSymbol(methodId).also { functionSymbol = it }
-                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                    resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
                     typeParameters += firMethod.typeParameters.map { typeParameter ->
                         buildTypeParameterCopy(typeParameter) {
                             origin = FirDeclarationOrigin.Enhancement
@@ -332,7 +332,7 @@ class FirSignatureEnhancement(
                     isCrossinline = valueParameter.isCrossinline
                     isNoinline = valueParameter.isNoinline
                     isVararg = valueParameter.isVararg
-                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                    resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
                     annotations += valueParameter.annotations
                 }
             }

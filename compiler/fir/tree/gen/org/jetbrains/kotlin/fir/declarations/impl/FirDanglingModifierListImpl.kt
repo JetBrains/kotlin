@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 internal class FirDanglingModifierListImpl(
     override val source: KtSourceElement?,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
@@ -54,8 +54,8 @@ internal class FirDanglingModifierListImpl(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

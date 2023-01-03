@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 
 /**
  * Transform designation into IMPLICIT_TYPES_BODY_RESOLVE declaration. Affects only for target declaration, it's children and dependents
@@ -51,7 +51,7 @@ internal class LLFirDesignatedImplicitTypesTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
+        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
         designation.target.checkPhase(FirResolvePhase.CONTRACTS)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -64,7 +64,7 @@ internal class LLFirDesignatedImplicitTypesTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         if (target is FirCallableDeclaration) {
             checkReturnTypeRefIsResolved(target)

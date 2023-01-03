@@ -38,7 +38,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val symbol: FirFieldSymbol,
     override val name: Name,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
@@ -98,8 +98,8 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -178,7 +178,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var lazyInitializer: Lazy<FirExpression?>? = null
 
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+    override var resolveState: FirResolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaField {
@@ -188,7 +188,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             origin = javaOrigin(isFromSource),
             symbol,
             name,
-            resolvePhase,
+            resolveState,
             returnTypeRef,
             status,
             isVar,

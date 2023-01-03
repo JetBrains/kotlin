@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -61,7 +64,7 @@ private class LLFirEnsureBasedTransformerForReturnTypeCalculatorImpl(
 
     private fun <T : FirCallableDeclaration> T.ensureReturnType() {
         if (this !== targetDeclaration) return
-        if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
+        if (resolveState.resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
         lazyResolveToPhase(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
             lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)

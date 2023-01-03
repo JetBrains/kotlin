@@ -34,7 +34,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
@@ -163,8 +163,8 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -217,7 +217,7 @@ class FirJavaValueParameterBuilder {
             source,
             moduleData,
             origin = javaOrigin(isFromSource),
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState(),
             attributes,
             returnTypeRef,
             name,

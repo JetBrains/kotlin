@@ -36,7 +36,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -73,8 +73,8 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
@@ -147,7 +147,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
 
     override var source: KtSourceElement? = null
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
@@ -160,7 +160,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
         return FirJavaClass(
             source,
             moduleData,
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState(),
             name,
             origin = javaOrigin(isFromSource),
             annotations.toMutableOrEmpty(),

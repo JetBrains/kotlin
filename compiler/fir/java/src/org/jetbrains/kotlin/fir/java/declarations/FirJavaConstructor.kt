@@ -39,7 +39,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     annotationBuilder: () -> List<FirAnnotation>,
     override var status: FirDeclarationStatus,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirConstructor() {
     override val receiverParameter: FirReceiverParameter? get() = null
@@ -74,8 +74,8 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -179,7 +179,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             typeParameters,
             annotationBuilder,
             status,
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState(),
             dispatchReceiverType
         )
     }
@@ -198,8 +198,8 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             throw IllegalStateException()
         }
 
-    @Deprecated("Modification of 'resolvePhase' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
-    override var resolvePhase: FirResolvePhase
+    @Deprecated("Modification of 'resolveState' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var resolveState: FirResolveState
         get() = throw IllegalStateException()
         set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()

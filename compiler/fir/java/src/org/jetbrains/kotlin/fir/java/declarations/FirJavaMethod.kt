@@ -50,7 +50,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameter>,
@@ -152,8 +152,8 @@ class FirJavaMethod @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -205,7 +205,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var isStatic: Boolean by Delegates.notNull()
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+    override var resolveState: FirResolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
     var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
 
@@ -240,7 +240,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
             source,
             moduleData,
             origin = javaOrigin(isFromSource),
-            resolvePhase,
+            resolveState,
             attributes,
             returnTypeRef,
             typeParameters,
@@ -266,7 +266,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     val copyBuilder = FirJavaMethodBuilder()
     copyBuilder.source = original.source
     copyBuilder.moduleData = original.moduleData
-    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.resolveState = original.resolveState
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.valueParameters.addAll(original.valueParameters)

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.impl.FirFileAnnotationsContainerImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -28,7 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirFileAnnotationsContainerBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     lateinit var moduleData: FirModuleData
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var containingFileSymbol: FirFileSymbol
@@ -36,7 +38,7 @@ class FirFileAnnotationsContainerBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirFileAnnotationsContainer {
         return FirFileAnnotationsContainerImpl(
             source,
-            resolvePhase,
+            resolveState,
             moduleData,
             annotations.toMutableOrEmpty(),
             containingFileSymbol,

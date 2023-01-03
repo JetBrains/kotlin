@@ -35,12 +35,12 @@ internal object DeclarationCopyBuilder {
         val newGetter = getAccessorToUse(this, propertyWithBody) { it.getter }
 
         val propertyResolvePhase = minOf(
-            this@withBodyFrom.resolvePhase,
+            this@withBodyFrom.resolveState.resolvePhase,
             FirResolvePhase.DECLARATIONS,
-            newGetter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
-            newSetter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
-            propertyWithBody.getter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
-            propertyWithBody.setter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            newGetter?.resolveState?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            newSetter?.resolveState?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            propertyWithBody.getter?.resolveState?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            propertyWithBody.setter?.resolveState?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
         )
 
         return buildPropertyCopy(this@withBodyFrom) {
@@ -83,7 +83,7 @@ internal object DeclarationCopyBuilder {
         originalDeclaration: FirDeclaration,
         builtDeclaration: FirDeclaration,
     ) {
-        resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
+        resolvePhase = minOf(originalDeclaration.resolveState.resolvePhase, FirResolvePhase.DECLARATIONS)
         source = builtDeclaration.source
         moduleData = originalDeclaration.moduleData
     }
