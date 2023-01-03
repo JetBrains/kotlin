@@ -34,6 +34,8 @@ object StandardNames {
 
     @JvmField val CHAR_CODE = Name.identifier("code")
 
+    @JvmField val NEXT_CHAR = Name.identifier("nextChar")
+
     @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")
 
     @JvmField val DYNAMIC_FQ_NAME = FqName("<dynamic>")

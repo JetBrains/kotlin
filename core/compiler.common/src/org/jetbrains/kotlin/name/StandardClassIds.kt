@@ -116,6 +116,7 @@ object StandardClassIds {
     val Set = "Set".collectionsId()
     val Map = "Map".collectionsId()
     val MutableIterator = "MutableIterator".collectionsId()
+    val CharIterator = "CharIterator".collectionsId()
 
     val MutableIterable = "MutableIterable".collectionsId()
     val MutableCollection = "MutableCollection".collectionsId()
