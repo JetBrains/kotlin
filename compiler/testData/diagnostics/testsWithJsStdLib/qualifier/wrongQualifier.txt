@@ -1,1 +1,4 @@
 package
+
+public typealias JsQ = kotlin.js.JsQualifier
+

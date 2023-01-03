@@ -206,6 +206,7 @@
 /core/builtins/ "Kotlin Compiler Core"
 /core/compiler.common/ "Kotlin Compiler Core"
 /core/compiler.common.jvm/ "Kotlin Compiler Core"
+/core/compiler.common.js/ "Kotlin Compiler Core"
 /core/descriptors/ "Kotlin Compiler Core"
 /core/descriptors.jvm/ "Kotlin Compiler Core"
 /core/descriptors.runtime/ "Kotlin Libraries"
