@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -110,8 +109,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 "build",
                 executedTaskNames = expectedTasks,
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
-                    warningMode = WarningMode.All,
                     freeArgs = listOf(
                         // remove after KT-49933 is fixed
                         "-x", ":lib:transformCommonMainDependenciesMetadata",
@@ -128,14 +125,9 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
-                warningMode = WarningMode.All
-            )
             build(
                 ":lib:commonizeCInterop",
                 ":commonizeNativeDistribution",
-                buildOptions = buildOptions
             ) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
                 // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
