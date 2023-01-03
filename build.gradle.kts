@@ -705,6 +705,7 @@ tasks {
 
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":kotlin-build-common:test")
+        dependsOn(":kotlin-build-common:testJUnit5")
         dependsOn(":core:descriptors.runtime:test")
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
