@@ -80,6 +80,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.preciseCompilationResultsBackup
                 .convention(propertiesProvider.preciseCompilationResultsBackup)
                 .finalizeValueOnRead()
+            task.taskOutputsBackupExcludes.addAll(task.preciseCompilationResultsBackup.map {
+                if (it) listOf(task.destinationDirectory.get().asFile, task.taskBuildLocalStateDirectory.get().asFile) else emptyList()
+            })
 
             task.incremental = false
             task.useModuleDetection.convention(false)

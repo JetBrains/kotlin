@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
@@ -57,6 +58,12 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 } else {
                     task.classpathSnapshotProperties.classpath.from(task.project.provider { task.libraries }).disallowChanges()
                 }
+                task.taskOutputsBackupExcludes.addAll(
+                    task.classpathSnapshotProperties.classpathSnapshotDir.asFile.flatMap {
+                        // it looks weird, but it's required to work around this issue: https://github.com/gradle/gradle/issues/17704
+                        objectFactory.providerWithLazyConvention { listOf(it) }
+                    }.orElse(emptyList())
+                )
             }
         }
     }

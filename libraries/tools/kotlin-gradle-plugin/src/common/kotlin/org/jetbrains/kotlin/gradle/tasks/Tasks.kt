@@ -386,14 +386,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
-    protected open val taskOutputsBackupExcludes: List<File>
-        get() {
-            val list = mutableListOf<File>()
-            if (preciseCompilationResultsBackup.get()) {
-                list.add(destinationDirectory.get().asFile)
-            }
-            return list
-        }
+    internal abstract val taskOutputsBackupExcludes: SetProperty<File>
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
@@ -420,7 +413,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                             fileSystemOperations,
                             layout.buildDirectory,
                             layout.buildDirectory.dir("snapshot/kotlin/$name"),
-                            outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes,
+                            outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes.get(),
                             logger
                         ).also {
                             it.createSnapshot()
@@ -638,9 +631,6 @@ abstract class KotlinCompile @Inject constructor(
             classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
         )
-
-    override val taskOutputsBackupExcludes: List<File>
-        get() = (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { listOf(it) } ?: emptyList()) + super.taskOutputsBackupExcludes
 
     @get:Internal
     final override val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
