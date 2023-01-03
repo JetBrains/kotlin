@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import javax.inject.Inject
 
 abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) : KGPBaseTest() {
     @Suppress("DEPRECATION")
@@ -59,7 +57,7 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     }
 
     @DisplayName("configuration cache is reused when idea.version system property is changed in browser project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5, maxVersion = TestVersions.Gradle.G_7_5)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5)
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
