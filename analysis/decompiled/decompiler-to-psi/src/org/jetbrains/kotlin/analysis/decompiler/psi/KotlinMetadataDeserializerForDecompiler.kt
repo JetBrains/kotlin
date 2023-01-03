@@ -40,7 +40,8 @@ class KotlinMetadataDeserializerForDecompiler(
             LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses,
             ContractDeserializer.DEFAULT,
             extensionRegistryLite = serializerProtocol.extensionRegistry,
-            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+            enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
         )
     }
 

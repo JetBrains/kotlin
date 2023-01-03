@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.EnumEntriesDeserializationSupportImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.EnumEntriesDeserializationSupport
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierTypeSettings
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -42,6 +44,9 @@ abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName)
             throw UnsupportedOperationException("This method is not supposed to be called.")
         }
     }
+
+    protected val enumEntriesDeserializationSupport: EnumEntriesDeserializationSupport =
+        EnumEntriesDeserializationSupportImpl(moduleDescriptor.platform)
 
     override fun resolveTopLevelClass(classId: ClassId) = deserializationComponents.deserializeClass(classId)
 

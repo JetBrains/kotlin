@@ -55,7 +55,8 @@ class DeserializationComponents(
     val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default,
     val samConversionResolver: SamConversionResolver,
     val platformDependentTypeTransformer: PlatformDependentTypeTransformer = PlatformDependentTypeTransformer.None,
-    val typeAttributeTranslators: List<TypeAttributeTranslator> = listOf(DefaultTypeAttributeTranslator)
+    val typeAttributeTranslators: List<TypeAttributeTranslator> = listOf(DefaultTypeAttributeTranslator),
+    val enumEntriesDeserializationSupport: EnumEntriesDeserializationSupport = EnumEntriesDeserializationSupport.Default,
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 

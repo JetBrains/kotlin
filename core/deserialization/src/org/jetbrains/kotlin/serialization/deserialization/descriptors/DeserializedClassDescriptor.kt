@@ -53,10 +53,13 @@ class DeserializedClassDescriptor(
     )
 
     private val staticScope =
-        if (kind == ClassKind.ENUM_CLASS)
-            StaticScopeForKotlinEnum(c.storageManager, this)
-        else
+        if (kind == ClassKind.ENUM_CLASS) {
+            val enumEntriesCanBeUsed = Flags.HAS_ENUM_ENTRIES.get(classProto.flags) ||
+                    c.components.enumEntriesDeserializationSupport.canSynthesizeEnumEntries() == true
+            StaticScopeForKotlinEnum(c.storageManager, this, enumEntriesCanBeUsed)
+        } else {
             MemberScope.Empty
+        }
 
     private val typeConstructor = DeserializedClassTypeConstructor()
 

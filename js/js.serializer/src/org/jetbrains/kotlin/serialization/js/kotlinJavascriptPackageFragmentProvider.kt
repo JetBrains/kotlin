@@ -64,6 +64,10 @@ fun createKotlinJavascriptPackageFragmentProvider(
 
     val notFoundClasses = NotFoundClasses(storageManager, module)
 
+    val enumEntriesDeserializationSupport = object : EnumEntriesDeserializationSupport {
+        override fun canSynthesizeEnumEntries(): Boolean = false
+    }
+
     val components = DeserializationComponents(
         storageManager,
         module,
@@ -80,7 +84,8 @@ fun createKotlinJavascriptPackageFragmentProvider(
         ContractDeserializerImpl(configuration, storageManager),
         platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent,
         extensionRegistryLite = JsSerializerProtocol.extensionRegistry,
-        samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
+        samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+        enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
     )
 
     for (packageFragment in packageFragments.filterIsInstance<KotlinJavascriptPackageFragment>()) {

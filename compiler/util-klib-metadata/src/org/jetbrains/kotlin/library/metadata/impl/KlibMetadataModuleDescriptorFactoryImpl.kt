@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -152,6 +153,10 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             KlibMetadataSerializerProtocol
         )
 
+        val enumEntriesDeserializationSupport = object : EnumEntriesDeserializationSupport {
+            override fun canSynthesizeEnumEntries(): Boolean = moduleDescriptor.platform.isJvm()
+        }
+
         val components = DeserializationComponents(
             storageManager,
             moduleDescriptor,
@@ -168,7 +173,8 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             ContractDeserializerImpl(configuration, storageManager),
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
-            platformDependentTypeTransformer = platformDependentTypeTransformer
+            platformDependentTypeTransformer = platformDependentTypeTransformer,
+            enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
         )
 
         fragmentsToInitialize.forEach {

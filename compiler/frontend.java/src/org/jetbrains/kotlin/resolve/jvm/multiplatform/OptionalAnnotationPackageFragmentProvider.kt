@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.EnumEntriesDeserializationSupportImpl
 import org.jetbrains.kotlin.resolve.jvm.JvmCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -61,7 +62,8 @@ class OptionalAnnotationPackageFragmentProvider(
                     notFoundClasses,
                     ContractDeserializer.DEFAULT,
                     extensionRegistryLite = serializerProtocol.extensionRegistry,
-                    samConversionResolver = SamConversionResolver.Empty
+                    samConversionResolver = SamConversionResolver.Empty,
+                    enumEntriesDeserializationSupport = EnumEntriesDeserializationSupportImpl(module.platform),
                 )
             }
 
