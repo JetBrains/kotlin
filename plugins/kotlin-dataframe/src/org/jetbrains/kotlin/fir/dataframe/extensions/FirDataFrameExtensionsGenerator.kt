@@ -20,13 +20,15 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate.BuilderContext.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -56,7 +58,7 @@ class FirDataFrameExtensionsGenerator(
         predicateBasedProvider.getSymbolsByPredicate(predicate).filterIsInstance<FirRegularClassSymbol>()
     }
 
-    private val predicate: DeclarationPredicate = annotated(dataSchema)
+    private val predicate: LookupPredicate = annotated(dataSchema)
 
     private val fields by lazy {
         matchedClasses.flatMap { classSymbol ->
@@ -196,7 +198,9 @@ class FirDataFrameExtensionsGenerator(
                 EffectiveVisibility.Public
             )
             this.returnTypeRef = returnTypeRef
-            receiverTypeRef = receiverType.toFirResolvedTypeRef()
+            receiverParameter = buildReceiverParameter {
+                typeRef = receiverType.toFirResolvedTypeRef()
+            }
             val classId = callableId.classId
             if (classId != null) {
                 dispatchReceiverType = ConeClassLikeTypeImpl(

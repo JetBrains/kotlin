@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
@@ -92,8 +94,10 @@ class FirDataFrameCandidateInterceptor(
             }
             val substitutorByMap = substitutorByMap(substitutorMap, session)
 
-            receiverTypeRef = buildResolvedTypeRefCopy(receiverTypeRef as FirResolvedTypeRef) {
-                type = substitutorByMap.substituteOrSelf(type)
+            receiverParameter = buildReceiverParameterCopy(receiverParameter!!) {
+                this.typeRef = buildResolvedTypeRefCopy(this.typeRef as FirResolvedTypeRef) {
+                    type = substitutorByMap.substituteOrSelf(type)
+                }
             }
 
             valueParameters.replaceAll {
