@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 external class A {
     class B
 }
