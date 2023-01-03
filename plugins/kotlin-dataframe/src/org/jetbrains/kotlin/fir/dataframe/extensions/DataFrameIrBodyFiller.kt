@@ -99,6 +99,18 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
         val origin = declaration.origin
         if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameExtensionsGenerator.DataFramePlugin)) return declaration
         val getter = declaration.getter ?: return declaration
+
+        val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
+        val jvmName = constructors.single { it.owner.valueParameters.size == 1 }
+        val markerName = ((getter.extensionReceiverParameter!!.type as IrSimpleType).arguments.single() as IrSimpleType).classFqName?.shortName()!!
+        val jvmNameArg = "${markerName.identifier}_${declaration.name.identifier}"
+        getter.annotations = listOf(
+            IrConstructorCallImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 0, 1)
+                .also {
+                    it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg))
+                }
+        )
+
         val returnType = getter.returnType
         val isDataColumn = returnType.classFqName!!.asString().let {
             it == DataColumn::class.qualifiedName!! || it == ColumnGroup::class.qualifiedName!!
