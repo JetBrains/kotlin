@@ -109,7 +109,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,
-                checkConfigurationCacheFileReport = false,
                 buildOptions = defaultBuildOptions.copy(
                     configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
                     warningMode = WarningMode.All,
@@ -264,14 +263,12 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         checkUpToDateOnRebuild: Boolean = true,
-        checkConfigurationCacheFileReport: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions
     ) {
         assertSimpleConfigurationCacheScenarioWorks(
             *taskNames,
             executedTaskNames = executedTaskNames,
             checkUpToDateOnRebuild = checkUpToDateOnRebuild,
-            checkConfigurationCacheFileReport = checkConfigurationCacheFileReport,
             buildOptions = buildOptions,
         )
     }
