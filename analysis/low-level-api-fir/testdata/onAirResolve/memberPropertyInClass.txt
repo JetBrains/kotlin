@@ -1,2 +1,2 @@
-public final [BODY_RESOLVE] val niewbe: R|kotlin/String| = String(Hello)
-    public [BODY_RESOLVE] get(): R|kotlin/String|
+public final [ResolvedTo(BODY_RESOLVE)] val niewbe: R|kotlin/String| = String(Hello)
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|

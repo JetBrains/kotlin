@@ -1,1 +1,1 @@
-[BODY_RESOLVE] lval y: R|kotlin/Int| = R|<local>/f|
+[ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = R|<local>/f|

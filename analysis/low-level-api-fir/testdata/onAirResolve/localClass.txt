@@ -1,9 +1,9 @@
-public final [BODY_RESOLVE] class E : R|kotlin/Any| {
-    public [BODY_RESOLVE] constructor(): R|E| {
+public final [ResolvedTo(BODY_RESOLVE)] class E : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|E| {
         super<R|kotlin/Any|>()
     }
 
-    public final [BODY_RESOLVE] fun e(): R|kotlin/Int| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun e(): R|kotlin/Int| {
         ^e R|<local>/x|
     }
 

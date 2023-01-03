@@ -1,1 +1,1 @@
-[BODY_RESOLVE] lval z: R|kotlin/String| = R|<local>/qqq|
+[ResolvedTo(BODY_RESOLVE)] lval z: R|kotlin/String| = R|<local>/qqq|

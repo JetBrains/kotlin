@@ -1,139 +1,139 @@
 
 RAW_FIR:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [STATUS] testMe@fun <implicit>.<anonymous>([RAW_FIR] b: <implicit>): <implicit> <inline=Unknown>  {
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -141,19 +141,19 @@ FILE: lambdaAsSAMInterface.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [STATUS] testMe@fun <implicit>.<anonymous>([RAW_FIR] b: <implicit>): <implicit> <inline=Unknown>  {
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -161,19 +161,19 @@ FILE: lambdaAsSAMInterface.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [STATUS] testMe@fun <implicit>.<anonymous>([RAW_FIR] b: <implicit>): <implicit> <inline=Unknown>  {
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -181,19 +181,19 @@ FILE: lambdaAsSAMInterface.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [RAW_FIR] class Arg : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? fun [RAW_FIR] interface Foo : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun foo([RAW_FIR] a: Arg): Arg
+    public? final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
     }
-    public? final? [RAW_FIR] fun testMe([RAW_FIR] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [STATUS] testMe@fun <implicit>.<anonymous>([RAW_FIR] b: <implicit>): <implicit> <inline=Unknown>  {
+    public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
+        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -201,20 +201,20 @@ FILE: lambdaAsSAMInterface.kt
 
 BODY_RESOLVE:
 FILE: lambdaAsSAMInterface.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class Arg : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Arg : R|kotlin/Any| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public abstract fun [SUPER_TYPES] interface Foo : R|kotlin/Any| {
-        public abstract [STATUS] fun foo([STATUS] a: R|foo/Arg|): R|foo/Arg|
+    public abstract fun [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
 
     }
-    public final [CONTRACTS] fun testMe([CONTRACTS] f: R|foo/Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|foo/Foo|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        R|foo/testMe|(<L> = [BODY_RESOLVE] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([BODY_RESOLVE] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|
         }
         )
@@ -222,20 +222,20 @@ FILE: lambdaAsSAMInterface.kt
 
 FILE RAW TO BODY:
 FILE: lambdaAsSAMInterface.kt
-    public final [BODY_RESOLVE] class Arg : R|kotlin/Any| {
-        public [BODY_RESOLVE] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public abstract fun [BODY_RESOLVE] interface Foo : R|kotlin/Any| {
-        public abstract [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: R|foo/Arg|): R|foo/Arg|
+    public abstract fun [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|foo/Arg|): R|foo/Arg|
 
     }
-    public final [BODY_RESOLVE] fun testMe([BODY_RESOLVE] f: R|foo/Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun testMe([ResolvedTo(BODY_RESOLVE)] f: R|foo/Foo|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        R|foo/testMe|(<L> = [BODY_RESOLVE] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([BODY_RESOLVE] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|
         }
         )
