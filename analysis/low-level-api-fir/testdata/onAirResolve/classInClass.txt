@@ -1,9 +1,9 @@
-public final inner [BODY_RESOLVE] class ONAIR<[STATUS] T> : R|X.BASE| {
-    public [BODY_RESOLVE] X<T>.constructor(): R|X.ONAIR<T>| {
+public final inner [ResolvedTo(BODY_RESOLVE)] class ONAIR<[ResolvedTo(STATUS)] T> : R|X.BASE| {
+    public [ResolvedTo(BODY_RESOLVE)] X<T>.constructor(): R|X.ONAIR<T>| {
         super<R|X.BASE|>()
     }
 
-    public final [BODY_RESOLVE] fun x(): R|X.Y<T>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|X.Y<T>| {
         ^x R|SubstitutionOverride</X.Y.Y>|<R|T|>()
     }
 

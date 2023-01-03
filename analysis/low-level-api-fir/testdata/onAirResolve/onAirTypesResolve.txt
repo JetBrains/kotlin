@@ -1,23 +1,23 @@
-public final [BODY_RESOLVE] class Y : R|kotlin/Any| {
-    public [BODY_RESOLVE] constructor(): R|X.Y| {
+public final [ResolvedTo(BODY_RESOLVE)] class Y : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X.Y| {
         super<R|kotlin/Any|>()
     }
 
-    public open [BODY_RESOLVE] class BASE : R|X| {
-        public [BODY_RESOLVE] constructor(): R|X.Y.BASE| {
+    public open [ResolvedTo(BODY_RESOLVE)] class BASE : R|X| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X.Y.BASE| {
             super<R|X|>()
         }
 
     }
 
-    public final [BODY_RESOLVE] class DERIVED : R|X.Y.BASE| {
-        public [BODY_RESOLVE] constructor(): R|X.Y.DERIVED| {
+    public final [ResolvedTo(BODY_RESOLVE)] class DERIVED : R|X.Y.BASE| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X.Y.DERIVED| {
             super<R|X.Y.BASE|>()
         }
 
     }
 
-    public final [BODY_RESOLVE] fun withType([BODY_RESOLVE] arg: R|X.Y.BASE|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun withType([ResolvedTo(BODY_RESOLVE)] arg: R|X.Y.BASE|): R|kotlin/Unit| {
     }
 
 }

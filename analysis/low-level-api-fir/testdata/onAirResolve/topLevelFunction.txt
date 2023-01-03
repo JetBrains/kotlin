@@ -1,5 +1,5 @@
-public final [BODY_RESOLVE] fun onAir(): R|kotlin/Int| {
-    local final [BODY_RESOLVE] fun yyy(): R|kotlin/String| {
+public final [ResolvedTo(BODY_RESOLVE)] fun onAir(): R|kotlin/Int| {
+    local final [ResolvedTo(BODY_RESOLVE)] fun yyy(): R|kotlin/String| {
         ^yyy String(hello)
     }
 
