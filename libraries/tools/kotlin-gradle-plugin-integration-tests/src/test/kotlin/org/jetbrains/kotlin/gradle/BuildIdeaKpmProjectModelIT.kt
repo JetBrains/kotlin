@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -16,7 +17,12 @@ class BuildIdeaKpmProjectModelIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Check 'buildIdeaKpmProjectModel' creates expected files")
     fun `test - simple kpm project`(gradleVersion: GradleVersion) {
-        project("kpm-simple", gradleVersion) {
+        project(
+            "kpm-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                // Workaround for KT-55751
+                warningMode = WarningMode.None,
+            )
+        ) {
             build("buildIdeaKpmProjectModel") {
                 assertFileInProjectExists("build/IdeaKpmProject/model.txt")
                 assertFileInProjectExists("build/IdeaKpmProject/model.java.bin")

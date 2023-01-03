@@ -359,7 +359,13 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             """
         )
 
-        build(resolveConfigurationTaskName) {
+        build(
+            resolveConfigurationTaskName,
+            options = defaultBuildOptions().copy(
+                // Workaround for KT-55751
+                warningMode = WarningMode.None,
+            )
+        ) {
             assertSuccessful()
             val output = output.lines().single { marker in it }.substringAfter(marker).removeSurrounding("[", "]").split(",")
             assertTrue { output.any { "$nestedProjectName-1.0.jar" in it } }

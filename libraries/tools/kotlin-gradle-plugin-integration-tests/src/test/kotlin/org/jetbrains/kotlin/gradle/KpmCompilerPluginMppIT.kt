@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.junit.Test
 import kotlin.test.assertTrue
 
 class KpmCompilerPluginMppIT : BaseGradleIT() {
+    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(
+        // Workaround for KT-55751
+        warningMode = WarningMode.None,
+    )
 
     @Test
     fun testTransientPluginOptions() {
