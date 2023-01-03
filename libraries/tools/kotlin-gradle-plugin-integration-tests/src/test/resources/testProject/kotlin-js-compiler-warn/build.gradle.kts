@@ -9,6 +9,7 @@ repositories {
     mavenCentral()
 }
 
+@Suppress("DEPRECATION")
 kotlin {
     js(BOTH)
     js(BOTH_TYPE) {
