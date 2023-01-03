@@ -336,7 +336,7 @@ public class CallResolver {
         else if (calleeExpression instanceof KtConstructorDelegationReferenceExpression) {
             KtConstructorDelegationCall delegationCall = (KtConstructorDelegationCall) context.call.getCallElement();
             DeclarationDescriptor container = context.scope.getOwnerDescriptor();
-            assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
+            assert container instanceof ConstructorDescriptor : "Trying to resolve KtConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
             return (OverloadResolutionResults) resolveConstructorDelegationCall(
                     context,
                     delegationCall,

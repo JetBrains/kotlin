@@ -91,7 +91,7 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
                 (another is KtLightClassForScript && fqName == another.fqName)
 
     override fun getElementIcon(flags: Int): Icon? =
-        throw UnsupportedOperationException("This should be done by JetIconProvider")
+        throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
 

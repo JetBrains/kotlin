@@ -224,13 +224,13 @@ public class KotlinTestUtils {
         for (KotlinSourceRoot root : roots) {
             File file = new File(root.getPath());
             if (file.isFile()) {
-                ktFiles.add(loadJetFile(environment.getProject(), file));
+                ktFiles.add(loadKtFile(environment.getProject(), file));
             }
             else {
                 //noinspection ConstantConditions
                 for (File childFile : file.listFiles()) {
                     if (childFile.getName().endsWith(".kt") || childFile.getName().endsWith(".kts")) {
-                        ktFiles.add(loadJetFile(environment.getProject(), childFile));
+                        ktFiles.add(loadKtFile(environment.getProject(), childFile));
                     }
                 }
             }
@@ -597,18 +597,18 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static KtFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
+    public static KtFile loadKtFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
         return new KtPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
     }
 
     @NotNull
-    public static List<KtFile> loadToJetFiles(@NotNull KotlinCoreEnvironment environment, @NotNull List<File> files) throws IOException {
-        List<KtFile> jetFiles = Lists.newArrayList();
+    public static List<KtFile> loadToKtFiles(@NotNull KotlinCoreEnvironment environment, @NotNull List<File> files) throws IOException {
+        List<KtFile> ktFiles = Lists.newArrayList();
         for (File file : files) {
-            jetFiles.add(loadJetFile(environment.getProject(), file));
+            ktFiles.add(loadKtFile(environment.getProject(), file));
         }
-        return jetFiles;
+        return ktFiles;
     }
 
     @NotNull

@@ -603,8 +603,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         if (initializerValue == null) return state.getClassBuilderMode().generateBodies;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
-        KotlinType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
-        Type type = typeMapper.mapType(jetType);
+        KotlinType kotlinType = getPropertyOrDelegateType(property, propertyDescriptor);
+        Type type = typeMapper.mapType(kotlinType);
         return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
     }
 

@@ -571,7 +571,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     @NotNull
     private LexicalScope getDeclarationsScope() throws IOException {
-        KtFile ktFile = KotlinTestUtils.loadJetFile(getProject(), new File("compiler/testData/type-checker-test.kt"));
+        KtFile ktFile = KotlinTestUtils.loadKtFile(getProject(), new File("compiler/testData/type-checker-test.kt"));
         AnalysisResult result = JvmResolveUtil.analyze(ktFile, getEnvironment());
         //noinspection ConstantConditions
         return result.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);

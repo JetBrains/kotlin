@@ -24,7 +24,7 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
 
     fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R
 
-    @Deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
+    @Deprecated("Don't use getReference() on KtElement for the choice is unpredictable")
     override fun getReference(): PsiReference?
 }
 

@@ -196,8 +196,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             this.annotations = Annotations.Companion.getEMPTY();
         }
 
-        List<KtAnnotationEntry> jetDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
-        if (jetDanglingAnnotations.isEmpty()) {
+        List<KtAnnotationEntry> ktDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
+        if (ktDanglingAnnotations.isEmpty()) {
             this.danglingAnnotations = Annotations.Companion.getEMPTY();
         }
         else {
@@ -213,7 +213,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             return getScopeForMemberDeclarationResolution();
                         }
                     },
-                    jetDanglingAnnotations
+                    ktDanglingAnnotations
             );
         }
 

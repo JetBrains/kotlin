@@ -61,7 +61,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     private fun analyzeFileToPackageView(vararg extraClassPath: File): PackageViewDescriptor {
         val environment = createEnvironment(extraClassPath.toList())
 
-        val ktFile = KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt"))
+        val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyzeAndCheckForErrors(ktFile, environment)
 
         return result.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME).also {
@@ -197,7 +197,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = compileLibrary("library")
         val environment = createEnvironment(listOf(library))
 
-        val ktFile = KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt"))
+        val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyze(ktFile, environment)
         result.throwIfError()
 

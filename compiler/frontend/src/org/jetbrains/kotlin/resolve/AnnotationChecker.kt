@@ -92,7 +92,7 @@ class AnnotationChecker(
             }
         }
         if (annotated is KtDeclarationWithBody) {
-            // JetFunction or JetPropertyAccessor
+            // KtFunction or KtPropertyAccessor
             for (parameter in annotated.valueParameters) {
                 if (!parameter.hasValOrVar()) {
                     check(parameter, trace)
@@ -276,7 +276,7 @@ class AnnotationChecker(
         }
 
         fun checkUselessFunctionLiteralAnnotation() {
-            // TODO: tests on different JetAnnotatedExpression (?!)
+            // TODO: tests on different KtAnnotatedExpression (?!)
             if (KotlinTarget.FUNCTION !in applicableTargets) return
             val annotatedExpression = entry.parent as? KtAnnotatedExpression ?: return
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return

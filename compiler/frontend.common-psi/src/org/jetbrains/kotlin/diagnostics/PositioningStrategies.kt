@@ -249,9 +249,9 @@ object PositioningStrategies {
     val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
         override fun mark(element: KtDeclaration): List<TextRange> {
             if (element is KtTypeParameterListOwner) {
-                val jetTypeParameterList = element.typeParameterList
-                if (jetTypeParameterList != null) {
-                    return markElement(jetTypeParameterList)
+                val ktTypeParameterList = element.typeParameterList
+                if (ktTypeParameterList != null) {
+                    return markElement(ktTypeParameterList)
                 }
             }
             return DECLARATION_SIGNATURE.mark(element)

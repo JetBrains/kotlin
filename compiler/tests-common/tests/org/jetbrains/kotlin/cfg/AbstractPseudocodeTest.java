@@ -62,7 +62,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
 
         CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForCompilerTests(FileUtil.loadFile(file, true), environment);
 
-        KtFile ktFile = KotlinTestUtils.loadJetFile(environment.getProject(), file);
+        KtFile ktFile = KotlinTestUtils.loadKtFile(environment.getProject(), file);
 
         SetMultimap<KtElement, Pseudocode> data = LinkedHashMultimap.create();
         AnalysisResult analysisResult = KotlinTestUtils.analyzeFile(ktFile, environment);

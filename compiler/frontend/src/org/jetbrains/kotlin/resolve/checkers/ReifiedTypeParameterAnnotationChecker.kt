@@ -47,7 +47,7 @@ class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
     ) {
         for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified }) {
             val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
-            if (typeParameterDeclaration !is KtTypeParameter) throw AssertionError("JetTypeParameter expected")
+            if (typeParameterDeclaration !is KtTypeParameter) throw AssertionError("KtTypeParameter expected")
 
             diagnosticHolder.report(
                 Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(

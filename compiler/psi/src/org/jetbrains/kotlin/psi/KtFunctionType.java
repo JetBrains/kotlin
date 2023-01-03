@@ -53,8 +53,8 @@ public class KtFunctionType extends KtElementImplStub<KotlinPlaceHolderStub<KtFu
         if (receiverTypeRef != null) {
             result.add(receiverTypeRef);
         }
-        for (KtParameter jetParameter : getParameters()) {
-            result.add(jetParameter.getTypeReference());
+        for (KtParameter ktParameter : getParameters()) {
+            result.add(ktParameter.getTypeReference());
         }
         KtTypeReference returnTypeRef = getReturnTypeReference();
         if (returnTypeRef != null) {

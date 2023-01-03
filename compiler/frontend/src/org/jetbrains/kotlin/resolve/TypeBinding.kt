@@ -63,8 +63,8 @@ private fun createTypeBindingFromPsi(
 }
 
 fun KtCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext): TypeBinding<PsiElement>? {
-    val jetTypeReference = typeReference
-    if (jetTypeReference != null) return jetTypeReference.createTypeBinding(trace)
+    val ktTypeReference = typeReference
+    if (ktTypeReference != null) return ktTypeReference.createTypeBinding(trace)
 
     val descriptor = trace[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
     if (descriptor !is CallableDescriptor) return null

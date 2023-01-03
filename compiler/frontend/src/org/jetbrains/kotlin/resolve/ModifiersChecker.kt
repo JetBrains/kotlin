@@ -29,7 +29,7 @@ object ModifierCheckerCore {
         languageVersionSettings: LanguageVersionSettings
     ) {
         if (listOwner is KtDeclarationWithBody) {
-            // JetFunction or JetPropertyAccessor
+            // KtFunction or KtPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {
                     check(parameter, trace, trace[BindingContext.VALUE_PARAMETER, parameter], languageVersionSettings)

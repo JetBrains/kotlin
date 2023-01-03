@@ -176,11 +176,11 @@ public class AnnotationResolverImpl extends AnnotationResolver {
     }
 
     public static void reportUnsupportedAnnotationForTypeParameter(
-            @NotNull KtTypeParameter jetTypeParameter,
+            @NotNull KtTypeParameter ktTypeParameter,
             @NotNull BindingTrace trace,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
-        KtModifierList modifierList = jetTypeParameter.getModifierList();
+        KtModifierList modifierList = ktTypeParameter.getModifierList();
         if (modifierList == null) return;
 
         for (KtAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {

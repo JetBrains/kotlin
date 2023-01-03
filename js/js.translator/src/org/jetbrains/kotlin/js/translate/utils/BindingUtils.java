@@ -82,7 +82,7 @@ public final class BindingUtils {
     @NotNull
     private static KtParameter getParameterForDescriptor(@NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-        assert result instanceof KtParameter : message(descriptor, "ValueParameterDescriptor should have corresponding JetParameter");
+        assert result instanceof KtParameter : message(descriptor, "ValueParameterDescriptor should have corresponding KtParameter");
         return (KtParameter) result;
     }
 

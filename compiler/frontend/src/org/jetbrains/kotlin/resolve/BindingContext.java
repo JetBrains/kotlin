@@ -205,8 +205,8 @@ public interface BindingContext {
             }
             PsiElement declarationPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
             if (declarationPsiElement instanceof KtParameter) {
-                KtParameter jetParameter = (KtParameter) declarationPsiElement;
-                return jetParameter.hasValOrVar() ||
+                KtParameter ktParameter = (KtParameter) declarationPsiElement;
+                return ktParameter.hasValOrVar() ||
                        backingFieldRequired; // this part is unused because we do not allow access to constructor parameters in member bodies
             }
             if (propertyDescriptor.getModality() == Modality.ABSTRACT) return false;

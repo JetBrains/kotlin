@@ -78,8 +78,8 @@ public abstract class KtClassOrObjectInfo<E extends KtClassOrObject> implements 
     public FqName getContainingPackageFqName() {
         PsiFile file = element.getContainingFile();
         if (file instanceof KtFile) {
-            KtFile jetFile = (KtFile) file;
-            return jetFile.getPackageFqName();
+            KtFile ktFile = (KtFile) file;
+            return ktFile.getPackageFqName();
         }
         throw new IllegalArgumentException("Not in a KtFile: " + element);
     }

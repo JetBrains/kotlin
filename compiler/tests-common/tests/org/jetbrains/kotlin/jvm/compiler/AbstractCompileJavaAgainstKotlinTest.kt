@@ -116,7 +116,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         updateConfiguration(environment.configuration)
         environment.registerJavac(
             javaFiles = javaFiles,
-            kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first()))
+            kotlinFiles = listOf(KotlinTestUtils.loadKtFile(environment.project, ktFiles.first()))
         )
         if (!ktFiles.isEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)

@@ -141,7 +141,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val modules = HashMap<String, TestModule>()
         for (dir in moduleDirs) {
             val name = dir.name
-            val kotlinFiles = KotlinTestUtils.loadToJetFiles(environment, dir.listFiles { it -> it.extension == "kt" }?.toList().orEmpty())
+            val kotlinFiles = KotlinTestUtils.loadToKtFiles(environment, dir.listFiles { it -> it.extension == "kt" }?.toList().orEmpty())
             val javaFilesScope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
                 override fun contains(file: VirtualFile): Boolean {
                     if (file !in myBaseScope!!) return false

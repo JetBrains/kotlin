@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
+import org.jetbrains.kotlin.js.descriptorUtils.getKotlinTypeFqName
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -59,7 +59,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
             property,
-            T.getJetTypeFqName(false).removePrefix("kotlin.") // i don't feel so good about it...
+            T.getKotlinTypeFqName(false).removePrefix("kotlin.") // i don't feel so good about it...
 //          alternative:  KotlinBuiltIns.getPrimitiveType(T)!!.typeName.identifier
         )
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
@@ -162,7 +162,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    val typeName = kType.getJetTypeFqName(false)
+    val typeName = kType.getKotlinTypeFqName(false)
     val name = when (typeName) {
         "Z" -> if (kType.isBoolean()) PrimitiveBuiltins.booleanSerializer else null
         "B" -> if (kType.isByte()) PrimitiveBuiltins.byteSerializer else null

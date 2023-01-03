@@ -560,9 +560,9 @@ public class PropertyCodegen {
             PropertyDescriptor propertyDescriptor = propertyAccessorDescriptor.getCorrespondingProperty();
             StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
 
-            PsiElement jetProperty = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-            if (jetProperty instanceof KtProperty || jetProperty instanceof KtParameter) {
-                codegen.markLineNumber((KtElement) jetProperty, false);
+            PsiElement ktProperty = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
+            if (ktProperty instanceof KtProperty || ktProperty instanceof KtParameter) {
+                codegen.markLineNumber((KtElement) ktProperty, false);
             }
 
             if (propertyAccessorDescriptor instanceof PropertyGetterDescriptor) {

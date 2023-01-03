@@ -181,7 +181,7 @@ abstract class KtLightClassForFacadeBase constructor(
         equals(another) ||
                 (another is KtLightClassForFacade && another.facadeClassFqName == facadeClassFqName)
 
-    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
+    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT

@@ -306,9 +306,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
-            jetWhenEntry.firstOfTypeWithRender<FirWhenBranch>(jetWhenEntry.expression) { this.result.typeRef }
-            super.visitWhenEntry(jetWhenEntry)
+        override fun visitWhenEntry(ktWhenEntry: KtWhenEntry) {
+            ktWhenEntry.firstOfTypeWithRender<FirWhenBranch>(ktWhenEntry.expression) { this.result.typeRef }
+            super.visitWhenEntry(ktWhenEntry)
         }
 
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {

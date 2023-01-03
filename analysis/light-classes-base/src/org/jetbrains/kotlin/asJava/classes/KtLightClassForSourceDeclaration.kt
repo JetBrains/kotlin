@@ -76,7 +76,7 @@ abstract class KtLightClassForSourceDeclaration(
                 (qualifiedName != null && another is KtLightClassForSourceDeclaration && qualifiedName == another.qualifiedName)
 
     override fun getElementIcon(flags: Int): Icon? =
-        throw UnsupportedOperationException("This should be done by JetIconProvider")
+        throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

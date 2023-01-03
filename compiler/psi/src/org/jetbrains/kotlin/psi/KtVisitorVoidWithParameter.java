@@ -22,7 +22,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
 
     // methods with parameter
 
-    public void visitJetElementVoid(@NotNull KtElement element, P data) {
+    public void visitKtElementVoid(@NotNull KtElement element, P data) {
         super.visitKtElement(element, data);
     }
 
@@ -58,7 +58,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitDestructuringDeclarationEntry(multiDeclarationEntry, data);
     }
 
-    public void visitJetFileVoid(@NotNull KtFile file, P data) {
+    public void visitKtFileVoid(@NotNull KtFile file, P data) {
         super.visitKtFile(file, data);
     }
 
@@ -370,8 +370,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitTypeProjection(typeProjection, data);
     }
 
-    public void visitWhenEntryVoid(@NotNull KtWhenEntry jetWhenEntry, P data) {
-        super.visitWhenEntry(jetWhenEntry, data);
+    public void visitWhenEntryVoid(@NotNull KtWhenEntry ktWhenEntry, P data) {
+        super.visitWhenEntry(ktWhenEntry, data);
     }
 
     public void visitCollectionLiteralExpressionVoid(@NotNull KtCollectionLiteralExpression expression, P data) {
@@ -425,7 +425,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     // hidden methods
     @Override
     public final Void visitKtElement(@NotNull KtElement element, P data) {
-        visitJetElementVoid(element, data);
+        visitKtElementVoid(element, data);
     	return null;
     }
 
@@ -473,7 +473,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
 
     @Override
     public final Void visitKtFile(@NotNull KtFile file, P data) {
-        visitJetFileVoid(file, data);
+        visitKtFileVoid(file, data);
         return null;
     }
 
@@ -936,8 +936,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitWhenEntry(@NotNull KtWhenEntry jetWhenEntry, P data) {
-        visitWhenEntryVoid(jetWhenEntry, data);
+    public final Void visitWhenEntry(@NotNull KtWhenEntry ktWhenEntry, P data) {
+        visitWhenEntryVoid(ktWhenEntry, data);
     	return null;
     }
 
