@@ -260,7 +260,7 @@ class ClasspathRootsResolver(
         val rootModules = when {
             sourceModule != null -> listOf(sourceModule.name) + additionalModules
             addAllModulePathToRoots -> modules.map(JavaModule::name)
-            else -> computeDefaultRootModules() + additionalModules
+            else -> javaModuleFinder.computeDefaultRootModules() + additionalModules
         }
 
         val allDependencies = javaModuleGraph.getAllDependencies(rootModules)
@@ -282,14 +282,7 @@ class ClasspathRootsResolver(
             if (module == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             } else {
-                module.moduleRoots.mapTo(result) { (root, isBinary, isBinarySignature) ->
-                    val type = when {
-                        isBinarySignature -> JavaRoot.RootType.BINARY_SIG
-                        isBinary -> JavaRoot.RootType.BINARY
-                        else -> JavaRoot.RootType.SOURCE
-                    }
-                    JavaRoot(root, type)
-                }
+                result.addAll(module.getJavaModuleRoots())
             }
         }
 
@@ -301,40 +294,6 @@ class ClasspathRootsResolver(
                 sourceModule.moduleInfoFile
             )
         }
-    }
-
-    // See http://openjdk.java.net/jeps/261
-    private fun computeDefaultRootModules(): List<String> {
-        val result = arrayListOf<String>()
-
-        val systemModules = javaModuleFinder.systemModules.associateBy(JavaModule::name)
-        val javaSeExists = "java.se" in systemModules
-        if (javaSeExists) {
-            // The java.se module is a root, if it exists.
-            result.add("java.se")
-        }
-
-        fun JavaModule.Explicit.exportsAtLeastOnePackageUnqualified(): Boolean = moduleInfo.exports.any { it.toModules.isEmpty() }
-
-        if (!javaSeExists) {
-            // If it does not exist then every java.* module on the upgrade module path or among the system modules
-            // that exports at least one package, without qualification, is a root.
-            for ((name, module) in systemModules) {
-                if (name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
-                    result.add(name)
-                }
-            }
-        }
-
-        for ((name, module) in systemModules) {
-            // Every non-java.* module on the upgrade module path or among the system modules that exports at least one package,
-            // without qualification, is also a root.
-            if (!name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
-                result.add(name)
-            }
-        }
-
-        return result
     }
 
     private fun report(severity: CompilerMessageSeverity, message: String, file: VirtualFile? = null) {
