@@ -161,7 +161,7 @@ object KotlinJavascriptSerializationUtil {
         fqName: FqName,
         languageVersionSettings: LanguageVersionSettings,
         project: Project,
-        metadataVersion: BinaryVersion
+        metadataVersion: JsMetadataVersion
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
 

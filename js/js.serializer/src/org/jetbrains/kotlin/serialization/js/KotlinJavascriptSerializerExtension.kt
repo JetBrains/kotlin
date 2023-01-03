@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.psi.KtFile
@@ -31,11 +29,12 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.FlexibleType
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 class KotlinJavascriptSerializerExtension(
     private val fileRegistry: KotlinFileRegistry,
     private val languageVersionSettings: LanguageVersionSettings,
-    override val metadataVersion: BinaryVersion
+    override val metadataVersion: JsMetadataVersion
 ) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override val stringTable = ApproximatingStringTable()
 
