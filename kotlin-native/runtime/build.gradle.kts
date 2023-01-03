@@ -78,6 +78,8 @@ bitcode {
         }
 
         module("libbacktrace") {
+            @OptIn(DeprecatedTargetAPI::class)
+            @SuspiciousTargetAPIUsage
             val elfSize = when (target.architecture) {
                 TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
                 TargetArchitecture.X86, TargetArchitecture.ARM32,
