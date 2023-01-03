@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
@@ -68,11 +69,11 @@ open class KotlinMetadataStubBuilder(
     }
 
     sealed class FileWithMetadata {
-        class Incompatible(val version: BinaryVersion) : FileWithMetadata()
+        class Incompatible(val version: BuiltInsBinaryVersion) : FileWithMetadata()
 
         open class Compatible(
             val proto: ProtoBuf.PackageFragment,
-            val version: BinaryVersion,
+            val version: BuiltInsBinaryVersion,
             serializerProtocol: SerializerExtensionProtocol
         ) : FileWithMetadata() {
             val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)

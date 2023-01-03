@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
@@ -21,7 +21,7 @@ class KotlinMetadataDeserializerForDecompiler(
     packageFqName: FqName,
     private val proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
-    private val metadataVersion: BinaryVersion,
+    private val metadataVersion: BuiltInsBinaryVersion,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : DeserializerForDecompilerBase(packageFqName) {
