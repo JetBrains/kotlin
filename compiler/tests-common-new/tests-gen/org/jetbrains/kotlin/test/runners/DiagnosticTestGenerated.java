@@ -1099,6 +1099,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("AnnotatedNullableTypes.kt")
+            public void testAnnotatedNullableTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedNullableTypes.kt");
+            }
+
+            @Test
             @TestMetadata("AnnotatedResultType.kt")
             public void testAnnotatedResultType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedResultType.kt");
