@@ -169,7 +169,9 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override fun hashCode(): Int = classOrObjectDeclaration.hashCode()
 
-    override fun getName(): String? = classOrObjectDeclaration?.name
+    override fun getName(): String? = classOrObjectDeclaration?.name ?: withClassOrObjectSymbol {
+        it.name?.asString()
+    }
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
