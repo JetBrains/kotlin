@@ -707,3 +707,14 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
     require(this.isSingleFieldValueClass(session))
     return toRegularClassSymbol(session)!!.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
 }
+
+fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration) =
+    (containingDeclarations + declaration).takeWhile { it.isNonLocal }.lastOrNull()
+
+val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is FirFile
+
+fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
+    if (hasAnnotation(classId, session)) return true
+    val container = getContainingClassSymbol(session) ?: return false
+    return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
+}

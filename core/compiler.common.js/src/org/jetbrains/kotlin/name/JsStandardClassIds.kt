@@ -12,6 +12,10 @@ object JsStandardClassIds {
 
     object Annotations {
         val JsQualifier = "JsQualifier".jsId()
+        val JsModule = "JsModule".jsId()
+        val JsNonModule = "JsNonModule".jsId()
+
+        val JsNative = "native".jsId()
     }
 }
 
