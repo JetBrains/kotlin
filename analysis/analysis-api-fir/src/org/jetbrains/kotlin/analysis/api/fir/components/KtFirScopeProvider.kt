@@ -69,20 +69,15 @@ internal class KtFirScopeProvider(
 
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? {
         return when (this) {
-            is KtFirNamedClassOrObjectSymbol -> {
-                firSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
-                body(firSymbol.fir)
-            }
-            is KtFirAnonymousObjectSymbol -> {
-                firSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
-                body(firSymbol.fir)
-            }
+            is KtFirNamedClassOrObjectSymbol -> body(firSymbol.fir)
+            is KtFirAnonymousObjectSymbol -> body(firSymbol.fir)
             is KtFirEnumEntrySymbol -> {
                 firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 val initializer = firSymbol.fir.initializer ?: return null
                 check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer.javaClass}" }
                 body(initializer.anonymousObject)
             }
+
             else -> error { "Unknown KtSymbolWithDeclarations implementation ${this::class.qualifiedName}" }
         }
     }
