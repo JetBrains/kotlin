@@ -1339,6 +1339,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("InheritingAnnotationClass.kt")
+            public void testInheritingAnnotationClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/InheritingAnnotationClass.kt");
+            }
+
+            @Test
             @TestMetadata("invalidTypesInAnnotationConstructor.kt")
             public void testInvalidTypesInAnnotationConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/invalidTypesInAnnotationConstructor.kt");
