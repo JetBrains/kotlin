@@ -19,7 +19,7 @@ internal class KtFe10DefinitelyNotNullType(
     override val type: DefinitelyNotNullType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtDefinitelyNotNullType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging(analysisContext) }
 
     override val original: KtType
         get() = withValidityAssertion { type.original.toKtType(analysisContext) }

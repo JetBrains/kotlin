@@ -18,7 +18,7 @@ internal class KtFe10DynamicType(
     override val type: DynamicType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtDynamicType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging(analysisContext) }
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { type.ktNullability }

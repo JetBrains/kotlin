@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -404,9 +405,36 @@ internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
     }
 }
 
-internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
+internal tailrec fun KotlinBuiltIns.areSameArrayTypeIgnoringProjections(left: KotlinType, right: KotlinType): Boolean {
+    val leftIsArray = KotlinBuiltIns.isArrayOrPrimitiveArray(left)
+    val rightIsArray = KotlinBuiltIns.isArrayOrPrimitiveArray(right)
+
+    return when {
+        leftIsArray && rightIsArray -> areSameArrayTypeIgnoringProjections(getArrayElementType(left), getArrayElementType(right))
+        !leftIsArray && !rightIsArray -> left == right
+        else -> false
+    }
+}
+
+
+internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(containingArrayType: KotlinType, analysisContext: Fe10AnalysisContext)
+        : List<KtAnnotationValue> = flatMap { constantValue ->
+    val constantType = constantValue.getType(analysisContext.resolveSession.moduleDescriptor)
+    if (analysisContext.builtIns.areSameArrayTypeIgnoringProjections(containingArrayType, constantType)) {
+        // If an element in the array has the same type as the containing array, it's a spread component that needs
+        // to be expanded here. (It should have the array element type instead.)
+        (constantValue as ArrayValue).value.expandArrayAnnotationValue(containingArrayType, analysisContext)
+    } else {
+        listOf(constantValue.toKtAnnotationValue(analysisContext))
+    }
+}
+
+internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisContext): KtAnnotationValue {
     return when (this) {
-        is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtAnnotationValue() }, sourcePsi = null)
+        is ArrayValue -> {
+            val arrayType = getType(analysisContext.resolveSession.moduleDescriptor)
+            KtArrayAnnotationValue(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null)
+        }
         is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null)
         is KClassValue -> when (val value = value) {
             is KClassValue.Value.LocalClass -> {
@@ -422,7 +450,7 @@ internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
-                    arguments = value.getKtNamedAnnotationArguments(),
+                    arguments = value.getKtNamedAnnotationArguments(analysisContext),
                 )
             )
         }
@@ -569,18 +597,18 @@ internal fun createKtInitializerValue(
     return KtNonConstantInitializerValue(initializer)
 }
 
-internal fun AnnotationDescriptor.toKtAnnotationApplication(): KtAnnotationApplication {
+internal fun AnnotationDescriptor.toKtAnnotationApplication(analysisContext: Fe10AnalysisContext): KtAnnotationApplication {
     return KtAnnotationApplication(
         annotationClass?.maybeLocalClassId,
         (source as? PsiSourceElement)?.psi as? KtCallElement,
         (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget(),
-        getKtNamedAnnotationArguments(),
+        getKtNamedAnnotationArguments(analysisContext),
     )
 }
 
-internal fun AnnotationDescriptor.getKtNamedAnnotationArguments() =
+internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext) =
     allValueArguments.map { (name, value) ->
-        KtNamedAnnotationValue(name, value.toKtAnnotationValue())
+        KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext))
     }
 
 

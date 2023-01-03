@@ -21,7 +21,7 @@ internal class KtFe10FlexibleType(
     override val type: FlexibleType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtFlexibleType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging(analysisContext) }
 
     override val lowerBound: KtType
         get() = withValidityAssertion { type.lowerBound.toKtType(analysisContext) }
