@@ -9,6 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
@@ -35,6 +36,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.description = "Download and install a local node/npm version"
             it.configuration = provider {
                 this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
+                    .markResolvable()
                     .also { conf -> conf.isTransitive = false }
             }
         }

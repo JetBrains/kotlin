@@ -102,12 +102,3 @@ internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () 
     objects.listProperty(T::class.java).apply { set(provider(itemsProvider)) }
 
 
-internal fun Configuration.markConsumable(): Configuration = apply {
-    this.isCanBeConsumed = true
-    this.isCanBeResolved = false
-}
-
-internal fun Configuration.markResolvable(): Configuration = apply {
-    this.isCanBeConsumed = false
-    this.isCanBeResolved = true
-}

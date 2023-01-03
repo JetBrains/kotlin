@@ -147,6 +147,7 @@ class NativeCompilerDownloader(
         }
 
         val configuration = project.configurations.detachedConfiguration(compilerDependency)
+            .markResolvable()
         logger.lifecycle("\nPlease wait while Kotlin/Native compiler $compilerVersion is being installed.")
 
         if (!kotlinProperties.nativeDownloadFromMaven) {

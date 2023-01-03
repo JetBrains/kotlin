@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.idea.kpm.*
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmPlatformDependencyResolver.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttributesSetup
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 
 /**
  * Resolves 'platform' binary dependencies for a given variant or fragment.
@@ -105,7 +106,7 @@ private fun ArtifactResolution.Variant.createVariantArtifactView(fragment: Gradl
 }
 
 private fun ArtifactResolution.PlatformFragment.createPlatformFragmentArtifactView(fragment: GradleKpmFragment): ArtifactView {
-    val fragmentCompileDependencies = fragment.project.configurations.detachedConfiguration()
+    val fragmentCompileDependencies = fragment.project.configurations.detachedConfiguration().markResolvable()
 
     fragmentCompileDependencies.dependencies.addAll(
         fragment.transitiveApiConfiguration.allDependencies.matching { it !is ProjectDependency }

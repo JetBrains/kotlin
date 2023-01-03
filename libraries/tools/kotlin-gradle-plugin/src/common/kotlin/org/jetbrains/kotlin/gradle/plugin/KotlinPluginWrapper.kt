@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
@@ -87,6 +88,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false
             isCanBeConsumed = false
+            isCanBeResolved = true
             addGradlePluginMetadataAttributes(project)
         }
 
@@ -105,6 +107,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project
             .configurations
             .maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME)
+            .markResolvable()
             .defaultDependencies {
                 it.add(
                     project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")

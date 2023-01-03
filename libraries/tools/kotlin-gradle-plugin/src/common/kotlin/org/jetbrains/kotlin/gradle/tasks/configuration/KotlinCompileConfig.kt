@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
@@ -33,7 +34,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 // composite builds (e.g., https://issuetracker.google.com/183952598).
                 project.configurations.detachedConfiguration(
                     project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
-                )
+                ).markResolvable()
             } else null
 
             taskProvider.configure { task ->
