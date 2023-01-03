@@ -243,6 +243,9 @@ class K2JSTranslator @JvmOverloads constructor(
         scope: Collection<DeclarationDescriptor>
     ): ProtoBuf.PackageFragment {
         val metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)
+        if (metadataVersion !is JsMetadataVersion?) {
+            error("${metadataVersion?.let { it::class }} must be either null or ${JsMetadataVersion::class.simpleName}")
+        }
         return KotlinJavascriptSerializationUtil.serializeDescriptors(
             bindingContext,
             moduleDescriptor,
