@@ -27,7 +27,8 @@ object ConeTypeIntersector {
             }
         }
 
-        if (inputTypes.any { it is ConeFlexibleType }) {
+        // Note: we aren't sure how to intersect raw & dynamic types properly (see KT-55762)
+        if (inputTypes.any { it is ConeFlexibleType } && inputTypes.none { it.isRaw() || it is ConeDynamicType }) {
             // (A..B) & C = (A & C)..(B & C)
             val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() })
             val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() })

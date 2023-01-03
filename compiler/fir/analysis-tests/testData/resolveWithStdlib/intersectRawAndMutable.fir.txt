@@ -1,0 +1,27 @@
+FILE: test.kt
+    public abstract interface StringSet : R|kotlin/collections/MutableSet<kotlin/String>| {
+    }
+    public final fun foo(arg: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, @EnhancedNullability java/util/ArrayList<*>>| = Q|Producer|.R|/Producer.foo|()
+        when () {
+            (R|<local>/x| is R|kotlin/collections/Set<*>|) ->  {
+                lval y: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, @EnhancedNullability java/util/ArrayList<*>>| = R|<local>/x|
+            }
+        }
+
+        when () {
+            (R|<local>/x| is R|kotlin/collections/MutableSet<*>|) ->  {
+                lval y: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, @EnhancedNullability java/util/ArrayList<*>>| = R|<local>/x|
+            }
+        }
+
+        when () {
+            (R|<local>/x| is R|StringSet|) ->  {
+                R|<local>/x|.R|SubstitutionOverride</StringSet.add: R|kotlin/Boolean|>|(String())
+                R|<local>/x|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(Int(1))
+                R|<local>/x|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(Null(null))
+                R|<local>/x|.R|SubstitutionOverride</StringSet.iterator: R|kotlin/collections/MutableIterator<kotlin/String>|>|().R|SubstitutionOverride<kotlin/collections/MutableIterator.next: R|kotlin/String|>|().R|kotlin/String.length|
+            }
+        }
+
+    }

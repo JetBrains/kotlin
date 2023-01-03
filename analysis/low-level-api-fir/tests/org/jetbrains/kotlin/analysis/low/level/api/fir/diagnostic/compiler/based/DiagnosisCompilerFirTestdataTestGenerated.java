@@ -4723,6 +4723,18 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("intersectDynamicAndString.kt")
+        public void testIntersectDynamicAndString() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectDynamicAndString.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectRawAndMutable.kt")
+        public void testIntersectRawAndMutable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectRawAndMutable.kt");
+        }
+
+        @Test
         @TestMetadata("javaEnumSynthetic.kt")
         public void testJavaEnumSynthetic() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/javaEnumSynthetic.kt");
