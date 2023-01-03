@@ -61,7 +61,9 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            build(":app:build")
+            build(":app:build") {
+                assertConfigurationCacheStored()
+            }
             // check IdeaPropertiesEvaluator for the logic
             build(":app:build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()
@@ -99,7 +101,9 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     @GradleTest
     fun testNodeJsOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
-            build(":build")
+            build(":build") {
+                assertConfigurationCacheStored()
+            }
             // check IdeaPropertiesEvaluator for the logic
             build(":build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()

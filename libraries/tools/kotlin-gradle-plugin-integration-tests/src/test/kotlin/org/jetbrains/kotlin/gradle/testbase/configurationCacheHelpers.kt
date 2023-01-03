@@ -33,7 +33,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
             "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
         )
 
-        assertOutputContains("Configuration cache entry stored.")
+        assertConfigurationCacheStored()
     }
 
     build("clean", buildOptions = buildOptions)
@@ -49,6 +49,10 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
             assertTasksUpToDate(*executedTask.toTypedArray())
         }
     }
+}
+
+fun BuildResult.assertConfigurationCacheStored() {
+    assertOutputContains("Configuration cache entry stored.")
 }
 
 fun BuildResult.assertConfigurationCacheReused() {
