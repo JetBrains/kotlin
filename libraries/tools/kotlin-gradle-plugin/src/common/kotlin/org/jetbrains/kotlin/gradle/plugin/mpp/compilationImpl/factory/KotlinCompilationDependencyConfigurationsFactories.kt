@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -227,7 +226,6 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         isVisible = false
         isCanBeConsumed = false
         description = "Kotlin compiler plugins for $compilation"
-        reorderPluginClasspathDependencies()
     }
 
     return DefaultKotlinCompilationConfigurationsContainer(

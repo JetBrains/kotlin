@@ -196,36 +196,6 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-47921: serialization plugin passed first to the compiler")
-    @GradleTest
-    fun testSerializationPluginOrderedFirst(gradleVersion: GradleVersion) {
-        project("allOpenSimple", gradleVersion) {
-            // Ensure that there are also allopen, noarg, and serialization plugins applied:
-            buildGradle.modify {
-                """
-                |plugins {
-                |    id "org.jetbrains.kotlin.plugin.noarg"
-                |    id "org.jetbrains.kotlin.plugin.serialization"
-                |${it.substringAfter("plugins {")}
-                """.trimMargin()
-            }
-
-            build(
-                "compileKotlin",
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-            ) {
-                val xPlugin = output
-                    .split(" ")
-                    .single { it.startsWith("-Xplugin") }
-                    .substringAfter("-Xplugin")
-                    .split(",")
-                assertTrue(xPlugin.first().contains("serialization")) {
-                    "Expected serialization plugin to go first; actual order: $xPlugin"
-                }
-            }
-        }
-    }
-
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_6_8 // Gradle usage of sam-with-receivers subplugin was added in this version

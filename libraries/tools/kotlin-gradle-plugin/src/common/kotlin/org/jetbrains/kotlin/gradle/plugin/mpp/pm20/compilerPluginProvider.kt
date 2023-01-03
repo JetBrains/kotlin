@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
@@ -94,7 +93,6 @@ private class CompilerPluginOptionsBuilder(
                 isCanBeConsumed = false
                 isCanBeResolved = true
                 isVisible = false
-                reorderPluginClasspathDependencies()
                 addGradlePluginMetadataAttributes(project)
             }
         artifacts.forEach { project.dependencies.add(configurationName, it) }
