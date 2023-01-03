@@ -22,12 +22,13 @@ dependencies {
     embedded(project(":kotlin-scripting-dependencies-maven")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
 
-    embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.8.0")
-    embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.8.0")
-    embedded("org.apache.maven.resolver:maven-resolver-transport-wagon:1.8.0")
-    embedded("org.apache.maven.resolver:maven-resolver-impl:1.8.0")
-    embedded("org.apache.maven:maven-core:3.8.5")
-    embedded("org.apache.maven.wagon:wagon-http:3.5.1")
+    embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.2")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.9.2")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.2")
+    embedded("org.apache.maven.resolver:maven-resolver-impl:1.9.2")
+    embedded("org.apache.maven:maven-core:3.8.7")
+    embedded("org.apache.maven.wagon:wagon-http:3.5.3")
+    embedded("commons-io:commons-io:2.11.0")
 }
 
 sourceSets {
