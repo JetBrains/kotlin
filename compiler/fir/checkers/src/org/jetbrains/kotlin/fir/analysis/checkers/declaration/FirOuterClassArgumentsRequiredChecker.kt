@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.*
 object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
-        val oldResolvePhase = declaration.resolvePhase
+        val oldResolvePhase = declaration.resolveState
         val oldList = declaration.superTypeRefs.toList()
 
         try {
@@ -30,7 +30,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
                 checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
             }
         } catch (e: ConcurrentModificationException) {
-            val newResolvePhase = declaration.resolvePhase
+            val newResolvePhase = declaration.resolveState
             val newList = declaration.superTypeRefs.toList()
 
             throw IllegalStateException(

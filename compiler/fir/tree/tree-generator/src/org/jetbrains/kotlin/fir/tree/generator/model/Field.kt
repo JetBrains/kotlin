@@ -98,6 +98,8 @@ class FieldWithDefault(val origin: Field) : Field() {
 
     override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
     var defaultValueInBuilder: String? = null
+    var customSetterInBuilder: String? = null
+    var customGetterInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable
     override var isMutableOrEmpty: Boolean = origin.isMutableOrEmpty
     override var isMutableInInterface: Boolean = origin.isMutableInInterface

@@ -117,16 +117,16 @@ internal class ReanalyzableFunctionStructureElement(
         ) as FirSimpleFunction
 
         return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
-            val upgradedPhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
+            val upgradedPhase = minOf(originalFunction.resolveState.resolvePhase, FirResolvePhase.DECLARATIONS)
 
             moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
                 with(originalFunction) {
                     replaceBody(temporaryFunction.body)
                     replaceContractDescription(temporaryFunction.contractDescription)
-                    replaceResolvePhase(upgradedPhase)
+                    replaceResolveState(upgradedPhase.asResolveState())
                 }
                 designation.toSequence(includeTarget = true).forEach {
-                    it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
+                    it.replaceResolveState(minOf(it.resolveState.resolvePhase, upgradedPhase).asResolveState())
                 }
 
                 originalFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -164,18 +164,18 @@ internal class ReanalyzablePropertyStructureElement(
         ) as FirProperty
 
         return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
-            val getterPhase = originalProperty.getter?.resolvePhase ?: originalProperty.resolvePhase
-            val setterPhase = originalProperty.setter?.resolvePhase ?: originalProperty.resolvePhase
-            val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
+            val getterPhase = originalProperty.getter?.resolveState?.resolvePhase ?: originalProperty.resolveState.resolvePhase
+            val setterPhase = originalProperty.setter?.resolveState?.resolvePhase ?: originalProperty.resolveState.resolvePhase
+            val upgradedPhase = minOf(originalProperty.resolveState.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS).asResolveState()
 
             moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
                 with(originalProperty) {
                     getter?.replaceBody(temporaryProperty.getter?.body)
                     setter?.replaceBody(temporaryProperty.setter?.body)
                     replaceInitializer(temporaryProperty.initializer)
-                    getter?.replaceResolvePhase(upgradedPhase)
-                    setter?.replaceResolvePhase(upgradedPhase)
-                    replaceResolvePhase(upgradedPhase)
+                    getter?.replaceResolveState(upgradedPhase)
+                    setter?.replaceResolveState(upgradedPhase)
+                    replaceResolveState(upgradedPhase)
                     replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
                 }
 

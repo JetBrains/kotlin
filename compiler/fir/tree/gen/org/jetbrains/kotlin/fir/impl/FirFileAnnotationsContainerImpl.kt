@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.fir.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 internal class FirFileAnnotationsContainerImpl(
     override val source: KtSourceElement?,
     @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val moduleData: FirModuleData,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val containingFileSymbol: FirFileSymbol,
@@ -44,8 +44,8 @@ internal class FirFileAnnotationsContainerImpl(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        resolveState = newResolveState
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

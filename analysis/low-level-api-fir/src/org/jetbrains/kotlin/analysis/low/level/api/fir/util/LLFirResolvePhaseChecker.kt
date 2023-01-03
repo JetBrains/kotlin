@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
 internal object LLFirResolvePhaseChecker {
     fun requireResolvePhase(firDeclaration: FirDeclaration, requiredPhase: FirResolvePhase) {
-        require(firDeclaration.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
-            "Required $requiredPhase for $firDeclaration but ${firDeclaration.resolvePhase} found"
+        require(firDeclaration.resolveState.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
+            "Required $requiredPhase for $firDeclaration but ${firDeclaration.resolveState} found"
         }
     }
 }

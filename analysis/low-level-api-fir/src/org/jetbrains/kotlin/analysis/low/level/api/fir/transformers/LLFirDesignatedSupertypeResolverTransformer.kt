@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -71,7 +71,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     }
 
     private inner class DesignationCollector {
-        private val visited = mutableMapOf<FirElementWithResolvePhase, FirDesignationWithFile>()
+        private val visited = mutableMapOf<FirElementWithResolveState, FirDesignationWithFile>()
         private val toVisit = mutableListOf<FirDesignationWithFile>()
 
         fun collect(designation: FirDesignationWithFile): Collection<FirDesignationWithFile> {
@@ -154,7 +154,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
+        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
         designation.firFile.checkPhase(FirResolvePhase.IMPORTS)
 
         val targetDesignation = if (designation.target !is FirClassLikeDeclaration) {
@@ -177,7 +177,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(FirResolvePhase.SUPER_TYPES)
         when (target) {
             is FirClass -> {

@@ -57,7 +57,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
             isExpect = makeExpect
         }
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
-        resolvePhase = this@generateValuesFunction.resolvePhase
+        resolveState = this@generateValuesFunction.resolveState
         body = buildEmptyExpressionBlock().also {
             it.replaceTypeRef(returnTypeRef)
         }
@@ -107,9 +107,9 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             isCrossinline = false
             isNoinline = false
             isVararg = false
-            resolvePhase = this@generateValueOfFunction.resolvePhase
+            resolveState = this@generateValueOfFunction.resolveState
         }
-        resolvePhase = this@generateValueOfFunction.resolvePhase
+        resolveState = this@generateValueOfFunction.resolveState
         body = buildEmptyExpressionBlock().also {
             it.replaceTypeRef(returnTypeRef)
         }
@@ -144,7 +144,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             isExpect = makeExpect
         }
         symbol = FirPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
-        resolvePhase = this@generateEntriesGetter.resolvePhase
+        resolveState = this@generateEntriesGetter.resolveState
         getter = FirDefaultPropertyGetter(
             sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
             moduleData, FirDeclarationOrigin.Source, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),

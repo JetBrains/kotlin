@@ -39,8 +39,8 @@ class FirSyntheticPropertyAccessor(
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef
 
-    override val resolvePhase: FirResolvePhase
-        get() = delegate.resolvePhase
+    override val resolveState: FirResolveState
+        get() = delegate.resolveState
 
     override val status: FirDeclarationStatus
         get() = delegate.status
@@ -131,7 +131,7 @@ class FirSyntheticPropertyAccessor(
         notSupported()
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+    override fun replaceResolveState(newResolveState: FirResolveState) {
         notSupported()
     }
 

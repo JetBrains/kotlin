@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -22,7 +22,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
     scopeSession: ScopeSession,
 ) : LLFirLazyTransformer, FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession, CompilerRequiredAnnotationsComputationSession()) {
 
-    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolvePhase>) {
+    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolveState>) {
         if (!designationIterator.hasNext()) {
             val declaration = designation.target
             FirLazyBodiesCalculator.calculateCompilerAnnotations(declaration)
@@ -47,7 +47,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) return
+        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) return
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
@@ -59,7 +59,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
 //        checkNestedDeclarationsAreResolved(declaration)

@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -35,9 +37,14 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     abstract override var source: KtSourceElement?
-    abstract override var resolvePhase: FirResolvePhase
-    abstract override val annotations: MutableList<FirAnnotation>
+    abstract override var resolveState: FirResolveState
     abstract override var moduleData: FirModuleData
+    override var resolvePhase: FirResolvePhase
+        get() = resolveState.resolvePhase
+        set(value) {
+            resolveState = value.asResolveState()
+        }
+    abstract override val annotations: MutableList<FirAnnotation>
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
     abstract var status: FirDeclarationStatus

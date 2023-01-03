@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
@@ -31,7 +30,7 @@ fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
         ).renderElementAsString(it)
     }
     withEntry("${name}FirSourceElementKind", fir.source?.kind?.let { it::class.simpleName })
-    if (fir is FirElementWithResolvePhase) {
+    if (fir is FirElementWithResolveState) {
         withKtModuleEntry("${name}KtModule", fir.llFirModuleData.ktModule)
     }
     withPsiEntry("${name}Psi", fir.psi)

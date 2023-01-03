@@ -11,8 +11,19 @@ import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
 object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
     fun configureBuilders() = with(firTreeBuilder) {
+        val elementWithResolveStateBuilder by builder {
+            fields from elementWithResolveState
+            builder.fields += FieldWithDefault(field("resolvePhase", resolvePhaseType)).apply {
+                customGetterInBuilder = "resolveState.resolvePhase"
+                customSetterInBuilder = "resolveState = value.asResolveState()"
+            }
+            useTypes(phaseAsResolveState)
+        }
+
         val declarationBuilder by builder {
+            parents += elementWithResolveStateBuilder
             fields from declaration without "symbol"
+            useTypes(phaseAsResolveState)
         }
 
         val annotationContainerBuilder by builder {
@@ -34,7 +45,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val classBuilder by builder {
             parents += declarationBuilder
             parents += annotationContainerBuilder
-            fields from klass without listOf("symbol", "resolvePhase")
+            fields from klass without listOf("symbol", "resolveState", "resolvePhase")
+            useTypes(phaseAsResolveState)
         }
 
         builder(regularClass) {
@@ -62,11 +74,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += annotationContainerBuilder
             fields from function without listOf(
                 "symbol",
+                "resolveState",
                 "resolvePhase",
                 "controlFlowGraphReference",
                 "receiverParameter",
                 "typeParameters",
             )
+            useTypes(phaseAsResolveState)
         }
 
         val loopJumpBuilder by builder {
@@ -76,6 +90,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val abstractConstructorBuilder by builder {
             parents += functionBuilder
             fields from constructor without listOf("isPrimary")
+            useTypes(phaseAsResolveState)
         }
 
         val abstractFunctionCallBuilder by builder {
@@ -98,12 +113,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(typeParameter) {
+            parents += elementWithResolveStateBuilder
             withCopy()
         }
 
         builder(field) {
             parents += declarationBuilder
-            default("resolvePhase", "FirResolvePhase.DECLARATIONS")
+            default("resolveState", "FirResolvePhase.DECLARATIONS")
             openBuilder()
         }
 
@@ -227,7 +243,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += declarationBuilder
             parents += typeParametersOwnerBuilder
             defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
-            default("resolvePhase", "FirResolvePhase.RAW_FIR")
+            default("resolveState", "FirResolvePhase.RAW_FIR.asResolveState()")
+            useTypes(phaseAsResolveState)
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
             withCopy()
         }
@@ -305,6 +322,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(valueParameter, type = "FirValueParameterImpl") {
+            parents += elementWithResolveStateBuilder
             openBuilder()
             withCopy()
         }
@@ -323,6 +341,19 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(emptyContractDescriptionType)
             openBuilder()
             withCopy()
+        }
+
+        builder(enumEntry) {
+            parents += elementWithResolveStateBuilder
+        }
+
+        builder(errorFunction) {
+            parents += elementWithResolveStateBuilder
+        }
+
+
+        builder(errorProperty) {
+            parents += elementWithResolveStateBuilder
         }
 
         builder(smartCastExpression) {
@@ -420,10 +451,12 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         configureFieldInAllLeafBuilders(
-            field = "resolvePhase",
+            field = "resolveState",
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
-            default(it, "FirResolvePhase.RAW_FIR")
+            default(it, "FirResolvePhase.RAW_FIR.asResolveState()")
+            useTypes(resolvePhaseType)
+            useTypes(phaseAsResolveState)
         }
 
         configureFieldInAllLeafBuilders(

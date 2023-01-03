@@ -53,7 +53,7 @@ class JavaAnnotationSyntheticPropertiesScope(
                         isVar = false,
                         it,
                         function.status.copy(modality = Modality.FINAL),
-                        function.resolvePhase,
+                        function.resolveState,
                         accessor
                     )
                 }

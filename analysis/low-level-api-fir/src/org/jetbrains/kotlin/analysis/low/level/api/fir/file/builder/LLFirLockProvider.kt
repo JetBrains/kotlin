@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import java.util.concurrent.locks.ReentrantLock
 
@@ -19,6 +20,7 @@ internal class LLFirLockProvider {
     private val globalLock = ReentrantLock()
 
     private val locksForImports = ContainerUtil.createConcurrentSoftMap<FirFile, ReentrantLock>()
+    private val locks = ContainerUtil.createConcurrentSoftMap<FirElementWithResolveState, ReentrantLock>()
 
     inline fun <R> withLock(
         @Suppress("UNUSED_PARAMETER") key: FirFile,

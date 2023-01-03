@@ -26,7 +26,7 @@ class FirSyntheticProperty(
     override val isVar: Boolean,
     override val symbol: FirSyntheticPropertySymbol,
     override val status: FirDeclarationStatus,
-    override var resolvePhase: FirResolvePhase,
+    override var resolveState: FirResolveState,
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null,
     override val backingField: FirBackingField? = null,
@@ -142,8 +142,8 @@ class FirSyntheticProperty(
         notSupported()
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun replaceResolveState(newResolveState: FirResolveState) {
+        TODO("Not yet implemented")
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {

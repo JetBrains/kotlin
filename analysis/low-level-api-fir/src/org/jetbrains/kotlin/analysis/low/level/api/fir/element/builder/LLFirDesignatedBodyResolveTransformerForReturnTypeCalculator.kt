@@ -62,7 +62,7 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
 
     private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDesignation) -> Unit) {
         if (this !== targetDeclaration) return
-        if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
+        if (resolveState.resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
         lazyResolveToPhase(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
             val declarationList = designation.filterIsInstance<FirDeclaration>()
