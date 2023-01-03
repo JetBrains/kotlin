@@ -23,6 +23,7 @@ suspend fun saveSpilledVariables() = suspendCoroutineUninterceptedOrReturn<Unit>
 }
 
 val test: suspend (Int) -> Unit = { unused ->
+    suspend {}() // prevent tail-call optimization
     saveSpilledVariables()
 }
 
@@ -37,9 +38,9 @@ fun box(): String {
         test(1)
     }
 
-    if (spilledVariables != setOf("label" to "1")) return "FAIL 1: $spilledVariables"
+    if (spilledVariables != setOf("label" to "2")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "1")) return "FAIL 2: $spilledVariables"
+    if (spilledVariables != setOf("label" to "2")) return "FAIL 2: $spilledVariables"
 
     return "OK"
 }

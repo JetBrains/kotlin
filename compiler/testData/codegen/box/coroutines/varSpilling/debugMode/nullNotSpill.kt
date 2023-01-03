@@ -45,7 +45,7 @@ fun box(): String {
         test()
     }
 
-    val continuationName = "Continuation at NullNotSpillKt\$box\$1.invokeSuspend(nullNotSpill.kt:45)"
+    val continuationName = "Continuation at NullNotSpillKt\$box\$1.invoke(nullNotSpill.kt:45)"
     if (spilledVariables != setOf("label" to "1", "L$0" to continuationName, "L$1" to "null")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "2", "L$0" to continuationName, "L$1" to "[null]")) return "FAIL 2: $spilledVariables"

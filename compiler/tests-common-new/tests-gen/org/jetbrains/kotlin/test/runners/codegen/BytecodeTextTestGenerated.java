@@ -1914,6 +1914,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             public void testWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/stateMachine/withTypeParameter.kt");
             }
+
+            @Test
+            @TestMetadata("withTypeParameter2.kt")
+            public void testWithTypeParameter2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/stateMachine/withTypeParameter2.kt");
+            }
         }
     }
 

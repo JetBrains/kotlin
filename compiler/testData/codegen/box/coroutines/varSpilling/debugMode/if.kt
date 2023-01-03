@@ -52,7 +52,7 @@ fun box(): String {
         test(true)
     }
 
-    var continuationName = "Continuation at IfKt\$box\$1.invokeSuspend(if.kt:52)"
+    var continuationName = "Continuation at IfKt\$box\$1.invoke(if.kt:52)"
     if (spilledVariables != setOf("label" to "1", "Z$0" to "true", "L$0" to continuationName, "L$1" to "a1", "L$2" to "null"))
         return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
@@ -66,7 +66,7 @@ fun box(): String {
         test(false)
     }
 
-    continuationName = "Continuation at IfKt\$box\$2.invokeSuspend(if.kt:66)"
+    continuationName = "Continuation at IfKt\$box\$2.invoke(if.kt:66)"
     if (spilledVariables != setOf("label" to "2", "Z$0" to "false", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2")) return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "3", "Z$0" to "false", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2")) return "FAIL 5: $spilledVariables"

@@ -9,7 +9,8 @@
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory
-// 1 final class SuspendFunInterfaceKt\$box\$1
+// NEW and INVOKESPECIAL <init>, since this is tail-call lambda
+// 2 final class SuspendFunInterfaceKt\$box\$1
 
 import kotlin.coroutines.*
 

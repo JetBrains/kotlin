@@ -45,7 +45,7 @@ fun box(): String {
         test()
     }
 
-    val continuationName = "Continuation at SimpleKt\$box\$1.invokeSuspend(simple.kt:45)"
+    val continuationName = "Continuation at SimpleKt\$box\$1.invoke(simple.kt:45)"
     if (spilledVariables != setOf("label" to "1", "L$0" to continuationName, "L$1" to "a", "L$2" to "null")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "2", "L$0" to continuationName, "L$1" to "a", "L$2" to "[a]")) return "FAIL 2: $spilledVariables"

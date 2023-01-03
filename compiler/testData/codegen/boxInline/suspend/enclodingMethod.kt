@@ -34,11 +34,12 @@ public inline fun <T, R> Flow<T>.transform(crossinline transformer: suspend Flow
 public inline fun <T, R> Flow<T>.map(crossinline transformer: suspend (value: T) -> R): Flow<R> = transform { value -> emit(transformer(value)) }
 
 inline fun decorate() = suspend {
+    suspend {}() // prevent tail-call optimization
     flow<Int> {
         emit(1)
-    }.map { it + 1 }
-        .collect {
-        }
+    }.map {
+        it + 1
+    }.collect {}
 }
 
 // FILE: box.kt

@@ -46,7 +46,7 @@ fun box(): String {
         test("a", "b")
     }
 
-    val continuationName = "Continuation at TwoRefsKt\$box\$1.invokeSuspend(twoRefs.kt:46)"
+    val continuationName = "Continuation at TwoRefsKt\$box\$1.invoke(twoRefs.kt:46)"
     if (spilledVariables != setOf("label" to "1", "L$0" to "a", "L$1" to "b", "L$2" to continuationName, "L$3" to "null")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "2", "L$0" to "a", "L$1" to "b", "L$2" to continuationName, "L$3" to "[a]")) return "FAIL 2: $spilledVariables"

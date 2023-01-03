@@ -10,4 +10,9 @@ fun main(args: Array<String>) {
     })
 }
 
+// JVM_TEMPLATES
 // 2 TABLESWITCH
+
+// JVM_IR_TEMPLATES
+// lambda inside main is tail-call
+// 1 TABLESWITCH

@@ -124,41 +124,41 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             // FunctionReferencePhase generates raw function references to SuspendFunctionN's suspend invoke functions,
             // replace them with function references with Function{N+1}'s invoke functions with continuation parameter.
             override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
-                if (expression.symbol.owner.isSuspend) {
-                    val function = expression.symbol.owner
-                    val parentClass = function.parentAsClass
-                    if (parentClass.parent == context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage) {
-                        // RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String): kotlin.String [suspend,fake_override,operator]
-                        // declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
-                        // ->
-                        // RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String, p2: kotlin.coroutines.Continuation<String>): kotlin.Any? [fake_override,operator]
-                        // declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
-                        val fakeClass = context.irFactory.buildClass { name = Name.special("<fake>") }
-                        fakeClass.parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
-
-                        val superType = buildOrdinaryFunctionTypeFromSuspendInvokeTypes(
-                            function.valueParameters.map { it.type }, function.returnType
-                        )
-
-                        val invokeMethod = superType.classOrNull!!.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
-
-                        val fakeInstanceMethod = buildFakeOverrideMember(superType, invokeMethod, fakeClass) as IrSimpleFunction
-                        (fakeInstanceMethod as IrFunctionWithLateBinding).acquireSymbol(IrSimpleFunctionSymbolImpl())
-                        fakeInstanceMethod.overriddenSymbols = listOf(invokeMethod.symbol)
-                        return IrRawFunctionReferenceImpl(
-                            expression.startOffset, expression.endOffset, expression.type, fakeInstanceMethod.symbol
-                        )
-                    } else {
-                        val arity = expression.symbol.owner.valueParameters.size
-                        val nonSuspendFunctionalType = context.ir.symbols.functionN(arity + 1)
-
-                        val invokeMethod = nonSuspendFunctionalType.functions.single { it.owner.modality == Modality.ABSTRACT }
-                        return IrRawFunctionReferenceImpl(
-                            expression.startOffset, expression.endOffset, expression.type, invokeMethod
-                        )
-                    }
-                } else {
+                if (!expression.symbol.owner.isSuspend) {
                     return super.visitRawFunctionReference(expression)
+                }
+
+                val function = expression.symbol.owner
+                val parentClass = function.parentAsClass
+                if (parentClass.parent == context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage) {
+                    // RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String): kotlin.String [suspend,fake_override,operator]
+                    // declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+                    // ->
+                    // RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String, p2: kotlin.coroutines.Continuation<String>): kotlin.Any? [fake_override,operator]
+                    // declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+                    val fakeClass = context.irFactory.buildClass { name = Name.special("<fake>") }
+                    fakeClass.parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+
+                    val superType = buildOrdinaryFunctionTypeFromSuspendInvokeTypes(
+                        function.valueParameters.map { it.type }, function.returnType
+                    )
+
+                    val invokeMethod = superType.classOrNull!!.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
+
+                    val fakeInstanceMethod = buildFakeOverrideMember(superType, invokeMethod, fakeClass) as IrSimpleFunction
+                    (fakeInstanceMethod as IrFunctionWithLateBinding).acquireSymbol(IrSimpleFunctionSymbolImpl())
+                    fakeInstanceMethod.overriddenSymbols = listOf(invokeMethod.symbol)
+                    return IrRawFunctionReferenceImpl(
+                        expression.startOffset, expression.endOffset, expression.type, fakeInstanceMethod.symbol
+                    )
+                } else {
+                    val arity = expression.symbol.owner.valueParameters.size
+                    val nonSuspendFunctionalType = context.ir.symbols.functionN(arity + 1)
+
+                    val invokeMethod = nonSuspendFunctionalType.functions.single { it.owner.modality == Modality.ABSTRACT }
+                    return IrRawFunctionReferenceImpl(
+                        expression.startOffset, expression.endOffset, expression.type, invokeMethod
+                    )
                 }
             }
 
@@ -451,6 +451,14 @@ internal fun IrFunction.isTailCallSuspendLambda(): Boolean {
             } else {
                 super.visitCall(expression)
             }
+        }
+
+        override fun visitBlockBody(body: IrBlockBody) {
+            val implicitReturn = body.statements.lastOrNull()
+            if (implicitReturn is IrCall) {
+                tailCalls += implicitReturn
+            }
+            super.visitBlockBody(body)
         }
 
         override fun visitBlock(expression: IrBlock) {

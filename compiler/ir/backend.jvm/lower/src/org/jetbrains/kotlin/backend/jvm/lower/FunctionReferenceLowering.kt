@@ -54,7 +54,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     // `suspend` function references are the same as non-`suspend` ones, just with an extra continuation parameter;
     // however, suspending lambdas require different generation implemented in SuspendLambdaLowering
-    // because they are also their own continuation classes.
+    // because they are also their own continuation classes, unless they are tail-call, in which case, they act like callable references.
     // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
     private fun IrFunctionReference.isTailCallSuspendFunctionReference(): Boolean = isSuspend &&
             (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION

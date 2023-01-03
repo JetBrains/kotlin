@@ -15,8 +15,11 @@ inline suspend fun inlineMe1(crossinline c: suspend () -> Unit): SuspendRunnable
         }
     }
 
+suspend fun dummy() {}
+
 inline suspend fun inlineMe2(crossinline c: suspend () -> Unit): suspend () -> Unit =
     {
+        dummy()
         c()
     }
 
