@@ -43,10 +43,6 @@ internal fun customizeKotlinDependencies(project: Project) {
         )
     }
 
-    if (propertiesProvider.stdlibDefaultDependency && propertiesProvider.stdlibDomApiIncluded) {
-        project.configureKotlinDomApiDefaultDependency(topLevelExtension, coreLibrariesVersion)
-    }
-
     project.configurations.configureDefaultVersionsResolutionStrategy(
         coreLibrariesVersion
     )
