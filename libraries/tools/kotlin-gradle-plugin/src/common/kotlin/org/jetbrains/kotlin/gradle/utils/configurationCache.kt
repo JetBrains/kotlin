@@ -13,6 +13,13 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 
+internal fun isProjectIsolationEnabled(gradle: Gradle) =
+    try {
+        (gradle.startParameter as? StartParameterInternal)?.isolatedProjects?.get()
+    } catch (_: IncompatibleClassChangeError) {
+        null
+    } ?: false
+
 internal fun isConfigurationCacheAvailable(gradle: Gradle) =
     try {
         val startParameters = gradle.startParameter
