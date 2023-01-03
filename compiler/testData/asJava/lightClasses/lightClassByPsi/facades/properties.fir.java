@@ -33,9 +33,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static java.lang.Boolean islowercase;
 
   @org.jetbrains.annotations.Nullable()
-  private static java.lang.Integer counter2;
-
-  @org.jetbrains.annotations.Nullable()
   private static java.lang.Integer getInt;
 
   @org.jetbrains.annotations.Nullable()

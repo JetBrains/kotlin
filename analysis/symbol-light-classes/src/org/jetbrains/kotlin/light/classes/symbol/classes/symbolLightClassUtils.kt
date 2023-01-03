@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModuleOfTypeSafe
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -349,22 +351,6 @@ internal fun SymbolLightClassBase.createField(
     takePropertyVisibility: Boolean,
     result: MutableList<KtLightField>
 ) {
-
-    fun hasBackingField(property: KtPropertySymbol): Boolean = when (property) {
-        is KtSyntheticJavaPropertySymbol -> true
-        is KtKotlinPropertySymbol -> when {
-            property.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> false
-            property.modality == Modality.ABSTRACT -> false
-            property.isHiddenOrSynthetic() -> false
-            property.isLateInit -> true
-            property.isDelegatedProperty -> true
-            property.isFromPrimaryConstructor -> true
-            property.psi.let { it == null || it is KtParameter } -> true
-            property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD) -> false
-            else -> property.hasBackingField
-        }
-    }
-
     if (!hasBackingField(declaration)) return
 
     val isDelegated = (declaration as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
@@ -384,6 +370,38 @@ internal fun SymbolLightClassBase.createField(
             takePropertyVisibility = takePropertyVisibility,
         )
     )
+}
+
+context(KtAnalysisSession)
+private fun hasBackingField(property: KtPropertySymbol): Boolean {
+    if (property is KtSyntheticJavaPropertySymbol) return true
+    requireIsInstance<KtKotlinPropertySymbol>(property)
+
+    if (property.origin.cannotHasBackingField() || property.isStatic) return false
+    if (property.isLateInit || property.isDelegatedProperty || property.isFromPrimaryConstructor) return true
+    val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
+    if (hasBackingFieldByPsi == false) {
+        return hasBackingFieldByPsi
+    }
+
+    if (property.modality == Modality.ABSTRACT ||
+        property.isHiddenOrSynthetic(AnnotationUseSiteTarget.FIELD, strictUseSite = false)
+    ) return false
+
+    return hasBackingFieldByPsi ?: property.hasBackingField
+}
+
+private fun KtSymbolOrigin.cannotHasBackingField(): Boolean =
+    this == KtSymbolOrigin.SOURCE_MEMBER_GENERATED ||
+            this == KtSymbolOrigin.DELEGATED ||
+            this == KtSymbolOrigin.INTERSECTION_OVERRIDE ||
+            this == KtSymbolOrigin.SUBSTITUTION_OVERRIDE
+
+private fun PsiElement.hasBackingField(): Boolean {
+    if (this is KtParameter) return true
+    if (this !is KtProperty) return false
+
+    return hasInitializer() || getter?.takeIf { it.hasBody() } == null || setter?.takeIf { it.hasBody() } == null && isVar
 }
 
 context(KtAnalysisSession)

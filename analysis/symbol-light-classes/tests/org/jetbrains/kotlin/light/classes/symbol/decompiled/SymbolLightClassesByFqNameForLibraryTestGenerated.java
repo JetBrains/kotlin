@@ -79,6 +79,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("BackingFields.kt")
+    public void testBackingFields() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/BackingFields.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionObject.kt")
     public void testCompanionObject() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");

@@ -74,6 +74,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationRepeatable.kt");
     }
 
+    @TestMetadata("BackingFields.kt")
+    public void testBackingFields() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/BackingFields.kt");
+    }
+
     @TestMetadata("CompanionObject.kt")
     public void testCompanionObject() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");

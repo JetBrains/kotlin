@@ -104,12 +104,13 @@ internal class UltraLightMembersCreator(
     private fun hasBackingField(property: KtCallableDeclaration): Boolean {
         if (property.hasModifier(ABSTRACT_KEYWORD)) return false
         if (property.hasModifier(LATEINIT_KEYWORD)) return true
-        if (property is KtParameter) return true
-        if ((property as? KtProperty)?.accessors?.isEmpty() == true) return true
 
-        val context = LightClassGenerationSupport.getInstance(containingClass.project).analyze(property)
-        val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
-        return descriptor is PropertyDescriptor && context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
+        if (property is KtParameter) return true
+        if (property !is KtProperty) return false
+
+        return property.hasInitializer() ||
+                property.getter?.takeIf { it.hasBody() } == null ||
+                property.setter?.takeIf { it.hasBody() } == null && property.isVar
     }
 
     fun createMethods(
