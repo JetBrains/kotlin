@@ -37,8 +37,6 @@
 -keep class org.apache.maven.wagon.providers.** { *; }
 -keep class org.jetbrains.kotlin.org.apache.maven.wagon.providers.** { *; }
 
--keep class org.slf4j.** { *; }
-
 -keepclassmembers class * extends java.lang.Enum {
     <fields>;
     **[] values();
