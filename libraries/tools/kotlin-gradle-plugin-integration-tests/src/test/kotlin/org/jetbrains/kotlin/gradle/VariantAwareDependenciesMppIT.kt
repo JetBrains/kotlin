@@ -44,6 +44,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
                 assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
             }
 
+            @Suppress("DEPRECATION")
             gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.LEGACY))
 
             testResolveAllConfigurations(

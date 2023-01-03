@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -21,8 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import java.util.Locale
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -134,6 +132,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     fun `test js IR compilation dependencies`() {
         val project = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION")
                 js(BOTH)
                 targets.withType<KotlinJsTarget> {
                     irTarget!!.compilations.getByName("main").dependencies {
@@ -167,6 +166,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
             kotlin {
                 jvm()
+                @Suppress("DEPRECATION")
                 js(BOTH)
                 linuxX64("linux")
                 android()
@@ -193,6 +193,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm()
+                @Suppress("DEPRECATION")
                 js(BOTH)
                 linuxX64("linux")
             }
@@ -225,22 +226,24 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     class TestDisambiguationAttributePropagation {
         private val disambiguationAttribute = org.gradle.api.attributes.Attribute.of("disambiguationAttribute", String::class.java)
 
-        private val mppProject get() = buildProjectWithMPP {
-            kotlin {
-                jvm("plainJvm") {
-                    attributes { attribute(disambiguationAttribute, "plainJvm") }
-                }
+        private val mppProject
+            get() = buildProjectWithMPP {
+                kotlin {
+                    jvm("plainJvm") {
+                        attributes { attribute(disambiguationAttribute, "plainJvm") }
+                    }
 
-                jvm("jvmWithJava") {
-                    withJava()
-                    attributes { attribute(disambiguationAttribute, "jvmWithJava") }
+                    jvm("jvmWithJava") {
+                        withJava()
+                        attributes { attribute(disambiguationAttribute, "jvmWithJava") }
+                    }
                 }
             }
-        }
 
-        private val javaProject get() = buildProject {
-            project.plugins.apply("java-library")
-        }
+        private val javaProject
+            get() = buildProject {
+                project.plugins.apply("java-library")
+            }
 
         //NB: There is no "api" configuration registered by Java Plugin
         private val javaConfigurations = listOf(

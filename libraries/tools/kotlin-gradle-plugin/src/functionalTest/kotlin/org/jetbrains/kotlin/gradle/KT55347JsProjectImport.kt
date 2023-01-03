@@ -34,6 +34,7 @@ class KT55347JsProjectImport {
     fun `GranularMetadataTransformation should be accessible in pure js projects -- IR`() =
         `GranularMetadataTransformation should be accessible in pure js projects`(IR)
 
+    @Suppress("DEPRECATION")
     @Test
     fun `GranularMetadataTransformation should be accessible in pure js projects -- BOTH`() =
         `GranularMetadataTransformation should be accessible in pure js projects`(BOTH)
