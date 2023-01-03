@@ -47,7 +47,9 @@ object ConeTypeIntersector {
          * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
          * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
          */
-        val isResultNotNullable = inputTypes.any { !it.isNullable(context) }
+        val isResultNotNullable = with(context) {
+            inputTypes.any { !it.isNullableType() }
+        }
         val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
             if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
@@ -91,11 +93,4 @@ object ConeTypeIntersector {
 
     private fun ConeKotlinType.isStrictSubtypeOf(context: ConeTypeContext, supertype: ConeKotlinType): Boolean =
         AbstractTypeChecker.isSubtypeOf(context, this, supertype) && !AbstractTypeChecker.isSubtypeOf(context, supertype, this)
-
-    private fun ConeKotlinType.isNullable(context: ConeTypeContext): Boolean =
-        when {
-            isMarkedNullable -> true
-            this is ConeFlexibleType -> upperBound.isNullable(context)
-            else -> !ConeNullabilityChecker.isSubtypeOfAny(context, this)
-        }
 }
