@@ -739,7 +739,11 @@ class BodyGenerator(
 
         // REF -> REF -> REF_CAST
         if (!expectedIsPrimitive) {
-            generateRefNullCast(actualTypeErased, expectedTypeErased)
+            if (expectedClassErased.isSubclassOf(actualClassErased)) {
+                generateRefNullCast(actualTypeErased, expectedTypeErased)
+            } else {
+                body.buildUnreachable()
+            }
         }
     }
 

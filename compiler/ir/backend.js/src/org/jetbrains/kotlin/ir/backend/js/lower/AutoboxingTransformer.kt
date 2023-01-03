@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -134,14 +133,6 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
         val res = super.visitReturn(expression)
         processingReturnStack.pop()
         return res
-    }
-
-    override fun visitFunction(declaration: IrFunction): IrStatement {
-        return super.visitFunction(declaration)
-    }
-
-    override fun visitVararg(expression: IrVararg): IrExpression {
-        return super.visitVararg(expression)
     }
 
     override fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression {
