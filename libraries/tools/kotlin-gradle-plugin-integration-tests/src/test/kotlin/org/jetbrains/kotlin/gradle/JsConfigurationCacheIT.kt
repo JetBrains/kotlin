@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName
 import javax.inject.Inject
 
 abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) : KGPBaseTest() {
+    @Suppress("DEPRECATION")
     private val defaultJsOptions = BuildOptions.JsOptions(
         useIrBackend = irBackend,
         jsCompilerType = if (irBackend) KotlinJsCompilerType.IR else KotlinJsCompilerType.LEGACY,
