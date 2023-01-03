@@ -19,6 +19,7 @@ val signPublication = !version.toString().contains("-SNAPSHOT") &&
 
 configureCommonPublicationSettingsForGradle(signPublication)
 configureKotlinCompileTasksGradleCompatibility()
+addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
 // common plugin bundle configuration

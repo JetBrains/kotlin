@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
@@ -593,5 +594,42 @@ fun Project.publishShadowedJar(
                 add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
             }
         }
+    }
+}
+
+fun Project.addBomCheckTask() {
+    val checkBomTask = tasks.register("checkGradlePluginsBom") {
+        group = "Validation"
+        description = "Check if project is added into Kotlin Gradle Plugins bom"
+
+        val bomBuildFile = project(":kotlin-gradle-plugins-bom").projectDir.resolve("build.gradle.kts")
+        val exceptions = listOf(
+            project(":gradle:android-test-fixes").path,
+            project(":kotlin-gradle-build-metrics").path,
+            project(":kotlin-gradle-statistics").path,
+        )
+        val projectPath = this@addBomCheckTask.path
+
+        doLast {
+            if (projectPath in exceptions) return@doLast
+
+            val constraintsLines = bomBuildFile.readText()
+                .substringAfter("constraints {")
+                .substringBefore("}")
+                .split("\n")
+                .map { it.trim() }
+
+            val isContainingThisProject = constraintsLines.contains(
+                "api(project(\"$projectPath\"))"
+            )
+
+            if (!isContainingThisProject) {
+                throw GradleException(":kotlin-gradle-plugins-bom does not contain $projectPath project constraint!")
+            }
+        }
+    }
+
+    tasks.named("check") {
+        dependsOn(checkBomTask)
     }
 }
