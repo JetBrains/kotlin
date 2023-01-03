@@ -10368,6 +10368,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("javaEnumEntriesAmbiguity.kt")
+                public void testJavaEnumEntriesAmbiguity() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguity.kt");
+                }
+
+                @Test
                 @TestMetadata("nameShadowingOfExternallyDefinedEntries.kt")
                 public void testNameShadowingOfExternallyDefinedEntries() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/nameShadowingOfExternallyDefinedEntries.kt");
