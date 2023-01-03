@@ -245,6 +245,9 @@ abstract class IncrementalCompilerRunner<
                     RuntimeException("Failed to close caches, previous ICResult `$icResult` was discarded", e)
                 )
             }
+            if (icResult is ICResult.Completed && icResult.exitCode == ExitCode.OK) {
+                transaction.markAsSuccessful()
+            }
             return icResult
         }
     }
@@ -555,7 +558,6 @@ abstract class IncrementalCompilerRunner<
         }
 
         if (exitCode == ExitCode.OK) {
-            transaction.markAsSuccessful()
             reporter.measure(BuildTime.STORE_BUILD_INFO) {
                 BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
 
