@@ -22,14 +22,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-public class KotlinStaticDeclarationIndex {
-    internal val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
-    internal val classMap: MutableMap<FqName, MutableSet<KtClassOrObject>> = mutableMapOf()
-    internal val typeAliasMap: MutableMap<FqName, MutableSet<KtTypeAlias>> = mutableMapOf()
-    internal val topLevelFunctionMap: MutableMap<FqName, MutableSet<KtNamedFunction>> = mutableMapOf()
-    internal val topLevelPropertyMap: MutableMap<FqName, MutableSet<KtProperty>> = mutableMapOf()
-}
-
 public class KotlinStaticDeclarationProvider internal constructor(
     private val index: KotlinStaticDeclarationIndex,
     private val scope: GlobalSearchScope,
