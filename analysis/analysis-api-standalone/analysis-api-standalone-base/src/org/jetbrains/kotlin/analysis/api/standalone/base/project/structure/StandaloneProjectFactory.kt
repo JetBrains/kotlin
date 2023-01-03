@@ -67,6 +67,9 @@ object StandaloneProjectFactory {
 
             registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
             registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+
+            // The Java language level must be configured before Java source files are parsed. See `findJvmRootsForJavaFiles`.
+            setupHighestLanguageLevel()
         }
     }
 
@@ -85,8 +88,6 @@ object StandaloneProjectFactory {
 
         project.registerService(ProjectStructureProvider::class.java, projectStructureProvider)
         initialiseVirtualFileFinderServices(environment, modules, sourceFiles, languageVersionSettings, jdkHome)
-
-        project.setupHighestLanguageLevel()
     }
 
     private fun initialiseVirtualFileFinderServices(
@@ -153,6 +154,10 @@ object StandaloneProjectFactory {
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
     }
 
+    /**
+     * Note that [findJvmRootsForJavaFiles] parses the given [files] because it needs access to each file's package name. To avoid parsing
+     * errors, [registerJavaPsiFacade] ensures that the Java language level is configured before [findJvmRootsForJavaFiles] is called.
+     */
     fun findJvmRootsForJavaFiles(files: List<PsiJavaFile>): List<PsiDirectory> {
         if (files.isEmpty()) return emptyList()
         val result = mutableSetOf<PsiDirectory>()

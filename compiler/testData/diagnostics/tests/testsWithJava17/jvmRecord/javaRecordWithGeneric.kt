@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// FIR_IDE_IGNORE
 
 // FILE: MyInterface.java
 public interface MyInterface<T> {
