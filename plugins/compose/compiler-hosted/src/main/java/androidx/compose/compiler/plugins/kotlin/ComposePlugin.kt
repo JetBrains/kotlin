@@ -244,7 +244,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                             " Compose Compiler requires Kotlin version" +
                             " $KOTLIN_VERSION_EXPECTATION but you appear to be using Kotlin" +
                             " version $version which is not known to be compatible.  Please" +
-                            " fix your configuration (or" +
+                            " consult the Compose-Kotlin compatibility map located at" +
+                            " https://developer.android.com" +
+                            "/jetpack/androidx/releases/compose-kotlin" +
+                            " to choose a compatible version pair (or" +
                             " `suppressKotlinVersionCompatibilityCheck` but don't say I" +
                             " didn't warn you!)."
                     )
