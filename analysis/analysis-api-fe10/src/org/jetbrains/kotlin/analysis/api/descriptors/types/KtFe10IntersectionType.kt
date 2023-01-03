@@ -24,7 +24,7 @@ internal class KtFe10IntersectionType(
     private val supertypes: Collection<KotlinType>,
     override val analysisContext: Fe10AnalysisContext
 ) : KtIntersectionType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
 
     override val conjuncts: List<KtType> by cached {
         val result = ArrayList<KtType>(supertypes.size)

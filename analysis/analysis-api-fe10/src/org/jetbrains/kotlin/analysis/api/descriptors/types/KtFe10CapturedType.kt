@@ -20,7 +20,7 @@ internal class KtFe10CapturedType(
     override val fe10Type: CapturedType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtCapturedType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }

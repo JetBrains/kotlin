@@ -34,7 +34,7 @@ internal class KtFe10FunctionalType(
     private val descriptor: FunctionClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtFunctionalType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }

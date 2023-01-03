@@ -33,7 +33,7 @@ internal class KtFe10TypeErrorType(
     }
 
 
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
 
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }

@@ -29,7 +29,7 @@ internal class KtFe10UsualClassType(
     private val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtUsualClassType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
 
     override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
         get() = withValidityAssertion {

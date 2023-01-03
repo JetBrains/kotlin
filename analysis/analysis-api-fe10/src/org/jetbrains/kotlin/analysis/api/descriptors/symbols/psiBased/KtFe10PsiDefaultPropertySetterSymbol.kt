@@ -103,7 +103,7 @@ internal class KtFe10PsiDefaultPropertySetterSymbol(
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
-            descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
+            descriptor?.let { KtFe10AnnotationsList.create(it.annotations, analysisContext) } ?: KtEmptyAnnotationsList(token)
         }
 
     context(KtAnalysisSession)
@@ -152,7 +152,7 @@ internal class KtFe10PsiDefaultPropertySetterSymbol(
 
         override val annotationsList: KtAnnotationsList
             get() = withValidityAssertion {
-                descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
+                descriptor?.let { KtFe10AnnotationsList.create(it.annotations, analysisContext) } ?: KtEmptyAnnotationsList(token)
             }
 
         context(KtAnalysisSession)
