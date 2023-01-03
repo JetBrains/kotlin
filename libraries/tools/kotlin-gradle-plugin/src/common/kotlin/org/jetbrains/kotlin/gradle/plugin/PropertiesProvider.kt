@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
@@ -395,6 +396,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     fun nativeCacheKindForTarget(target: KonanTarget): NativeCacheKind? =
         this.property("kotlin.native.cacheKind.${target.presetName}")?.let { NativeCacheKind.byCompilerArgument(it) }
+
+    /**
+     * Dependencies caching orchestration machinery.
+     */
+    val nativeCacheOrchestration: NativeCacheOrchestration?
+        get() = this.property("kotlin.native.cacheOrchestration")?.let { NativeCacheOrchestration.byCompilerArgument(it) }
 
     /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
