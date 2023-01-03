@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtSta
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinBuiltInsCache
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.StandaloneKotlinBuiltInsCache
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
@@ -42,5 +44,8 @@ object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
+        application.apply {
+            registerService(KotlinBuiltInsCache::class.java, StandaloneKotlinBuiltInsCache::class.java)
+        }
     }
 }

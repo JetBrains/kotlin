@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -93,6 +92,12 @@ public class StandaloneAnalysisAPISessionBuilder(
         )
     }
 
+    private fun registerApplicationServices() {
+        kotlinCoreProjectEnvironment.environment.application.apply {
+            registerService(KotlinBuiltInsCache::class.java, StandaloneKotlinBuiltInsCache::class.java)
+        }
+    }
+
     public fun <T : Any> registerApplicationService(serviceInterface: Class<T>, serviceImplementation: T) {
         kotlinCoreProjectEnvironment.environment.application.apply {
             registerService(serviceInterface, serviceImplementation)
@@ -122,7 +127,6 @@ public class StandaloneAnalysisAPISessionBuilder(
                 KotlinStaticDeclarationProviderFactory(
                     this,
                     ktFiles,
-                    kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
             )
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(ktFiles))
@@ -198,6 +202,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             modules,
             allSourceFiles,
         )
+        registerApplicationServices()
 
         val project = kotlinCoreProjectEnvironment.project
         val ktFiles = allSourceFiles.filterIsInstance<KtFile>()

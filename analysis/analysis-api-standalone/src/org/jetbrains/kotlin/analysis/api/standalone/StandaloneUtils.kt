@@ -40,25 +40,15 @@ import org.jetbrains.kotlin.psi.KtFile
  * Configure Application environment for Analysis API standalone mode.
  *
  * In particular, this will register:
- *   * [KotlinReferenceProvidersService]
- *   * [KotlinReferenceProviderContributor]
+ *   * [KotlinBuiltInsCache]
  */
 @Deprecated(
     "Use StandaloneAnalysisAPISessionBuilder.",
     ReplaceWith("buildStandaloneAnalysisAPISession { }")
 )
 public fun configureApplicationEnvironment(app: MockApplication) {
-    if (app.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
-        app.registerService(
-            KotlinReferenceProvidersService::class.java,
-            HLApiReferenceProviderService::class.java
-        )
-    }
-    if (app.getServiceIfCreated(KotlinReferenceProviderContributor::class.java) == null) {
-        app.registerService(
-            KotlinReferenceProviderContributor::class.java,
-            KotlinFirReferenceContributor::class.java
-        )
+    if (app.getServiceIfCreated(KotlinBuiltInsCache::class.java) == null) {
+        app.registerService(KotlinBuiltInsCache::class.java, StandaloneKotlinBuiltInsCache::class.java)
     }
 }
 

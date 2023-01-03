@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
+object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
 
     @OptIn(KtAnalysisApiInternals::class)
