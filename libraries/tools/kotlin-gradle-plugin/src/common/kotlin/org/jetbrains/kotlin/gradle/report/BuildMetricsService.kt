@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.ConcurrentHashMap
@@ -134,7 +135,7 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
             }
 
             //do not need to collect metrics if there aren't consumers for this data
-            val reportingSettings = reportingSettings(project.rootProject)
+            val reportingSettings = reportingSettings(project)
             if (reportingSettings.buildReportOutputs.isEmpty()) {
                 return null
             }

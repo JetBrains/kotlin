@@ -9,10 +9,12 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.io.File
 
-internal fun reportingSettings(rootProject: Project): ReportingSettings {
-    val properties = PropertiesProvider(rootProject)
+internal fun reportingSettings(project: Project): ReportingSettings {
+    val properties = PropertiesProvider(project)
     val buildReportOutputTypes = properties.buildReportOutputs.map {
         BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
             ?: throw IllegalStateException("Unknown output type: $it")
@@ -23,7 +25,12 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
             else -> BuildReportMode.VERBOSE
         }
     val fileReportSettings = if (buildReportOutputTypes.contains(BuildReportType.FILE)) {
-        val buildReportDir = properties.buildReportFileOutputDir ?: rootProject.buildDir.resolve("reports/kotlin-build")
+        val buildReportDir = properties.buildReportFileOutputDir ?: (if (isProjectIsolationEnabled(project.gradle)) {
+            // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
+            project.rootDir.resolve("build")
+        } else {
+            project.rootProject.buildDir
+        }).resolve("reports/kotlin-build")
         val includeMetricsInReport = properties.buildReportMetrics || buildReportMode == BuildReportMode.VERBOSE
         FileReportSettings(buildReportDir = buildReportDir, includeMetricsInReport = includeMetricsInReport)
     } else {
