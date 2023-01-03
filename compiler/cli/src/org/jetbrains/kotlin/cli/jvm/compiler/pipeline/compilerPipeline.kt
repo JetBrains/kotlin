@@ -79,7 +79,6 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
-import java.util.LinkedHashSet
 import kotlin.reflect.KFunction2
 
 private const val kotlinFileExtensionWithDot = ".${KotlinFileType.EXTENSION}"
@@ -104,14 +103,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
         CompilerMessageSeverity.STRONG_WARNING,
         "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
     )
-
-    if (compilerConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-        messageCollector.report(
-            CompilerMessageSeverity.ERROR,
-            "K2 compiler does not support multi-platform projects yet, so please remove -Xuse-k2 flag"
-        )
-        return false
-    }
 
     val outputs = mutableListOf<GenerationState>()
     var mainClassFqName: FqName? = null
@@ -342,7 +333,7 @@ fun compileModuleToAnalyzedFir(
     val platformProviderAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
         moduleConfiguration,
         projectEnvironment,
-        sourcesScope,
+        platformSourcesScope,
         previousStepsSymbolProviders,
         incrementalExcludesScope
     )?.also { (_, _, precompiledBinariesFileScope) ->
@@ -383,12 +374,13 @@ fun compileModuleToAnalyzedFir(
             registerExtendedCommonCheckers()
         }
     }
+    val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
     val commonSession = runIf(isMppEnabled) {
         FirJvmSessionFactory.createModuleBasedSession(
             commonModuleData!!,
             sessionProvider,
-            commonSourcesScope!!,
+            javaSourcesScope,
             projectEnvironment,
             commonProviderAndScopeForIncrementalCompilation,
             extensionRegistrars,
@@ -403,7 +395,7 @@ fun compileModuleToAnalyzedFir(
     val platformSession = FirJvmSessionFactory.createModuleBasedSession(
         platformModuleData,
         sessionProvider,
-        platformSourcesScope,
+        javaSourcesScope,
         projectEnvironment,
         platformProviderAndScopeForIncrementalCompilation,
         extensionRegistrars,
