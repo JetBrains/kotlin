@@ -34,7 +34,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsTestWithJsStdLib> {
-                model("diagnostics/testsWithJsStdLib")
+                model("diagnostics/testsWithJsStdLib", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {

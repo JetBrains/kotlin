@@ -74,7 +74,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
             listOf(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 // (Most) builtins should be taken from the dependencies in JS compilation, therefore builtins provider is the last one
                 // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
                 // NOTE: it requires precise filtering for true nuiltins, like Function*
