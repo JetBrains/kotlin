@@ -22,6 +22,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("conflictingJvmDeclarations.kt")
+    public void testConflictingJvmDeclarations() throws Exception {
+        runTest("testData/box/conflictingJvmDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("duplicatedSignature.kt")
     public void testDuplicatedSignature() throws Exception {
         runTest("testData/box/duplicatedSignature.kt");

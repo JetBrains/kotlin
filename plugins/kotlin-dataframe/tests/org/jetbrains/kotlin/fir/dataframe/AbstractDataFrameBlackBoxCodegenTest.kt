@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.classpathFromClassloader
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -22,21 +23,30 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import java.io.File
 
 open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWithTargetBackendForTestGeneratorMarker*/ {
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
+            frontend = FrontendKinds.FIR
+            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            dependencyKind = DependencyKind.Binary
             targetBackend = TargetBackend.JVM_IR
         }
         defaultDirectives {
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
         }
+        facadeStep(::FirFrontendFacade)
         commonFirWithPluginFrontendConfiguration()
         firHandlersStep {
             useHandlers(::NoFirCompilationErrorsHandler)
@@ -52,6 +62,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
         jvmArtifactsHandlersStep {
             useHandlers(::JvmBoxRunner)
         }
+        useConfigurators(::JvmEnvironmentConfigurator, ::CommonEnvironmentConfigurator)
         useCustomRuntimeClasspathProviders(::MyClasspathProvider)
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
     }
