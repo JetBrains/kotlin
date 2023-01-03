@@ -144,6 +144,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtEnumEntry> DEPRECATED_DECLARATION_OF_ENUM_ENTRY = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory2<PsiElement, PropertyDescriptor, ClassDescriptor> DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY = DiagnosticFactory2.create(WARNING);

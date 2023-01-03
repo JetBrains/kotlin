@@ -75,6 +75,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY, "Ambiguous access to companion''s property ''{0}'' in enum is deprecated. Please, add explicit Companion qualifier to the class name", NAME);
         MAP.put(DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY, "Ambiguous access to companion''s property 'entries' in enum is deprecated. Please, add explicit Companion qualifier to the class name");
         MAP.put(DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM, "Ambiguous access to property 'entries' from enum is deprecated. Please, add explicit qualifier to the call");
+        MAP.put(DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE, "Ambiguous access to property 'entries' is deprecated. Please, specify type of the referenced expression explicitly");
         MAP.put(DEPRECATED_DECLARATION_OF_ENUM_ENTRY, "Conflicting declarations: enum entry 'entries' and the property 'Enum.entries' (KT-48872). Please, rename the enum entry declaration");
         MAP.put(DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY, "Ambiguous access to property ''{0}'' is deprecated because similar enum entry ''{1}'' is available. Please add explicit named import or use fully qualified name", FQ_NAME, FQ_NAME);
 

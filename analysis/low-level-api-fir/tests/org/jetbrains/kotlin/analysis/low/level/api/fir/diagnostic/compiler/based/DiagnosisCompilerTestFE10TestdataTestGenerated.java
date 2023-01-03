@@ -10320,6 +10320,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("conflictingPropertyEntriesAndReference.kt")
+                public void testConflictingPropertyEntriesAndReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/conflictingPropertyEntriesAndReference.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesPropertyAsExtensionClash.kt")
                 public void testEntriesPropertyAsExtensionClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyAsExtensionClash.kt");

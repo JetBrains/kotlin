@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassValueReceiver
+import org.jetbrains.kotlin.types.TypeUtils
 
 object CustomEnumEntriesMigrationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -30,6 +33,8 @@ object CustomEnumEntriesMigrationCallChecker : CallChecker {
             context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY.on(reportOn))
         } else if (descriptor.isCallToExternalEntriesInsideEnum(reportOn)) {
             context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM.on(reportOn))
+        } else if (descriptor.isReferenceToMemberEntriesWithoutExpectedFunctionalType(reportOn, context)) {
+            context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE.on(reportOn))
         }
     }
 
@@ -52,5 +57,15 @@ object CustomEnumEntriesMigrationCallChecker : CallChecker {
         return !DescriptorUtils.isEnumClass(this.containingDeclaration) &&
                 contextExpression.parent !is KtDotQualifiedExpression &&
                 contextExpression.parentsWithSelf.any { it is KtClass && it.isEnum() }
+    }
+
+    private fun PropertyDescriptor.isReferenceToMemberEntriesWithoutExpectedFunctionalType(
+        expression: PsiElement,
+        context: CallCheckerContext
+    ): Boolean {
+        val expectedType = context.resolutionContext.expectedType
+        return expression.parent is KtCallableReferenceExpression &&
+                DescriptorUtils.isEnumClass(containingDeclaration) &&
+                (TypeUtils.noExpectedType(expectedType) || !expectedType.isFunctionType)
     }
 }
