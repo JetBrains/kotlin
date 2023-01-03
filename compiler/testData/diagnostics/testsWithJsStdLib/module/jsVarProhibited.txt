@@ -2,5 +2,7 @@ package
 
 package foo {
     @kotlin.js.JsModule(import = "bar") public external var bar: kotlin.Int
+    @foo.JsM /* = kotlin.js.JsModule */(import = "bar") public external var bar2: kotlin.Int
     @kotlin.js.JsNonModule public external var baz: kotlin.Int
+    public typealias JsM = kotlin.js.JsModule
 }
