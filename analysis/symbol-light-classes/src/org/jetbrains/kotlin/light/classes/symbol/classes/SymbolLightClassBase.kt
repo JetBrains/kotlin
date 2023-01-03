@@ -20,6 +20,8 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -137,7 +139,9 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     abstract override fun hashCode(): Int
 
-    override fun getContext(): PsiElement = parent
+    override fun getContext(): PsiElement = parent ?: buildErrorWithAttachment("parent must not be null") {
+        withClassEntry("class", this@SymbolLightClassBase)
+    }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)
 
