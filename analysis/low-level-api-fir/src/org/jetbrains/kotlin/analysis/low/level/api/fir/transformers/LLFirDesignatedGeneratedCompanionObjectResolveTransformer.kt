@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -20,7 +20,7 @@ internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
     private val transformer: FirCompanionGenerationTransformer = FirCompanionGenerationTransformer(session)
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.COMPANION_GENERATION) return
+        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.COMPANION_GENERATION) return
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.COMPANION_GENERATION) {
             designation.target.transform<FirDeclaration, Nothing?>(transformer, null)
@@ -30,7 +30,7 @@ internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
-        check(target.resolvePhase >= FirResolvePhase.COMPANION_GENERATION)
+    override fun checkIsResolved(target: FirElementWithResolveState) {
+        check(target.resolveState.resolvePhase >= FirResolvePhase.COMPANION_GENERATION)
     }
 }

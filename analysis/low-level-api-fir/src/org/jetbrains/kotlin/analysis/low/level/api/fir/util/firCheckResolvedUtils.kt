@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 internal inline fun checkTypeRefIsResolved(
     typeRef: FirTypeRef,
     typeRefName: String,
-    owner: FirElementWithResolvePhase,
+    owner: FirElementWithResolveState,
     acceptImplicitTypeRef: Boolean = false,
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
 ) {

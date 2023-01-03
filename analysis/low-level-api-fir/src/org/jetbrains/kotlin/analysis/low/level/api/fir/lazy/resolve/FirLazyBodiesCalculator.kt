@@ -9,7 +9,9 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
@@ -18,17 +20,18 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.psi.*
 
 internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(designation: FirDesignation) {
@@ -44,7 +47,7 @@ internal object FirLazyBodiesCalculator {
         firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
-    fun calculateAnnotations(firElement: FirElementWithResolvePhase) {
+    fun calculateAnnotations(firElement: FirElementWithResolveState) {
         calculateAnnotations(firElement, firElement.moduleData.session)
     }
 
@@ -55,7 +58,7 @@ internal object FirLazyBodiesCalculator {
         )
     }
 
-    fun calculateCompilerAnnotations(firElement: FirElementWithResolvePhase) {
+    fun calculateCompilerAnnotations(firElement: FirElementWithResolveState) {
         firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
             FirLazyAnnotationTransformer,
             FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)

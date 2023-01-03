@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.FirElementWithResolveStateBuilder
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -21,9 +22,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -43,11 +46,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 
 @FirBuilderDsl
-class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
+class FirErrorFunctionBuilder : FirElementWithResolveStateBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    lateinit var moduleData: FirModuleData
+    override lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
@@ -61,7 +64,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirErrorFunction {
         return FirErrorFunctionImpl(
             source,
-            resolvePhase,
+            resolveState,
             annotations.toMutableOrEmpty(),
             moduleData,
             origin,

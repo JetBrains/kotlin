@@ -120,7 +120,7 @@ object FirFakeOverrideGenerator {
             name = baseFunction.name
             status = baseFunction.status.copy(newVisibility, newModality, isExpect = isExpect)
             symbol = newSymbol
-            resolvePhase = baseFunction.resolvePhase
+            resolvePhase = baseFunction.resolveState.resolvePhase
 
             dispatchReceiverType = newDispatchReceiverType
             attributes = baseFunction.attributes.copy()
@@ -177,7 +177,7 @@ object FirFakeOverrideGenerator {
 
             dispatchReceiverType = newDispatchReceiverType
 
-            resolvePhase = baseConstructor.resolvePhase
+            resolvePhase = baseConstructor.resolveState.resolvePhase
             source = baseConstructor.source
             attributes = baseConstructor.attributes.copy()
             deprecationsProvider = baseConstructor.deprecationsProvider
@@ -361,7 +361,7 @@ object FirFakeOverrideGenerator {
             isLocal = false
             status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect)
 
-            resolvePhase = baseProperty.resolvePhase
+            resolvePhase = baseProperty.resolveState.resolvePhase
             dispatchReceiverType = newDispatchReceiverType
             attributes = baseProperty.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
@@ -502,11 +502,11 @@ object FirFakeOverrideGenerator {
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
 
             source = baseField.source
-            resolvePhase = baseField.resolvePhase
+            resolvePhase = baseField.resolveState.resolvePhase
             name = baseField.name
             isVar = baseField.isVar
             status = baseField.status
-            resolvePhase = baseField.resolvePhase
+            resolvePhase = baseField.resolveState.resolvePhase
             annotations += baseField.annotations
             attributes = baseField.attributes.copy()
             dispatchReceiverType = baseField.dispatchReceiverType

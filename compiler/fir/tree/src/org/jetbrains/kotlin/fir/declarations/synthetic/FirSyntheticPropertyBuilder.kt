@@ -26,7 +26,7 @@ class FirSyntheticPropertyBuilder {
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
         moduleData, name, isVar = delegateSetter != null, symbol = symbol,
         status = status ?: delegateGetter.status,
-        resolvePhase = delegateGetter.resolvePhase,
+        resolveState = delegateGetter.resolveState,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true, symbol),
         setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false, symbol) },
         deprecationsProvider = deprecationsProvider

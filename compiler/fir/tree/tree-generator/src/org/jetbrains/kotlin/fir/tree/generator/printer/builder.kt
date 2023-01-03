@@ -200,6 +200,21 @@ private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: B
             true
         }
     }
+    field.customGetterInBuilder?.let { getter ->
+        withIndent {
+            println("get() = $getter")
+        }
+    }
+    field.customSetterInBuilder?.let { setter ->
+        withIndent {
+            println("set(value) {")
+            withIndent {
+                println(setter)
+            }
+            println("}")
+        }
+    }
+
     return needNewLine to hasRequiredFields
 }
 
@@ -220,7 +235,7 @@ private fun SmartPrinter.printFieldListInBuilder(field: FieldList, builder: Buil
 }
 
 private fun SmartPrinter.printModifiers(builder: Builder, field: Field, fieldIsUseless: Boolean) {
-    if (builder is IntermediateBuilder) {
+    if (builder is IntermediateBuilder && (field as? FieldWithDefault)?.customGetterInBuilder == null && (field as? FieldWithDefault)?.customSetterInBuilder == null) {
         print("abstract ")
     }
     if (builder.isFromParent(field)) {

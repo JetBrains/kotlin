@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeAliasImpl
@@ -38,7 +40,7 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -53,7 +55,7 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder
     override fun build(): FirTypeAlias {
         return FirTypeAliasImpl(
             source,
-            resolvePhase,
+            resolveState,
             moduleData,
             origin,
             attributes,
@@ -84,7 +86,7 @@ inline fun buildTypeAliasCopy(original: FirTypeAlias, init: FirTypeAliasBuilder.
     }
     val copyBuilder = FirTypeAliasBuilder()
     copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.resolveState = original.resolveState
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

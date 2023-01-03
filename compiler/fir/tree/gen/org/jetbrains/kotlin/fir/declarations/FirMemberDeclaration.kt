@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
+    abstract override val resolveState: FirResolveState
     abstract override val annotations: List<FirAnnotation>
     abstract override val symbol: FirBasedSymbol<out FirDeclaration>
     abstract override val moduleData: FirModuleData
@@ -34,7 +34,7 @@ sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner 
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformMemberDeclaration(this, data) as E
 
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

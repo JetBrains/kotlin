@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirScriptImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -34,7 +36,7 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirScriptBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
@@ -48,7 +50,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirScript {
         return FirScriptImpl(
             source,
-            resolvePhase,
+            resolveState,
             annotations.toMutableOrEmpty(),
             moduleData,
             origin,

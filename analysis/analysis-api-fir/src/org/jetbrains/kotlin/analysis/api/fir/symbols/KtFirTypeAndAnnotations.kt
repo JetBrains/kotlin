@@ -22,7 +22,7 @@ internal fun FirClassSymbol<*>.superTypesList(builder: KtSymbolByFirBuilder): Li
 internal fun FirRegularClassSymbol.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtType> {
     val fir = fir
 
-    if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
+    if (fir.resolveState.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
         return fir.superTypeRefs.mapToKtType(builder)
     }
 

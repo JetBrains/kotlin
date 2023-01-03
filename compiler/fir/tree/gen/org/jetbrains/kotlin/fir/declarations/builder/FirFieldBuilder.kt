@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -46,7 +48,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -68,7 +70,7 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
     override fun build(): FirField {
         return FirFieldImpl(
             source,
-            resolvePhase,
+            resolveState,
             moduleData,
             origin,
             attributes,

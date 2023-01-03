@@ -270,8 +270,6 @@ private class ReturnTypeCalculatorWithJump(
     }
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
-        if (declaration.resolvePhase >= FirResolvePhase.CONTRACTS) return
-
         val canHaveContracts = when {
             declaration is FirProperty && !declaration.isLocal -> true
             declaration is FirSimpleFunction && !declaration.isLocal -> true

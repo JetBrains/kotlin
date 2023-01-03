@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -26,7 +26,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
     scopeSession: ScopeSession,
 ) : LLFirLazyTransformer, FirAnnotationArgumentsResolveTransformer(session, scopeSession, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
 
-    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolvePhase>) {
+    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolveState>) {
         if (!designationIterator.hasNext()) {
             FirLazyBodiesCalculator.calculateAnnotations(designation.target)
             designation.target.transform<FirDeclaration, ResolutionMode>(declarationsTransformer, ResolutionMode.ContextIndependent)
@@ -55,7 +55,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
+        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
         designation.target.checkPhase(FirResolvePhase.STATUS)
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
@@ -69,7 +69,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         if (target !is FirAnnotationContainer) return
         val unresolvedAnnotation = target.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
         check(unresolvedAnnotation == null) {

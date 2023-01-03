@@ -28,7 +28,7 @@ class FirDefaultPropertyBackingField(
 ) : FirBackingFieldImpl(
     source = null,
     moduleData = moduleData,
-    resolvePhase = FirResolvePhase.RAW_FIR,
+    resolveState = FirResolvePhase.RAW_FIR.asResolveState(),
     origin = FirDeclarationOrigin.Synthetic,
     attributes = FirDeclarationAttributes(),
     returnTypeRef = returnTypeRef,

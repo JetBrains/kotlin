@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirDeclaration : FirElementWithResolvePhase(), FirAnnotationContainer {
+sealed class FirDeclaration : FirElementWithResolveState(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
+    abstract override val resolveState: FirResolveState
     abstract override val annotations: List<FirAnnotation>
     abstract val symbol: FirBasedSymbol<out FirDeclaration>
     abstract override val moduleData: FirModuleData
@@ -34,7 +34,7 @@ sealed class FirDeclaration : FirElementWithResolvePhase(), FirAnnotationContain
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformDeclaration(this, data) as E
 
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

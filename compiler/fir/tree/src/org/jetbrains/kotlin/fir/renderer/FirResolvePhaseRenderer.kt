@@ -12,6 +12,6 @@ class FirResolvePhaseRenderer {
     private val printer get() = components.printer
 
     fun render(declaration: FirDeclaration) {
-        printer.print("[${declaration.resolvePhase}] ")
+        printer.print("[${declaration.resolveState}] ")
     }
 }

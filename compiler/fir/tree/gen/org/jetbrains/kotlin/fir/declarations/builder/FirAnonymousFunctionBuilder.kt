@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -98,8 +100,8 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     }
 
 
-    @Deprecated("Modification of 'resolvePhase' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
-    override var resolvePhase: FirResolvePhase
+    @Deprecated("Modification of 'resolveState' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override var resolveState: FirResolveState
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

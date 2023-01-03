@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -42,7 +42,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.TYPES) return
+        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.TYPES) return
         designation.target.checkPhase(FirResolvePhase.SUPER_TYPES)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
@@ -61,7 +61,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
         return super.transformTypeRef(typeRef, data)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(FirResolvePhase.TYPES)
         when (target) {
             is FirCallableDeclaration -> {

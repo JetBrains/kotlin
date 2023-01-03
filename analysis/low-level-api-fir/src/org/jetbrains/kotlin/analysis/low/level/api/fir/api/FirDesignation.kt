@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
-    target: FirElementWithResolvePhase,
+    target: FirElementWithResolveState,
     val firFile: FirFile
 ) : FirDesignation(
     path,
     target,
 ) {
-    fun toSequenceWithFile(includeTarget: Boolean): Sequence<FirElementWithResolvePhase> = sequence {
+    fun toSequenceWithFile(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
         yield(firFile)
         yieldAll(path)
         if (includeTarget) yield(target)
@@ -47,18 +47,18 @@ class FirDesignationWithFile(
 
 open class FirDesignation(
     val path: List<FirRegularClass>,
-    val target: FirElementWithResolvePhase,
+    val target: FirElementWithResolveState,
 ) {
-    val firstNonFileDeclaration: FirElementWithResolvePhase
+    val firstNonFileDeclaration: FirElementWithResolveState
         get() = path.firstOrNull() ?: target
 
-    fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolvePhase> = sequence {
+    fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
         yieldAll(path)
         if (includeTarget) yield(target)
     }
 }
 
-private fun collectDesignationPath(target: FirElementWithResolvePhase): List<FirRegularClass>? {
+private fun collectDesignationPath(target: FirElementWithResolveState): List<FirRegularClass>? {
     when (target) {
         is FirSimpleFunction,
         is FirProperty,
@@ -210,34 +210,34 @@ private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): Fir
     return FirElementFinder.findClassifierWithClassId(firFile, classId) as? FirRegularClass
 }
 
-fun FirElementWithResolvePhase.collectDesignation(firFile: FirFile): FirDesignationWithFile =
+fun FirElementWithResolveState.collectDesignation(firFile: FirFile): FirDesignationWithFile =
     tryCollectDesignation(firFile) ?: buildErrorWithAttachment("No designation of local declaration") {
         withFirEntry("firFile", firFile)
     }
 
-fun FirElementWithResolvePhase.collectDesignation(): FirDesignation =
+fun FirElementWithResolveState.collectDesignation(): FirDesignation =
     tryCollectDesignation()
         ?: buildErrorWithAttachment("No designation of local declaration") {
             withFirEntry("FirDeclaration", this@collectDesignation)
         }
 
-fun FirElementWithResolvePhase.collectDesignationWithFile(): FirDesignationWithFile =
+fun FirElementWithResolveState.collectDesignationWithFile(): FirDesignationWithFile =
     tryCollectDesignationWithFile()
         ?: buildErrorWithAttachment("No designation of local declaration") {
             withFirEntry("FirDeclaration", this@collectDesignationWithFile)
         }
 
-fun FirElementWithResolvePhase.tryCollectDesignation(firFile: FirFile): FirDesignationWithFile? =
+fun FirElementWithResolveState.tryCollectDesignation(firFile: FirFile): FirDesignationWithFile? =
     collectDesignationPath(this)?.let {
         FirDesignationWithFile(it, this, firFile)
     }
 
-fun FirElementWithResolvePhase.tryCollectDesignation(): FirDesignation? =
+fun FirElementWithResolveState.tryCollectDesignation(): FirDesignation? =
     collectDesignationPath(this)?.let {
         FirDesignation(it, this)
     }
 
-fun FirElementWithResolvePhase.tryCollectDesignationWithFile(): FirDesignationWithFile? {
+fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWithFile? {
     return when (this) {
         is FirDeclaration -> {
             val path = collectDesignationPath(this) ?: return null
@@ -248,6 +248,6 @@ fun FirElementWithResolvePhase.tryCollectDesignationWithFile(): FirDesignationWi
             val firFile = getContainingFile() ?: return null
             FirDesignationWithFile(path = emptyList(), this, firFile)
         }
-        else -> unexpectedElementError<FirElementWithResolvePhase>(this)
+        else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
 }

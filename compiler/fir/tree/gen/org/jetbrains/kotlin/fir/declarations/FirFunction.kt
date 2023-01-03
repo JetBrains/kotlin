@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirControlFlowGraphOwner, FirStatement {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
+    abstract override val resolveState: FirResolveState
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
@@ -50,7 +50,7 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformFunction(this, data) as E
 
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
