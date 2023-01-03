@@ -21,6 +21,7 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
+import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
@@ -192,6 +193,12 @@ constructor(
         CacheBuilder.Settings.createWithProject(project, binary, konanTarget, toolOptions, externalDependenciesArgs)
     }
 
+    private class CacheSettings(val orchestration: NativeCacheOrchestration, val kind: NativeCacheKind, val gradleUserHomeDir: File)
+
+    private val cacheSettings by lazy {
+        CacheSettings(project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget), project.gradle.gradleUserHomeDir)
+    }
+
     override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
 
     override fun setupCompilerArgs(
@@ -297,11 +304,23 @@ constructor(
         )
 
         val executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
-        val cacheArgs = CacheBuilder(
-            executionContext = executionContext,
-            settings = cacheBuilderSettings,
-            konanPropertiesService = konanPropertiesService.get()
-        ).buildCompilerArgs(resolvedDependencyGraph)
+        val additionalOptions = mutableListOf<String>().apply {
+            addAll(externalDependenciesArgs)
+            when (cacheSettings.orchestration) {
+                NativeCacheOrchestration.Compiler -> {
+                    if (cacheSettings.kind != NativeCacheKind.NONE && konanPropertiesService.get().cacheWorksFor(konanTarget))
+                        add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
+                }
+                NativeCacheOrchestration.Gradle -> {
+                    val cacheBuilder = CacheBuilder(
+                        executionContext = executionContext,
+                        settings = cacheBuilderSettings,
+                        konanPropertiesService = konanPropertiesService.get()
+                    )
+                    addAll(cacheBuilder.buildCompilerArgs(resolvedDependencyGraph))
+                }
+            }
+        }
 
         @Suppress("DEPRECATION") val enableEndorsedLibs = this.enableEndorsedLibs // TODO: remove before 1.9.0, see KT-54098
 
@@ -324,7 +343,7 @@ constructor(
             isStaticFramework,
             exportLibraries.files.filterKlibsPassedToCompiler(),
             sources.asFileTree.files.toList(),
-            externalDependenciesArgs + cacheArgs
+            additionalOptions
         )
 
         KotlinNativeCompilerRunner(

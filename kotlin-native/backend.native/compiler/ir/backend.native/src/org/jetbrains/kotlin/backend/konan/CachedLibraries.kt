@@ -236,6 +236,7 @@ class CachedLibraries(
         fun computeVersionedCacheDirectory(baseCacheDirectory: File, library: KotlinLibrary, allLibraries: List<KotlinLibrary>): File {
             val dependencies = getAllDependencies(library, allLibraries)
             val messageDigest = MessageDigest.getInstance("SHA-256")
+            messageDigest.update(compilerMarker)
             messageDigest.digestLibrary(library)
             dependencies.sortedBy { it.uniqueName }.forEach { messageDigest.digestLibrary(it) }
 
@@ -252,5 +253,8 @@ class CachedLibraries(
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"
+
+        // TODO: Remove after dropping Gradle cache orchestration.
+        private val compilerMarker = "K/N orchestration".encodeToByteArray()
     }
 }

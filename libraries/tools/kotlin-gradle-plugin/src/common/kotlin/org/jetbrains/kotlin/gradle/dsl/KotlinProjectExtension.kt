@@ -409,3 +409,14 @@ enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputK
             NativeCacheKind.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }
+
+// This is a temporary parameter for the translation period.
+enum class NativeCacheOrchestration {
+    Gradle,
+    Compiler;
+
+    companion object {
+        fun byCompilerArgument(argument: String): NativeCacheOrchestration? =
+            NativeCacheOrchestration.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+    }
+}
