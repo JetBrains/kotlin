@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
@@ -48,7 +49,7 @@ open class AbstractFirJsTest(
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with (builder) {
+        with(builder) {
             defaultDirectives {
                 val runIc = getBoolean("kotlin.js.ir.icMode")
                 if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
@@ -57,16 +58,17 @@ open class AbstractFirJsTest(
                 if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+                DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
             }
 
-        firHandlersStep {
-            useHandlers(
-                ::FirDumpHandler,
-                ::FirCfgDumpHandler,
-                ::FirCfgConsistencyHandler,
-                ::FirResolvedTypesVerifier,
-            )
-        }
+            firHandlersStep {
+                useHandlers(
+                    ::FirDumpHandler,
+                    ::FirCfgDumpHandler,
+                    ::FirCfgConsistencyHandler,
+                    ::FirResolvedTypesVerifier,
+                )
+            }
 
             configureJsArtifactsHandlersStep {
                 useHandlers(

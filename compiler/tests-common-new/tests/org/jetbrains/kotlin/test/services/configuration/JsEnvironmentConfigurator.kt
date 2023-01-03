@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.DependencyDescription
-import org.jetbrains.kotlin.test.model.DependencyRelation
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
@@ -164,14 +161,21 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
             val visited = mutableSetOf<TestModule>()
-            fun getRecursive(module: TestModule, kind: DependencyRelation) {
-                val dependencies = if (kind == DependencyRelation.FriendDependency) module.friendDependencies else module.regularDependencies
-                dependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
-                    if (it !in visited) {
-                        visited += it
-                        getRecursive(it, kind)
-                    }
+            fun getRecursive(module: TestModule, relation: DependencyRelation) {
+                val dependencies = if (relation == DependencyRelation.FriendDependency) {
+                    module.friendDependencies
+                } else {
+                    module.regularDependencies
                 }
+                dependencies
+                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
+                    .filter { it.kind != DependencyKind.Source }
+                    .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
+                        if (it !in visited) {
+                            visited += it
+                            getRecursive(it, relation)
+                        }
+                    }
             }
             getRecursive(module, kind)
             return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }

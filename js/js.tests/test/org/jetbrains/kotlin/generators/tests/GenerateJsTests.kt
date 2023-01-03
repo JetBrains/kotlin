@@ -24,6 +24,8 @@ fun main(args: Array<String>) {
         "compileKotlinAgainstKotlin",
     )
 
+    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+
     // TODO: repair these tests
     //generateTestDataForReservedWords()
 
@@ -171,6 +173,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIrJsLocalVariableTest> {
                 model("debug/localVariables")
+            }
+
+            testClass<AbstractFirJsDiagnosticTest>(suiteTestClassName = "FirJsOldFrontendDiagnosticsTestGenerated") {
+                model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractFir2IrJsTextTest>(
