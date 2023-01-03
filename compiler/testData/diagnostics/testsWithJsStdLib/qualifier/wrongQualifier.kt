@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 @file:JsQualifier(<!WRONG_JS_QUALIFIER!>""<!>)
 
@@ -15,3 +16,9 @@
 
 // FILE: f.kt
 @file:JsQualifier("a.bc.d23._$")
+
+// FILE: g.kt
+typealias JsQ = JsQualifier
+
+// FILE: h.kt
+@file:JsQ(<!WRONG_JS_QUALIFIER!>value = "%^&"<!>)

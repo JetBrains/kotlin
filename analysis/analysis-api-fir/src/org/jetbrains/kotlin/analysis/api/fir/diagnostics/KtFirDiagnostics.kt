@@ -703,6 +703,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeFromTypesPhase: KtType
     }
 
+    abstract class WrongJsQualifier : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongJsQualifier::class
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName

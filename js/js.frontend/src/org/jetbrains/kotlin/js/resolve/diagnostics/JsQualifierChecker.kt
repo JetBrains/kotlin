@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.validateQualifier
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
@@ -42,15 +43,6 @@ object JsQualifierChecker : AdditionalAnnotationChecker {
                 val argumentPsi = entry.valueArgumentList!!.arguments[0]
                 trace.report(ErrorsJs.WRONG_JS_QUALIFIER.on(argumentPsi))
             }
-        }
-    }
-
-    private fun validateQualifier(qualifier: String): Boolean {
-        val parts = qualifier.split('.')
-        if (parts.isEmpty()) return false
-
-        return parts.all { part ->
-            part.isNotEmpty() && part[0].isJavaIdentifierStart() && part.drop(1).all(Char::isJavaIdentifierPart)
         }
     }
 }
