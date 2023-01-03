@@ -2031,6 +2031,23 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExplicitTypeArgumentsInPropertyAccess::class
     }
 
+    abstract class LateinitIntrinsicCallOnNonLiteral : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnNonLiteral::class
+    }
+
+    abstract class LateinitIntrinsicCallOnNonLateinit : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnNonLateinit::class
+    }
+
+    abstract class LateinitIntrinsicCallInInlineFunction : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallInInlineFunction::class
+    }
+
+    abstract class LateinitIntrinsicCallOnNonAccessibleProperty : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnNonAccessibleProperty::class
+        abstract val declaration: KtSymbol
+    }
+
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }

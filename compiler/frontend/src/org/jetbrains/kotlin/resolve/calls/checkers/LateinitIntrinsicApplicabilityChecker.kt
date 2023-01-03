@@ -17,30 +17,28 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 class LateinitIntrinsicApplicabilityChecker(val isWarningInPre19: Boolean) : CallChecker {
-    private val ACCESSIBLE_LATEINIT_PROPERTY_LITERAL = FqName("kotlin.internal.AccessibleLateinitPropertyLiteral")
-
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.resultingDescriptor
 
         // An optimization
         if (descriptor.name.asString() != "isInitialized") return
 
-        if (descriptor.extensionReceiverParameter?.annotations?.hasAnnotation(ACCESSIBLE_LATEINIT_PROPERTY_LITERAL) != true) return
+        if (descriptor.extensionReceiverParameter?.annotations?.hasAnnotation(FqNames.accessibleLateinitPropertyLiteral) != true) return
 
         val expression = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.let(KtPsiUtil::safeDeparenthesize)
         fun <T> chooseDiagnostic(ifWarning: T, ifError: T) =

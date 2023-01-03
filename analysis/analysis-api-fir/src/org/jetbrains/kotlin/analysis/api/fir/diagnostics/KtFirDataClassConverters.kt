@@ -2877,6 +2877,31 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL) { firDiagnostic ->
+        LateinitIntrinsicCallOnNonLiteralImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT) { firDiagnostic ->
+        LateinitIntrinsicCallOnNonLateinitImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION) { firDiagnostic ->
+        LateinitIntrinsicCallInInlineFunctionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY) { firDiagnostic ->
+        LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_DECLARATION_WITH_BODY) { firDiagnostic ->
         ExpectedDeclarationWithBodyImpl(
             firDiagnostic as KtPsiDiagnostic,

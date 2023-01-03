@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // On JVM, isInitialized on a property from another file is forbidden because lateinit-ness is not included in the an ABI of a property.
 // IGNORE_BACKEND_K1: JVM, JVM_IR
+// In K2, isInitialized on a property from another file is forbidden for all backends.
+// IGNORE_BACKEND_K2: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
 
 // FILE: A.kt

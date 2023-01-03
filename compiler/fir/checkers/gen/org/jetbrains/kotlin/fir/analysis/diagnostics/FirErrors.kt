@@ -557,6 +557,10 @@ object FirErrors {
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING by warning0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS by error0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS by error0<KtExpression>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL by error0<PsiElement>()
+    val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT by error0<PsiElement>()
+    val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION by error0<PsiElement>()
+    val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error1<PsiElement, FirBasedSymbol<*>>()
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

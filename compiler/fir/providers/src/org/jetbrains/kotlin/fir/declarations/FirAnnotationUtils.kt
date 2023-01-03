@@ -113,6 +113,10 @@ fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId, session: FirSession): Bool
     return resolvedAnnotationsWithClassIds.hasAnnotation(classId, session)
 }
 
+fun FirAnnotationContainer.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
+    return annotations.hasAnnotation(classId, session)
+}
+
 fun List<FirAnnotation>.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return this.any { it.toAnnotationClassId(session) == classId }
 }

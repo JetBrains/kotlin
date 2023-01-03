@@ -2446,6 +2446,27 @@ internal class ExplicitTypeArgumentsInPropertyAccessImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ExplicitTypeArgumentsInPropertyAccess(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class LateinitIntrinsicCallOnNonLiteralImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.LateinitIntrinsicCallOnNonLiteral(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class LateinitIntrinsicCallOnNonLateinitImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.LateinitIntrinsicCallOnNonLateinit(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class LateinitIntrinsicCallInInlineFunctionImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.LateinitIntrinsicCallInInlineFunction(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
+    override val declaration: KtSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.LateinitIntrinsicCallOnNonAccessibleProperty(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ExpectedDeclarationWithBodyImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

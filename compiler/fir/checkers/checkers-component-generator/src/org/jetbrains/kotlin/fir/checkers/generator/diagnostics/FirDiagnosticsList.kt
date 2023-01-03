@@ -1018,6 +1018,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING by warning<KtProperty>(PositioningStrategy.TYPE_PARAMETERS_LIST)
         val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS by error<KtProperty>(PositioningStrategy.TYPE_PARAMETERS_LIST)
         val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS by error<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+
+        val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error<PsiElement>() {
+            parameter<Symbol>("declaration")
+        }
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

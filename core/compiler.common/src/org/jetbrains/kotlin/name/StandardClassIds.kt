@@ -171,6 +171,8 @@ object StandardClassIds {
 
         val WasExperimental = "WasExperimental".baseId()
 
+        val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
+
         object Java {
             val Deprecated = "Deprecated".javaLangId()
             val Repeatable = "Repeatable".javaAnnotationId()
@@ -226,8 +228,8 @@ object StandardClassIds {
             StandardClassIds.MapEntry to StandardClassIds.MutableMapEntry
         )
 
-         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
-             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
+        val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
+            baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
 }
 

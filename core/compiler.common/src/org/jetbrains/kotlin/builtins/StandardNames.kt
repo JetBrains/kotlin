@@ -74,6 +74,7 @@ object StandardNames {
     @JvmField
     val TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"))
 
+    @JvmField
     val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
 
     @JvmField
@@ -137,6 +138,7 @@ object StandardNames {
         @JvmField val mustBeDocumented: FqName = annotationName("MustBeDocumented")
         @JvmField val unsafeVariance: FqName = fqName("UnsafeVariance")
         @JvmField val publishedApi: FqName = fqName("PublishedApi")
+        @JvmField val accessibleLateinitPropertyLiteral: FqName = internalName("AccessibleLateinitPropertyLiteral")
 
         @JvmField val iterator: FqName = collectionsFqName("Iterator")
         @JvmField val iterable: FqName = collectionsFqName("Iterable")
@@ -227,6 +229,10 @@ object StandardNames {
 
         private fun annotationName(simpleName: String): FqName {
             return ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
+        }
+
+        private fun internalName(simpleName: String): FqName {
+            return KOTLIN_INTERNAL_FQ_NAME.child(Name.identifier(simpleName))
         }
     }
 
