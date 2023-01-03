@@ -22757,6 +22757,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("EqualsOperatorOverrideHierarchies.kt")
+            public void testEqualsOperatorOverrideHierarchies() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/EqualsOperatorOverrideHierarchies.kt");
+            }
+
+            @Test
             @TestMetadata("incForAssignmentSmartCast.kt")
             public void testIncForAssignmentSmartCast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/incForAssignmentSmartCast.kt");
