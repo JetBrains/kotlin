@@ -59,7 +59,8 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     param: P,
     completion: Continuation<T>
 ): Any? =
-    // For tail-call lambdas we create a wrapper continuation
+    // For tail-call lambdas we create a wrapper continuation,
+    // otherwise, they have no root continuation, and thus, we will be unable to [intercept] them.
     if (this !is Continuation<*>) {
         val intermediate: suspend R.() -> T = {
             this@startCoroutineUninterceptedOrReturn.invoke(this, param) // Tail-call suspend lambda.
