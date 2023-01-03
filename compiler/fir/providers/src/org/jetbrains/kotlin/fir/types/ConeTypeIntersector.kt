@@ -37,16 +37,6 @@ object ConeTypeIntersector {
             return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound)
         }
 
-        /**
-         * resultNullability. Value description:
-         * ACCEPT_NULL means that all types marked nullable
-         *
-         * NOT_NULL means that there is one type which is subtype of Any => all types can be made definitely not null,
-         * making types definitely not null (not just not null) makes sense when we have intersection of type parameters like {T!! & S}
-         *
-         * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
-         * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
-         */
         val isResultNotNullable = with(context) {
             inputTypes.any { !it.isNullableType() }
         }
