@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_MODULE_PROHIBITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -22,6 +24,11 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NESTED_JS_MODULE_PROHIBITED,
             "@JsModule and @JsNonModule can't appear on here since the file is already marked by either @JsModule or @JsNonModule"
+        )
+        map.put(
+            WRONG_MULTIPLE_INHERITANCE,
+            "Can''t apply multiple inheritance here, since it''s impossible to generate bridge for system function {0}",
+            FirDiagnosticRenderers.SYMBOL
         )
 
         map.checkMissingMessages(FirJsErrors)
