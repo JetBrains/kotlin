@@ -9,8 +9,10 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.junit.Test
 
 /**
@@ -133,6 +135,8 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             }
         }
 
+        @OptIn(DeprecatedTargetAPI::class)
+        @SuspiciousTargetAPIUsage
         private fun WithSourceSetCommonizerDependencies.assertP2SourceSetDependencies() {
             listOf("nativeMain", "nativeTest").forEach { sourceSetName ->
                 getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
@@ -177,6 +181,8 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             }
         }
 
+        @OptIn(DeprecatedTargetAPI::class)
+        @SuspiciousTargetAPIUsage
         private fun WithSourceSetCommonizerDependencies.assertP3SourceSetDependencies() {
             /*
             windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.

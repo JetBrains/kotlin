@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.executors
 
-import org.jetbrains.kotlin.konan.target.Configurables
-import org.jetbrains.kotlin.konan.target.ConfigurablesWithEmulator
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 
 /**
@@ -15,6 +13,8 @@ import java.io.File
  *
  * @param configurables [Configurables] for emulated target
  */
+@OptIn(DeprecatedTargetAPI::class)
+@SuspiciousTargetAPIUsage
 class EmulatorExecutor(
         private val configurables: ConfigurablesWithEmulator,
 ) : Executor {

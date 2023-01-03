@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -187,6 +184,7 @@ internal constructor(
         ARM64("__ARM64_ARCH_8__"),
     }
 
+    @OptIn(DeprecatedTargetAPI::class)
     private val KonanTarget.appleArchitecture: AppleArchitecture get() =
         when (architecture) {
             Architecture.X64 -> AppleArchitecture.X64
@@ -255,6 +253,7 @@ internal constructor(
         return archToFramework.values.firstOrNull()?.target?.family
     }
 
+    @OptIn(DeprecatedTargetAPI::class)
     private val FrameworkDescriptor.plistPlatform: String
         get() = when (target) {
             // remove `is ...` after Gradle Configuration Cache deserialization for Objects of a Sealed Class is fixed
@@ -446,6 +445,7 @@ internal constructor(
     }
 
     companion object {
+        @OptIn(DeprecatedTargetAPI::class)
         private val supportedTargets = listOf(
             IOS_ARM32, IOS_ARM64, IOS_X64,
             WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_DEVICE_ARM64,

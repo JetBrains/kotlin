@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.CInteropHints
@@ -86,6 +87,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
         return testPathFull.resolve("contents.gold.txt")
     }
 
+    @OptIn(DeprecatedTargetAPI::class)
     private fun getBuiltinsGoldenFile(testPathFull: File): File {
         val goldenFilePart = when (targets.testTarget) {
             KonanTarget.ANDROID_ARM32 -> "ARM32"

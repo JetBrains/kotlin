@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.WASM32
 import java.io.File
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 
 abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
                                                        type: Class<T>,
@@ -92,6 +94,8 @@ open class KonanProgram(name: String,
         get() = project.konanBinBaseDir
 }
 
+@OptIn(DeprecatedTargetAPI::class)
+@SuspiciousTargetAPIUsage
 open class KonanDynamic(name: String,
                         project: ProjectInternal,
                         targets: Iterable<String> = project.konanExtension.targets)

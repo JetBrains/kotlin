@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformIntWidth
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidthIndex
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -31,6 +33,8 @@ class PlatformBitWidthTest {
     }
 
     @Test
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     fun `test shared int`() {
         assertEquals(
             PlatformIntWidth.INT,
@@ -47,6 +51,8 @@ class PlatformBitWidthTest {
     }
 
     @Test
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     fun `test int and long`() {
         assertEquals(
             PlatformIntWidth.MIXED,
@@ -55,6 +61,8 @@ class PlatformBitWidthTest {
     }
 
     @Test
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     fun `test int and unknown`() {
         assertEquals(
             null,
@@ -81,6 +89,8 @@ class PlatformBitWidthTest {
     }
 
     @Test
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     fun `test the good, the bad and the ugly`() {
         assertEquals(
             null,

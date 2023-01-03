@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 
 internal object AppleSdk {
     fun defineNativeTargets(platform: String, archs: List<String>): List<KonanTarget> {
@@ -14,6 +16,8 @@ internal object AppleSdk {
 
         val targets: MutableSet<KonanTarget> = mutableSetOf()
 
+        @OptIn(DeprecatedTargetAPI::class)
+        @SuspiciousTargetAPIUsage
         when {
             platform.startsWith("iphoneos") -> {
                 targets.addAll(archs.map { arch ->

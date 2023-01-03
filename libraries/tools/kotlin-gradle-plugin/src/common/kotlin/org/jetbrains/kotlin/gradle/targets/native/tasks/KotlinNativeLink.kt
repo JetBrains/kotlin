@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.io.File
@@ -247,6 +248,7 @@ constructor(
     )
 
     @get:Internal
+    @OptIn(DeprecatedTargetAPI::class)
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
             val prefix = outputKind.prefix(konanTarget)

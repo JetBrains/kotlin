@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
@@ -53,6 +54,7 @@ enum class NativeOutputKind(
         "shared",
         description = "a dynamic library"
     ) {
+        @OptIn(DeprecatedTargetAPI::class)
         override fun availableFor(target: KonanTarget) = target != KonanTarget.WASM32
     },
     STATIC(
@@ -60,6 +62,7 @@ enum class NativeOutputKind(
         "static",
         description = "a static library"
     ) {
+        @OptIn(DeprecatedTargetAPI::class)
         override fun availableFor(target: KonanTarget) = target != KonanTarget.WASM32
     },
     FRAMEWORK(

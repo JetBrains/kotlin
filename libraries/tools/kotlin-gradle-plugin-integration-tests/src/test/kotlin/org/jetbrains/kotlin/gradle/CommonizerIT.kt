@@ -11,8 +11,10 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -437,6 +439,8 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     private fun `test multiple cinterops with test source sets and compilations`(testSourceSetsDependingOnMain: Boolean) {
         with(Project("commonizeMultipleCInteropsWithTests", minLogLevel = INFO)) {
 
@@ -642,6 +646,8 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     @Test
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     fun `test KT-48138 commonizing c-interops when nativeTest and nativeMain have different targets`() {
         with(Project("commonize-kt-48138-nativeMain-nativeTest-different-targets")) {
             reportSourceSetCommonizerDependencies(this) {

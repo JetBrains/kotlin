@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Presets
 import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Targets
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.konan.target.*
 
 internal class KotlinPresetEntry(
     val presetName: String,
@@ -55,6 +53,8 @@ private val nativeTargetsWithSimulatorTests =
         KonanTarget.IOS_X64,
         KonanTarget.IOS_SIMULATOR_ARM64,
 
+        @OptIn(DeprecatedTargetAPI::class)
+        @SuspiciousTargetAPIUsage
         KonanTarget.WATCHOS_X86,
         KonanTarget.WATCHOS_X64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,

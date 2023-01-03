@@ -46,6 +46,7 @@ open class HostManager(
         return targets[resolveAlias(name)] ?: throw TargetSupportException("Unknown target name: $name")
     }
 
+    @OptIn(DeprecatedTargetAPI::class)
     private val commonTargets = setOf(
         LINUX_X64,
         LINUX_ARM32_HFP,
@@ -61,6 +62,7 @@ open class HostManager(
         WASM32
     )
 
+    @OptIn(DeprecatedTargetAPI::class)
     private val appleTargets = setOf(
         MACOS_X64,
         MACOS_ARM64,

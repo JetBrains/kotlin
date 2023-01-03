@@ -153,6 +153,7 @@ fun isSimulatorTarget(project: Project, target: KonanTarget): Boolean =
 /**
  * Check that [target] is an Apple device.
  */
+@OptIn(DeprecatedTargetAPI::class)
 fun supportsRunningTestsOnDevice(target: KonanTarget): Boolean =
     target == KonanTarget.IOS_ARM32 || target == KonanTarget.IOS_ARM64
 

@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.platformName
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -103,6 +100,7 @@ internal class InfoPListBuilder(
             )
         }
 
+        @OptIn(DeprecatedTargetAPI::class)
         if (target == KonanTarget.IOS_ARM32) {
             contents.append("""
                 |    <key>UIRequiredDeviceCapabilities</key>

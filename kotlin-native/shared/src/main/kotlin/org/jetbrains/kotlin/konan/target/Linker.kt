@@ -359,6 +359,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
+    @OptIn(DeprecatedTargetAPI::class)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,

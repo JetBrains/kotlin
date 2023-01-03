@@ -548,6 +548,7 @@ fun KonanTestExecutable.configureXcodeBuild() {
                     writeText(text)
                 }
 
+        @OptIn(DeprecatedTargetAPI::class)
         val sdk = when (project.testTarget) {
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> Xcode.findCurrent().iphoneosSdk
             else -> error("Unsupported target: ${project.testTarget}")

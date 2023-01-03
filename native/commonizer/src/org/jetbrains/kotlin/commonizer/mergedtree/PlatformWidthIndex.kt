@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 enum class PlatformIntWidth {
@@ -18,6 +20,8 @@ enum class PlatformIntWidth {
 }
 
 object PlatformWidthIndex {
+    @OptIn(DeprecatedTargetAPI::class)
+    @SuspiciousTargetAPIUsage
     private val widthByLeafTargets = mapOf(
         LeafCommonizerTarget(KonanTarget.IOS_ARM32) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.IOS_ARM64) to PlatformIntWidth.LONG,

@@ -41,8 +41,10 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
@@ -148,6 +150,9 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
             val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MACOS_ARM64, MINGW_X64)
+
+            @OptIn(DeprecatedTargetAPI::class)
+            @SuspiciousTargetAPIUsage
             val nativeTargetsWithSimulatorTests =
                 setOf(IOS_X64, IOS_SIMULATOR_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64)
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.closure
@@ -146,6 +147,7 @@ private class KotlinTargetHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_ARM64
     }
 
+    @DeprecatedTargetAPI
     override fun anyIosArm32() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM32
     }
@@ -170,6 +172,7 @@ private class KotlinTargetHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_ARM64
     }
 
+    @DeprecatedTargetAPI
     override fun anyWatchosX86() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_X86
     }
@@ -202,6 +205,7 @@ private class KotlinTargetHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_X64
     }
 
+    @DeprecatedTargetAPI
     override fun anyMingwX86() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MINGW_X86
     }
@@ -222,18 +226,22 @@ private class KotlinTargetHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM64
     }
 
+    @DeprecatedTargetAPI
     override fun anyLinuxArm32Hfp() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM32_HFP
     }
 
+    @DeprecatedTargetAPI
     override fun anyLinuxMips32() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPS32
     }
 
+    @DeprecatedTargetAPI
     override fun anyLinuxMipsel32() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPSEL32
     }
 
+    @DeprecatedTargetAPI
     override fun anyWasm32() = addTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WASM32
     }

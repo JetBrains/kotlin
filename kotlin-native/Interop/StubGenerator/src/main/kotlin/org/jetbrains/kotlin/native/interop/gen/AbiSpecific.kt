@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.native.interop.indexer.*
 
@@ -62,6 +63,7 @@ class DarwinX86AbiInfo : ObjCAbiInfo {
 }
 
 class DarwinArm32AbiInfo(private val target: KonanTarget) : ObjCAbiInfo {
+    @OptIn(DeprecatedTargetAPI::class)
     override fun shouldUseStret(returnType: Type): Boolean = when (target) {
         KonanTarget.IOS_ARM32 -> when (returnType) {
             is RecordType -> !returnType.isIntegerLikeType()

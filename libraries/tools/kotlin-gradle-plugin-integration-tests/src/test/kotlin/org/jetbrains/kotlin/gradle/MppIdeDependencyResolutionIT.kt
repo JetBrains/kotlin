@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -56,6 +58,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         if (!dependency.isCommonized) fail("$dependency is not marked as 'isCommonized'")
                     }
 
+                    @OptIn(DeprecatedTargetAPI::class)
+                    @SuspiciousTargetAPIUsage
                     val nativeMainTarget = CommonizerTarget(
                         LINUX_X64, LINUX_ARM64, MACOS_X64, MACOS_ARM64, IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MINGW_X64, MINGW_X86
                     )

@@ -25,6 +25,7 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
         import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
         import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+        import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
         import org.jetbrains.kotlin.konan.target.KonanTarget
         import javax.inject.Inject
     """.trimIndent()
@@ -54,14 +55,15 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         "val EmbedBitcodeMode = BitcodeEmbeddingModeDsl()"
     ).joinToString("\n").indented(4)
 
-    val konanTargetConstants = KonanTarget.predefinedTargets.values.joinToString("\n") {
-        val nameParts = it.name.split("_")
+    val konanTargetConstants = KonanTarget.predefinedTargets.values.joinToString("\n") { target ->
+        val nameParts = target.name.split("_")
         val name = nameParts.drop(1).joinToString(
             separator = "",
             prefix = nameParts.first(),
             transform = String::capitalizeUS
         )
-        "val $name = KonanTarget.${it.name.uppercase(Locale.US)}"
+        val deprecation = "@DeprecatedTargetAPI\n".takeIf { KonanTarget.deprecatedTargets.contains(target) } ?: ""
+        "${deprecation}val $name = KonanTarget.${target.name.uppercase(Locale.US)}"
     }.indented(4)
 
     val code = listOf(

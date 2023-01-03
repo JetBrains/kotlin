@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -161,6 +162,7 @@ abstract class GradleKpmAndroidNativeArm64Variant @Inject constructor(
     }
 }
 
+@DeprecatedTargetAPI
 abstract class GradleKpmIosArm32Variant @Inject constructor(
     containingModule: GradleKpmModule,
     fragmentName: String,
@@ -1088,6 +1090,7 @@ internal val allKpmNativeVariantConstructors = listOf(
     GradleKpmWasm32Variant.constructor
 )
 
+@OptIn(DeprecatedTargetAPI::class)
 internal fun kpmNativeVariantClass(konanTarget: KonanTarget): Class<out GradleKpmNativeVariantInternal>? = when (konanTarget) {
     KonanTarget.ANDROID_X64 -> GradleKpmAndroidNativeX64Variant::class.java
     KonanTarget.ANDROID_X86 -> GradleKpmAndroidNativeX86Variant::class.java

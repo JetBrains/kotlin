@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
@@ -236,6 +237,7 @@ abstract class AbstractKotlinNativeCompile<
         get() = project.nativeUseEmbeddableCompilerJar
 
     @get:Internal
+    @OptIn(DeprecatedTargetAPI::class)
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
             val prefix = outputKind.prefix(konanTarget)

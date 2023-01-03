@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import kotlin.properties.ReadOnlyProperty
@@ -457,6 +458,7 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
     val Kotlin_processFieldInMark by lazyRtFunction
     val Kotlin_processEmptyObjectInMark by lazyRtFunction
 
+    @OptIn(DeprecatedTargetAPI::class)
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32,
@@ -563,6 +565,7 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
         global
     }
 
+    @OptIn(DeprecatedTargetAPI::class)
     private val personalityFunctionName = when (target) {
         KonanTarget.IOS_ARM32 -> "__gxx_personality_sj0"
         KonanTarget.MINGW_X64 -> "__gxx_personality_seh0"

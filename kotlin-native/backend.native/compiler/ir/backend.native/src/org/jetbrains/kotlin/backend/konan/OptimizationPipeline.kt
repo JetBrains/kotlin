@@ -127,6 +127,7 @@ internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState
         generationState.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
         else -> LlvmOptimizationLevel.DEFAULT
     }
+    @OptIn(DeprecatedTargetAPI::class)
     val sizeLevel: LlvmSizeLevel = when {
         // We try to optimize code as much as possible on embedded targets.
         target is KonanTarget.ZEPHYR ||

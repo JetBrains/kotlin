@@ -138,6 +138,7 @@ sealed class ClangArgs(
         }
     }.flatten()
 
+    @OptIn(DeprecatedTargetAPI::class)
     private val specificClangArgs: List<String> = when (target) {
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard"

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -89,6 +90,7 @@ private fun String.toBuildDependenciesTaskName(pod: CocoapodsDependency): String
     this
 )
 
+@OptIn(DeprecatedTargetAPI::class)
 private val KotlinNativeTarget.toValidSDK: String
     get() = when (konanTarget) {
         IOS_X64, IOS_SIMULATOR_ARM64 -> "iphonesimulator"

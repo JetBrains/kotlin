@@ -2,14 +2,17 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:OptIn(DeprecatedTargetAPI::class)
+@file:SuspiciousTargetAPIUsage
 package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.PlatformIntegerCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 
 class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommonizationTest() {
     fun `test signed ints without optimistic commonization`() {
