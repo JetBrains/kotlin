@@ -305,7 +305,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             val serviceClass = BuildReportsService::class.java
             val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-            val reportingSettings = reportingSettings(project.rootProject)
+            val reportingSettings = reportingSettings(project)
             if (reportingSettings.buildReportOutputs.isEmpty()) {
                 return null //no need to collect data
             }

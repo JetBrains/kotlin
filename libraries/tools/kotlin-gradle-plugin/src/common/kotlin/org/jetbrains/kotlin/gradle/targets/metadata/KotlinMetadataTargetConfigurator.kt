@@ -34,14 +34,14 @@ internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadata
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(rootProject)) {
+    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(this)) {
         mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
                 hierarchicalStructureSupport ||
                 enableGranularSourceSetsMetadata == true
     }
 
 internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(rootProject)) {
+    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(this)) {
         when {
             !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
             else -> true
