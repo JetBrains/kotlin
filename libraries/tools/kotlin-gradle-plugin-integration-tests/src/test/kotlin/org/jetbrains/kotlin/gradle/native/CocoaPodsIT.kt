@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
@@ -820,6 +821,7 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun testSyncFrameworkMultipleArchitecturesWithCustomName() {
         with(project) {
             val frameworkName = "customSdk"

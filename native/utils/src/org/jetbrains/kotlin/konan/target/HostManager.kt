@@ -211,6 +211,7 @@ open class HostManager(
 
         val knownTargetTemplates = listOf("zephyr")
 
+        @SuspiciousTargetAPIUsage
         private val targetAliasResolutions = mapOf(
             "linux" to "linux_x64",
             "macbook" to "macos_x64",

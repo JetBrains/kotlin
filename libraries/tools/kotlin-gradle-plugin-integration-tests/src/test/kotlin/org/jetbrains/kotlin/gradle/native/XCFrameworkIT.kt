@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
 import org.junit.BeforeClass
@@ -31,6 +32,7 @@ class XCFrameworkIT : BaseGradleIT() {
     )
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun `assemble XCFramework for all available ios and watchos targets`() {
         with(Project("appleXCFramework")) {
             build("assembleSharedDebugXCFramework") {

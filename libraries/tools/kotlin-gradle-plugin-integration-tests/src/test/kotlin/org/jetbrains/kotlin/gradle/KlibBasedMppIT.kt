@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import java.io.File
 import java.util.*
 import java.util.zip.ZipFile
@@ -224,6 +225,7 @@ class KlibBasedMppIT : BaseGradleIT() {
         // Then check that in the host-specific modules, there's a metadata artifact that contains the host-specific source set but not the
         // common source sets:
 
+        @SuspiciousTargetAPIUsage
         val hostSpecificTargets = when {
             HostManager.hostIsMac -> listOf("iosArm64", "iosX64")
             HostManager.hostIsLinux -> listOf("linuxMips32", "linuxMipsel32")

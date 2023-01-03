@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
 import org.apache.commons.lang.StringUtils.splitByCharacterTypeCamelCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 
 internal val KonanTarget.compressedName: String
     get() = buildString {
@@ -34,6 +32,8 @@ internal val Family.compressedName: Char
         Family.ZEPHYR -> 'z'
     }
 
+@OptIn(DeprecatedTargetAPI::class)
+@SuspiciousTargetAPIUsage
 internal val Architecture.compressedName: String
     get() = when (this) {
         Architecture.X64 -> "x64"

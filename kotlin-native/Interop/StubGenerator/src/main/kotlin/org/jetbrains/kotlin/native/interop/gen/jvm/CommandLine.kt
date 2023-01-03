@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.tool
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
@@ -138,6 +139,7 @@ open class CInteropArguments(argParser: ArgParser =
             description = "Don't hide exceptions with user-friendly ones").default(false)
 }
 
+@SuspiciousTargetAPIUsage
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",
         prefixStyle = ArgParser.OptionPrefixStyle.JVM)): CommonInteropArguments(argParser) {
     enum class TargetType {

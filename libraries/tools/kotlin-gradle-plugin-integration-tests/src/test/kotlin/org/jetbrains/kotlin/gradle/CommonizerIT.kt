@@ -752,6 +752,7 @@ private object CommonizableTargets {
         else -> fail("Unsupported os: ${os.name}")
     }
 
+    @SuspiciousTargetAPIUsage
     val targetB = when {
         os.isMacOsX -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = false)
         os.isLinux -> TargetSubstitution("linuxArm64", isCompilable = true, isExecutable = false)

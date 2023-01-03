@@ -2,7 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:SuspiciousTargetAPIUsage
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.utils.Xcode
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.konan.target.*
 import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test

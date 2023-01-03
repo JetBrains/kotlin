@@ -2,11 +2,12 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:SuspiciousTargetAPIUsage
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.junit.Test
 
 class CommonizerHierarchicalIT : BaseGradleIT() {

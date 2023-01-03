@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.tasks.FrameworkLayout
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
@@ -46,6 +47,7 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun smokeWatchos() {
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
 
@@ -75,6 +77,7 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun smokeMacos() {
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
 
@@ -206,6 +209,7 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun testDifferentTypes() {
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
             gradleBuildScript().modify {
@@ -222,6 +226,7 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun testAllStatic() {
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
             gradleBuildScript().modify {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTas
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerGroup
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import kotlin.test.*
 
 class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
@@ -271,6 +272,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         `hierarchical project`(testSourceSetsDependOnMainSourceSets = false)
     }
 
+    @SuspiciousTargetAPIUsage
     private fun `hierarchical project`(testSourceSetsDependOnMainSourceSets: Boolean) {
         /* Define targets */
         val linux = kotlin.linuxX64("linux")

@@ -4,6 +4,8 @@
  */
 
 @file:Suppress("FunctionName")
+@file:SuspiciousTargetAPIUsage
+@file:OptIn(DeprecatedTargetAPI::class)
 
 package org.jetbrains.kotlin.gradle
 
@@ -13,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.naturalKotlinTargetHierarchy
+import org.jetbrains.kotlin.konan.target.DeprecatedTargetAPI
+import org.jetbrains.kotlin.konan.target.SuspiciousTargetAPIUsage
 import kotlin.test.*
 
 class KotlinTargetHierarchyDslTest {
@@ -23,6 +27,7 @@ class KotlinTargetHierarchyDslTest {
 
 
     @Test
+    @SuspiciousTargetAPIUsage
     fun `test - hierarchy default - targets from all families`() {
         kotlin.apply {
             targetHierarchy.default()

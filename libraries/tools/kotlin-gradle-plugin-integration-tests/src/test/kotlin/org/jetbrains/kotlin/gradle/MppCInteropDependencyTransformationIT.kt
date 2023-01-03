@@ -315,6 +315,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
             }
 
+            @SuspiciousTargetAPIUsage
             val optionsWithAdditionalTargetEnabled = options.withFreeCommandLineArgument("-Pp2.enableLinuxArm32Hfp")
 
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = optionsWithAdditionalTargetEnabled) {
