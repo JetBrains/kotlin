@@ -1023,7 +1023,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             Flag.Class::IS_EXTERNAL,
             Flag.Class::IS_EXPECT,
             Flag.Class::IS_VALUE,
-            Flag.Class::IS_FUN
+            Flag.Class::IS_FUN,
+            Flag.Class::HAS_ENUM_ENTRIES,
         )
 
         private val TYPE_ALIAS_FLAGS: Array<KProperty0<Flag>> = arrayOf(

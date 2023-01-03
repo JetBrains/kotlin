@@ -32,7 +32,7 @@ public class Flags {
     public static final BooleanFlagField IS_EXPECT_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
     public static final BooleanFlagField IS_VALUE_CLASS = FlagField.booleanAfter(IS_EXPECT_CLASS);
     public static final BooleanFlagField IS_FUN_INTERFACE = FlagField.booleanAfter(IS_VALUE_CLASS);
-    private static final BooleanFlagField HAS_ENUM_ENTRIES = FlagField.booleanAfter(IS_FUN_INTERFACE);
+    public static final BooleanFlagField HAS_ENUM_ENTRIES = FlagField.booleanAfter(IS_FUN_INTERFACE);
 
     // Constructors
 

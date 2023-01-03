@@ -1,0 +1,16 @@
+// UsualClass.class
+// ------------------------------------------
+public final class UsualClass : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // signature: foo()V
+  public final fun foo(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

@@ -1,0 +1,19 @@
+// MyEnum.class
+// ------------------------------------------
+public final enum class MyEnum : kotlin/Enum<MyEnum> {
+
+  // signature: <init>(Ljava/lang/String;I)V
+  private constructor()
+
+  ONE,
+
+  TWO,
+
+  // module name: test-module
+
+  // has Enum.entries
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

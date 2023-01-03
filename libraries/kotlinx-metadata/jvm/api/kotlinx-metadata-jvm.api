@@ -23,6 +23,7 @@ public final class kotlinx/metadata/Flag {
 }
 
 public final class kotlinx/metadata/Flag$Class {
+	public static final field HAS_ENUM_ENTRIES Lkotlinx/metadata/Flag;
 	public static final field INSTANCE Lkotlinx/metadata/Flag$Class;
 	public static final field IS_ANNOTATION_CLASS Lkotlinx/metadata/Flag;
 	public static final field IS_CLASS Lkotlinx/metadata/Flag;

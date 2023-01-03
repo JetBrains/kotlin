@@ -44,6 +44,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/Contracts.kt");
     }
 
+    @TestMetadata("EnumEntries.kt")
+    public void testEnumEntries() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/EnumEntries.kt");
+    }
+
     @TestMetadata("FunInterface.kt")
     public void testFunInterface() throws Exception {
         runTest("libraries/tools/kotlinp/testData/FunInterface.kt");
@@ -72,6 +77,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("NestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("libraries/tools/kotlinp/testData/NestedClasses.kt");
+    }
+
+    @TestMetadata("NotEnumWithEnumEntriesEnabled.kt")
+    public void testNotEnumWithEnumEntriesEnabled() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/NotEnumWithEnumEntriesEnabled.kt");
     }
 
     @TestMetadata("OptionalAnnotation.kt")

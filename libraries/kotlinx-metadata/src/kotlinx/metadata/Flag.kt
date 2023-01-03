@@ -224,6 +224,13 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          */
         @JvmField
         val IS_FUN = Flag(F.IS_FUN_INTERFACE)
+
+        /**
+         * Signifies that the corresponding enum class has ".entries" property in bytecode.
+         * Always `false` for not enum classes.
+         */
+        @JvmField
+        val HAS_ENUM_ENTRIES = Flag(F.HAS_ENUM_ENTRIES)
     }
 
     /**
