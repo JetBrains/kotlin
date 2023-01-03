@@ -95,7 +95,7 @@ internal class KtFe10PsiDefaultPropertyGetterSymbol(
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
-            descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
+            descriptor?.let { KtFe10AnnotationsList.create(it.annotations, analysisContext) } ?: KtEmptyAnnotationsList(token)
         }
 
     context(KtAnalysisSession)

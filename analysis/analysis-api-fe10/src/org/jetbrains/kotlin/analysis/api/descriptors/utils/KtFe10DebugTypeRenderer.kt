@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getKtNamedAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
@@ -35,10 +36,12 @@ internal class KtFe10DebugTypeRenderer {
         const val ERROR_TYPE_TEXT = "ERROR_TYPE"
     }
 
+    context(Fe10AnalysisContext)
     fun render(type: KotlinType, consumer: PrettyPrinter) {
         consumer.renderType(type)
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderType(type: KotlinType) {
         renderTypeAnnotationsDebug(type)
         when (val unwrappedType = type.unwrap()) {
@@ -72,6 +75,7 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderTypeAnnotationsDebug(type: KotlinType) {
         val annotations = type.annotations
             .filter { it.annotationClass?.classId != StandardClassIds.Annotations.ExtensionFunctionType }
@@ -79,8 +83,9 @@ internal class KtFe10DebugTypeRenderer {
         printCollectionIfNotEmpty(annotations, separator = " ", postfix = "  ") { renderTypeAnnotationDebug(it) }
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
-        val namedValues = annotation.getKtNamedAnnotationArguments()
+        val namedValues = annotation.getKtNamedAnnotationArguments(this@Fe10AnalysisContext)
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues)
     }
 
@@ -114,12 +119,14 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderFlexibleType(type: FlexibleType) {
         val lowerBoundText = prettyPrint { renderType(type.lowerBound) }
         val upperBoundText = prettyPrint { renderType(type.upperBound) }
         append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderDefinitelyNotNullType(type: DefinitelyNotNullType) {
         renderType(type.original)
         append(" & Any")
@@ -129,12 +136,14 @@ internal class KtFe10DebugTypeRenderer {
         append(ERROR_TYPE_TEXT)
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderCapturedType(type: CapturedType) {
         append("CapturedType(")
         renderTypeProjection(type.typeProjection)
         append(")")
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderCapturedType(type: NewCapturedType) {
         append("CapturedType(")
         renderTypeProjection(type.constructor.projection)
@@ -146,11 +155,13 @@ internal class KtFe10DebugTypeRenderer {
         append("TypeVariable(").append(name.asString()).append(")")
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderIntersectionType(typeConstructor: IntersectionTypeConstructor) {
         append("it")
         printCollection(typeConstructor.supertypes, separator = " & ", prefix = "(", postfix = ")") { renderType(it) }
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderFunctionType(type: SimpleType) {
         if (type.isSuspendFunctionType || type.isKSuspendFunctionType) {
             append("suspend ")
@@ -181,12 +192,14 @@ internal class KtFe10DebugTypeRenderer {
         append(descriptor.name.render())
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderOrdinaryType(type: SimpleType) {
         val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
         renderTypeSegment(nestedType.root)
         printCollectionIfNotEmpty(nestedType.nested, separator = ".", prefix = ".", postfix = "") { renderTypeSegment(it) }
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderTypeSegment(typeSegment: PossiblyInnerType) {
         val classifier = typeSegment.classifierDescriptor
 
@@ -200,6 +213,7 @@ internal class KtFe10DebugTypeRenderer {
         printCollection(fqName.pathSegments(), separator = ".") { append(it.render()) }
     }
 
+    context(Fe10AnalysisContext)
     private fun PrettyPrinter.renderTypeProjection(projection: TypeProjection) {
         if (projection.isStarProjection) {
             append("*")

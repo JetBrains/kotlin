@@ -27,7 +27,7 @@ internal interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
         get() = withValidityAssertion {
             KtFe10AnnotationsList.create(
                 fe10Type.annotations,
-                token,
+                analysisContext,
                 ignoreAnnotations = setOf(
                     StandardClassIds.Annotations.ExtensionFunctionType,
                     StandardClassIds.Annotations.ContextFunctionTypeParams,
@@ -39,7 +39,7 @@ internal interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
         get() = analysisContext.token
 }
 
-internal fun KotlinType.asStringForDebugging(): String {
+internal fun KotlinType.asStringForDebugging(analysisContext: Fe10AnalysisContext): String {
     val renderer = KtFe10DebugTypeRenderer()
-    return prettyPrint { renderer.render(this@asStringForDebugging, this) }
+    return prettyPrint { with(analysisContext) { renderer.render(this@asStringForDebugging, this@prettyPrint) } }
 }

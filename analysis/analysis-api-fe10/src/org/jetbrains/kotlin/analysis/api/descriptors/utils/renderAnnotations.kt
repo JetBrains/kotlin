@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationValue
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -20,6 +21,7 @@ internal fun PrettyPrinter.renderFe10Annotations(
     annotations: Annotations,
     isSingleLineAnnotations: Boolean,
     renderAnnotationWithShortNames: Boolean,
+    analysisContext: Fe10AnalysisContext,
     predicate: (ClassId) -> Boolean = { true }
 ) {
     val separator = if (isSingleLineAnnotations) " " else "\n"
@@ -39,7 +41,7 @@ internal fun PrettyPrinter.renderFe10Annotations(
             printCollectionIfNotEmpty(valueArguments, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
                 append(name.render())
                 append(" = ")
-                append(value.toKtAnnotationValue().renderAsSourceCode())
+                append(value.toKtAnnotationValue(analysisContext).renderAsSourceCode())
             }
 
             append(separator)

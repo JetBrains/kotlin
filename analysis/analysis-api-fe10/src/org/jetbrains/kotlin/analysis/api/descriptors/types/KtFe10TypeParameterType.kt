@@ -23,7 +23,7 @@ internal class KtFe10TypeParameterType(
     private val parameter: TypeParameterDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtTypeParameterType(), KtFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging() }
+    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
 
     override val name: Name
         get() = withValidityAssertion { parameter.name }
