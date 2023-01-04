@@ -18,7 +18,7 @@ class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVaria
 
 class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintPosition<FirElement>(argument)
 
-class ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothing?>(null)
+object ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothing?>(null)
 
 class ConeExplicitTypeParameterConstraintPosition(
     typeArgument: FirTypeProjection,
