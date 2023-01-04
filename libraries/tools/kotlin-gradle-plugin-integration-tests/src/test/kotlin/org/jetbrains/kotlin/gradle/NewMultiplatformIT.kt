@@ -1991,18 +1991,15 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    @Ignore
     fun testWasmNodeTest() = testWasmTest("nodejs", "Node", useBinaryen = false)
 
     @Test
-    @Ignore
     fun testWasmWithBinaryenNodeTest() = testWasmTest("nodejs", "Node", useBinaryen = true)
 
     @Test
     fun testWasmD8Test() = testWasmTest("d8", "D8", useBinaryen = false)
 
     @Test
-    @Ignore
     fun testWasmWithBinaryenD8Test() = testWasmTest("d8", "D8", useBinaryen = true)
 
     @Test

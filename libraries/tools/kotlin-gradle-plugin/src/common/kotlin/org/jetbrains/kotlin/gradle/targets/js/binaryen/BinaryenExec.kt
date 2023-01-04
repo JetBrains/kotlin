@@ -32,6 +32,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         "--enable-gc",
         "--enable-reference-types",
         "--enable-exception-handling",
+        "--enable-bulk-memory",  // For array initialization from data sections
         "--hybrid",
         "-O3",
         "--inline-functions-with-loops",
