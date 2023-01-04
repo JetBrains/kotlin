@@ -20,7 +20,7 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar())
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(null))
         IrGenerationExtension.registerExtension(DataFrameIrBodyFiller())
     }
 }
