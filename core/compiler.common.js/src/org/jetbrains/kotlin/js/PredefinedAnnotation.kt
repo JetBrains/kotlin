@@ -16,16 +16,18 @@
 
 package org.jetbrains.kotlin.js
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 
-enum class PredefinedAnnotation(fqName: String) {
-    LIBRARY("kotlin.js.library"),
-    NATIVE("kotlin.js.native"),
-    NATIVE_INVOKE("kotlin.js.nativeInvoke"),
-    NATIVE_GETTER("kotlin.js.nativeGetter"),
-    NATIVE_SETTER("kotlin.js.nativeSetter");
+enum class PredefinedAnnotation(val classId: ClassId) {
+    LIBRARY(JsStandardClassIds.Annotations.JsLibrary),
+    NATIVE(JsStandardClassIds.Annotations.JsNative),
+    NATIVE_INVOKE(JsStandardClassIds.Annotations.JsNativeInvoke),
+    NATIVE_GETTER(JsStandardClassIds.Annotations.JsNativeGetter),
+    NATIVE_SETTER(JsStandardClassIds.Annotations.JsNativeSetter);
 
-    val fqName: FqName = FqName(fqName)
+    val fqName: FqName = classId.asSingleFqName()
 
     companion object {
         val WITH_CUSTOM_NAME = setOf(LIBRARY, NATIVE)

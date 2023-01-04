@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 private val FirBasedSymbol<*>.isExternal
@@ -46,6 +48,10 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
 }
 
+fun FirBasedSymbol<*>.isEffectivelyExternalMember(session: FirSession): Boolean {
+    return fir is FirMemberDeclaration && isEffectivelyExternal(session)
+}
+
 fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
 
 fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
@@ -66,10 +72,33 @@ fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
     }
 
     if (this is FirPropertyAccessorSymbol) {
-        return propertySymbol.hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsNative, session)
+        val property = propertySymbol
+        return property.hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsNative, session)
+    }
+
+    return false
+}
+
+private val FirBasedSymbol<*>.isExpect
+    get() = when (this) {
+        is FirCallableSymbol<*> -> isExpect
+        is FirClassSymbol<*> -> isExpect
+        else -> false
+    }
+
+fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
+    if (fir is FirMemberDeclaration && isExpect) return true
+    if (isEffectivelyExternalMember(session)) return true
+
+    for (annotation in PredefinedAnnotation.values()) {
+        if (hasAnnotationOrInsideAnnotatedClass(annotation.classId, session)) {
+            return true
+        }
     }
 
     return false
 }
 
 fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext) = isNativeObject(context.session)
+
+fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)
