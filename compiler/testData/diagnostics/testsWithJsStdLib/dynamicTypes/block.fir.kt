@@ -2,8 +2,8 @@
 
 fun test() {
     dynamic {
-        foo()
-        bar.baz(0)
+        <!DEBUG_INFO_DYNAMIC!>foo<!>()
+        <!DEBUG_INFO_DYNAMIC!>bar<!>.<!DEBUG_INFO_DYNAMIC!>baz<!>(0)
     }
 }
 

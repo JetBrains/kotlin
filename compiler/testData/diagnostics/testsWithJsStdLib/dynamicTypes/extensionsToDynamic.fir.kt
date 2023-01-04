@@ -1,34 +1,34 @@
 // !MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
-    d.onDynamic()
-    d.onNullableDynamic()
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    d.<!DEBUG_INFO_DYNAMIC!>onNullableDynamic<!>()
 
-    d.valOnDynamic
-    d.valOnDynamic = 1
+    d.<!DEBUG_INFO_DYNAMIC!>valOnDynamic<!>
+    d.<!DEBUG_INFO_DYNAMIC!>valOnDynamic<!> = 1
 
-    d.varOnDynamic
-    d.varOnDynamic = 1
+    d.<!DEBUG_INFO_DYNAMIC!>varOnDynamic<!>
+    d.<!DEBUG_INFO_DYNAMIC!>varOnDynamic<!> = 1
 }
 
 fun dynamic.extTest() {
-    onDynamic()
-    onNullableDynamic()
+    <!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    <!DEBUG_INFO_DYNAMIC!>onNullableDynamic<!>()
 
-    valOnDynamic
-    valOnDynamic = 1
+    <!DEBUG_INFO_DYNAMIC!>valOnDynamic<!>
+    <!DEBUG_INFO_DYNAMIC!>valOnDynamic<!> = 1
 
-    varOnDynamic
-    varOnDynamic = 1
+    <!DEBUG_INFO_DYNAMIC!>varOnDynamic<!>
+    <!DEBUG_INFO_DYNAMIC!>varOnDynamic<!> = 1
 
-    this.onDynamic()
-    this.onNullableDynamic()
+    this.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    this.<!DEBUG_INFO_DYNAMIC!>onNullableDynamic<!>()
 
-    this.valOnDynamic
-    this.valOnDynamic = 1
+    this.<!DEBUG_INFO_DYNAMIC!>valOnDynamic<!>
+    this.<!DEBUG_INFO_DYNAMIC!>valOnDynamic<!> = 1
 
-    this.varOnDynamic
-    this.varOnDynamic = 1
+    this.<!DEBUG_INFO_DYNAMIC!>varOnDynamic<!>
+    this.<!DEBUG_INFO_DYNAMIC!>varOnDynamic<!> = 1
 
 }
 
@@ -44,11 +44,11 @@ var dynamic.varOnDynamic: Int
 
 class ForMemberExtensions {
     fun test(d: dynamic) {
-        d.memberExtensionVar
-        d.memberExtensionVar = 1
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVar<!>
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVar<!> = 1
 
-        d.memberExtensionVal
-        d.memberExtensionVal = 1
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVal<!>
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVal<!> = 1
     }
 
     val dynamic.memberExtensionVal: Int get() = 1

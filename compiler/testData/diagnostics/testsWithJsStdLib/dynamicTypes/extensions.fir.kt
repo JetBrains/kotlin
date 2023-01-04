@@ -2,18 +2,18 @@
 // !MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
-    d.onAny()
-    d?.onAny()
+    d.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
+    d?.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
     run {
-        d!!.onAny()
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
     }
 
-    d.onAny(1)
+    d.<!DEBUG_INFO_DYNAMIC!>onAny<!>(1)
 
-    d.onNullableAny()
-    d.onString()
+    d.<!DEBUG_INFO_DYNAMIC!>onNullableAny<!>()
+    d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
-    d.onDynamic()
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
     d?.<!UNRESOLVED_REFERENCE!>onDynamic<!>()
 
     (d as String).onString()
@@ -29,8 +29,8 @@ fun dynamic.onDynamic() {}
 
 class C {
     fun test(d: dynamic) {
-        d.member()
-        d.memberExtension()
+        d.<!DEBUG_INFO_DYNAMIC!>member<!>()
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtension<!>()
     }
 
     fun member() {}
