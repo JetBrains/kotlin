@@ -19,6 +19,14 @@ sealed class KtSourceElementKind
 
 object KtRealSourceElementKind : KtSourceElementKind()
 
+/**
+ * When an element has a kind of KtFakeSourceElementKind it means that relevant FIR element was created synthetically.
+ * And while this definition might look a bit vaguely because, e.g. RawFirBuilder might create a lot of "synthetic" things
+ * and not all of them we want to treat as "fake" (like when's created from if's), there is a criteria that ultimately means
+ * that one need to use KtFakeSourceElementKind, and it's the situation when several FIR elements might share the same source element.
+ *
+ * And vice versa, KtRealSourceElementKind means that there's a single FIR node in the resulting tree that has the same source element.
+ */
 sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for some fir expression implicit return typeRef is generated
     // some of them are: break, continue, return, throw, string concat,
