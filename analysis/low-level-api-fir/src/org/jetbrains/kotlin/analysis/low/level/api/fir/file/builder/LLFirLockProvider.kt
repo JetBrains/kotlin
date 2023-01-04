@@ -24,7 +24,6 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private val globalLock = ReentrantLock()
 
     private val locksForImports = ContainerUtil.createConcurrentSoftMap<FirFile, ReentrantLock>()
-    private val locks = ContainerUtil.createConcurrentSoftMap<FirElementWithResolveState, ReentrantLock>()
 
     private val superTypesLock = ReentrantLock()
     private val statusLock = ReentrantLock()
@@ -43,14 +42,18 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         phase: FirResolvePhase,
         action: () -> Unit
     ) {
-        val lock = when (phase) {
+        when (phase) {
             FirResolvePhase.RAW_FIR -> error("Non-lazy phase $phase")
             FirResolvePhase.IMPORTS -> error("Non-lazy phase $phase")
             FirResolvePhase.SEALED_CLASS_INHERITORS -> error("Non-lazy phase $phase")
-            FirResolvePhase.SUPER_TYPES -> superTypesLock
-            FirResolvePhase.STATUS -> statusLock
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> bodyResolveLock
-            FirResolvePhase.BODY_RESOLVE -> bodyResolveLock
+
+            FirResolvePhase.SUPER_TYPES,
+            FirResolvePhase.STATUS,
+            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+            FirResolvePhase.BODY_RESOLVE -> {
+                withGlobalPhaseLock(phase, action)
+            }
+
             FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
             FirResolvePhase.COMPANION_GENERATION,
             FirResolvePhase.TYPES,
@@ -58,9 +61,30 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
             FirResolvePhase.CONTRACTS,
             FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING,
             FirResolvePhase.EXPECT_ACTUAL_MATCHING -> {
-                val lockOn = designation.firstNonFileDeclaration
-                locks.getOrPut(lockOn) { ReentrantLock() }
+                withDeclarationPhaseLock(designation, phase, action)
             }
+        }
+    }
+
+    private inline fun withDeclarationPhaseLock(
+        designation: FirDesignationWithFile,
+        phase: FirResolvePhase,
+        action: () -> Unit
+    ) {
+        val lockOn = designation.firstNonFileDeclaration
+        lockOn.withCriticalSection(phase, action)
+    }
+
+    private inline fun withGlobalPhaseLock(
+        phase: FirResolvePhase,
+        action: () -> Unit
+    ) {
+        val lock = when (phase) {
+            FirResolvePhase.SUPER_TYPES -> superTypesLock
+            FirResolvePhase.STATUS -> statusLock
+            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> bodyResolveLock
+            FirResolvePhase.BODY_RESOLVE -> bodyResolveLock
+            else -> error("The phase $phase does not require the global lock")
         }
         checker.lazyResolveToPhaseInside(phase) {
             lock.lockWithPCECheck(DEFAULT_LOCKING_INTERVAL) { action() }
@@ -76,10 +100,11 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         }
     }
 
-    private inline fun FirElementWithResolveState.withCricicalSection(
+    private inline fun FirElementWithResolveState.withCriticalSection(
         phase: FirResolvePhase,
         action: () -> Unit
     ) {
+        val fieldUpdater = getFieldUpdater(this)
         while (true) {
             checkCanceled()
             val stateSnapshot = resolveState
@@ -88,7 +113,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                 is FirInProcessOfResolvingToPhaseState -> {
                     val latch = CountDownLatch(1)
                     val newState = FirInProcessOfResolvingToPhaseStateWithLatch(phase, latch)
-                    resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)
+                    fieldUpdater.compareAndSet(this, stateSnapshot, newState)
                     continue
                 }
                 is FirInProcessOfResolvingToPhaseStateWithLatch -> {
@@ -97,7 +122,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                 }
                 is FirResolvedToPhaseState -> {
                     val newState = FirInProcessOfResolvingToPhaseState(phase)
-                    if (!resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)) {
+                    if (!fieldUpdater.compareAndSet(this, stateSnapshot, newState)) {
                         continue
                     }
                     try {
@@ -113,7 +138,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                                 error("phase is unexpectedly unlocked $stateSnapshot")
                             }
                         }
-                        if (!resolveStateFieldUpdater.compareAndSet(this, stateSnapshotAfter, FirResolvedToPhaseState(phase))) {
+                        if (!fieldUpdater.compareAndSet(this, stateSnapshotAfter, FirResolvedToPhaseState(phase))) {
                             error("phase was updated by other thread")
                         }
                     }
@@ -124,10 +149,20 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     }
 }
 
-private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
-    FirElementWithResolveState::class.java,
-    FirResolveState::class.java,
-    FirElementWithResolveState::resolveState.name
-)
+private val fieldUpdaters = ThreadLocal.withInitial {
+    mutableMapOf<Class<out FirElementWithResolveState>, AtomicReferenceFieldUpdater<out FirElementWithResolveState, FirResolveState>>()
+}
+
+private fun getFieldUpdater(declaration: FirElementWithResolveState): AtomicReferenceFieldUpdater<FirElementWithResolveState, FirResolveState> {
+    val map = fieldUpdaters.get()
+    @Suppress("UNCHECKED_CAST")
+    return map.getOrPut(declaration::class.java) {
+        AtomicReferenceFieldUpdater.newUpdater(
+            declaration::class.java,
+            FirResolveState::class.java,
+            "resolveState"
+        )
+    } as AtomicReferenceFieldUpdater<FirElementWithResolveState, FirResolveState>
+}
 
 private const val DEFAULT_LOCKING_INTERVAL = 50L
