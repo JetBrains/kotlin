@@ -64,7 +64,10 @@ class Psi2IrTranslator(
         extensions: GeneratorExtensions = GeneratorExtensions(),
         fragmentContext: FragmentContext? = null
     ): GeneratorContext {
-        val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions)
+        val typeTranslator = TypeTranslatorImpl(
+            symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions,
+            allowErrorTypeInAnnotations = configuration.skipBodies,
+        )
         return GeneratorContext(
             configuration,
             moduleDescriptor,

@@ -22,7 +22,8 @@ class ConstantValueGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
     symbolTable: ReferenceSymbolTable,
     typeTranslator: TypeTranslator,
-) : ConstantValueGenerator(moduleDescriptor, symbolTable, typeTranslator) {
+    allowErrorTypeInAnnotations: Boolean,
+) : ConstantValueGenerator(moduleDescriptor, symbolTable, typeTranslator, allowErrorTypeInAnnotations) {
     override fun extractAnnotationOffsets(annotationDescriptor: AnnotationDescriptor): Pair<Int, Int> =
         extractOffsets(annotationDescriptor.source)
 

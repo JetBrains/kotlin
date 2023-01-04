@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
+import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -28,6 +29,7 @@ abstract class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
     private val symbolTable: ReferenceSymbolTable,
     private val typeTranslator: TypeTranslator,
+    private val allowErrorTypeInAnnotations: Boolean,
 ) {
     protected abstract fun extractAnnotationOffsets(annotationDescriptor: AnnotationDescriptor): Pair<Int, Int>
 
@@ -158,7 +160,10 @@ abstract class ConstantValueGenerator(
         if (annotationClassDescriptor !is ClassDescriptor) return null
         if (annotationClassDescriptor is NotFoundClasses.MockClassDescriptor) return null
 
-        assert(DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) {
+        assert(
+            DescriptorUtils.isAnnotationClass(annotationClassDescriptor) ||
+                    (allowErrorTypeInAnnotations && annotationClassDescriptor is ErrorClassDescriptor)
+        ) {
             "Annotation class expected: $annotationClassDescriptor"
         }
 

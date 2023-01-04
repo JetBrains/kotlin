@@ -14,16 +14,18 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 
-open class TypeTranslatorImpl(
+class TypeTranslatorImpl(
     symbolTable: ReferenceSymbolTable,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor,
     typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     enterTableScope: Boolean = false,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
-    private val ktFile: KtFile? = null
+    private val ktFile: KtFile? = null,
+    allowErrorTypeInAnnotations: Boolean = false,
 ) : TypeTranslator(symbolTable, languageVersionSettings, typeParametersResolverBuilder, enterTableScope, extensions) {
-    override val constantValueGenerator: ConstantValueGenerator = ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this)
+    override val constantValueGenerator: ConstantValueGenerator =
+        ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this, allowErrorTypeInAnnotations)
 
     private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
