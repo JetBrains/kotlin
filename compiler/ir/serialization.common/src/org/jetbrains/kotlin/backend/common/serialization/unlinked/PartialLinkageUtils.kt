@@ -180,7 +180,7 @@ internal abstract class FileAwareIrElementTransformerVoid(startingFile: PartialL
     private var _currentFile: PartialLinkageUtils.File? = startingFile
     protected val currentFile: PartialLinkageUtils.File get() = _currentFile ?: error("No information about current file")
 
-    override fun visitFile(declaration: IrFile): IrFile {
+    final override fun visitFile(declaration: IrFile): IrFile {
         _currentFile = PartialLinkageUtils.File.IrBased(declaration)
         return try {
             super.visitFile(declaration)

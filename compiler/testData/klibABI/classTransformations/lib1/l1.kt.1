@@ -123,8 +123,11 @@ class InnerClassContainer {
 }
 
 annotation class AnnotationClassWithChangedParameterType(val x: /*Int*/ String)
-/*annotation*/ class AnnotationClassThatBecomesRegularClass(val x: Int)
+/*annotation*/ class AnnotationClassThatBecomesRegularClass(val x: Int) { override fun toString() = "AnnotationClassThatBecomesRegularClass[x=$x]" }
 //annotation class AnnotationClassThatDisappears(val x: Int)
+annotation class AnnotationClassWithRenamedParameters(val xi: Int, val xs: String)
+annotation class AnnotationClassWithReorderedParameters(val s: String, val i: Int)
+annotation class AnnotationClassWithNewParameter(val i: Int, val s: String = "Apple")
 
 class ValueToClass(val x: Int)
 value class ClassToValue(val x: Int)
