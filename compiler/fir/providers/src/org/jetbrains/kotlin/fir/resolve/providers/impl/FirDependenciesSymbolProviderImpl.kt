@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @ThreadSafeMutableState
-open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenciesSymbolProvider(session) {
+open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolProvider(session) {
     private val classCache = session.firCachesFactory.createCache(::computeClass)
     private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
     private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)

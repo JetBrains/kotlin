@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -153,7 +150,7 @@ internal object LLFirSessionFactory {
             )
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
-            register(FirDependenciesSymbolProvider::class, dependencyProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
@@ -245,7 +242,7 @@ internal object LLFirSessionFactory {
             )
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
-            register(FirDependenciesSymbolProvider::class, dependencyProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
             configureSession?.invoke(this)
