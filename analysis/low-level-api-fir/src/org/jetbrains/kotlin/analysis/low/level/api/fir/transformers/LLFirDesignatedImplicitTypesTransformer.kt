@@ -54,9 +54,6 @@ internal class LLFirDesignatedImplicitTypesTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
-        designation.target.checkPhase(FirResolvePhase.CONTRACTS)
-
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         }

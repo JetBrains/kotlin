@@ -41,9 +41,6 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.EXPECT_ACTUAL_MATCHING) return
-        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
             designation.firFile.transform<FirFile, Nothing?>(this, null)

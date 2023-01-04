@@ -38,9 +38,6 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) return
-        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
             FirLazyBodiesCalculator.calculateAnnotations(designation.firFile)
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
