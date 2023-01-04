@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReceiverTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -51,9 +54,6 @@ internal class LLFirDesignatedTypeResolverTransformer(
 
         declarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.target, FirResolvePhase.TYPES)
-
-        checkIsResolved(designation.target)
-        (designation.target as? FirDeclaration)?.let { checkClassMembersAreResolved(it) }
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
@@ -78,6 +78,9 @@ internal class LLFirDesignatedTypeResolverTransformer(
             else -> {}
         }
         checkNestedDeclarationsAreResolved(target)
-        (target as? FirDeclaration)?.let { checkTypeParametersAreResolved(it) }
+        (target as? FirDeclaration)?.let {
+            checkTypeParametersAreResolved(it)
+            checkClassMembersAreResolved(it)
+        }
     }
 }

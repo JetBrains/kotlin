@@ -48,7 +48,6 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
         }
 
         updatePhaseDeep(designation.target, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-        checkIsResolved(designation.target)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

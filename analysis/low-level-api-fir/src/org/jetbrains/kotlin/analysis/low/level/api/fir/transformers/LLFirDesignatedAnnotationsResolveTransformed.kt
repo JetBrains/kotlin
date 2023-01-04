@@ -57,7 +57,6 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         }
 
         LLFirLazyTransformer.updatePhaseDeep(designation.target, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-        checkIsResolved(designation.target)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

@@ -118,8 +118,8 @@ internal interface LLFirLazyTransformer {
             @TestOnly set
 
         val DUMMY = object : LLFirLazyTransformer {
-            override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) = Unit
-            override fun checkIsResolved(target: FirElementWithResolveState) = error("Not implemented")
+            override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {}
+            override fun checkIsResolved(target: FirElementWithResolveState) {}
         }
     }
 }

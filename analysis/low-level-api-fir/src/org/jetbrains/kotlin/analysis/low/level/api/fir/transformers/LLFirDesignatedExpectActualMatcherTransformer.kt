@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTra
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
@@ -49,7 +53,6 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
 
         declarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.target, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-        checkIsResolved(designation.target)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
