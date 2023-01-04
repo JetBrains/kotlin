@@ -42,13 +42,9 @@ import org.jetbrains.kotlin.name.Name
  * methods and properties in the super-interface, and creates corresponding members in the subclass.
  * TODO: generic super interface types and generic delegated members.
  */
-class DelegatedMemberGenerator(
-    private val components: Fir2IrComponents,
-    dependentGenerators: List<DelegatedMemberGenerator>
-) : Fir2IrComponents by components {
-
-    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = merge(dependentGenerators) { it.baseFunctionSymbols }
-    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = merge(dependentGenerators) { it.basePropertySymbols }
+class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
+    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = mutableMapOf()
+    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = mutableMapOf()
 
     private data class DeclarationBodyInfo(
         val declaration: IrDeclaration,
@@ -58,16 +54,6 @@ class DelegatedMemberGenerator(
     )
 
     private val bodiesInfo = mutableListOf<DeclarationBodyInfo>()
-
-    private fun <K, V> merge(
-        dependentGenerators: List<DelegatedMemberGenerator>,
-        mapFunc: (DelegatedMemberGenerator) -> MutableMap<K, V>
-    ): MutableMap<K, V> {
-        return dependentGenerators.map { mapFunc(it) }.fold(mutableMapOf()) { result, map ->
-            result.putAll(map)
-            result
-        }
-    }
 
     fun generateBodies() {
         for ((declaration, irField, delegateToSymbol, delegateToLookupTag) in bodiesInfo) {

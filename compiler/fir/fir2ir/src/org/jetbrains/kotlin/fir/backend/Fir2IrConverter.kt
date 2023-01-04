@@ -513,7 +513,7 @@ class Fir2IrConverter(
 
             val classifierStorage = Fir2IrClassifierStorage(components, dependentComponents.map { it.classifierStorage })
             components.classifierStorage = classifierStorage
-            components.delegatedMemberGenerator = DelegatedMemberGenerator(components, dependentComponents.map { it.delegatedMemberGenerator })
+            components.delegatedMemberGenerator = DelegatedMemberGenerator(components)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, dependentComponents.map { it.declarationStorage })
             components.declarationStorage = declarationStorage
             components.visibilityConverter = visibilityConverter
@@ -530,7 +530,7 @@ class Fir2IrConverter(
             val annotationGenerator = AnnotationGenerator(components)
             components.builtIns = builtIns
             components.annotationGenerator = annotationGenerator
-            val fakeOverrideGenerator = FakeOverrideGenerator(components, conversionScope, dependentComponents.map { it.fakeOverrideGenerator })
+            val fakeOverrideGenerator = FakeOverrideGenerator(components, conversionScope)
             components.fakeOverrideGenerator = fakeOverrideGenerator
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator

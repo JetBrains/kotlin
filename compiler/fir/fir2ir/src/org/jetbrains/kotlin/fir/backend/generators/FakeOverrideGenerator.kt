@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.unwrapSubstitutionAndIntersectionOverrides
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -31,23 +30,11 @@ import org.jetbrains.kotlin.name.Name
 
 class FakeOverrideGenerator(
     private val components: Fir2IrComponents,
-    private val conversionScope: Fir2IrConversionScope,
-    dependentGenerators: List<FakeOverrideGenerator>
+    private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
-
-    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = merge(dependentGenerators) { it.baseFunctionSymbols }
-    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = merge(dependentGenerators) { it.basePropertySymbols }
-    private val baseStaticFieldSymbols: MutableMap<IrField, List<FirFieldSymbol>> = merge(dependentGenerators) { it.baseStaticFieldSymbols }
-
-    private fun <K, V> merge(
-        dependentGenerators: List<FakeOverrideGenerator>,
-        mapFunc: (FakeOverrideGenerator) -> MutableMap<K, V>
-    ): MutableMap<K, V> {
-        return dependentGenerators.map { mapFunc(it) }.fold(mutableMapOf()) { result, map ->
-            result.putAll(map)
-            result
-        }
-    }
+    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = mutableMapOf()
+    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = mutableMapOf()
+    private val baseStaticFieldSymbols: MutableMap<IrField, List<FirFieldSymbol>> = mutableMapOf()
 
     private fun IrSimpleFunction.withFunction(f: IrSimpleFunction.() -> Unit): IrSimpleFunction {
         return conversionScope.withFunction(this, f)

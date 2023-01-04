@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -46,19 +46,19 @@ class Fir2IrClassifierStorage(
 
     private val classCache: MutableMap<FirRegularClass, IrClass> = merge { it.classCache }
 
-    private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = merge { it.localClassesCreatedOnTheFly }
+    private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
 
     private var processMembersOfClassesOnTheFlyImmediately = false
 
-    private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAlias> = merge { it.typeAliasCache }
+    private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAlias> = mutableMapOf()
 
     private val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = merge { it.typeParameterCache }
 
-    private val typeParameterCacheForSetter: MutableMap<FirTypeParameter, IrTypeParameter> = merge { it.typeParameterCacheForSetter }
+    private val typeParameterCacheForSetter: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
     private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = merge { it.enumEntryCache }
 
-    private val fieldsForContextReceivers: MutableMap<IrClass, List<IrField>> = merge { it.fieldsForContextReceivers }
+    private val fieldsForContextReceivers: MutableMap<IrClass, List<IrField>> = mutableMapOf()
 
     private val localStorage: Fir2IrLocalStorage = Fir2IrLocalStorage(
         dependentStorages.map { it.localStorage }.fold(mutableMapOf()) { result, storage ->

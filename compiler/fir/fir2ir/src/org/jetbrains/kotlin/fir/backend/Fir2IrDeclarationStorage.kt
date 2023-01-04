@@ -70,19 +70,19 @@ class Fir2IrDeclarationStorage(
 
     private val firProvider = session.firProvider
 
-    private val fragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = merge(dependentStorages) { it.fragmentCache }
+    private val fragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
 
-    private val builtInsFragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = merge(dependentStorages) { it.builtInsFragmentCache }
+    private val builtInsFragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
 
-    private val fileCache: ConcurrentHashMap<FirFile, IrFile> = merge(dependentStorages) { it.fileCache }
+    private val fileCache: ConcurrentHashMap<FirFile, IrFile> = ConcurrentHashMap()
 
-    private val scriptCache: ConcurrentHashMap<FirScript, IrScript> = merge(dependentStorages) { it.scriptCache }
+    private val scriptCache: ConcurrentHashMap<FirScript, IrScript> = ConcurrentHashMap()
 
     private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = merge(dependentStorages) { it.functionCache }
 
-    private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = merge(dependentStorages) { it.constructorCache }
+    private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = ConcurrentHashMap()
 
-    private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = merge(dependentStorages) { it.initializerCache }
+    private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
     private val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = merge(dependentStorages) { it.propertyCache }
 
@@ -108,22 +108,17 @@ class Fir2IrDeclarationStorage(
         }
 
     // For pure fields (from Java) only
-    private val fieldToPropertyCache: ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty> = merge(dependentStorages) { it.fieldToPropertyCache }
+    private val fieldToPropertyCache: ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty> = ConcurrentHashMap()
 
-    private val delegatedReverseCache: ConcurrentHashMap<IrDeclaration, FirDeclaration> = merge(dependentStorages) { it.delegatedReverseCache }
+    private val delegatedReverseCache: ConcurrentHashMap<IrDeclaration, FirDeclaration> = ConcurrentHashMap()
 
-    private val fieldCache: ConcurrentHashMap<FirField, IrField> = merge(dependentStorages) { it.fieldCache }
+    private val fieldCache: ConcurrentHashMap<FirField, IrField> = ConcurrentHashMap()
 
     private data class FieldStaticOverrideKey(val lookupTag: ConeClassLikeLookupTag, val name: Name)
 
-    private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrField> = merge(dependentStorages) { it.fieldStaticOverrideCache }
+    private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrField> = ConcurrentHashMap()
 
-    private val localStorage: Fir2IrLocalStorage by threadLocal {
-        Fir2IrLocalStorage(dependentStorages.map { it.localStorage }.fold(mutableMapOf()) { result, storage ->
-            result.putAll(storage.getLocalClassCache())
-            result
-        })
-    }
+    private val localStorage: Fir2IrLocalStorage by threadLocal { Fir2IrLocalStorage() }
 
     private fun <K, V> merge(
         dependentStorages: List<Fir2IrDeclarationStorage>,
