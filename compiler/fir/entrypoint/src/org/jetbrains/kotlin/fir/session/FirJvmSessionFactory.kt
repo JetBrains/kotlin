@@ -94,7 +94,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependenciesSymbolProvider ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
                 var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
                 incrementalCompilationContext?.let {
@@ -131,7 +131,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
                     javaSymbolProvider,
-                    dependenciesSymbolProvider,
+                    *dependencies.toTypedArray(),
                     optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )
             }
