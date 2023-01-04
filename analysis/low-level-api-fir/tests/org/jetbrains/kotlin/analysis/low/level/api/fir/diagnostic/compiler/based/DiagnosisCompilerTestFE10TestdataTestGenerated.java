@@ -1099,6 +1099,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("AnnotatedNullableTypes.kt")
+            public void testAnnotatedNullableTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedNullableTypes.kt");
+            }
+
+            @Test
             @TestMetadata("AnnotatedResultType.kt")
             public void testAnnotatedResultType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedResultType.kt");
@@ -1330,6 +1336,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("inheritFromAnnotationClass2.kt")
             public void testInheritFromAnnotationClass2() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/inheritFromAnnotationClass2.kt");
+            }
+
+            @Test
+            @TestMetadata("InheritingAnnotationClass.kt")
+            public void testInheritingAnnotationClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/InheritingAnnotationClass.kt");
             }
 
             @Test
@@ -22748,6 +22760,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("compareToNullable.kt")
             public void testCompareToNullable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/compareToNullable.kt");
+            }
+
+            @Test
+            @TestMetadata("EqualsOperatorOverrideHierarchies.kt")
+            public void testEqualsOperatorOverrideHierarchies() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/EqualsOperatorOverrideHierarchies.kt");
             }
 
             @Test
