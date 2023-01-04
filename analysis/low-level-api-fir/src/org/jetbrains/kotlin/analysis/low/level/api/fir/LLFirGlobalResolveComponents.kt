@@ -12,6 +12,5 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 internal class LLFirGlobalResolveComponents(
     val project: Project,
 ) {
-    val phaseRunner: LLFirPhaseRunner = LLFirPhaseRunner()
     val lockProvider: LLFirLockProvider = LLFirLockProvider()
 }

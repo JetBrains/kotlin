@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
@@ -76,12 +75,10 @@ internal class LLFirDesignatedStatusResolveTransformer(
     }
 
 
-    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
+    override fun transformDeclaration() {
         val designationIterator = designation.path.iterator()
         val transformer = FirDesignatedStatusResolveTransformerForIDE(designationIterator)
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
-            transformer.moveNextDeclaration()
-        }
+        transformer.moveNextDeclaration()
     }
 
     override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
