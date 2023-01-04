@@ -47,7 +47,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
 
         val session = context.session
         for (annotation in annotations) {
-            val classId = annotation.classId ?: continue
+            val unexpandedClassId = annotation.classId ?: continue
             val annotationClassId = annotation.toAnnotationClassId(session) ?: continue
             if (annotationClassId.isLocal) continue
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
@@ -69,11 +69,11 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
                     // on the same element.
                     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
                     val explicitContainer = annotationClass.resolveContainerAnnotation(session)
-                    if (explicitContainer != null && annotations.any { it.classId == explicitContainer }) {
+                    if (explicitContainer != null && annotations.any { it.toAnnotationClassId(session) == explicitContainer }) {
                         reporter.reportOn(
                             annotation.source,
                             FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,
-                            classId,
+                            unexpandedClassId,
                             explicitContainer,
                             context
                         )
@@ -91,7 +91,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {
-                val kotlinRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Repeatable }
+                val kotlinRepeatable = annotations.find { it.toAnnotationClassId(session) == StandardClassIds.Annotations.Repeatable }
                 if (kotlinRepeatable != null) {
                     checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
                 }
