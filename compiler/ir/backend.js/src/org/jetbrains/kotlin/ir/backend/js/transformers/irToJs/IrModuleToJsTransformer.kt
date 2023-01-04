@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -321,12 +323,16 @@ class IrModuleToJsTransformer(
         nameGenerator.nameMap.entries.forEach { (declaration, name) ->
             computeTag(declaration)?.let { tag ->
                 result.nameBindings[tag] = name
+                if (isBuiltInClass(declaration) || checkIsFunctionInterface(declaration.symbol.signature)) {
+                    result.optionalCrossModuleImports += tag
+                }
             }
         }
 
         nameGenerator.imports.entries.forEach { (declaration, importExpression) ->
             val tag = computeTag(declaration) ?: error("No tag for imported declaration ${declaration.render()}")
             result.imports[tag] = importExpression
+            result.optionalCrossModuleImports += tag
         }
 
         fileExports.file.declarations.forEach {

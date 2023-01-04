@@ -33017,6 +33017,19 @@ public final class JsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.CompositeBlock polyfills = 18;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CompositeBlock getPolyfills();
+
+    /**
+     * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+     */
+    java.util.List<java.lang.Integer> getOptionalCrossModuleImportsList();
+    /**
+     * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+     */
+    int getOptionalCrossModuleImportsCount();
+    /**
+     * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+     */
+    int getOptionalCrossModuleImports(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Fragment}
@@ -33248,6 +33261,27 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000100;
               break;
             }
+            case 152: {
+              if (!((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
+                optionalCrossModuleImports_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00040000;
+              }
+              optionalCrossModuleImports_.add(input.readInt32());
+              break;
+            }
+            case 154: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00040000) == 0x00040000) && input.getBytesUntilLimit() > 0) {
+                optionalCrossModuleImports_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00040000;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                optionalCrossModuleImports_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -33282,6 +33316,9 @@ public final class JsAstProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00010000) == 0x00010000)) {
           definitions_ = java.util.Collections.unmodifiableList(definitions_);
+        }
+        if (((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
+          optionalCrossModuleImports_ = java.util.Collections.unmodifiableList(optionalCrossModuleImports_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -33800,6 +33837,28 @@ public final class JsAstProtoBuf {
       return polyfills_;
     }
 
+    public static final int OPTIONALCROSSMODULEIMPORTS_FIELD_NUMBER = 19;
+    private java.util.List<java.lang.Integer> optionalCrossModuleImports_;
+    /**
+     * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getOptionalCrossModuleImportsList() {
+      return optionalCrossModuleImports_;
+    }
+    /**
+     * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+     */
+    public int getOptionalCrossModuleImportsCount() {
+      return optionalCrossModuleImports_.size();
+    }
+    /**
+     * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+     */
+    public int getOptionalCrossModuleImports(int index) {
+      return optionalCrossModuleImports_.get(index);
+    }
+
     private void initFields() {
       importedModule_ = java.util.Collections.emptyList();
       importEntry_ = java.util.Collections.emptyList();
@@ -33819,6 +33878,7 @@ public final class JsAstProtoBuf {
       suiteFunction_ = 0;
       definitions_ = java.util.Collections.emptyList();
       polyfills_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CompositeBlock.getDefaultInstance();
+      optionalCrossModuleImports_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -33971,6 +34031,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         output.writeMessage(18, polyfills_);
       }
+      for (int i = 0; i < optionalCrossModuleImports_.size(); i++) {
+        output.writeInt32(19, optionalCrossModuleImports_.get(i));
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -34056,6 +34119,15 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(18, polyfills_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < optionalCrossModuleImports_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(optionalCrossModuleImports_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getOptionalCrossModuleImportsList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -34187,6 +34259,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00010000);
         polyfills_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CompositeBlock.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00020000);
+        optionalCrossModuleImports_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00040000);
         return this;
       }
 
@@ -34291,6 +34365,11 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000100;
         }
         result.polyfills_ = polyfills_;
+        if (((bitField0_ & 0x00040000) == 0x00040000)) {
+          optionalCrossModuleImports_ = java.util.Collections.unmodifiableList(optionalCrossModuleImports_);
+          bitField0_ = (bitField0_ & ~0x00040000);
+        }
+        result.optionalCrossModuleImports_ = optionalCrossModuleImports_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -34417,6 +34496,16 @@ public final class JsAstProtoBuf {
         }
         if (other.hasPolyfills()) {
           mergePolyfills(other.getPolyfills());
+        }
+        if (!other.optionalCrossModuleImports_.isEmpty()) {
+          if (optionalCrossModuleImports_.isEmpty()) {
+            optionalCrossModuleImports_ = other.optionalCrossModuleImports_;
+            bitField0_ = (bitField0_ & ~0x00040000);
+          } else {
+            ensureOptionalCrossModuleImportsIsMutable();
+            optionalCrossModuleImports_.addAll(other.optionalCrossModuleImports_);
+          }
+          
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -36137,6 +36226,72 @@ public final class JsAstProtoBuf {
         polyfills_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CompositeBlock.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00020000);
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> optionalCrossModuleImports_ = java.util.Collections.emptyList();
+      private void ensureOptionalCrossModuleImportsIsMutable() {
+        if (!((bitField0_ & 0x00040000) == 0x00040000)) {
+          optionalCrossModuleImports_ = new java.util.ArrayList<java.lang.Integer>(optionalCrossModuleImports_);
+          bitField0_ |= 0x00040000;
+         }
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getOptionalCrossModuleImportsList() {
+        return java.util.Collections.unmodifiableList(optionalCrossModuleImports_);
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public int getOptionalCrossModuleImportsCount() {
+        return optionalCrossModuleImports_.size();
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public int getOptionalCrossModuleImports(int index) {
+        return optionalCrossModuleImports_.get(index);
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public Builder setOptionalCrossModuleImports(
+          int index, int value) {
+        ensureOptionalCrossModuleImportsIsMutable();
+        optionalCrossModuleImports_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public Builder addOptionalCrossModuleImports(int value) {
+        ensureOptionalCrossModuleImportsIsMutable();
+        optionalCrossModuleImports_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public Builder addAllOptionalCrossModuleImports(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureOptionalCrossModuleImportsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, optionalCrossModuleImports_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 optionalCrossModuleImports = 19;</code>
+       */
+      public Builder clearOptionalCrossModuleImports() {
+        optionalCrossModuleImports_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00040000);
+        
         return this;
       }
 

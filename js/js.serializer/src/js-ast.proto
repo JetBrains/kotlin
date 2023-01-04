@@ -419,6 +419,7 @@ message Fragment {
     optional int32 suite_function = 16;
     repeated int32 definitions = 17;
     optional CompositeBlock polyfills = 18;
+    repeated int32 optionalCrossModuleImports = 19;
 }
 
 message InlinedLocalDeclarations {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 class JsIrProgramFragment(val packageFqn: String) {
     val nameBindings = mutableMapOf<String, JsName>()
+    val optionalCrossModuleImports = hashSetOf<String>()
     val declarations = JsCompositeBlock()
     val exports = JsCompositeBlock()
     val importedModules = mutableListOf<JsImportedModule>()
@@ -35,6 +36,7 @@ class JsIrModule(
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
         val definitions = mutableSetOf<String>()
+        val optionalCrossModuleImports = hashSetOf<String>()
         var hasJsExports = false
         for (fragment in fragments) {
             hasJsExports = hasJsExports || !fragment.exports.isEmpty
@@ -42,8 +44,17 @@ class JsIrModule(
                 nameBindings[tag] = name.toString()
             }
             definitions += fragment.definitions
+            optionalCrossModuleImports += fragment.optionalCrossModuleImports
         }
-        return JsIrModuleHeader(moduleName, externalModuleName, definitions, nameBindings, hasJsExports, this)
+        return JsIrModuleHeader(
+            moduleName = moduleName,
+            externalModuleName = externalModuleName,
+            definitions = definitions,
+            nameBindings = nameBindings,
+            optionalCrossModuleImports = optionalCrossModuleImports,
+            hasJsExports = hasJsExports,
+            associatedModule = this
+        )
     }
 }
 
@@ -52,6 +63,7 @@ class JsIrModuleHeader(
     val externalModuleName: String,
     val definitions: Set<String>,
     val nameBindings: Map<String, String>,
+    val optionalCrossModuleImports: Set<String>,
     val hasJsExports: Boolean,
     var associatedModule: JsIrModule?
 ) {
@@ -100,7 +112,13 @@ class CrossModuleDependenciesResolver(
         for (header in headers) {
             val builder = headerToBuilder[header]!!
             for (tag in header.externalNames) {
-                val fromModuleBuilder = definitionModule[tag] ?: continue // TODO error?
+                val fromModuleBuilder = definitionModule[tag]
+                if (fromModuleBuilder == null) {
+                    if (tag in header.optionalCrossModuleImports) {
+                        continue
+                    }
+                    error("Internal error: cannot find external signature '$tag' for module ${header.moduleName}")
+                }
 
                 builder.imports += CrossModuleRef(fromModuleBuilder, tag)
                 fromModuleBuilder.exports += tag
@@ -110,8 +128,6 @@ class CrossModuleDependenciesResolver(
         return headers.associateWith { headerToBuilder[it]!!.buildCrossModuleRefs() }
     }
 }
-
-private fun String.prettyTag() = takeWhile { c -> c != '|' }
 
 private class CrossModuleRef(val module: JsIrModuleCrossModuleReferecenceBuilder, val tag: String)
 
@@ -153,7 +169,7 @@ private class JsIrModuleCrossModuleReferecenceBuilder(
             val tag = crossModuleRef.tag
             require(crossModuleRef.module::exportNames.isInitialized) {
                 // This situation appears in case of a dependent module redefine a symbol (function) from their dependency
-                "Cross module dependency resolution failed due to symbol '${tag.prettyTag()}' redefinition"
+                "Cross module dependency resolution failed due to signature '$tag' redefinition"
             }
             val exportedAs = crossModuleRef.module.exportNames[tag]!!
             val moduleName = import(crossModuleRef.module.header)
@@ -207,7 +223,7 @@ class CrossModuleReferences(
     fun initJsImportsForModule(module: JsIrModule) {
         val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
         jsImports = imports.entries.associate {
-            val importedAs = tagToName[it.key] ?: error("Internal error: cannot find imported name for symbol ${it.key.prettyTag()}")
+            val importedAs = tagToName[it.key] ?: error("Internal error: cannot find imported name for signature ${it.key}")
             val exportRef = JsNameRef(
                 it.value.exportedAs,
                 it.value.moduleExporter.let {

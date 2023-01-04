@@ -20,7 +20,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     }
 
     private enum class NameType(val typeMask: Int) {
-        DEFINITIONS(0b01), NAME_BINDINGS(0b10)
+        DEFINITIONS(0b1), NAME_BINDINGS(0b10), OPTIONAL_IMPORTS(0b100)
     }
 
     class CachedModuleInfo(val artifact: ModuleArtifact, val jsIrHeader: JsIrModuleHeader, var crossModuleReferencesHash: ICHash = ICHash())
@@ -30,6 +30,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val definitions = mutableSetOf<String>()
         val nameBindings = mutableMapOf<String, String>()
+        val optionalCrossModuleImports = hashSetOf<String>()
 
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val hasJsExports = readBool()
@@ -39,13 +40,24 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
             if (mask and NameType.DEFINITIONS.typeMask != 0) {
                 definitions += tag
             }
+            if (mask and NameType.OPTIONAL_IMPORTS.typeMask != 0) {
+                optionalCrossModuleImports += tag
+            }
             if (mask and NameType.NAME_BINDINGS.typeMask != 0) {
                 nameBindings[tag] = readString()
             }
         }
         CachedModuleInfo(
             artifact = this@fetchModuleInfo,
-            jsIrHeader = JsIrModuleHeader(moduleSafeName, moduleExternalName, definitions, nameBindings, hasJsExports, null),
+            jsIrHeader = JsIrModuleHeader(
+                moduleName = moduleSafeName,
+                externalModuleName = moduleExternalName,
+                definitions = definitions,
+                nameBindings = nameBindings,
+                optionalCrossModuleImports = optionalCrossModuleImports,
+                hasJsExports = hasJsExports,
+                associatedModule = null
+            ),
             crossModuleReferencesHash = crossModuleReferencesHash
         )
     }
@@ -55,6 +67,10 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
             val names = mutableMapOf<String, Pair<Int, String?>>()
             for ((tag, name) in jsIrHeader.nameBindings) {
                 names[tag] = NameType.NAME_BINDINGS.typeMask to name
+            }
+            for (tag in jsIrHeader.optionalCrossModuleImports) {
+                val maskAndName = names[tag]
+                names[tag] = ((maskAndName?.first ?: 0) or NameType.OPTIONAL_IMPORTS.typeMask) to maskAndName?.second
             }
             for (tag in jsIrHeader.definitions) {
                 val maskAndName = names[tag]

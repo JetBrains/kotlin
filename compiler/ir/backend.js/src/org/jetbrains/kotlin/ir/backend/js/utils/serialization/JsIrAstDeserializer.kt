@@ -68,6 +68,8 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
             deserializeString(nameBindingProto.signatureId) to deserializeName(nameBindingProto.nameId)
         }
 
+        proto.optionalCrossModuleImportsList.mapTo(fragment.optionalCrossModuleImports) { deserializeString(it) }
+
         proto.irClassModelList.associateTo(fragment.classes) { clsProto -> deserialize(clsProto) }
 
         if (proto.hasTestsInvocation()) {

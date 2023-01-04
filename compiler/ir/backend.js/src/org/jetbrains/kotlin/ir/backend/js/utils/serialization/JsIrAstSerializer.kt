@@ -70,6 +70,10 @@ class JsIrAstSerializer: JsAstSerializerBase() {
             fragmentBuilder.addNameBinding(nameBindingBuilder)
         }
 
+        fragment.optionalCrossModuleImports.forEach {
+            fragmentBuilder.addOptionalCrossModuleImports(serialize(it))
+        }
+
         fragment.classes.entries.forEach { (name, model) -> fragmentBuilder.addIrClassModel(serialize(name, model)) }
 
         fragment.testFunInvocation?.let {
