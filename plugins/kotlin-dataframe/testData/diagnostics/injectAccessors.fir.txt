@@ -5,14 +5,14 @@ FILE: injectAccessors.kt
 
     }
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
         }
         )
         lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Scope499.age|
     }
     public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
         }
         )

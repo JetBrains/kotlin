@@ -5,13 +5,52 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
-import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
+import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
+import org.jetbrains.kotlin.fir.dataframe.services.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.initIdeaConfiguration
+import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
+import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
+import org.junit.jupiter.api.BeforeAll
 
-abstract class AbstractDataFrameDiagnosticTest : BaseTestRunner() {
+abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
+
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun setUp() {
+            initIdeaConfiguration()
+        }
+    }
+
+    override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
+        return EnvironmentBasedStandardLibrariesPathProvider
+    }
+
     override fun TestConfigurationBuilder.configuration() {
-        commonFirWithPluginFrontendConfiguration()
+        baseFirDiagnosticTestConfiguration()
+// disabled because checker it too strict and fails even when shouldn't
+//    firHandlersStep {
+//        useHandlers(
+//            ::FirResolveContractViolationErrorHandler,
+//        )
+//    }
+
+        defaultDirectives {
+            +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
+            +FirDiagnosticsDirectives.FIR_DUMP
+        }
+
+        useConfigurators(
+            ::DataFramePluginAnnotationsProvider,
+            ::ExtensionRegistrarConfigurator
+        )
+        useAfterAnalysisCheckers(
+            ::DisableLazyResolveChecksAfterAnalysisChecker,
+        )
     }
 }

@@ -1,11 +1,11 @@
 FILE: injectAccessorsDsl.kt
     public final fun Dsl is evaluated to (df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_498|<R|kotlin/Any?|>(<L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDsl<kotlin/Any?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            (this@R|special/anonymous|, String(col1)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.from: R|kotlin/Boolean|>|<R|kotlin/Int|>(from@fun R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            (this@R|special/anonymous|, String(col1)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.from: R|kotlin/Boolean|>|<R|kotlin/Int|>(from@fun R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(5)
             }
             )
-            (this@R|special/anonymous|, this@R|special/anonymous|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.expr: R|org/jetbrains/kotlinx/dataframe/DataColumn<R>|>|<R|kotlin/Int|>(<L> = expr@fun R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            (this@R|special/anonymous|, this@R|special/anonymous|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.expr: R|org/jetbrains/kotlinx/dataframe/DataColumn<R>|>|<R|kotlin/Int|>(<L> = expr@fun R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(5)
             }
             )).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.into: R|kotlin/Boolean|>|(String(col2))
