@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // MODULE: lib
 import org.jetbrains.kotlin.fir.plugin.AllOpen
 
