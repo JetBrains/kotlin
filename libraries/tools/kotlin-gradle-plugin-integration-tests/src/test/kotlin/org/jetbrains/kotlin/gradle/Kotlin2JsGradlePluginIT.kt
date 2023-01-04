@@ -183,8 +183,8 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 }
                 val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
                 val klibCacheDirs = cacheRootDir.list()
-                // 2 for lib.klib + 1 for stdlib + 1 for dom-api + 1 for main
-                assertEquals(5, klibCacheDirs?.size, "cache should contain 4 dirs")
+                // 2 for lib.klib + 1 for stdlib  + 1 for main
+                assertEquals(4, klibCacheDirs?.size, "cache should contain 4 dirs")
 
                 val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
                 assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
