@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
 import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.fir2IrStep
@@ -24,6 +23,12 @@ import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -49,7 +54,14 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
         facadeStep(::FirFrontendFacade)
         commonFirWithPluginFrontendConfiguration()
         firHandlersStep {
-            useHandlers(::NoFirCompilationErrorsHandler)
+            useHandlers(
+                ::FirDiagnosticsHandler,
+                ::FirDumpHandler,
+                ::FirCfgDumpHandler,
+                ::FirCfgConsistencyHandler,
+                ::FirResolvedTypesVerifier,
+                ::FirScopeDumpHandler,
+            )
         }
         fir2IrStep()
         irHandlersStep {
