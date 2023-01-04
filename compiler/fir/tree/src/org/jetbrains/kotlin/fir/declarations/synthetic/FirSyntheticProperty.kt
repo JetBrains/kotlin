@@ -26,7 +26,7 @@ class FirSyntheticProperty(
     override val isVar: Boolean,
     override val symbol: FirSyntheticPropertySymbol,
     override val status: FirDeclarationStatus,
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null,
     override val backingField: FirBackingField? = null,
@@ -34,6 +34,10 @@ class FirSyntheticProperty(
 ) : FirProperty() {
     init {
         symbol.bind(this)
+    }
+
+    init {
+        this.resolveState = resolveState
     }
 
     override val returnTypeRef: FirTypeRef

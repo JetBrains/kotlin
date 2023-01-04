@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    override var resolveState: FirResolveState = FirResolvePhase.RAW_FIR.asResolveState()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
@@ -75,6 +76,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
             source,
+            resolveState,
             annotations.toMutableOrEmpty(),
             moduleData,
             origin,
@@ -100,13 +102,6 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     }
 
 
-    @Deprecated("Modification of 'resolveState' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
-    override var resolveState: FirResolveState
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
-
     @Deprecated("Modification of 'status' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var status: FirDeclarationStatus
         get() = throw IllegalStateException()
@@ -130,6 +125,7 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     }
     val copyBuilder = FirAnonymousFunctionBuilder()
     copyBuilder.source = original.source
+    copyBuilder.resolveState = original.resolveState
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin

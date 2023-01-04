@@ -35,8 +35,7 @@ import kotlin.properties.Delegates
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
-    @Volatile
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -60,6 +59,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     init {
         symbol.bind(this)
+        this.resolveState = resolveState
     }
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()

@@ -37,8 +37,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin.Java,
     override val symbol: FirFieldSymbol,
     override val name: Name,
-    @Volatile
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
@@ -50,6 +49,7 @@ class FirJavaField @FirImplementationDetail constructor(
 ) : FirField() {
     init {
         symbol.bind(this)
+        this.resolveState = resolveState
     }
 
     override val receiverParameter: FirReceiverParameter? get() = null

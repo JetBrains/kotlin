@@ -38,8 +38,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     annotationBuilder: () -> List<FirAnnotation>,
     override var status: FirDeclarationStatus,
-    @Volatile
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirConstructor() {
     override val receiverParameter: FirReceiverParameter? get() = null
@@ -47,6 +46,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     init {
         symbol.bind(this)
+        this.resolveState = resolveState
     }
 
     override val delegatedConstructor: FirDelegatedConstructorCall?

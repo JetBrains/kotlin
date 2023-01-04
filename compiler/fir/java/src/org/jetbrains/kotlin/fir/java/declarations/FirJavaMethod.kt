@@ -49,8 +49,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
-    @Volatile
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameter>,
@@ -63,6 +62,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
 ) : FirSimpleFunction() {
     init {
         symbol.bind(this)
+        this.resolveState = resolveState
     }
 
     override val receiverParameter: FirReceiverParameter?
