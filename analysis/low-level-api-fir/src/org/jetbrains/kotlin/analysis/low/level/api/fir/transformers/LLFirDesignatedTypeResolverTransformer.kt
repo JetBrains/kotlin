@@ -45,9 +45,6 @@ internal class LLFirDesignatedTypeResolverTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.TYPES) return
-        designation.target.checkPhase(FirResolvePhase.SUPER_TYPES)
-
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
             designation.firFile.transform<FirFile, Any?>(this, null)
         }

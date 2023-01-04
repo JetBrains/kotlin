@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsMappingTransformer
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
 
 /**
  * Transform designation into ANNOTATIONS_ARGUMENTS_MAPPING declaration. Affects only for target declaration, it's children and dependents
@@ -39,9 +38,6 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) return
-        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
             FirLazyBodiesCalculator.calculateAnnotations(designation.firFile)
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)

@@ -77,9 +77,6 @@ internal class LLFirDesignatedStatusResolveTransformer(
 
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.STATUS) return
-        designation.target.checkPhase(FirResolvePhase.TYPES)
-
         val designationIterator = designation.path.iterator()
         val transformer = FirDesignatedStatusResolveTransformerForIDE(designationIterator)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {

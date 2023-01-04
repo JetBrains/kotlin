@@ -155,9 +155,6 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
-        designation.firFile.checkPhase(FirResolvePhase.IMPORTS)
-
         val targetDesignation = if (designation.target !is FirClassLikeDeclaration) {
             val resolvableTarget = designation.path.lastOrNull() ?: return
             val targetPath = designation.path.dropLast(1)

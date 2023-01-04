@@ -44,9 +44,6 @@ internal class LLFirDesignatedContractsResolveTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.CONTRACTS) return
-        designation.target.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
-
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.CONTRACTS) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)

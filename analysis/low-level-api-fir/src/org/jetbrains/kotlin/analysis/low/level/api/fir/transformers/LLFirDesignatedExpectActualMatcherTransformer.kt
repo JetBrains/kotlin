@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
@@ -42,9 +41,6 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.EXPECT_ACTUAL_MATCHING) return
-        designation.target.checkPhase(FirResolvePhase.STATUS)
-
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
             designation.firFile.transform<FirFile, Nothing?>(this, null)

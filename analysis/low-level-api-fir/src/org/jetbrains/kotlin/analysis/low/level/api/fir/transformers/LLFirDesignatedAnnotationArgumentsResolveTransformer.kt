@@ -56,9 +56,6 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
-        designation.target.checkPhase(FirResolvePhase.STATUS)
-
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {

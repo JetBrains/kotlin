@@ -22,8 +22,6 @@ internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
     private val transformer: FirCompanionGenerationTransformer = FirCompanionGenerationTransformer(session)
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolvePhase >= FirResolvePhase.COMPANION_GENERATION) return
-
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.COMPANION_GENERATION) {
             designation.target.transform<FirDeclaration, Nothing?>(transformer, null)
         }
