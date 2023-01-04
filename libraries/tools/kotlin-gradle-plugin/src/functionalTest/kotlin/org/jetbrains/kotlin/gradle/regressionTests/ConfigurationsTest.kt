@@ -7,6 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -29,6 +33,98 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class ConfigurationsTest : MultiplatformExtensionTest() {
+
+    @Test
+    fun `source set dependencies dsl test`() {
+        val lib = buildProjectWithMPP(projectBuilder = { withName("lib"); withParent(project) }) {
+            kotlin {
+                jvm()
+                linuxX64()
+            }
+
+            configurations.create("outputConfiguration") {
+                it.isCanBeConsumed = true
+                it.isCanBeResolved = false
+            }
+        }
+
+        kotlin.jvm()
+        kotlin.linuxX64()
+
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            api("junit:junit:4.13.2") { setTransitive(false) }
+            api(kotlin("reflect")) { setTransitive(false) }
+            api(kotlin("reflect", "1.3.0"))
+            implementation(kotlin("reflect", "1.2.71"))
+            compileOnly(kotlin("reflect", "1.2.70"))
+            runtimeOnly(kotlin("reflect", "1.2.60"))
+            api(project(path = ":lib", configuration = "outputConfiguration"))
+        }
+
+        project.evaluate()
+
+        val commonMainApi = project.configurations.getByName("commonMainApi")
+        val commonMainImplementation = project.configurations.getByName("commonMainImplementation")
+        val commonMainCompileOnly = project.configurations.getByName("commonMainCompileOnly")
+        val commonMainRuntimeOnly = project.configurations.getByName("commonMainRuntimeOnly")
+
+        fun Configuration.assertHasDependency(criterionName: String, criterion: Dependency.() -> Boolean) {
+            val allDependenciesString = allDependencies.joinToString("\n")
+            val message = "Configuration expected to have dependency: ${criterionName}.\n" +
+                    "But it has only dependencies: \n$allDependenciesString"
+            assertTrue(message) { allDependencies.any(criterion) }
+        }
+
+        commonMainApi.assertHasDependency("non-transitive string notation of junit:junit:4.13.2") {
+            this is ModuleDependency &&
+            group == "junit" &&
+            name == "junit" &&
+            version == "4.13.2" &&
+            !isTransitive
+        }
+
+        commonMainApi.assertHasDependency("non-transitive dependency notation of kotlin-reflect without version") {
+            this is ModuleDependency &&
+            group == "org.jetbrains.kotlin" &&
+            name == "kotlin-reflect" &&
+            version == null &&
+            !isTransitive
+        }
+
+        commonMainApi.assertHasDependency("dependency notation of kotlin-reflect:1.3.0") {
+            this is ModuleDependency &&
+            group == "org.jetbrains.kotlin" &&
+            name == "kotlin-reflect" &&
+            version == "1.3.0"
+        }
+
+        commonMainApi.assertHasDependency("project notation of :lib:outputConfiguration") {
+            this is ProjectDependency &&
+            dependencyProject == lib &&
+            targetConfiguration == "outputConfiguration"
+        }
+
+        commonMainImplementation.assertHasDependency("dependency notation of kotlin-reflect:1.2.71") {
+            this is ModuleDependency &&
+            group == "org.jetbrains.kotlin" &&
+            name == "kotlin-reflect" &&
+            version == "1.2.71"
+        }
+
+        commonMainCompileOnly.assertHasDependency("dependency notation of kotlin-reflect:1.2.70") {
+            this is ModuleDependency &&
+            group == "org.jetbrains.kotlin" &&
+            name == "kotlin-reflect" &&
+            version == "1.2.70"
+        }
+
+        commonMainRuntimeOnly.assertHasDependency("dependency notation of kotlin-reflect:1.2.60") {
+            this is ModuleDependency &&
+            group == "org.jetbrains.kotlin" &&
+            name == "kotlin-reflect" &&
+            version == "1.2.60"
+        }
+    }
 
     @Test
     fun `consumable configurations except sourcesElements with platform target are marked with Category LIBRARY`() {

@@ -1530,48 +1530,6 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl")) {
-        val originalBuildscriptContent = gradleBuildScript("app").readText()
-
-        fun testDependencies() = testResolveAllConfigurations("app") {
-            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.13.2.jar")
-            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> kotlin-stdlib-common-${KOTLIN_VERSION}.jar")
-            val dependenciesOnNonTransitive = (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*")
-                .toRegex().findAll(output)
-
-            if (dependenciesOnNonTransitive.count() != 2) fail(
-                "Expected two resolved dependencies on testNonTransitiveStringNotationApiDependenciesMetadata. " +
-                        "Found: ${dependenciesOnNonTransitive.toList().map { it.value }}"
-            )
-
-            assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-
-            // All scoped DependenciesMetadata should resolve consistently into the same version
-            assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-
-            assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
-        }
-
-        testDependencies()
-
-        // Then run with Gradle Kotlin DSL; the build script needs some correction to be a valid GK DSL script:
-        gradleBuildScript("app").run {
-            modify {
-                originalBuildscriptContent
-                    .replace(": ", " = ")
-                    .replace("def ", " val ")
-                    .replace("new File(cacheRedirectorFile)", "File(cacheRedirectorFile)")
-                    .replace("id \"org.jetbrains.kotlin.test.fixes.android\"", "id(\"org.jetbrains.kotlin.test.fixes.android\")")
-            }
-            renameTo(projectDir.resolve("app/build.gradle.kts"))
-        }
-
-        testDependencies()
-    }
-
-    @Test
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
         testResolveAllConfigurations("app") {
             assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
