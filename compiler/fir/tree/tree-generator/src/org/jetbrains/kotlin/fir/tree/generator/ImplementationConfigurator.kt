@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.model.ArbitraryImportable
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.Object
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.OpenClass
 
@@ -356,9 +355,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(anonymousFunction) {
-            default("resolveState", "FirResolvePhase.DECLARATIONS.asResolveState()")
-            useTypes(resolvePhaseType)
-            useTypes(phaseAsResolveState)
         }
 
         noImpl(anonymousFunctionExpression)

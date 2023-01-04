@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract override val source: KtSourceElement?
-    abstract override val resolveState: FirResolveState
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes

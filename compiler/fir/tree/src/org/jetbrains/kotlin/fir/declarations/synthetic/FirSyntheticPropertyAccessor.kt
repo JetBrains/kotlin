@@ -27,6 +27,10 @@ class FirSyntheticPropertyAccessor(
     override val isGetter: Boolean,
     override val propertySymbol: FirPropertySymbol,
 ) : FirPropertyAccessor() {
+    init {
+        this.resolveState = delegate.resolveState
+    }
+
     override val source: KtSourceElement?
         get() = delegate.source
 
@@ -38,9 +42,6 @@ class FirSyntheticPropertyAccessor(
 
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef
-
-    override val resolveState: FirResolveState
-        get() = delegate.resolveState
 
     override val status: FirDeclarationStatus
         get() = delegate.status

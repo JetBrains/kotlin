@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
-
 import java.io.File
 
 fun Implementation.generateCode(generationPath: File): GeneratedFile {
@@ -77,7 +76,11 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             withIndent {
 
                 fieldsWithoutDefault.forEachIndexed { _, field ->
-                    printField(field, isImplementation = true, override = true, end = ",")
+                    if (field.isFinal) {
+                        println("${field.name}: ${field.typeWithArguments},")
+                    } else {
+                        printField(field, isImplementation = true, override = true, end = ",")
+                    }
                 }
             }
             print(")")
@@ -119,6 +122,17 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 for (symbolField in symbolFields) {
                     withIndent {
                         println("${symbolField.name}${symbolField.call()}bind(this)")
+                    }
+                }
+                println("}")
+                println()
+            }
+
+            fieldsWithoutDefault.filter { it.isFinal }.takeIf { it.isNotEmpty() }?.let { fields ->
+                println("init {")
+                withIndent {
+                    for (field in fields) {
+                        println("this.${field.name} = ${field.name}")
                     }
                 }
                 println("}")

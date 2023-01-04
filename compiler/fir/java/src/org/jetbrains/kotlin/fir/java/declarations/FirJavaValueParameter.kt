@@ -33,8 +33,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
-    @Volatile
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
@@ -46,6 +45,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 ) : FirValueParameter() {
     init {
         symbol.bind(this)
+        this.resolveState = resolveState
     }
 
     override val isCrossinline: Boolean

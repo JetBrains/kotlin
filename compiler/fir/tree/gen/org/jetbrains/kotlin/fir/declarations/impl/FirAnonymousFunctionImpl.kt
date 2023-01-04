@@ -18,12 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
-import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -43,6 +41,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 internal class FirAnonymousFunctionImpl(
     override val source: KtSourceElement?,
+    resolveState: FirResolveState,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
@@ -65,12 +64,14 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
-    @Volatile
-    override var resolveState: FirResolveState = FirResolvePhase.DECLARATIONS.asResolveState()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 
     init {
         symbol.bind(this)
+    }
+
+    init {
+        this.resolveState = resolveState
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
