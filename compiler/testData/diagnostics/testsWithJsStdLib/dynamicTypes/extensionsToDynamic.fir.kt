@@ -11,7 +11,7 @@ fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>varOnDynamic<!> = 1
 }
 
-fun dynamic.extTest() {
+fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.extTest() {
     <!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
     <!DEBUG_INFO_DYNAMIC!>onNullableDynamic<!>()
 
@@ -32,12 +32,12 @@ fun dynamic.extTest() {
 
 }
 
-fun dynamic.onDynamic() {}
-fun dynamic?.onNullableDynamic() {}
+fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamic() {}
+fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic?<!>.onNullableDynamic() {}
 
-val dynamic.valOnDynamic: Int get() = 1
+val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.valOnDynamic: Int get() = 1
 
-var dynamic.varOnDynamic: Int
+var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.varOnDynamic: Int
     get() = 1
     set(v) {}
 
@@ -51,8 +51,8 @@ class ForMemberExtensions {
         d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVal<!> = 1
     }
 
-    val dynamic.memberExtensionVal: Int get() = 1
-    var dynamic.memberExtensionVar: Int
+    val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.memberExtensionVal: Int get() = 1
+    var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.memberExtensionVar: Int
         get() = 1
         set(v) {}
 }

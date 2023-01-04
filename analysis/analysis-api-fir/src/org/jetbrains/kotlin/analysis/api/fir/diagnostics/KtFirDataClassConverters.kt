@@ -2022,6 +2022,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED) { firDiagnostic ->
+        DynamicReceiverNotAllowedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INCOMPATIBLE_TYPES) { firDiagnostic ->
         IncompatibleTypesImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
