@@ -154,6 +154,13 @@ class MainKtsIT {
             listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
         )
     }
+
+    @Test
+    fun testUtf8Bom() {
+        val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
+        Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
+        runWithKotlincAndMainKts(scriptPath, listOf("Hello world"))
+    }
 }
 
 fun runWithKotlincAndMainKts(
@@ -203,4 +210,6 @@ fun runWithK2JVMCompilerAndMainKts(
         )
     }
 }
+
+internal const val UTF8_BOM = 0xfeff.toChar().toString()
 

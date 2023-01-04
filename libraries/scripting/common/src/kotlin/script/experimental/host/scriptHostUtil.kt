@@ -62,7 +62,7 @@ abstract class FileBasedScriptSource() : ExternalSourceCode {
  */
 open class FileScriptSource(override val file: File, private val preloadedText: String? = null) : FileBasedScriptSource(), Serializable {
     override val externalLocation: URL get() = file.toURI().toURL()
-    override val text: String by lazy { preloadedText ?: file.readText() }
+    override val text: String by lazy { preloadedText ?: file.readTextSkipUtf8Bom() }
     override val name: String? get() = file.name
     override val locationId: String? get() = file.path
 
@@ -81,7 +81,7 @@ open class FileScriptSource(override val file: File, private val preloadedText: 
  * The implementation of the SourceCode for a script location pointed by the URL
  */
 open class UrlScriptSource(override val externalLocation: URL) : ExternalSourceCode, Serializable {
-    override val text: String by lazy { externalLocation.readText() }
+    override val text: String by lazy { externalLocation.readTextSkipUtf8Bom() }
     override val name: String? get() = externalLocation.file
     override val locationId: String? get() = externalLocation.toString()
 
@@ -133,3 +133,10 @@ private val ExternalSourceCode.textSafe: String?
         } catch (e: Throwable) {
             null
         }
+
+private const val UTF8_BOM = 0xfeff.toChar().toString()
+
+private fun File.readTextSkipUtf8Bom(): String = readText().removePrefix(UTF8_BOM)
+
+private fun URL.readTextSkipUtf8Bom(): String = readText().removePrefix(UTF8_BOM)
+

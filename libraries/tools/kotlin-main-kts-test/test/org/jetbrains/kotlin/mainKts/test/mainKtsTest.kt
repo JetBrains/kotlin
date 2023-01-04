@@ -266,6 +266,14 @@ class MainKtsTest {
         )
     }
 
+    @Test
+    fun testUtf8Bom() {
+        val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
+        Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
+        val res = evalFile(File(scriptPath))
+        assertSucceeded(res)
+    }
+
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
         Assert.assertTrue(
             "test failed:\n  ${res.reports.joinToString("\n  ") { it.severity.name + ": " + it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
