@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
+import org.jetbrains.kotlin.compiler.plugin.CliOption
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
+import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.extensions.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -37,12 +42,32 @@ class GeneratedNames {
     val tokenState = mutableMapOf<ClassId, SchemaContext>()
     val callableState = mutableMapOf<Name, FirSimpleFunction>()
 }
+val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
-class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
+// listOf("-P", "plugin:org.jetbrains.kotlinx.dataframe:path=/home/nikitak/IdeaProjects/run-df")
+class DataFrameCommandLineProcessor : CommandLineProcessor {
+    companion object {
+        val RESOLUTION_DIRECTORY = CliOption(
+            "path", "<path>", "", required = false, allowMultipleOccurrences = false
+        )
+    }
+    override val pluginId: String = "org.jetbrains.kotlinx.dataframe"
+
+    override val pluginOptions: Collection<AbstractCliOption> = listOf(RESOLUTION_DIRECTORY)
+
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
+        return when (option) {
+            RESOLUTION_DIRECTORY -> configuration.put(PATH, value)
+            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
+        }
+    }
+}
+
+class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         with(GeneratedNames()) {
             +::FirDataFrameExtensionsGenerator
-            +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, tokenIds) }
+            +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, tokenIds, path) }
             +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
             +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, tokenIds, callableState) }
             +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
@@ -53,7 +78,7 @@ class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar())
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH)))
         IrGenerationExtension.registerExtension(DataFrameIrBodyFiller())
     }
 

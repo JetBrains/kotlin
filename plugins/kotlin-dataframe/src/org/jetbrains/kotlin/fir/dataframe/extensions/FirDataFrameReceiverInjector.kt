@@ -37,8 +37,12 @@ class FirDataFrameReceiverInjector(
     private val scopeState: MutableMap<ClassId, SchemaContext>,
     private val scopeIds: ArrayDeque<ClassId>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
-    val tokenIds: ArrayDeque<ClassId>
+    val tokenIds: ArrayDeque<ClassId>,
+    val path: String?
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
+
+    override val resolutionPath: String?
+        get() = path
 
     private val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
 
