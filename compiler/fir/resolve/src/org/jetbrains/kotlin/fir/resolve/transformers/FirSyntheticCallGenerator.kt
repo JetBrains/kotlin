@@ -163,6 +163,7 @@ class FirSyntheticCallGenerator(
 
         val callableId = SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
+        // fun accept(p: <parameterTypeRef>): Unit
         val function =
             generateMemberFunction(functionSymbol, callableId.callableName, returnType = context.session.builtinTypes.unitType).apply {
                 valueParameters += parameterTypeRef.toValueParameter("reference", functionSymbol, isVararg = false)
