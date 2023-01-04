@@ -931,10 +931,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                     task('printMetadataFiles') {
                         doFirst {
-                            ['Api', 'Implementation', 'CompileOnly'].each { kind ->
-                                def configuration = configurations.getByName("commonMain${'$'}kind" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
-                                configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }
-                            }
+                            def configuration = configurations.getByName("commonMainResolvable" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
+                            configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }                            
                         }
                     }
                 """.trimIndent()
@@ -952,9 +950,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .toSet()
 
                 Assert.assertEquals(
-                    listOf("Api", "Implementation", "CompileOnly").map {
-                        "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
-                    }.toSet(),
+                    setOf("commonMainResolvable$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName),
                     paths
                 )
             }
@@ -1011,10 +1007,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                     task('printMetadataFiles') {
                         doFirst {
-                            ['Api', 'Implementation', 'CompileOnly'].each { kind ->
-                                def configuration = configurations.getByName("nodeJsMain${'$'}kind" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
-                                configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }
-                            }
+                            def configuration = configurations.getByName("nodeJsMainResolvable" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
+                            configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }
                         }
                     }
                 """.trimIndent()
@@ -1035,9 +1029,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .toSet()
 
                 Assert.assertEquals(
-                    listOf("Api", "Implementation", "CompileOnly").map {
-                        "nodeJsMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
-                    }.toSet(),
+                    setOf("nodeJsMainResolvable$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName),
                     paths
                 )
             }
@@ -1062,7 +1054,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         "\n" + """
                         task('printMetadataFiles') {
                            doFirst {
-                               configurations.getByName('commonMainImplementation$METADATA_CONFIGURATION_NAME_SUFFIX')
+                               configurations.getByName('commonMainResolvable$METADATA_CONFIGURATION_NAME_SUFFIX')
                                    .files.each { println '$pathPrefix' + it.name }
                            }
                         }
