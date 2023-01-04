@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
@@ -154,18 +153,16 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         }
     }
 
-    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
+    override fun transformDeclaration() {
         val targetDesignation = if (designation.target !is FirClassLikeDeclaration) {
             val resolvableTarget = designation.path.lastOrNull() ?: return
             val targetPath = designation.path.dropLast(1)
             FirDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
 
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.SUPER_TYPES) {
-            val collected = collect(targetDesignation)
-            supertypeComputationSession.breakLoops(session)
-            apply(collected)
-        }
+        val collected = collect(targetDesignation)
+        supertypeComputationSession.breakLoops(session)
+        apply(collected)
     }
 
     override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {

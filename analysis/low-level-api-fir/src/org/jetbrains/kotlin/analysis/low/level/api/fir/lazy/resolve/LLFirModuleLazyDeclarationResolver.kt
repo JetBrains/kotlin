@@ -161,7 +161,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 phase = currentPhase,
                 designation = designation,
                 scopeSession = scopeSession,
-                phaseRunner = moduleComponents.globalResolveComponents.phaseRunner,
                 lockProvider = moduleComponents.globalResolveComponents.lockProvider,
                 towerDataContextCollector = null
             )
@@ -187,9 +186,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                     phase = currentPhase,
                     designation = designation,
                     scopeSession = scopeSession,
-                    phaseRunner = moduleComponents.globalResolveComponents.phaseRunner,
                     lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                    towerDataContextCollector = towerDataContextCollector
+                    towerDataContextCollector = towerDataContextCollector,
                 )
             }
         }

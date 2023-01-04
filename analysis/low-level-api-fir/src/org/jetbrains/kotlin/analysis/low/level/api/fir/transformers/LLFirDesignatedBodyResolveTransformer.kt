@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirEnsureBasedTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
@@ -49,11 +48,8 @@ internal class LLFirDesignatedBodyResolveTransformer(
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
-            designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
-        }
-
+    override fun transformDeclaration() {
+        designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         ideDeclarationTransformer.ensureDesignationPassed()
     }
 

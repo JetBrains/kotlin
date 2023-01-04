@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 
 internal interface LLFirLazyTransformer {
-    fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
+    fun transformDeclaration()
 
     fun checkIsResolved(target: FirElementWithResolveState)
 
@@ -64,7 +63,7 @@ internal interface LLFirLazyTransformer {
             @TestOnly set
 
         val DUMMY = object : LLFirLazyTransformer {
-            override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {}
+            override fun transformDeclaration() {}
             override fun checkIsResolved(target: FirElementWithResolveState) {}
             override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {}
         }

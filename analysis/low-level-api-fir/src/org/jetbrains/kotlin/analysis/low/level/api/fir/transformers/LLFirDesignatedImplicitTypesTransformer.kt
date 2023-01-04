@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
@@ -53,11 +52,8 @@ internal class LLFirDesignatedImplicitTypesTransformer(
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-            designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
-        }
-
+    override fun transformDeclaration() {
+        designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         ideDeclarationTransformer.ensureDesignationPassed()
     }
 
@@ -65,7 +61,7 @@ internal class LLFirDesignatedImplicitTypesTransformer(
         LLFirPhaseUpdater.updateDeclarationInternalsPhase(
             target,
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-            updateForLocalDeclarations = false/* here should be true if we resolved the body*/,
+            updateForLocalDeclarations = false, /* here should be true if we resolved the body*/
         )
     }
 
