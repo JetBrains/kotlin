@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 internal class FirScriptImpl(
     override val source: KtSourceElement?,
-    @Volatile
-    override var resolveState: FirResolveState,
+    resolveState: FirResolveState,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
@@ -44,6 +43,10 @@ internal class FirScriptImpl(
 ) : FirScript() {
     init {
         symbol.bind(this)
+    }
+
+    init {
+        this.resolveState = resolveState
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 
 sealed class Field : Importable {
-    abstract val name: String
+    abstract var name: String
     open val arguments = mutableListOf<Importable>()
     abstract val nullable: Boolean
     abstract var isVolatile: Boolean
+    abstract var isFinal: Boolean
+    abstract var isLateinit: Boolean
     open var withReplace: Boolean = false
     abstract val isFirType: Boolean
 
@@ -73,7 +75,7 @@ sealed class Field : Importable {
 // ----------- Field with default -----------
 
 class FieldWithDefault(val origin: Field) : Field() {
-    override val name: String get() = origin.name
+    override var name: String = origin.name
     override val type: String get() = origin.type
     override var isVolatile: Boolean = origin.isVolatile
     override val nullable: Boolean get() = origin.nullable
@@ -95,6 +97,14 @@ class FieldWithDefault(val origin: Field) : Field() {
 
     override val fullQualifiedName: String?
         get() = origin.fullQualifiedName
+
+    override var isFinal: Boolean
+        get() = origin.isFinal
+        set(_) {}
+
+    override var isLateinit: Boolean
+        get() = origin.isLateinit
+        set(_) {}
 
     override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
     var defaultValueInBuilder: String? = null
@@ -126,13 +136,15 @@ class FieldWithDefault(val origin: Field) : Field() {
 }
 
 class SimpleField(
-    override val name: String,
+    override var name: String,
     override val type: String,
     override val packageName: String?,
     val customType: Importable? = null,
     override val nullable: Boolean,
     override var withReplace: Boolean,
-    override var isVolatile: Boolean = false
+    override var isVolatile: Boolean = false,
+    override var isFinal: Boolean = false,
+    override var isLateinit: Boolean = false,
 ) : Field() {
     override val isFirType: Boolean = false
     override val fullQualifiedName: String?
@@ -149,7 +161,9 @@ class SimpleField(
             customType,
             nullable,
             withReplace,
-            isVolatile
+            isVolatile,
+            isFinal,
+            isLateinit,
         ).apply {
             withBindThis = this@SimpleField.withBindThis
         }
@@ -162,7 +176,8 @@ class SimpleField(
         customType,
         nullable,
         withReplace,
-        isVolatile
+        isVolatile,
+        isFinal,
     ).also {
         it.withBindThis = withBindThis
         updateFieldsInCopy(it)
@@ -170,10 +185,10 @@ class SimpleField(
 }
 
 class FirField(
-    override val name: String,
+    override var name: String,
     val element: AbstractElement,
     override val nullable: Boolean,
-    override var withReplace: Boolean
+    override var withReplace: Boolean,
 ) : Field() {
     init {
         if (element is ElementWithArguments) {
@@ -183,11 +198,13 @@ class FirField(
 
     override val type: String get() = element.type
     override var isVolatile: Boolean = false
+    override var isFinal: Boolean = false
     override val packageName: String? get() = element.packageName
     override val isFirType: Boolean = true
 
     override var isMutable: Boolean = true
     override var isMutableOrEmpty: Boolean = false
+    override var isLateinit: Boolean = false
 
     override fun internalCopy(): Field {
         return FirField(
@@ -204,7 +221,7 @@ class FirField(
 // ----------- Field list -----------
 
 class FieldList(
-    override val name: String,
+    override var name: String,
     val baseType: Importable,
     override var withReplace: Boolean,
     useMutableOrEmpty: Boolean = false
@@ -218,8 +235,10 @@ class FieldList(
         get() = false
 
     override var isVolatile: Boolean = false
+    override var isFinal: Boolean = false
     override var isMutable: Boolean = true
     override var isMutableOrEmpty: Boolean = useMutableOrEmpty
+    override var isLateinit: Boolean = false
 
     override fun internalCopy(): Field {
         return FieldList(
