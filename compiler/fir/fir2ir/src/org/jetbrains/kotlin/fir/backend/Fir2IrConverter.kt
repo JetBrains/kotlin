@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -60,6 +61,7 @@ class Fir2IrConverter(
         fir2irVisitor: Fir2IrVisitor,
         fir2IrExtensions: Fir2IrExtensions,
     ) {
+        session.lazyDeclarationResolver.disableLazyResolveContractChecks()
         for (firFile in allFirFiles) {
             registerFileAndClasses(firFile, irModuleFragment)
         }
