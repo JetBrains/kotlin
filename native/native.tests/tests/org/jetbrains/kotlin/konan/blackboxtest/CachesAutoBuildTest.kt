@@ -42,7 +42,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
         val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), lib)
 
-        assertTrue(main.executableFile.exists())
+        assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
     }
 
@@ -58,7 +58,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
             externalLib, userLib
         )
 
-        assertTrue(main.executableFile.exists())
+        assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("externalLib").exists())
         assertFalse(autoCacheDir.resolve(cacheFlavor).resolve("userLib").exists())
     }
@@ -75,12 +75,13 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         assertTrue(cacheDir.resolve("lib-${if (makePerFileCache) "per-file-cache" else "cache"}").exists())
         val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, listOf(cacheDir), lib)
 
-        assertTrue(main.executableFile.exists())
+        assertTrue(main.exists())
         assertFalse(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
     }
 
-    private fun compileToExecutable(sourcesDir: File, autoCacheFrom: File, cacheDirectories: List<File>, vararg dependencies: KLIB) =
-        compileToExecutable(
+    private fun compileToExecutable(sourcesDir: File, autoCacheFrom: File, cacheDirectories: List<File>, vararg dependencies: KLIB): File {
+        autoCacheDir.mkdirs()
+        return compileToExecutable(
             sourcesDir,
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
@@ -89,7 +90,8 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
                 ) + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" }
             ),
             *dependencies
-        ).assertSuccess().resultingArtifact
+        ).executableFile
+    }
 
     private val autoCacheDir: File get() = buildDir.resolve("__auto_cache__")
     private val cacheFlavor: String

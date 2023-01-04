@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.PipelineType
@@ -35,6 +36,83 @@ import org.junit.jupiter.api.Assumptions
 import java.io.File
 
 private val DEFAULT_EXTRAS = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
+
+internal abstract class ArtifactBuilder<T>(
+    val test: AbstractNativeSimpleTest,
+    val rootDir: File,
+    val targetSrc: String,
+    dependencies: List<TestCompilationArtifact.KLIB>
+) {
+    private val buildDir = test.buildDir
+    var outputDir: String = ""
+
+    private val sources = mutableListOf<Pair<String, String>>()
+    private val dependencies = dependencies.toMutableList()
+
+    infix fun String.copyTo(to: String) {
+        sources.add(Pair(this, to))
+    }
+
+    fun dependsOn(klib: TestCompilationArtifact.KLIB) {
+        dependencies.add(klib)
+    }
+
+    protected abstract fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>): T
+
+    fun build(): T {
+        val targetSrc = buildDir.resolve(targetSrc)
+        targetSrc.deleteRecursively()
+        targetSrc.mkdirs()
+        val outputDir = if (outputDir == "") buildDir else buildDir.resolve(outputDir)
+        sources.forEach {
+            val source = rootDir.resolve(it.first)
+            val target = targetSrc.resolve(it.second)
+            target.mkdirs()
+            if (source.isFile)
+                source.copyTo(target, true)
+            else
+                source.copyRecursively(target, true)
+        }
+        return build(targetSrc, outputDir, dependencies)
+    }
+}
+
+internal class LibraryBuilder(
+    test: AbstractNativeSimpleTest,
+    rootDir: File,
+    targetSrc: String,
+    dependencies: List<TestCompilationArtifact.KLIB>
+) : ArtifactBuilder<TestCompilationArtifact.KLIB>(test, rootDir, targetSrc, dependencies) {
+    var libraryVersion: String? = null
+
+    override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
+        test.compileToLibrary(
+            sourcesDir,
+            outputDir,
+            freeCompilerArgs = libraryVersion?.let { TestCompilerArgs(listOf("-library-version=$it")) } ?: TestCompilerArgs.EMPTY,
+            dependencies
+        )
+}
+
+internal class ExecutableBuilder(
+    test: AbstractNativeSimpleTest,
+    rootDir: File,
+    targetSrc: String,
+    dependencies: List<TestCompilationArtifact.KLIB>
+) : ArtifactBuilder<CompiledExecutable>(test, rootDir, targetSrc, dependencies) {
+    private val freeCompilerArgs = mutableListOf<String>()
+
+    operator fun String.unaryPlus() {
+        freeCompilerArgs.add(this)
+    }
+
+    override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
+        test.compileToExecutable(
+            sourcesDir,
+            freeCompilerArgs = if (freeCompilerArgs.isEmpty()) TestCompilerArgs.EMPTY else TestCompilerArgs(freeCompilerArgs),
+            dependencies
+        )
+}
 
 internal val AbstractNativeSimpleTest.buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
 
@@ -54,19 +132,42 @@ internal fun AbstractNativeSimpleTest.compileToLibrary(
     sourcesDir: File,
     outputDir: File,
     vararg dependencies: TestCompilationArtifact.KLIB
+): TestCompilationArtifact.KLIB = compileToLibrary(sourcesDir, outputDir, TestCompilerArgs.EMPTY, dependencies.asList())
+
+internal fun AbstractNativeSimpleTest.compileToLibrary(
+    sourcesDir: File,
+    outputDir: File,
+    freeCompilerArgs: TestCompilerArgs,
+    dependencies: List<TestCompilationArtifact.KLIB>
 ): TestCompilationArtifact.KLIB {
-    val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir)
+    val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
     val compilationResult = compileToLibrary(testCase, outputDir, dependencies.map { it.asLibraryDependency() })
     return compilationResult.resultingArtifact
+}
+
+internal class CompiledExecutable(
+    val testCase: TestCase,
+    val compilationResult: TestCompilationResult.Success<out TestCompilationArtifact.Executable>
+) {
+    val executableFile: File get() = compilationResult.resultingArtifact.executableFile
+
+    val testExecutable by lazy { TestExecutable.fromCompilationResult(testCase, compilationResult) }
 }
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
-): TestCompilationResult<out TestCompilationArtifact.Executable> {
+) = compileToExecutable(sourcesDir, freeCompilerArgs, dependencies.asList())
+
+internal fun AbstractNativeSimpleTest.compileToExecutable(
+    sourcesDir: File,
+    freeCompilerArgs: TestCompilerArgs,
+    dependencies: List<TestCompilationArtifact.KLIB>
+): CompiledExecutable {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    return compileToExecutable(testCase, dependencies.map { it.asLibraryDependency() })
+    val compilationResult = compileToExecutable(testCase, dependencies.map { it.asLibraryDependency() })
+    return CompiledExecutable(testCase, compilationResult.assertSuccess())
 }
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
