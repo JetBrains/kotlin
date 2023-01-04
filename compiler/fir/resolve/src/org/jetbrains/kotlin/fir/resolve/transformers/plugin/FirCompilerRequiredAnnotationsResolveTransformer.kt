@@ -10,19 +10,18 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
+import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
@@ -56,7 +55,7 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     final override val session: FirSession,
     computationSession: CompilerRequiredAnnotationsComputationSession
 ) : FirAbstractPhaseTransformer<Nothing?>(COMPILER_REQUIRED_ANNOTATIONS) {
-    internal abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
+    abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
 
     val extensionService = session.extensionService
@@ -154,7 +153,7 @@ private class FirPartialImportResolveTransformer(
     }
 }
 
-private class FirSpecificAnnotationResolveTransformer(
+class FirSpecificAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     computationSession: CompilerRequiredAnnotationsComputationSession

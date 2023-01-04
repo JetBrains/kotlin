@@ -257,10 +257,16 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-            context.withRegularClass(regularClass, components, forContracts = true) {
+            return resolveRegularClass(regularClass) {
                 transformDeclarationContent(regularClass, data)
+                regularClass
             }
-            return regularClass
+        }
+
+        override fun resolveRegularClass(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
+            return context.withRegularClass(regularClass, components, forContracts = true) {
+                action()
+            }
         }
 
         override fun transformAnonymousObject(

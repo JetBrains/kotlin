@@ -142,6 +142,7 @@ internal class FileStructure private constructor(
     private fun createStructureElement(container: KtElement): FileStructureElement = when {
         container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+            firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
             moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
                 target = firFile.annotationsContainer,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),

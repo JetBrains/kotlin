@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -20,56 +18,22 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
 
-    private fun FirDeclaration.isValidForResolve(): Boolean = when (origin) {
-        is FirDeclarationOrigin.Source,
-        is FirDeclarationOrigin.ImportedFromObjectOrStatic,
-        is FirDeclarationOrigin.Delegated,
-        is FirDeclarationOrigin.Synthetic,
-        is FirDeclarationOrigin.SubstitutionOverride,
-        is FirDeclarationOrigin.SamConstructor,
-        is FirDeclarationOrigin.IntersectionOverride -> {
-            when (this) {
-                is FirFile -> true
-                is FirSyntheticProperty -> false
-                is FirSyntheticPropertyAccessor -> false
-                is FirSimpleFunction,
-                is FirProperty,
-                is FirPropertyAccessor,
-                is FirField,
-                is FirTypeAlias,
-                is FirConstructor -> resolveState.resolvePhase < FirResolvePhase.BODY_RESOLVE
-                else -> true
-            }
-        }
-        else -> {
-            check(resolveState.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
-                "Expected body resolve phase for origin $origin but found $resolveState"
-            }
-            false
-        }
-    }
 
-    private fun FirElementWithResolveState.isValidForResolve() = when (this) {
-        is FirDeclaration -> isValidForResolve()
-        is FirFileAnnotationsContainer -> true
-        else -> throwUnexpectedFirElementError(this)
-    }
 
     private fun resolveContainingFileToImports(target: FirElementWithResolveState) {
         if (target.resolveState.resolvePhase >= FirResolvePhase.IMPORTS) return
         val firFile = target.getContainingFile() ?: return
         if (firFile.resolveState.resolvePhase >= FirResolvePhase.IMPORTS) return
-        moduleComponents.globalResolveComponents.lockProvider.withLocksForImportResolution(firFile) {
+        moduleComponents.globalResolveComponents.lockProvider.withLock(firFile, FirResolvePhase.IMPORTS) {
             resolveFileToImportsWithoutLock(firFile)
         }
     }
@@ -78,7 +42,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         if (firFile.resolveState.resolvePhase >= FirResolvePhase.IMPORTS) return
         checkCanceled()
         firFile.transform<FirElement, Any?>(FirImportResolveTransformer(firFile.moduleData.session), null)
-        firFile.replaceResolveState(FirResolvePhase.IMPORTS.asResolveState())
     }
 
     /**
@@ -109,60 +72,62 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         resolveContainingFileToImports(target)
         if (toPhase == FirResolvePhase.IMPORTS) return
 
-        for (designation in declarationDesignationsToResolve(target)) {
-            if (!designation.target.isValidForResolve()) continue
-            if (designation.target.resolveState.resolvePhase >= toPhase) continue
-            lazyResolveDesignation(
-                designation = designation,
-                scopeSession = scopeSession,
-                toPhase = toPhase,
-            )
-        }
-    }
-
-    private fun declarationDesignationsToResolve(target: FirElementWithResolveState): List<FirDesignationWithFile> {
-        return when (target) {
-            is FirPropertyAccessor -> declarationDesignationsToResolve(target.propertySymbol.fir)
-            is FirBackingField -> declarationDesignationsToResolve(target.propertySymbol.fir)
-            is FirTypeParameter -> declarationDesignationsToResolve(target.containingDeclarationSymbol.fir)
-            is FirValueParameter -> declarationDesignationsToResolve(target.containingFunctionSymbol.fir)
-            is FirFile -> {
-                val validForResolveDeclarations = buildList {
-                    add(target.annotationsContainer)
-                    target.declarations.filterTo(this) { it.isValidForResolve() }
-                }
-
-                validForResolveDeclarations.map {
-                    FirDesignationWithFile(path = emptyList(), target = it, firFile = target)
-                }
-            }
-            else -> listOfNotNull(target.tryCollectDesignationWithFile())
-        }
+        lazyResolveDesignations(
+            designations = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(target),
+            scopeSession = scopeSession,
+            toPhase = toPhase,
+        )
     }
 
 
-    private fun lazyResolveDesignation(
-        designation: FirDesignationWithFile,
+
+    private fun lazyResolveDesignations(
+        designations: List<LLFirDesignationToResolve>,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
-        val declarationResolvePhase = designation.target.resolveState.resolvePhase
-        if (declarationResolvePhase >= toPhase) return
+        if (designations.isEmpty()) return
 
-        var currentPhase = maxOf(declarationResolvePhase, FirResolvePhase.IMPORTS)
+        var currentPhase = run {
+            var min = FirResolvePhase.BODY_RESOLVE
+            for (designation in designations) {
+                when (designation) {
+                    is LLFirDesignationForResolveWithMembers -> {
+                        min = minOf(min, designation.target.resolveState.resolvePhase)
+                        for (target in designation.callableMembersToResolve) {
+                            min = minOf(min, target.resolveState.resolvePhase)
+                        }
+                    }
+                    is LLFirDesignationForResolveWithMultipleTargets -> {
+                        for (target in designation.targets) {
+                            min = minOf(min, target.resolveState.resolvePhase)
+                        }
+                    }
+                }
+
+                for (pathPart in designation.path) {
+                    min = minOf(min, pathPart.resolveState.resolvePhase)
+                }
+            }
+            min
+        }.coerceAtLeast(FirResolvePhase.IMPORTS)
+
+        if (currentPhase >= toPhase) return
 
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
             checkCanceled()
 
-            LLFirLazyTransformerExecutor.execute(
-                phase = currentPhase,
-                designation = designation,
-                scopeSession = scopeSession,
-                lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                towerDataContextCollector = null,
-                firProviderInterceptor = null,
-            )
+            for (designation in designations) {
+                LLFirLazyTransformerExecutor.execute(
+                    phase = currentPhase,
+                    designation = designation,
+                    scopeSession = scopeSession,
+                    lockProvider = moduleComponents.globalResolveComponents.lockProvider,
+                    towerDataContextCollector = null,
+                    firProviderInterceptor = null,
+                )
+            }
         }
     }
 
@@ -190,7 +155,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
             LLFirLazyTransformerExecutor.execute(
                 phase = currentPhase,
-                designation = designation,
+                designation = designation.asMultiDesignation(resolveMembersInsideTarget = true),
                 scopeSession = scopeSession,
                 lockProvider = moduleComponents.globalResolveComponents.lockProvider,
                 towerDataContextCollector = towerDataContextCollector,

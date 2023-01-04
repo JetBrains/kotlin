@@ -102,9 +102,14 @@ internal class FirElementBuilder(
 internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     var container: PsiElement? = this
     while (container != null && container !is KtFile) {
-        if (container is KtNamedDeclaration
-            && (container.isNonAnonymousClassOrObject() || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
-            && container !is KtPrimaryConstructor
+        if (container is KtDeclaration
+            && (container.isNonAnonymousClassOrObject()
+                    || container is KtConstructor<*>
+                    || container is KtDeclarationWithBody
+                    || container is KtProperty
+                    || container is KtTypeAlias
+                    || container is KtClassInitializer
+                    )
             && declarationCanBeLazilyResolved(container)
             && container !is KtFunctionLiteral
             && container.containingClassOrObject !is KtEnumEntry

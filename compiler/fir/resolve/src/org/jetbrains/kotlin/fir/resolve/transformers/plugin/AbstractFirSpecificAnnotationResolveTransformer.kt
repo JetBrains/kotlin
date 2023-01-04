@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.resolve.FirTransformerInternals
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
@@ -43,10 +44,10 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
-    protected val session: FirSession,
-    protected val scopeSession: ScopeSession,
-    protected val computationSession: CompilerRequiredAnnotationsComputationSession
+abstract class AbstractFirSpecificAnnotationResolveTransformer(
+    @property:PrivateForInline val session: FirSession,
+    @property:PrivateForInline val scopeSession: ScopeSession,
+    val computationSession: CompilerRequiredAnnotationsComputationSession
 ) : FirDefaultTransformer<Nothing?>() {
     companion object {
         private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord)
@@ -54,9 +55,13 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
     }
 
+    @OptIn(PrivateForInline::class)
     private val predicateBasedProvider = session.predicateBasedProvider
 
+    @OptIn(PrivateForInline::class)
     private val annotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.annotations
+
+    @OptIn(PrivateForInline::class)
     private val metaAnnotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.metaAnnotations
 
     @PrivateForInline
@@ -72,8 +77,11 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
     )
 
-    private var owners: PersistentList<FirDeclaration> = persistentListOf()
-    private val classDeclarationsStack = ArrayDeque<FirClass>()
+    @PrivateForInline
+    var owners: PersistentList<FirDeclaration> = persistentListOf()
+
+    @PrivateForInline
+    val classDeclarationsStack = ArrayDeque<FirClass>()
 
     @OptIn(PrivateForInline::class)
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): FirStatement {
@@ -101,6 +109,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return annotationCall
     }
 
+    @OptIn(PrivateForInline::class)
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
         val symbol = annotationTypeRef.coneType.toRegularClassSymbol(session) ?: return
         val regularClass = symbol.fir
@@ -124,6 +133,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return name in REQUIRED_ANNOTATION_NAMES
     }
 
+    @OptIn(PrivateForInline::class)
     private fun FirResolvedTypeRef.requiredToSave(): Boolean {
         val classId = type.classId ?: return false
         return when {
@@ -140,16 +150,46 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
-        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
-            if (!shouldTransformDeclaration(regularClass)) return regularClass
-            computationSession.recordThatAnnotationsAreResolved(regularClass)
-            return transformDeclaration(regularClass, data).also {
-                val state = beforeTransformingChildren(regularClass)
+        resolveRegularClass(
+            regularClass,
+            transformChildren = {
                 regularClass.transformDeclarations(this, data)
                 regularClass.transformSuperTypeRefs(this, data)
-                afterTransformingChildren(state)
+            },
+            afterChildrenTransform = {
                 calculateDeprecations(regularClass)
-            } as FirStatement
+            }
+        )
+        return regularClass
+    }
+
+    @OptIn(PrivateForInline::class)
+    @FirTransformerInternals
+    inline fun resolveRegularClass(
+        regularClass: FirRegularClass,
+        transformChildren: () -> Unit,
+        afterChildrenTransform: () -> Unit
+    ) {
+        withRegularClass(regularClass) {
+            if (!shouldTransformDeclaration(regularClass)) return
+            computationSession.recordThatAnnotationsAreResolved(regularClass)
+            transformDeclaration(regularClass, null).also {
+                transformChildren(regularClass) {
+                    transformChildren()
+                }
+                afterChildrenTransform()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    @FirTransformerInternals
+    inline fun withRegularClass(
+        regularClass: FirRegularClass,
+        action: () -> Unit
+    ) {
+        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
+            action()
         }
     }
 
@@ -161,27 +201,35 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         } as FirTypeAlias
     }
 
-    @OptIn(FirExtensionApiInternals::class)
+    @OptIn(FirExtensionApiInternals::class, PrivateForInline::class)
     override fun transformDeclaration(declaration: FirDeclaration, data: Nothing?): FirDeclaration {
         return (transformAnnotationContainer(declaration, data) as FirDeclaration).also {
             predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
         }
     }
 
+    @OptIn(PrivateForInline::class)
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         if (!shouldTransformDeclaration(file)) return file
-        return withFile(file) {
+        resolveFile(file) {
+            file.transformDeclarations(this, data)
+        }
+        return file
+    }
+
+    @FirTransformerInternals
+    @OptIn(PrivateForInline::class)
+    fun resolveFile(file: FirFile, action: () -> Unit) {
+        withFile(file) {
             withFileScopes(file) {
                 scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
-                val state = beforeTransformingChildren(file)
-                try {
-                    file.transformDeclarations(this, data)
-                } finally {
-                    afterTransformingChildren(state)
+                transformChildren(file) {
+                    action()
                 }
             }
         }
     }
+
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withFile(file: FirFile, f: () -> T): T {
@@ -192,20 +240,23 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
-    private fun calculateDeprecations(classLikeDeclaration: FirClassLikeDeclaration) {
+    @FirTransformerInternals
+    @OptIn(PrivateForInline::class)
+    fun calculateDeprecations(classLikeDeclaration: FirClassLikeDeclaration) {
         if (classLikeDeclaration.deprecationsProvider == UnresolvedDeprecationProvider) {
             classLikeDeclaration.replaceDeprecationsProvider(classLikeDeclaration.getDeprecationsProvider(session.firCachesFactory))
         }
     }
 
-    protected lateinit var scopes: List<FirScope>
+    lateinit var scopes: List<FirScope>
 
+    @OptIn(PrivateForInline::class)
     inline fun <T> withFileScopes(file: FirFile, f: () -> T): T {
         scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
         return f()
     }
 
-    protected abstract fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean
+    abstract fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean
 
     override fun transformProperty(property: FirProperty, data: Nothing?): FirProperty {
         if (!shouldTransformDeclaration(property)) return property
@@ -213,6 +264,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return transformDeclaration(property, data) as FirProperty
     }
 
+    @PrivateForInline
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: Nothing?
@@ -220,9 +272,9 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         if (!shouldTransformDeclaration(simpleFunction)) return simpleFunction
         computationSession.recordThatAnnotationsAreResolved(simpleFunction)
         return transformDeclaration(simpleFunction, data).also {
-            val state = beforeTransformingChildren(simpleFunction)
-            simpleFunction.transformValueParameters(this, data)
-            afterTransformingChildren(state)
+            transformChildren(simpleFunction) {
+                simpleFunction.transformValueParameters(this, data)
+            }
         } as FirSimpleFunction
     }
 
@@ -233,9 +285,11 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         if (!shouldTransformDeclaration(constructor)) return constructor
         computationSession.recordThatAnnotationsAreResolved(constructor)
         return transformDeclaration(constructor, data).also {
-            val state = beforeTransformingChildren(constructor)
-            constructor.transformValueParameters(this, data)
-            afterTransformingChildren(state)
+            transformChildren(constructor) {
+                constructor.transformValueParameters(this, data)
+
+            }
+
         } as FirConstructor
     }
 
@@ -270,11 +324,13 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
      * @return Some state of the transformer; when the nested declarations are transformed, this state will be
      * passed to the [afterTransformingChildren].
      */
-    private fun beforeTransformingChildren(parentDeclaration: FirDeclaration): PersistentList<FirDeclaration> {
+    @PrivateForInline
+    fun beforeTransformingChildren(parentDeclaration: FirDeclaration): PersistentList<FirDeclaration> {
         val current = owners
         owners = owners.add(parentDeclaration)
         return current
     }
+
 
 
     /**
@@ -283,9 +339,20 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
      *
      * @param state A state produced by the [beforeTransformingChildren] call before the transformation.
      */
-    private fun afterTransformingChildren(state: PersistentList<FirDeclaration>?) {
+    @PrivateForInline
+    fun afterTransformingChildren(state: PersistentList<FirDeclaration>?) {
         requireNotNull(state)
         owners = state
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> transformChildren(parentDeclaration: FirDeclaration, action: () -> R): R {
+        val state = beforeTransformingChildren(parentDeclaration)
+        try {
+            return action()
+        } finally {
+            afterTransformingChildren(state)
+        }
     }
 
     private fun FirUserTypeRef.createDeepCopy(): FirUserTypeRef {

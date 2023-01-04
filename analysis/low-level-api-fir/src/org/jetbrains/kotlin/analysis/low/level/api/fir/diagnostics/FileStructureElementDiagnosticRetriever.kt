@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.Persisten
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
 
 internal abstract class FileStructureElementDiagnosticRetriever {
@@ -25,8 +26,8 @@ internal abstract class FileStructureElementDiagnosticRetriever {
     ): FileStructureElementDiagnosticList
 }
 
-internal class SingleNonLocalDeclarationDiagnosticRetriever(
-    private val structureElementDeclaration: FirDeclaration
+internal class ClassDiagnosticRetreiver(
+    private val structureElementDeclaration: FirRegularClass
 ) : FileStructureElementDiagnosticRetriever() {
     override fun retrieve(
         firFile: FirFile,
@@ -45,48 +46,13 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
     }
 
     private class Visitor(
-        private val structureElementDeclaration: FirDeclaration,
+        private val structureElementDeclaration: FirRegularClass,
         context: CheckerContext,
         components: DiagnosticCollectorComponents
     ) : LLFirDiagnosticVisitor(context, components) {
-        private var insideAlwaysVisitableDeclarations = 0
 
         override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
-            if (declaration.shouldVisitWithNestedDeclarations()) {
-                insideAlwaysVisitableDeclarations++
-            }
-
-            if (insideAlwaysVisitableDeclarations > 0) {
-                return true
-            }
-
-            @Suppress("IntroduceWhenSubject")
-            return when {
-                structureElementDeclaration !is FirRegularClass -> true
-                structureElementDeclaration == declaration -> true
-                declaration.hasAnnotation(StandardClassIds.Annotations.Suppress) -> {
-                    useRegularComponents = false
-                    true
-                }
-                else -> false
-            }
-        }
-
-        private fun FirDeclaration.shouldVisitWithNestedDeclarations(): Boolean {
-            if (shouldDiagnosticsAlwaysBeCheckedOn(this)) return true
-            return when (this) {
-                is FirAnonymousInitializer -> true
-                is FirEnumEntry -> false
-                is FirValueParameter -> true
-                is FirConstructor -> isPrimary
-                else -> false
-            }
-        }
-
-        override fun onDeclarationExit(declaration: FirDeclaration) {
-            if (declaration.shouldVisitWithNestedDeclarations()) {
-                insideAlwaysVisitableDeclarations--
-            }
+            return declaration == structureElementDeclaration || shouldDiagnosticsAlwaysBeCheckedOn(declaration)
         }
     }
 
@@ -95,6 +61,36 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
             KtFakeSourceElementKind.PropertyFromParameter -> true
             KtFakeSourceElementKind.ImplicitConstructor -> true
             else -> false
+        }
+    }
+}
+
+internal class SingleNonLocalDeclarationDiagnosticRetriever(
+    private val structureElementDeclaration: FirDeclaration
+) : FileStructureElementDiagnosticRetriever() {
+    override fun retrieve(
+        firFile: FirFile,
+        collector: FileStructureElementDiagnosticsCollector,
+        moduleComponents: LLFirModuleResolveComponents,
+    ): FileStructureElementDiagnosticList {
+        val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
+        val context = moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
+            PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
+        }
+        return withSourceCodeAnalysisExceptionUnwrapping {
+            collector.collectForStructureElement(structureElementDeclaration) { components ->
+                Visitor(context, components)
+            }
+        }
+    }
+
+    private class Visitor(
+        context: CheckerContext,
+        components: DiagnosticCollectorComponents
+    ) : LLFirDiagnosticVisitor(context, components) {
+
+        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
+            return true
         }
     }
 }

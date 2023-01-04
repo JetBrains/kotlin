@@ -1,1 +1,1 @@
-fun foo() = 42/* NonReanalyzableDeclarationStructureElement */
+fun foo() = 42/* NonReanalyzableNonClassDeclarationStructureElement */

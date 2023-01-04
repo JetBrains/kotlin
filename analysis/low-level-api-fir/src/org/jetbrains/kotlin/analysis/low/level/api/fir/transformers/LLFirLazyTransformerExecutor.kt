@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirDesignationToResolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -15,26 +15,15 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 internal object LLFirLazyTransformerExecutor {
     fun execute(
         phase: FirResolvePhase,
-        designation: FirDesignationWithFile,
+        designation: LLFirDesignationToResolve,
         scopeSession: ScopeSession,
         lockProvider: LLFirLockProvider,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
     ) {
-
-        val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
-            phase,
-            designation,
-            scopeSession,
-            lockProvider,
-            towerDataContextCollector,
-            firProviderInterceptor,
-        ) ?: return
-
-        lockProvider.withLock(designation, phase) {
-            lazyTransformer.transformDeclaration()
-            lazyTransformer.updatePhaseForDeclarationInternals(designation.target)
-        }
-        lazyTransformer.checkIsResolved(designation.target)
+        val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhaseIfExists(phase) ?: return
+        val session = designation.firFile.moduleData.session
+        lazyResolver.resolve(designation, lockProvider, session, scopeSession, towerDataContextCollector, firProviderInterceptor)
+        lazyResolver.checkIsResolved(designation)
     }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.FirTransformerInternals
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -76,7 +77,8 @@ open class FirExpectActualMatcherTransformer(
 
     // ------------------------------------------------------
 
-    private fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
+    @FirTransformerInternals
+    fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         if (!memberDeclaration.isActual) return
         val actualSymbol = memberDeclaration.symbol
         val expectForActualData = FirExpectActualResolver.findExpectForActual(

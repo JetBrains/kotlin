@@ -219,7 +219,7 @@ FILE: functionWithGenericExpectedTypeInside.kt
         }
 
     }
-    public final [ResolvedTo(TYPES)] class Bar : R|Foo<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             super<<implicit>>()
         }

@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.psi.*
 
 internal object FileElementFactory {
     /**
@@ -40,7 +35,14 @@ internal object FileElementFactory {
             moduleComponents,
         )
 
-        else -> NonReanalyzableDeclarationStructureElement(
+        ktDeclaration is KtClassOrObject && ktDeclaration !is KtEnumEntry -> NonReanalyzableClassDeclarationStructureElement(
+            firFile,
+            firDeclaration as FirRegularClass,
+            ktDeclaration,
+            moduleComponents,
+        )
+
+        else -> NonReanalyzableNonClassDeclarationStructureElement(
             firFile,
             firDeclaration,
             ktDeclaration,

@@ -66,6 +66,7 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
+            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.resolve.FirTransformerInternals"
         }
     }
 }

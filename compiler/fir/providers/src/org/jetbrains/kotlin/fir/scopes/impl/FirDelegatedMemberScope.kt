@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -134,6 +135,8 @@ class FirDelegatedMemberScope(
             if (propertySymbol !is FirPropertySymbol) {
                 return@processor
             }
+
+            propertySymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
 
             val original = propertySymbol.fir
 

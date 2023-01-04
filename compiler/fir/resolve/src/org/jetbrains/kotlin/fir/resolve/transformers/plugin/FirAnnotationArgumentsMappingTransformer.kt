@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 open class FirAnnotationArgumentsMappingTransformer(
     session: FirSession,
@@ -37,14 +41,18 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
         regularClass.transformAnnotations(this, data)
         doTransformTypeParameters(regularClass)
+        regularClass.transformSuperTypeRefs(this, data)
 
-        context.withContainingClass(regularClass) {
+        doTransformRegularClass(regularClass, data)
+        return regularClass
+    }
+
+    override fun resolveRegularClass(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
+        return context.withContainingClass(regularClass) {
             context.withRegularClass(regularClass, components) {
-                transformDeclarationContent(regularClass, data) as FirRegularClass
+                action()
             }
         }
-
-        return regularClass
     }
 
     override fun transformAnonymousInitializer(
@@ -158,6 +166,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
         doTransformTypeParameters(typeAlias)
         typeAlias.transformAnnotations(transformer, data)
+        typeAlias.expandedTypeRef.transform<FirTypeRef, _>(transformer, data)
         return typeAlias
     }
 

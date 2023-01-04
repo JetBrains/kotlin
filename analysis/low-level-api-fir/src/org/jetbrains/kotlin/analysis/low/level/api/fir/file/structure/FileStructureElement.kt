@@ -10,14 +10,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetreiver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -165,7 +164,8 @@ internal class ReanalyzablePropertyStructureElement(
         return moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
             val getterPhase = originalProperty.getter?.resolveState?.resolvePhase ?: originalProperty.resolveState.resolvePhase
             val setterPhase = originalProperty.setter?.resolveState?.resolvePhase ?: originalProperty.resolveState.resolvePhase
-            val upgradedPhase = minOf(originalProperty.resolveState.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS).asResolveState()
+            val upgradedPhase =
+                minOf(originalProperty.resolveState.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS).asResolveState()
 
             moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
                 with(originalProperty) {
@@ -192,13 +192,62 @@ internal class ReanalyzablePropertyStructureElement(
     }
 }
 
-internal class NonReanalyzableDeclarationStructureElement(
+internal sealed class NonReanalyzableDeclarationStructureElement(
+    firFile: FirFile,
+    moduleComponents: LLFirModuleResolveComponents,
+) : FileStructureElement(firFile, moduleComponents)
+
+internal class NonReanalyzableClassDeclarationStructureElement(
+    firFile: FirFile,
+    val fir: FirRegularClass,
+    override val psi: KtClassOrObject,
+    moduleComponents: LLFirModuleResolveComponents,
+) : NonReanalyzableDeclarationStructureElement(firFile, moduleComponents) {
+
+    override val mappings = KtToFirMapping(fir, Recorder())
+
+    override val diagnostics = FileStructureElementDiagnostics(
+        firFile,
+        ClassDiagnosticRetreiver(fir),
+        moduleComponents,
+    )
+
+    private inner class Recorder : FirElementsRecorder() {
+        override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
+        }
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
+        }
+
+        override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
+        }
+
+        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MutableMap<KtElement, FirElement>) {
+        }
+
+        override fun visitRegularClass(regularClass: FirRegularClass, data: MutableMap<KtElement, FirElement>) {
+            if (regularClass != fir) return
+            for (member in regularClass.declarations) {
+                if (member is FirProperty || member is FirAnonymousInitializer) {
+                    member.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                }
+            }
+            super.visitRegularClass(regularClass, data)
+        }
+
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: MutableMap<KtElement, FirElement>) {
+        }
+    }
+}
+
+internal class NonReanalyzableNonClassDeclarationStructureElement(
     firFile: FirFile,
     val fir: FirDeclaration,
     override val psi: KtDeclaration,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElement(firFile, moduleComponents) {
-    override val mappings = KtToFirMapping(fir, recorder)
+) : NonReanalyzableDeclarationStructureElement(firFile, moduleComponents) {
+
+    override val mappings = KtToFirMapping(fir, Recorder)
 
     override val diagnostics = FileStructureElementDiagnostics(
         firFile,
@@ -206,27 +255,16 @@ internal class NonReanalyzableDeclarationStructureElement(
         moduleComponents,
     )
 
-
-    companion object {
-        private val recorder = object : FirElementsRecorder() {
-            override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
-                val psi = property.psi as? KtProperty ?: return super.visitProperty(property, data)
-                if (!isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
-                    super.visitProperty(property, data)
-                }
-            }
-
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
-                val psi = simpleFunction.psi as? KtNamedFunction ?: return super.visitSimpleFunction(simpleFunction, data)
-                if (!isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
-                    super.visitSimpleFunction(simpleFunction, data)
-                }
-            }
-        }
-    }
+    private object Recorder : FirElementsRecorder()
 }
 
-internal class DanglingTopLevelModifierListStructureElement(firFile: FirFile, val fir: FirDeclaration, moduleComponents: LLFirModuleResolveComponents, override val psi: KtAnnotated) :
+
+internal class DanglingTopLevelModifierListStructureElement(
+    firFile: FirFile,
+    val fir: FirDeclaration,
+    moduleComponents: LLFirModuleResolveComponents,
+    override val psi: KtAnnotated
+) :
     FileStructureElement(firFile, moduleComponents) {
     override val mappings = KtToFirMapping(fir, FirElementsRecorder())
 

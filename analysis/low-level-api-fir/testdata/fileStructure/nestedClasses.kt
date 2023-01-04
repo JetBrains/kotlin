@@ -1,14 +1,14 @@
-class A {/* NonReanalyzableDeclarationStructureElement */
-    class B {/* NonReanalyzableDeclarationStructureElement */
+class A {/* NonReanalyzableClassDeclarationStructureElement */
+    class B {/* NonReanalyzableClassDeclarationStructureElement */
         fun x() {/* ReanalyzableFunctionStructureElement */
         }
 
-        class C {/* NonReanalyzableDeclarationStructureElement */
+        class C {/* NonReanalyzableClassDeclarationStructureElement */
 
         }
     }
 
-    class E {/* NonReanalyzableDeclarationStructureElement */
+    class E {/* NonReanalyzableClassDeclarationStructureElement */
 
     }
 

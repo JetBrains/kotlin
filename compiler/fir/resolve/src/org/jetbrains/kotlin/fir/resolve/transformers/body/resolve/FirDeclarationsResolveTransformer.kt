@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
-import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.toExpectedType
+import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -536,17 +539,27 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return typeAlias
     }
 
-    private fun doTransformRegularClass(
+    protected fun doTransformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
+    ): FirRegularClass {
+        return resolveRegularClass(regularClass) {
+            transformDeclarationContent(regularClass, data) as FirRegularClass
+        }
+    }
+
+    @FirTransformerInternals
+    open fun resolveRegularClass(
+        regularClass: FirRegularClass,
+        action: () -> FirRegularClass
     ): FirRegularClass {
         dataFlowAnalyzer.enterClass()
 
         val result = context.withRegularClass(regularClass, components) {
-            transformDeclarationContent(regularClass, data) as FirRegularClass
+            action()
         }
 
-        if (!implicitTypeOnly) {
+        if (transformer.preserveCFGForClasses) {
             val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
         } else {

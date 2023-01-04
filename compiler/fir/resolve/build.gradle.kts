@@ -15,3 +15,9 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.resolve.FirTransformerInternals"
+    }
+}

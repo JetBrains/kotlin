@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -115,6 +116,7 @@ class FirClassSubstitutionScope(
 
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
@@ -175,6 +177,7 @@ class FirClassSubstitutionScope(
     fun createSubstitutionOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val constructor = original.fir
+        original.lazyResolveToPhase(FirResolvePhase.TYPES)
 
         val symbolForOverride = FirConstructorSymbol(original.callableId)
         val (newTypeParameters, _, _, newReturnType, newSubstitutor, fakeOverrideSubstitution) =

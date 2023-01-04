@@ -1,13 +1,13 @@
-enum class A {/* NonReanalyzableDeclarationStructureElement */
-    X,/* NonReanalyzableDeclarationStructureElement */
-    Y,/* NonReanalyzableDeclarationStructureElement */
+enum class A {/* NonReanalyzableClassDeclarationStructureElement */
+    X,/* NonReanalyzableNonClassDeclarationStructureElement */
+    Y,/* NonReanalyzableNonClassDeclarationStructureElement */
     Z
 
-    ;/* NonReanalyzableDeclarationStructureElement */
+    ;/* NonReanalyzableNonClassDeclarationStructureElement */
 
     fun foo(){/* ReanalyzableFunctionStructureElement */}
 
-    val x = 10/* NonReanalyzableDeclarationStructureElement */
+    val x = 10/* NonReanalyzableNonClassDeclarationStructureElement */
 
-    fun bar() = 10/* NonReanalyzableDeclarationStructureElement */
+    fun bar() = 10/* NonReanalyzableNonClassDeclarationStructureElement */
 }

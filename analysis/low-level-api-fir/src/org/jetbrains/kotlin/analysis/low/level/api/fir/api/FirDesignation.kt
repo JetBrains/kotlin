@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -34,6 +35,14 @@ class FirDesignationWithFile(
         yieldAll(path)
         if (includeTarget) yield(target)
     }
+
+    fun nestedDesignation(target: FirElementWithResolveState): FirDesignationWithFile {
+        check(this.target is FirRegularClass) {
+            "Expected ${FirRegularClass::class.java.name} to create a nested designation but was ${this.target::class.java.simpleName}"
+        }
+        return FirDesignationWithFile(path + this.target, target, firFile)
+    }
+
 }
 
 open class FirDesignation(
@@ -94,6 +103,9 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
             if (klass.classId.isLocal) return null
             klass.toFirRegularClassFromSameSession(target.moduleData.session)
         }
+        is FirAnonymousInitializer -> {
+            target.containingClass()
+        }
         else -> return null
     } ?: return emptyList()
 
@@ -148,4 +160,28 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
         }
         else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
+}
+
+fun FirDesignationWithFile.withIntermediateDesignations(): List<FirDesignationWithFile> {
+    if (path.isEmpty()) return listOf(this)
+    return path.indices.map { i ->
+        FirDesignationWithFile(path.subList(0, path.size - i), target, firFile)
+    }
+}
+
+fun FirElementWithResolveState.createNestedDesignations(firFile: FirFile): List<FirDesignationWithFile> {
+    val result = mutableListOf<FirDesignationWithFile>()
+    val queue = java.util.ArrayDeque<FirDesignationWithFile>()
+    queue.offer(FirDesignationWithFile(emptyList(), this, firFile))
+    while (queue.isNotEmpty()) {
+        val designation = queue.pop()
+        result += designation
+        when (val target = designation.target) {
+            is FirRegularClass -> {
+                target.declarations.forEach { queue.offer(designation.nestedDesignation(it)) }
+            }
+        }
+    }
+
+    return result
 }

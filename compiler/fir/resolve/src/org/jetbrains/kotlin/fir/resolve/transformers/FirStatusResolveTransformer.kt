@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirTransformerInternals
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
@@ -108,9 +110,7 @@ open class FirStatusResolveTransformer(
          */
         if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
             firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
-            if (firClass is FirRegularClass && firClass.isInline) {
-                firClass.valueClassRepresentation = computeValueClassRepresentation(firClass, session)
-            }
+            trasnformValueClassRepresentation(firClass)
         }
         return transformClass(firClass, data).also {
             statusComputationSession.endComputing(firClass)
@@ -201,13 +201,14 @@ class StatusComputationSession {
 abstract class AbstractFirStatusResolveTransformer(
     final override val session: FirSession,
     val scopeSession: ScopeSession,
-    protected val statusComputationSession: StatusComputationSession,
+    @property:FirTransformerInternals val statusComputationSession: StatusComputationSession,
     private val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
     private val scopeForLocalClass: FirScope?
 ) : FirAbstractTreeTransformer<FirResolvedDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
-    protected val classes = mutableListOf<FirClass>()
-    protected val statusResolver = FirStatusResolver(session, scopeSession)
+    @PrivateForInline val classes = mutableListOf<FirClass>()
+    @FirTransformerInternals val statusResolver = FirStatusResolver(session, scopeSession)
 
+    @OptIn(PrivateForInline::class)
     protected val containingClass: FirClass? get() = classes.lastOrNull()
 
     protected abstract fun FirDeclaration.needResolveMembers(): Boolean
@@ -225,7 +226,8 @@ abstract class AbstractFirStatusResolveTransformer(
         return (data ?: declarationStatus)
     }
 
-    protected inline fun storeClass(
+    @OptIn(PrivateForInline::class)
+    inline fun storeClass(
         klass: FirClass,
         computeResult: () -> FirDeclaration
     ): FirDeclaration {
@@ -321,7 +323,19 @@ abstract class AbstractFirStatusResolveTransformer(
         } as FirStatement
     }
 
-    protected fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
+    @FirTransformerInternals
+    fun trasnformValueClassRepresentation(firClass: FirClass) {
+        if (firClass is FirRegularClass && firClass.isInline) {
+            firClass.valueClassRepresentation = computeValueClassRepresentation(firClass, session)
+        }
+    }
+
+    @FirTransformerInternals
+    fun transformClassStatus(firClass: FirRegularClass) {
+        firClass.transformStatus(this,  statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
+    }
+
+    fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
         for (superTypeRef in regularClass.superTypeRefs) {
             forceResolveStatusOfCorrespondingClass(superTypeRef)
         }

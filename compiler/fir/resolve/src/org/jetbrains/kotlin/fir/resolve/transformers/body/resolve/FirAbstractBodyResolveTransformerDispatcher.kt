@@ -5,24 +5,23 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirTransformerInternals
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
+import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
-import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractBodyResolveTransformerDispatcher(
@@ -36,6 +35,8 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     val firProviderInterceptor: FirProviderInterceptor? = null,
 ) : FirAbstractBodyResolveTransformer(phase) {
 
+    open val preserveCFGForClasses: Boolean get() = !implicitTypeOnly
+
     final override val context: BodyResolveContext =
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
     final override val components: BodyResolveTransformerComponents =
@@ -43,8 +44,12 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 
     final override val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 
-    internal abstract val expressionsTransformer: FirExpressionsResolveTransformer
-    protected abstract val declarationsTransformer: FirDeclarationsResolveTransformer
+    @FirTransformerInternals
+    abstract val expressionsTransformer: FirExpressionsResolveTransformer
+
+    @FirTransformerInternals
+    abstract val declarationsTransformer: FirDeclarationsResolveTransformer
+
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): FirFile {

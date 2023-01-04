@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
@@ -44,7 +46,7 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
         return regularClass.transformDeclarations(this, data)
     }
 
-    private fun generateCompanion(regularClass: FirRegularClass) {
+    fun generateCompanion(regularClass: FirRegularClass) {
         // TODO: add proper error reporting
         generatedDeclarationProvider = session.generatedDeclarationsSymbolProvider ?: return
         val companionClassId = regularClass.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
