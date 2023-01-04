@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -70,7 +69,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
         val firFile = target.getContainingFile() ?: return
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile) {
+        moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
             resolveFileToImportsWithoutLock(firFile)
         }
     }
@@ -113,7 +112,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         for (designation in declarationDesignationsToResolve(target)) {
             if (!designation.target.isValidForResolve()) continue
             if (designation.target.resolvePhase >= toPhase) continue
-            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile) {
+            moduleComponents.globalResolveComponents.lockProvider.withLock(designation.firFile) {
                 runLazyDesignatedResolveWithoutLock(
                     designation = designation,
                     scopeSession = scopeSession,
