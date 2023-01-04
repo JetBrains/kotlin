@@ -12,7 +12,14 @@ evaluationDependsOnChildren()
 def pKotlinBig() { return project('kotlin_big').extensions }
 def pKotlinNative() { return project('kotlin_native').extensions }
 
-def outputDir = "$buildDir/doc"
+ext.outputDir = "$buildDir/doc"
+ext.kotlin_root = pKotlinBig().kotlin_root
+ext.kotlin_libs = pKotlinBig().kotlin_libs
+ext.kotlin_native_root = pKotlinNative().kotlin_native_root
+ext.github_revision = pKotlinBig().github_revision
+ext.localRoot = kotlin_root
+ext.baseUrl = new URL("https://github.com/JetBrains/kotlin/tree/$github_revision")
+ext.templatesDir = "$projectDir/templates".replace('\\', '/')
 
 task cleanDocs(type: Delete) {
     delete(outputDir)
@@ -41,11 +48,6 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
     return tasks.register("kotlin-stdlib_" + version + (isLatest ? "_latest" : ""), DokkaTask) {
         dependsOn(prepare)
 
-        def outputDir = "$buildDir/doc"
-
-        def github_revision = pKotlinBig().github_revision
-
-        def kotlin_root = pKotlinBig().kotlin_root
         def kotlin_libs = pKotlinBig().kotlin_libs
         def kotlin_native_root = pKotlinNative().kotlin_native_root
         def kotlin_native_libs = pKotlinNative().kotlin_native_libs
@@ -56,9 +58,18 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
         def stdlibSamples = "$kotlin_root/libraries/stdlib/samples/test"
 
         def stdlibCommonClasspath = ["$kotlin_libs/kotlin-stdlib-common/".toString()]
-        def stdlibJvmClasspath = ["$kotlin_libs/kotlin-stdlib/".toString(), "$kotlin_stdlib_dir/jdk7/src".toString(), "$kotlin_libs/kotlin-stdlib-jdk8/".toString(), "$kotlin_root/core/reflection.jvm/src".toString()]
+        def stdlibJvmClasspath = ["$kotlin_libs/kotlin-stdlib/".toString(), "$kotlin_libs/kotlin-stdlib-jdk7".toString(), "$kotlin_libs/kotlin-stdlib-jdk8/".toString(), "$kotlin_root/core/reflection.jvm/src".toString()]
         def stdlibNativeClasspath = ["$kotlin_native_libs/klib/common/stdlib".toString()]
         def stdlibJsClasspath = ["$kotlin_libs/kotlin-stdlib-js/".toString()]
+        def suppressedPackages = [
+                "kotlin.internal",
+                "kotlin.jvm.internal",
+                "kotlin.js.internal",
+                "kotlin.native.internal",
+                "kotlin.jvm.functions",
+                "kotlin.coroutines.jvm.internal",
+                "kotlin.reflect.jvm.internal"
+        ]
 
         def kotlinLanguageVersion = version
         if (version == "1.0")
@@ -68,28 +79,22 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
         moduleName.set("stdlib")
         if (isLatest) {
             outputDirectory.set(new File(outputDir, "/kotlin-stdlib/latest"))
-            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"             : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "${projectDir.toString().replace('\\', '/')}/templates" }""",
+            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"             : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.versioning.VersioningPlugin": """{ "version": "$version", "olderVersionsDir": "${outputDir.toString().replace('\\', '/')}//kotlin-stdlib/old" }"""])
         } else {
             outputDirectory.set(new File(outputDir, "/kotlin-stdlib/old/" + version))
-            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "${projectDir.toString().replace('\\', '/')}/templates" }""",
+            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.kotlinlang.VersionFilterPlugin": """{ "targetVersion": "$version" }""",
                                          "org.jetbrains.dokka.versioning.VersioningPlugin"   : """{ "version": "$version" }"""])
         }
         dokkaSourceSets {
             if (version != "1.0" && version != "1.1") { // Common platform since Kotlin 1.2
                 register("kotlin-stdlib-common") {
-                    documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
-                    skipDeprecated.set(false)
                     jdkVersion.set(8)
                     platform.set(Platform.common)
-                    includes.from(stdlibIncludeMd.toString())
-                    noStdlibLink.set(true)
                     noJdkLink.set(true)
                     classpath.setFrom(stdlibCommonClasspath)
-                    languageVersion.set(kotlinLanguageVersion)
 
-                    samples.from(stdlibSamples.toString())
                     displayName.set("Common")
                     sourceRoots.from("$kotlin_root/core/builtins/native")
                     sourceRoots.from("$kotlin_root/core/builtins/src/")
@@ -97,25 +102,14 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
                     sourceRoots.from("$kotlin_stdlib_dir/common/src")
                     sourceRoots.from("$kotlin_stdlib_dir/src")
                     sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
-                    sourceLink {
-                        localDirectory.set(file(kotlin_root))
-                        remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                        remoteLineSuffix.set("#L")
-                    }
                 }
             }
 
             register("kotlin-stdlib-java-common") {
-                documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(stdlibIncludeMd.toString())
-                noStdlibLink.set(true)
                 classpath.setFrom(stdlibJvmClasspath)
-                languageVersion.set(kotlinLanguageVersion)
 
-                samples.from(stdlibSamples.toString())
                 displayName.set("JVM")
                 if (version != "1.0" && version != "1.1") {
                     dependsOn("kotlin-stdlib-common")
@@ -141,132 +135,39 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
                     sourceRoots.from("$kotlin_stdlib_dir/src")
                     sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
                 }
-                perPackageOption {
-                    matchingRegex.set("kotlin.reflect.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.jvm.functions(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.coroutines.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.coroutines.experimental.migration(\$|\\.).*")
-                    suppress.set(true)
-                }
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
             }
             register("kotlin-stdlib-jdk8") {
-                documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(stdlibIncludeMd.toString())
-                noStdlibLink.set(true)
                 classpath.setFrom(stdlibJvmClasspath)
-                languageVersion.set(kotlinLanguageVersion)
 
-                samples.from(stdlibSamples.toString())
                 displayName.set("JRE8")
                 dependsOn("kotlin-stdlib-java-common")
                 if (version != "1.0" && version != "1.1") {
                     dependsOn("kotlin-stdlib-common")
                 }
                 sourceRoots.from("$kotlin_stdlib_dir/jdk8/src")
-                perPackageOption {
-                    matchingRegex.set("kotlin.reflect.jvm.internal")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.jvm.functions(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.coroutines.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.coroutines.experimental.migration(\$|\\.).*")
-                    suppress.set(true)
-                }
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
             }
             register("kotlin-stdlib-jdk7") {
-                documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(stdlibIncludeMd.toString())
-                noStdlibLink.set(true)
                 classpath.setFrom(stdlibJvmClasspath)
-                languageVersion.set(kotlinLanguageVersion)
 
 
-                samples.from(stdlibSamples.toString())
                 displayName.set("JRE7")
                 dependsOn("kotlin-stdlib-java-common")
                 if (version != "1.0" && version != "1.1") {
                     dependsOn("kotlin-stdlib-common")
                 }
                 sourceRoots.from("$kotlin_stdlib_dir/jdk7/src")
-                perPackageOption {
-                    matchingRegex.set("kotlin.reflect.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.jvm.functions(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.coroutines.jvm.internal(\$|\\.).*")
-                    suppress.set(true)
-                }
-                perPackageOption {
-                    matchingRegex.set("kotlin.coroutines.experimental.migration(\$|\\.).*")
-                    suppress.set(true)
-                }
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
             }
             if (version != "1.0") { // JS platform since Kotlin 1.1
                 register("kotlin-stdlib-js") {
-                    documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
-                    skipDeprecated.set(false)
                     jdkVersion.set(8)
                     platform.set(Platform.js)
-                    includes.from(stdlibIncludeMd.toString())
-                    noStdlibLink.set(true)
                     noJdkLink.set(true)
                     classpath.setFrom(stdlibJsClasspath)
-                    languageVersion.set(kotlinLanguageVersion)
 
-                    samples.from(stdlibSamples.toString())
                     displayName.set("JS")
                     if (version != "1.0" && version != "1.1") {
                         dependsOn("kotlin-stdlib-common")
@@ -286,7 +187,6 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
                         sourceRoots.from("$kotlin_stdlib_dir/src")
                         sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
                     }
-
                     perPackageOption {
                         matchingRegex.set("org.w3c(\$|\\.).*")
                         reportUndocumented.set(false)
@@ -295,38 +195,15 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
                         matchingRegex.set("org.khronos(\$|\\.).*")
                         reportUndocumented.set(false)
                     }
-                    perPackageOption {
-                        matchingRegex.set("jquery(\$|\\.).*")
-                        suppress.set(true)
-                    }
-                    perPackageOption {
-                        matchingRegex.set("kotlin.reflect.jvm.internal(\$|\\.).*")
-                        suppress.set(true)
-                    }
-                    perPackageOption {
-                        matchingRegex.set("kotlin.js.internal(\$|\\.).*")
-                        suppress.set(true)
-                    }
-                    sourceLink {
-                        localDirectory.set(file(kotlin_root))
-                        remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                        remoteLineSuffix.set("#L")
-                    }
                 }
             }
             if (version != "1.0" && version != "1.1" && version != "1.2") { // Native platform since Kotlin 1.3
                 register("kotlin-stdlib-native") {
-                    documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
-                    skipDeprecated.set(false)
                     jdkVersion.set(8)
                     platform.set(Platform.native)
-                    includes.from(stdlibIncludeMd.toString())
-                    noStdlibLink.set(true)
                     noJdkLink.set(true)
                     classpath.setFrom(stdlibNativeClasspath)
-                    languageVersion.set(kotlinLanguageVersion)
 
-                    samples.from(stdlibSamples.toString())
                     displayName.set("Native")
                     dependsOn("kotlin-stdlib-common")
 
@@ -336,18 +213,28 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
                     sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
                     sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
                     perPackageOption {
-                        matchingRegex.set("kotlin.native.internal(\$|\\.).*")
-                        suppress.set(true)
-                    }
-                    perPackageOption {
                         matchingRegex.set("kotlin.test(\$|\\.).*")
                         suppress.set(true)
                     }
-                    sourceLink {
-                        localDirectory.set(file(kotlin_root))
-                        remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                        remoteLineSuffix.set("#L")
+                }
+            }
+            configureEach {
+                documentedVisibilities.set([DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED])
+                skipDeprecated.set(false)
+                includes.from(stdlibIncludeMd.toString())
+                noStdlibLink.set(true)
+                languageVersion.set(kotlinLanguageVersion)
+                samples.from(stdlibSamples.toString())
+                suppressedPackages.forEach { packageName ->
+                    perPackageOption {
+                        matchingRegex.set("${packageName.replace(".", "\\.")}(\$|\\..*)")
+                        suppress.set(true)
                     }
+                }
+                sourceLink {
+                    localDirectory.set(file(localRoot))
+                    remoteUrl.set(baseUrl)
+                    remoteLineSuffix.set("#L")
                 }
             }
         }
@@ -357,14 +244,6 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
 TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean isLatest, TaskProvider<DokkaTask> stdlibDocTask) {
     return tasks.register("kotlin-test_" + version + (isLatest ? "_latest" : ""), DokkaTask) {
         dependsOn(prepare, stdlibDocTask)
-
-        def outputDir = "$buildDir/doc"
-
-        def github_revision = pKotlinBig().github_revision
-
-        def kotlin_root = pKotlinBig().kotlin_root
-        def kotlin_libs = pKotlinBig().kotlin_libs
-        def kotlin_native_root = pKotlinNative().kotlin_native_root
 
         def kotlinTestIncludeMd = "$kotlin_root/libraries/kotlin.test/Module.md"
 
@@ -383,76 +262,44 @@ TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean
 
         if (isLatest) {
             outputDirectory.set(new File(outputDir, "/kotlin.test/latest"))
-            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"             : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "${projectDir.toString().replace('\\', '/')}/templates" }""",
+            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"             : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.versioning.VersioningPlugin": """{ "version": "$version", "olderVersionsDir": "${outputDir.toString().replace('\\', '/')}//kotlin.test/old" }"""])
         } else {
             outputDirectory.set(new File(outputDir, "/kotlin.test/old/" + version))
-            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "${projectDir.toString().replace('\\', '/')}/templates" }""",
+            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.kotlinlang.VersionFilterPlugin": """{ "targetVersion": "$version" }""",
                                          "org.jetbrains.dokka.versioning.VersioningPlugin"   : """{ "version": "$version" }"""])
         }
 
         dokkaSourceSets {
             "kotlin-test-common" {
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.common)
-                includes.from(kotlinTestIncludeMd.toString())
                 classpath.setFrom(kotlinTestCommonClasspath)
-                languageVersion.set(kotlinLanguageVersion)
+                noJdkLink.set(true)
 
                 displayName.set("Common")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/common/src/main/kotlin")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/annotations-common/src/main/kotlin")
-
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
             }
 
             "kotlin-test-jvm" {
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(kotlinTestIncludeMd.toString())
                 classpath.setFrom(kotlinTestJvmClasspath)
-                languageVersion.set(kotlinLanguageVersion)
 
                 displayName.set("JVM")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/jvm/src/main/kotlin")
-                perPackageOption {
-                    matchingRegex.set("org.junit(\$|\\.).*")
-                    skipDeprecated.set(true)
-                }
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
             }
 
             "kotlin-test-JUnit" {
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(kotlinTestIncludeMd.toString())
                 classpath.setFrom(kotlinTestJunitClasspath)
-                languageVersion.set(kotlinLanguageVersion)
 
                 displayName.set("JUnit")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/junit/src/main/kotlin")
 
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
-                externalDocumentationLink {
-                    url.set(new URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
-                    packageListUrl.set(stdlibPackageList)
-                }
                 externalDocumentationLink {
                     url.set(new URL("http://junit.org/junit4/javadoc/latest/"))
                     packageListUrl.set(new URL("http://junit.org/junit4/javadoc/latest/package-list"))
@@ -460,25 +307,13 @@ TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean
             }
 
             "kotlin-test-JUnit5" {
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(kotlinTestIncludeMd.toString())
                 classpath.setFrom(kotlinTestJunit5Classpath)
-                languageVersion.set(kotlinLanguageVersion)
 
                 displayName.set("JUnit5")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/junit5/src/main/kotlin")
 
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
-                externalDocumentationLink {
-                    url.set(new URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
-                    packageListUrl.set(stdlibPackageList)
-                }
                 externalDocumentationLink {
                     url.set(new URL("https://junit.org/junit5/docs/current/api/"))
                     packageListUrl.set(junit5PackageList)
@@ -486,25 +321,13 @@ TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean
             }
 
             "kotlin-test-TestNG" {
-                skipDeprecated.set(false)
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
-                includes.from(kotlinTestIncludeMd.toString())
                 classpath.setFrom(kotlinTestTestngClasspath)
-                languageVersion.set(kotlinLanguageVersion)
 
                 displayName.set("TestNG")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/testng/src/main/kotlin")
 
-                sourceLink {
-                    localDirectory.set(file(kotlin_root))
-                    remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                    remoteLineSuffix.set("#L")
-                }
-                externalDocumentationLink {
-                    url.set(new URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
-                    packageListUrl.set(stdlibPackageList)
-                }
                 // externalDocumentationLink {
                 //     url.set(new URL("https://jitpack.io/com/github/cbeust/testng/master/javadoc/"))
                 //     packageListUrl.set(new URL("https://jitpack.io/com/github/cbeust/testng/master/javadoc/package-list"))
@@ -512,52 +335,37 @@ TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean
             }
             if (version != "1.0") { // JS platform since Kotlin 1.1
                 "kotlin-test-js" {
-                    skipDeprecated.set(false)
-                    jdkVersion.set(8)
                     platform.set(Platform.js)
-                    includes.from(kotlinTestIncludeMd.toString())
                     classpath.setFrom(kotlinTestJsClasspath)
-                    languageVersion.set(kotlinLanguageVersion)
+                    noJdkLink.set(true)
 
                     displayName.set("JS")
                     sourceRoots.from("$kotlin_root/libraries/kotlin.test/js/src/main/kotlin")
-
-                    sourceLink {
-                        localDirectory.set(file(kotlin_root))
-                        remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                        remoteLineSuffix.set("#L")
-                    }
-                    perPackageOption {
-                        matchingRegex.set("org.junit(\$|\\.).*")
-                        skipDeprecated.set(true)
-                    }
-                    externalDocumentationLink {
-                        url.set(new URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
-                        packageListUrl.set(stdlibPackageList)
-                    }
                 }
             }
             if (version != "1.0" && version != "1.1" && version != "1.2") { // Native platform since Kotlin 1.3
                 "kotlin-test-native" {
-                    skipDeprecated.set(false)
-                    jdkVersion.set(8)
                     platform.set(Platform.native)
-                    includes.from(kotlinTestIncludeMd.toString())
                     classpath.setFrom(kotlinTestJsClasspath)
-                    languageVersion.set(kotlinLanguageVersion)
+                    noJdkLink.set(true)
 
                     displayName.set("Native")
                     sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin/kotlin/test")
-
-                    sourceLink {
-                        localDirectory.set(file(kotlin_root))
-                        remoteUrl.set(new URL("https://github.com/JetBrains/kotlin/tree/$github_revision"))
-                        remoteLineSuffix.set("#L")
-                    }
-                    externalDocumentationLink {
-                        url.set(new URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
-                        packageListUrl.set(stdlibPackageList)
-                    }
+                }
+            }
+            configureEach {
+                skipDeprecated.set(false)
+                includes.from(kotlinTestIncludeMd.toString())
+                languageVersion.set(kotlinLanguageVersion)
+                noStdlibLink.set(true)
+                sourceLink {
+                    localDirectory.set(file(localRoot))
+                    remoteUrl.set(baseUrl)
+                    remoteLineSuffix.set("#L")
+                }
+                externalDocumentationLink {
+                    url.set(new URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
+                    packageListUrl.set(stdlibPackageList)
                 }
             }
         }
