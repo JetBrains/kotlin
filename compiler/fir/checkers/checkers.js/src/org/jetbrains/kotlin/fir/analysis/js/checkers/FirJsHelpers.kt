@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
+import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationStringParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -64,6 +65,10 @@ fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: Checker
     }
 
     return false
+}
+
+fun FirBasedSymbol<*>.getJsName(session: FirSession): String? {
+    return getAnnotationStringParameter(JsStandardClassIds.Annotations.JsName, session)
 }
 
 fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {

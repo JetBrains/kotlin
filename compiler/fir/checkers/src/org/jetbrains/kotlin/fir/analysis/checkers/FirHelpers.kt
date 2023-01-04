@@ -733,3 +733,9 @@ fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, sess
 
 fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession) =
     symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)
+
+fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: FirSession): String? {
+    val annotation = getAnnotationByClassId(classId, session) as? FirAnnotationCall
+    val expression = annotation?.argumentMapping?.mapping?.values?.firstOrNull() as? FirConstExpression<*>
+    return expression?.value as? String
+}
