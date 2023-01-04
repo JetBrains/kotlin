@@ -29,10 +29,14 @@ internal class LLFirLazyTransformerExecutor {
                 designation,
                 scopeSession,
                 lockProvider,
-                towerDataContextCollector
-            )
+                towerDataContextCollector,
+            ) ?: return
+
             executeWithoutPCE {
-                lazyTransformer.transformDeclaration(phaseRunner)
+                lockProvider.withLock(designation, phase) {
+                    lazyTransformer.transformDeclaration(phaseRunner)
+                    lazyTransformer.checkIsResolved(designation.target)
+                }
             }
         }
     }
