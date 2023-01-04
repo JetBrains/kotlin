@@ -16,9 +16,12 @@
 package org.jetbrains.kotlin.konan
 
 import java.io.File
+import java.nio.file.Files
 
 interface TemporaryFilesService {
     fun create(name: String): File
+
+    fun dispose()
 }
 
 /**
@@ -26,18 +29,18 @@ interface TemporaryFilesService {
  * If pathToTemporaryDir is given and is not empty then temporary outputs will be preserved
  */
 class TempFiles(pathToTemporaryDir: String? = null) : TemporaryFilesService {
-    fun dispose() {
+    override fun dispose() {
         if (deleteOnExit) {
             // Note: this can throw an exception if a file deletion is failed for some reason (e.g. OS is Windows and the file is in use).
             dir.deleteRecursively()
         }
     }
 
-    private val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
+    private val deleteOnExit = pathToTemporaryDir.isNullOrEmpty()
 
     private val dir by lazy {
         if (deleteOnExit) {
-            createTempDir("konan_temp")
+            Files.createTempDirectory("konan_temp").toFile()
         } else {
             createDirForTemporaryFiles(pathToTemporaryDir!!)
         }

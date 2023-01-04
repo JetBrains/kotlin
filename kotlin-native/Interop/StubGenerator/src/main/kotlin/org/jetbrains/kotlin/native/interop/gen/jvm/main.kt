@@ -310,7 +310,7 @@ private fun processCLib(
 
     val libName = additionalArgs.cstubsName ?: fqParts.joinToString("") + "stubs"
 
-    val tempFiles = TempFiles(libName, cinteropArguments.tempDir)
+    val tempFiles = TempFiles(cinteropArguments.tempDir)
 
     val imports = parseImports(allLibraryDependencies)
 
@@ -341,7 +341,7 @@ private fun processCLib(
 
 
     File(nativeLibsDir).mkdirs()
-    val outCFile = tempFiles.create(libName, ".${library.language.sourceFileExtension}")
+    val outCFile = tempFiles.create("$libName.${library.language.sourceFileExtension}")
 
     val logger = if (verbose) {
         { message: String -> println(message) }
@@ -394,7 +394,7 @@ private fun processCLib(
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
     val nativeOutputPath: String = when (flavor) {
         KotlinPlatform.JVM -> {
-            val outOFile = tempFiles.create(libName,".o")
+            val outOFile = tempFiles.create("$libName.o")
             val compilerCmd = arrayOf(compiler, *compilerArgs,
                     "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
             runCmd(compilerCmd, verbose)

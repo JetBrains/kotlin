@@ -33,7 +33,7 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
 internal data class SaveAdditionalCacheInfoPhaseInput(
         val cacheAdditionalInfo: CacheAdditionalInfo?,
         val dependenciesTrackingResult: DependenciesTrackingResult,
-        val cacheDirectory: File
+        val cacheOutputs: CacheOutputs
 )
 
 /**
@@ -43,13 +43,12 @@ internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Phase
         name = "SaveAdditionalCacheInfo",
         description = "Save additional cache info (inline functions bodies and fields of classes)"
 ) { context, input ->
-    val cacheOutputs = CacheOutputs(input.cacheDirectory.absolutePath, context.config.target, context.config.produce)
-    CacheStorage(cacheOutputs).saveAdditionalCacheInfo(input.cacheAdditionalInfo, input.dependenciesTrackingResult)
+    CacheStorage(input.cacheOutputs).saveAdditionalCacheInfo(input.cacheAdditionalInfo, input.dependenciesTrackingResult)
 }
 
 internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, CacheOutputs>(
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
 ) { _, outputFiles ->
-    CacheStorage.renameOutput(outputFiles)
+    CacheStorage.renameOutput(outputFiles.tempCacheDirectory, File(outputFiles.cacheRootPath))
 }

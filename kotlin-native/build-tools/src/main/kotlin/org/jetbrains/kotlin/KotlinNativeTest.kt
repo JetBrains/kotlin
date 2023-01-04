@@ -16,7 +16,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import java.io.ByteArrayOutputStream
@@ -568,16 +567,16 @@ open class KonanDynamicTest : KonanStandaloneTest() {
             else -> listOf("-L", artifactsDir, "-rpath", artifactsDir)
         }
         val commands = linker.finalLinkCommands(
-                objectFiles = listOf("${this@KonanDynamicTest.executable}.o"),
-                executable = executable,
-                libraries = listOf("-l$name"),
-                linkerArgs = linkerArgs,
-                optimize = isOpt,
-                debug = isDebug,
-                kind = LinkerOutputKind.EXECUTABLE,
-                outputDsymBundle = "",
-                needsProfileLibrary = false,
-                mimallocEnabled = false
+            objectFiles = listOf("${this@KonanDynamicTest.executable}.o"),
+            executable = executable,
+            libraries = listOf("-l$name"),
+            linkerArgs = linkerArgs,
+            optimize = isOpt,
+            debug = isDebug,
+            kind = LinkerOutputKind.EXECUTABLE,
+            outputDsymBundle = "",
+            needsProfileLibrary = false,
+            mimallocEnabled = false
         )
         commands.map { cmd ->
             // Filter out linker option that defines __cxa_demangle because Konan_cxa_demangle is not defined in tests.

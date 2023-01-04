@@ -75,7 +75,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
     abstract fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   kind: LinkerOutputKind, outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind? = null): List<Command>
 
@@ -123,7 +123,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   kind: LinkerOutputKind, outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         require(sanitizer == null) {
@@ -221,7 +221,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
-                                   outputDsymBundle: String,
+                                   outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
@@ -264,6 +264,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 
         // TODO: revise debug information handling.
         if (debug) {
+            require(outputDsymBundle != null)
             result += dsymUtilCommand(executable, outputDsymBundle)
             if (optimize) {
                 result += Command(strip, *stripFlags.toTypedArray(), executable)
@@ -362,7 +363,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   kind: LinkerOutputKind, outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
@@ -454,7 +455,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   kind: LinkerOutputKind, outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         require(sanitizer == null) {
@@ -507,7 +508,7 @@ class WasmLinker(targetProperties: WasmConfigurables)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   kind: LinkerOutputKind, outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
@@ -563,7 +564,7 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   kind: LinkerOutputKind, outputDsymBundle: String?,
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")

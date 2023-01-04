@@ -6,18 +6,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.util.prefixBaseNameIfNot
 import org.jetbrains.kotlin.util.suffixIfNot
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 import kotlin.random.Random
-
-interface LinkerOutputFiles {
-    val symbolicInfoFile: String
-
-    val dynamicCacheInstallName: String
-
-    val nativeBinaryFile: String
-}
 
 private class OutputFilesMangler(target: KonanTarget, private val produce: CompilerOutputKind) {
     val prefix = produce.prefix(target)
@@ -53,19 +45,19 @@ class CacheOutputs(val cacheRootPath: String, target: KonanTarget, private val p
 
     val tempCacheDirectory = File(cacheRootPath + Random.nextLong().toString())
 
-    val bitcodeDependenciesFile = tempCacheDirectory.cacheBinaryPart().child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
-    val inlineFunctionBodiesFile = tempCacheDirectory.cacheIrPart().child(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME)
-    val classFieldsFile = tempCacheDirectory.cacheIrPart().child(CachedLibraries.CLASS_FIELDS_FILE_NAME)
-    val eagerInitializedPropertiesFile = tempCacheDirectory.cacheIrPart().child(CachedLibraries.EAGER_INITIALIZED_PROPERTIES_FILE_NAME)
+    val bitcodeDependenciesFile = File(tempCacheDirectory.cacheBinaryPart(), CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
+    val inlineFunctionBodiesFile = File(tempCacheDirectory.cacheIrPart(), CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME)
+    val classFieldsFile = File(tempCacheDirectory.cacheIrPart(), CachedLibraries.CLASS_FIELDS_FILE_NAME)
+    val eagerInitializedPropertiesFile = File(tempCacheDirectory.cacheIrPart(), CachedLibraries.EAGER_INITIALIZED_PROPERTIES_FILE_NAME)
 
-    private fun File.cacheBinaryPart() = this.child(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+    private fun File.cacheBinaryPart() = File(this, CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
 
-    private fun File.cacheIrPart() = this.child(CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
+    private fun File.cacheIrPart() = File(this, CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
 
     val cacheFileName = with(mangler) { File((cacheRootPath).fullOutputName()).absoluteFile.name }
 
 
-    val dynamicCacheInstallName = File(cacheRootPath).cacheBinaryPart().child(cacheFileName).absolutePath
+    val dynamicCacheInstallName = File(File(cacheRootPath).cacheBinaryPart(), cacheFileName).absolutePath
 
     fun prepareTempDirectories() {
         tempCacheDirectory.mkdirs()
@@ -84,15 +76,9 @@ class KlibOutputFiles(private val outputName: String, target: KonanTarget, val p
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind) : LinkerOutputFiles {
+class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind) {
 
     private val mangler = OutputFilesMangler(target, produce)
-
-    /**
-     * Header file for dynamic library.
-     */
-    val cAdapterHeader by lazy { File("${outputName}_api.h") }
-    val cAdapterDef    by lazy { File("${outputName}.def") }
 
     /**
      * Compiler's main output file.
@@ -102,8 +88,4 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
     val mainFile = File(mainFileName)
 
     val perFileCacheFileName = File(outputName).absoluteFile.name
-
-    override val nativeBinaryFile = mainFileName
-
-    override val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 }

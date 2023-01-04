@@ -217,17 +217,17 @@ abstract class CompileToExecutable : DefaultTask() {
         // Getting link commands requires presence of a target toolchain.
         // Thus we cannot get them at the configuration stage because the toolchain may be not downloaded yet.
         platformManager.platform(target.get()).linker.finalLinkCommands(
-                listOf(compilerOutputFile.asFile.get().absolutePath),
-                outputFile.asFile.get().absolutePath,
-                listOf(),
-                linkerArgs.get(),
-                optimize = false,
-                debug = true,
-                kind = LinkerOutputKind.EXECUTABLE,
-                outputDsymBundle = outputFile.asFile.get().absolutePath + ".dSYM",
-                needsProfileLibrary = false,
-                mimallocEnabled = mimallocEnabled.get(),
-                sanitizer = sanitizer.orNull
+            listOf(compilerOutputFile.asFile.get().absolutePath),
+            outputFile.asFile.get().absolutePath,
+            listOf(),
+            linkerArgs.get(),
+            optimize = false,
+            debug = true,
+            kind = LinkerOutputKind.EXECUTABLE,
+            outputDsymBundle = outputFile.asFile.get().absolutePath + ".dSYM",
+            needsProfileLibrary = false,
+            mimallocEnabled = mimallocEnabled.get(),
+            sanitizer = sanitizer.orNull
         ).map { it.argsWithExecutable }
     }
 

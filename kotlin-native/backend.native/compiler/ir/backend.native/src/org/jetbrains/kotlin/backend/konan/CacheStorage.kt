@@ -9,17 +9,19 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import java.io.File
+import java.nio.file.Files
 
 internal class CacheStorage(private val outputFiles: CacheOutputs) {
 
     companion object {
-        fun renameOutput(outputFiles: CacheOutputs) {
+        fun renameOutput(temporaryCacheDirectory: File, outputCacheDirectory: File) {
             // For caches the output file is a directory. It might be created by someone else,
             // we have to delete it in order for the next renaming operation to succeed.
             // TODO: what if the directory is not empty?
-            java.io.File(outputFiles.mainFileName).delete()
-            if (!outputFiles.tempCacheDirectory.renameTo(outputFiles.mainFile))
-                outputFiles.tempCacheDirectory.deleteRecursively()
+            outputCacheDirectory.delete()
+            if (!temporaryCacheDirectory.renameTo(outputCacheDirectory))
+                temporaryCacheDirectory.deleteRecursively()
         }
     }
 
@@ -34,7 +36,7 @@ internal class CacheStorage(private val outputFiles: CacheOutputs) {
     }
 
     private fun saveCacheBitcodeDependencies(immediateBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>) {
-        outputFiles.bitcodeDependenciesFile.writeLines(DependenciesSerializer.serialize(immediateBitcodeDependencies))
+        Files.write(outputFiles.bitcodeDependenciesFile.toPath(), (DependenciesSerializer.serialize(immediateBitcodeDependencies)))
     }
 
     private fun saveInlineFunctionBodies(inlineFunctionBodies: List<SerializedInlineFunctionReference>) {

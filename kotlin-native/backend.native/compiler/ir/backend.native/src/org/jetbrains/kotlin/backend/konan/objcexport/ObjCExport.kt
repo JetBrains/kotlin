@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import java.io.File
+import java.nio.file.Files
 
 internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
@@ -125,15 +125,6 @@ internal class ObjCExport(
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
     }
-
-    /**
-     * Populate framework directory with headers, module and info.plist.
-     */
-    fun produceFrameworkInterface() {
-        if (exportedInterface != null) {
-            createObjCFramework(generationState.config, moduleDescriptor, exportedInterface, File(generationState.outputFile))
-        }
-    }
 }
 
 // See https://bugs.swift.org/browse/SR-10177
@@ -156,10 +147,10 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
             "}"
     )
 
-    val source = createTempFile("protocols", ".m").deleteOnExit()
-    source.writeLines(headerLines + protocolsStub)
+    val source = generationState.tempFiles.create("protocols.m")
+    Files.write(source.toPath(), headerLines + protocolsStub)
 
-    val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
+    val bitcode = generationState.tempFiles.create("protocols.bc")
 
     val clangCommand = generationState.config.clang.clangC(
             source.absolutePath,

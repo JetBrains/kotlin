@@ -17,7 +17,6 @@ typealias ExecutableFile = String
 
 internal class BitcodeCompiler(
         private val context: PhaseContext,
-        private val temporaryFiles: TemporaryFilesService,
 ) {
 
     private val config = context.config
@@ -51,9 +50,7 @@ internal class BitcodeCompiler(
         runTool(absoluteToolName, *arg)
     }
 
-    private fun clang(configurables: ClangFlags, file: File): File {
-        val objectFile = temporaryFiles.create("${file.nameWithoutExtension}.o")
-
+    private fun clang(configurables: ClangFlags, inputFile: File, outputFile: File): File {
         val targetTriple = if (configurables is AppleConfigurables) {
             platform.targetTriple.withOSVersion(configurables.osVersionMin)
         } else {
@@ -75,11 +72,11 @@ internal class BitcodeCompiler(
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
                 }
         if (configurables is AppleConfigurables) {
-            targetTool("clang++", *flags.toTypedArray(), file.absolutePath, "-o", objectFile.absolutePath)
+            targetTool("clang++", *flags.toTypedArray(), inputFile.absolutePath, "-o", outputFile.absolutePath)
         } else {
-            hostLlvmTool("clang++", *flags.toTypedArray(), file.absolutePath, "-o", objectFile.absolutePath)
+            hostLlvmTool("clang++", *flags.toTypedArray(), inputFile.absolutePath, "-o", outputFile.absolutePath)
         }
-        return objectFile
+        return outputFile
     }
 
     private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
@@ -88,9 +85,9 @@ internal class BitcodeCompiler(
         RelocationModeFlags.Mode.DEFAULT -> emptyList()
     }
 
-    fun makeObjectFiles(bitcodeFile: File): List<File> =
-            listOf(when (val configurables = platform.configurables) {
-                is ClangFlags -> clang(configurables, bitcodeFile)
+    fun makeObjectFile(bitcodeFile: File, outputFile: File): File =
+            when (val configurables = platform.configurables) {
+                is ClangFlags -> clang(configurables, bitcodeFile, outputFile)
                 else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
-            })
+            }
 }

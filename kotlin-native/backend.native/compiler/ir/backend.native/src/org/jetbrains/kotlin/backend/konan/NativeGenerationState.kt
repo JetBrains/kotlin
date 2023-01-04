@@ -46,6 +46,8 @@ internal class NativeGenerationState(
 ) : BasicPhaseContext(config) {
     val outputFile = outputFiles.mainFileName
 
+    val moduleIdentifier =
+
     val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()

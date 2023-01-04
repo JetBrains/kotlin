@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Linker
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.konan.TempFiles
+import java.io.File
 
-data class LinkerPhaseInput(
-        val outputFile: String,
-        val objectFiles: List<ObjectFile>,
+internal data class LinkerPhaseInput(
+        val outputs: LinkerOutputs,
+        val objectFiles: List<File>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
-        val outputFiles: OutputFiles,
-        val temporaryFiles: TempFiles,
         val isCoverageEnabled: Boolean,
 )
 
@@ -23,6 +21,20 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPh
         name = "Linker",
         description = "Linker"
 ) { context, input ->
-    val linker = Linker(context, input.isCoverageEnabled, input.temporaryFiles, input.outputFiles)
-    linker.link(input.outputFile, input.objectFiles, input.dependenciesTrackingResult)
+    val linker = Linker(context)
+    linker.link(input.outputs, input.objectFiles, input.dependenciesTrackingResult, isCoverageEnabled = input.isCoverageEnabled)
+}
+
+data class PreLinkPhaseInput(
+        val objectFiles: List<File>,
+        val outputObjectFile: File,
+        val dependenciesTrackingResult: DependenciesTrackingResult,
+)
+
+internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<PhaseContext, PreLinkPhaseInput>(
+        name = "PreLinkCaches",
+        description = "create single big static file",
+) { context, input ->
+    val linker = Linker(context)
+    linker.preLinkStaticCaches(input.objectFiles, input.outputObjectFile, input.dependenciesTrackingResult)
 }

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.Family
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * Constructs an Apple framework without a binary.
@@ -33,39 +35,48 @@ internal class FrameworkBuilder(
             Family.WATCHOS,
             Family.TVOS -> frameworkDirectory
 
-            Family.OSX -> frameworkDirectory.child("Versions/A")
+            Family.OSX -> File(frameworkDirectory, "Versions/A")
             else -> error(target)
         }
 
-        val headers = frameworkContents.child("Headers")
+        val headers = File(frameworkContents, "Headers")
 
         headers.mkdirs()
         objCHeaderWriter.write("$frameworkName.h", headerLines, headers)
 
-        val modules = frameworkContents.child("Modules")
+        val modules = File(frameworkContents, "Modules")
         modules.mkdirs()
 
         val moduleMap = moduleMapBuilder.build(frameworkName, moduleDependencies)
 
-        modules.child("module.modulemap").writeBytes(moduleMap.toByteArray())
+        File(modules, "module.modulemap").writeBytes(moduleMap.toByteArray())
 
         val directory = when (target.family) {
             Family.IOS,
             Family.WATCHOS,
             Family.TVOS -> frameworkContents
 
-            Family.OSX -> frameworkContents.child("Resources").also { it.mkdirs() }
+            Family.OSX -> File(frameworkContents, "Resources").also { it.mkdirs() }
             else -> error(target)
         }
 
-        val infoPlistFile = directory.child("Info.plist")
+        val infoPlistFile = File(directory, "Info.plist")
         val infoPlistContents = infoPListBuilder.build(frameworkName, mainPackageGuesser, moduleDescriptor)
         infoPlistFile.writeBytes(infoPlistContents.toByteArray())
         if (target.family == Family.OSX) {
-            frameworkDirectory.child("Versions/Current").createAsSymlink("A")
+            File(frameworkDirectory, "Versions/Current").createAsSymlink("A")
             for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
-                frameworkDirectory.child(child).createAsSymlink("Versions/Current/$child")
+                File(frameworkDirectory, child).createAsSymlink("Versions/Current/$child")
             }
         }
     }
+}
+
+private fun File.createAsSymlink(target: String) {
+    val targetPath = Paths.get(target)
+    val path = this.toPath()
+    if (Files.isSymbolicLink(path) && Files.readSymbolicLink(path) == targetPath) {
+        return
+    }
+    Files.createSymbolicLink(path, targetPath)
 }

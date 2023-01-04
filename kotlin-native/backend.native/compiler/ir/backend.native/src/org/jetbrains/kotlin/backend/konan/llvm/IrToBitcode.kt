@@ -2740,7 +2740,7 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
-    fun appendStaticInitializers() {
+    private fun appendStaticInitializers() {
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
         val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
 
@@ -2770,11 +2770,12 @@ internal class CodeGeneratorVisitor(
 
             val ctorName = when {
                 // TODO: Try to not use moduleId.
-                library == null -> (if (context.config.produce.isCache) generationState.outputFiles.cacheFileName else context.config.moduleId).moduleConstructorName
-                library == context.config.libraryToCache?.klib
-                        && context.config.producePerFileCache ->
+                library == null ->
+                    (if (context.config.produce.isCache) generationState.outputFiles.cacheFileName else context.config.moduleId).moduleConstructorName
+                library == context.config.libraryToCache?.klib && context.config.producePerFileCache ->
                     fileCtorName(library.uniqueName, generationState.outputFiles.perFileCacheFileName)
-                else -> library.moduleConstructorName
+                else ->
+                    library.moduleConstructorName
             }
 
             if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {

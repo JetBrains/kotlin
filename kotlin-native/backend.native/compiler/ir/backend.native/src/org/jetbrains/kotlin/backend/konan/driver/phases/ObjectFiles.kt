@@ -12,13 +12,12 @@ import java.io.File
 
 internal data class ObjectFilesPhaseInput(
         val bitcodeFile: File,
-        val temporaryFiles: TemporaryFilesService
+        val outputFile: File
 )
 
-internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<PhaseContext, ObjectFilesPhaseInput, List<File>>(
+internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<PhaseContext, ObjectFilesPhaseInput>(
         name = "ObjectFiles",
         description = "Bitcode to object file",
-        outputIfNotEnabled = { _, _, _, _ -> emptyList() }
 ) { context, input ->
-    BitcodeCompiler(context, input.temporaryFiles).makeObjectFiles(input.bitcodeFile)
+    BitcodeCompiler(context).makeObjectFile(input.bitcodeFile, input.outputFile)
 }

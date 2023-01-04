@@ -2,15 +2,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
-import org.jetbrains.kotlin.konan.TempFiles
-import org.jetbrains.kotlin.konan.TemporaryFilesService
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.konan.target.*
+import java.io.File
 
 internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
         when (context.config.produce) {
@@ -35,12 +30,15 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
             else -> TODO("${context.config.produce} should not reach native linker stage")
         }
 
+internal data class LinkerOutputs(
+        val binaryFile: File,
+        val dSymFile: File?,
+        val installName: String?
+)
+
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
         private val context: PhaseContext,
-        private val isCoverageEnabled: Boolean = false,
-        private val tempFiles: TemporaryFilesService,
-        private val outputFiles: LinkerOutputFiles,
 ) {
 
     private val config = context.config
@@ -52,9 +50,10 @@ internal class Linker(
     private val debug = config.debug || config.lightDebug
 
     fun link(
-            outputFile: String,
-            objectFiles: List<ObjectFile>,
-            dependenciesTrackingResult: DependenciesTrackingResult
+            linkerOutputs: LinkerOutputs,
+            objectFiles: List<File>,
+            dependenciesTrackingResult: DependenciesTrackingResult,
+            isCoverageEnabled: Boolean
     ) {
         val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
@@ -63,8 +62,8 @@ internal class Linker(
         val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
 
         val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten()
-
-        runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, dependenciesTrackingResult)
+        val caches = determineCachesToLink(context, dependenciesTrackingResult)
+        runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags, caches, linkerOutputs, isCoverageEnabled)
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -85,45 +84,19 @@ internal class Linker(
     }
 
     private fun runLinker(
-            outputFile: String,
-            objectFiles: List<ObjectFile>,
+            objectFiles: List<File>,
             includedBinaries: List<String>,
             libraryProvidedLinkerFlags: List<String>,
-            dependenciesTrackingResult: DependenciesTrackingResult,
+            caches: CachesToLink,
+            linkerOutputs: LinkerOutputs,
+            isCoverageEnabled: Boolean
     ): ExecutableFile {
-        val additionalLinkerArgs: List<String>
-        val executable: String
-
-        if (config.produce != CompilerOutputKind.FRAMEWORK) {
-            additionalLinkerArgs = if (target.family.isAppleFamily) {
-                when (config.produce) {
-                    CompilerOutputKind.DYNAMIC_CACHE ->
-                        listOf("-install_name", outputFiles.dynamicCacheInstallName)
-                    else -> listOf("-dead_strip")
-                }
-            } else {
-                emptyList()
-            }
-            executable = outputFiles.nativeBinaryFile
-        } else {
-            val framework = File(outputFile)
-            val dylibName = framework.name.removeSuffix(".framework")
-            val dylibRelativePath = when (target.family) {
-                Family.IOS,
-                Family.TVOS,
-                Family.WATCHOS -> dylibName
-                Family.OSX -> "Versions/A/$dylibName"
-                else -> error(target)
-            }
-            additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
-            val dylibPath = framework.child(dylibRelativePath)
-            dylibPath.parentFile.mkdirs()
-            executable = dylibPath.absolutePath
-        }
+        val additionalLinkerArgs: List<String> = linkerOutputs.installName?.let { listOf("-install_name, $it") } ?: emptyList()
+        val executable: String = linkerOutputs.binaryFile.absolutePath
 
         val mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC
 
-        val linkerInput = determineLinkerInput(objectFiles, linkerOutput, dependenciesTrackingResult)
+        val linkerInput = determineLinkerInput(objectFiles, caches)
         try {
             File(executable).delete()
             val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
@@ -132,14 +105,14 @@ internal class Linker(
                     libraryProvidedLinkerFlags + additionalLinkerArgs
 
             val finalOutputCommands = linker.finalLinkCommands(
-                    objectFiles = linkerInput.objectFiles,
+                    objectFiles = linkerInput.objectFiles.map { it.absolutePath },
                     executable = executable,
                     libraries = linker.linkStaticLibraries(includedBinaries) + linkerInput.caches.static,
                     linkerArgs = linkerArgs,
                     optimize = optimize,
                     debug = debug,
                     kind = linkerOutput,
-                    outputDsymBundle = outputFiles.symbolicInfoFile,
+                    outputDsymBundle = linkerOutputs.dSymFile?.absolutePath,
                     needsProfileLibrary = isCoverageEnabled,
                     mimallocEnabled = mimallocEnabled,
                     sanitizer = config.sanitizer
@@ -174,11 +147,9 @@ internal class Linker(
     }
 
     private fun determineLinkerInput(
-            objectFiles: List<ObjectFile>,
-            linkerOutputKind: LinkerOutputKind,
-            dependenciesTrackingResult: DependenciesTrackingResult,
+            objectFiles: List<File>,
+            caches: CachesToLink,
     ): LinkerInput {
-        val caches = determineCachesToLink(context, dependenciesTrackingResult)
         // Since we have several linker stages that involve caching,
         // we should detect cache usage early to report errors correctly.
         val cachingInvolved = caches.static.isNotEmpty() || caches.dynamic.isNotEmpty()
@@ -187,26 +158,34 @@ internal class Linker(
                 // Do not link static cache dependencies.
                 LinkerInput(objectFiles, CachesToLink(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
             }
-            shouldPerformPreLink(caches, linkerOutputKind) -> {
-                val preLinkResult = tempFiles.create("withStaticCaches.o").absolutePath
-                val preLinkCommands = linker.preLinkCommands(objectFiles + caches.static, preLinkResult)
-                LinkerInput(listOf(preLinkResult), CachesToLink(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
-            }
             else -> LinkerInput(objectFiles, caches, emptyList(), cachingInvolved)
+        }
+    }
+
+    fun preLinkStaticCaches(
+            inputObjectFiles: List<File>,
+            outputObjectFile: File,
+            dependenciesTrackingResult: DependenciesTrackingResult,
+    ) {
+        val caches = determineCachesToLink(context, dependenciesTrackingResult)
+        val preLinkCommands = linker.preLinkCommands(inputObjectFiles.map { it.absolutePath } + caches.static, outputObjectFile.absolutePath)
+        preLinkCommands.forEach {
+            it.logWith(context::log)
+            it.execute()
         }
     }
 }
 
 private class LinkerInput(
-        val objectFiles: List<ObjectFile>,
+        val objectFiles: List<File>,
         val caches: CachesToLink,
         val preLinkCommands: List<Command>,
         val cachingInvolved: Boolean
 )
 
-private class CachesToLink(val static: List<String>, val dynamic: List<String>)
+internal class CachesToLink(val static: List<String>, val dynamic: List<String>)
 
-private fun determineCachesToLink(
+internal fun determineCachesToLink(
         context: PhaseContext,
         dependenciesTrackingResult: DependenciesTrackingResult,
 ): CachesToLink {
