@@ -226,6 +226,7 @@ val generateTypeScriptJsExportOnFileTests = sequential(
                     !it.path.endsWith("implicit-export") &&
                     !it.path.endsWith("inheritance") &&
                     !it.path.endsWith("strict-implicit-export") &&
+                    !it.path.endsWith("private-primary-constructor") &&
                     !it.path.endsWith(exportFileDirPostfix)
         }
         .map { generateJsExportOnFileTestFor(it.name) }

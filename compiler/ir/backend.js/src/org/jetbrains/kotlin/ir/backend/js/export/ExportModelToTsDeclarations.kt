@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val Nullable = "Nullable"
@@ -306,12 +310,24 @@ class ExportModelToTsDeclarations {
         val bodyString = privateCtorString + membersString + indent
 
         val nestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
+        val tsIgnoreForPrivateConstructorInheritance = if (hasSuperClassWithPrivateConstructor()) {
+            tsIgnore("extends class with private primary constructor") + "\n$indent"
+        } else ""
+
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
         val staticsExport =
             if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent, prefix) else ""
 
-        return if (name.isValidES5Identifier()) klassExport + staticsExport else ""
+        return if (name.isValidES5Identifier()) tsIgnoreForPrivateConstructorInheritance + klassExport + staticsExport else ""
+    }
+
+    private fun ExportedRegularClass.hasSuperClassWithPrivateConstructor(): Boolean {
+        return superClasses.firstIsInstanceOrNull<ExportedType.ClassType>()
+            ?.ir
+            ?.takeIf { !it.isObject }
+            ?.primaryConstructor
+            ?.let { it.visibility == DescriptorVisibilities.PRIVATE || it.hasAnnotation(JsAnnotations.jsExportIgnoreFqn) } ?: false
     }
 
     private fun List<ExportedType>.toExtendsClause(indent: String): String {
@@ -450,5 +466,9 @@ class ExportModelToTsDeclarations {
         return this is ExportedObject && nestedClasses.all {
             it.couldBeProperty() && it.ir.visibility != DescriptorVisibilities.PROTECTED
         }
+    }
+
+    private fun tsIgnore(reason: String): String {
+        return "/* @ts-ignore: $reason */"
     }
 }

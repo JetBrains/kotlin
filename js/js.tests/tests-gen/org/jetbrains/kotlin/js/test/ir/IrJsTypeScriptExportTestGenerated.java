@@ -638,6 +638,22 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/typescript-export/private-primary-constructor")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Private_primary_constructor {
+        @Test
+        public void testAllFilesPresentInPrivate_primary_constructor() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/private-primary-constructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("private-primary-constructor.kt")
+        public void testPrivate_primary_constructor() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/private-primary-constructor/private-primary-constructor.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/typescript-export/properties")
     @TestDataPath("$PROJECT_ROOT")
     public class Properties {
