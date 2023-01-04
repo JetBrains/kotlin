@@ -74,13 +74,15 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                         // when with one branch cannot be completed if it's not already complete in the first place
                     }
                     else -> {
-                        whenExpression = whenExpression.transformBranches(
-                            transformer,
+                        val resolutionModeForBranches =
                             (data as? ResolutionMode.WithExpectedType)
                                 // Currently we don't use information from cast, but probably we could have
-                                ?.takeIf { !it.fromCast }
+                                ?.takeUnless { it.fromCast }
                                 ?.copy(forceFullCompletion = false)
-                                ?: ResolutionMode.ContextDependent,
+                                ?: ResolutionMode.ContextDependent
+                        whenExpression = whenExpression.transformBranches(
+                            transformer,
+                            resolutionModeForBranches,
                         )
 
                         whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
