@@ -55,7 +55,7 @@ fun isValidJavaFqName(qualifiedName: String?): Boolean {
     for (c in qualifiedName) {
         when (state) {
             State.BEGINNING, State.AFTER_DOT -> {
-                if (!Character.isJavaIdentifierPart(c)) return false
+                if (!Character.isJavaIdentifierStart(c)) return false
                 state = State.MIDDLE
             }
             State.MIDDLE -> {
