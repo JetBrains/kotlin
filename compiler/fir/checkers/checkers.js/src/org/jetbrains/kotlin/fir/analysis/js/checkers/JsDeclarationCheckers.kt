@@ -23,6 +23,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirJsModuleChecker,
+            FirJsRuntimeAnnotationChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>

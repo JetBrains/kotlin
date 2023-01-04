@@ -56,6 +56,10 @@ fun FirReference.toResolvedConstructorSymbol(discardErrorReference: Boolean = fa
     return this.toResolvedSymbol<FirConstructorSymbol>(discardErrorReference)
 }
 
+fun FirReference.toResolvedEnumEntrySymbol(discardErrorReference: Boolean = false): FirEnumEntrySymbol? {
+    return this.toResolvedSymbol<FirEnumEntrySymbol>(discardErrorReference)
+}
+
 @OptIn(ExperimentalContracts::class)
 fun FirReference.isError(): Boolean {
     contract {
