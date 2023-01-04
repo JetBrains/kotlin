@@ -24,6 +24,10 @@ abstract class FirSession @PrivateSessionConstructor constructor(
             return generateAccessor(T::class)
         }
 
+        inline fun <reified T : FirSessionComponent> sessionComponentAccessor(id: String): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
+            return generateAccessor(id)
+        }
+
         inline fun <reified T : FirSessionComponent> nullableSessionComponentAccessor(): NullableArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateNullableAccessor(T::class)
         }
@@ -36,6 +40,11 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     @SessionConfiguration
     fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
         registerComponent(tClass, value)
+    }
+
+    @SessionConfiguration
+    fun register(keyQualifiedName: String, value: FirSessionComponent) {
+        registerComponent(keyQualifiedName, value)
     }
 
     override fun toString(): String {
