@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -74,7 +75,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 totalLength += FirRenderer().renderElementAsString(firFile).length
                 counter++
                 firFile.accept(object : FirVisitor<Unit, FirElement>() {
-                    override fun visitElement(element: FirElement, data: FirElement) {
+                    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirElement) {
                         element.acceptChildren(this, element)
                     }
 

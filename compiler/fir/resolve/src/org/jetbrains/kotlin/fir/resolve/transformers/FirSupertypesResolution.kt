@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
@@ -259,7 +260,7 @@ open class FirSupertypeResolverVisitor(
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
         else moduleSession.firProvider.getFirClassifierByFqName(classId)
 
-    override fun visitElement(element: FirElement, data: Any?) {}
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Any?) {}
 
     private fun prepareFileScopes(file: FirFile): ScopePersistentList {
         return supertypeComputationSession.getOrPutFileScope(file) {

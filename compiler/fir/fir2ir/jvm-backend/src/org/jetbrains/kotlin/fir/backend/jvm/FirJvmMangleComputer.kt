@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -295,7 +296,7 @@ open class FirJvmMangleComputer(
         }
     }
 
-    override fun visitElement(element: FirElement, data: Boolean) = error("unexpected element ${element.render()}")
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Boolean) = error("unexpected element ${element.render()}")
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Boolean) {
         isRealExpect = isRealExpect or regularClass.isExpect

@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -71,7 +72,7 @@ class Fir2IrVisitor(
 
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
-    override fun visitElement(element: FirElement, data: Any?): IrElement {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Any?): IrElement {
         TODO("Should not be here: ${element::class} ${element.render()}")
     }
 

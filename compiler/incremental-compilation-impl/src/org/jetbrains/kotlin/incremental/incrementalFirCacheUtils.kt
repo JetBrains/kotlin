@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.SpecialNames
@@ -57,7 +58,7 @@ internal fun collectNewDirtySources(
                 data.pop()
             }
 
-            override fun visitElement(element: FirElement, data: MutableList<MetadataSerializer>) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: MutableList<MetadataSerializer>) {
                 element.acceptChildren(this, data)
             }
 

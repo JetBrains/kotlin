@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 // Note that [PreliminaryLoopVisitor] in FIR DFA collects assigned variable names.
 // This one collects declared variable symbols per capturing statements.
@@ -40,7 +41,7 @@ class DeclaredVariableCollector {
 
     // FirStatement -- closest statement (loop/lambda/local declaration) which may contain reassignments
     private val visitor = object : FirVisitor<Unit, FirStatement?>() {
-        override fun visitElement(element: FirElement, data: FirStatement?) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirStatement?) {
             element.acceptChildren(this, data)
         }
 

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -97,7 +98,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         private val prohibitProtectedCallFromInline: Boolean =
             session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitProtectedCallFromInline)
 
-        override fun visitElement(element: FirElement, data: CheckerContext) {}
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: CheckerContext) {}
 
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
             val targetSymbol = functionCall.toResolvedCallableSymbol()

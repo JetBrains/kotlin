@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -605,7 +606,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             fir.returnTypeRef.accept(this, data)
         }
 
-        override fun visitElement(element: FirElement, data: StringBuilder) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: StringBuilder) {
             element.acceptChildren(this, data)
         }
 

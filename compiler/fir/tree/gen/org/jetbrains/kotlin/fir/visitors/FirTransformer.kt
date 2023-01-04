@@ -147,6 +147,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -721,7 +722,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(resolvedContractDescription, data)
     }
 
-    final override fun visitElement(element: FirElement, data: D): FirElement {
+    final override fun <@Monomorphic TE: FirElement> visitElement(element: TE, data: D): FirElement {
         return transformElement(element, data)
     }
 

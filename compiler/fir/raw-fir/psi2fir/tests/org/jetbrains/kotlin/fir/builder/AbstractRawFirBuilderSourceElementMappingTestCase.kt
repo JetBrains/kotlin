@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
@@ -58,7 +59,7 @@ abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFi
     }
 
     private object FindElementVisitor : FirVisitor<Unit, ElementFindingResult>() {
-        override fun visitElement(element: FirElement, data: ElementFindingResult) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: ElementFindingResult) {
             element.realPsi?.let { psi ->
                 if (data.psi == psi) {
                     data.result += element

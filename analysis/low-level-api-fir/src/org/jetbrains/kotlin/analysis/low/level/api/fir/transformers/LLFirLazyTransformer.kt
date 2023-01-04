@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 internal interface LLFirLazyTransformer {
     fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
@@ -62,7 +63,7 @@ internal interface LLFirLazyTransformer {
 
     companion object {
         private object WholeTreePhaseUpdater : FirVisitor<Unit, FirResolvePhase>() {
-            override fun visitElement(element: FirElement, data: FirResolvePhase) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirResolvePhase) {
                 if (element is FirElementWithResolvePhase) {
                     if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
                     element.replaceResolvePhase(data)

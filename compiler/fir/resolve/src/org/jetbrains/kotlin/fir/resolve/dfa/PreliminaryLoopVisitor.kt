@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 
 class PreliminaryLoopVisitor {
@@ -37,7 +38,7 @@ class PreliminaryLoopVisitor {
 
     // FirStatement -- closest statement (loop/lambda/local declaration) which may contain reassignments
     private val visitor = object : FirVisitor<Unit, FirStatement?>() {
-        override fun visitElement(element: FirElement, data: FirStatement?) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirStatement?) {
             element.acceptChildren(this, data)
         }
 

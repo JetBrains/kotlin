@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class ConeEffectExtractor(
@@ -30,7 +31,7 @@ class ConeEffectExtractor(
         private val BOOLEAN_NOT = FirContractsDslNames.id("kotlin", "Boolean", "not")
     }
 
-    override fun visitElement(element: FirElement, data: Nothing?): ConeContractDescriptionElement? {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Nothing?): ConeContractDescriptionElement? {
         return null
     }
 

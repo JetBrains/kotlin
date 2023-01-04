@@ -147,6 +147,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -154,7 +155,7 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
  */
 
 abstract class FirVisitor<out R, in D> {
-    abstract fun visitElement(element: FirElement, data: D): R
+    abstract fun <@Monomorphic ET: FirElement> visitElement(element: ET, data: D): R
 
     open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): R  = visitElement(annotationContainer, data)
 

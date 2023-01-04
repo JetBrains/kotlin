@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
@@ -221,7 +222,7 @@ private inline fun FirFile.forEachElementWithContainers(
     crossinline saveDeclaration: (element: FirElement, owners: List<FirBasedSymbol<*>>) -> Unit
 ) {
     val declarationsCollector = object : FirVisitor<Unit, PersistentList<FirBasedSymbol<*>>>() {
-        override fun visitElement(element: FirElement, data: PersistentList<FirBasedSymbol<*>>) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: PersistentList<FirBasedSymbol<*>>) {
             if (element is FirDeclaration) {
                 saveDeclaration(element, data)
             }

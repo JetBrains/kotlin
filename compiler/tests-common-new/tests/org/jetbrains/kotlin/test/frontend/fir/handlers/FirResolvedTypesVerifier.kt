@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeFunctionExpectedError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.IGNORE_LEAKED_INTERNAL_TYPES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -75,7 +76,7 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
         val detectedTypeVariableTypesParents = mutableSetOf<FirElement>()
         val detectedStubTypesParents = mutableSetOf<FirElement>()
 
-        override fun visitElement(element: FirElement, data: FirElement) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirElement) {
             if (element is FirDiagnosticHolder) {
                 for (coneType in element.diagnostic.coneTypes()) {
                     checkElementWithConeType(element, coneType)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
@@ -1354,7 +1355,7 @@ class ControlFlowGraphBuilder {
         val graphs = mutableListOf<ControlFlowGraph>()
 
         call.acceptChildren(object : FirDefaultVisitor<Unit, Any?>() {
-            override fun visitElement(element: FirElement, data: Any?) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Any?) {
                 element.acceptChildren(this, null)
             }
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 fun FirElement.validate() {
     accept(FirGeneratedElementsValidator, null)
@@ -26,7 +27,7 @@ fun FirElement.validate() {
  *  - add validation of declaration origin and resolve phase for all declarations
  */
 object FirGeneratedElementsValidator : FirDefaultVisitor<Unit, Any?>() {
-    override fun visitElement(element: FirElement, data: Any?) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Any?) {
         element.acceptChildren(this, null)
     }
 

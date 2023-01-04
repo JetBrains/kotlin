@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -43,7 +44,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             mask = mask or IdSignature.Flags.IS_EXPECT.encode(f)
         }
 
-        override fun visitElement(element: FirElement, data: Any?) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Any?) {
             TODO("Should not be here")
         }
 

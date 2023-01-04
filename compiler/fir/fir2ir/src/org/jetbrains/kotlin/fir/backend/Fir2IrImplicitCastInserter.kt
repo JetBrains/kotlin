@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -37,7 +38,7 @@ class Fir2IrImplicitCastInserter(
         toIrType(conversionTypeContext)
     }
 
-    override fun visitElement(element: FirElement, data: IrElement): IrElement {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: IrElement): IrElement {
         TODO("Should not be here: ${element::class}: ${element.render()}")
     }
 

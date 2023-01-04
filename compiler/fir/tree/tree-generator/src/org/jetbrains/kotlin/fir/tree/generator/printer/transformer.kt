@@ -21,6 +21,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import ${it.fullQualifiedName}") }
+        println("import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic")
         println()
         printGeneratedMessage()
 
@@ -50,10 +51,17 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 print("final override fun ")
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
 
-                println(
-                    "visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                        .typeWithArguments}${element.multipleUpperBoundsList()}{",
-                )
+                if (element.name == "Element") {
+                    println(
+                        "<@Monomorphic TE: FirElement> visit${element.name}($varName: TE, data: D): ${
+                            element.transformerType.typeWithArguments}${element.multipleUpperBoundsList()}{",
+                    )
+                } else {
+                    println(
+                        "visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${
+                            element.transformerType.typeWithArguments}${element.multipleUpperBoundsList()}{",
+                    )
+                }
                 withIndent {
                     println("return transform${element.name}($varName, data)")
                 }

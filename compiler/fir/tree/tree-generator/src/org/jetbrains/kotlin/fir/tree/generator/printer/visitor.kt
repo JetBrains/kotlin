@@ -37,6 +37,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import ${it.fullQualifiedName}") }
+        println("import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic")
         println()
         printGeneratedMessage()
 
@@ -48,7 +49,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
 
         pushIndent()
         if (!visitSuperTypeByDefault) {
-            println("abstract fun visitElement(element: FirElement, data: D): R\n")
+            println("abstract fun <@Monomorphic ET: FirElement> visitElement(element: ET, data: D): R\n")
         }
         for (element in elements) {
             if (element == AbstractFirTreeBuilder.baseFirElement) continue
@@ -86,12 +87,14 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import ${it.fullQualifiedName}") }
+        println("import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic")
         println()
         printGeneratedMessage()
 
         println("abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {")
 
         withIndent {
+//            println("abstract fun <@Monomorphic TE: FirElement> visitElement(element: TE)")
             println("abstract fun visitElement(element: FirElement)")
             println()
             for (element in elements) {
@@ -110,7 +113,13 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
             for (element in elements) {
                 with(element) {
                     val varName = safeDecapitalizedName
-                    println("final override fun ${typeParameters}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()}{")
+
+                    if (element.name == "Element") {
+                        println("final override fun <@Monomorphic TE: FirElement> ${typeParameters}visit$name($varName: TE, data: Nothing?)${multipleUpperBoundsList()}{")
+                    } else {
+                        println("final override fun ${typeParameters}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()}{")
+                    }
+
                     withIndent {
                         println("visit$name($varName)")
                     }
@@ -134,6 +143,7 @@ fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File): Gene
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import ${it.fullQualifiedName}") }
+//        println("import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic")
         println()
         printGeneratedMessage()
 

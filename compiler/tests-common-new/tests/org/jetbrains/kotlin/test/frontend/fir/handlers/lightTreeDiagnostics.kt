@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.toKtLightSourceElement
 
@@ -57,7 +58,7 @@ private data class VisitorState(
 )
 
 private object FirTreesExtractVisitor : FirVisitor<Unit, VisitorState>() {
-    override fun visitElement(element: FirElement, data: VisitorState) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: VisitorState) {
         val source = element.source ?: return
         val currentTree = source.treeStructure
         val (lastTree, visitedTrees, result) = data

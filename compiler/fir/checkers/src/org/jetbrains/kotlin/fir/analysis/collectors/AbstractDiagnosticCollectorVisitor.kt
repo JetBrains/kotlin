@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.whileAnalysing
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
@@ -33,7 +34,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     protected abstract fun checkElement(element: FirElement)
 
-    override fun visitElement(element: FirElement, data: Nothing?) {
+    override fun <@Monomorphic TE : FirElement>visitElement(element: TE, data: Nothing?) {
         if (element is FirAnnotationContainer) {
             visitAnnotationContainer(element, data)
             return

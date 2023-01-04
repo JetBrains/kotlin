@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -57,7 +58,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         }
     }
 
-    override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: MutableMap<KtElement, FirElement>) {
         cacheElement(element, data)
         element.acceptChildren(this, data)
     }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.utils.keysToMap
 
 class LocalClassesNavigationInfo(
@@ -48,7 +49,7 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     val allMembers: MutableList<FirDeclaration> = mutableListOf()
     private val currentPath: MutableList<FirClassLikeDeclaration> = mutableListOf()
 
-    override fun visitElement(element: FirElement, data: Any?) {}
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: Any?) {}
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
         visitClass(regularClass, null)

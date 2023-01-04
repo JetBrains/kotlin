@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -239,7 +240,7 @@ internal class RootStructureElement(
 
     companion object {
         private val recorder = object : FirElementsRecorder() {
-            override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: MutableMap<KtElement, FirElement>) {
                 if (element !is FirDeclaration || element is FirFile) {
                     super.visitElement(element, data)
                 }

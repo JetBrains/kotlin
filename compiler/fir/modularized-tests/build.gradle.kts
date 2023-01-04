@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 /*
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
@@ -54,4 +56,19 @@ projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb 
     }
 }
 
-testsJar()
+
+
+val fatJar = task("fatJar", type = Jar::class) {
+    dependsOn(testSourceSet.runtimeClasspath)
+    dependsOn(testSourceSet.output)
+    dependsOn("testClasses")
+
+    baseName = "${project.name}-fat"
+
+    doFirst {
+        val all = (testSourceSet.output.classesDirs.files + testSourceSet.runtimeClasspath.files).filter {
+            it.exists()
+        }
+        from(all.map { if (it.isDirectory) it else zipTree(it) })
+    }
+}

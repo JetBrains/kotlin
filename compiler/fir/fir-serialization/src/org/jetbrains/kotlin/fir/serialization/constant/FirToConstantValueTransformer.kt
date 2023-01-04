@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? = accept(FirToConstantValueTransformer, session)
 
 internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
-    override fun visitElement(
-        element: FirElement,
+    override fun <@Monomorphic TE : FirElement> visitElement(
+        element: TE,
         data: FirSession
     ): ConstantValue<*>? {
         error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")

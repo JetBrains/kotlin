@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 
 class FirSealedClassInheritorsProcessor(
@@ -52,7 +53,7 @@ class FirSealedClassInheritorsProcessor(
     }
 
     class InheritorsCollector(val session: FirSession) : FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableList<ClassId>>>() {
-        override fun visitElement(element: FirElement, data: MutableMap<FirRegularClass, MutableList<ClassId>>) {}
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: MutableMap<FirRegularClass, MutableList<ClassId>>) {}
 
         override fun visitFile(file: FirFile, data: MutableMap<FirRegularClass, MutableList<ClassId>>) {
             file.declarations.forEach { it.accept(this, data) }

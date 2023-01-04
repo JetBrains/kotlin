@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Any?>() {
@@ -168,7 +169,7 @@ private sealed class WhenExhaustivenessChecker {
     )
 
     protected abstract class AbstractConditionChecker<in D : Any> : FirVisitor<Unit, D>() {
-        override fun visitElement(element: FirElement, data: D) {}
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: D) {}
 
         override fun visitWhenExpression(whenExpression: FirWhenExpression, data: D) {
             whenExpression.branches.forEach { it.accept(this, data) }

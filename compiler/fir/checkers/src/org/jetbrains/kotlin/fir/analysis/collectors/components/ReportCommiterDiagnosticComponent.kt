@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 class ReportCommitterDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-    override fun visitElement(element: FirElement, data: CheckerContext) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: CheckerContext) {
         checkAndCommitReportsOn(element, data)
     }
 

@@ -147,6 +147,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.*
 
 @ThreadSafeMutableState
@@ -98,7 +99,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     )
 
     private object FirRecorder : FirDefaultVisitor<Unit, FirRecorderData>() {
-        override fun visitElement(element: FirElement, data: FirRecorderData) {}
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirRecorderData) {}
 
         override fun visitRegularClass(regularClass: FirRegularClass, data: FirRecorderData) {
             val classId = regularClass.symbol.classId
