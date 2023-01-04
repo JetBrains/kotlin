@@ -87,7 +87,6 @@ internal class LLFirDesignatedStatusResolveTransformer(
         }
 
         updatePhaseDeep(designation.target, FirResolvePhase.STATUS)
-        checkIsResolved(designation.target)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
