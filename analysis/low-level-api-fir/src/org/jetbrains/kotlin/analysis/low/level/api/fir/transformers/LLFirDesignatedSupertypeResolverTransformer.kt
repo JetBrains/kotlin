@@ -174,7 +174,6 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         }
 
         updatePhaseDeep(designation.target, FirResolvePhase.SUPER_TYPES)
-        checkIsResolved(designation.target)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
