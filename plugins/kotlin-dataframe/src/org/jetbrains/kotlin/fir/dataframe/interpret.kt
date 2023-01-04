@@ -39,12 +39,16 @@ interface InterpretationErrorReporter {
     val errorReported: Boolean
     fun reportInterpretationError(call: FirFunctionCall, message: String)
 
+    fun doNotReportInterpretationError()
+
     companion object {
         val DEFAULT = object : InterpretationErrorReporter {
             override val errorReported: Boolean = false
             override fun reportInterpretationError(call: FirFunctionCall, message: String) {
 
             }
+
+            override fun doNotReportInterpretationError() = Unit
         }
     }
 }
@@ -190,15 +194,19 @@ fun <T> KotlinTypeFacade.interpret(
                 }
 
                 val objectWithSchema = it.expression.getSchema()
-                val arg = objectWithSchema.schemaArg
-                val schemaTypeArg = (objectWithSchema.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
-                val schema = if (schemaTypeArg.isStarProjection) {
-                    PluginDataFrameSchema(emptyList())
+                if (objectWithSchema == null) {
+                    reporter.doNotReportInterpretationError()
+                    null
                 } else {
-                    pluginDataFrameSchema(schemaTypeArg.type as ConeClassLikeType)
+                    val arg = objectWithSchema.schemaArg
+                    val schemaTypeArg = (objectWithSchema.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
+                    val schema = if (schemaTypeArg.isStarProjection) {
+                        PluginDataFrameSchema(emptyList())
+                    } else {
+                        pluginDataFrameSchema(schemaTypeArg.type as ConeClassLikeType)
+                    }
+                    Interpreter.Success(schema)
                 }
-
-                Interpreter.Success(schema)
             }
         }
         value?.let { value1 -> it.name.identifier to value1 }
@@ -361,10 +369,10 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
     return Arguments(refinedArgument)
 }
 
-internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema get() = { getSchema(session) }
+internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema? get() = { getSchema(session) }
 
-internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema {
-    return typeRef.toClassLikeSymbol(session)!!.let {
+internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
+    return typeRef.toClassLikeSymbol(session)?.let {
         val (typeRef, symbol) = if (it is FirTypeAliasSymbol) {
             it.resolvedExpandedTypeRef to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
         } else {

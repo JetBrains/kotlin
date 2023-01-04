@@ -62,6 +62,10 @@ class Checker : FirFunctionCallChecker() {
                     reporter.reportOn(call.source, ERROR, message, context)
                     errorReported = true
                 }
+
+                override fun doNotReportInterpretationError() {
+                    errorReported = true
+                }
             })
         }
     }
