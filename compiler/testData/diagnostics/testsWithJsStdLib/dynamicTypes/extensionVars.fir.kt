@@ -47,7 +47,7 @@ var String.onStringVar: Int
     get() = 1
     set(v) {}
 
-var dynamic.onDynamicVar: Int
+var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamicVar: Int
     get() = 1
     set(v) {}
 

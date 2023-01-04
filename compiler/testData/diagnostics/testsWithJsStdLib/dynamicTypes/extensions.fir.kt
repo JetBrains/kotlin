@@ -25,7 +25,7 @@ fun test(d: dynamic) {
 fun Any.onAny() {}
 fun Any?.onNullableAny() {}
 fun String.onString() {}
-fun dynamic.onDynamic() {}
+fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamic() {}
 
 class C {
     fun test(d: dynamic) {

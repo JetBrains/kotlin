@@ -41,7 +41,7 @@ fun testReassignmentWithStaticCalls(d: dynamic) {
 val Any.onAnyVal: Int get() = 1
 val Any?.onNullableAnyVal: Int get() = 1
 val String.onStringVal: Int get() = 1
-val dynamic.onDynamicVal: Int get() = 1
+val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamicVal: Int get() = 1
 
 class C {
     fun test(d: dynamic) {
