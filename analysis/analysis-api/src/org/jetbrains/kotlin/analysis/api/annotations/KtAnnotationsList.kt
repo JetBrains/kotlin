@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 
 /**
@@ -28,10 +29,18 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      *
      * The semantic is equivalent to
      * ```
-     * annotationsList.containsAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
+     * annotationsList.hasAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
+     *
+     * annotationsList.hasAnnotation(classId, useSiteTarget, strictUseSite) == annotationsList.annotations.any {
+     *      (it.useSiteTarget == useSiteTarget || !strictUseSite && it.useSiteTarget == null) && it.classId == classId
+     * }
      * ```
      */
-    public abstract fun hasAnnotation(classId: ClassId): Boolean
+    public abstract fun hasAnnotation(
+        classId: ClassId,
+        useSiteTarget: AnnotationUseSiteTarget? = null,
+        strictUseSite: Boolean = true,
+    ): Boolean
 
     /**
      * A list of annotations applied with specified [classId].

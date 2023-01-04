@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -44,8 +45,12 @@ internal class KtFe10AnnotationsList private constructor(
             }
         }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        return fe10Annotations.hasAnnotation(classId.asSingleFqName())
+    override fun hasAnnotation(
+        classId: ClassId,
+        useSiteTarget: AnnotationUseSiteTarget?,
+        strictUseSite: Boolean,
+    ): Boolean = withValidityAssertion {
+        fe10Annotations.hasAnnotation(classId.asSingleFqName())
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
