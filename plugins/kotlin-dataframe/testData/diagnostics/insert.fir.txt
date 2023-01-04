@@ -7,7 +7,7 @@ FILE: insert.kt
     public final val df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(age))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|Person|>()
         public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>|
     public final fun insert_properties(): R|kotlin/Unit| {
-        R|/df|.R|org/jetbrains/kotlinx/dataframe/api/insert|<R|Person|, R|kotlin/Int|>(String(year of birth), <L> = insert@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+        R|/df|.R|org/jetbrains/kotlinx/dataframe/api/insert|<R|Person|, R|kotlin/Int|>(String(year of birth), <L> = insert@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(2021).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/age|)
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/under|<R|Person|>(String(test))

@@ -12,7 +12,7 @@ FILE: dfIde.kt
     public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(i))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1), Int(2), Int(3))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>()
         R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/i|)
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ca), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ca), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(423)
         }
         )
@@ -26,7 +26,7 @@ FILE: dfIde.kt
     public abstract interface Cars : R|kotlin/Any| {
     }
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(2022)
         }
         )
