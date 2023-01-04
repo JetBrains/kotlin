@@ -15,7 +15,7 @@ internal sealed class SourceFileCacheArtifact(val srcFile: KotlinSourceFile, val
     abstract fun commitMetadata()
 
     fun commitBinaryAst(fragment: JsIrProgramFragment) {
-        binaryAstFile.recreate()
+        binaryAstFile.parentFile?.mkdirs()
         BufferedOutputStream(binaryAstFile.outputStream()).use {
             fragment.serializeTo(it)
         }
@@ -32,7 +32,7 @@ internal sealed class SourceFileCacheArtifact(val srcFile: KotlinSourceFile, val
         private val encodedMetadata: ByteArray
     ) : SourceFileCacheArtifact(srcFile, binaryAstFile) {
         override fun commitMetadata() {
-            metadataFile.recreate()
+            metadataFile.parentFile?.mkdirs()
             metadataFile.writeBytes(encodedMetadata)
         }
     }

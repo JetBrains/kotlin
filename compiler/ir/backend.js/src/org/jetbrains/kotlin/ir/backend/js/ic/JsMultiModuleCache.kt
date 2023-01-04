@@ -91,10 +91,10 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
 
     private fun File.writeIfNotNull(data: String?) {
         if (data != null) {
-            recreate()
+            parentFile?.mkdirs()
             writeText(data)
         } else {
-            ifExists { delete() }
+            delete()
         }
     }
 

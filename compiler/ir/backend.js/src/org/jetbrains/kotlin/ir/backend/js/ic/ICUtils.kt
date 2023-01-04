@@ -8,23 +8,12 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.OutputStream
 
 internal inline fun <T> File.ifExists(f: File.() -> T): T? = if (exists()) f() else null
 
-internal fun File.recreate() {
-    if (exists()) {
-        delete()
-    } else {
-        parentFile?.mkdirs()
-    }
-    createNewFile()
-}
-
 internal inline fun <T> File.useCodedInputIfExists(f: CodedInputStream.() -> T) = ifExists {
-    FileInputStream(this).use {
+    inputStream().use {
         CodedInputStream.newInstance(it).f()
     }
 }
@@ -36,8 +25,8 @@ internal inline fun OutputStream.useCodedOutput(f: CodedOutputStream.() -> Unit)
 }
 
 internal inline fun File.useCodedOutput(f: CodedOutputStream.() -> Unit) {
-    recreate()
-    FileOutputStream(this).useCodedOutput(f)
+    parentFile?.mkdirs()
+    outputStream().useCodedOutput(f)
 }
 
 internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null): Nothing {
