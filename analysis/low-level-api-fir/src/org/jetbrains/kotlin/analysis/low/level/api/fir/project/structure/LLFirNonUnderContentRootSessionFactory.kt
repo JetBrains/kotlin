@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.FirEmptyPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
-import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -102,8 +102,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             )
 
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-            register(FirDependenciesSymbolProvider::class, dependencyProvider)
-            register(FirDependenciesSymbolProvider::class, dependencyProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
         }

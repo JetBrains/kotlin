@@ -57,8 +57,6 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
 
-abstract class FirDependenciesSymbolProvider(session: FirSession) : FirSymbolProvider(session)
-
 private fun FirSymbolProvider.getClassDeclaredMemberScope(classId: ClassId): FirScope? {
     val classSymbol = getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
     return session.declaredMemberScope(classSymbol.fir)
@@ -86,4 +84,9 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
 }
 
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
-val FirSession.dependenciesSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor<FirDependenciesSymbolProvider>()
+
+const val DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY: String = "org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider"
+
+val FirSession.dependenciesSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor(
+    DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
+)
