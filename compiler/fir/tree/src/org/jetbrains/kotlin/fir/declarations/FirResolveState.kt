@@ -27,14 +27,20 @@ class FirResolvedToPhaseState private constructor(
 
 fun FirResolvePhase.asResolveState(): FirResolvedToPhaseState = FirResolvedToPhaseState(this)
 
-class FirInProcessOfResolvingToPhaseState private constructor(
-    val resolvingTo: FirResolvePhase
-) : FirResolveState() {
+
+sealed class FirInProcessOfResolvingToPhaseState : FirResolveState() {
+    abstract val resolvingTo: FirResolvePhase
     override val resolvePhase: FirResolvePhase
         get() = FirResolvePhase.values()[resolvingTo.ordinal - 1]
 
+}
+
+class FirInProcessOfResolvingToPhaseStateWithoutLatch private constructor(
+    override val resolvingTo: FirResolvePhase
+) : FirInProcessOfResolvingToPhaseState() {
     companion object {
-        private val phases: List<FirInProcessOfResolvingToPhaseState> = FirResolvePhase.values().map(::FirInProcessOfResolvingToPhaseState)
+        private val phases: List<FirInProcessOfResolvingToPhaseState> =
+            FirResolvePhase.values().map(::FirInProcessOfResolvingToPhaseStateWithoutLatch)
 
         operator fun invoke(phase: FirResolvePhase): FirInProcessOfResolvingToPhaseState {
             require(phase != FirResolvePhase.RAW_FIR) {
@@ -48,8 +54,8 @@ class FirInProcessOfResolvingToPhaseState private constructor(
 }
 
 class FirInProcessOfResolvingToPhaseStateWithLatch(
-    override val resolvePhase: FirResolvePhase,
+    override val resolvingTo: FirResolvePhase,
     val latch: CountDownLatch,
-) : FirResolveState() {
+) : FirInProcessOfResolvingToPhaseState() {
     override fun toString(): String = "ResolvingToWithLatch($resolvePhase)"
 }
