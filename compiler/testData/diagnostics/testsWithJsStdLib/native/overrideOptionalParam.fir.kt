@@ -3,7 +3,7 @@ open external class A {
 }
 
 class B : A() {
-    override fun f(x: Int) {}
+    <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS!>override fun f(x: Int)<!> {}
 }
 
 class BB : A()
@@ -36,7 +36,7 @@ class E : D() {
 }
 
 class F : D(), I {
-    override fun f(x: Int) {}
+    <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS!>override fun f(x: Int)<!> {}
 }
 
 external class G : D, I {
@@ -51,9 +51,9 @@ open external class XE {
     fun f(x: Int)
 }
 
-class Y : X(), I
+class <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE!>Y<!> : X(), I
 
-class YY : A(), II
+class <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE!>YY<!> : A(), II
 
 external class YE: XE, I
 

@@ -7,12 +7,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,6 +44,20 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     }
 
     return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
+}
+
+fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
+
+fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
+    if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
+
+    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctions(context) ?: return false
+
+    for (overriddenFunction in overridden.filter { it.isEffectivelyExternal(context) }) {
+        if (overriddenFunction.valueParameterSymbols.any { it.hasDefaultValue }) return true
+    }
+
+    return false
 }
 
 fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
