@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -32,11 +29,15 @@ import org.jetbrains.kotlin.util.wrapIntoSourceCodeAnalysisExceptionIfNeeded
 // TODO: rewrite
 fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
 
-// do we need a deep copy here ?
 fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): R {
     if (source == null) return this
     if (source?.kind == newKind) return this
-    val newSource = source?.fakeElement(newKind)
+    return copyWithNewSource(source?.fakeElement(newKind))
+}
+
+// do we need a deep copy here ?
+fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
+    if (source?.kind == newSource?.kind) return this
 
     @Suppress("UNCHECKED_CAST")
     return when (val typeRef = this) {
@@ -63,7 +64,7 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): 
             isMarkedNullable = typeRef.isMarkedNullable
             annotations += typeRef.annotations
         }
-        is FirImplicitBuiltinTypeRef -> typeRef.withFakeSource(newKind)
+        is FirImplicitBuiltinTypeRef -> typeRef.withNewSource(newSource)
         is FirIntersectionTypeRef -> buildIntersectionTypeRef {
             source = newSource
             isMarkedNullable = typeRef.isMarkedNullable

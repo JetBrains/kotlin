@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 external annotation class <!WRONG_EXTERNAL_DECLARATION!>A(val x: Int)<!>
 
 val x: Int

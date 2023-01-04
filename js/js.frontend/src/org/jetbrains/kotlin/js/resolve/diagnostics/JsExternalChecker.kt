@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 object JsExternalChecker : DeclarationChecker {
-    val DEFINED_EXTERNALLY_PROPERTY_NAMES = setOf(FqNameUnsafe("kotlin.js.noImpl"), FqNameUnsafe("kotlin.js.definedExternally"))
+    val DEFINED_EXTERNALLY_PROPERTY_NAMES = JsStandardClassIds.Callables.definedExternallyPropertyNames
+        .map { it.asSingleFqName().toUnsafe() }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!AnnotationsUtils.isNativeObject(descriptor)) return
