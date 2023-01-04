@@ -85,7 +85,12 @@ class DeserializedDescriptorResolver {
         get() {
             if (skipMetadataVersionCheck || classHeader.metadataVersion.isCompatible(ownMetadataVersion)) return null
             return IncompatibleVersionErrorData(
-                classHeader.metadataVersion, maxOf(ownMetadataVersion.prev(), JvmMetadataVersion.INSTANCE), location, classId
+                actualVersion = classHeader.metadataVersion,
+                compilerVersion = JvmMetadataVersion.INSTANCE,
+                languageVersion = ownMetadataVersion,
+                expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
+                filePath = location,
+                classId = classId
             )
         }
 

@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.metadata.deserialization
  * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
  *   make a change to binaries which is both forward- and backward compatible.
  */
-abstract class BinaryVersion(private vararg val numbers: Int) : Comparable<BinaryVersion> {
+abstract class BinaryVersion(private vararg val numbers: Int) {
     val major: Int = numbers.getOrNull(0) ?: UNKNOWN
     val minor: Int = numbers.getOrNull(1) ?: UNKNOWN
     val patch: Int = numbers.getOrNull(2) ?: UNKNOWN
@@ -85,18 +85,6 @@ abstract class BinaryVersion(private vararg val numbers: Int) : Comparable<Binar
         result += 31 * result + patch
         result += 31 * result + rest.hashCode()
         return result
-    }
-
-    override fun compareTo(other: BinaryVersion): Int {
-        return when {
-            major > other.major -> 1
-            major < other.major -> -1
-            minor > other.minor -> 1
-            minor < other.minor -> -1
-            patch > other.patch -> 1
-            patch < other.patch -> -1
-            else -> 0
-        }
     }
 
     companion object {

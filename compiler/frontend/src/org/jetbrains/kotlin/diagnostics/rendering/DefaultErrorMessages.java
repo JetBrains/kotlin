@@ -439,8 +439,10 @@ public class DefaultErrorMessages {
                 "{0} was compiled with an incompatible version of Kotlin. {1}",
                 TO_STRING,
                 (incompatibility, renderingContext) ->
-                        "The binary version of its metadata is " + incompatibility.getActualVersion() +
-                        ", expected version is " + incompatibility.getExpectedVersion() + ".\n" +
+                        "The actual metadata version is " + incompatibility.getActualVersion() +
+                        ", but the compiler version " + incompatibility.getCompilerVersion() +
+                        (incompatibility.getLanguageVersion().equals(incompatibility.getCompilerVersion()) ? "" : " [with language version " + incompatibility.getLanguageVersion() + "]") +
+                        " can read versions up to " + incompatibility.getExpectedVersion() + ".\n" +
                         "The class is loaded from " + FileUtil.toSystemIndependentName(incompatibility.getFilePath())
         );
 

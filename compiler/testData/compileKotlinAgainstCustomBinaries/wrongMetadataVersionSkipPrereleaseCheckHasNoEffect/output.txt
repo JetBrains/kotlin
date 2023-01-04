@@ -1,34 +1,34 @@
 error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
 $TMP_DIR$/library-after.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:5:16: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:5:16: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
 fun baz(param: A, nested: A.Nested) {
                ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:5:27: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:5:27: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
 fun baz(param: A, nested: A.Nested) {
                           ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:5:29: error: class 'a.A.Nested' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:5:29: error: class 'a.A.Nested' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A$Nested.class
 fun baz(param: A, nested: A.Nested) {
                             ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:6:23: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:6:23: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
     val constructor = A()
                       ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:7:18: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:7:18: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
     val nested = A.Nested()
                  ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:7:20: error: class 'a.A.Nested' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:7:20: error: class 'a.A.Nested' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A$Nested.class
     val nested = A.Nested()
                    ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:8:22: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:8:22: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
     val methodCall = param.method()
                      ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:9:30: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionSkipPrereleaseCheckHasNoEffect/source.kt:9:30: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
     val supertype = object : A() {}
                              ^

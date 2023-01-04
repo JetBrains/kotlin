@@ -100,10 +100,15 @@ class JvmClassFileBasedSymbolProvider(
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {
             // TODO: skipMetadataVersionCheck
-            val expectedMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
-            if (classHeader.metadataVersion.isCompatible(expectedMetadataVersion)) return null
+            val metadataVersionFromLanguageVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
+            if (classHeader.metadataVersion.isCompatible(metadataVersionFromLanguageVersion)) return null
             return IncompatibleVersionErrorData(
-                classHeader.metadataVersion, maxOf(expectedMetadataVersion, JvmMetadataVersion.INSTANCE.next()), location, classId
+                actualVersion = classHeader.metadataVersion,
+                compilerVersion = JvmMetadataVersion.INSTANCE,
+                languageVersion = metadataVersionFromLanguageVersion,
+                expectedVersion = metadataVersionFromLanguageVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
+                filePath = location,
+                classId = classId
             )
         }
 

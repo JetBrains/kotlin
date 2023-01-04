@@ -25,13 +25,12 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  *
  * @property bytes the byte array representing the contents of a `.kotlin_module` file
  */
-class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: ByteArray, jvmMetadataVersion: JvmMetadataVersion) {
+class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: ByteArray) {
     @get:IgnoreInApiDump
     internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
         bytes, javaClass.name,
         skipMetadataVersionCheck = false,
-        isJvmPackageNameSupported = true,
-        metadataVersionFromLanguageVersion = jvmMetadataVersion
+        isJvmPackageNameSupported = true
     ) {
         // TODO: report incorrect versions of modules
     }
@@ -90,7 +89,7 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
          */
         @Deprecated("Writer API is deprecated as excessive and cumbersome. Please use KotlinModuleMetadata.write(kmModule, metadataVersion)")
         fun write(metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
-            KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0), jvmMetadataVersion)
+            KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0))
     }
 
     /**
@@ -129,7 +128,7 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
         @JvmStatic
         fun read(bytes: ByteArray): KotlinModuleMetadata? {
             try {
-                val result = KotlinModuleMetadata(bytes, JvmMetadataVersion.INSTANCE)
+                val result = KotlinModuleMetadata(bytes)
                 if (result.data == ModuleMapping.EMPTY) return null
 
                 if (result.data == ModuleMapping.CORRUPTED) {
