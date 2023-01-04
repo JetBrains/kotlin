@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 
 object JsExternalFileChecker : DeclarationChecker {
-    private val annotationFqNames = setOf(AnnotationsUtils.JS_MODULE_ANNOTATION, AnnotationsUtils.JS_QUALIFIER_ANNOTATION)
+    private val annotationFqNames = JsStandardClassIds.Annotations.annotationsRequiringExternal.map { it.asSingleFqName() }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!AnnotationsUtils.isNativeObject(descriptor) && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
