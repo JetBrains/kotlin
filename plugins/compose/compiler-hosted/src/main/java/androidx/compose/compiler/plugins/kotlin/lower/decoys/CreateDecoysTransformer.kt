@@ -125,13 +125,21 @@ class CreateDecoysTransformer(
         }
 
         val newName = declaration.decoyImplementationName()
-        val original = super.visitSimpleFunction(declaration) as IrSimpleFunction
-        val copied = original.copyWithName(newName)
-        copied.parent = original.parent
-
+        val copied = declaration.copyWithName(newName) as IrSimpleFunction
+        copied.parent = declaration.parent
         originalFunctions += copied to declaration.parent
 
-        return original.apply {
+        // "copied" has new symbols (due to deepCopyWithSymbols).
+        // Therefore, we need to recurse into the copied version.
+        // Otherwise, inner `copied` functions can be added to a parent
+        // that is not in the IR tree anymore (due to a body removal from decoy - see `stubBody`).
+        // The use cases:
+        // 1) A @Composable function declaring an anonymous object implementing
+        // an interface with @Composable function.
+        // 2) A @Composable function declaring a local class with a @Composable function.
+        super.visitSimpleFunction(copied) as IrSimpleFunction
+
+        return declaration.apply {
             setDecoyAnnotation(newName.asString())
 
             valueParameters.forEach { it.defaultValue = null }
@@ -146,14 +154,19 @@ class CreateDecoysTransformer(
             return super.visitConstructor(declaration)
         }
 
-        val original = super.visitConstructor(declaration) as IrConstructor
         val newName = declaration.decoyImplementationName()
-
-        val copied = original.copyWithName(newName, context.irFactory::buildConstructor)
-
+        val copied = declaration.copyWithName(
+            newName, context.irFactory::buildConstructor
+        ) as IrConstructor
+        copied.parent = declaration.parent
         originalFunctions += copied to declaration.parent
 
-        return original.apply {
+        // "copied" has new symbols (due to deepCopyWithSymbols).
+        // Therefore, we need to recurse into the copied version.
+        // See the comment in visitSimpleFunction for an explanation.
+        super.visitConstructor(copied) as IrConstructor
+
+        return declaration.apply {
             setDecoyAnnotation(newName.asString())
             stubBody()
         }
