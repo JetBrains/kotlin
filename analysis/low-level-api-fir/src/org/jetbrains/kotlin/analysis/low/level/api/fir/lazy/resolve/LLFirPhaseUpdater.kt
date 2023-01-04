@@ -18,37 +18,40 @@ internal object LLFirPhaseUpdater {
         updateForLocalDeclarations: Boolean,
     ) {
         if (updateForLocalDeclarations) {
-            PhaseUpdatingTransformer.visitElement(target, newPhase)
+            target.acceptChildren(PhaseUpdatingTransformer, newPhase)
         } else {
-            updatePhaseForNonLocals(target, newPhase)
+            updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
         }
     }
 
 
-    private fun updatePhaseForNonLocals(element: FirElementWithResolveState, newPhase: FirResolvePhase) {
+    private fun updatePhaseForNonLocals(element: FirElementWithResolveState, newPhase: FirResolvePhase, isTargetDeclaration: Boolean) {
         if (element.resolvePhase >= newPhase) return
-        element.replaceResolveState(newPhase.asResolveState())
+        if (!isTargetDeclaration) {
+            // phase update for target declaration happens as a declaration publication event after resolve is finished
+            element.replaceResolveState(newPhase.asResolveState())
+        }
 
         if (element is FirTypeParameterRefsOwner) {
             element.typeParameters.forEach { typeParameter ->
                 // if it is not a type parameter of outer declaration
                 if (typeParameter is FirTypeParameter) {
-                    updatePhaseForNonLocals(typeParameter, newPhase)
+                    updatePhaseForNonLocals(typeParameter, newPhase, isTargetDeclaration = false)
                 }
             }
         }
 
         when (element) {
             is FirFunction -> {
-                element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase) }
+                element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
             is FirProperty -> {
-                element.getter?.let { updatePhaseForNonLocals(it, newPhase) }
-                element.setter?.let { updatePhaseForNonLocals(it, newPhase) }
+                element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+                element.setter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
             is FirClass -> {
                 element.declarations.forEach {
-                    updatePhaseForNonLocals(it, newPhase)
+                    updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false)
                 }
             }
             else -> Unit
