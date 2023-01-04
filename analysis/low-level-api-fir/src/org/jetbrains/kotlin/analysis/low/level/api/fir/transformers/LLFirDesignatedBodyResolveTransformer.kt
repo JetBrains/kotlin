@@ -50,9 +50,6 @@ internal class LLFirDesignatedBodyResolveTransformer(
         }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.target.resolveState.resolvePhase >= FirResolvePhase.BODY_RESOLVE) return
-        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         }
