@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import java.util.concurrent.locks.ReentrantLock
 
 /**
@@ -72,6 +75,59 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
             locksForImports.getOrPut(file) { ReentrantLock() }.lockWithPCECheck(DEFAULT_LOCKING_INTERVAL) { action() }
         }
     }
+
+    private inline fun FirElementWithResolveState.withCricicalSection(
+        phase: FirResolvePhase,
+        action: () -> Unit
+    ) {
+        while (true) {
+            checkCanceled()
+            val stateSnapshot = resolveState
+            if (stateSnapshot.resolvePhase >= phase) return
+            when (stateSnapshot) {
+                is FirInProcessOfResolvingToPhaseState -> {
+                    val latch = CountDownLatch(1)
+                    val newState = FirInProcessOfResolvingToPhaseStateWithLatch(phase, latch)
+                    resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)
+                    continue
+                }
+                is FirInProcessOfResolvingToPhaseStateWithLatch -> {
+                    if (!stateSnapshot.latch.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)) continue
+                    break
+                }
+                is FirResolvedToPhaseState -> {
+                    val newState = FirInProcessOfResolvingToPhaseState(phase)
+                    if (!resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)) {
+                        continue
+                    }
+                    try {
+                        action()
+                    } finally {
+                        val stateSnapshotAfter = resolveState
+                        when (stateSnapshotAfter) {
+                            is FirInProcessOfResolvingToPhaseState -> {}
+                            is FirInProcessOfResolvingToPhaseStateWithLatch -> {
+                                stateSnapshotAfter.latch.countDown()
+                            }
+                            is FirResolvedToPhaseState -> {
+                                error("phase is unexpectedly unlocked $stateSnapshot")
+                            }
+                        }
+                        if (!resolveStateFieldUpdater.compareAndSet(this, stateSnapshotAfter, FirResolvedToPhaseState(phase))) {
+                            error("phase was updated by other thread")
+                        }
+                    }
+                }
+            }
+            break
+        }
+    }
 }
+
+private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+    FirElementWithResolveState::class.java,
+    FirResolveState::class.java,
+    FirElementWithResolveState::resolveState.name
+)
 
 private const val DEFAULT_LOCKING_INTERVAL = 50L

@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-interface FirResolveState {
-    val resolvePhase: FirResolvePhase
+import java.util.concurrent.CountDownLatch
 
-    override fun toString(): String
+sealed class FirResolveState {
+    abstract val resolvePhase: FirResolvePhase
+
+    abstract override fun toString(): String
 }
 
 class FirResolvedToPhaseState private constructor(
     override val resolvePhase: FirResolvePhase
-) : FirResolveState {
+) : FirResolveState() {
     companion object {
         private val phases: List<FirResolvedToPhaseState> = FirResolvePhase.values().map(::FirResolvedToPhaseState)
 
@@ -24,3 +26,30 @@ class FirResolvedToPhaseState private constructor(
 }
 
 fun FirResolvePhase.asResolveState(): FirResolvedToPhaseState = FirResolvedToPhaseState(this)
+
+class FirInProcessOfResolvingToPhaseState private constructor(
+    val resolvingTo: FirResolvePhase
+) : FirResolveState() {
+    override val resolvePhase: FirResolvePhase
+        get() = FirResolvePhase.values()[resolvingTo.ordinal - 1]
+
+    companion object {
+        private val phases: List<FirInProcessOfResolvingToPhaseState> = FirResolvePhase.values().map(::FirInProcessOfResolvingToPhaseState)
+
+        operator fun invoke(phase: FirResolvePhase): FirInProcessOfResolvingToPhaseState {
+            require(phase != FirResolvePhase.RAW_FIR) {
+                "Cannot resolve to ${FirResolvePhase.RAW_FIR} as it's a first phase"
+            }
+            return phases[phase.ordinal]
+        }
+    }
+
+    override fun toString(): String = "ResolvingTo($resolvingTo)"
+}
+
+class FirInProcessOfResolvingToPhaseStateWithLatch(
+    override val resolvePhase: FirResolvePhase,
+    val latch: CountDownLatch,
+) : FirResolveState() {
+    override fun toString(): String = "ResolvingToWithLatch($resolvePhase)"
+}
