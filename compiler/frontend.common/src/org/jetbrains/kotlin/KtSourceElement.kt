@@ -245,6 +245,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for extension receiver type the corresponding receiver parameter is generated
     // with a fake sources which refers to this the type
     object ReceiverFromType : KtFakeSourceElementKind()
+
+    // Synthetic calls for if/when/try/etc.
+    object SyntheticCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
