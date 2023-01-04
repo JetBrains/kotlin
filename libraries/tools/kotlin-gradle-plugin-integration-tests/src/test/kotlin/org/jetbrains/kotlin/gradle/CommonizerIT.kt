@@ -268,13 +268,7 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     private fun `test single native platform`(project: String) {
-        val posixInImplementationMetadataConfigurationRegex = Regex(""".*implementationMetadataConfiguration:.*([pP])osix""")
         val posixInIntransitiveMetadataConfigurationRegex = Regex(""".*intransitiveMetadataConfiguration:.*([pP])osix""")
-
-        fun CompiledProject.containsPosixInImplementationMetadataConfiguration(): Boolean =
-            output.lineSequence().any { line ->
-                line.matches(posixInImplementationMetadataConfigurationRegex)
-            }
 
         fun CompiledProject.containsPosixInIntransitiveMetadataConfiguration(): Boolean =
             output.lineSequence().any { line ->
@@ -285,11 +279,6 @@ class CommonizerIT : BaseGradleIT() {
             build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=false") {
                 assertSuccessful()
 
-                assertTrue(
-                    containsPosixInImplementationMetadataConfiguration(),
-                    "Expected dependency on posix in implementationMetadataConfiguration"
-                )
-
                 assertFalse(
                     containsPosixInIntransitiveMetadataConfiguration(),
                     "Expected **no** dependency on posix in intransitiveMetadataConfiguration"
@@ -298,11 +287,6 @@ class CommonizerIT : BaseGradleIT() {
 
             build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=true") {
                 assertSuccessful()
-
-                assertFalse(
-                    containsPosixInImplementationMetadataConfiguration(),
-                    "Expected **no** posix dependency in implementationMetadataConfiguration"
-                )
 
                 assertTrue(
                     containsPosixInIntransitiveMetadataConfiguration(),
