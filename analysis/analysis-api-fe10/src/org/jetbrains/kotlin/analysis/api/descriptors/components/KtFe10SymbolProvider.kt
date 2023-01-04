@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnaly
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.findTypeAliasAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -120,6 +122,11 @@ internal class KtFe10SymbolProvider(
     override fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return null
         return descriptor.toKtClassSymbol(analysisContext)
+    }
+
+    override fun getTypeAliasByClassId(classId: ClassId): KtTypeAliasSymbol? {
+        val descriptor = analysisContext.resolveSession.moduleDescriptor.findTypeAliasAcrossModuleDependencies(classId) ?: return null
+        return descriptor.toKtClassifierSymbol(analysisContext) as? KtTypeAliasSymbol
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol> {

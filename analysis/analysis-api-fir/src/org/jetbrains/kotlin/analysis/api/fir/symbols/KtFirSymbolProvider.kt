@@ -161,6 +161,11 @@ internal class KtFirSymbolProvider(
         return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(symbol)
     }
 
+    override fun getTypeAliasByClassId(classId: ClassId): KtTypeAliasSymbol? {
+        val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
+        return firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(symbol)
+    }
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol> {
         val firs = firSymbolProvider.getTopLevelCallableSymbols(packageFqName, name)
         return firs.asSequence().map { firSymbol ->

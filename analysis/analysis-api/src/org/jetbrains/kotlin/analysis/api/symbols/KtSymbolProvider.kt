@@ -55,6 +55,8 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
+    public abstract fun getTypeAliasByClassId(classId: ClassId): KtTypeAliasSymbol?
+
     public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol>
 
     @Suppress("PropertyName")
@@ -141,6 +143,12 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
      */
     public fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? =
         withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(classId) }
+
+    /**
+     * @return [KtTypeAliasSymbol] with specified [classId] or `null` in case such symbol is not found
+     */
+    public fun getTypeAliasByClassId(classId: ClassId): KtTypeAliasSymbol? =
+        withValidityAssertion { analysisSession.symbolProvider.getTypeAliasByClassId(classId) }
 
     /**
      * @return list of top-level functions and properties which are visible from current use-site module
