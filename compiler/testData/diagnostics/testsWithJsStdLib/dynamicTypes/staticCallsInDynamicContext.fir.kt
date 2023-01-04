@@ -2,26 +2,26 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun dynamic.test() {
-    foo()
-    ext()
+    <!DEBUG_INFO_DYNAMIC!>foo<!>()
+    <!DEBUG_INFO_DYNAMIC!>ext<!>()
 
     bar()
-    this.bar()
+    this.<!DEBUG_INFO_DYNAMIC!>bar<!>()
 
     baz = 2
-    this.baz = 2
+    this.<!DEBUG_INFO_DYNAMIC!>baz<!> = 2
 
     "".ext()
-    ext()
+    <!DEBUG_INFO_DYNAMIC!>ext<!>()
 
     "".extValFun()
-    extValFun()
+    <!DEBUG_INFO_DYNAMIC!>extValFun<!>()
 
     "".extVal
-    extVal
+    <!DEBUG_INFO_DYNAMIC!>extVal<!>
 
     baz.extExtVal()
-    extExtVal()
+    <!DEBUG_INFO_DYNAMIC!>extExtVal<!>()
 
     ""()
     this()
@@ -29,7 +29,7 @@ fun dynamic.test() {
     C() + C()
     <!UNRESOLVED_REFERENCE!>+<!>C()
 
-    this + C()
+    this <!DEBUG_INFO_DYNAMIC!>+<!> C()
 
     0.<!UNRESOLVED_REFERENCE!>missing<!>()
 }

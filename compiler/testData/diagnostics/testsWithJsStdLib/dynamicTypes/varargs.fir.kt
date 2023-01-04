@@ -8,6 +8,6 @@ fun test() {
 
 fun v(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> d: dynamic) {
     for (dd in d) {
-        dd.foo()
+        dd.<!DEBUG_INFO_DYNAMIC!>foo<!>()
     }
 }

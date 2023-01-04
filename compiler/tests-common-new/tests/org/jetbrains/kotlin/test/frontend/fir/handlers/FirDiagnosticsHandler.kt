@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.diagnostics.*
@@ -15,21 +16,22 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.renderForDebugInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
@@ -91,7 +93,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
             globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
             collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-            collectDebugInfoDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+            collectDebugInfoDiagnostics(module, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
         }
     }
 
@@ -128,6 +130,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     private fun collectDebugInfoDiagnostics(
+        module: TestModule,
         testFile: TestFile,
         firFile: FirFile,
         lightTreeEnabled: Boolean,
@@ -140,18 +143,54 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             .mapValues { (_, value) -> value.toSet() }
 
         val consumer = DebugDiagnosticConsumer(result, diagnosedRangesToDiagnosticNames)
+        val shouldRenderDynamic = DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives
 
         object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element is FirExpression) {
                     consumer.reportExpressionTypeDiagnostic(element)
                 }
-
+                if (shouldRenderDynamic && element is FirResolvable) {
+                    reportDynamic(element)
+                }
                 if (element is FirSmartCastExpression) {
                     element.originalExpression.acceptChildren(this)
                 } else {
                     element.acceptChildren(this)
                 }
+            }
+
+            private fun reportDynamic(element: FirResolvable) {
+                val calleeDeclaration = element.calleeReference.toResolvedCallableSymbol() ?: return
+                val isInvokeCallWithDynamicReceiver = calleeDeclaration.name == OperatorNameConventions.INVOKE
+                        && element is FirQualifiedAccess
+                        && element.dispatchReceiver.typeRef.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session)
+
+                if (calleeDeclaration.origin !is FirDeclarationOrigin.DynamicScope && !isInvokeCallWithDynamicReceiver) {
+                    return
+                }
+
+                val source = element.calleeReference.source
+
+                // Unfortunately I had to repeat positioning strategy logic here
+                // (we need to check diagnostic range before applying it)
+                val target = when (calleeDeclaration.name) {
+                    OperatorNameConventions.INVOKE -> when {
+                        isInvokeCallWithDynamicReceiver -> source
+                        else -> source?.parentAsSourceElement ?: source
+                    }
+                    in OperatorNameConventions.ALL_BINARY_OPERATION_NAMES,
+                    in OperatorNameConventions.UNARY_OPERATION_NAMES,
+                    in OperatorNameConventions.ASSIGNMENT_OPERATIONS,
+                    OperatorNameConventions.GET, OperatorNameConventions.SET -> {
+                        source?.operatorSignIfBinary ?: source
+                    }
+                    else -> {
+                        source
+                    }
+                }
+
+                consumer.reportDynamicDiagnostic(target)
             }
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
@@ -238,6 +277,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
     }
 
+    private fun DebugDiagnosticConsumer.reportDynamicDiagnostic(sourceElement: KtSourceElement?) {
+        report(DebugInfoDiagnosticFactory0.DYNAMIC, sourceElement)
+    }
+
     private fun getTypeOfCall(
         reference: FirNamedReference,
         resolvedSymbol: FirBasedSymbol<*>?
@@ -274,6 +317,37 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
+private fun FirTypeRef.isFunctionTypeWithDynamicReceiver(session: FirSession) =
+    coneTypeSafe<ConeKotlinType>()?.isFunctionTypeWithDynamicReceiver(session) == true
+
+private fun ConeKotlinType.isFunctionTypeWithDynamicReceiver(session: FirSession): Boolean {
+    val hasExplicitDynamicReceiver = receiverType(session) is ConeDynamicType
+    val hasImplicitDynamicReceiver = isExtensionFunctionType && this.typeArguments.firstOrNull()?.type is ConeDynamicType
+    return hasExplicitDynamicReceiver || hasImplicitDynamicReceiver
+}
+
+private val KtSourceElement.parentAsSourceElement: KtSourceElement?
+    get() = when (elementType) {
+        KtNodeTypes.REFERENCE_EXPRESSION -> when (this) {
+            is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(kind)
+            is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)?.toKtLightSourceElement(treeStructure, kind)
+            else -> null
+        }
+        else -> null
+    }
+
+private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
+    get() = when (elementType) {
+        KtNodeTypes.BINARY_EXPRESSION -> when (this) {
+            is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
+            is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)
+                ?.let { treeStructure.findChildByType(it, KtNodeTypes.OPERATION_REFERENCE) }
+                ?.toKtLightSourceElement(treeStructure, kind)
+            else -> null
+        }
+        else -> null
+    }
+
 private class DebugDiagnosticConsumer(
     private val result: MutableList<KtDiagnostic>,
     private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
@@ -284,8 +358,49 @@ private class DebugDiagnosticConsumer(
             KtFakeSourceElementKind.DesugaredCompoundAssignment,
             KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
             KtFakeSourceElementKind.SmartCastExpression,
-            KtFakeSourceElementKind.DelegatingConstructorCall
+            KtFakeSourceElementKind.DelegatingConstructorCall,
+            KtFakeSourceElementKind.ArrayAccessNameReference,
+            KtFakeSourceElementKind.ArrayIndexExpressionReference,
+            KtFakeSourceElementKind.DesugaredPrefixNameReference,
+            KtFakeSourceElementKind.DesugaredPostfixNameReference,
         )
+    }
+
+    fun report(debugFactory: DebugInfoDiagnosticFactory0, sourceElement: KtSourceElement?) {
+        if (sourceElement == null || sourceElement.kind !in allowedKindsForDebugInfo) return
+
+        // Lambda argument is always (?) duplicated by function literal
+        // Block expression is always (?) duplicated by single block expression
+        if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return
+
+        val availableDiagnostics = diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]
+        if (availableDiagnostics == null || debugFactory.name !in availableDiagnostics) {
+            return
+        }
+
+        val factory = KtDiagnosticFactory0(
+            name = debugFactory.name,
+            severity = debugFactory.severity,
+            defaultPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT,
+            psiType = PsiElement::class
+        )
+
+        val diagnostic = when (sourceElement) {
+            is KtPsiSourceElement -> KtPsiSimpleDiagnostic(
+                sourceElement,
+                debugFactory.severity,
+                factory,
+                factory.defaultPositioningStrategy
+            )
+            is KtLightSourceElement -> KtLightSimpleDiagnostic(
+                sourceElement,
+                debugFactory.severity,
+                factory,
+                factory.defaultPositioningStrategy
+            )
+        }
+
+        result.add(diagnostic)
     }
 
     fun report(debugFactory: DebugInfoDiagnosticFactory1, element: FirElement, argumentFactory: () -> String) {

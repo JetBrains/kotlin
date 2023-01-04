@@ -2,25 +2,25 @@
 // !DIAGNOSTICS:-USELESS_CAST
 
 fun test(d: dynamic) {
-    d.onAnyVar
-    d.onAnyVar = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
+    d.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
 
-    d?.onAnyVar
-    d?.onAnyVar = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
+    d?.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
 
     run {
-        d!!.onAnyVar
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
 
     }
     run {
         d!!.<!UNRESOLVED_REFERENCE!>onAnyVar<!> = 1
     }
 
-    d.onNullableAnyVar = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onNullableAnyVar<!> = 1
 
-    d.onStringVar = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onStringVar<!> = 1
 
-    d.onDynamicVar = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
     d?.<!UNRESOLVED_REFERENCE!>onDynamicVar<!> = 1
 
@@ -53,11 +53,11 @@ var dynamic.onDynamicVar: Int
 
 class C {
     fun test(d: dynamic) {
-        d.memberVar
-        d.memberExtensionVar
+        d.<!DEBUG_INFO_DYNAMIC!>memberVar<!>
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVar<!>
 
-        d.memberVar = 1
-        d.memberExtensionVar = 1
+        d.<!DEBUG_INFO_DYNAMIC!>memberVar<!> = 1
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVar<!> = 1
     }
 
     var memberVar = 1

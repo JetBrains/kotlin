@@ -2,24 +2,24 @@
 // !MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
-    d.onAnyVal
-    d.onAnyVal = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!>
+    d.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!> = 1
 
-    d?.onAnyVal
-    d?.onAnyVal = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!>
+    d?.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!> = 1
 
     run {
-        d!!.onAnyVal
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!>
     }
     run {
         d!!.<!UNRESOLVED_REFERENCE!>onAnyVal<!> = 1
     }
 
-    d.onNullableAnyVal = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onNullableAnyVal<!> = 1
 
-    d.onStringVal = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onStringVal<!> = 1
 
-    d.onDynamicVal = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamicVal<!> = 1
 
     (d as String).onStringVal
     (d as Any).onAnyVal
@@ -28,7 +28,7 @@ fun test(d: dynamic) {
 }
 
 fun testReassignmentWithSafeCall(d: dynamic) {
-    d?.onDynamicVal = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamicVal<!> = 1
 }
 
 fun testReassignmentWithStaticCalls(d: dynamic) {
@@ -45,11 +45,11 @@ val dynamic.onDynamicVal: Int get() = 1
 
 class C {
     fun test(d: dynamic) {
-        d.memberVal
-        d.memberVal = 1
+        d.<!DEBUG_INFO_DYNAMIC!>memberVal<!>
+        d.<!DEBUG_INFO_DYNAMIC!>memberVal<!> = 1
 
-        d.memberExtensionVal
-        d.memberExtensionVal = 1
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVal<!>
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtensionVal<!> = 1
     }
 
     val memberVal = 1
