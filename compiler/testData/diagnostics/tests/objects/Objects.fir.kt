@@ -17,6 +17,8 @@ class T : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
 
 object B : <!SINGLETON_IN_SUPERTYPE!>A<!> {}
 
+val c = <!NO_VALUE_FOR_PARAMETER{LT}!>object : <!NO_VALUE_FOR_PARAMETER{PSI}, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
+
 val x = A.foo()
 
 val y = object : Foo(x) {

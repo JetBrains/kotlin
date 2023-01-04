@@ -47,7 +47,7 @@ fun test() {
     val x9: (Foo<Float>) -> Int = { x: Foo<<!UNRESOLVED_REFERENCE!>_<!>> -> 10 }
 
     val x10 = object : <!UNRESOLVED_REFERENCE!>_<!> {}
-    val x11 = object : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>Foo<<!UNRESOLVED_REFERENCE!>_<!>><!> {}
+    val x11 = object : <!FINAL_SUPERTYPE!>Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>() {}
 
     if (x11 is <!UNRESOLVED_REFERENCE!>_<!>) { }
     if (x11 is <!INCOMPATIBLE_TYPES!>Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>) { }

@@ -52,7 +52,7 @@ fun lol(a: Array<Boolean>) {}
 
 class M {
     companion <!REDECLARATION!>object<!> {}
-    val <!REDECLARATION!>Companion<!> = object : Any {}
+    val <!REDECLARATION!>Companion<!> = object : Any() {}
 }
 
 fun B.foo() {}

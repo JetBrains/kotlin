@@ -92,6 +92,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirImplementationMismatchChecker,
             FirTypeParametersInObjectChecker,
             FirSupertypesChecker,
+            FirPrimaryConstructorSuperTypeChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
@@ -106,7 +107,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirManyCompanionObjectsChecker,
             FirMethodOfAnyImplementedInInterfaceChecker,
             FirDataClassPrimaryConstructorChecker,
-            FirPrimaryConstructorSuperTypeChecker,
             FirFunInterfaceDeclarationChecker,
             FirNestedClassChecker,
             FirValueClassDeclarationChecker,

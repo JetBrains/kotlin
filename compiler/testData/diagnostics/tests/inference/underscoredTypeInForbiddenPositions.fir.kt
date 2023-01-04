@@ -47,7 +47,7 @@ fun test() {
     val x9: (Foo<Float>) -> Int = { x: Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>> -> 10 }
 
     val x10 = object : <!UNRESOLVED_REFERENCE!>_<!> {}
-    val x11 = object : <!FINAL_SUPERTYPE!>Foo<<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>_<!>><!> {}
+    val x11 = object : <!FINAL_SUPERTYPE!>Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>() {}
 
     if (x11 is <!UNRESOLVED_REFERENCE!>_<!>) { }
     if (<!USELESS_IS_CHECK!>x11 is Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>) { }

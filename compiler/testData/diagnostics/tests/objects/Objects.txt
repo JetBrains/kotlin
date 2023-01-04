@@ -1,6 +1,7 @@
 package
 
 package toplevelObjectDeclarations {
+    public val c: toplevelObjectDeclarations.Foo
     public val x: kotlin.Int
     public val y: toplevelObjectDeclarations.Foo
     public val z: kotlin.Int

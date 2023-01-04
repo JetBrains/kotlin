@@ -17,6 +17,8 @@ object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
 
 object B : <!SINGLETON_IN_SUPERTYPE!>A<!> {}
 
+val c = object : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
+
 val x = A.foo()
 
 val y = object : Foo(x) {
