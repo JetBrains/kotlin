@@ -1120,7 +1120,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     source = parameterSource?.fakeElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
-                    returnTypeRef = firProperty.returnTypeRef
+                    returnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     this.name = name
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                         isOperator = true

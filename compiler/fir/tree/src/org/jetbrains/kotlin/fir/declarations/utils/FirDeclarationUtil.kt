@@ -43,3 +43,5 @@ val FirDeclaration.isNonLocal
         is FirClassLikeDeclaration -> !symbol.classId.isLocal
         else -> false
     }
+
+val FirCallableDeclaration.isExtension get() = receiverParameter != null

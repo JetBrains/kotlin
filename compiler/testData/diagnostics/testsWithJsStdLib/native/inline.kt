@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -NOTHING_TO_INLINE
 
 <!INLINE_EXTERNAL_DECLARATION!>inline external fun foo(): Unit<!>

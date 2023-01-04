@@ -206,6 +206,11 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     return overriddenFunctions
 }
 
+fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {
+    val fieldsMap = delegateFieldsMap ?: emptyMap()
+    return superTypeRefs.mapIndexed { index, it -> it to fieldsMap[index] }.toMap()
+}
+
 /**
  * Returns the modality of the class
  */

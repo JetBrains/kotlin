@@ -1,17 +1,17 @@
 // !DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
 
 external open class Base(x: Int) {
-    constructor(x: String) : this(23)
+    constructor(x: String) : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>this<!>(23)
 
-    constructor(x: String, y: String) : this("")
+    constructor(x: String, y: String) : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>this<!>("")
 }
 
-external open class Derived1() : Base(23) {
-    constructor(x: Byte) : super(23)
+external open class Derived1() : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>Base(23)<!> {
+    constructor(x: Byte) : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>super<!>(23)
 
-    constructor(x: String) : super("")
+    constructor(x: String) : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>super<!>("")
 
-    constructor(x: String, y: String) : super("")
+    constructor(x: String, y: String) : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>super<!>("")
 }
 
-external open class Derived2() : Base("")
+external open class Derived2() : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>Base("")<!>
