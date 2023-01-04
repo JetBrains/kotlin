@@ -40,6 +40,7 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
         // In these examples we should try using the property type information while resolving the initializer,
         // but it's ok if it's not applicable
         val shouldBeStrictlyEnforced: Boolean = true,
+        // Currently the only case for expected type when we don't force completion are when's branches
         forceFullCompletion: Boolean = true,
     ) : ResolutionMode(forceFullCompletion) {
 
