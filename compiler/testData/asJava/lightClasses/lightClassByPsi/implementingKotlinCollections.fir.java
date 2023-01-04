@@ -10,9 +10,10 @@ public final class MyList /* MyList*/ implements java.util.List<java.lang.String
 }
 
 public abstract class MySet /* MySet*/<T>  implements ASet<T> {
-  public  MySet();//  .ctor()
-
+  @java.lang.Override()
   public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(java.lang.String)
+
+  public  MySet();//  .ctor()
 }
 
 public abstract class SmartSet /* SmartSet*/<T>  extends kotlin.collections.AbstractMutableSet<T> {

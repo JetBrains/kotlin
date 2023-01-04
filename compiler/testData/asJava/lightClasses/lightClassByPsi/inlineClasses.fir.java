@@ -9,11 +9,12 @@ public enum Foo /* Foo*/ {
 public final class InlineInheritance /* InlineInheritance*/ {
   private final int v;
 
+  @java.lang.Override()
+  public int y();//  y()
+
   public final int getV();//  getV()
 
   public int getX();//  getX()
-
-  public int y();//  y()
 }
 
 public final class InlinedDelegate /* InlinedDelegate*/<T>  {

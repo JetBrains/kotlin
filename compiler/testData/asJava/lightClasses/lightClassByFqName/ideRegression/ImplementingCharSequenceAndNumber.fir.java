@@ -34,11 +34,13 @@ public final class Container /* p1.Container*/ {
     @java.lang.Override()
     public char get(int);//  get(int)
 
-    public  MyString();//  .ctor()
-
+    @java.lang.Override()
     public error.NonExistentClass chars();//  chars()
 
+    @java.lang.Override()
     public error.NonExistentClass codePoints();//  codePoints()
+
+    public  MyString();//  .ctor()
 
     public int getLength();//  getLength()
   }

@@ -167,6 +167,12 @@ internal class SymbolLightSimpleMethod(
 
     override fun isConstructor(): Boolean = false
 
+    override fun isOverride(): Boolean = _isOverride
+
+    private val _isOverride: Boolean by lazyPub {
+        withFunctionSymbol { it.isOverride }
+    }
+
     private val KtType.isVoidType: Boolean get() = isUnit && nullabilityType != NullabilityType.Nullable
 
     private val _returnedType: PsiType by lazyPub {
