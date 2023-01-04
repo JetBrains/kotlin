@@ -785,6 +785,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("staticImportFromObject_extension.kt")
+    public void testStaticImportFromObject_extension() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportFromObject_extension.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportFromObject_member.kt")
+    public void testStaticImportFromObject_member() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportFromObject_member.kt");
+    }
+
+    @Test
     @TestMetadata("substituteOverrideResolution.kt")
     public void testSubstituteOverrideResolution() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/substituteOverrideResolution.kt");

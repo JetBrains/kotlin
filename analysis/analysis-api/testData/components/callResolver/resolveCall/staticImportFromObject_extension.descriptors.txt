@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = "42"
+        isSafeNavigation = false
+        type = kotlin.String
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Int
+        symbol = /Foo.bar(<extension receiver>: kotlin.String): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = /Foo.bar
+    typeArgumentsMapping = {}
+    argumentMapping = {}
