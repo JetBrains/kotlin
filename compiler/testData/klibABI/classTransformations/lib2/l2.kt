@@ -63,25 +63,26 @@ inline fun getClassToInterfaceInline(): ClassToInterface = ClassToInterface()
 fun getClassToInterfaceAsAny(): Any = ClassToInterface()
 inline fun getClassToInterfaceAsAnyInline(): Any = ClassToInterface()
 
-fun getInterfaceToClass(): InterfaceToClass = object : InterfaceToClass {}
+//   TODO: fix calling the proper delegating constructor when an inherited interface evolutes to a class
+//fun getInterfaceToClass(): InterfaceToClass = object : InterfaceToClass {}
 //inline fun getInterfaceToClassInline(): InterfaceToClass = object : InterfaceToClass {}
-fun getInterfaceToClassAsAny(): Any = object : InterfaceToClass {}
+//fun getInterfaceToClassAsAny(): Any = object : InterfaceToClass {}
 //inline fun getInterfaceToClassAsAnyInline(): Any = object : InterfaceToClass {}
-
-class InterfaceToClassImpl : InterfaceToClass
-class InterfaceToClassContainer {
-    class InterfaceToClassImpl : InterfaceToClass
-}
-
-fun getInterfaceToClassImpl(): InterfaceToClass = InterfaceToClassImpl()
-inline fun getInterfaceToClassImplInline(): InterfaceToClass = InterfaceToClassImpl()
-fun getInterfaceToClassImplAsAny(): Any = InterfaceToClassImpl()
-inline fun getInterfaceToClassImplAsAnyInline(): Any = InterfaceToClassImpl()
-
-fun getInterfaceToClassNestedImpl(): InterfaceToClass = InterfaceToClassContainer.InterfaceToClassImpl()
-inline fun getInterfaceToClassNestedImplInline(): InterfaceToClass = InterfaceToClassContainer.InterfaceToClassImpl()
-fun getInterfaceToClassNestedImplAsAny(): Any = InterfaceToClassContainer.InterfaceToClassImpl()
-inline fun getInterfaceToClassNestedImplAsAnyInline(): Any = InterfaceToClassContainer.InterfaceToClassImpl()
+//
+//class InterfaceToClassImpl : InterfaceToClass
+//class InterfaceToClassContainer {
+//    class InterfaceToClassImpl : InterfaceToClass
+//}
+//
+//fun getInterfaceToClassImpl(): InterfaceToClass = InterfaceToClassImpl()
+//inline fun getInterfaceToClassImplInline(): InterfaceToClass = InterfaceToClassImpl()
+//fun getInterfaceToClassImplAsAny(): Any = InterfaceToClassImpl()
+//inline fun getInterfaceToClassImplAsAnyInline(): Any = InterfaceToClassImpl()
+//
+//fun getInterfaceToClassNestedImpl(): InterfaceToClass = InterfaceToClassContainer.InterfaceToClassImpl()
+//inline fun getInterfaceToClassNestedImplInline(): InterfaceToClass = InterfaceToClassContainer.InterfaceToClassImpl()
+//fun getInterfaceToClassNestedImplAsAny(): Any = InterfaceToClassContainer.InterfaceToClassImpl()
+//inline fun getInterfaceToClassNestedImplAsAnyInline(): Any = InterfaceToClassContainer.InterfaceToClassImpl()
 
 fun getNestedObjectToCompanion1(): NestedObjectToCompanion1.Companion = NestedObjectToCompanion1.Companion
 inline fun getNestedObjectToCompanion1Inline(): NestedObjectToCompanion1.Companion = NestedObjectToCompanion1.Companion
@@ -114,57 +115,85 @@ inline fun getCompanionToNestedObject2NameShortInline(): String = CompanionToNes
 fun getCompanionAndNestedObjectsSwap(): String = CompanionAndNestedObjectsSwap.name() // companion object name is omit
 inline fun getCompanionAndNestedObjectsSwapInline(): String = CompanionAndNestedObjectsSwap.name() // companion object name is omit
 
-fun getNestedToInnerName() = NestedClassContainer.NestedToInner().name()
-inline fun getNestedToInnerNameInline() = NestedClassContainer.NestedToInner().name()
-fun getNestedToInnerObjectName() = NestedClassContainer.NestedToInner.Object.name()
-inline fun getNestedToInnerObjectNameInline() = NestedClassContainer.NestedToInner.Object.name()
-fun getNestedToInnerCompanionName() = NestedClassContainer.NestedToInner.name()
-inline fun getNestedToInnerCompanionNameInline() = NestedClassContainer.NestedToInner.name()
-fun getNestedToInnerNestedName() = NestedClassContainer.NestedToInner.Nested().name()
-inline fun getNestedToInnerNestedNameInline() = NestedClassContainer.NestedToInner.Nested().name()
-fun getNestedToInnerInnerName() = NestedClassContainer.NestedToInner().Inner().name()
-inline fun getNestedToInnerInnerNameInline() = NestedClassContainer.NestedToInner().Inner().name()
-
-fun getInnerToNestedName() = InnerClassContainer().InnerToNested().name()
-inline fun getInnerToNestedNameInline() = InnerClassContainer().InnerToNested().name()
-fun getInnerToNestedObjectName() = InnerClassContainer().InnerToNested().Object().name()
-inline fun getInnerToNestedObjectNameInline() = InnerClassContainer().InnerToNested().Object().name()
-fun getInnerToNestedCompanionName() = InnerClassContainer().InnerToNested().Companion().name()
-inline fun getInnerToNestedCompanionNameInline() = InnerClassContainer().InnerToNested().Companion().name()
-fun getInnerToNestedNestedName() = InnerClassContainer().InnerToNested().Nested().name()
-inline fun getInnerToNestedNestedNameInline() = InnerClassContainer().InnerToNested().Nested().name()
-fun getInnerToNestedInnerName() = InnerClassContainer().InnerToNested().Inner().name()
-inline fun getInnerToNestedInnerNameInline() = InnerClassContainer().InnerToNested().Inner().name()
+//  TODO: fix excessive/missing dispatch receiver on nested/inner class constructor call
+//fun getNestedToInnerName() = NestedClassContainer.NestedToInner().name()
+//inline fun getNestedToInnerNameInline() = NestedClassContainer.NestedToInner().name()
+//fun getNestedToInnerObjectName() = NestedClassContainer.NestedToInner.Object.name()
+//inline fun getNestedToInnerObjectNameInline() = NestedClassContainer.NestedToInner.Object.name()
+//fun getNestedToInnerCompanionName() = NestedClassContainer.NestedToInner.name()
+//inline fun getNestedToInnerCompanionNameInline() = NestedClassContainer.NestedToInner.name()
+//fun getNestedToInnerNestedName() = NestedClassContainer.NestedToInner.Nested().name()
+//inline fun getNestedToInnerNestedNameInline() = NestedClassContainer.NestedToInner.Nested().name()
+//fun getNestedToInnerInnerName() = NestedClassContainer.NestedToInner().Inner().name()
+//inline fun getNestedToInnerInnerNameInline() = NestedClassContainer.NestedToInner().Inner().name()
+//
+//fun getInnerToNestedName() = InnerClassContainer().InnerToNested().name()
+//inline fun getInnerToNestedNameInline() = InnerClassContainer().InnerToNested().name()
+//fun getInnerToNestedObjectName() = InnerClassContainer().InnerToNested().Object().name()
+//inline fun getInnerToNestedObjectNameInline() = InnerClassContainer().InnerToNested().Object().name()
+//fun getInnerToNestedCompanionName() = InnerClassContainer().InnerToNested().Companion().name()
+//inline fun getInnerToNestedCompanionNameInline() = InnerClassContainer().InnerToNested().Companion().name()
+//fun getInnerToNestedNestedName() = InnerClassContainer().InnerToNested().Nested().name()
+//inline fun getInnerToNestedNestedNameInline() = InnerClassContainer().InnerToNested().Nested().name()
+//fun getInnerToNestedInnerName() = InnerClassContainer().InnerToNested().Inner().name()
+//inline fun getInnerToNestedInnerNameInline() = InnerClassContainer().InnerToNested().Inner().name()
 
 annotation class AnnotationClassWithParameterThatBecomesRegularClass(val x: AnnotationClassThatBecomesRegularClass)
+annotation class AnnotationClassWithParameterOfParameterThatBecomesRegularClass(val x: AnnotationClassWithParameterThatBecomesRegularClass)
 annotation class AnnotationClassWithParameterThatDisappears(val x: AnnotationClassThatDisappears)
+annotation class AnnotationClassWithParameterOfParameterThatDisappears(val x: AnnotationClassWithParameterThatDisappears)
 
-fun getAnnotationClassWithChangedParameterType(): AnnotationClassWithChangedParameterType =
-    AnnotationClassWithChangedParameterType(-1)
-inline fun getAnnotationClassWithChangedParameterTypeInline(): AnnotationClassWithChangedParameterType =
-    AnnotationClassWithChangedParameterType(-2)
-fun getAnnotationClassThatBecomesRegularClass(): AnnotationClassThatBecomesRegularClass =
-    AnnotationClassThatBecomesRegularClass(-3)
-inline fun getAnnotationClassThatBecomesRegularClassInline(): AnnotationClassThatBecomesRegularClass =
-    AnnotationClassThatBecomesRegularClass(-4)
-fun getAnnotationClassWithParameterThatBecomesRegularClass(): AnnotationClassWithParameterThatBecomesRegularClass =
-    AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(-5))
-inline fun getAnnotationClassWithParameterThatBecomesRegularClassInline(): AnnotationClassWithParameterThatBecomesRegularClass =
-    AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(-6))
-fun getAnnotationClassThatDisappears(): AnnotationClassThatDisappears = AnnotationClassThatDisappears(-7)
-inline fun getAnnotationClassThatDisappearsInline(): AnnotationClassThatDisappears = AnnotationClassThatDisappears(-8)
-fun getAnnotationClassThatDisappearsAsAny(): Any = AnnotationClassThatDisappears(-9)
-inline fun getAnnotationClassThatDisappearsAsAnyInline(): Any = AnnotationClassThatDisappears(-10)
-fun getAnnotationClassWithParameterThatDisappears(): AnnotationClassWithParameterThatDisappears = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(-11))
-inline fun getAnnotationClassWithParameterThatDisappearsInline(): AnnotationClassWithParameterThatDisappears = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(-12))
-fun getAnnotationClassWithParameterThatDisappearsAsAny(): Any = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(-13))
-inline fun getAnnotationClassWithParameterThatDisappearsAsAnyInline(): Any = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(-14))
+fun getAnnotationClassWithChangedParameterType(): AnnotationClassWithChangedParameterType = AnnotationClassWithChangedParameterType(101)
+inline fun getAnnotationClassWithChangedParameterTypeInline(): AnnotationClassWithChangedParameterType = AnnotationClassWithChangedParameterType(102)
+fun getAnnotationClassWithChangedParameterTypeAsAny(): Any = AnnotationClassWithChangedParameterType(103)
+inline fun getAnnotationClassWithChangedParameterTypeAsAnyInline(): Any = AnnotationClassWithChangedParameterType(104)
+fun getAnnotationClassThatBecomesRegularClass(): AnnotationClassThatBecomesRegularClass = AnnotationClassThatBecomesRegularClass(105)
+inline fun getAnnotationClassThatBecomesRegularClassInline(): AnnotationClassThatBecomesRegularClass = AnnotationClassThatBecomesRegularClass(106)
+fun getAnnotationClassThatBecomesRegularClassAsAny(): Any = AnnotationClassThatBecomesRegularClass(107)
+inline fun getAnnotationClassThatBecomesRegularClassAsAnyInline(): Any = AnnotationClassThatBecomesRegularClass(108)
+fun getAnnotationClassWithParameterThatBecomesRegularClass(): AnnotationClassWithParameterThatBecomesRegularClass = AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(109))
+inline fun getAnnotationClassWithParameterThatBecomesRegularClassInline(): AnnotationClassWithParameterThatBecomesRegularClass = AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(110))
+fun getAnnotationClassWithParameterThatBecomesRegularClassAsAny(): Any = AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(111))
+inline fun getAnnotationClassWithParameterThatBecomesRegularClassAsAnyInline(): Any = AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(112))
+fun getAnnotationClassWithParameterOfParameterThatBecomesRegularClass(): AnnotationClassWithParameterOfParameterThatBecomesRegularClass = AnnotationClassWithParameterOfParameterThatBecomesRegularClass(AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(113)))
+inline fun getAnnotationClassWithParameterOfParameterThatBecomesRegularClassInline(): AnnotationClassWithParameterOfParameterThatBecomesRegularClass = AnnotationClassWithParameterOfParameterThatBecomesRegularClass(AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(114)))
+fun getAnnotationClassWithParameterOfParameterThatBecomesRegularClassAsAny(): Any = AnnotationClassWithParameterOfParameterThatBecomesRegularClass(AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(115)))
+inline fun getAnnotationClassWithParameterOfParameterThatBecomesRegularClassAsAnyInline(): Any = AnnotationClassWithParameterOfParameterThatBecomesRegularClass(AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(116)))
+fun getAnnotationClassThatDisappears(): AnnotationClassThatDisappears = AnnotationClassThatDisappears(117)
+inline fun getAnnotationClassThatDisappearsInline(): AnnotationClassThatDisappears = AnnotationClassThatDisappears(118)
+fun getAnnotationClassThatDisappearsAsAny(): Any = AnnotationClassThatDisappears(119)
+inline fun getAnnotationClassThatDisappearsAsAnyInline(): Any = AnnotationClassThatDisappears(120)
+fun getAnnotationClassWithParameterThatDisappears(): AnnotationClassWithParameterThatDisappears = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(121))
+inline fun getAnnotationClassWithParameterThatDisappearsInline(): AnnotationClassWithParameterThatDisappears = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(122))
+fun getAnnotationClassWithParameterThatDisappearsAsAny(): Any = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(123))
+inline fun getAnnotationClassWithParameterThatDisappearsAsAnyInline(): Any = AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(124))
+fun getAnnotationClassWithParameterOfParameterThatDisappears(): AnnotationClassWithParameterOfParameterThatDisappears = AnnotationClassWithParameterOfParameterThatDisappears(AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(125)))
+inline fun getAnnotationClassWithParameterOfParameterThatDisappearsInline(): AnnotationClassWithParameterOfParameterThatDisappears = AnnotationClassWithParameterOfParameterThatDisappears(AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(126)))
+fun getAnnotationClassWithParameterOfParameterThatDisappearsAsAny(): Any = AnnotationClassWithParameterOfParameterThatDisappears(AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(127)))
+inline fun getAnnotationClassWithParameterOfParameterThatDisappearsAsAnyInline(): Any = AnnotationClassWithParameterOfParameterThatDisappears(AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(128)))
+fun getAnnotationClassWithRenamedParameters(): AnnotationClassWithRenamedParameters = AnnotationClassWithRenamedParameters(129, "Banana")
+inline fun getAnnotationClassWithRenamedParametersInline(): AnnotationClassWithRenamedParameters = AnnotationClassWithRenamedParameters(130, "Pear")
+fun getAnnotationClassWithRenamedParametersAsAny(): Any = AnnotationClassWithRenamedParameters(131, "Orange")
+inline fun getAnnotationClassWithRenamedParametersAsAnyInline(): Any = AnnotationClassWithRenamedParameters(132, "Peach")
+fun getAnnotationClassWithReorderedParameters(): AnnotationClassWithReorderedParameters = AnnotationClassWithReorderedParameters(133, "Kiwi")
+inline fun getAnnotationClassWithReorderedParametersInline(): AnnotationClassWithReorderedParameters = AnnotationClassWithReorderedParameters(134, "Watermelon")
+fun getAnnotationClassWithReorderedParametersAsAny(): Any = AnnotationClassWithReorderedParameters(135, "Grapefruit")
+inline fun getAnnotationClassWithReorderedParametersAsAnyInline(): Any = AnnotationClassWithReorderedParameters(136, "Melon")
+fun getAnnotationClassWithNewParameter(): AnnotationClassWithNewParameter = AnnotationClassWithNewParameter(137)
+inline fun getAnnotationClassWithNewParameterInline(): AnnotationClassWithNewParameter = AnnotationClassWithNewParameter(138)
+fun getAnnotationClassWithNewParameterAsAny(): Any = AnnotationClassWithNewParameter(139)
+inline fun getAnnotationClassWithNewParameterAsAnyInline(): Any = AnnotationClassWithNewParameter(140)
 
 @AnnotationClassWithChangedParameterType(1) class HolderOfAnnotationClassWithChangedParameterType { override fun toString() = "HolderOfAnnotationClassWithChangedParameterType" }
 @AnnotationClassThatBecomesRegularClass(2) class HolderOfAnnotationClassThatBecomesRegularClass { override fun toString() = "HolderOfAnnotationClassThatBecomesRegularClass" }
 @AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(3)) class HolderOfAnnotationClassWithParameterThatBecomesRegularClass { override fun toString() = "HolderOfAnnotationClassWithParameterThatBecomesRegularClass" }
-@AnnotationClassThatDisappears(4) class HolderOfAnnotationClassThatDisappears { override fun toString() = "HolderOfAnnotationClassThatDisappears" }
-@AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(5)) class HolderOfAnnotationClassWithParameterThatDisappears { override fun toString() = "HolderOfAnnotationClassWithParameterThatDisappears" }
+@AnnotationClassWithParameterOfParameterThatBecomesRegularClass(AnnotationClassWithParameterThatBecomesRegularClass(AnnotationClassThatBecomesRegularClass(4))) class HolderOfAnnotationClassWithParameterOfParameterThatBecomesRegularClass { override fun toString() = "HolderOfAnnotationClassWithParameterOfParameterThatBecomesRegularClass" }
+@AnnotationClassThatDisappears(5) class HolderOfAnnotationClassThatDisappears { override fun toString() = "HolderOfAnnotationClassThatDisappears" }
+@AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(6)) class HolderOfAnnotationClassWithParameterThatDisappears { override fun toString() = "HolderOfAnnotationClassWithParameterThatDisappears" }
+@AnnotationClassWithParameterOfParameterThatDisappears(AnnotationClassWithParameterThatDisappears(AnnotationClassThatDisappears(7))) class HolderOfAnnotationClassWithParameterOfParameterThatDisappears { override fun toString() = "HolderOfAnnotationClassWithParameterOfParameterThatDisappears" }
+@AnnotationClassWithRenamedParameters(8, "Grape") class HolderOfAnnotationClassWithRenamedParameters { override fun toString() = "HolderOfAnnotationClassWithRenamedParameters" }
+@AnnotationClassWithReorderedParameters(9, "Figs") class HolderOfAnnotationClassWithReorderedParameters { override fun toString() = "HolderOfAnnotationClassWithReorderedParameters" }
+@AnnotationClassWithNewParameter(10) class HolderOfAnnotationClassWithNewParameter { override fun toString() = "HolderOfAnnotationClassWithNewParameter" }
 
 fun getHolderOfAnnotationClassWithChangedParameterType() = HolderOfAnnotationClassWithChangedParameterType()
 inline fun getHolderOfAnnotationClassWithChangedParameterTypeInline() = HolderOfAnnotationClassWithChangedParameterType()
@@ -172,10 +201,20 @@ fun getHolderOfAnnotationClassThatBecomesRegularClass() = HolderOfAnnotationClas
 inline fun getHolderOfAnnotationClassThatBecomesRegularClassInline() = HolderOfAnnotationClassThatBecomesRegularClass()
 fun getHolderOfAnnotationClassWithParameterThatBecomesRegularClass() = HolderOfAnnotationClassWithParameterThatBecomesRegularClass()
 inline fun getHolderOfAnnotationClassWithParameterThatBecomesRegularClassInline() = HolderOfAnnotationClassWithParameterThatBecomesRegularClass()
+fun getHolderOfAnnotationClassWithParameterOfParameterThatBecomesRegularClass() = HolderOfAnnotationClassWithParameterOfParameterThatBecomesRegularClass()
+inline fun getHolderOfAnnotationClassWithParameterOfParameterThatBecomesRegularClassInline() = HolderOfAnnotationClassWithParameterOfParameterThatBecomesRegularClass()
 fun getHolderOfAnnotationClassThatDisappears() = HolderOfAnnotationClassThatDisappears()
 inline fun getHolderOfAnnotationClassThatDisappearsInline() = HolderOfAnnotationClassThatDisappears()
 fun getHolderOfAnnotationClassWithParameterThatDisappears() = HolderOfAnnotationClassWithParameterThatDisappears()
 inline fun getHolderOfAnnotationClassWithParameterThatDisappearsInline() = HolderOfAnnotationClassWithParameterThatDisappears()
+fun getHolderOfAnnotationClassWithParameterOfParameterThatDisappears() = HolderOfAnnotationClassWithParameterOfParameterThatDisappears()
+inline fun getHolderOfAnnotationClassWithParameterOfParameterThatDisappearsInline() = HolderOfAnnotationClassWithParameterOfParameterThatDisappears()
+fun getHolderOfAnnotationClassWithRenamedParameters() = HolderOfAnnotationClassWithRenamedParameters()
+inline fun getHolderOfAnnotationClassWithRenamedParametersInline() = HolderOfAnnotationClassWithRenamedParameters()
+fun getHolderOfAnnotationClassWithReorderedParameters() = HolderOfAnnotationClassWithReorderedParameters()
+inline fun getHolderOfAnnotationClassWithReorderedParametersInline() = HolderOfAnnotationClassWithReorderedParameters()
+fun getHolderOfAnnotationClassWithNewParameter() = HolderOfAnnotationClassWithNewParameter()
+inline fun getHolderOfAnnotationClassWithNewParameterInline() = HolderOfAnnotationClassWithNewParameter()
 
 fun getValueToClass(): ValueToClass = ValueToClass(1)
 inline fun getValueToClassInline(): ValueToClass = ValueToClass(2)

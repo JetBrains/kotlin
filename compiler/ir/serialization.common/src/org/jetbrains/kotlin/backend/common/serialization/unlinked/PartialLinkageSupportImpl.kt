@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.allUnbound
 
 internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: IrMessageLogger) : PartialLinkageSupport {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
-    private val classifierExplorer = ClassifierExplorer(stubGenerator)
+    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, messageLogger)
 
     override val partialLinkageEnabled get() = true

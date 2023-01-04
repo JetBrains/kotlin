@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkage
 internal fun PartialLinkageCase.renderErrorMessage(): String = buildString {
     when (this@renderErrorMessage) {
         is MissingDeclaration -> noDeclarationForSymbol(missingDeclarationSymbol)
-        is MissingEnclosingClass -> noEnclosingClass(orphanedClassSymbol)
+        is AnnotationWithUnacceptableParameter -> unacceptableAnnotationParam(annotationClassSymbol, unacceptableClassifierSymbol)
 
         is DeclarationUsesPartiallyLinkedClassifier ->
             declarationWithPartiallyLinkedClassifier(declarationSymbol, cause, forExpression = false)
@@ -249,44 +249,42 @@ private fun StringBuilder.expression(expression: IrExpression, continuation: (Ex
     return continuation(expressionKind)
 }
 
-private fun Appendable.cause(cause: Unusable): Appendable =
-    when (cause) {
-        is Unusable.MissingClassifier -> unlinkedSymbol(cause)
-        is Unusable.MissingEnclosingClass -> noEnclosingClass(cause)
-        is Unusable.DueToOtherClassifier -> {
-            when (val rootCause = cause.rootCause) {
-                is Unusable.MissingClassifier -> unlinkedSymbol(rootCause, cause)
-                is Unusable.MissingEnclosingClass -> noEnclosingClass(rootCause, cause)
-            }
+private fun Appendable.cause(
+    cause: Unusable,
+    omitSubjectIf: IrSymbol?,
+    printIntermediateCause: Boolean
+): Appendable {
+    val (rootCause: Unusable.CanBeRootCause, intermediateCause: Unusable.DueToOtherClassifier?) = when (cause) {
+        is Unusable.CanBeRootCause -> cause to null
+        is Unusable.DueToOtherClassifier -> cause.rootCause to cause
+    }
+
+    when (rootCause) {
+        is Unusable.MissingClassifier -> {
+            append(" uses unlinked ").declarationKind(rootCause.symbol, capitalized = false).append(" symbol ").symbolName(rootCause.symbol)
+        }
+
+        is Unusable.AnnotationWithUnacceptableParameter -> {
+            if (omitSubjectIf != rootCause.symbol)
+                append(" uses ").declarationKindName(rootCause.symbol, capitalized = false).append(" that has non-annotation ")
+            else
+                append(" uses non-annotation ")
+            declarationKindName(rootCause.unacceptableClassifierSymbol, capitalized = false).append(" as a parameter")
         }
     }
+
+    if (printIntermediateCause && intermediateCause != null)
+        append(" (through ").declarationKindName(intermediateCause.symbol, capitalized = false).append(")")
+
+    return this
+}
 
 private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
     append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").symbolName(symbol)
 
-private fun Appendable.noEnclosingClass(symbol: IrClassSymbol): Appendable =
-    declarationKindName(symbol, capitalized = true).append(" lacks enclosing class")
-
-private fun Appendable.unlinkedSymbol(
-    rootCause: Unusable.MissingClassifier,
-    cause: Unusable.DueToOtherClassifier? = null
-): Appendable {
-    append("unlinked ").declarationKind(rootCause.symbol, capitalized = false).append(" symbol ").symbolName(rootCause.symbol)
-    if (cause != null) through(cause)
-    return this
-}
-
-private fun Appendable.noEnclosingClass(
-    rootCause: Unusable.MissingEnclosingClass,
-    cause: Unusable.DueToOtherClassifier? = null
-): Appendable {
-    declarationKindName(rootCause.symbol, capitalized = false)
-    if (cause != null) through(cause)
-    return append(". ").noEnclosingClass(rootCause.symbol)
-}
-
-private fun Appendable.through(cause: Unusable.DueToOtherClassifier): Appendable =
-    append(" (through ").declarationKindName(cause.symbol, capitalized = false).append(")")
+private fun Appendable.unacceptableAnnotationParam(symbol: IrClassSymbol, unacceptableClassifierSymbol: IrClassifierSymbol): Appendable =
+    declarationKindName(symbol, capitalized = true).append(" has non-annotation ")
+        .declarationKindName(unacceptableClassifierSymbol, capitalized = false).append(" as a parameter")
 
 private fun Appendable.module(module: PLModule): Appendable =
     append("module ").append(module.name)
@@ -303,27 +301,35 @@ private fun Appendable.declarationWithPartiallyLinkedClassifier(
     cause: Unusable,
     forExpression: Boolean
 ): Appendable {
-    val declaration = declarationSymbol.owner
-    return if (declaration is IrFunction && declaration.parentClassOrNull?.symbol == cause.symbol) {
+    val functionDeclaration = declarationSymbol.owner as? IrFunction
+    val parentOfFunctionIsDispatchReceiver = (functionDeclaration?.parent as? IrClass)?.symbol == cause.symbol
+
+    // The subject of the error message. In case the current declaration is a function with its own parent class being
+    // the dispatch receiver, the subject is the class.
+    val subjectSymbol = if (parentOfFunctionIsDispatchReceiver) cause.symbol else declarationSymbol
+
+    if (parentOfFunctionIsDispatchReceiver) {
         // Callable member is unusable due to unusable dispatch receiver.
+        val functionIsConstructor = functionDeclaration is IrConstructor
+
         if (forExpression) {
-            if (declaration is IrConstructor)
-                declarationKindName(cause.symbol, capitalized = true)
+            if (functionIsConstructor)
+                declarationKindName(subjectSymbol, capitalized = true) // "Class 'Foo'"
             else
-                append("Dispatch receiver ").declarationKindName(cause.symbol, capitalized = true)
-            append(" uses ").cause(cause.rootCause)
+                append("Dispatch receiver ").declarationKindName(subjectSymbol, capitalized = false) // "Dispatch receiver class 'Foo'"
         } else {
-            declarationKindName(cause.symbol, capitalized = true)
-                .append(if (declaration is IrConstructor) " created by " else ", the dispatch receiver of ")
-                .declarationKindName(declarationSymbol, capitalized = false).append(" uses ").cause(cause.rootCause)
+            declarationKindName(subjectSymbol, capitalized = true) // "Class 'Foo'"
+                .append(if (functionIsConstructor) " created by " else ", the dispatch receiver of ") // ", the dispatch receiver of"
+                .declarationKindName(declarationSymbol, capitalized = false) // "function 'foo'"
         }
     } else {
         if (forExpression)
-            declarationKind(declarationSymbol, capitalized = true)
+            declarationKind(subjectSymbol, capitalized = true) // "Function"
         else
-            declarationKindName(declarationSymbol, capitalized = true)
-        append(" uses ").cause(cause)
+            declarationKindName(subjectSymbol, capitalized = true) // "Function 'foo'"
     }
+
+    return cause(cause, omitSubjectIf = subjectSymbol, printIntermediateCause = !parentOfFunctionIsDispatchReceiver)
 }
 
 private fun StringBuilder.expressionWithPartiallyLinkedClassifier(
@@ -342,7 +348,7 @@ private fun StringBuilder.expressionWithPartiallyLinkedClassifier(
         else -> true
     }
 
-    append("Expression uses ").cause(if (printIntermediateCause) cause else cause.rootCause)
+    append("Expression").cause(cause, omitSubjectIf = null, printIntermediateCause)
 }
 
 private fun Appendable.inaccessibleDeclaration(
@@ -361,5 +367,3 @@ private fun Appendable.appendCapitalized(text: String, capitalized: Boolean): Ap
 
     return append(text)
 }
-
-private val Unusable.rootCause get() = if (this is Unusable.DueToOtherClassifier) rootCause else this

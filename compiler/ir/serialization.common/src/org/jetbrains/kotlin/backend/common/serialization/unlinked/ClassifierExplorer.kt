@@ -9,30 +9,51 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassi
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Usable
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstantObject
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.util.isEnumEntry
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class ClassifierExplorer(private val stubGenerator: MissingDeclarationStubGenerator) {
+internal class ClassifierExplorer(private val builtIns: IrBuiltIns, val stubGenerator: MissingDeclarationStubGenerator) {
     private val exploredSymbols = ExploredClassifiers()
 
-    fun exploreType(type: IrType): Unusable? = type.exploreType(visitedSymbols = hashSetOf()) as? Unusable
-    fun exploreSymbol(symbol: IrClassifierSymbol): Unusable? = symbol.exploreSymbol(visitedSymbols = hashSetOf()) as? Unusable
+    private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {
+        setOf(
+            builtIns.stringClass, // kotlin.String
+            builtIns.kClassClass // kotlin.reflect.KClass
+        )
+    }
+
+    private val permittedAnnotationParameterSymbols: Set<IrClassSymbol> by lazy {
+        buildSet {
+            this += permittedAnnotationArrayParameterSymbols
+
+            PrimitiveType.values().forEach {
+                addIfNotNull(builtIns.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>
+                addIfNotNull(builtIns.findClass(it.arrayTypeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>Array
+            }
+
+            UnsignedType.values().forEach {
+                addIfNotNull(builtIns.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>
+                addIfNotNull(builtIns.findClass(it.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>Array
+            }
+        }
+    }
+
+    fun exploreType(type: IrType): Unusable? = type.exploreType(visitedSymbols = hashSetOf()).asUnusable()
+    fun exploreSymbol(symbol: IrClassifierSymbol): Unusable? = symbol.exploreSymbol(visitedSymbols = hashSetOf()).asUnusable()
 
     fun exploreIrElement(element: IrElement) {
         element.acceptChildrenVoid(IrElementExplorer { it.exploreType(visitedSymbols = hashSetOf()) })
@@ -41,8 +62,8 @@ internal class ClassifierExplorer(private val stubGenerator: MissingDeclarationS
     /** Explore the IR type to find the first cause why this type should be considered as unusable. */
     private fun IrType.exploreType(visitedSymbols: MutableSet<IrClassifierSymbol>): ExploredClassifier {
         return when (this) {
-            is IrSimpleType -> (classifier.exploreSymbol(visitedSymbols) as? Unusable)
-                ?: arguments.firstUnusable { (it as? IrTypeProjection)?.type?.exploreType(visitedSymbols) }
+            is IrSimpleType -> classifier.exploreSymbol(visitedSymbols).asUnusable()
+                ?: arguments.firstUnusable { it.typeOrNull?.exploreType(visitedSymbols) }
                 ?: Usable
             is IrDynamicType -> Usable
             else -> throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
@@ -82,12 +103,8 @@ internal class ClassifierExplorer(private val stubGenerator: MissingDeclarationS
                 if (classifier.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                     return exploredSymbols.registerUnusable(this, MissingClassifier(this))
 
-                val outerClassSymbol = if (classifier.isInner || classifier.isEnumEntry) {
-                    classifier.parentClassOrNull?.symbol
-                        ?: return exploredSymbols.registerUnusable(this, MissingEnclosingClass(this as IrClassSymbol))
-                } else null
-
-                (outerClassSymbol?.exploreSymbol(visitedSymbols) as? Unusable)
+                classifier.annotationConstructors?.firstUnusable { it.exploreAnnotationConstructor(visitedSymbols) }
+                    ?: classifier.outerClassSymbol?.exploreSymbol(visitedSymbols).asUnusable()
                     ?: classifier.typeParameters.firstUnusable { it.symbol.exploreSymbol(visitedSymbols) }
                     ?: classifier.superTypes.firstUnusable { it.exploreType(visitedSymbols) }
             }
@@ -97,18 +114,88 @@ internal class ClassifierExplorer(private val stubGenerator: MissingDeclarationS
             else -> null
         }
 
-        val rootCause = when (cause) {
-            null -> return exploredSymbols.registerUsable(this)
-            is DueToOtherClassifier -> cause.rootCause
-            is CanBeRootCause -> cause
+        val rootCause = when {
+            cause == null -> return exploredSymbols.registerUsable(this)
+            cause.symbol == this -> return exploredSymbols.registerUnusable(this, cause)
+            else -> when (cause) {
+                is DueToOtherClassifier -> cause.rootCause
+                is CanBeRootCause -> cause
+            }
         }
 
         return exploredSymbols.registerUnusable(this, DueToOtherClassifier(this, rootCause))
     }
 
-    /** Iterate the collection and find the first unusable classifier. */
-    private inline fun <T> List<T>.firstUnusable(transform: (T) -> ExploredClassifier?): Unusable? =
-        firstNotNullOfOrNull { transform(it) as? Unusable }
+    private fun IrConstructor.exploreAnnotationConstructor(visitedSymbols: MutableSet<IrClassifierSymbol>): Unusable? {
+        return valueParameters.firstUnusable { valueParameter ->
+            valueParameter.type.exploreType(visitedSymbols).asUnusable()
+                ?: valueParameter.exploreAnnotationConstructorParameter(visitedSymbols, annotationClass = parentAsClass)
+        }
+    }
+
+    /** See also [org.jetbrains.kotlin.resolve.CompileTimeConstantUtils.isAcceptableTypeForAnnotationParameter] */
+    private fun IrValueParameter.exploreAnnotationConstructorParameter(
+        visitedSymbols: MutableSet<IrClassifierSymbol>,
+        annotationClass: IrClass
+    ): Unusable? {
+        val parameterType = type.asSimpleType() ?: return null
+        val parameterClassSymbol = parameterType.classifier as IrClassSymbol
+        val parameterClass = parameterClassSymbol.owner
+
+        when {
+            parameterClass.isAnnotationClass -> {
+                // Recurse on another annotation.
+                parameterClassSymbol.exploreSymbol(visitedSymbols).asUnusable()?.let { return it }
+            }
+
+            parameterClass.isEnumClass || parameterClassSymbol in permittedAnnotationParameterSymbols -> return null // Permitted.
+
+            parameterClassSymbol == builtIns.arrayClass -> {
+                // Additional checks for array element type.
+                for (argument in parameterType.arguments) {
+                    val argumentClassSymbol = (argument.typeOrNull?.asSimpleType() ?: continue).classifier as IrClassSymbol
+                    val argumentClass = argumentClassSymbol.owner
+
+                    when {
+                        argumentClass.isAnnotationClass -> {
+                            // Recurse on another annotation.
+                            argumentClassSymbol.exploreSymbol(visitedSymbols).asUnusable()?.let { return it }
+                        }
+
+                        argumentClass.isEnumClass || argumentClassSymbol in permittedAnnotationArrayParameterSymbols -> continue // Permitted.
+
+                        else -> return AnnotationWithUnacceptableParameter(annotationClass.symbol, argumentClassSymbol)
+                    }
+                }
+            }
+
+            else -> return AnnotationWithUnacceptableParameter(annotationClass.symbol, parameterClassSymbol)
+        }
+
+        return null
+    }
+
+    companion object {
+        private inline val IrClass.annotationConstructors: Sequence<IrConstructor>?
+            get() = if (isAnnotationClass) constructors else null
+
+        private inline val IrClass.outerClassSymbol: IrClassSymbol?
+            get() = if (isInner || isEnumEntry) parentClassOrNull?.symbol else null
+
+        private inline val IrTypeArgument.typeOrNull: IrType?
+            get() = (this as? IrTypeProjection)?.type
+
+        private fun IrType.asSimpleType() = this as? IrSimpleType
+
+        private fun ExploredClassifier?.asUnusable() = this as? Unusable
+
+        /** Iterate the collection and find the first unusable classifier. */
+        private inline fun <T> Iterable<T>.firstUnusable(transform: (T) -> ExploredClassifier?): Unusable? =
+            firstNotNullOfOrNull { transform(it).asUnusable() }
+
+        private inline fun <T> Sequence<T>.firstUnusable(transform: (T) -> ExploredClassifier?): Unusable? =
+            firstNotNullOfOrNull { transform(it).asUnusable() }
+    }
 }
 
 private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrElementVisitorVoid {

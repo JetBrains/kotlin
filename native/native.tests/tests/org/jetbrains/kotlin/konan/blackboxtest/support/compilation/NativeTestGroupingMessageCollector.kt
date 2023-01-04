@@ -128,7 +128,6 @@ internal class NativeTestGroupingMessageCollector(
         private val PARTIAL_LINKAGE_WARNING_REGEXES = listOf(
             Regex(".*No .+ found for symbol .+"),
             Regex(".+ uses unlinked .+ symbol .+"),
-            Regex(".+ lacks enclosing class$"),
             Regex("^Abstract .+ is not implemented in non-abstract .+"),
             Regex(".+ is .+ while .+ is expected$")
         )

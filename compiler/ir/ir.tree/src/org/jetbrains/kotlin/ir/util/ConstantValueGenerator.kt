@@ -156,15 +156,12 @@ abstract class ConstantValueGenerator(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor, realType: KotlinType? = null): IrConstructorCall? {
         val annotationType = realType ?: annotationDescriptor.type
-        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
-        if (annotationClassDescriptor !is ClassDescriptor) return null
-        if (annotationClassDescriptor is NotFoundClasses.MockClassDescriptor) return null
+        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-        assert(
-            DescriptorUtils.isAnnotationClass(annotationClassDescriptor) ||
-                    (allowErrorTypeInAnnotations && annotationClassDescriptor is ErrorClassDescriptor)
-        ) {
-            "Annotation class expected: $annotationClassDescriptor"
+        when (annotationClassDescriptor) {
+            is NotFoundClasses.MockClassDescriptor -> return null
+            is ErrorClassDescriptor -> if (!allowErrorTypeInAnnotations) return null
+            else -> if (!DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) return null
         }
 
         val primaryConstructorDescriptor = annotationClassDescriptor.unsubstitutedPrimaryConstructor

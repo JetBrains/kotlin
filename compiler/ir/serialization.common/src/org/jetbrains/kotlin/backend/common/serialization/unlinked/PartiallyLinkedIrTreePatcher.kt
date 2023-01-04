@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.utils.compact
 import java.util.*
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
@@ -104,7 +105,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private inner class DeclarationTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<DeclarationTransformerContext>()
 
-        private fun <T : IrElement> T.transformChildren(): T {
+        private fun <T : IrDeclaration> T.transformChildren(): T {
             transformChildrenVoid()
             return this
         }
@@ -142,7 +143,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 // Transform the reason into the most appropriate linkage case.
                 val partialLinkageCase = when (unusableClass) {
                     is ExploredClassifier.Unusable.MissingClassifier -> MissingDeclaration(declaration.symbol)
-                    is ExploredClassifier.Unusable.MissingEnclosingClass -> MissingEnclosingClass(declaration.symbol)
+                    is ExploredClassifier.Unusable.AnnotationWithUnacceptableParameter -> AnnotationWithUnacceptableParameter(
+                        declaration.symbol,
+                        unusableClass.unacceptableClassifierSymbol
+                    )
                     is ExploredClassifier.Unusable.DueToOtherClassifier -> DeclarationUsesPartiallyLinkedClassifier(
                         declaration.symbol,
                         unusableClass.rootCause
@@ -313,11 +317,13 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         private fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
-            overriddenSymbols = overriddenSymbols.filter { symbol ->
-                val owner = symbol.owner as IrDeclaration
-                owner.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION
-                        // Handle the case when the overridden declaration became private.
-                        && (owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
+            if (overriddenSymbols.isNotEmpty()) {
+                overriddenSymbols = overriddenSymbols.filterTo(ArrayList(overriddenSymbols.size)) { symbol ->
+                    val owner = symbol.owner as IrDeclaration
+                    owner.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION
+                            // Handle the case when the overridden declaration became private.
+                            && (owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
+                }.compact()
             }
         }
 
@@ -326,11 +332,18 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     private inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+        override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
+            (declaration as? IrFile)?.filterUnusableAnnotations()
+            return super.visitPackageFragment(declaration)
+        }
+
         override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
             return if (declaration.origin is PartiallyLinkedDeclarationOrigin)
-                declaration // There are no expressions to patch.
-            else
+                declaration // There are nor expressions neither annotations to patch.
+            else {
+                declaration.filterUnusableAnnotations()
                 super.visitDeclaration(declaration)
+            }
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
@@ -444,6 +457,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         private fun IrMemberAccessExpression<*>.checkExpressionTypeArguments(): PartialLinkageCase? {
+            // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
             return ExpressionUsesPartiallyLinkedClassifier(
                 this,
                 (0 until typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
@@ -484,11 +498,11 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 else -> when (symbol) {
                     is IrFunctionSymbol -> with(symbol.owner) {
-                        extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
+                        dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
+                            ?: extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
                             ?: valueParameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
                             ?: returnType.precalculatedUnusableClassifier()
                             ?: typeParameters.firstNotNullOfOrNull { it.superTypes.precalculatedUnusableClassifier() }
-                            ?: dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
                     }
 
                     is IrFieldSymbol -> symbol.owner.type.precalculatedUnusableClassifier()
@@ -563,6 +577,26 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
+        private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrElement {
+            if (annotations.isNotEmpty()) {
+                annotations = annotations.filterTo(ArrayList(annotations.size)) { annotation ->
+                    // TODO: check the following steps (do it for nested annotations recursively)
+                    val partialLinkageCase = with(annotation) {
+                        checkReferencedDeclaration(symbol)
+                            ?: checkExpressionTypeArguments()
+                            ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
+                                constructedClass.kind == ClassKind.ANNOTATION_CLASS
+                            }
+                    } ?: return@filterTo true
+
+                    // Just log a warning. Do not throw a linkage error as this would produce broken IR.
+                    partialLinkageCase.logLinkageErrorAsWarning(this, currentFile)
+
+                    false // Drop it.
+                }.compact()
+            }
+        }
+
         /**
          * Removes statements after the first IR p.l. error (everything after the IR p.l. error if effectively dead code and do not need
          * to be kept in the IR tree).
@@ -586,11 +620,17 @@ internal class PartiallyLinkedIrTreePatcher(
     private fun List<IrType>.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         firstNotNullOfOrNull { it.toPartiallyLinkedMarkerTypeOrNull() }
 
-    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: PLFile): IrCall {
+    private fun PartialLinkageCase.logLinkageErrorAsWarning(element: IrElement, file: PLFile): String {
         val errorMessage = renderErrorMessage()
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
         messageLogger.report(Severity.WARNING, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
+
+        return errorMessage
+    }
+
+    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: PLFile): IrCall {
+        val errorMessage = logLinkageErrorAsWarning(element, file)
 
         return IrCallImpl(
             startOffset = element.startOffset,

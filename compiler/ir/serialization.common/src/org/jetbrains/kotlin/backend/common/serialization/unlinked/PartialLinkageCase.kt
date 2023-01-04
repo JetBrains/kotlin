@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
@@ -30,12 +31,15 @@ internal sealed interface PartialLinkageCase {
     class MissingDeclaration(val missingDeclarationSymbol: IrSymbol) : PartialLinkageCase
 
     /**
-     * There is no enclosing class for an inner class (or an enum entry). This may happen if the inner class became a top-level class
-     * in newer version of the library.
+     * The annotation class has unacceptable classifier as one of its parameters. This may happen if the class representing this
+     * parameter was an annotation class before, but then it was converted to a non-annotation class.
      *
-     * Applicable to: Declarations (classes).
+     * Applicable to: Declarations (annotation classes).
      */
-    class MissingEnclosingClass(val orphanedClassSymbol: IrClassSymbol) : PartialLinkageCase
+    class AnnotationWithUnacceptableParameter(
+        val annotationClassSymbol: IrClassSymbol,
+        val unacceptableClassifierSymbol: IrClassifierSymbol
+    ) : PartialLinkageCase
 
     /**
      * Declaration's signature uses partially linked classifier symbol.

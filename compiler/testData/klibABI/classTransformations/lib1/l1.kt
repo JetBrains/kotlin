@@ -125,6 +125,9 @@ class InnerClassContainer {
 annotation class AnnotationClassWithChangedParameterType(val x: Int)
 annotation class AnnotationClassThatBecomesRegularClass(val x: Int)
 annotation class AnnotationClassThatDisappears(val x: Int)
+annotation class AnnotationClassWithRenamedParameters(val i: Int, val s: String)
+annotation class AnnotationClassWithReorderedParameters(val i: Int, val s: String)
+annotation class AnnotationClassWithNewParameter(val i: Int)
 
 value class ValueToClass(val x: Int)
 class ClassToValue(val x: Int)
