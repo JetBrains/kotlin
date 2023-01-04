@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
@@ -40,12 +39,9 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
         } as FirFile
     }
 
-    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
+    override fun transformDeclaration() {
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-            designation.firFile.transform<FirFile, Nothing?>(this, null)
-        }
-
+        designation.firFile.transform<FirFile, Nothing?>(this, null)
         declarationTransformer.ensureDesignationPassed()
     }
 

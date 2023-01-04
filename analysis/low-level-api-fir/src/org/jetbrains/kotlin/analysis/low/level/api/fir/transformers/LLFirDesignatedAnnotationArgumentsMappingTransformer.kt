@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
@@ -36,12 +35,9 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
-            designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
-        }
+    override fun transformDeclaration() {
+        designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
     }
-
 
     override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
         LLFirPhaseUpdater.updateDeclarationInternalsPhase(target, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING, updateForLocalDeclarations = false)

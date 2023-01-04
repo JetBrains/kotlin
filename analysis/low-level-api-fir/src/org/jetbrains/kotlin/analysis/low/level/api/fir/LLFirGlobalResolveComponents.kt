@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyRes
 internal class LLFirGlobalResolveComponents(
     val project: Project,
 ) {
-    val phaseRunner: LLFirPhaseRunner = LLFirPhaseRunner()
     val checker: LLFirLazyResolveContractChecker = LLFirLazyResolveContractChecker()
     val lockProvider: LLFirLockProvider = LLFirLockProvider(checker)
 }
