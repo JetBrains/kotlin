@@ -730,3 +730,6 @@ fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, sess
     val container = getContainingClassSymbol(session) ?: return false
     return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
 }
+
+fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession) =
+    symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)
