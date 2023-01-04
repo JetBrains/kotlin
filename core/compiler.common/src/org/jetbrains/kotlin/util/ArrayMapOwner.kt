@@ -19,7 +19,6 @@ abstract class AbstractArrayMapOwner<K : Any, V : Any> : Iterable<V> {
     protected abstract val typeRegistry: TypeRegistry<K, V>
 
     abstract class AbstractArrayMapAccessor<K : Any, V : Any, T : V>(
-        protected val key: KClass<out K>,
         protected val id: Int
     ) {
         protected fun extractValue(thisRef: AbstractArrayMapOwner<K, V>): T? {
@@ -28,7 +27,11 @@ abstract class AbstractArrayMapOwner<K : Any, V : Any> : Iterable<V> {
         }
     }
 
-    protected abstract fun registerComponent(tClass: KClass<out K>, value: V)
+    protected abstract fun registerComponent(keyQualifiedName: String, value: V)
+
+    protected fun registerComponent(tClass: KClass<out K>, value: V) {
+        registerComponent(tClass.qualifiedName!!, value)
+    }
 
     final override fun iterator(): Iterator<V> = arrayMap.iterator()
 
@@ -40,21 +43,20 @@ abstract class AbstractArrayMapOwner<K : Any, V : Any> : Iterable<V> {
 }
 
 class ArrayMapAccessor<K : Any, V : Any, T : V>(
-    key: KClass<out K>,
+    private val keyQualifiedName: String,
     id: Int,
     val default: T? = null
-) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(key, id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, V> {
+) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, V> {
     override fun getValue(thisRef: AbstractArrayMapOwner<K, V>, property: KProperty<*>): T {
         return extractValue(thisRef)
             ?: default
-            ?: error("No '$key'($id) in array owner: $thisRef")
+            ?: error("No '$keyQualifiedName'($id) in array owner: $thisRef")
     }
 }
 
 class NullableArrayMapAccessor<K : Any, V : Any, T : V>(
-    key: KClass<out K>,
     id: Int
-) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(key, id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, V?> {
+) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, V?> {
     override fun getValue(thisRef: AbstractArrayMapOwner<K, V>, property: KProperty<*>): T? {
         return extractValue(thisRef)
     }
@@ -65,19 +67,27 @@ abstract class TypeRegistry<K : Any, V : Any> {
     private val idCounter = AtomicInteger(0)
 
     fun <T : V, KK : K> generateAccessor(kClass: KClass<KK>, default: T? = null): ArrayMapAccessor<K, V, T> {
-        return ArrayMapAccessor(kClass, getId(kClass), default)
+        return ArrayMapAccessor(kClass.qualifiedName!!, getId(kClass), default)
+    }
+
+    fun <T : V> generateAccessor(keyQualifiedName: String, default: T? = null): ArrayMapAccessor<K, V, T> {
+        return ArrayMapAccessor(keyQualifiedName, getId(keyQualifiedName), default)
     }
 
     fun <T : V, KK : K> generateNullableAccessor(kClass: KClass<KK>): NullableArrayMapAccessor<K, V, T> {
-        return NullableArrayMapAccessor(kClass, getId(kClass))
+        return NullableArrayMapAccessor(getId(kClass))
     }
 
     fun <KK : K> generateAnyNullableAccessor(kClass: KClass<KK>): NullableArrayMapAccessor<K, V, *> {
-        return NullableArrayMapAccessor(kClass, getId(kClass))
+        return NullableArrayMapAccessor(getId(kClass))
     }
 
     fun <T : K> getId(kClass: KClass<T>): Int {
-        return idPerType.customComputeIfAbsent(kClass.qualifiedName!!) { idCounter.getAndIncrement() }
+        return getId(kClass.qualifiedName!!)
+    }
+
+    fun getId(keyQualifiedName: String): Int {
+        return idPerType.customComputeIfAbsent(keyQualifiedName) { idCounter.getAndIncrement() }
     }
 
     /*
