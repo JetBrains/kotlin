@@ -74,35 +74,20 @@ internal class DefaultKotlinSourceSetFactory(
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, "resources"))
 
-        val dependencyConfigurationWithMetadata = with(sourceSet) {
-            listOf(
-                listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName) to metadataLibrariesConfigurationName,
-                null to intransitiveMetadataConfigurationName
-            )
-        }
+        project.configurations.maybeCreate(sourceSet.intransitiveMetadataConfigurationName).apply {
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            isVisible = false
+            isCanBeConsumed = false
+            isCanBeResolved = true
 
-        dependencyConfigurationWithMetadata.forEach { (configurationNames, metadataName) ->
-            project.configurations.maybeCreate(metadataName).apply {
-                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                isVisible = false
-                isCanBeConsumed = false
-                isCanBeResolved = true
+            if (project.isKotlinGranularMetadataEnabled) {
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            }
 
-                if (configurationNames != null) {
-                    for (configurationName in configurationNames) {
-                        extendsFrom(project.configurations.maybeCreate(configurationName))
-                    }
-                }
-
-                if (project.isKotlinGranularMetadataEnabled) {
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                }
-
-                project.afterEvaluate {
-                    setJsCompilerIfNecessary(sourceSet, this@apply)
-                }
+            project.afterEvaluate {
+                setJsCompilerIfNecessary(sourceSet, this@apply)
             }
         }
     }

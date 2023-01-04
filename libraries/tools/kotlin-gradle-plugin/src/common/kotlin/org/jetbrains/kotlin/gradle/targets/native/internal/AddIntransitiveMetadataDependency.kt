@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 /**
  * Dependencies here are using a special configuration called 'intransitiveMetadataConfiguration'.
@@ -16,8 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
  * In this mode, every source set will receive exactly one commonized library to analyze its source code with.
  */
 internal fun Project.addIntransitiveMetadataDependencyIfPossible(sourceSet: DefaultKotlinSourceSet, dependency: FileCollection) {
-    val dependencyConfigurationName =
-        if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-        else sourceSet.metadataLibrariesConfigurationName
-    project.dependencies.add(dependencyConfigurationName, dependency)
+    if (project.isIntransitiveMetadataConfigurationEnabled) {
+        project.dependencies.add(sourceSet.intransitiveMetadataConfigurationName, dependency)
+    } /*else {
+        project.dependencies.add(sourceSet.internal.resolvableMetadataConfiguration.name, dependency)
+    }*/
 }
