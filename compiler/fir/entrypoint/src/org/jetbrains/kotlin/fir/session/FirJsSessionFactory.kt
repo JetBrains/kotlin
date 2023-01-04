@@ -44,11 +44,11 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
-            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependenciesSymbolProvider ->
+            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
-                    dependenciesSymbolProvider,
+                    *dependencies.toTypedArray(),
                 )
             }
         )
