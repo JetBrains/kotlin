@@ -14,33 +14,31 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 
-internal class LLFirLazyTransformerExecutor {
-    companion object {
-        fun execute(
-            phase: FirResolvePhase,
-            designation: FirDesignationWithFile,
-            scopeSession: ScopeSession,
-            phaseRunner: LLFirPhaseRunner,
-            lockProvider: LLFirLockProvider,
-            towerDataContextCollector: FirTowerDataContextCollector?,
-            firProviderInterceptor: FirProviderInterceptor?,
-        ) {
+internal object LLFirLazyTransformerExecutor {
+    fun execute(
+        phase: FirResolvePhase,
+        designation: FirDesignationWithFile,
+        scopeSession: ScopeSession,
+        phaseRunner: LLFirPhaseRunner,
+        lockProvider: LLFirLockProvider,
+        towerDataContextCollector: FirTowerDataContextCollector?,
+        firProviderInterceptor: FirProviderInterceptor?,
+    ) {
 
-            val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
-                phase,
-                designation,
-                scopeSession,
-                lockProvider,
-                towerDataContextCollector,
-                firProviderInterceptor,
-            ) ?: return
+        val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
+            phase,
+            designation,
+            scopeSession,
+            lockProvider,
+            towerDataContextCollector,
+            firProviderInterceptor,
+        ) ?: return
 
-            lockProvider.withLock(designation, phase) {
-                lazyTransformer.transformDeclaration(phaseRunner)
-                lazyTransformer.updatePhaseForDeclarationInternals(designation.target)
-                designation.target.replaceResolveState(phase.asResolveState())
-                lazyTransformer.checkIsResolved(designation.target)
-            }
+        lockProvider.withLock(designation, phase) {
+            lazyTransformer.transformDeclaration(phaseRunner)
+            lazyTransformer.updatePhaseForDeclarationInternals(designation.target)
+            designation.target.replaceResolveState(phase.asResolveState())
+            lazyTransformer.checkIsResolved(designation.target)
         }
     }
 }
