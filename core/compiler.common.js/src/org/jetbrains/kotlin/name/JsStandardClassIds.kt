@@ -20,6 +20,7 @@ object JsStandardClassIds {
         val JsNativeInvoke = "nativeInvoke".jsId()
         val JsNativeGetter = "nativeGetter".jsId()
         val JsNativeSetter = "nativeSetter".jsId()
+        val JsName = "JsName".jsId()
 
         val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     @property:JsName("x_") <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@get:JsName("getX_")<!> val x: Int = 0
 

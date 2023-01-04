@@ -1,11 +1,11 @@
 package foo
 
 class A {
-    var x: Int
+    <!JS_NAME_IS_NOT_ON_ALL_ACCESSORS!>var x: Int<!>
         @JsName("get_x") get() = 23
         set(value) {}
 
-    var y: Int
+    <!JS_NAME_IS_NOT_ON_ALL_ACCESSORS!>var y: Int<!>
         get() = 23
         @JsName("set_y") set(value) {}
 
@@ -14,10 +14,10 @@ class A {
         @JsName("set_z") set(value) {}
 }
 
-var xx: Int
+<!JS_NAME_IS_NOT_ON_ALL_ACCESSORS!>var xx: Int<!>
     @JsName("get_xx") get() = 23
     set(value) {}
 
-var A.ext: Int
+<!JS_NAME_IS_NOT_ON_ALL_ACCESSORS!>var A.ext: Int<!>
     @JsName("get_ext") get() = 23
     set(value) {}
