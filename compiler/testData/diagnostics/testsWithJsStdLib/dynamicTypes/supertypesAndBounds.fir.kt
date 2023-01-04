@@ -1,4 +1,4 @@
-interface Tr : dynamic
+interface Tr : <!DYNAMIC_SUPERTYPE!>dynamic<!>
 
 fun <T: dynamic> foo() {}
 
