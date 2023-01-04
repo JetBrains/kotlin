@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -85,7 +84,7 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
 
 internal abstract class LLFirDependentModuleProviders(
     session: FirSession,
-) : FirDependenciesSymbolProvider(session) {
+) : FirSymbolProvider(session) {
 
     abstract val dependentProviders: List<FirSymbolProvider>
     abstract val dependentSessions: List<LLFirSession>

@@ -116,7 +116,7 @@ abstract class FirAbstractSessionFactory {
             register(FirSymbolProvider::class, FirCompositeSymbolProvider(this, providers))
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
-            register(FirDependenciesSymbolProvider::class, dependenciesSymbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependenciesSymbolProvider)
         }
     }
 }
