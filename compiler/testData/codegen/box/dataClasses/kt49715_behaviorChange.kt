@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: [IR VALIDATION] Duplicate IR node: FUN GENERATED_DATA_CLASS_MEMBER name:equals
 
 interface A {

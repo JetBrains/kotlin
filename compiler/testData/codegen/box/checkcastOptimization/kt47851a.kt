@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: result.getMethod OK in FE1.0, unresolved in FIR
 // FULL_JDK
 

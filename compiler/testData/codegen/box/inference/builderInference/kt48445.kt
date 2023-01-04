@@ -1,5 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER on lazy call (Name3, T)
 // WITH_STDLIB
 

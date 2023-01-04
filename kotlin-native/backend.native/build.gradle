@@ -155,6 +155,7 @@ dependencies {
     compilerApi project(":kotlin-util-klib")
     compilerApi project(":kotlin-util-klib-metadata")
     compilerApi project(":compiler:ir.serialization.common")
+    compilerApi project(":compiler:fir:fir-serialization")
     compilerApi project(":compiler:ir.psi2ir")
     compilerApi project(":kotlin-native-shared")
     use(IntellijDependenciesKt) {

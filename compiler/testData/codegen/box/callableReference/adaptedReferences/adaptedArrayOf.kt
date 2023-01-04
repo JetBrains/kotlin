@@ -1,3 +1,6 @@
+// KT-55461
+// IGNORE_BACKEND_K2: NATIVE
+
 fun test(f: (Int, Int) -> Array<Int>) =
     f('O'.toInt(), 'K'.toInt())
 

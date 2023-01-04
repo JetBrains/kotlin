@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JS_IR, WASM
 //  JS IR & Wasm: https://youtrack.jetbrains.com/issue/KT-51225
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, NATIVE
 // FIR status: default argument mapping in MPP isn't designed yet
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: lib

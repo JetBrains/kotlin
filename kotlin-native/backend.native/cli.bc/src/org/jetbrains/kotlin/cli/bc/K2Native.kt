@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -64,8 +65,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val project = environment.project
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
         if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(ERROR, "K2 does not support Native target right now")
-            return ExitCode.COMPILATION_ERROR
+            messageCollector.report(WARNING, "New compiler pipeline K2 is experimental in Kotlin/Native. No compatibility guarantees are yet provided")
         }
         configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(arguments))
 

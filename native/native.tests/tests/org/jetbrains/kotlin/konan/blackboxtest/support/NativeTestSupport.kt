@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCr
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTests
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
@@ -196,6 +197,8 @@ private object NativeTestSupport {
         output += computeForcedStandaloneTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
+        // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
+        output += computePipelineType(testClass.get())
 
         return nativeTargets
     }
@@ -426,6 +429,12 @@ private object NativeTestSupport {
             .ensureExistsAndIsEmptyDirectory()
 
         return Binaries(testBinariesDir, sharedBinariesDir, givenBinariesDir)
+    }
+
+    private fun computePipelineType(testClass: Class<*>): PipelineType {
+        return if (testClass.annotations.any { it is K2Pipeline })
+            PipelineType.K2
+        else PipelineType.K1
     }
 
     /*************** Test class settings (simplified) ***************/

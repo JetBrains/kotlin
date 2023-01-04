@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -73,6 +72,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     testRoots = settings.get(),
                     generatedSources = settings.get(),
                     customKlibs = settings.get(),
+                    pipelineType = settings.get(),
                     timeouts = settings.get()
                 )
 
@@ -97,6 +97,7 @@ private class ExtTestDataFile(
     testRoots: TestRoots,
     private val generatedSources: GeneratedSources,
     private val customKlibs: CustomKlibs,
+    private val pipelineType: PipelineType,
     private val timeouts: Timeouts
 ) {
     private val structure by lazy {
@@ -136,11 +137,20 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isIgnoredTarget(TargetBackend.NATIVE, testDataFile) // Checks IGNORE_BACKEND directive.
+                && !isIgnoredNativeTarget(pipelineType, testDataFile) // Checks IGNORE_BACKEND directives.
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
+
+    private fun isIgnoredNativeTarget(pipelineType: PipelineType, testDataFile: File): Boolean {
+        return when (pipelineType) {
+            PipelineType.K1 ->
+                isIgnoredTarget(TargetBackend.NATIVE, testDataFile, IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K1_DIRECTIVE_PREFIX)
+            PipelineType.K2 ->
+                isIgnoredTarget(TargetBackend.NATIVE, testDataFile, IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K2_DIRECTIVE_PREFIX)
+        }
+    }
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
