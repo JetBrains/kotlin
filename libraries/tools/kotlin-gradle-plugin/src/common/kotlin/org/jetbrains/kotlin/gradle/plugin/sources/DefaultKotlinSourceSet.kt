@@ -45,9 +45,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
 
-    override val metadataLibrariesConfigurationName: String
-        get() = disambiguateName(METADATA_CONFIGURATION_NAME_SUFFIX)
-
     @Deprecated("KT-55312")
     override val apiMetadataConfigurationName: String
         get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
