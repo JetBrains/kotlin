@@ -91,6 +91,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("nonExhaustivenessOfWhenClause")
+    public void testNonExhaustivenessOfWhenClause() throws Exception {
+        runTest("compiler/testData/klibABI/nonExhaustivenessOfWhenClause/");
+    }
+
+    @Test
     @TestMetadata("removeAbstractFunctionFromAbstractClass")
     public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
         runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");

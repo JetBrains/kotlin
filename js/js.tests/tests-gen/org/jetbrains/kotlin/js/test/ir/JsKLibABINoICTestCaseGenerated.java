@@ -85,6 +85,11 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/nonAbstractPropertyInInterfaceBecomesAbstract/");
     }
 
+    @TestMetadata("nonExhaustivenessOfWhenClause")
+    public void testNonExhaustivenessOfWhenClause() throws Exception {
+        runTest("compiler/testData/klibABI/nonExhaustivenessOfWhenClause/");
+    }
+
     @TestMetadata("removeAbstractFunctionFromAbstractClass")
     public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
         runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");

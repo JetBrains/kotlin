@@ -1,0 +1,29 @@
+/*sealed*/ interface SI1 {
+    class A : SI1
+    class B : SI1
+}
+
+/*sealed*/ abstract class SC1 {
+    class A: SC1()
+    class B: SC1()
+}
+
+abstract class E1 {
+    object A : E1()
+    object B : E1()
+}
+
+abstract class E2 {
+    class A : E2()
+    class B : E2()
+}
+
+sealed interface SI2 {
+    object ClassToObject : SI2
+    class ObjectToClass : SI2
+}
+
+sealed class SC2 {
+    object ClassToObject : SC2()
+    class ObjectToClass : SC2()
+}
