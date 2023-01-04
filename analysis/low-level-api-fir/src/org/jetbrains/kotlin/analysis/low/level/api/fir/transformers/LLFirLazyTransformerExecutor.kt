@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
@@ -19,7 +18,6 @@ internal object LLFirLazyTransformerExecutor {
         phase: FirResolvePhase,
         designation: FirDesignationWithFile,
         scopeSession: ScopeSession,
-        phaseRunner: LLFirPhaseRunner,
         lockProvider: LLFirLockProvider,
         towerDataContextCollector: FirTowerDataContextCollector?
 
@@ -35,7 +33,7 @@ internal object LLFirLazyTransformerExecutor {
 
         executeWithoutPCE {
             lockProvider.withLock(designation, phase) {
-                lazyTransformer.transformDeclaration(phaseRunner)
+                lazyTransformer.transformDeclaration()
                 lazyTransformer.updatePhaseForDeclarationInternals(designation.target)
                 designation.target.replaceResolveState(phase.asResolveState())
                 lazyTransformer.checkIsResolved(designation.target)
