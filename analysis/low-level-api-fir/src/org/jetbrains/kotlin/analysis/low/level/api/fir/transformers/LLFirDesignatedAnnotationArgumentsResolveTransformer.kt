@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -63,9 +64,14 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
             moveNextDeclaration(designationIterator)
         }
+    }
 
-
-        LLFirLazyTransformer.updatePhaseDeep(designation.target, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
+            target,
+            FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS,
+            updateForLocalDeclarations = false,
+        )
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -159,11 +159,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         designation.firFile.checkPhase(FirResolvePhase.IMPORTS)
 
         val targetDesignation = if (designation.target !is FirClassLikeDeclaration) {
-            val resolvableTarget = designation.path.lastOrNull()
-            if (resolvableTarget == null) {
-                updatePhaseDeep(designation.target, FirResolvePhase.SUPER_TYPES)
-                return
-            }
+            val resolvableTarget = designation.path.lastOrNull() ?: return
             val targetPath = designation.path.dropLast(1)
             FirDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
@@ -173,8 +169,10 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             supertypeComputationSession.breakLoops(session)
             apply(collected)
         }
+    }
 
-        updatePhaseDeep(designation.target, FirResolvePhase.SUPER_TYPES)
+    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(target, FirResolvePhase.SUPER_TYPES, updateForLocalDeclarations = false)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

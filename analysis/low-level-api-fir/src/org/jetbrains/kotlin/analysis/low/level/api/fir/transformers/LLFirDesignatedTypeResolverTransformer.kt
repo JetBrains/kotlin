@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReceiverTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
@@ -53,7 +53,10 @@ internal class LLFirDesignatedTypeResolverTransformer(
         }
 
         declarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.target, FirResolvePhase.TYPES)
+    }
+
+    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(target, FirResolvePhase.TYPES, updateForLocalDeclarations = false)
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {

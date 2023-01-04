@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -62,9 +62,15 @@ internal class LLFirDesignatedImplicitTypesTransformer(
             designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
         }
 
-
         ideDeclarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.target, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+    }
+
+    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
+            target,
+            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+            updateForLocalDeclarations = false/* here should be true if we resolved the body*/,
+        )
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

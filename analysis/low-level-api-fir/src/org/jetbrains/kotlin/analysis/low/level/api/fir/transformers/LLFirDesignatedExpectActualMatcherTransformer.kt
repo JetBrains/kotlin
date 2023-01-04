@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -50,9 +50,15 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
             designation.firFile.transform<FirFile, Nothing?>(this, null)
         }
 
-
         declarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.target, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+    }
+
+    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
+            target,
+            FirResolvePhase.EXPECT_ACTUAL_MATCHING,
+            updateForLocalDeclarations = false,
+        )
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
