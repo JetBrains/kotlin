@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -41,14 +40,10 @@ open class YarnPlugin : Plugin<Project> {
             }
         }
 
-        val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
-
         val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
             task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
             task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             task.description = "Create root package.json"
-
-            task.mustRunAfter(rootClean)
         }
 
         configureRequiresNpmDependencies(project, rootPackageJson)

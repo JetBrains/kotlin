@@ -39,8 +39,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
             }
         }
 
-        val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
-
         val setupFileHasherTask = registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
             it.description = "Setup file hasher for caches"
         }
@@ -50,8 +48,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.dependsOn(setupFileHasherTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
-
-            it.mustRunAfter(rootClean)
         }
 
         registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)
