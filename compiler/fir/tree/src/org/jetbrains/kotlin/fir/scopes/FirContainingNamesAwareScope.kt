@@ -32,3 +32,9 @@ fun FirContainingNamesAwareScope.collectAllProperties(): Collection<FirVariableS
         processAllProperties(this::add)
     }
 }
+
+fun FirContainingNamesAwareScope.collectAllFunctions(): Collection<FirNamedFunctionSymbol> {
+    return mutableListOf<FirNamedFunctionSymbol>().apply {
+        processAllFunctions(this::add)
+    }
+}

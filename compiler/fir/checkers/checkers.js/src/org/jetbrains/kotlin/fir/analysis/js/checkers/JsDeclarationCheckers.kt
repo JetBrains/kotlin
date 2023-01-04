@@ -12,6 +12,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirJsInlineDeclarationChecker,
+            FirJsInheritanceFunctionChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>
@@ -28,5 +29,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJsMultipleInheritanceChecker,
             FirJsDynamicDeclarationChecker,
+            FirJsInheritanceClassChecker,
         )
 }
