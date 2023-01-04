@@ -7,11 +7,12 @@ fun <E> myE(): Out<E>? =  null
 interface Out<out T>
 
 fun foo(w: Out<*>) {
-    // While it's controversial that we used Any? as a type argument here
-    // There's no much sense fixing it soon, as it's a rather reguler use case (when Out is List an myE() is something like emptyList())
+    // To have inference working we need both instances of `w` expressions captured to a different captured types instances
+    // that return `false` when comparing them via `equals`.
     //
-    // What matters here is that due to some implementation details that has no sense diving it, to make it work both instances
-    // of `w` expressions should be captured to a different captured types.
-    // That is why this tests has been attached to the commit.
-    select(w, myE() /* type argument is inferred to Any? */ ?: w)
+    // Otherwise, due to some complicated inferences implementation details that are not really relevant,
+    // we've got NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER here.
+    //
+    // Anyway, this code should be definitely green and this test ensures it.
+    select(w, myE() ?: w)
 }
