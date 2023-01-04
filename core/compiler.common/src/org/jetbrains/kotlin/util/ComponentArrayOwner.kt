@@ -15,12 +15,12 @@ abstract class ComponentArrayOwner<K : Any, V : Any> : AbstractArrayMapOwner<K, 
     final override val arrayMap: ArrayMap<V> =
         ArrayMapImpl()
 
-    final override fun registerComponent(tClass: KClass<out K>, value: V) {
-        val id = typeRegistry.getId(tClass)
+    final override fun registerComponent(keyQualifiedName: String, value: V) {
+        val id = typeRegistry.getId(keyQualifiedName)
         try {
             arrayMap[id] = value
         } catch (e: Exception) {
-            throw RuntimeException(createDiagnosticMessage(id, tClass), e)
+            throw RuntimeException(createDiagnosticMessage(id, keyQualifiedName), e)
         }
     }
 
@@ -29,10 +29,10 @@ abstract class ComponentArrayOwner<K : Any, V : Any> : AbstractArrayMapOwner<K, 
         return arrayMap[id] ?: error("No '$key'($id) component in array: $this")
     }
 
-    private fun createDiagnosticMessage(id: Int, tClass: KClass<*>): String = buildString {
+    private fun createDiagnosticMessage(id: Int, keyQualifiedName: String): String = buildString {
         appendLine("Error occurred during registration of component in array")
         appendLine("Currently registered")
-        appendLine("  $id: $tClass")
+        appendLine("  $id: $keyQualifiedName")
         appendLine("Registrar:")
         for ((kClass, x) in typeRegistry.allValuesThreadUnsafeForRendering()) {
             appendLine("  $x: $kClass")
