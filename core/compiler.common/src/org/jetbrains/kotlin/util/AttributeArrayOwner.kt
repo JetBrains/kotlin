@@ -25,8 +25,8 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
     @Suppress("UNCHECKED_CAST")
     constructor() : this(EmptyArrayMap as ArrayMap<T>)
 
-    final override fun registerComponent(tClass: KClass<out K>, value: T) {
-        val id = typeRegistry.getId(tClass)
+    final override fun registerComponent(keyQualifiedName: String, value: T) {
+        val id = typeRegistry.getId(keyQualifiedName)
         when (arrayMap.size) {
             0 -> {
                 arrayMap = OneElementArrayMap(value, id)
