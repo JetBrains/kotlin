@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.projectIdOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
 internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
@@ -25,9 +24,9 @@ internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyR
     }
 
     private fun resolveSourceDependencies(
-        resolution: MetadataDependencyResolution.ChooseVisibleSourceSets,
+        resolution: MetadataDependencyResolution.ChooseVisibleSourceSets
     ): Iterable<IdeaKotlinDependency> {
-        val projectComponentIdentifier = resolution.dependency.projectIdOrNull ?: return emptyList()
+        val projectComponentIdentifier = resolution.dependency.id as? ProjectComponentIdentifier ?: return emptyList()
         return resolution.allVisibleSourceSetNames.map { visibleSourceSetName ->
             IdeaKotlinSourceDependency(
                 type = IdeaKotlinSourceDependency.Type.Regular,
