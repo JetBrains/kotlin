@@ -922,6 +922,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("debug.kt")
+        public void testDebug() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/debug.kt");
+        }
+
+        @Test
         @TestMetadata("forEachBooleanArray.kt")
         public void testForEachBooleanArray() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");

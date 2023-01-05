@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -4015,6 +4015,12 @@ public class FirBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("kt55398.kt")
+        public void testKt55398() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt55398.kt");
+        }
+
+        @Test
         @TestMetadata("kt6988.kt")
         public void testKt6988() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt6988.kt");
@@ -4084,12 +4090,6 @@ public class FirBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Ab
         @TestMetadata("singletonLambda.kt")
         public void testSingletonLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/singletonLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55398.kt")
-        public void testKt55398() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/reified/kt55398.kt");
         }
 
         @Nested

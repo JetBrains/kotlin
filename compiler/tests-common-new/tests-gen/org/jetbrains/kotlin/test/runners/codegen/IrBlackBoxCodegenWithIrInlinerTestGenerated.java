@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -922,6 +922,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("debug.kt")
+        public void testDebug() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/debug.kt");
+        }
+
+        @Test
         @TestMetadata("forEachBooleanArray.kt")
         public void testForEachBooleanArray() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
@@ -1255,6 +1261,18 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("stdlib.kt")
         public void testStdlib() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/stdlib.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayCreation.kt")
+        public void testVArrayCreation() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/vArrayCreation.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayReifiedGeneric.kt")
+        public void testVArrayReifiedGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/vArrayReifiedGeneric.kt");
         }
 
         @Test
@@ -4851,6 +4869,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("kt54802.kt")
         public void testKt54802() throws Exception {
             runTest("compiler/testData/codegen/box/casts/kt54802.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55005.kt")
+        public void testKt55005() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/kt55005.kt");
         }
 
         @Test
@@ -17210,6 +17234,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("multiple.kt")
+        public void testMultiple() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/multiple.kt");
+        }
+
+        @Test
         @TestMetadata("propertyWithContext.kt")
         public void testPropertyWithContext() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/propertyWithContext.kt");
@@ -17487,6 +17517,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("kt51277.kt")
+            public void testKt51277() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt51277.kt");
+            }
+
+            @Test
             @TestMetadata("kt51284.kt")
             public void testKt51284() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt51284.kt");
@@ -17496,6 +17532,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             @TestMetadata("kt51290.kt")
             public void testKt51290() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt51290.kt");
+            }
+
+            @Test
+            @TestMetadata("kt51397.kt")
+            public void testKt51397() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt51397.kt");
             }
 
             @Test
@@ -17529,9 +17571,21 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("kt52459.kt")
+            public void testKt52459() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt52459.kt");
+            }
+
+            @Test
             @TestMetadata("kt53846.kt")
             public void testKt53846() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt53846.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54357.kt")
+            public void testKt54357() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt54357.kt");
             }
 
             @Test
@@ -18929,6 +18983,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("kt48058.kt")
         public void testKt48058() throws Exception {
             runTest("compiler/testData/codegen/box/functions/kt48058.kt");
+        }
+
+        @Test
+        @TestMetadata("kt48989.kt")
+        public void testKt48989() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/kt48989.kt");
         }
 
         @Test
@@ -23073,6 +23133,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("useThisInsideInlineClassGeneric.kt")
         public void testUseThisInsideInlineClassGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("varargParameterOfInlineType.kt")
+        public void testVarargParameterOfInlineType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/varargParameterOfInlineType.kt");
         }
 
         @Test
@@ -50689,6 +50755,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("assigningArrayToVarargInAnnotation.kt")
         public void testAssigningArrayToVarargInAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/assigningArrayToVarargInAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("boxingArgumentsForVararg.kt")
+        public void testBoxingArgumentsForVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/boxingArgumentsForVararg.kt");
         }
 
         @Test

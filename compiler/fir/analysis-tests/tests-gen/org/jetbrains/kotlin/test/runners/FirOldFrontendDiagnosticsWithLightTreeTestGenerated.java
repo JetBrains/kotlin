@@ -18141,6 +18141,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("vArrayTypeArgumentNonReified.kt")
+            public void testVArrayTypeArgumentNonReified() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/vArrayTypeArgumentNonReified.kt");
+            }
+
+            @Test
             @TestMetadata("varargsOnParametersOfInlineClassType.kt")
             public void testVarargsOnParametersOfInlineClassType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");
