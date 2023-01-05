@@ -577,7 +577,6 @@ class AndroidCompilationDetails(
             project,
             other.apiConfigurationName,
             other.implementationConfigurationName,
-            other.compileOnlyConfigurationName
         )
     }
 
