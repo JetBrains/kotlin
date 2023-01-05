@@ -43,7 +43,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
     val repos: ArrayList<RemoteRepository> = arrayListOf()
 
-    private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
+    private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos.toList() // copy to avoid sharing problems
 
     private fun String.toMavenArtifact(): DefaultArtifact? =
         if (this.isNotBlank() && this.count { it == ':' } >= 2) DefaultArtifact(this)
