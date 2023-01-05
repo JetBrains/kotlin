@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -27,10 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
 import java.util.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class ConfigurationsTest : MultiplatformExtensionTest() {
 
@@ -522,5 +520,37 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                         entityNamesWithTurkishI.joinToString("\n")
             )
         }
+    }
+
+    // See KT-55697
+    @Test
+    fun testCompileOnlyDependenciesDontGetToAndroidTests() {
+        val project = buildProject {
+            applyKotlinAndroidPlugin()
+            androidLibrary {
+                compileSdk = 31
+            }
+        }
+
+        project.dependencies {
+            add("compileOnly", "org:example:1.0")
+        }
+
+        project.evaluate()
+
+        fun isTestDependencyPresent(configName: String): Boolean =
+            project.configurations.getByName(configName).incoming.dependencies.any { it.name == "example" }
+
+        assertTrue(isTestDependencyPresent("debugCompileClasspath"))
+        assertTrue(isTestDependencyPresent("releaseCompileClasspath"))
+
+        assertFalse(isTestDependencyPresent("debugRuntimeClasspath"))
+        assertFalse(isTestDependencyPresent("debugAndroidTestCompileClasspath"))
+        assertFalse(isTestDependencyPresent("debugAndroidTestRuntimeClasspath"))
+        assertFalse(isTestDependencyPresent("debugUnitTestCompileClasspath"))
+        assertFalse(isTestDependencyPresent("debugUnitTestRuntimeClasspath"))
+        assertFalse(isTestDependencyPresent("releaseRuntimeClasspath"))
+        assertFalse(isTestDependencyPresent("releaseUnitTestCompileClasspath"))
+        assertFalse(isTestDependencyPresent("releaseUnitTestRuntimeClasspath"))
     }
 }
