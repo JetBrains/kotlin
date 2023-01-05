@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -30,93 +29,101 @@ abstract class AbstractSymbolLightClassesParentingTest(
         val ktFile = ktFiles.first()
         val lightClass = findLightClass(fqName, ktFile.project)
 
-        lightClass?.accept(createLightAnnotationVisitor(testServices.assertions))
+        lightClass?.accept(createLightElementsVisitor(testServices.assertions))
     }
 
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         throw IllegalStateException("This test is not rendering light elements")
     }
 
-    private fun createLightAnnotationVisitor(assertions: AssertionsService) = object : JavaElementVisitor() {
-        private val declarationStack = ArrayDeque<PsiModifierListOwner>()
+    private fun createLightElementsVisitor(assertions: AssertionsService) = object : JavaElementVisitor() {
+        private val declarationStack = ArrayDeque<PsiElement>()
+
+        private fun <T : PsiElement> checkParentAndVisitChildren(declaration: T?, action: T.(visitor: JavaElementVisitor) -> Unit = {}) {
+            if (declaration == null) return
+            checkDeclarationParent(declaration)
+
+            declarationStack.addLast(declaration)
+            try {
+                if (declaration is PsiModifierListOwner) {
+                    declaration.modifierList?.accept(this)
+                }
+
+                if (declaration is PsiParameterListOwner) {
+                    declaration.parameterList.accept(this)
+                }
+
+                if (declaration is PsiTypeParameterListOwner) {
+                    declaration.typeParameterList?.accept(this)
+                }
+
+                declaration.action(this)
+            } finally {
+                val removed = declarationStack.removeLast()
+                assertions.assertEquals(declaration, removed)
+            }
+        }
+
+        override fun visitModifierList(list: PsiModifierList?) {
+            checkParentAndVisitChildren(list) { visitor ->
+                annotations.forEach { it.accept(visitor) }
+            }
+        }
+
+        override fun visitParameterList(list: PsiParameterList?) {
+            checkParentAndVisitChildren(list) { visitor ->
+                parameters.forEach { it.accept(visitor) }
+            }
+        }
+
+        override fun visitTypeParameterList(list: PsiTypeParameterList?) {
+            checkParentAndVisitChildren(list) { visitor ->
+                typeParameters.forEach { it.accept(visitor) }
+            }
+        }
 
         override fun visitClass(aClass: PsiClass?) {
-            if (aClass == null) return
-            checkDeclarationParent(aClass)
-            declarationStack.addLast(aClass)
+            checkParentAndVisitChildren(aClass) { visitor ->
+                annotations.forEach { it.accept(visitor) }
 
-            aClass.annotations.forEach { it.accept(this) }
-
-            aClass.fields.forEach { it.accept(this) }
-            aClass.methods.forEach { it.accept(this) }
-            aClass.innerClasses.forEach { it.accept(this) }
-
-            aClass.typeParameterList?.typeParameters?.forEach { it.accept(this) }
-
-            declarationStack.removeLast()
+                fields.forEach { it.accept(visitor) }
+                methods.forEach { it.accept(visitor) }
+                innerClasses.forEach { it.accept(visitor) }
+            }
         }
 
         override fun visitField(field: PsiField?) {
-            if (field == null) return
-            checkDeclarationParent(field)
-            declarationStack.addLast(field)
+            checkParentAndVisitChildren(field) { visitor ->
+                annotations.forEach { it.accept(visitor) }
 
-            field.annotations.forEach { it.accept(this) }
-
-            field.type.annotations.forEach { it.accept(this) }
-
-            declarationStack.removeLast()
+                type.annotations.forEach { it.accept(visitor) }
+            }
         }
 
         override fun visitMethod(method: PsiMethod?) {
-            if (method == null) return
-            checkDeclarationParent(method)
-            declarationStack.addLast(method)
+            checkParentAndVisitChildren(method) { visitor ->
+                annotations.forEach { it.accept(visitor) }
 
-            method.annotations.forEach { it.accept(this) }
-
-            method.returnType?.annotations?.forEach { it.accept(this) }
-            method.parameterList.parameters.forEach { it.accept(this) }
-
-            method.typeParameterList?.typeParameters?.forEach { it.accept(this) }
-
-            declarationStack.removeLast()
+                returnType?.annotations?.forEach { it.accept(visitor) }
+            }
         }
 
         override fun visitParameter(parameter: PsiParameter?) {
-            if (parameter == null) return
-            checkDeclarationParent(parameter)
-            declarationStack.addLast(parameter)
-
-            parameter.annotations.forEach { it.accept(this) }
-
-            declarationStack.removeLast()
+            checkParentAndVisitChildren(parameter) { visitor ->
+                annotations.forEach { it.accept(visitor) }
+            }
         }
 
         override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
-            if (classParameter == null) return
-            checkDeclarationParent(classParameter)
-            declarationStack.addLast(classParameter)
-
-            classParameter.annotations.forEach { it.accept(this) }
-
-            declarationStack.removeLast()
+            checkParentAndVisitChildren(classParameter) { visitor ->
+                annotations.forEach { it.accept(visitor) }
+            }
         }
 
         private fun checkDeclarationParent(declaration: PsiElement) {
             val expectedParent = declarationStack.lastOrNull() ?: return
-            val parent = when (declaration) {
-                is PsiParameter -> {
-                    val parameterList = declaration.parent as PsiParameterList
-                    parameterList.parent
-                }
-                is PsiTypeParameter -> {
-                    val parameterList = declaration.parent as PsiTypeParameterList
-                    parameterList.parent
-                }
-                else -> declaration.parent
-            }
-            assertions.assertNotNull(parent) { "Parent should not be null for ${declaration::class} with text ${declaration.text} "}
+            val parent = declaration.parent
+            assertions.assertNotNull(parent) { "Parent should not be null for ${declaration::class} with text ${declaration.text}" }
             assertions.assertEquals(expectedParent, parent) {
                 "Unexpected parent for ${declaration::class} with text ${declaration.text}"
             }
@@ -126,17 +133,24 @@ abstract class AbstractSymbolLightClassesParentingTest(
             if (annotation == null) return
 
             val owner = annotation.owner
-            TestCase.assertNotNull(owner)
+            assertions.assertNotNull(owner)
+
             val lastDeclaration = declarationStack.last()
-            TestCase.assertEquals(lastDeclaration.modifierList, owner)
-            when (lastDeclaration) {
+            val psiModifierListOwner = if (lastDeclaration is PsiModifierListOwner) {
+                assertions.assertEquals(lastDeclaration.modifierList, owner)
+                lastDeclaration
+            } else {
+                (lastDeclaration as PsiModifierList).parent
+            }
+
+            when (psiModifierListOwner) {
                 is PsiClass,
                 is PsiParameter ->
-                    TestCase.assertTrue(owner is SymbolLightClassModifierList<*>)
+                    assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
 
                 is PsiField,
                 is PsiMethod ->
-                    TestCase.assertTrue(owner is SymbolLightMemberModifierList<*>)
+                    assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
 
                 else ->
                     throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
