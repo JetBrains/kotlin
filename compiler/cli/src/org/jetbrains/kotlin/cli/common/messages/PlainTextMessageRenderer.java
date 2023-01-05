@@ -52,6 +52,19 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
 
     private static final Set<CompilerMessageSeverity> IMPORTANT_MESSAGE_SEVERITIES = EnumSet.of(EXCEPTION, ERROR, STRONG_WARNING, WARNING);
 
+    private final boolean colorEnabled;
+
+    public PlainTextMessageRenderer() {
+        this(COLOR_ENABLED);
+    }
+
+    // This constructor is not used in this project
+    // but it can be useful in a compilation server to still be able to generate colored output
+    @SuppressWarnings("WeakerAccess")
+    public PlainTextMessageRenderer(boolean colorEnabled) {
+        this.colorEnabled = colorEnabled;
+    }
+
     @Override
     public String renderPreamble() {
         return "";
@@ -78,7 +91,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             result.append(" ");
         }
 
-        if (COLOR_ENABLED) {
+        if (this.colorEnabled) {
             Ansi ansi = Ansi.ansi()
                     .bold()
                     .fg(severityColor(severity))
