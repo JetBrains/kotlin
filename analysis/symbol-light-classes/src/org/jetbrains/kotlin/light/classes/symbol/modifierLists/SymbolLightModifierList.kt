@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,6 +54,14 @@ internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierL
 
         this.lazyModifiersBox = null
         this.staticModifiers = staticModifiers
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitModifierList(this)
+        } else {
+            visitor.visitElement(this)
+        }
     }
 
     override val kotlinOrigin: KtModifierList? get() = owner.kotlinOrigin?.modifierList

@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
+import com.intellij.psi.JavaElementVisitor
+import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightParameterListBuilder
@@ -42,6 +44,14 @@ internal class SymbolLightParameterList(
         parameterPopulator.invoke(builder)
 
         builder
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitParameterList(this)
+        } else {
+            visitor.visitElement(this)
+        }
     }
 
     override fun getParameter(index: Int): PsiParameter? = clsDelegate.getParameter(index)
