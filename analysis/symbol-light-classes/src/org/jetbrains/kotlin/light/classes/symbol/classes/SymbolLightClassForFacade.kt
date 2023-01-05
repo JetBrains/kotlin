@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,21 +62,22 @@ class SymbolLightClassForFacade(
     private val firstFileInFacade by lazyPub { files.first() }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        if (multiFileClass)
-            return@lazyPub LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
-
         SymbolLightClassModifierList(
             containingDeclaration = this,
             staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL),
         ) { modifierList ->
-            withFileSymbols { fileSymbols ->
-                fileSymbols.flatMap {
-                    it.computeAnnotations(
-                        modifierList = modifierList,
-                        nullability = NullabilityType.Unknown,
-                        annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
-                        includeAnnotationsWithoutSite = false,
-                    )
+            if (multiFileClass) {
+                emptyList()
+            } else {
+                withFileSymbols { fileSymbols ->
+                    fileSymbols.flatMap {
+                        it.computeAnnotations(
+                            modifierList = modifierList,
+                            nullability = NullabilityType.Unknown,
+                            annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
+                            includeAnnotationsWithoutSite = false,
+                        )
+                    }
                 }
             }
         }
