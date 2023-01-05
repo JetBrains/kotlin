@@ -9,7 +9,7 @@ class A<T>(val fieldT: VArray<T>) {
     var fieldTNullable: VArray<T>? = null
 }
 
-inline fun <reified T> bar(p: VArray<T>) {
+inline fun <reified T, R> bar(p1: VArray<T>, p2: VArray<R>, p3: VArray<Array<T>>, p4: VArray<Array<R>>, p5: VArray<Array<*>>) {
     var y: VArray<T>
     var z: VArray<Int>
 }

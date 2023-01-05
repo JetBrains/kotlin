@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.chooseFactory
-import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.checkIfSuitableForReifiedTypeParameterAndReport
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -32,7 +29,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
             val typeParameter = typeParameters[index]
 
             if (source != null && typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
-                checkArgumentAndReport(typeArgument, source, false, context, reporter)
+                checkIfSuitableForReifiedTypeParameterAndReport(typeArgument, source, context, reporter)
             }
         }
     }
@@ -43,35 +40,4 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
-    private fun checkArgumentAndReport(
-        typeArgument: ConeKotlinType?,
-        source: KtSourceElement,
-        isArray: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        if (typeArgument?.classId == StandardClassIds.Array) {
-            checkArgumentAndReport(typeArgument.typeArguments[0].type, source, true, context, reporter)
-            return
-        }
-
-        if (typeArgument is ConeTypeParameterType) {
-            val factory = if (isArray) {
-                FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context)
-            } else {
-                FirErrors.TYPE_PARAMETER_AS_REIFIED
-            }
-            val symbol = typeArgument.lookupTag.typeParameterSymbol
-            if (!symbol.isReified) {
-                reporter.reportOn(source, factory, symbol, context)
-            }
-        } else if (typeArgument != null && typeArgument.cannotBeReified()) {
-            reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
-            return
-        }
-    }
-
-    private fun ConeKotlinType.cannotBeReified(): Boolean {
-        return this.isNothing || this.isNullableNothing || this is ConeCapturedType
-    }
 }
