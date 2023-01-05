@@ -93,8 +93,8 @@ private val KotlinNativeTarget.toValidSDK: String
     get() = when (konanTarget) {
         IOS_X64, IOS_SIMULATOR_ARM64 -> "iphonesimulator"
         IOS_ARM32, IOS_ARM64 -> "iphoneos"
-        WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64 -> "watchsimulator"
-        WATCHOS_ARM32, WATCHOS_ARM64 -> "watchos"
+        WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
+        WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_DEVICE_ARM64 -> "watchos"
         TVOS_X64, TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
         TVOS_ARM64 -> "appletvos"
         MACOS_X64, MACOS_ARM64 -> "macosx"
