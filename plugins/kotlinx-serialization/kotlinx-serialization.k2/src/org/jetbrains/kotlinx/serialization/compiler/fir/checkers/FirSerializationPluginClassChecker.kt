@@ -248,7 +248,9 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         }
 
         if (with(session) { classSymbol.serializableAnnotationIsUseless }) {
-            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
+            classSymbol.serializableOrMetaAnnotationSource?.let {
+                reporter.reportOn(it, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
+            }
             return false
         }
 
