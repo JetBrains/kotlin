@@ -286,10 +286,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
     if (declaration.name.isSpecial) return
 
-    if (declaration.visibility.isPrivateOrPrivateToThis() &&
-        declaration.getter?.hasBody == false &&
-        declaration.setter?.hasBody == false
-    ) return
+    if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
     if (declaration.hasJvmFieldAnnotation()) return
 
