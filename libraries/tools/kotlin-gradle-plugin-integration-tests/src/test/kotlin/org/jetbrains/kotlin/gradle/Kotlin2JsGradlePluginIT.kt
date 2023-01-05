@@ -1129,69 +1129,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
-    @DisplayName("dependencies are resolved to metadata")
-    @GradleTest
-    fun testResolveJsProjectDependencyToMetadata(gradleVersion: GradleVersion) {
-        project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            gradleProperties.appendText("kotlin.js.compiler=both")
-
-            val compiler = if (irBackend) "IR" else "LEGACY"
-
-            val pathPrefix = "metadataDependency: "
-
-            val appBuild = projectPath.resolve("app/build.gradle.kts")
-            appBuild.modify {
-                it.replace("target {", "js($compiler) {")
-            }
-            appBuild.appendText(
-                """
-                |
-                |kotlin.sourceSets {
-                |    val main by getting {
-                |        dependencies {
-                |            // add these dependencies to check that they are resolved to metadata
-                |                api(project(":base"))
-                |                implementation(project(":base"))
-                |                compileOnly(project(":base"))
-                |            }
-                |        }
-                |    }
-                |
-                |task("printMetadataFiles") {
-                |    doFirst {
-                |        listOf("api", "implementation", "compileOnly").forEach { kind ->
-                |            val configuration = configurations.getByName(kind + "DependenciesMetadata")
-                |            configuration.files.forEach { println("$pathPrefix" + configuration.name + "->" + it.name) }
-                |        }
-                |    }
-                |}
-                """.trimMargin()
-            )
-
-            val metadataDependencyRegex = "$pathPrefix(.*?)->(.*)".toRegex()
-
-            build("printMetadataFiles") {
-                val suffix = if (irBackend) "ir" else "legacy"
-                val ext = if (irBackend) "klib" else "jar"
-
-                val expectedFileName = "base-$suffix.$ext"
-
-                val paths = metadataDependencyRegex
-                    .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
-                    .filter { (_, f) -> "base" in f }
-                    .toSet()
-
-                assertEquals(
-                    listOf("api", "implementation", "compileOnly").map {
-                        "$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
-                    }.toSet(),
-                    paths
-                )
-            }
-        }
-    }
-
     @DisplayName("NodeJs test with custom fork options")
     @GradleTest
     fun testNodeJsForkOptions(gradleVersion: GradleVersion) {
