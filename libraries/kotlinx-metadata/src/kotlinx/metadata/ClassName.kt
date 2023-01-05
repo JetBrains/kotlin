@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,5 +18,16 @@ package kotlinx.metadata
  */
 typealias ClassName = String // Not a value class because of Java usages
 
-val ClassName.isLocal: Boolean
-    get() = this.startsWith(".")
+/**
+ * Checks whether a class name [this] represents a local class or an anonymous object.
+ *
+ * A class name represents a local class or an anonymous object if it starts with '.' (dot).
+ */
+fun ClassName.isLocalClassName(): Boolean = this.startsWith(".")
+
+@Deprecated(
+    "Renamed to isLocalClassName() to avoid confusion with String properties",
+    ReplaceWith("isLocalClassName()"),
+    level = DeprecationLevel.WARNING
+)
+val ClassName.isLocal: Boolean get() = isLocalClassName()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,7 @@ package kotlinx.metadata.internal
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
-import kotlinx.metadata.isLocal
+import kotlinx.metadata.isLocalClassName
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.serialization.StringTable
@@ -107,7 +107,7 @@ fun KmAnnotationArgument.writeAnnotationArgument(strings: StringTable): ProtoBuf
     }
 
 internal fun StringTable.getClassNameIndex(name: ClassName): Int =
-    if (name.isLocal)
+    if (name.isLocalClassName())
         getQualifiedClassNameIndex(name.substring(1), true)
     else
         getQualifiedClassNameIndex(name, false)

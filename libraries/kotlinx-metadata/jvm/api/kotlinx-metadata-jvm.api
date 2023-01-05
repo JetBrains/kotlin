@@ -1,5 +1,6 @@
 public final class kotlinx/metadata/ClassNameKt {
 	public static final fun isLocal (Ljava/lang/String;)Z
+	public static final fun isLocalClassName (Ljava/lang/String;)Z
 }
 
 public abstract interface annotation class kotlinx/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
@@ -1143,6 +1144,7 @@ public final class kotlinx/metadata/jvm/JvmMetadataUtil {
 	public static final fun Metadata (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lkotlin/Metadata;
 	public static synthetic fun Metadata$default (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lkotlin/Metadata;
 	public static final fun getJvmInternalName (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun toJvmInternalName (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/jvm/JvmMethodSignature : kotlinx/metadata/jvm/JvmMemberSignature {
