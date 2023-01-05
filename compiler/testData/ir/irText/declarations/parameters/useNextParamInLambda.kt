@@ -1,3 +1,6 @@
+// IGNORE_BACKEND_K2: ANY
+// accessing uninitialized parameter is illegal in FIR
+
 fun f(
     f1: () -> String = { f2() },
     f2: () -> String = { "FAIL" }

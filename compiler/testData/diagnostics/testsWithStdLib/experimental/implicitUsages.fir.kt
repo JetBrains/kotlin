@@ -85,7 +85,7 @@ object O {
     operator fun provideDelegate(x: Any?, y: Any?): C = C()
 }
 
-val x: String by <!OPT_IN_USAGE_ERROR!>O<!>
+val x: String by <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>O<!>
 
 @Marker
 class OperatorContainer : Comparable<OperatorContainer> {

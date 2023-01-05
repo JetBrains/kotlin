@@ -393,6 +393,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         }
         argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
         origin = FirFunctionCallOrigin.Operator
+        source = fakeSource
     }
     delegate = delegateBuilder.build()
     if (getter == null || getter is FirDefaultPropertyAccessor) {

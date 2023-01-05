@@ -47,7 +47,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         }
 
         val function = graph.declaration as? FirFunction ?: return
-        if (function !is FirContractDescriptionOwner) return
+        if (function !is FirContractDescriptionOwner || function.contractDescription.source == null) return
         val effects = function.contractDescription.effects ?: return
         val dataFlowInfo = function.controlFlowGraphReference?.dataFlowInfo ?: return
         for (firEffect in effects) {

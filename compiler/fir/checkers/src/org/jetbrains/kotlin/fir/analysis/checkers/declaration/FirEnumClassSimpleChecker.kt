@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findNonInterfaceSupertype
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirEnumClassSimpleChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -19,9 +23,12 @@ object FirEnumClassSimpleChecker : FirRegularClassChecker() {
             return
         }
 
-        declaration.findNonInterfaceSupertype(context)?.let {
-            reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM, context)
-        }
+        declaration.findNonInterfaceSupertype(context)
+            // Ignore Enum itself
+            // If it's explicit, CLASS_CANNOT_BE_EXTENDED_DIRECTLY will be reported instead.
+            // If it's implicit, it's fine.
+            ?.takeUnless { it.coneType.fullyExpandedType(context.session).classId == StandardClassIds.Enum }
+            ?.let { reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM, context) }
 
         if (declaration.typeParameters.isNotEmpty()) {
             reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.TYPE_PARAMETERS_IN_ENUM, context)

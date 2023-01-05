@@ -20,7 +20,7 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit) {
         }
 
         override fun run() {
-            <!LEAKED_IN_PLACE_LAMBDA!>c()<!>
+            <!LEAKED_IN_PLACE_LAMBDA!>c<!>()
         }
 
     }

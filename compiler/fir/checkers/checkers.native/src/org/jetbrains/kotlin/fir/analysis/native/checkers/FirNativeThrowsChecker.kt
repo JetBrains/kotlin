@@ -91,10 +91,10 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
         val (overriddenMember, overriddenThrows) = inherited.firstOrNull()
             ?: return true // Should not happen though.
 
-        if (decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
+        if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
             val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
             if (containingClassSymbol != null) {
-                reporter.reportOn(throwsAnnotation?.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
+                reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
             }
             return false
         }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -18,8 +17,8 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 object FirDynamicUnsupportedChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         // It's assumed this checker is only called
-        // by within the platform that disallows dynamics
-        if (typeRef.coneTypeSafe<ConeDynamicType>() != null) {
+        // by a platform that disallows dynamics
+        if (typeRef.source != null && typeRef.coneTypeSafe<ConeDynamicType>() != null) {
             reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "dynamic type", context)
         }
     }

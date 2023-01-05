@@ -96,11 +96,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                     if (referredParameterIndex < 0) return
 
                     if (index <= referredParameterIndex) {
-                        reporter.reportOn(
-                            qualifiedAccessExpression.source, FirErrors.UNINITIALIZED_PARAMETER,
-                            referredParameter,
-                            context
-                        )
+                        reporter.reportOn(qualifiedAccessExpression.source, FirErrors.UNINITIALIZED_PARAMETER, referredParameter, context)
                     }
                 }
 

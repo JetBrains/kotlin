@@ -53,7 +53,10 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
         }
 
         val containingDeclaration = context.containingDeclarations.last()
-        if (containingDeclaration is FirFunction && containingDeclaration.body is FirSingleExpressionBlock) {
+        if (containingDeclaration is FirFunction &&
+            containingDeclaration.body is FirSingleExpressionBlock &&
+            containingDeclaration.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor
+        ) {
             reporter.reportOn(source, FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY, context)
         }
     }

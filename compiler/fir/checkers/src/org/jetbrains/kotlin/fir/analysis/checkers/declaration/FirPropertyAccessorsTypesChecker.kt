@@ -33,6 +33,10 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
         val propertyType = property.returnTypeRef.coneType
 
         checkAccessorForDelegatedProperty(property, getter, context, reporter)
+
+        if (getter.isImplicitDelegateAccessor()) {
+            return
+        }
         if (getter.visibility != property.visibility) {
             reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, context)
         }
@@ -63,6 +67,10 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
             reporter.reportOn(setter.source, FirErrors.VAL_WITH_SETTER, context)
         }
         checkAccessorForDelegatedProperty(property, setter, context, reporter)
+
+        if (setter.isImplicitDelegateAccessor()) {
+            return
+        }
         val visibilityCompareResult = setter.visibility.compareTo(property.visibility)
         if (visibilityCompareResult == null || visibilityCompareResult > 0) {
             reporter.reportOn(setter.source, FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, context)
@@ -114,6 +122,9 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
             reporter.reportOn(accessor.source, FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY, context)
         }
     }
+
+    private fun FirPropertyAccessor.isImplicitDelegateAccessor(): Boolean =
+        source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
 
     private fun isLegallyAbstract(property: FirProperty, context: CheckerContext): Boolean {
         return property.isAbstract && context.findClosestClassOrObject().let { it is FirRegularClass && it.canHaveAbstractDeclaration }

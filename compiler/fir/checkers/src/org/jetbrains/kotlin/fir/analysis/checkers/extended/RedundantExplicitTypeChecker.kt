@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 object RedundantExplicitTypeChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isLocal) return
+        if (declaration.returnTypeRef.source == null) return
 
         val initializer = declaration.initializer ?: return
         val typeReference = declaration.returnTypeRef.takeUnless { it is FirErrorTypeRef } ?: return

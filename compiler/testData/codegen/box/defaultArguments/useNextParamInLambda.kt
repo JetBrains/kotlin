@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: JS, JS_IR, NATIVE, WASM
 // IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND_K2: JVM_IR
 // WASM_MUTE_REASON: IGNORED_IN_JS
+// FIR status: don't support legacy feature. UNINITIALIZED_PARAMETER y. See KT-49800
 
 fun f(
     f1: () -> String = { f2() },

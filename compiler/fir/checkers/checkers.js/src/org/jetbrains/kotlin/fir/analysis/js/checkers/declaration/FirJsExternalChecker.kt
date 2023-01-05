@@ -220,6 +220,12 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
             else -> null
         }
 
+        // we shouldn't check such things as the
+        // copy() function of a data class
+        if (source?.kind !is KtRealSourceElementKind) {
+            return
+        }
+
         val isWrong = body !is FirSingleExpressionBlock && !hasValidExternalBody()
                 || initializer != null && !initializer.isDefinedExternallyExpression()
 
@@ -227,12 +233,6 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(body.source, FirJsErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION, context)
         } else if (isWrong && initializer != null) {
             reporter.reportOn(initializer.source, FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION, context)
-        }
-
-        // we shouldn't check such things as the
-        // copy() function of a data class
-        if (source?.kind !is KtRealSourceElementKind) {
-            return
         }
 
         if (this is FirFunction) {

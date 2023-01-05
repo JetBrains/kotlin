@@ -23,7 +23,9 @@ object FirThrowableSubclassChecker : FirClassChecker() {
             return
 
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
+            declaration.typeParameters.firstOrNull()?.source?.let {
+                reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
+            }
 
             val shouldReport = when (declaration) {
                 is FirRegularClass -> declaration.isInner || declaration.isLocal

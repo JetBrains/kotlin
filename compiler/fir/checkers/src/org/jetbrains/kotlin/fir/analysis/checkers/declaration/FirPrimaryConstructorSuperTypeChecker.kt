@@ -78,7 +78,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker() {
         }
         val delegatedCallSource = delegatedConstructorCall.source ?: return
         if (delegatedCallSource.kind !is KtFakeSourceElementKind) return
-        if (superClassSymbol.classId == StandardClassIds.Enum) return
+        if (superClassSymbol.classId == StandardClassIds.Enum || superClassSymbol.classId == StandardClassIds.Java.Record) return
         if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
             reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED, context)
         }

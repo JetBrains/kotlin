@@ -41,6 +41,9 @@ object FirSupertypesChecker : FirClassChecker() {
         var classAppeared = false
         val superClassSymbols = hashSetOf<FirRegularClassSymbol>()
         for (superTypeRef in declaration.superTypeRefs) {
+            // skip implicit super types like Enum or Any
+            if (superTypeRef.source == null) continue
+
             val coneType = superTypeRef.coneType
             if (!nullableSupertypeReported && coneType.nullability == ConeNullability.NULLABLE) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)

@@ -17,7 +17,7 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit, e: () -> Uni
         val leaked: Any
 
         constructor() {
-            <!LEAKED_IN_PLACE_LAMBDA!>b()<!>
+            <!LEAKED_IN_PLACE_LAMBDA!>b<!>()
         }
 
         init {
@@ -25,7 +25,7 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit, e: () -> Uni
         }
 
         fun run() {
-            <!LEAKED_IN_PLACE_LAMBDA!>d()<!>
+            <!LEAKED_IN_PLACE_LAMBDA!>d<!>()
         }
     }
 
