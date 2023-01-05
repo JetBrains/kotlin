@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.js.analyze
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.js.PredefinedAnnotation.*
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 
-private val NATIVE_ANNOTATIONS = arrayOf(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
+private val nativeAnnotations = JsStandardClassIds.Annotations.nativeAnnotations.map { it.asSingleFqName() }
 
 private fun DeclarationDescriptor.isLexicallyInsideJsNative(): Boolean {
     var descriptor: DeclarationDescriptor = this
     while (true) {
         val annotations = descriptor.annotations
-        if (!annotations.isEmpty() && NATIVE_ANNOTATIONS.any(annotations::hasAnnotation)) return true
+        if (!annotations.isEmpty() && nativeAnnotations.any(annotations::hasAnnotation)) return true
         descriptor = descriptor.containingDeclaration ?: break
     }
     return false

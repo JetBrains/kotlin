@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -40,12 +40,12 @@ import java.util.List;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEffectivelyExternal;
 
 public final class AnnotationsUtils {
-    public static final FqName JS_NAME = new FqName("kotlin.js.JsName");
-    private static final FqName JS_EXPORT = new FqName("kotlin.js.JsExport");
-    private static final FqName JS_EXPORT_IGNORE = new FqName("kotlin.js.JsExport.Ignore");
-    public static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
-    private static final FqName JS_NON_MODULE_ANNOTATION = new FqName("kotlin.js.JsNonModule");
-    public static final FqName JS_QUALIFIER_ANNOTATION = new FqName("kotlin.js.JsQualifier");
+    private static final FqName JS_NAME = Annotations.JsName.asSingleFqName();
+    private static final FqName JS_EXPORT = Annotations.JsExport.asSingleFqName();
+    private static final FqName JS_EXPORT_IGNORE = Annotations.JsExportIgnore.asSingleFqName();
+    private static final FqName JS_MODULE_ANNOTATION = Annotations.JsModule.asSingleFqName();
+    private static final FqName JS_NON_MODULE_ANNOTATION = Annotations.JsNonModule.asSingleFqName();
+    private static final FqName JS_QUALIFIER_ANNOTATION = Annotations.JsQualifier.asSingleFqName();
 
     private AnnotationsUtils() {
     }

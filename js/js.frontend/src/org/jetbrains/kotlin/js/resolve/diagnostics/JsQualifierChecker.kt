@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.js.validateQualifier
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -37,7 +37,7 @@ object JsQualifierChecker : AdditionalAnnotationChecker {
         val bindingContext = trace.bindingContext
         for (entry in entries) {
             val annotation = bindingContext[BindingContext.ANNOTATION, entry] ?: continue
-            if (annotation.fqName != AnnotationsUtils.JS_QUALIFIER_ANNOTATION) continue
+            if (annotation.fqName != JsStandardClassIds.Annotations.JsQualifier.asSingleFqName()) continue
             val argument = annotation.allValueArguments.values.singleOrNull()?.value as? String ?: continue
             if (!validateQualifier(argument)) {
                 val argumentPsi = entry.valueArgumentList!!.arguments[0]
