@@ -97,7 +97,6 @@ internal object KotlinAndroidCompilationAssociator : KotlinCompilationAssociator
             target.project,
             main.apiConfigurationName,
             main.implementationConfigurationName,
-            main.compileOnlyConfigurationName
         )
     }
 }
