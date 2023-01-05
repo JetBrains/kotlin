@@ -1264,18 +1264,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("vArrayCreation.kt")
-        public void testVArrayCreation() throws Exception {
-            runTest("compiler/testData/codegen/box/arrays/vArrayCreation.kt");
-        }
-
-        @Test
-        @TestMetadata("vArrayReifiedGeneric.kt")
-        public void testVArrayReifiedGeneric() throws Exception {
-            runTest("compiler/testData/codegen/box/arrays/vArrayReifiedGeneric.kt");
-        }
-
-        @Test
         @TestMetadata("varargsWithJava.kt")
         public void testVarargsWithJava() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/varargsWithJava.kt");
@@ -1530,6 +1518,40 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/arrays/vArrays")
+        @TestDataPath("$PROJECT_ROOT")
+        public class VArrays {
+            @Test
+            public void testAllFilesPresentInVArrays() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("multidimensionalVArray.kt")
+            public void testMultidimensionalVArray() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/multidimensionalVArray.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayCreation.kt")
+            public void testVArrayCreation() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayCreation.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayReifiedGeneric.kt")
+            public void testVArrayReifiedGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayReifiedGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("vArraySize.kt")
+            public void testVArraySize() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArraySize.kt");
             }
         }
     }

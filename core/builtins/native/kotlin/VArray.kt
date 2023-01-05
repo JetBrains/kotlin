@@ -11,5 +11,7 @@ class VArray<T> {
     public operator fun set(index: Int, value: T): Unit
 
     public inline constructor(size: Int, init: (Int) -> T)
+
+    public val size: Int
 }
 
