@@ -12,8 +12,8 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformAndroidPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 fun buildProject(
@@ -42,6 +42,10 @@ fun buildProjectWithKPM(projectBuilder: ProjectBuilder.() -> Unit = { }, code: P
 fun buildProjectWithJvm(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
     project.plugins.apply(KotlinPlatformJvmPlugin::class.java)
     code()
+}
+
+fun Project.applyKotlinAndroidPlugin() {
+    project.plugins.apply(KotlinPlatformAndroidPlugin::class.java)
 }
 
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
