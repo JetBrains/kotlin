@@ -878,6 +878,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
               fun getValue(thisObj: Any?, property: KProperty<*>): Int {
                 return 10
               }
+              static val %stable: Int = 0
             }
             @StabilityInferred(parameters = 0)
             class UnstableDelegate {
