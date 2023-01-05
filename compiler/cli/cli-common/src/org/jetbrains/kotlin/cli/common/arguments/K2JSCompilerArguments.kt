@@ -292,8 +292,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var strictImplicitExportType: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xes-next",
-        description = "Generated JavaScript will use new ES2015+ features like ES classes."
+        value = "-Xes-classes",
+        description = "Generated JavaScript will use ES2015 classes."
     )
     var useEsNext: Boolean by FreezableVar(false)
 

@@ -207,8 +207,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
-        if (irClass.hasAnnotation(JsAnnotations.MetaClass)) {
-            context.staticContext.metaClasses.add(irClass.symbol)
+        if (irClass.hasAnnotation(JsAnnotations.PrioritizedInitialization)) {
+            context.staticContext.classesWithPrioritizedInitialization.add(irClass.symbol)
         } else {
             classModel.preDeclarationBlock.statements += generateSetMetadataCall()
         }

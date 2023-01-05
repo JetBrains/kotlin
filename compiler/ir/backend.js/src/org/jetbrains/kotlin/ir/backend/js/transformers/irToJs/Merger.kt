@@ -39,10 +39,10 @@ class Merger(
                     importStatements.putIfAbsent(declaration, JsVars(JsVars.JsVar(importName, rename(importExpression))))
                 }
 
-                val metaClasses = (mutableSetOf<JsName>() + f.metaClasses)
-                    .also { f.metaClasses.clear() }
+                val classesWithPrioritizedInitialization = (mutableSetOf<JsName>() + f.classesWithPrioritizedInitialization)
+                    .also { f.classesWithPrioritizedInitialization.clear() }
 
-                metaClasses.forEach { f.metaClasses.add(rename(it)) }
+                classesWithPrioritizedInitialization.forEach { f.classesWithPrioritizedInitialization.add(rename(it)) }
 
                 val classModels = (mutableMapOf<JsName, JsIrIcClassModel>() + f.classes)
                     .also { f.classes.clear() }
@@ -218,7 +218,7 @@ class Merger(
             initializerBlock.statements += it.initializers.statements
             polyfillDeclarationBlock.statements += it.polyfills.statements
 
-            for (name in it.metaClasses) {
+            for (name in it.classesWithPrioritizedInitialization) {
                 val model = classModels.remove(name) ?: continue
                 preDeclarationBlock.statements += model.preDeclarationBlock
                 postDeclarationBlock.statements += model.postDeclarationBlock

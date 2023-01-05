@@ -283,7 +283,7 @@ class IrModuleToJsTransformer(
             }
         }
 
-        result.metaClasses.addAll(staticContext.metaClasses.map { nameGenerator.getNameForClass(it.owner) })
+        result.classesWithPrioritizedInitialization.addAll(staticContext.classesWithPrioritizedInitialization.map { nameGenerator.getNameForClass(it.owner) })
 
         staticContext.classModels.entries.forEach { (symbol, model) ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =

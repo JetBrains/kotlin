@@ -45,7 +45,7 @@ internal fun implement(vararg interfaces: dynamic): BitMask {
     return result
 }
 
-@MetaClass
+@PrioritizedInitialization
 internal class BitMask(activeBits: Array<Int>) {
     var intArray: IntArray = run {
         if (activeBits.size == 0) {
