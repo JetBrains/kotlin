@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
+import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -29,7 +30,7 @@ object ArrayIterator : IntrinsicMethod() {
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
-        val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
+        val owner = classCodegen.typeMapper.mapType(expression.dispatchReceiver!!.type)
         return IrIntrinsicFunction.create(expression, signature, classCodegen, owner) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =

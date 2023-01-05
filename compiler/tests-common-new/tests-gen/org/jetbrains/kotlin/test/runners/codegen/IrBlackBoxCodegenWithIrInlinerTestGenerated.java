@@ -1543,6 +1543,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("vArrayIterator.kt")
+            public void testVArrayIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayIterator.kt");
+            }
+
+            @Test
             @TestMetadata("vArrayReifiedGeneric.kt")
             public void testVArrayReifiedGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayReifiedGeneric.kt");

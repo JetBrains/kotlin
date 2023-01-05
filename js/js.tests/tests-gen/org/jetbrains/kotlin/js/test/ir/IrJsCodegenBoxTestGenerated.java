@@ -935,6 +935,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testAllFilesPresentInVArrays() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
+
+            @Test
+            @TestMetadata("vArrayIterator.kt")
+            public void testVArrayIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayIterator.kt");
+            }
         }
     }
 

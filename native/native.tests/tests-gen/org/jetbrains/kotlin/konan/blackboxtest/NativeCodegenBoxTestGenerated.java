@@ -977,6 +977,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testAllFilesPresentInVArrays() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
+
+                @Test
+                @TestMetadata("vArrayIterator.kt")
+                public void testVArrayIterator() throws Exception {
+                    runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayIterator.kt");
+                }
             }
         }
 

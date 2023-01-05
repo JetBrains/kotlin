@@ -1253,6 +1253,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testAllFilesPresentInVArrays() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
+
+            @TestMetadata("vArrayIterator.kt")
+            public void testVArrayIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayIterator.kt");
+            }
         }
     }
 

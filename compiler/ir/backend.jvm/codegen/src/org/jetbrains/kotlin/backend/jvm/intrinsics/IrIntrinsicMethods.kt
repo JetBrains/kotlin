@@ -49,6 +49,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(FqName("kotlin.VArray"), null, "get", listOf(intFqn)) to ArrayGet,
                 Key(FqName("kotlin.VArray"), null, "<init>", listOf(intFqn)) to NewArray,
                 Key(FqName("kotlin.VArray"), null, "<get-size>", emptyList()) to ArraySize,
+                Key(FqName("kotlin.VArray"), null, "iterator", emptyList()) to ArrayIterator,
                 Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,

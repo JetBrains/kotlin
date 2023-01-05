@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +ValueClasses
+// ENABLE_JVM_IR_INLINER
+
+
 @JvmInline
 value class ICDoubleNullable(val x: Double?)
 
