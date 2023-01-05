@@ -12,10 +12,7 @@ import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -98,8 +95,7 @@ class SymbolLightClassForFacade(
                         if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtKotlinPropertySymbol) continue
                         if (callableSymbol !is KtSymbolWithVisibility) continue
                         if ((callableSymbol as? KtAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
-                        val isPrivate = callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE
-                        if (isPrivate && multiFileClass) continue
+                        if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue
                         yield(callableSymbol)
                     }
                 }
@@ -121,23 +117,16 @@ class SymbolLightClassForFacade(
         result: MutableList<KtLightField>
     ) {
         for (propertySymbol in fileScope.getCallableSymbols()) {
-
             if (propertySymbol !is KtKotlinPropertySymbol) continue
 
             // If this facade represents multiple files, only `const` properties need to be generated.
             if (multiFileClass && !propertySymbol.isConst) continue
 
-            val isLateInitWithPublicAccessors = if (propertySymbol.isLateInit) {
-                val getterIsPublic = propertySymbol.getter?.toPsiVisibilityForMember()
-                    ?.let { it == PsiModifier.PUBLIC } ?: true
-                val setterIsPublic = propertySymbol.setter?.toPsiVisibilityForMember()
-                    ?.let { it == PsiModifier.PUBLIC } ?: true
-                getterIsPublic && setterIsPublic
-            } else false
-
-            val forceStaticAndPropertyVisibility = isLateInitWithPublicAccessors ||
-                    (propertySymbol.isConst) ||
-                    propertySymbol.hasJvmFieldAnnotation()
+            val forceStaticAndPropertyVisibility = propertySymbol.isConst ||
+                    propertySymbol.hasJvmFieldAnnotation() ||
+                    propertySymbol.isLateInit &&
+                    propertySymbol.getter.isNullOrPublic() &&
+                    propertySymbol.setter.isNullOrPublic()
 
             createField(
                 propertySymbol,
@@ -145,11 +134,13 @@ class SymbolLightClassForFacade(
                 isTopLevel = true,
                 forceStatic = forceStaticAndPropertyVisibility,
                 takePropertyVisibility = forceStaticAndPropertyVisibility,
-                result
+                result,
             )
         }
-
     }
+
+    private fun KtPropertyAccessorSymbol?.isNullOrPublic(): Boolean =
+        this?.toPsiVisibilityForMember()?.let { it == PsiModifier.PUBLIC } != false
 
     private val _ownFields: List<KtLightField> by lazyPub {
         val result = mutableListOf<KtLightField>()
