@@ -8,7 +8,8 @@ import org.jetbrains.kotlin.utils.Printer
 class DeclarationPrinter(
         out: Appendable,
         private val headerRenderer: DeclarationHeaderRenderer,
-        private val signatureRenderer: IdSignatureRenderer
+        private val signatureRenderer: IdSignatureRenderer,
+        private val shouldPrintFakeOverrides: Boolean = false
 ) {
     private val printer = Printer(out, 1, "    ")
 
@@ -20,7 +21,7 @@ class DeclarationPrinter(
 
     private val DeclarationDescriptor.shouldBePrinted: Boolean
         get() = this is ClassifierDescriptorWithTypeParameters && isPublicOrProtected
-                || this is CallableMemberDescriptor && isPublicOrProtected && !isFakeOverride
+                || this is CallableMemberDescriptor && isPublicOrProtected && (shouldPrintFakeOverrides || !isFakeOverride)
 
     fun print(module: ModuleDescriptor) {
         module.accept(PrinterVisitor(), Unit)

@@ -245,6 +245,8 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             cinteropArguments.linkerOptions.value.toTypedArray()
     val verbose = cinteropArguments.verbose
 
+    val includeCategoriesInClasses = cinteropArguments.includeCategoriesInClasses
+
     val entryPoint = def.config.entryPoints.atMostOne()
     val linkerName = cinteropArguments.linker ?: def.config.linker
     val linker = "${tool.llvmHome}/bin/$linkerName"
@@ -309,7 +311,8 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             noStringConversion = def.config.noStringConversion.toSet(),
             exportForwardDeclarations = def.config.exportForwardDeclarations,
             disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
-            target = target
+            target = target,
+            includeCategoriesInClasses = includeCategoriesInClasses,
     )
 
 

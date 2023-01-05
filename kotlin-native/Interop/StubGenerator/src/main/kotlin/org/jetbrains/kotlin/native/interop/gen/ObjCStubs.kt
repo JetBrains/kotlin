@@ -292,7 +292,7 @@ internal val ObjCClassOrProtocol.selfAndSuperTypes: Sequence<ObjCClassOrProtocol
 internal val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
     get() = this.immediateSuperTypes.flatMap { it.selfAndSuperTypes }.distinct()
 
-internal fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
+internal fun ObjCContainer.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.methods.asSequence().filter { it.isClass == isClass }
 
 @Suppress("UNUSED_PARAMETER")
@@ -331,10 +331,24 @@ internal fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<Stri
 internal fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
         container.superTypes.any { superType -> superType.methods.any(this::replaces) }
 
+private fun printMethods(container: ObjCClassOrProtocol, methods: Sequence<ObjCMethod>, title: String? = null) {
+    println(("${container.name} methods" + title?.let { ": $it" }))
+    methods.forEach { method ->
+        val mark = if (method.isClass) "+" else "-"
+        val selector = method.selector
+        val kotlinName = method.kotlinName
+        println("$mark $kotlinName ($selector) init=${method.isInit} optional=${method.isOptional}")
+    }
+    println()
+}
+
+private fun ObjCMethod.isSpecial(): Boolean = this.returnsInstancetype() || this.isInit
+
 internal abstract class ObjCContainerStubBuilder(
         final override val context: StubsBuildingContext,
         private val container: ObjCClassOrProtocol,
-        protected val metaContainerStub: ObjCContainerStubBuilder?
+        private val categories: List<ObjCCategory> = emptyList(),
+        protected val metaContainerStub: ObjCContainerStubBuilder?,
 ) : StubElementBuilder {
     private val isMeta: Boolean get() = metaContainerStub == null
 
@@ -351,41 +365,27 @@ internal abstract class ObjCContainerStubBuilder(
 
     init {
         val superMethods = container.inheritedMethods(isMeta)
-
         // Add all methods declared in the class or protocol:
         var methods = container.declaredMethods(isMeta)
-
-        // Exclude those which are identically declared in super types:
-        methods -= superMethods
 
         // Add some special methods from super types:
         methods += superMethods.filter { it.returnsInstancetype() || it.isInit }
 
-        // Add methods from adopted protocols that must be implemented according to Kotlin rules:
-        if (container is ObjCClass) {
-            methods += container.protocolsWithSupers.flatMap { it.declaredMethods(isMeta) }.filter { !it.isOptional }
-        }
-
-        // Add methods inherited from multiple supertypes that must be defined according to Kotlin rules:
-        methods += container.immediateSuperTypes
-                .flatMap { superType ->
-                    val methodsWithInherited = superType.methodsWithInherited(isMeta).inheritedTo(container, isMeta)
-                    // Select only those which are represented as non-abstract in Kotlin:
-                    when (superType) {
-                        is ObjCClass -> methodsWithInherited
-                        is ObjCProtocol -> methodsWithInherited.filter { it.isOptional }
-                    }
-                }
-                .groupBy { it.selector }
-                .mapNotNull { (_, inheritedMethods) -> if (inheritedMethods.size > 1) inheritedMethods.first() else null }
+        methods += categories
+                .flatMap { it.declaredMethods(isMeta) }
+                .filterNot(ObjCMethod::isSpecial)
 
         this.methods = methods.distinctBy { it.selector }.toList()
 
-        this.properties = container.properties.filter { property ->
+        var properties = container.properties.asSequence()
+        properties += categories
+                .flatMap { it.properties }
+
+        this.properties = properties.filter { property ->
             property.getter.isClass == isMeta &&
                     // Select only properties that don't override anything:
                     superMethods.none { property.getter.replaces(it) || property.setter?.replaces(it) ?: false }
-        }
+        }.toList()
     }
 
     private val methodToStub = methods.map {
@@ -480,11 +480,13 @@ internal abstract class ObjCContainerStubBuilder(
 
 internal sealed class ObjCClassOrProtocolStubBuilder(
         context: StubsBuildingContext,
-        private val container: ObjCClassOrProtocol
+        private val container: ObjCClassOrProtocol,
+        private val categories: List<ObjCCategory> = emptyList()
 ) : ObjCContainerStubBuilder(
         context,
         container,
-        metaContainerStub = object : ObjCContainerStubBuilder(context, container, metaContainerStub = null) {
+        categories = categories,
+        metaContainerStub = object : ObjCContainerStubBuilder(context, container, categories, metaContainerStub = null) {
 
             override fun build(): List<StubIrElement> {
                 val origin = when (container) {
@@ -508,8 +510,9 @@ internal class ObjCProtocolStubBuilder(
 
 internal class ObjCClassStubBuilder(
         context: StubsBuildingContext,
-        private val clazz: ObjCClass
-) : ObjCClassOrProtocolStubBuilder(context, clazz), StubElementBuilder {
+        private val clazz: ObjCClass,
+        categories: List<ObjCCategory>
+) : ObjCClassOrProtocolStubBuilder(context, clazz, categories), StubElementBuilder {
     override fun build(): List<StubIrElement> {
         val companionSuper = ClassifierStubType(context.getKotlinClassFor(clazz, isMeta = true))
 
@@ -539,14 +542,16 @@ class GeneratedObjCCategoriesMembers {
 
 internal class ObjCCategoryStubBuilder(
         override val context: StubsBuildingContext,
-        private val category: ObjCCategory
+        private val category: ObjCCategory,
+        private val generateOnlySpecial: Boolean
 ) : StubElementBuilder {
     private val generatedMembers = context.generatedObjCCategoriesMembers
             .getOrPut(category.clazz, { GeneratedObjCCategoriesMembers() })
 
-    private val methodToBuilder = category.methods.filter { generatedMembers.register(it) }.map {
-        it to ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context)
-    }.toMap()
+    private val methodToBuilder = category.methods
+            .filter { !generateOnlySpecial || it.isSpecial() }
+            .filter { generatedMembers.register(it) }
+            .associateWith { ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context) }
 
     private val methodBuilders get() = methodToBuilder.values
 

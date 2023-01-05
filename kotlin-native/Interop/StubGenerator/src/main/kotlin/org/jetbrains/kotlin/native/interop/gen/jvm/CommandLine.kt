@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.native.interop.tool
 
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
 import kotlinx.cli.*
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
 const val NODEFAULTLIBS_DEPRECATED = "nodefaultlibs"
 const val NODEFAULTLIBS = "no-default-libs"
+const val FUTURE = "future"
 const val NOENDORSEDLIBS = "no-endorsed-libs"
 const val PURGE_USER_LIBS = "Xpurge-user-libs"
 const val TEMP_DIR = "Xtemporary-files-dir"
@@ -53,6 +52,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .default(DEFAULT_MODE)
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
+    val includeCategoriesInClasses by argParser.option(ArgType.Boolean, FUTURE,
+            description = "include methods of categories to corresponding classes").default(false)
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,
             description = "don't link the libraries from dist/klib automatically",
             deprecatedWarning = "Old form of flag. Please, use $NODEFAULTLIBS.").default(false)

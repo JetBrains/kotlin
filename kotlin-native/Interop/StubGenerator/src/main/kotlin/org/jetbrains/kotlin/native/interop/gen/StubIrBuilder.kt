@@ -328,9 +328,21 @@ class StubIrBuilder(private val context: StubIrContext) {
     private val buildingContext = context.plugin.stubsBuildingContext(context)
 
     fun build(): StubIrBuilderResult {
+
         nativeIndex.objCProtocols.filter { !it.isForwardDeclaration }.forEach { generateStubsForObjCProtocol(it) }
-        nativeIndex.objCClasses.filter { !it.isForwardDeclaration && !it.isNSStringSubclass()} .forEach { generateStubsForObjCClass(it) }
-        nativeIndex.objCCategories.filter { !it.clazz.isNSStringSubclass() }.forEach { generateStubsForObjCCategory(it) }
+
+        val categoriesPerClass = nativeIndex.objCCategories.groupBy { it.clazz }
+        val objcClassWithCategories = nativeIndex.objCClasses.associateWith { categoriesPerClass[it] ?: emptyList() }
+        objcClassWithCategories.filter { !it.key.isForwardDeclaration && !it.key.isNSStringSubclass() }
+                .forEach {  (clazz, categories) ->
+                    generateStubsForObjCClass(clazz, categories)
+                }
+
+        val categoriesWithoutClass = categoriesPerClass.filterKeys { it !in nativeIndex.objCClasses }.flatMap { it.value }
+        categoriesWithoutClass
+                .filterNot { it.clazz.isNSStringSubclass() }
+                .forEach { generateStubsForObjCCategory(it, generateOnlySpecial = false) }
+
         nativeIndex.structs.forEach { generateStubsForStruct(it) }
         nativeIndex.enums.forEach { generateStubsForEnum(it) }
         nativeIndex.functions.filter { it.name !in excludedFunctions }.forEach { generateStubsForFunction(it) }
@@ -416,11 +428,14 @@ class StubIrBuilder(private val context: StubIrContext) {
         addStubs(ObjCProtocolStubBuilder(buildingContext, objCProtocol).build())
     }
 
-    private fun generateStubsForObjCClass(objCClass: ObjCClass) {
-        addStubs(ObjCClassStubBuilder(buildingContext, objCClass).build())
+    private fun generateStubsForObjCClass(objCClass: ObjCClass, categories: List<ObjCCategory>) {
+        addStubs(ObjCClassStubBuilder(buildingContext, objCClass, categories).build())
+        categories.forEach { category ->
+            generateStubsForObjCCategory(category, generateOnlySpecial = true)
+        }
     }
 
-    private fun generateStubsForObjCCategory(objCCategory: ObjCCategory) {
-        addStubs(ObjCCategoryStubBuilder(buildingContext, objCCategory).build())
+    private fun generateStubsForObjCCategory(objCCategory: ObjCCategory, generateOnlySpecial: Boolean) {
+        addStubs(ObjCCategoryStubBuilder(buildingContext, objCCategory, generateOnlySpecial).build())
     }
 }

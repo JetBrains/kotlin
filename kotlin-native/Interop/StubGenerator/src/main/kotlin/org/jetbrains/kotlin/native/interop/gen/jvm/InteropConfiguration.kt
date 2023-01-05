@@ -32,7 +32,8 @@ class InteropConfiguration(
         val noStringConversion: Set<String>,
         val exportForwardDeclarations: List<String>,
         val disableDesignatedInitializerChecks: Boolean,
-        val target: KonanTarget
+        val target: KonanTarget,
+        val includeCategoriesInClasses: Boolean,
 )
 
 enum class KotlinPlatform {
