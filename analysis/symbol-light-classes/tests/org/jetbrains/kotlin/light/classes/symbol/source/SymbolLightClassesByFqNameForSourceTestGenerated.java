@@ -193,6 +193,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("JavaClassWithAnnotation.kt")
+    public void testJavaClassWithAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaClassWithAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("JvmNameOnMember.kt")
     public void testJvmNameOnMember() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JvmNameOnMember.kt");

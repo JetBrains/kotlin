@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
@@ -39,7 +42,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
-    override var annotations: MutableOrEmptyList<FirAnnotation>,
+    private val unEnhancedAnnotations: MutableOrEmptyList<JavaAnnotation>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
@@ -53,7 +56,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
-    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
 
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
@@ -70,6 +72,16 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         enhancement.enhanceSuperTypes(unenhnancedSuperTypes)
     }
 
+    // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val annotations: List<FirAnnotation> by lazy {
+        unEnhancedAnnotations.convertAnnotationsToFir(moduleData.session, javaTypeParameterStack)
+    }
+
+    // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val deprecationsProvider: DeprecationsProvider by lazy {
+        getDeprecationsProvider(moduleData.session)
+    }
+
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
     }
@@ -79,7 +91,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
-        deprecationsProvider = newDeprecationsProvider
+        error("${::replaceDeprecationsProvider.name} should not be called for ${this::class.simpleName}, ${deprecationsProvider::class.simpleName} is lazily calculated")
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
@@ -116,11 +128,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        annotations = newAnnotations.toMutableOrEmpty()
+        error("${::replaceAnnotations.name} should not be called for ${this::class.simpleName}, ${annotations::class.simpleName} is lazily calculated")
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -149,7 +160,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
 
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    var javaAnnotations: MutableList<JavaAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
 
@@ -157,14 +168,13 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
-        @Suppress("UNCHECKED_CAST")
         return FirJavaClass(
             source,
             moduleData,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
             origin = javaOrigin(isFromSource),
-            annotations.toMutableOrEmpty(),
+            javaAnnotations.toMutableOrEmpty(),
             status,
             classKind,
             declarations,

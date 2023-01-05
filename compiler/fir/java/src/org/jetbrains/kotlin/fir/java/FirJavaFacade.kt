@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -172,13 +172,12 @@ abstract class FirJavaFacade(
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
         val initialBounds = enhancement.performFirstRoundOfBoundsResolution(firJavaClass.typeParameters)
 
-        // 1. Resolve annotations
+        // 1. (will happen lazily in FirJavaClass.annotations) Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
         // 3. (will happen lazily in FirJavaClass.superTypeRefs) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
 
-        firJavaClass.setAnnotationsFromJava(session, javaClass, javaTypeParameterStack)
         enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
-        firJavaClass.replaceDeprecationsProvider(firJavaClass.getDeprecationsProvider(session))
+
         return firJavaClass
     }
 
@@ -194,6 +193,7 @@ abstract class FirJavaFacade(
         val moduleData = getModuleDataForClass(javaClass)
         return buildJavaClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
+            javaAnnotations += javaClass.annotations
             source = javaClass.toSourceElement()
             this.moduleData = moduleData
             symbol = classSymbol
