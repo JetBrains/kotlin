@@ -184,6 +184,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JvmStatic.kt");
     }
 
+    @TestMetadata("KotlinJavaSuper.kt")
+    public void testKotlinJavaSuper() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/KotlinJavaSuper.kt");
+    }
+
     @TestMetadata("LocalFunctions.kt")
     public void testLocalFunctions() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/LocalFunctions.kt");

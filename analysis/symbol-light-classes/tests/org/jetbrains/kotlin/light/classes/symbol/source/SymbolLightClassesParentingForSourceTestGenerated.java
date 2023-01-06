@@ -211,6 +211,12 @@ public class SymbolLightClassesParentingForSourceTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("KotlinJavaSuper.kt")
+    public void testKotlinJavaSuper() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/KotlinJavaSuper.kt");
+    }
+
+    @Test
     @TestMetadata("LocalFunctions.kt")
     public void testLocalFunctions() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/LocalFunctions.kt");
