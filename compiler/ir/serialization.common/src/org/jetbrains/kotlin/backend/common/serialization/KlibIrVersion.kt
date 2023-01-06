@@ -23,7 +23,7 @@ fun KlibIrVersion(vararg values: Int): KlibIrVersion {
     return KlibIrVersion(values[0], values[1], values[2])
 }
 
-val KotlinLibrary.metadataVersion: KlibIrVersion
+val KotlinLibrary.klibIrVersion: KlibIrVersion
     get() {
         val versionString = manifestProperties.getProperty(KLIB_PROPERTY_IR_VERSION)
         val versionIntArray = BinaryVersion.parseVersionArray(versionString)
