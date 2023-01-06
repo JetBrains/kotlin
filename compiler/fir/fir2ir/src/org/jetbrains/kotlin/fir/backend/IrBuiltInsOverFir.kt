@@ -537,13 +537,14 @@ class IrBuiltInsOverFir(
         val kotlinKt = kotlinIrPackage.createClass(kotlinPackage.child(Name.identifier("KotlinKt")))
         KotlinPackageFuns(
             arrayOf = kotlinKt.addPackageFun("arrayOf", arrayClass.defaultType) arrayOf@{
-                addTypeParameter("T", anyNType)
+                val typeParameter = addTypeParameter("T", anyNType)
                 addValueParameter {
                     this.name = Name.identifier("elements")
-                    this.type = arrayClass.defaultType
-                    this.varargElementType = typeParameters[0].defaultType
+                    this.type = arrayClass.typeWithParameters(listOf(typeParameter))
+                    this.varargElementType = typeParameter.defaultType
                     this.origin = this@arrayOf.origin
                 }
+                returnType = arrayClass.typeWithParameters(listOf(typeParameter))
             }
         )
     }
