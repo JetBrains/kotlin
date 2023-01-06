@@ -105,6 +105,7 @@ class ClassStabilityTransformer(
                 marked = true,
                 stability = Stability.Stable,
             )
+            cls.addStabilityMarkerField(irConst(STABLE))
             return cls
         }
 
@@ -162,27 +163,30 @@ class ClassStabilityTransformer(
             it.putValueArgument(0, irConst(parameterMask))
         }
 
-        val stabilityField = makeStabilityField().also { f ->
-            f.parent = cls
-            f.initializer = IrExpressionBodyImpl(
+        cls.addStabilityMarkerField(stableExpr)
+        return result
+    }
+
+    private fun IrClass.addStabilityMarkerField(stabilityExpression: IrExpression) {
+        val stabilityField = makeStabilityField().apply {
+            parent = this@addStabilityMarkerField
+            initializer = IrExpressionBodyImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                stableExpr
+                stabilityExpression
             )
         }
 
         if (context.platform.isJvm()) {
-            cls.declarations += stabilityField
+            declarations += stabilityField
         } else {
             // This ensures proper mangles in k/js and k/native (since kotlin 1.6.0-rc2)
-            val stabilityProp = makeStabilityProp().also {
-                it.parent = cls
-                it.backingField = stabilityField
+            val stabilityProp = makeStabilityProp().apply {
+                parent = this@addStabilityMarkerField
+                backingField = stabilityField
             }
             stabilityField.correspondingPropertySymbol = stabilityProp.symbol
-            cls.declarations += stabilityProp
+            declarations += stabilityProp
         }
-
-        return result
     }
 }
