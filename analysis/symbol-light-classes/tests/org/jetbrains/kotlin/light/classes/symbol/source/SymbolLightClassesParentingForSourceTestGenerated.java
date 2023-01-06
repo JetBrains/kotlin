@@ -259,6 +259,12 @@ public class SymbolLightClassesParentingForSourceTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("Throws.kt")
+    public void testThrows() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
+    }
+
+    @Test
     @TestMetadata("TypePararametersInClass.kt")
     public void testTypePararametersInClass() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/TypePararametersInClass.kt");
