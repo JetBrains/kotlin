@@ -59,6 +59,10 @@ val jsMainSources by task<Sync> {
     val excluded = listOf(
         // stdlib/js/src/generated is used exclusively for current `js-v1` backend.
         "libraries/stdlib/js/src/generated/**",
+        "libraries/stdlib/js/src/kotlin/browser",
+        "libraries/stdlib/js/src/kotlin/dom",
+        "libraries/stdlib/js/src/org.w3c",
+        "libraries/stdlib/js/src/kotlinx",
 
         // JS-specific optimized version of emptyArray() already defined
         "core/builtins/src/kotlin/ArrayIntrinsics.kt"
