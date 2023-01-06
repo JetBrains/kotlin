@@ -25,6 +25,7 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
         import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
         import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+        import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
         import org.jetbrains.kotlin.konan.target.KonanTarget
         import javax.inject.Inject
     """.trimIndent()
@@ -54,15 +55,15 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         "val EmbedBitcodeMode = BitcodeEmbeddingModeDsl()"
     ).joinToString("\n").indented(4)
 
-    val konanTargetConstants = KonanTarget.predefinedTargets.values.joinToString("\n") {
-        val nameParts = it.name.split("_")
-        val name = nameParts.drop(1).joinToString(
-            separator = "",
-            prefix = nameParts.first(),
-            transform = String::capitalizeUS
-        )
-        "val $name = KonanTarget.${it.name.uppercase(Locale.US)}"
-    }.indented(4)
+    val konanTargetConstants = KonanTarget.predefinedTargets.values.filter { !KonanTarget.deprecatedTargets.contains(it) }
+        .joinToString("\n") {
+            it.generateKonanTargetVal()
+        }.indented(4)
+
+    val deprecatedKonanTargetConstants = KonanTarget.predefinedTargets.values.filter { KonanTarget.deprecatedTargets.contains(it) }
+        .joinToString("\n") {
+            "\n@Deprecated(DEPRECATED_TARGET_MESSAGE)\n" + it.generateKonanTargetVal()
+        }.indented(4)
 
     val code = listOf(
         "package ${className.packageName()}",
@@ -74,9 +75,20 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         bitcodeModeConstants,
         bitcodeMode,
         konanTargetConstants,
+        deprecatedKonanTargetConstants,
         "}"
     ).joinToString(separator = "\n\n")
 
     val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
+}
+
+private fun KonanTarget.generateKonanTargetVal(): String {
+    val nameParts = this.name.split("_")
+    val name = nameParts.drop(1).joinToString(
+        separator = "",
+        prefix = nameParts.first(),
+        transform = String::capitalizeUS
+    )
+    return "val $name = KonanTarget.${this.name.uppercase(Locale.US)}"
 }

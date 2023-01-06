@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.konan.target.presetName
 internal class KotlinPresetEntry(
     val presetName: String,
     val presetType: TypeName,
-    val targetType: TypeName
+    val targetType: TypeName,
+    val deprecation: String? = null
 )
 
 internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
@@ -74,8 +75,9 @@ internal val nativePresetEntries = HostManager().targets
             else ->
                 Presets.simple to Targets.base
         }
+        val deprecation = "@Deprecated(DEPRECATED_TARGET_MESSAGE)".takeIf { target in KonanTarget.deprecatedTargets }
 
-        KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType))
+        KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType), deprecation)
     }
 
 internal val allPresetEntries = listOf(

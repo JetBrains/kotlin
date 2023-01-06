@@ -3,6 +3,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 
 @KotlinTargetsDsl
 @ExperimentalKotlinGradlePluginApi
@@ -42,7 +43,6 @@ interface KotlinTargetHierarchyBuilder {
     fun anyIosSimulatorArm64()
     fun anyWatchosArm32()
     fun anyWatchosArm64()
-    fun anyWatchosX86()
     fun anyWatchosX64()
     fun anyWatchosSimulatorArm64()
     fun anyWatchosDeviceArm64()
@@ -50,13 +50,26 @@ interface KotlinTargetHierarchyBuilder {
     fun anyTvosX64()
     fun anyTvosSimulatorArm64()
     fun anyLinuxX64()
-    fun anyMingwX86()
     fun anyMingwX64()
     fun anyMacosX64()
     fun anyMacosArm64()
     fun anyLinuxArm64()
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    fun anyWatchosX86()
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    fun anyMingwX86()
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     fun anyLinuxArm32Hfp()
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     fun anyLinuxMips32()
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     fun anyLinuxMipsel32()
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     fun anyWasm32()
 }
