@@ -56,6 +56,8 @@ val FirElement.symbol: FirBasedSymbol<*>?
 
 private fun FirBasedSymbol<*>?.unwrapFakeOverridesIfNecessary(): FirBasedSymbol<*>? {
     if (this !is FirCallableSymbol) return this
+    if (this.dispatchReceiverType == null) return this
+
     return this.unwrapFakeOverrides()
 }
 
