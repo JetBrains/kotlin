@@ -40,17 +40,21 @@ public:
         while (!other.stack_.compare_exchange_weak(otherHead, nullptr, std::memory_order_acq_rel)) {}
         // If the `other` stack was empty, do nothing.
         if (!otherHead) return;
-        // Now find the tail of `other`. If no deletions are performed, this is safe.
+        // If `this` stack is empty, just copy the `other` stack over 
+        T* thisHead = nullptr;
+        if (stack_.compare_exchange_strong(thisHead, otherHead, std::memory_order_acq_rel)) {
+            return;
+        }
+        // `this` stack is not empty. Find the tail of `other`. If no deletions are performed, this is safe.
         T* otherTail = otherHead;
         while (otherTail->next_) otherTail = otherTail->next_;
-        // Now make `otherTail->next_` point to the current head of `this` and
-        // simultaneously make `otherHead` the new current head.
-        T* thisHead = nullptr;
         // can't be because of the loop above
         RuntimeAssert(otherTail->next_ == nullptr, "otherTail->next_ must be a tail");
-        while (!stack_.compare_exchange_weak(thisHead, otherHead, std::memory_order_acq_rel)) {
+        // Now make `otherTail->next_` point to the current head of `this` and
+        // simultaneously make `otherHead` the new current head.
+        do {
             otherTail->next_ = thisHead;
-        }
+        } while (!stack_.compare_exchange_weak(thisHead, otherHead, std::memory_order_acq_rel));
     }
 
     bool isEmpty() noexcept { return stack_.load(std::memory_order_relaxed) == nullptr; }
