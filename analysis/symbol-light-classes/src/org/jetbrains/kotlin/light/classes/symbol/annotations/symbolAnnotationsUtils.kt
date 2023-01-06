@@ -36,11 +36,11 @@ import java.lang.annotation.ElementType
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    strictUseSite: Boolean = true,
-): Boolean = hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, annotationUseSiteTarget, strictUseSite)
+    acceptAnnotationsWithoutUseSite: Boolean = false,
+): Boolean = hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
 
 internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): String? {
-    val annotation = findAnnotation(StandardClassIds.Annotations.JvmName, annotationUseSiteTarget, strictUseSite = false)
+    val annotation = findAnnotation(StandardClassIds.Annotations.JvmName, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite = true)
     return annotation?.let {
         (it.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? String
     }
@@ -55,8 +55,9 @@ internal fun isHiddenByDeprecation(
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    strictUseSite: Boolean = true,
-) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget, strictUseSite)
+    acceptAnnotationsWithoutUseSite: Boolean = false,
+) = isHiddenByDeprecation(this, annotationUseSiteTarget) ||
+        hasJvmSyntheticAnnotation(annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmField)
 
@@ -65,28 +66,28 @@ internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(annotationUseSiteTarget
 
 internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    strictUseSite: Boolean = true,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, annotationUseSiteTarget, strictUseSite)
+    acceptAnnotationsWithoutUseSite: Boolean = false,
+): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
 
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = hasAnnotation(JVM_OVERLOADS_CLASS_ID)
 
 internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    strictUseSite: Boolean = true,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmStatic, annotationUseSiteTarget, strictUseSite)
+    acceptAnnotationsWithoutUseSite: Boolean = false,
+): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmStatic, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
 
 internal fun KtAnnotatedSymbol.findAnnotation(
     classId: ClassId,
     annotationUseSiteTarget: AnnotationUseSiteTarget?,
-    strictUseSite: Boolean = true,
+    acceptAnnotationsWithoutUseSite: Boolean = false,
 ): KtAnnotationApplication? {
-    if (!hasAnnotation(classId, annotationUseSiteTarget, strictUseSite)) return null
+    if (!hasAnnotation(classId, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)) return null
 
     return annotations.find {
         val useSiteTarget = it.useSiteTarget
-        (useSiteTarget == annotationUseSiteTarget || !strictUseSite && useSiteTarget == null) && it.classId == classId
+        (useSiteTarget == annotationUseSiteTarget || acceptAnnotationsWithoutUseSite && useSiteTarget == null) && it.classId == classId
     }
 }
 
@@ -291,14 +292,14 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
     annotationUseSiteTarget: AnnotationUseSiteTarget?,
     useSitePosition: PsiElement,
     containingClass: SymbolLightClassBase,
-    strictUseSite: Boolean = true,
+    acceptAnnotationsWithoutUseSite: Boolean = false,
 ) {
     if (containingClass.isEnum && this is KtFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
         builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
         builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = findAnnotation(StandardClassIds.Annotations.Throws, annotationUseSiteTarget, strictUseSite) ?: return
+    val annoApp = findAnnotation(StandardClassIds.Annotations.Throws, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite) ?: return
 
     fun handleAnnotationValue(annotationValue: KtAnnotationValue) = when (annotationValue) {
         is KtArrayAnnotationValue -> {

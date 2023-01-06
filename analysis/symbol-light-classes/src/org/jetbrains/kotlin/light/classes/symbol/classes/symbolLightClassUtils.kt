@@ -292,14 +292,14 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
         if (onlyJvmStatic &&
-            !hasJvmStaticAnnotation(siteTarget, strictUseSite = false) &&
-            !declaration.hasJvmStaticAnnotation(siteTarget, strictUseSite = false)
+            !hasJvmStaticAnnotation(siteTarget, acceptAnnotationsWithoutUseSite = true) &&
+            !declaration.hasJvmStaticAnnotation(siteTarget, acceptAnnotationsWithoutUseSite = true)
         ) return false
 
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(siteTarget)) return false
-        return !isHiddenOrSynthetic(siteTarget, strictUseSite = false)
+        return !isHiddenOrSynthetic(siteTarget, acceptAnnotationsWithoutUseSite = true)
     }
 
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
@@ -384,7 +384,7 @@ private fun hasBackingField(property: KtPropertySymbol): Boolean {
     }
 
     if (property.modality == Modality.ABSTRACT ||
-        property.isHiddenOrSynthetic(AnnotationUseSiteTarget.FIELD, strictUseSite = false)
+        property.isHiddenOrSynthetic(AnnotationUseSiteTarget.FIELD, acceptAnnotationsWithoutUseSite = true)
     ) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField

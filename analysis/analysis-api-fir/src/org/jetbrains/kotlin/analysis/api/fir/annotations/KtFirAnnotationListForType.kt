@@ -29,10 +29,17 @@ internal class KtFirAnnotationListForType private constructor(
     override fun hasAnnotation(
         classId: ClassId,
         useSiteTarget: AnnotationUseSiteTarget?,
-        strictUseSite: Boolean,
+        acceptAnnotationsWithoutUseSite: Boolean,
     ): Boolean = withValidityAssertion {
         coneType.customAnnotations.any {
-            (it.useSiteTarget == useSiteTarget || !strictUseSite && it.useSiteTarget == null) && it.fullyExpandedClassId(useSiteSession) == classId
+            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
+                    it.fullyExpandedClassId(useSiteSession) == classId
+        }
+    }
+
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+        coneType.customAnnotations.any {
+            it.fullyExpandedClassId(useSiteSession) == classId
         }
     }
 

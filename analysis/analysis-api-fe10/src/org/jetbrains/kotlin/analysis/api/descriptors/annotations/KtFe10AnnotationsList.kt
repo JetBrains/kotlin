@@ -45,13 +45,15 @@ internal class KtFe10AnnotationsList private constructor(
             }
         }
 
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+        fe10Annotations.hasAnnotation(classId.asSingleFqName())
+    }
+
     override fun hasAnnotation(
         classId: ClassId,
         useSiteTarget: AnnotationUseSiteTarget?,
-        strictUseSite: Boolean,
-    ): Boolean = withValidityAssertion {
-        fe10Annotations.hasAnnotation(classId.asSingleFqName())
-    }
+        acceptAnnotationsWithoutUseSite: Boolean,
+    ): Boolean = hasAnnotation(classId)
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()

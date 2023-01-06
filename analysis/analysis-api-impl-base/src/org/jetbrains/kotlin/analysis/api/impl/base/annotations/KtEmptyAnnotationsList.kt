@@ -19,8 +19,10 @@ class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotation
     override fun hasAnnotation(
         classId: ClassId,
         useSiteTarget: AnnotationUseSiteTarget?,
-        strictUseSite: Boolean,
+        acceptAnnotationsWithoutUseSite: Boolean,
     ): Boolean = withValidityAssertion { false }
+
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion { false }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> =
         withValidityAssertion { emptyList() }

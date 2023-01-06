@@ -30,16 +30,29 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      * The semantic is equivalent to
      * ```
      * annotationsList.hasAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
+     * ```
+     */
+    public abstract fun hasAnnotation(classId: ClassId): Boolean
+
+    /**
+     * Checks if entity contains annotation with specified [classId] and [useSiteTarget].
+     * If [useSiteTarget] is **null** [acceptAnnotationsWithoutUseSite] effectively unused.
      *
+     * The semantic is equivalent to
+     * ```
      * annotationsList.hasAnnotation(classId, useSiteTarget, strictUseSite) == annotationsList.annotations.any {
-     *      (it.useSiteTarget == useSiteTarget || !strictUseSite && it.useSiteTarget == null) && it.classId == classId
+     *      (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) && it.classId == classId
      * }
      * ```
+     *
+     * @param classId [ClassId] to search
+     * @param useSiteTarget specific [AnnotationUseSiteTarget]
+     * @param acceptAnnotationsWithoutUseSite add [ClassId] without specified [AnnotationUseSiteTarget] to search
      */
     public abstract fun hasAnnotation(
         classId: ClassId,
-        useSiteTarget: AnnotationUseSiteTarget? = null,
-        strictUseSite: Boolean = true,
+        useSiteTarget: AnnotationUseSiteTarget?,
+        acceptAnnotationsWithoutUseSite: Boolean = false,
     ): Boolean
 
     /**

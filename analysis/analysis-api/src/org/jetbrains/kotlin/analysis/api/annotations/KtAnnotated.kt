@@ -28,11 +28,18 @@ public val KtAnnotated.annotations: List<KtAnnotationApplication>
  *
  * @see [KtAnnotationsList.hasAnnotation]
  */
+public fun KtAnnotated.hasAnnotation(classId: ClassId): Boolean = annotationsList.hasAnnotation(classId)
+
+/**
+ * Checks if entity has annotation with specified [classId] and [useSiteTarget].
+ *
+ * @see [KtAnnotationsList.hasAnnotation]
+ */
 public fun KtAnnotated.hasAnnotation(
     classId: ClassId,
-    useSiteTarget: AnnotationUseSiteTarget? = null,
-    strictUseSite: Boolean = true,
-): Boolean = annotationsList.hasAnnotation(classId, useSiteTarget, strictUseSite)
+    useSiteTarget: AnnotationUseSiteTarget?,
+    acceptAnnotationsWithoutUseSite: Boolean = false,
+): Boolean = annotationsList.hasAnnotation(classId, useSiteTarget, acceptAnnotationsWithoutUseSite)
 
 /**
  * A list of annotations applied with specified [classId].

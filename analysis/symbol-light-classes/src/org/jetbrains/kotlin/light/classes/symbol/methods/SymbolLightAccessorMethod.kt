@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -136,7 +136,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 accessorSite,
                 this@SymbolLightAccessorMethod,
                 containingClass,
-                strictUseSite = false
+                acceptAnnotationsWithoutUseSite = true,
             )
         }
     }
@@ -197,8 +197,8 @@ internal class SymbolLightAccessorMethod private constructor(
     private fun isStatic(): Boolean = analyzeForLightClasses(ktModule) {
         val propertySymbol = propertySymbol()
         propertySymbol.isStatic ||
-                propertySymbol.hasJvmStaticAnnotation(accessorSite, strictUseSite = false) ||
-                propertyAccessorSymbol().hasJvmStaticAnnotation(accessorSite, strictUseSite = false)
+                propertySymbol.hasJvmStaticAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true) ||
+                propertyAccessorSymbol().hasJvmStaticAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true)
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
@@ -215,8 +215,8 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         analyzeForLightClasses(ktModule) {
-            propertySymbol().hasDeprecatedAnnotation(accessorSite, strictUseSite = false) ||
-                    propertyAccessorSymbol().hasDeprecatedAnnotation(accessorSite, strictUseSite = false)
+            propertySymbol().hasDeprecatedAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true) ||
+                    propertyAccessorSymbol().hasDeprecatedAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true)
         }
     }
 
