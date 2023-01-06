@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -259,12 +260,14 @@ class LazyScriptDescriptor(
     private val scriptProvidedProperties: () -> List<ScriptProvidedPropertyDescriptor> = resolveSession.storageManager.createLazyValue {
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties].orEmpty()
             .mapNotNull { (name, type) ->
-                findTypeDescriptor(getScriptingClass(type), Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)
-                    ?.let { name.toValidJvmIdentifier() to it.defaultType.makeNullableAsSpecified(type.isNullable) }
-            }.map { (name, classDescriptor) ->
+                findTypeDescriptor(getScriptingClass(type), Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)?.let {
+                    name.toValidJvmIdentifier() to
+                            it.defaultType.makeNullableAsSpecified(type.isNullable).replaceArgumentsWithStarProjections()
+                }
+            }.map { (name, type) ->
                 ScriptProvidedPropertyDescriptor(
                     Name.identifier(name),
-                    classDescriptor,
+                    type,
                     thisAsReceiverParameter,
                     true,
                     this
