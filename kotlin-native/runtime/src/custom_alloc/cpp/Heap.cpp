@@ -40,7 +40,7 @@ void Heap::Sweep() noexcept {
         smallPages_[blockSize].Sweep();
     }
     mediumPages_.Sweep();
-    largePages_.Sweep();
+    largePages_.SweepAndFree();
 }
 
 MediumPage* Heap::GetMediumPage(uint32_t cellCount) noexcept {

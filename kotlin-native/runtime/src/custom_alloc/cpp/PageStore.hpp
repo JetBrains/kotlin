@@ -22,26 +22,24 @@ public:
         while ((page = empty_.Pop())) page->Destroy();
     }
 
-    T* SweepAndFreeEmpty(AtomicStack<T>& from, AtomicStack<T>& to) noexcept {
-        T* page;
-        while ((page = from.Pop())) {
-            if (!page->Sweep()) {
-                empty_.Push(page);
-            } else {
-                to.Push(page);
-                return page;
-            }
-        }
-        return nullptr;
+    void Sweep() noexcept {
+        while (SweepSingle(unswept_, ready_)) {}
     }
 
-    void Sweep() noexcept {
-        while (SweepAndFreeEmpty(unswept_, ready_)) {}
+    void SweepAndFree() noexcept {
+        T* page;
+        while ((page = unswept_.Pop())) {
+            if (page->Sweep()) {
+                ready_.Push(page);
+            } else {
+                page->Destroy();
+            }
+        }
     }
 
     T* GetPage(uint32_t cellCount) noexcept {
         T* page;
-        if ((page = SweepAndFreeEmpty(unswept_, used_))) {
+        if ((page = SweepSingle(unswept_, used_))) {
             return page;
         }
         if ((page = ready_.Pop())) {
@@ -70,6 +68,18 @@ public:
     }
 
 private:
+    T* SweepSingle(AtomicStack<T>& from, AtomicStack<T>& to) noexcept {
+        T* page;
+        while ((page = from.Pop())) {
+            if (page->Sweep()) {
+                to.Push(page);
+                return page;
+            }
+            empty_.Push(page);
+        }
+        return nullptr;
+    }
+
     AtomicStack<T> empty_;
     AtomicStack<T> ready_;
     AtomicStack<T> used_;
