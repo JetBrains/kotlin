@@ -73,7 +73,7 @@ message Expression {
         Invocation invocation = 41;
         Instantiation instantiation = 42;
         SuperLiteral super_literal = 43;
-        ClassExpression classExpression = 44;
+        Class class = 44;
     }
 }
 
@@ -125,10 +125,11 @@ message Function {
     }
 }
 
-// Simplified JavaScript class expression
-message ClassExpression {
+message Class {
     optional int32 name_id = 1;
     optional Expression super_expression = 2;
+    optional Function constructor = 3;
+    repeated Function member = 4;
 }
 
 message Parameter {

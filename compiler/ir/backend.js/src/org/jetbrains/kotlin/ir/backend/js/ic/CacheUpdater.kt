@@ -732,6 +732,7 @@ fun rebuildCacheForDirtyFiles(
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
+    es6mode: Boolean
 ): Pair<IrModuleFragment, List<Pair<IrFile, JsIrProgramFragment>>> {
     val emptyMetadata = object : KotlinSourceFileExports() {
         override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
@@ -750,7 +751,13 @@ fun rebuildCacheForDirtyFiles(
         currentIrModule.files.filter { irFile -> irFile.fileEntry.name in files }
     } ?: currentIrModule.files
 
-    val compilerWithIC = JsIrCompilerWithIC(currentIrModule, configuration, JsGenerationGranularity.PER_MODULE, exportedDeclarations)
+    val compilerWithIC = JsIrCompilerWithIC(
+        currentIrModule,
+        configuration,
+        JsGenerationGranularity.PER_MODULE,
+        exportedDeclarations,
+        es6mode
+    )
 
     // Load declarations referenced during `context` initialization
     jsIrLinker.loadUnboundSymbols(true)

@@ -52,9 +52,11 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
     private fun IrConstructor.addBoxParameter() {
         val irClass = parentAsClass
-        val body = body as? IrBlockBody ?: return
         val boxParameter = generateBoxParameter(irClass).also { valueParameters += it }
+
+        val body = body as? IrBlockBody ?: return
         val isBoxUsed = body.replaceThisWithBoxBeforeSuperCall(irClass, boxParameter.symbol)
+
         if (isBoxUsed) {
             body.statements.add(0, boxParameter.generateDefaultResolution())
         }
@@ -134,7 +136,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
         if (irClass.superClass != null || (!irClass.isInner && !irClass.isLocal)) return
 
-        val statements = (constructor.body as IrBlockBody).statements
+        val statements = (constructor.body as? IrBlockBody)?.statements ?: return
         val delegationConstructorIndex = statements.indexOfFirst { it is IrDelegatingConstructorCall }
 
         if (delegationConstructorIndex == -1) return
@@ -155,7 +157,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
     private fun hackExceptions(constructor: IrConstructor) {
         val setPropertiesSymbol = context.setPropertiesToThrowableInstanceSymbol
 
-        val statements = (constructor.body as IrBlockBody).statements
+        val statements = (constructor.body as? IrBlockBody)?.statements ?: return
 
         var callIndex = -1
         var superCallIndex = -1

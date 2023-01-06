@@ -253,25 +253,18 @@ abstract class JsAstDeserializerBase {
             )
         }
 
-        // TODO: make more complex serialization to support class syntax inside `js` call
-        JsAstProtoBuf.Expression.ExpressionCase.CLASSEXPRESSION -> {
-            val classProto = proto.classExpression
+        JsAstProtoBuf.Expression.ExpressionCase.CLASS -> {
+            val classProto = proto.class_
             JsClass(
                 runIf(classProto.hasNameId()) { deserializeName(classProto.nameId) },
-                runIf(classProto.hasSuperExpression()) { deserialize(classProto.superExpression) as JsNameRef }
+                runIf(classProto.hasSuperExpression()) { deserialize(classProto.superExpression) as JsNameRef },
+                runIf(classProto.hasConstructor()) { deserializeFunction(classProto.constructor) },
+                classProto.memberList.map(::deserializeFunction).toMutableList()
             )
         }
 
         JsAstProtoBuf.Expression.ExpressionCase.FUNCTION -> {
-            val functionProto = proto.function
-            JsFunction(scope, deserialize(functionProto.body) as JsBlock, "").apply {
-                modifiers += functionProto.modifierList.map(::map)
-                parameters += functionProto.parameterList.map { deserializeParameter(it) }
-                if (functionProto.hasNameId()) {
-                    name = deserializeName(functionProto.nameId)
-                }
-                isLocal = functionProto.local
-            }
+            deserializeFunction(proto.function)
         }
 
         JsAstProtoBuf.Expression.ExpressionCase.DOC_COMMENT -> {
@@ -355,6 +348,17 @@ abstract class JsAstDeserializerBase {
 
         null,
         JsAstProtoBuf.Expression.ExpressionCase.EXPRESSION_NOT_SET -> error("Unknown expression")
+    }
+
+    protected fun deserializeFunction(functionProto: JsAstProtoBuf.Function): JsFunction {
+        return JsFunction(scope, deserialize(functionProto.body) as JsBlock, "").apply {
+            modifiers += functionProto.modifierList.map(::map)
+            parameters += functionProto.parameterList.map { deserializeParameter(it) }
+            if (functionProto.hasNameId()) {
+                name = deserializeName(functionProto.nameId)
+            }
+            isLocal = functionProto.local
+        }
     }
 
     protected fun deserializeVars(proto: JsAstProtoBuf.Vars): JsVars {

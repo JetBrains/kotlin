@@ -295,7 +295,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         value = "-Xes-classes",
         description = "Generated JavaScript will use ES2015 classes."
     )
-    var useEsNext: Boolean by FreezableVar(false)
+    var useEsClasses: Boolean by FreezableVar(false)
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,

@@ -36,7 +36,7 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
         if (!klass.isSubclassOf(context.irBuiltIns.throwableClass.owner))
             return
 
-        val statements = (irBody as IrBlockBody).statements
+        val statements = (irBody as? IrBlockBody)?.statements ?: return
         val delegatingConstructorCallIndex = statements.indexOfLast { it is IrDelegatingConstructorCall }
 
         statements.add(delegatingConstructorCallIndex + 1, JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->

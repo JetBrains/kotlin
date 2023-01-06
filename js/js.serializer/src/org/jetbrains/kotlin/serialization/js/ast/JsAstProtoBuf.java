@@ -1569,13 +1569,13 @@ public final class JsAstProtoBuf {
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SuperLiteral getSuperLiteral();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
      */
-    boolean hasClassExpression();
+    boolean hasClass_();
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
      */
-    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression getClassExpression();
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class getClass_();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Expression}
@@ -1946,13 +1946,13 @@ public final class JsAstProtoBuf {
               break;
             }
             case 354: {
-              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.Builder subBuilder = null;
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.Builder subBuilder = null;
               if (expressionCase_ == 44) {
-                subBuilder = ((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_).toBuilder();
+                subBuilder = ((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_).toBuilder();
               }
-              expression_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.PARSER, extensionRegistry);
+              expression_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_);
+                subBuilder.mergeFrom((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_);
                 expression_ = subBuilder.buildPartial();
               }
               expressionCase_ = 44;
@@ -2024,7 +2024,7 @@ public final class JsAstProtoBuf {
       INVOCATION(41),
       INSTANTIATION(42),
       SUPER_LITERAL(43),
-      CLASSEXPRESSION(44),
+      CLASS(44),
       EXPRESSION_NOT_SET(0);
       private int value = 0;
       private ExpressionCase(int value) {
@@ -2054,7 +2054,7 @@ public final class JsAstProtoBuf {
           case 41: return INVOCATION;
           case 42: return INSTANTIATION;
           case 43: return SUPER_LITERAL;
-          case 44: return CLASSEXPRESSION;
+          case 44: return CLASS;
           case 0: return EXPRESSION_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -2590,21 +2590,21 @@ public final class JsAstProtoBuf {
       return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SuperLiteral.getDefaultInstance();
     }
 
-    public static final int CLASSEXPRESSION_FIELD_NUMBER = 44;
+    public static final int CLASS_FIELD_NUMBER = 44;
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
      */
-    public boolean hasClassExpression() {
+    public boolean hasClass_() {
       return expressionCase_ == 44;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
      */
-    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression getClassExpression() {
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class getClass_() {
       if (expressionCase_ == 44) {
-         return (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_;
+         return (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_;
       }
-      return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.getDefaultInstance();
+      return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.getDefaultInstance();
     }
 
     private void initFields() {
@@ -2724,8 +2724,8 @@ public final class JsAstProtoBuf {
           return false;
         }
       }
-      if (hasClassExpression()) {
-        if (!getClassExpression().isInitialized()) {
+      if (hasClass_()) {
+        if (!getClass_().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -2829,7 +2829,7 @@ public final class JsAstProtoBuf {
         output.writeMessage(43, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SuperLiteral) expression_);
       }
       if (expressionCase_ == 44) {
-        output.writeMessage(44, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_);
+        output.writeMessage(44, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -2962,7 +2962,7 @@ public final class JsAstProtoBuf {
       }
       if (expressionCase_ == 44) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(44, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_);
+          .computeMessageSize(44, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -3327,8 +3327,8 @@ public final class JsAstProtoBuf {
             mergeSuperLiteral(other.getSuperLiteral());
             break;
           }
-          case CLASSEXPRESSION: {
-            mergeClassExpression(other.getClassExpression());
+          case CLASS: {
+            mergeClass_(other.getClass_());
             break;
           }
           case EXPRESSION_NOT_SET: {
@@ -3443,8 +3443,8 @@ public final class JsAstProtoBuf {
             return false;
           }
         }
-        if (hasClassExpression()) {
-          if (!getClassExpression().isInitialized()) {
+        if (hasClass_()) {
+          if (!getClass_().isInitialized()) {
             
             return false;
           }
@@ -5251,24 +5251,24 @@ public final class JsAstProtoBuf {
       }
 
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
        */
-      public boolean hasClassExpression() {
+      public boolean hasClass_() {
         return expressionCase_ == 44;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
        */
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression getClassExpression() {
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class getClass_() {
         if (expressionCase_ == 44) {
-          return (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_;
+          return (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_;
         }
-        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.getDefaultInstance();
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.getDefaultInstance();
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
        */
-      public Builder setClassExpression(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression value) {
+      public Builder setClass_(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -5278,22 +5278,22 @@ public final class JsAstProtoBuf {
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
        */
-      public Builder setClassExpression(
-          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.Builder builderForValue) {
+      public Builder setClass_(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.Builder builderForValue) {
         expression_ = builderForValue.build();
 
         expressionCase_ = 44;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
        */
-      public Builder mergeClassExpression(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression value) {
+      public Builder mergeClass_(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class value) {
         if (expressionCase_ == 44 &&
-            expression_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.getDefaultInstance()) {
-          expression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.newBuilder((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) expression_)
+            expression_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.getDefaultInstance()) {
+          expression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.newBuilder((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) expression_)
               .mergeFrom(value).buildPartial();
         } else {
           expression_ = value;
@@ -5303,9 +5303,9 @@ public final class JsAstProtoBuf {
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.ClassExpression classExpression = 44;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Class class = 44;</code>
        */
-      public Builder clearClassExpression() {
+      public Builder clearClass_() {
         if (expressionCase_ == 44) {
           expressionCase_ = 0;
           expression_ = null;
@@ -9725,8 +9725,8 @@ public final class JsAstProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Function)
   }
 
-  public interface ClassExpressionOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.ClassExpression)
+  public interface ClassOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Class)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
@@ -9746,36 +9746,55 @@ public final class JsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Expression super_expression = 2;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression getSuperExpression();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+     */
+    boolean hasConstructor();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function getConstructor();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function> 
+        getMemberList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function getMember(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    int getMemberCount();
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.ClassExpression}
-   *
-   * <pre>
-   * Simplified JavaScript class expression
-   * </pre>
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Class}
    */
-  public static final class ClassExpression extends
+  public static final class Class extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.ClassExpression)
-      ClassExpressionOrBuilder {
-    // Use ClassExpression.newBuilder() to construct.
-    private ClassExpression(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.Class)
+      ClassOrBuilder {
+    // Use Class.newBuilder() to construct.
+    private Class(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private ClassExpression(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+    private Class(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-    private static final ClassExpression defaultInstance;
-    public static ClassExpression getDefaultInstance() {
+    private static final Class defaultInstance;
+    public static Class getDefaultInstance() {
       return defaultInstance;
     }
 
-    public ClassExpression getDefaultInstanceForType() {
+    public Class getDefaultInstanceForType() {
       return defaultInstance;
     }
 
     private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-    private ClassExpression(
+    private Class(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -9819,6 +9838,27 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000002;
               break;
             }
+            case 26: {
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = constructor_.toBuilder();
+              }
+              constructor_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(constructor_);
+                constructor_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
+              break;
+            }
+            case 34: {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                member_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function>();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              member_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -9827,6 +9867,9 @@ public final class JsAstProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          member_ = java.util.Collections.unmodifiableList(member_);
+        }
         try {
           unknownFieldsCodedOutput.flush();
         } catch (java.io.IOException e) {
@@ -9837,18 +9880,18 @@ public final class JsAstProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static org.jetbrains.kotlin.protobuf.Parser<ClassExpression> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<ClassExpression>() {
-      public ClassExpression parsePartialFrom(
+    public static org.jetbrains.kotlin.protobuf.Parser<Class> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Class>() {
+      public Class parsePartialFrom(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new ClassExpression(input, extensionRegistry);
+        return new Class(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<ClassExpression> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Class> getParserForType() {
       return PARSER;
     }
 
@@ -9883,9 +9926,61 @@ public final class JsAstProtoBuf {
       return superExpression_;
     }
 
+    public static final int CONSTRUCTOR_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function constructor_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+     */
+    public boolean hasConstructor() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function getConstructor() {
+      return constructor_;
+    }
+
+    public static final int MEMBER_FIELD_NUMBER = 4;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function> member_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function> getMemberList() {
+      return member_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.FunctionOrBuilder> 
+        getMemberOrBuilderList() {
+      return member_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    public int getMemberCount() {
+      return member_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function getMember(int index) {
+      return member_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.FunctionOrBuilder getMemberOrBuilder(
+        int index) {
+      return member_.get(index);
+    }
+
     private void initFields() {
       nameId_ = 0;
       superExpression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
+      constructor_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.getDefaultInstance();
+      member_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -9895,6 +9990,18 @@ public final class JsAstProtoBuf {
 
       if (hasSuperExpression()) {
         if (!getSuperExpression().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasConstructor()) {
+        if (!getConstructor().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getMemberCount(); i++) {
+        if (!getMember(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -9911,6 +10018,12 @@ public final class JsAstProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, superExpression_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, constructor_);
+      }
+      for (int i = 0; i < member_.size(); i++) {
+        output.writeMessage(4, member_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -9929,6 +10042,14 @@ public final class JsAstProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, superExpression_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(3, constructor_);
+      }
+      for (int i = 0; i < member_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, member_.get(i));
+      }
       size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
@@ -9941,53 +10062,53 @@ public final class JsAstProtoBuf {
       return super.writeReplace();
     }
 
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(byte[] data)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseDelimitedFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9996,25 +10117,21 @@ public final class JsAstProtoBuf {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression prototype) {
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
 
     /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.ClassExpression}
-     *
-     * <pre>
-     * Simplified JavaScript class expression
-     * </pre>
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Class}
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression, Builder>
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class, Builder>
         implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.ClassExpression)
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpressionOrBuilder {
-      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.newBuilder()
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.Class)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -10031,6 +10148,10 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         superExpression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
+        constructor_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        member_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -10038,20 +10159,20 @@ public final class JsAstProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.getDefaultInstance();
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.getDefaultInstance();
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression build() {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression result = buildPartial();
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression buildPartial() {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression(this);
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -10062,17 +10183,39 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.superExpression_ = superExpression_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.constructor_ = constructor_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          member_ = java.util.Collections.unmodifiableList(member_);
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.member_ = member_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
 
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression other) {
-        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class.getDefaultInstance()) return this;
         if (other.hasNameId()) {
           setNameId(other.getNameId());
         }
         if (other.hasSuperExpression()) {
           mergeSuperExpression(other.getSuperExpression());
+        }
+        if (other.hasConstructor()) {
+          mergeConstructor(other.getConstructor());
+        }
+        if (!other.member_.isEmpty()) {
+          if (member_.isEmpty()) {
+            member_ = other.member_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureMemberIsMutable();
+            member_.addAll(other.member_);
+          }
+          
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -10086,6 +10229,18 @@ public final class JsAstProtoBuf {
             return false;
           }
         }
+        if (hasConstructor()) {
+          if (!getConstructor().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getMemberCount(); i++) {
+          if (!getMember(i).isInitialized()) {
+            
+            return false;
+          }
+        }
         return true;
       }
 
@@ -10093,11 +10248,11 @@ public final class JsAstProtoBuf {
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression parsedMessage = null;
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ClassExpression) e.getUnfinishedMessage();
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Class) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -10200,15 +10355,200 @@ public final class JsAstProtoBuf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.ClassExpression)
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function constructor_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+       */
+      public boolean hasConstructor() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function getConstructor() {
+        return constructor_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+       */
+      public Builder setConstructor(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        constructor_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+       */
+      public Builder setConstructor(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Builder builderForValue) {
+        constructor_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+       */
+      public Builder mergeConstructor(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            constructor_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.getDefaultInstance()) {
+          constructor_ =
+            org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.newBuilder(constructor_).mergeFrom(value).buildPartial();
+        } else {
+          constructor_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Function constructor = 3;</code>
+       */
+      public Builder clearConstructor() {
+        constructor_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function> member_ =
+        java.util.Collections.emptyList();
+      private void ensureMemberIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          member_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function>(member_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function> getMemberList() {
+        return java.util.Collections.unmodifiableList(member_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public int getMemberCount() {
+        return member_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function getMember(int index) {
+        return member_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder setMember(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMemberIsMutable();
+        member_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder setMember(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Builder builderForValue) {
+        ensureMemberIsMutable();
+        member_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder addMember(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMemberIsMutable();
+        member_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder addMember(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMemberIsMutable();
+        member_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder addMember(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Builder builderForValue) {
+        ensureMemberIsMutable();
+        member_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder addMember(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Builder builderForValue) {
+        ensureMemberIsMutable();
+        member_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder addAllMember(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function> values) {
+        ensureMemberIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, member_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder clearMember() {
+        member_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function member = 4;</code>
+       */
+      public Builder removeMember(int index) {
+        ensureMemberIsMutable();
+        member_.remove(index);
+
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Class)
     }
 
     static {
-      defaultInstance = new ClassExpression(true);
+      defaultInstance = new Class(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.ClassExpression)
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Class)
   }
 
   public interface ParameterOrBuilder extends

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.AbstractInvalidationTest
+import org.jetbrains.kotlin.incremental.AbstractJsIrES6InvalidationTest
+import org.jetbrains.kotlin.incremental.AbstractJsIrInvalidationTest
 import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
@@ -57,8 +59,12 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData") {
-            testClass<AbstractInvalidationTest> {
+            testClass<AbstractJsIrInvalidationTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsIrES6InvalidationTest> {
+                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
         }
 

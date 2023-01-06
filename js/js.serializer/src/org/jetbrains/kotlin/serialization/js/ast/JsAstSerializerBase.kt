@@ -253,23 +253,16 @@ abstract class JsAstSerializerBase {
             }
 
             override fun visitFunction(x: JsFunction) {
-                val functionBuilder = JsAstProtoBuf.Function.newBuilder()
-                x.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
-                x.modifiers.forEach { functionBuilder.addModifier(map(it)) }
-                x.name?.let { functionBuilder.nameId = serialize(it) }
-                functionBuilder.body = serialize(x.body)
-                if (x.isLocal) {
-                    functionBuilder.local = true
-                }
-                builder.function = functionBuilder.build()
+                builder.function = serializeFunction(x)
             }
 
-            // TODO: make more complex serialization to support class syntax inside `js` call
             override fun visitClass(x: JsClass) {
-                val classBuilder = JsAstProtoBuf.ClassExpression.newBuilder()
+                val classBuilder = JsAstProtoBuf.Class.newBuilder()
                 x.name?.let { classBuilder.nameId = serialize(it) }
                 x.baseClass?.let { classBuilder.superExpression = serialize(it) }
-                builder.classExpression = classBuilder.build()
+                x.constructor?.let { classBuilder.constructor = serializeFunction(it) }
+                x.members.forEach { classBuilder.addMember(serializeFunction(it)) }
+                builder.class_ = classBuilder.build()
             }
 
             override fun visitDocComment(comment: JsDocComment) {
@@ -404,6 +397,19 @@ abstract class JsAstSerializerBase {
         }
         return blockBuilder.build()
     }
+
+    protected fun serializeFunction(function: JsFunction): JsAstProtoBuf.Function {
+        val functionBuilder = JsAstProtoBuf.Function.newBuilder()
+        function.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
+        function.modifiers.forEach { functionBuilder.addModifier(map(it)) }
+        function.name?.let { functionBuilder.nameId = serialize(it) }
+        functionBuilder.body = serialize(function.body)
+        if (function.isLocal) {
+            functionBuilder.local = true
+        }
+        return functionBuilder.build()
+    }
+
 
     protected fun serializeVars(vars: JsVars): JsAstProtoBuf.Vars {
         val varsBuilder = JsAstProtoBuf.Vars.newBuilder()
