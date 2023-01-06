@@ -1391,3 +1391,6 @@ public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer : kotlinx/me
 	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Writer;[IILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
 }
 
+public abstract interface annotation class kotlinx/metadata/jvm/UnstableMetadataApi : java/lang/annotation/Annotation {
+}
+

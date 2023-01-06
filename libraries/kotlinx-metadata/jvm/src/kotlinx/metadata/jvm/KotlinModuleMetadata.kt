@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  *
  * @property bytes the byte array representing the contents of a `.kotlin_module` file
  */
+@UnstableMetadataApi
 class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: ByteArray) {
     @get:IgnoreInApiDump
     internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
@@ -126,6 +127,7 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
          * which means that it's either not the content of a .kotlin_module file, or it has been corrupted.
          */
         @JvmStatic
+        @UnstableMetadataApi
         fun read(bytes: ByteArray): KotlinModuleMetadata? {
             try {
                 val result = KotlinModuleMetadata(bytes)
@@ -149,6 +151,7 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
          * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
          *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default
          */
+        @UnstableMetadataApi
         fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
             Writer().also { kmModule.accept(it) }.write(metadataVersion)
     }
@@ -160,6 +163,7 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
 @Deprecated(VISITOR_API_MESSAGE)
+@UnstableMetadataApi
 abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
     /**
      * Visits the table of all single- and multi-file facades declared in some package of this module.
@@ -208,6 +212,7 @@ abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
 /**
  * Represents a Kotlin JVM module file.
  */
+@UnstableMetadataApi
 class KmModule : KmModuleVisitor() {
     /**
      * Table of all single- and multi-file facades declared in some package of this module, where keys are '.'-separated package names.
@@ -267,6 +272,7 @@ class KmModule : KmModuleVisitor() {
  * @property multiFileClassParts the map of multi-file classes where keys are names of multi-file class parts,
  *   and values are names of the corresponding multi-file facades
  */
+@UnstableMetadataApi
 class KmPackageParts(
     val fileFacades: MutableList<String>,
     val multiFileClassParts: MutableMap<String, String>

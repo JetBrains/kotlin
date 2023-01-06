@@ -1,10 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kotlinp
 
+import kotlinx.metadata.jvm.UnstableMetadataApi
 import java.io.File
 import java.io.IOException
 import kotlin.system.exitProcess
@@ -40,7 +41,7 @@ object Main {
             val text = try {
                 when (file.extension) {
                     "class" -> kotlinp.renderClassFile(kotlinp.readClassFile(file))
-                    "kotlin_module" -> kotlinp.renderModuleFile(kotlinp.readModuleFile(file))
+                    "kotlin_module" -> @OptIn(UnstableMetadataApi::class) kotlinp.renderModuleFile(kotlinp.readModuleFile(file))
                     else -> throw KotlinpException("only .class and .kotlin_module files are supported")
                 }
             } catch (e: IOException) {

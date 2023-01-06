@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import junit.framework.TestCase.assertEquals
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import kotlinx.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,6 +33,7 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
 
     val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true))
 
+    @OptIn(UnstableMetadataApi::class)
     compile(file, disposable, tmpdir) { outputFile ->
         when (outputFile.extension) {
             "kotlin_module" -> {
@@ -130,8 +132,10 @@ private fun transformClassFileWithNodes(classFile: KotlinClassMetadata): KotlinC
     }
 
 @Suppress("DEPRECATION") // We're testing that reading/writing with KmNodes is identical to direct
+@OptIn(UnstableMetadataApi::class)
 private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
     KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
 
+@OptIn(UnstableMetadataApi::class)
 private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
     KotlinModuleMetadata.write(moduleFile.toKmModule())

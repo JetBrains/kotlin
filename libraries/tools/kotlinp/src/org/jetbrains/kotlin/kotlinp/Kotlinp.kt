@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kotlinp
 import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import kotlinx.metadata.jvm.UnstableMetadataApi
 import java.io.File
 
 class Kotlinp(private val settings: KotlinpSettings) {
@@ -34,10 +35,12 @@ class Kotlinp(private val settings: KotlinpSettings) {
         }
     }
 
+    @OptIn(UnstableMetadataApi::class)
     internal fun renderModuleFile(metadata: KotlinModuleMetadata?): String =
         if (metadata != null) ModuleFilePrinter(settings).print(metadata)
         else buildString { appendLine("unsupported file") }
 
+    @OptIn(UnstableMetadataApi::class)
     internal fun readModuleFile(file: File): KotlinModuleMetadata? =
         KotlinModuleMetadata.read(file.readBytes())
 }
