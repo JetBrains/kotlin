@@ -68,7 +68,11 @@ internal class JsIrLinkerLoader(
         var runtimeModule: ModuleDescriptorImpl? = null
 
         // TODO: deduplicate this code using part from klib.kt
-        fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
+        fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl {
+            if (current in descriptors) {
+                return descriptors.getValue(current)
+            }
+
             val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
             val lookupTracker = LookupTracker.DO_NOTHING
@@ -82,12 +86,15 @@ internal class JsIrLinkerLoader(
             )
             if (isBuiltIns) runtimeModule = md
 
-            val dependencies = dependencyGraph[current]!!.map { getModuleDescriptor(it) }
-            md.setDependencies(listOf(md) + dependencies)
-            md
+            descriptors[current] = md
+            return md
         }
 
-        return dependencyGraph.keys.associateBy { klib -> getModuleDescriptor(klib) }
+        val moduleDescriptorToKotlinLibrary = dependencyGraph.keys.associateBy { klib -> getModuleDescriptor(klib) }
+        return moduleDescriptorToKotlinLibrary
+            .onEach { (key, _) -> key.setDependencies(moduleDescriptorToKotlinLibrary.keys.toList()) }
+            .map<ModuleDescriptorImpl, KotlinLibrary, Pair<ModuleDescriptor, KotlinLibrary>> { it.key to it.value }
+            .toMap()
     }
 
     data class LoadedJsIr(val linker: JsIrLinker, val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>)

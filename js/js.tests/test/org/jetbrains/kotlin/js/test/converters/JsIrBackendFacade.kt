@@ -208,7 +208,7 @@ class JsIrBackendFacade(
 
         return getIrModuleInfoForKlib(
             moduleDescriptor,
-            sortDependencies(JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices)) + mainModuleLib,
+            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
             friendModules,
             filesToLoad,
             configuration,

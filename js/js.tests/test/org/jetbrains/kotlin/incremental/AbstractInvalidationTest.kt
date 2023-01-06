@@ -387,7 +387,7 @@ abstract class AbstractInvalidationTest(
             moduleSourceFiles,
             configuration,
             sourceModule.jsFrontEndResult.jsAnalysisResult,
-            sortDependencies(sourceModule.descriptors),
+            sortDependencies(sourceModule.moduleDependencies),
             icData,
             expectDescriptorToSymbol,
             IrFactoryImpl,

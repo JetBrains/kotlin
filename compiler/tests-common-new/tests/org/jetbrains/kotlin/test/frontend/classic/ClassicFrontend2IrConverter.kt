@@ -84,12 +84,13 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project,
             sourceFiles,
             configuration,
             analysisResult,
-            sortDependencies(JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices)),
+            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
             icData,
             expectDescriptorToSymbol,
             IrFactoryImpl,

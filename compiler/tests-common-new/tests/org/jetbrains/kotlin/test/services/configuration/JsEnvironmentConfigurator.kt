@@ -213,6 +213,16 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return dependencies.associateBy { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
         }
 
+        fun getAllDependenciesMappingFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, List<KotlinLibrary>> {
+            val allRecursiveLibraries: Map<KotlinLibrary, ModuleDescriptor> = getAllRecursiveLibrariesFor(module, testServices)
+            val m2l = allRecursiveLibraries.map { it.value to it.key }.toMap()
+
+            return allRecursiveLibraries.keys.associateWith { m ->
+                val descriptor = allRecursiveLibraries[m] ?: error("No descriptor found for library ${m.libraryName}")
+                descriptor.allDependencyModules.filter { it != descriptor }.map { m2l.getValue(it) }
+            }
+        }
+
         fun TestModule.hasFilesToRecompile(): Boolean {
             return files.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }
         }
