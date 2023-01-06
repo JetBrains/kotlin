@@ -528,6 +528,7 @@ internal class InsertImplicitCasts(
     // This is a kludge to remove IR-based descriptors where possible.
     private fun KotlinType.toNonIrBased(): KotlinType {
         if (this !is SimpleType) return this
+        if (this.isError) return this
         val newDescriptor = constructor.declarationDescriptor?.let {
             if (it is IrBasedDeclarationDescriptor<*> && it.owner.symbol.hasDescriptor)
                 it.owner.symbol.descriptor as ClassifierDescriptor
