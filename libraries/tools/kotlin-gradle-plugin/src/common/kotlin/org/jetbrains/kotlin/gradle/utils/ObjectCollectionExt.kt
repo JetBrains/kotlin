@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
@@ -28,4 +29,18 @@ internal fun <T> NamedDomainObjectContainer<T>.getOrCreate(
     }.get() else (if (configure != null) create(name, configure) else create(name)).also { value ->
         if (invokeWhenCreated != null) invokeWhenCreated(value)
     }
+}
+
+internal fun <T> NamedDomainObjectContainer<T>.maybeRegister(
+    name: String,
+    configure: (T.() -> Unit)? = null
+): NamedDomainObjectProvider<T> {
+    val entity = if (name in names) {
+        named(name)
+    } else {
+        register(name)
+    }
+
+    if (configure != null) entity.configure(configure)
+    return entity
 }

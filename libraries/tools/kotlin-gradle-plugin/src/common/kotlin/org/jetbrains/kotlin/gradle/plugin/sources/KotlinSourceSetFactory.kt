@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.maybeRegister
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
@@ -74,20 +75,35 @@ internal class DefaultKotlinSourceSetFactory(
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, "resources"))
 
-        project.configurations.maybeCreate(sourceSet.intransitiveMetadataConfigurationName).apply {
-            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            isVisible = false
-            isCanBeConsumed = false
-            isCanBeResolved = true
+        val dependencyConfigurationWithMetadata = with(sourceSet) {
+            @Suppress("DEPRECATION")
+            listOf(
+                apiConfigurationName to apiMetadataConfigurationName,
+                implementationConfigurationName to implementationMetadataConfigurationName,
+                compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
+                null to intransitiveMetadataConfigurationName
+            )
+        }
 
-            if (project.isKotlinGranularMetadataEnabled) {
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            }
+        dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
+            project.configurations.maybeRegister(metadataName) {
+                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                isVisible = false
+                isCanBeConsumed = false
 
-            project.afterEvaluate {
-                setJsCompilerIfNecessary(sourceSet, this@apply)
+                if (configurationName != null) {
+                    extendsFrom(project.configurations.maybeCreate(configurationName))
+                }
+
+                if (project.isKotlinGranularMetadataEnabled) {
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                }
+
+                project.afterEvaluate {
+                    setJsCompilerIfNecessary(sourceSet, this)
+                }
             }
         }
     }
