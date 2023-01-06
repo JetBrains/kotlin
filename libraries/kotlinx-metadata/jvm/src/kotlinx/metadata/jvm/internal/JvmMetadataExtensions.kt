@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -209,7 +209,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 if (fieldSignature != null) {
                     signature.field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
                         field.name = c[fieldSignature.name]
-                        field.desc = c[fieldSignature.desc]
+                        field.desc = c[fieldSignature.descriptor]
                     }.build()
                 }
                 if (getterSignature != null) {
@@ -323,6 +323,6 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     private fun JvmMemberSignature.toJvmMethodSignature(c: WriteContext): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {
             name = c[this@toJvmMethodSignature.name]
-            desc = c[this@toJvmMethodSignature.desc]
+            desc = c[this@toJvmMethodSignature.descriptor]
         }.build()
 }

@@ -1092,15 +1092,15 @@ public final class kotlinx/metadata/jvm/JvmExtensionsKt {
 
 public final class kotlinx/metadata/jvm/JvmFieldSignature : kotlinx/metadata/jvm/JvmMemberSignature {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public fun asString ()Ljava/lang/String;
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlinx/metadata/jvm/JvmFieldSignature;
 	public static synthetic fun copy$default (Lkotlinx/metadata/jvm/JvmFieldSignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/metadata/jvm/JvmFieldSignature;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getDesc ()Ljava/lang/String;
+	public fun getDescriptor ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/jvm/JvmFlag {
@@ -1134,10 +1134,11 @@ public final class kotlinx/metadata/jvm/JvmFunctionExtensionVisitor$Companion {
 }
 
 public abstract class kotlinx/metadata/jvm/JvmMemberSignature {
-	public abstract fun asString ()Ljava/lang/String;
-	public abstract fun getDesc ()Ljava/lang/String;
+	public final fun asString ()Ljava/lang/String;
+	public final fun getDesc ()Ljava/lang/String;
+	public abstract fun getDescriptor ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
-	public final fun toString ()Ljava/lang/String;
+	public abstract fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/jvm/JvmMetadataUtil {
@@ -1149,15 +1150,15 @@ public final class kotlinx/metadata/jvm/JvmMetadataUtil {
 
 public final class kotlinx/metadata/jvm/JvmMethodSignature : kotlinx/metadata/jvm/JvmMemberSignature {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public fun asString ()Ljava/lang/String;
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlinx/metadata/jvm/JvmMethodSignature;
 	public static synthetic fun copy$default (Lkotlinx/metadata/jvm/JvmMethodSignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/metadata/jvm/JvmMethodSignature;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getDesc ()Ljava/lang/String;
+	public fun getDescriptor ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public class kotlinx/metadata/jvm/JvmPackageExtensionVisitor : kotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor, kotlinx/metadata/KmPackageExtensionVisitor {

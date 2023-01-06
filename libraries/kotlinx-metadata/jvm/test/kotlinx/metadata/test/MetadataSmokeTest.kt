@@ -34,7 +34,7 @@ class MetadataSmokeTest {
 
         val inlineFunctions = classMetadata.toKmClass().functions
             .filter { Flag.Function.IS_INLINE(it.flags) }
-            .mapNotNull { it.signature?.asString() }
+            .mapNotNull { it.signature?.toString() }
 
         assertEquals(
             listOf("foo(Lkotlin/jvm/functions/Function0;)Ljava/lang/String;"),
