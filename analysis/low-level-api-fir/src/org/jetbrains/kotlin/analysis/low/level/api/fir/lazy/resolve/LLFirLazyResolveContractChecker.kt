@@ -24,7 +24,7 @@ internal class LLFirLazyResolveContractChecker {
 
     private fun checkIfCanLazyResolveToPhase( requestedPhase: FirResolvePhase) {
         val currentPhase = currentTransformerPhase.get() ?: return
-
+        if (currentPhase == FirResolvePhase.STATUS && currentPhase == requestedPhase) return
         if (requestedPhase >= currentPhase) {
             error(
                 """`lazyResolveToPhase($requestedPhase)` cannot be called from a transformer with a phase $currentPhase.
