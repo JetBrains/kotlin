@@ -55,7 +55,28 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name)
 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
+    /**
+     * @returns full package names that might be not empty (have some non-class declarations) in this provider
+     *
+     * In JVM, it's expensive to compute all the packages that might contain a Java class among dependencies.
+     * But, as we have all the metadata, we may be sure about top-level callables and type aliases.
+     * This method should only be used for sake of optimization to avoid having too many empty-list/null values in our caches.
+     */
+    abstract fun computePackageSetWithTopLevelCallables(): Set<String>?
+
+    /**
+     * TODO
+     */
+    abstract fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>?
+
+    abstract fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>?
 }
+
+/**
+ * Works almost as regular flatMap, but returns a set and returns null if any lambda call returned null
+ */
+inline fun <T, R> Iterable<T>.flatMapToNullableSet(transform: (T) -> Iterable<R>?): Set<R>? =
+    flatMapTo(mutableSetOf()) { transform(it) ?: return null }
 
 private fun FirSymbolProvider.getClassDeclaredMemberScope(classId: ClassId): FirScope? {
     val classSymbol = getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null

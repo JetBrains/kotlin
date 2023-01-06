@@ -77,4 +77,13 @@ class FirCloneableSymbolProvider(
     override fun getPackage(fqName: FqName): FqName? {
         return null
     }
+
+    override fun computePackageSetWithTopLevelCallables(): Set<String> = emptySet()
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
+        if (packageFqName == StandardClassIds.Cloneable.packageFqName)
+            setOf(StandardClassIds.Cloneable.shortClassName.asString())
+        else
+            emptySet()
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 }

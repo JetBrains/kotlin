@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -22,15 +25,43 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @NoMutableState
-class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
-    private val classCache = session.firCachesFactory.createCache(::computeClass)
+class FirCompositeSymbolProvider(
+    session: FirSession,
+    val providers: List<FirSymbolProvider>,
+    private val isCliMode: Boolean,
+) : FirSymbolProvider(session) {
+
+    private val classLikeCache = session.firCachesFactory.createCache(::computeClass)
     private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
     private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)
     private val topLevelPropertyCache = session.firCachesFactory.createCache(::computeTopLevelProperties)
     private val packageCache = session.firCachesFactory.createCache(::computePackage)
 
+    private val callablePackageSet: Set<String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computePackageSetWithTopLevelCallables()
+    }
+
+    private val knownTopLevelClassesByPackage: FirCache<FqName, Set<String>?, Nothing?> =
+        session.firCachesFactory.createCache(::knownTopLevelClassifiersInPackage)
+
+    private val callableNamesInPackage: FirCache<FqName, Set<Name>?, Nothing?> =
+        session.firCachesFactory.createCache(::computeCallableNamesInPackage)
+
+    private fun ensureNotNullForCli(v: Any?) {
+        require(!isCliMode || v != null) {
+            ""
+        }
+    }
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+        if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return emptyList()
         return topLevelCallableCache.getValue(CallableId(packageFqName, name))
+    }
+
+    private fun mayHaveTopLevelCallablesInPackage(packageFqName: FqName, name: Name): Boolean {
+        if (callablePackageSet != null && packageFqName.asString() !in callablePackageSet!!) return false
+        val callableNamesInPackage = callableNamesInPackage.getValue(packageFqName) ?: return true
+        return name in callableNamesInPackage
     }
 
     @FirSymbolProviderInternals
@@ -40,11 +71,13 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return
         destination += topLevelFunctionCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+        if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return
         destination += topLevelPropertyCache.getValue(CallableId(packageFqName, name))
     }
 
@@ -53,7 +86,18 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return classCache.getValue(classId)
+        val knownClassifierNames = knownTopLevelClassesByPackage.getValue(classId.packageFqName)
+        if (knownClassifierNames != null && !isNameForFunctionClass(classId)) {
+            val outerClassId = classId.outerClassId
+            if (outerClassId == null && classId.shortClassName.asString() !in knownClassifierNames) return null
+            if (outerClassId != null && classId.outermostClassId.shortClassName.asString() !in knownClassifierNames) return null
+        }
+
+        return classLikeCache.getValue(classId)
+    }
+
+    private fun isNameForFunctionClass(classId: ClassId): Boolean {
+        return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
     }
 
     @OptIn(FirSymbolProviderInternals::class)
@@ -76,4 +120,13 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByClassId(classId) }
+
+    override fun computePackageSetWithTopLevelCallables(): Set<String>? =
+        providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallables() }
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
+        providers.flatMapToNullableSet { it.knownTopLevelClassifiersInPackage(packageFqName) }
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+        providers.flatMapToNullableSet { it.computeCallableNamesInPackage(packageFqName) }
 }

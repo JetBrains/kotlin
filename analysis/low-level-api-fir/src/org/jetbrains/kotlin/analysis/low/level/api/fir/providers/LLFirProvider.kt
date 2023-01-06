@@ -113,6 +113,12 @@ internal class LLFirProvider(
         override fun getPackage(fqName: FqName): FqName? =
             providerHelper.getPackage(fqName)
 
+        override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
+
+        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = null
+
+        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
+
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
             return getFirClassifierByFqName(classId)?.symbol
         }

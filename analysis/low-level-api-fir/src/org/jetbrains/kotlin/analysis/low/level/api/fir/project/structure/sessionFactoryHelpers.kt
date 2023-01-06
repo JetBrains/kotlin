@@ -49,7 +49,7 @@ internal inline fun createCompositeSymbolProvider(
     session: FirSession,
     createSubProviders: MutableList<FirSymbolProvider>.() -> Unit
 ): FirCompositeSymbolProvider =
-    FirCompositeSymbolProvider(session, buildList(createSubProviders))
+    FirCompositeSymbolProvider(session, buildList(createSubProviders), isCliMode = false)
 
 @SessionConfiguration
 internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {

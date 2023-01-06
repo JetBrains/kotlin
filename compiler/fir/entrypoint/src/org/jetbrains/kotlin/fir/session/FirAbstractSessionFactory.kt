@@ -55,7 +55,7 @@ abstract class FirAbstractSessionFactory {
 
             val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider)
 
-            val symbolProvider = FirCompositeSymbolProvider(this, providers)
+            val symbolProvider = FirCompositeSymbolProvider(this, providers, isCliMode = true)
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
@@ -111,10 +111,10 @@ abstract class FirAbstractSessionFactory {
                 dependencyProviders,
             )
 
-            register(FirSymbolProvider::class, FirCompositeSymbolProvider(this, providers))
+            register(FirSymbolProvider::class, FirCompositeSymbolProvider(this, providers, isCliMode = true))
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCompositeSymbolProvider(this, dependencyProviders))
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCompositeSymbolProvider(this, dependencyProviders, isCliMode = true))
         }
     }
 

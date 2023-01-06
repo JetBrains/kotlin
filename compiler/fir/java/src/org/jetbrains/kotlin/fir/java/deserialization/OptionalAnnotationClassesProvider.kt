@@ -45,13 +45,22 @@ class OptionalAnnotationClassesProvider(
         return@lazy Pair(optionalAnnotationClasses, optionalAnnotationPackages)
     }
 
+    private val optionalAnnotationClassNamesByPackage: Map<FqName, Set<String>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        buildMap<FqName, MutableSet<String>> {
+            for (classId in optionalAnnotationClassesAndPackages.first.keys) {
+                getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName.asString())
+            }
+        }
+    }
+
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         return emptyList()
     }
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String> = optionalAnnotationClassesAndPackages.second
 
-    override fun mayHaveTopLevelClass(classId: ClassId): Boolean = classId in optionalAnnotationClassesAndPackages.first
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String> =
+        optionalAnnotationClassNamesByPackage[packageFqName] ?: emptySet()
 
     override fun extractClassMetadata(
         classId: ClassId,
