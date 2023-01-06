@@ -272,6 +272,7 @@
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin JS"
+/libraries/kotlin-dom-api-compat/ "Kotlin JS"
 /libraries/tools/gradle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotation-processing/ "Kotlin Build Tools"
