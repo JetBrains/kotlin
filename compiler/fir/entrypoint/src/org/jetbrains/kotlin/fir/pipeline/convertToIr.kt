@@ -77,29 +77,16 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
     linkViaSignatures: Boolean,
     dependentComponents: List<Fir2IrComponents>
 ): Fir2IrResult {
-    if (linkViaSignatures) {
-        val signaturer = JvmIdSignatureDescriptor(mangler = JvmDescriptorMangler(mainDetector = null))
-        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            session, scopeSession, fir,
-            session.languageVersionSettings, signaturer, fir2IrExtensions,
-            FirJvmKotlinMangler(session),
-            JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions,
-            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
-            generateSignatures = true,
-            dependentComponents = dependentComponents
-        )
-    } else {
-        return Fir2IrConverter.createModuleFragmentWithoutSignatures(
-            session, scopeSession, fir,
-            session.languageVersionSettings, fir2IrExtensions,
-            FirJvmKotlinMangler(session),
-            JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions,
-            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            dependentComponents = dependentComponents
-        )
-    }
+    val signaturer = JvmIdSignatureDescriptor(mangler = JvmDescriptorMangler(mainDetector = null))
+    return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+        session, scopeSession, fir,
+        session.languageVersionSettings, signaturer, fir2IrExtensions,
+        FirJvmKotlinMangler(),
+        JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
+        Fir2IrJvmSpecialAnnotationSymbolProvider(),
+        irGeneratorExtensions,
+        kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
+        generateSignatures = linkViaSignatures,
+        dependentComponents = dependentComponents
+    )
 }

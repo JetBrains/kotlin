@@ -59,11 +59,14 @@ class Fir2IrConverter(
         irGenerationExtensions: Collection<IrGenerationExtension>,
         fir2irVisitor: Fir2IrVisitor,
         fir2IrExtensions: Fir2IrExtensions,
+        shouldPreCache: Boolean
     ) {
         for (firFile in allFirFiles) {
             registerFileAndClasses(firFile, irModuleFragment)
         }
-        classifierStorage.preCacheBuiltinClasses()
+        if (shouldPreCache) {
+            classifierStorage.preCacheBuiltinClasses()
+        }
         // The file processing is performed phase-to-phase:
         //   1. Creation of all non-local regular classes
         //   2. Class header processing (type parameters, supertypes, this receiver)
@@ -424,6 +427,20 @@ class Fir2IrConverter(
             }
         }
 
+        private fun createSymbolTable(
+            linkViaSignatures: Boolean,
+            signatureComposer: FirBasedSignatureComposer,
+            irFactory: IrFactory,
+            signaturer: IdSignatureComposer
+        ): SymbolTable {
+            return if (!linkViaSignatures) {
+                val stubSignaturer = DescriptorSignatureComposerStub()
+                SymbolTable(stubSignaturer, irFactory)
+            } else {
+                SymbolTable(WrappedDescriptorSignatureComposer(signaturer, signatureComposer), irFactory)
+            }
+        }
+
         fun createModuleFragmentWithSignaturesIfNeeded(
             session: FirSession,
             scopeSession: ScopeSession,
@@ -441,48 +458,16 @@ class Fir2IrConverter(
             kotlinBuiltIns: KotlinBuiltIns,
             dependentComponents: List<Fir2IrComponents>
         ): Fir2IrResult {
-            if (!generateSignatures) {
-                return createModuleFragmentWithoutSignatures(
-                    session, scopeSession, firFiles, languageVersionSettings,
-                    fir2IrExtensions, mangler, irMangler, irFactory,
-                    visibilityConverter, specialSymbolProvider, irGenerationExtensions,
-                    kotlinBuiltIns, dependentComponents
-                )
-            }
-            val signatureComposer = FirBasedSignatureComposer(mangler, dependentComposers = dependentComponents.map { it.signatureComposer as FirBasedSignatureComposer })
-            val wrappedSignaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer)
-            val symbolTable = SymbolTable(wrappedSignaturer, irFactory, dependentTables = dependentComponents.map { it.symbolTable })
+            val otherComponents = dependentComponents.firstOrNull()
+            val signatureComposer = otherComponents?.signatureComposer as FirBasedSignatureComposer? ?: FirBasedSignatureComposer(mangler)
+            val symbolTable =
+                otherComponents?.symbolTable ?: createSymbolTable(generateSignatures, signatureComposer, irFactory, signaturer)
+
             return createModuleFragmentWithSymbolTable(
                 session, scopeSession, firFiles, languageVersionSettings,
                 fir2IrExtensions, irMangler, irFactory, visibilityConverter,
                 specialSymbolProvider, irGenerationExtensions, signatureComposer,
                 symbolTable, generateSignatures = true, kotlinBuiltIns = kotlinBuiltIns, dependentComponents = dependentComponents
-            )
-        }
-
-        fun createModuleFragmentWithoutSignatures(
-            session: FirSession,
-            scopeSession: ScopeSession,
-            firFiles: List<FirFile>,
-            languageVersionSettings: LanguageVersionSettings,
-            fir2IrExtensions: Fir2IrExtensions,
-            mangler: FirMangler,
-            irMangler: KotlinMangler.IrMangler,
-            irFactory: IrFactory,
-            visibilityConverter: Fir2IrVisibilityConverter,
-            specialSymbolProvider: Fir2IrSpecialSymbolProvider,
-            irGenerationExtensions: Collection<IrGenerationExtension>,
-            kotlinBuiltIns: KotlinBuiltIns,
-            dependentComponents: List<Fir2IrComponents>
-        ): Fir2IrResult {
-            val signatureComposer = FirBasedSignatureComposer(mangler, dependentComposers = dependentComponents.map { it.signatureComposer as FirBasedSignatureComposer })
-            val signaturer = DescriptorSignatureComposerStub()
-            val symbolTable = SymbolTable(signaturer, irFactory, dependentTables = dependentComponents.map { it.symbolTable })
-            return createModuleFragmentWithSymbolTable(
-                session, scopeSession, firFiles, languageVersionSettings,
-                fir2IrExtensions, irMangler, irFactory, visibilityConverter,
-                specialSymbolProvider, irGenerationExtensions, signatureComposer,
-                symbolTable, generateSignatures = false, kotlinBuiltIns = kotlinBuiltIns, dependentComponents = dependentComponents
             )
         }
 
@@ -514,7 +499,8 @@ class Fir2IrConverter(
             val classifierStorage = Fir2IrClassifierStorage(components, dependentComponents.map { it.classifierStorage })
             components.classifierStorage = classifierStorage
             components.delegatedMemberGenerator = DelegatedMemberGenerator(components)
-            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, dependentComponents.map { it.declarationStorage })
+            val declarationStorage =
+                Fir2IrDeclarationStorage(components, moduleDescriptor, dependentComponents.map { it.declarationStorage })
             components.declarationStorage = declarationStorage
             components.visibilityConverter = visibilityConverter
             val typeConverter = Fir2IrTypeConverter(components)
@@ -547,7 +533,12 @@ class Fir2IrConverter(
             }
 
             converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, fir2IrExtensions
+                allFirFiles,
+                irModuleFragment,
+                irGenerationExtensions,
+                fir2irVisitor,
+                fir2IrExtensions,
+                shouldPreCache = dependentComponents.isEmpty()
             )
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)

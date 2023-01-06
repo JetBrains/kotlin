@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 
 @NoMutableState
-class FirJvmKotlinMangler(private val session: FirSession) : AbstractKotlinMangler<FirDeclaration>(), FirMangler {
+class FirJvmKotlinMangler : AbstractKotlinMangler<FirDeclaration>(), FirMangler {
 
     override fun FirDeclaration.mangleString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.FULL, compatibleMode).computeMangle(this)
 
@@ -31,6 +30,6 @@ class FirJvmKotlinMangler(private val session: FirSession) : AbstractKotlinMangl
     }
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
-        return FirJvmMangleComputer(StringBuilder(256), mode, session)
+        return FirJvmMangleComputer(StringBuilder(256), mode)
     }
 }
