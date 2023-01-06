@@ -23,6 +23,9 @@ class JvmDeclarationOrigin(
     val descriptor: DeclarationDescriptor?,
     val parametersForJvmOverload: List<KtParameter?>? = null
 ) {
+    override fun toString(): String =
+        if (this == NO_ORIGIN) "NO_ORIGIN" else "origin=$originKind element=${element?.javaClass?.simpleName} descriptor=$descriptor"
+
     companion object {
         @JvmField
         val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)

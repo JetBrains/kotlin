@@ -142,6 +142,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private var done = false
 
     fun convert(): List<KaptStub> {
+        if (kaptContext.logger.isVerbose) {
+            dumpDeclarationOrigins()
+        }
+
         if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
 
@@ -152,6 +156,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         return stubs
+    }
+
+    private fun dumpDeclarationOrigins() {
+        kaptContext.logger.info("Declaration origins:")
+        for ((key, value) in kaptContext.origins) {
+            val element = when (key) {
+                is ClassNode -> "class ${key.name}"
+                is FieldNode -> "field ${key.name}:${key.desc}"
+                is MethodNode -> "method ${key.name}${key.desc}"
+                else -> key.javaClass.toString()
+            }
+            kaptContext.logger.info("$element -> $value")
+        }
     }
 
     private fun generateNonExistentClass(): JCCompilationUnit {
