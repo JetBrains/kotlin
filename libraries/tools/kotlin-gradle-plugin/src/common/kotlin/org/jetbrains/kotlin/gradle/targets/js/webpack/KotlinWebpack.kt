@@ -119,7 +119,7 @@ constructor(
     @get:Internal
     val entry: Provider<RegularFile>
         get() = inputFilesDirectory.map {
-            it.file(entryModuleName.get() + ".js")
+            it.file(entryModuleName.get() + if (platformType == KotlinPlatformType.wasm) ".mjs" else ".js")
         }
 
     init {
