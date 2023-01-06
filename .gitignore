@@ -56,6 +56,7 @@ build/
 .idea/artifacts/kotlin_reflect_jar.xml
 .idea/artifacts/kotlin_stdlib_js_ir_*
 .idea/artifacts/kotlin_test_js_ir_*
+.idea/artifacts/kotlin_dom_api_compat_*
 .idea/artifacts/kotlin_stdlib_wasm_*
 .idea/artifacts/kotlin_test_wasm_*
 .idea/artifacts/kotlinx_atomicfu_runtime_*
