@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
@@ -48,7 +47,18 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
     @OptIn(FirSymbolProviderInternals::class)
     override fun afterPhase() {
         super.afterPhase()
-        session.generatedDeclarationsSymbolProvider?.enable()
+
+        val generatedDeclarationsSymbolProvider = session.generatedDeclarationsSymbolProvider
+        generatedDeclarationsSymbolProvider?.enable()
+
+        // This part is a bit hacky way to clear the caches in CLI FirCompositeSymbolProvider when there are plugins that may generate new entities.
+        // It's necessary because otherwise, when symbol provider is being queried on the stage of compiler-required annotations resolution
+        // we record incorrect (incomplete) results to its cache, so after the phase is completed we just start from the scratch
+        val symbolProvider = session.symbolProvider
+        if (generatedDeclarationsSymbolProvider != null && symbolProvider is FirCompositeSymbolProvider) {
+            @OptIn(SessionConfiguration::class)
+            session.register(FirSymbolProvider::class, symbolProvider.createCopyWithCleanCaches())
+        }
     }
 }
 

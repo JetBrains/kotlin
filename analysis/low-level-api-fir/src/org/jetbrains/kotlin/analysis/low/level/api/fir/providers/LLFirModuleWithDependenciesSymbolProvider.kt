@@ -77,6 +77,12 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         getPackageWithoutDependencies(fqName)
             ?: dependencyProvider.getPackage(fqName)
 
+    override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = null
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
+
 
     fun getPackageWithoutDependencies(fqName: FqName): FqName? =
         providers.firstNotNullOfOrNull { it.getPackage(fqName) }
@@ -150,6 +156,10 @@ internal abstract class LLFirDependentModuleProviders(
             }
         }
 
+    // TODO: Consider having proper implementations for sake of optimizations
+    override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = null
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
     private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
         destination: MutableList<S>,

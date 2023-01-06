@@ -77,6 +77,18 @@ open class FirBuiltinSymbolProvider(
         } ?: syntheticFunctionalInterfaceCache.tryGetSyntheticFunctionalInterface(classId)
     }
 
+    override fun computePackageSetWithTopLevelCallables(): Set<String> =
+        allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
+        allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) { fragment ->
+            fragment.classDataFinder.allClassIds.map { it.shortClassName.asString() }
+        }.orEmpty()
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
+        allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) {
+            it.getTopLevelCallableNames()
+        }.orEmpty()
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -153,6 +165,9 @@ open class FirBuiltinSymbolProvider(
         fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
             return getTopLevelFunctionSymbols(name)
         }
+
+        fun getTopLevelCallableNames(): Collection<Name> =
+            packageProto.`package`.functionList.map { nameResolver.getName(it.name) }
 
         fun getTopLevelFunctionSymbols(name: Name): List<FirNamedFunctionSymbol> {
             return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
