@@ -68,6 +68,16 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     fun enable() {
         disabled = false
     }
+
+    override fun computePackageSetWithTopLevelCallables(): Set<String>? =
+        if (disabled) null else delegate.computePackageSetWithTopLevelCallables()
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
+        if (disabled) null else delegate.knownTopLevelClassifiersInPackage(packageFqName)
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+        if (disabled) null else delegate.computeCallableNamesInPackage(packageFqName)
+
 }
 
 val FirSession.generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()

@@ -53,6 +53,35 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         hasPackage(packageFqName)
     }
 
+    private val callableNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>, Nothing?> =
+        cachesFactory.createLazyValue {
+            computeNamesGroupedByPackage(
+                FirDeclarationGenerationExtension::getTopLevelCallableIds,
+                CallableId::packageName, CallableId::callableName
+            )
+        }
+
+    private val classNamesInPackageCache: FirLazyValue<Map<FqName, Set<String>>, Nothing?> =
+        cachesFactory.createLazyValue {
+            computeNamesGroupedByPackage(
+                FirDeclarationGenerationExtension::getTopLevelClassIds,
+                ClassId::getPackageFqName
+            ) { it.shortClassName.asString() }
+        }
+
+    private fun <I, N> computeNamesGroupedByPackage(
+        ids: FirDeclarationGenerationExtension.() -> Collection<I>,
+        packageFqName: (I) -> FqName,
+        shortName: (I) -> N,
+    ): Map<FqName, Set<N>> =
+        buildMap<FqName, MutableSet<N>> {
+            for (extension in extensions) {
+                for (id in extension.ids()) {
+                    getOrPut(packageFqName(id)) { mutableSetOf() }.add(shortName(id))
+                }
+            }
+        }
+
     private val extensionsByTopLevelClassId: FirLazyValue<Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
         session.firCachesFactory.createLazyValue {
             extensions.flatGroupBy { it.topLevelClassIdsCache.getValue() }
@@ -139,4 +168,15 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     override fun getPackage(fqName: FqName): FqName? {
         return fqName.takeIf { packageCache.getValue(fqName, null) }
     }
+
+    override fun computePackageSetWithTopLevelCallables(): Set<String> =
+        extensions.flatMapTo(mutableSetOf()) { extension ->
+            extension.topLevelCallableIdsCache.getValue(null).map { it.packageName.asString() }
+        }
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
+        classNamesInPackageCache.getValue()[packageFqName] ?: emptySet()
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
+        callableNamesInPackageCache.getValue()[packageFqName].orEmpty()
 }

@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
@@ -14,13 +17,16 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -96,18 +102,63 @@ class KlibBasedSymbolProvider(
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String> = fragmentNamesInLibraries.keys
 
-    // Looks like it's expensive to compute the presence of a class properly for KLib
-    override fun mayHaveTopLevelClass(classId: ClassId): Boolean = true
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String> =
+        buildSet {
+            forEachFragmentInPackage(packageFqName) { _, fragment, nameResolver ->
+                for (classNameId in fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()) {
+                    add(nameResolver.getClassId(classNameId).shortClassName.asString())
+                }
+            }
+        }
 
     @OptIn(SymbolInternals::class)
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
-        val packageStringName = classId.packageFqName.asString()
+        forEachFragmentInPackage(classId.packageFqName) { resolvedLibrary, fragment, nameResolver ->
+            val finder = KlibMetadataClassDataFinder(fragment, nameResolver)
+            val classProto = finder.findClassData(classId)?.classProto ?: return@forEachFragmentInPackage
 
-        val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return null
+            val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
+            val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
+
+            return ClassMetadataFindResult.NoMetadata { symbol ->
+                val source = createDeserializedContainerSource(resolvedLibrary,
+
+                    classId.packageFqName
+                )
+
+                deserializeClassToSymbol(
+                    classId,
+                    classProto,
+                    symbol,
+                    nameResolver,
+                    session,
+                    moduleData,
+                    annotationDeserializer,
+                    kotlinScopeProvider,
+                    KlibMetadataSerializerProtocol,
+                    parentContext,
+                    source,
+                    origin = defaultDeserializationOrigin,
+                    deserializeNestedClass = this::getClass,
+                )
+                symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+            }
+        }
+
+        return null
+    }
+
+    private inline fun forEachFragmentInPackage(
+        packageFqName: FqName,
+        f: (KotlinResolvedLibrary, ProtoBuf.PackageFragment, NameResolver) -> Unit
+    ) {
+        val packageStringName = packageFqName.asString()
+
+        val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return
 
         for (resolvedLibrary in librariesWithFragment) {
             for (packageMetadataPart in resolvedLibrary.library.packageMetadataParts(packageStringName)) {
-                val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
+
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, packageMetadataPart)
 
                 val nameResolver = NameResolverImpl(
@@ -115,35 +166,9 @@ class KlibBasedSymbolProvider(
                     fragment.qualifiedNames,
                 )
 
-                val finder = KlibMetadataClassDataFinder(fragment, nameResolver)
-                val classProto = finder.findClassData(classId)?.classProto ?: continue
-
-                val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
-
-                return ClassMetadataFindResult.NoMetadata { symbol ->
-                    val source = createDeserializedContainerSource(resolvedLibrary, classId.packageFqName)
-
-                    deserializeClassToSymbol(
-                        classId,
-                        classProto,
-                        symbol,
-                        nameResolver,
-                        session,
-                        moduleData,
-                        annotationDeserializer,
-                        kotlinScopeProvider,
-                        KlibMetadataSerializerProtocol,
-                        parentContext,
-                        source,
-                        origin = defaultDeserializationOrigin,
-                        deserializeNestedClass = this::getClass,
-                    )
-                    symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
-                }
+                f(resolvedLibrary, fragment, nameResolver)
             }
         }
-
-        return null
     }
 
     private fun createDeserializedContainerSource(

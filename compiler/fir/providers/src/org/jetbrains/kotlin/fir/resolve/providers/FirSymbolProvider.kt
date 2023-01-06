@@ -55,7 +55,36 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name)
 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
+
+    /**
+     * All the three "compute*" functions below have the following common contract:
+     * - They return null in case necessary name set is too hard/impossible to compute.
+     * - They might return a strict superset of the name set, i.e. the resulting set might contain some names that do not belong to the provider.
+     * - It might be non-cheap to compute them on each query, thus their result should be cached properly.
+     *
+     * @returns full package names that contain some top-level callables
+     */
+    abstract fun computePackageSetWithTopLevelCallables(): Set<String>?
+
+    /**
+     * @returns top-level classifier names that belong to `packageFqName` or null if it's complicated to compute the set
+     *
+     * All usages must take into account that the result might not include kotlin.FunctionN
+     * (and others for which org.jetbrains.kotlin.builtins.functions.FunctionClassKind.Companion.byClassNamePrefix not-null)
+     */
+    abstract fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>?
+
+    /**
+     * @returns top-level callable names that belong to `packageFqName` or null if it's complicated to compute the set
+     */
+    abstract fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>?
 }
+
+/**
+ * Works almost as regular flatMap, but returns a set and returns null if any lambda call returned null
+ */
+inline fun <T, R> Iterable<T>.flatMapToNullableSet(transform: (T) -> Iterable<R>?): Set<R>? =
+    flatMapTo(mutableSetOf()) { transform(it) ?: return null }
 
 private fun FirSymbolProvider.getClassDeclaredMemberScope(classId: ClassId): FirScope? {
     val classSymbol = getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null

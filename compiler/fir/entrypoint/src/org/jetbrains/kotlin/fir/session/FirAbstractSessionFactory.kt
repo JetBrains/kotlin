@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.*
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -55,7 +58,7 @@ abstract class FirAbstractSessionFactory {
 
             val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider)
 
-            val symbolProvider = FirCompositeSymbolProvider(this, providers)
+            val symbolProvider = FirCachingCompositeSymbolProvider(this, providers)
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
@@ -111,10 +114,16 @@ abstract class FirAbstractSessionFactory {
                 dependencyProviders,
             )
 
-            register(FirSymbolProvider::class, FirCompositeSymbolProvider(this, providers))
+            register(
+                FirSymbolProvider::class,
+                FirCachingCompositeSymbolProvider(
+                    this, providers,
+                    expectedCachesToBeCleanedOnce = generatedSymbolsProvider != null
+                )
+            )
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCompositeSymbolProvider(this, dependencyProviders))
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
         }
     }
 
@@ -139,7 +148,7 @@ abstract class FirAbstractSessionFactory {
         fun FirSymbolProvider.collectProviders() {
             if (!visited.add(this)) return
             when {
-                this is FirCompositeSymbolProvider -> {
+                this is FirCachingCompositeSymbolProvider -> {
                     for (provider in providers) {
                         provider.collectProviders()
                     }

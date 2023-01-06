@@ -75,6 +75,26 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             if (fqName in state.allSubPackages) return fqName
             return null
         }
+
+        override fun computePackageSetWithTopLevelCallables(): Set<String> =
+            state.allSubPackages.mapTo(mutableSetOf()) { it.asString() }
+
+        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
+            state.classifierInPackage[packageFqName].orEmpty().mapTo(mutableSetOf()) { it.asString() }
+
+        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = buildSet {
+            for (key in state.functionMap.keys) {
+                if (key.packageName == packageFqName) {
+                    add(key.callableName)
+                }
+            }
+
+            for (key in state.propertyMap.keys) {
+                if (key.packageName == packageFqName) {
+                    add(key.callableName)
+                }
+            }
+        }
     }
 
     private val FirDeclaration.file: FirFile
@@ -109,6 +129,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
             if (!classId.isNestedClass && !classId.isLocal) {
                 data.state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
+                data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
             }
 
             regularClass.acceptChildren(this, data)
@@ -120,6 +141,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data.state.classifierMap.put(classId, typeAlias)?.let {
                 data.nameConflictsTracker?.registerClassifierRedeclaration(classId, typeAlias.symbol, data.file, it.symbol, prevFile)
             }
+
+            data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
         }
 
         override fun visitPropertyAccessor(
@@ -166,10 +189,11 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     private val state = State()
 
     private class State {
-        val fileMap = mutableMapOf<FqName, List<FirFile>>()
+        val fileMap: MutableMap<FqName, List<FirFile>> = mutableMapOf<FqName, List<FirFile>>()
         val allSubPackages = mutableSetOf<FqName>()
         val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
         val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
+        val classifierInPackage = mutableMapOf<FqName, MutableSet<Name>>()
         val classesInPackage = mutableMapOf<FqName, MutableSet<Name>>()
         val functionMap = mutableMapOf<CallableId, List<FirNamedFunctionSymbol>>()
         val propertyMap = mutableMapOf<CallableId, List<FirPropertySymbol>>()
@@ -195,6 +219,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             constructorMap.putAll(other.constructorMap)
             callableContainerMap.putAll(other.callableContainerMap)
             classesInPackage.putAll(other.classesInPackage)
+            classifierInPackage.putAll(other.classifierInPackage)
         }
     }
 
