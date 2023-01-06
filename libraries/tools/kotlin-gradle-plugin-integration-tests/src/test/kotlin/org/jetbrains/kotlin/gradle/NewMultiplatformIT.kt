@@ -1013,24 +1013,23 @@ class NewMultiplatformIT : BaseGradleIT() {
                     }
                 """.trimIndent()
             )
-            val metadataDependencyRegex = "$pathPrefix(.*?)->(.*)".toRegex()
 
             build(
                 "printMetadataFiles",
                 options = buildOptions.copy(jsCompilerType = KotlinJsCompilerType.IR)
             ) {
-                assertSuccessful()
+                // After introducing Resolvable Metadata Dependencies configuration
+                // resolving nodeJsMainResolvableDependenciesMetadata is expected to fail for dependencies that have published
+                // both Legacy and IR klibs.
+                // Previously these Metadata Dependencies Configurations got resolved into platform artifacts which is incorrect
+                // and is just result of gradle's attempt to resolve to anything.
+                // TODO: Remove this test after removing Resolvable Metadata Dependencies for platform source sets.
+                assertFailed()
 
-                val expectedFileName = "sample-lib-nodejsir-1.0.klib"
-
-                val paths = metadataDependencyRegex
-                    .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
-                    .filter { (_, f) -> "sample-lib" in f }
-                    .toSet()
-
-                Assert.assertEquals(
-                    setOf("nodeJsMainResolvable$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName),
-                    paths
+                assertContains(
+                    "However we cannot choose between the following variants of com.example:sample-lib-nodejs:1.0:",
+                    "- nodeJsIrApiElements-published",
+                    "- nodeJsLegacyApiElements-published",
                 )
             }
         }
