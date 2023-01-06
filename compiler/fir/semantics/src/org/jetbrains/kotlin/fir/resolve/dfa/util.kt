@@ -56,6 +56,11 @@ val FirElement.symbol: FirBasedSymbol<*>?
 
 private fun FirBasedSymbol<*>?.unwrapFakeOverridesIfNecessary(): FirBasedSymbol<*>? {
     if (this !is FirCallableSymbol) return this
+    // This is necessary only for sake of optimizations necessary because this is a really hot place.
+    // Not having `dispatchReceiverType` means that this is a local/top-level property that can't be a fake override.
+    // And at the same time, checking a field is much faster than a couple of attributes (0.3 secs at MT Full Kotlin)
+    if (this.dispatchReceiverType == null) return this
+
     return this.unwrapFakeOverrides()
 }
 
