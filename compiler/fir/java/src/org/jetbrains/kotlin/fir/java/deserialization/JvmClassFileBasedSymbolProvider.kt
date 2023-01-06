@@ -99,7 +99,7 @@ class JvmClassFileBasedSymbolProvider(
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String> = packagePartProvider.computePackageSetWithNonClassDeclarations()
 
-    override fun mayHaveTopLevelClass(classId: ClassId): Boolean = javaFacade.hasTopLevelClassOf(classId)
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {

@@ -45,6 +45,12 @@ class JavaSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
         if (javaFacade.hasTopLevelClassOf(classId)) getFirJavaClass(classId) else null
 
+    override fun computePackageSetWithTopLevelCallables(): Set<String> = emptySet()
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+
     private fun getFirJavaClass(classId: ClassId): FirRegularClassSymbol? =
         classCache.getValue(classId, classId.outerClassId?.let { getFirJavaClass(it) })
 

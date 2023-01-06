@@ -124,7 +124,25 @@ abstract class AbstractFirDeserializedSymbolProvider(
     // This method should only be used for sake of optimization to avoid having too many empty-list/null values in our caches
     protected abstract fun computePackageSetWithNonClassDeclarations(): Set<String>
 
-    protected abstract fun mayHaveTopLevelClass(classId: ClassId): Boolean
+    override fun computePackageSetWithTopLevelCallables(): Set<String> = computePackageSetWithNonClassDeclarations()
+
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = allNamesByPackage.getValue(packageFqName)
+
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? {
+        val classesInPackage = knownTopLevelClassesInPackage(packageFqName) ?: return null
+
+        if (packageFqName.asString() !in packageNamesForNonClassDeclarations) return classesInPackage
+
+        val typeAliasNames = typeAliasesNamesByPackage.getValue(packageFqName)
+        if (typeAliasNames.isEmpty()) return classesInPackage
+
+        return buildSet {
+            addAll(classesInPackage)
+            typeAliasNames.mapTo(this) { it.asString() }
+        }
+    }
+
+    protected abstract fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>?
 
     protected abstract fun extractClassMetadata(
         classId: ClassId,
@@ -238,6 +256,11 @@ abstract class AbstractFirDeserializedSymbolProvider(
             // If that's the case, `classCache` should contain a value for `classId`.
         }
         return classCache.getValue(classId, parentContext)
+    }
+
+    private fun mayHaveTopLevelClass(topLevelClassId: ClassId): Boolean {
+        val knownClassNames = knownTopLevelClassifiersInPackage(topLevelClassId.packageFqName) ?: return true
+        return topLevelClassId.shortClassName.asString() in knownClassNames
     }
 
     private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
