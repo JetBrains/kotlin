@@ -613,6 +613,7 @@ tasks {
 
     register("jsIrCompilerTest") {
         dependsOn(":js:js.tests:jsIrTest")
+        dependsOn(":js:js.tests:jsStdlibApiTest")
     }
 
     register("wasmCompilerTest") {
