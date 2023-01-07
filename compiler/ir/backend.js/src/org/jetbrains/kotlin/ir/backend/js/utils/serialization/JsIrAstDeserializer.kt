@@ -11,97 +11,454 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragmen
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
-import org.jetbrains.kotlin.protobuf.CodedInputStream
-import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializerBase
-import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
-import java.io.InputStream
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
+import java.util.*
+import java.util.ArrayDeque
 
-class JsIrAstDeserializer : JsAstDeserializerBase() {
-    override val scope = emptyScope
+fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragment {
+    return JsIrAstDeserializer(input).readFragment()
+}
 
-    fun deserialize(input: InputStream): JsIrProgramFragment {
-        return deserialize(Chunk.parseFrom(CodedInputStream.newInstance(input).apply { setRecursionLimit(4096) }))
+private class JsIrAstDeserializer(private val source: ByteArray) {
+
+    private var offset = 0
+
+    private val stringTable = readArray { readString() }
+    private val nameTable = readArray { readName() }
+
+    private val scope = emptyScope
+    private val fileStack: Deque<String> = ArrayDeque()
+
+    private fun readByte(): Byte {
+        return source[offset++]
     }
 
-    fun deserialize(proto: Chunk): JsIrProgramFragment {
-        stringTable += proto.stringTable.entryList
-        nameTable += proto.nameTable.entryList
-        nameCache += nameTable.map { null }
-        try {
-            return deserialize(proto.fragment)
-        } finally {
-            stringTable.clear()
-            nameTable.clear()
-            nameCache.clear()
+    private fun readBoolean(): Boolean {
+        return readByte() != 0.toByte()
+    }
+
+    private fun readInt(): Int {
+        var result = readByte().toInt() // no need to mask the highest bit
+        result = (result shl 8) or (readByte().toInt() and 0xFF)
+        result = (result shl 8) or (readByte().toInt() and 0xFF)
+        result = (result shl 8) or (readByte().toInt() and 0xFF)
+        return result
+    }
+
+    private fun readLong(): Long {
+        var result = readByte().toLong() // no need to mask the highest bit
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        result = (result shl 8) or (readByte().toLong() and 0xFF)
+        return result
+    }
+
+    private fun readDouble(): Double {
+        return Double.fromBits(readLong())
+    }
+
+    private fun readString(): String {
+        val length = readInt()
+        val result = String(source, offset, length, SerializationCharset)
+        offset += length
+        return result
+    }
+
+    private inline fun <reified T> readArray(readElement: () -> T): Array<T> {
+        return Array<T>(readInt()) { readElement() }
+    }
+
+    private inline fun readRepeated(readElement: () -> Unit) {
+        var length = readInt()
+        while (length-- > 0) {
+            readElement()
         }
     }
 
-    private fun deserialize(proto: Fragment): JsIrProgramFragment {
-        val fragment = JsIrProgramFragment(proto.packageFqn)
-
-        fragment.importedModules += proto.importedModuleList.map { importedModuleProto ->
-            JsImportedModule(
-                deserializeString(importedModuleProto.externalNameId),
-                deserializeName(importedModuleProto.internalNameId),
-                if (importedModuleProto.hasPlainReference()) deserialize(importedModuleProto.plainReference) else null
-            )
+    private inline fun <T> readList(readElement: () -> T): List<T> {
+        val length = readInt()
+        val result = ArrayList<T>(length)
+        for (i in 0 until length) {
+            result.add(readElement())
         }
-
-        proto.importEntryList.associateTo(fragment.imports) { importProto ->
-            deserializeString(importProto.signatureId) to deserialize(importProto.expression)
-        }
-
-        if (proto.hasDeclarationBlock()) {
-            fragment.declarations.statements += deserializeCompositeBlock(proto.declarationBlock).statements
-        }
-        if (proto.hasInitializerBlock()) {
-            fragment.initializers.statements += deserializeCompositeBlock(proto.initializerBlock).statements
-        }
-        if (proto.hasExportBlock()) {
-            fragment.exports.statements += deserializeCompositeBlock(proto.exportBlock).statements
-        }
-        if (proto.hasPolyfills()) {
-            fragment.polyfills.statements += deserializeCompositeBlock(proto.polyfills).statements
-        }
-
-        proto.nameBindingList.associateTo(fragment.nameBindings) { nameBindingProto ->
-            deserializeString(nameBindingProto.signatureId) to deserializeName(nameBindingProto.nameId)
-        }
-
-        proto.optionalCrossModuleImportsList.mapTo(fragment.optionalCrossModuleImports) { deserializeString(it) }
-
-        proto.irClassModelList.associateTo(fragment.classes) { clsProto -> deserialize(clsProto) }
-
-        if (proto.hasTestsInvocation()) {
-            fragment.testFunInvocation = deserialize(proto.testsInvocation)
-        }
-
-        if (proto.hasMainInvocation()) {
-            fragment.mainFunction = deserialize(proto.mainInvocation)
-        }
-
-        if (proto.hasSuiteFunction()) {
-            fragment.suiteFn = deserializeName(proto.suiteFunction)
-        }
-
-        if (proto.hasDts()) {
-            fragment.dts = TypeScriptFragment(proto.dts)
-        }
-        fragment.definitions += proto.definitionsList.map { deserializeString(it) }
-
-        return fragment
+        return result
     }
 
-    private fun deserialize(proto: IrClassModel): Pair<JsName, JsIrIcClassModel> {
-        return deserializeName(proto.nameId) to JsIrIcClassModel(proto.superClassesList.map { deserializeName(it) }).apply {
-            if (proto.hasPreDeclarationBlock()) {
-                preDeclarationBlock.statements += deserializeCompositeBlock(proto.preDeclarationBlock).statements
+    private inline fun <T> ifTrue(then: () -> T): T? {
+        return if (readBoolean()) then() else null
+    }
+
+    fun readFragment(): JsIrProgramFragment {
+        return JsIrProgramFragment(readString()).apply {
+            readRepeated {
+                importedModules += JsImportedModule(
+                    externalName = stringTable[readInt()],
+                    internalName = nameTable[readInt()],
+                    plainReference = ifTrue { readExpression() }
+                )
             }
-            if (proto.hasPostDeclarationBlock()) {
-                postDeclarationBlock.statements += deserializeCompositeBlock(proto.postDeclarationBlock).statements
-            }
+
+            readRepeated { imports[stringTable[readInt()]] = readExpression() }
+
+            readRepeated { declarations.statements += readStatement() }
+            readRepeated { initializers.statements += readStatement() }
+            readRepeated { exports.statements += readStatement() }
+            readRepeated { polyfills.statements += readStatement() }
+
+            readRepeated { nameBindings[stringTable[readInt()]] = nameTable[readInt()] }
+            readRepeated { optionalCrossModuleImports.add(stringTable[readInt()]) }
+            readRepeated { classes[nameTable[readInt()]] = readIrIcClassModel() }
+
+            ifTrue { testFunInvocation = readStatement() }
+            ifTrue { mainFunction = readStatement() }
+            ifTrue { dts = TypeScriptFragment(readString()) }
+            ifTrue { suiteFn = nameTable[readInt()] }
+
+            readRepeated { definitions += stringTable[readInt()] }
         }
     }
 
-    override fun embedSources(deserializedLocation: JsLocation, file: String): JsLocationWithSource? = null
+    private fun readIrIcClassModel(): JsIrIcClassModel {
+        return JsIrIcClassModel(readList { nameTable[readInt()] }).apply {
+            readRepeated { preDeclarationBlock.statements += readStatement() }
+            readRepeated { postDeclarationBlock.statements += readStatement() }
+        }
+    }
+
+    private fun readStatement(): JsStatement {
+        return withComments {
+            withLocation {
+                with(StatementIds) {
+                    when (val id = readByte().toInt()) {
+                        RETURN -> {
+                            JsReturn(ifTrue { readExpression() })
+                        }
+                        THROW -> {
+                            JsThrow(readExpression())
+                        }
+                        BREAK -> {
+                            JsBreak(ifTrue { JsNameRef(nameTable[readInt()]) })
+                        }
+                        CONTINUE -> {
+                            JsContinue(ifTrue { JsNameRef(nameTable[readInt()]) })
+                        }
+                        DEBUGGER -> {
+                            JsDebugger()
+                        }
+                        EXPRESSION -> {
+                            JsExpressionStatement(readExpression()).apply {
+                                ifTrue { exportedTag = stringTable[readInt()] }
+                            }
+                        }
+                        VARS -> {
+                            readVars()
+                        }
+                        BLOCK -> {
+                            JsBlock().apply {
+                                readRepeated { statements += readStatement() }
+                            }
+                        }
+                        COMPOSITE_BLOCK -> {
+                            readCompositeBlock()
+                        }
+                        LABEL -> {
+                            JsLabel(nameTable[readInt()], readStatement())
+                        }
+                        IF -> {
+                            JsIf(readExpression(), readStatement(), ifTrue { readStatement() })
+                        }
+                        SWITCH -> {
+                            JsSwitch(
+                                readExpression(),
+                                readList {
+                                    withLocation {
+                                        ifTrue {
+                                            JsCase().apply { caseExpression = readExpression() }
+                                        } ?: JsDefault()
+                                    }.apply {
+                                        readRepeated {
+                                            statements += readStatement()
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                        WHILE -> {
+                            JsWhile(readExpression(), readStatement())
+                        }
+                        DO_WHILE -> {
+                            JsDoWhile(readExpression(), readStatement())
+                        }
+                        FOR -> {
+                            val condition = ifTrue { readExpression() }
+                            val incrementExpression = ifTrue { readExpression() }
+                            val body = ifTrue { readStatement() }
+
+                            ifTrue {
+                                JsFor(
+                                    readVars(),
+                                    condition,
+                                    incrementExpression,
+                                    body
+                                )
+                            } ?: JsFor(
+                                ifTrue { readExpression() },
+                                condition,
+                                incrementExpression,
+                                body
+                            )
+                        }
+                        FOR_IN -> {
+                            JsForIn(
+                                ifTrue { nameTable[readInt()] },
+                                ifTrue { readExpression() },
+                                readExpression(),
+                                readStatement()
+                            )
+                        }
+                        TRY -> {
+                            JsTry(
+                                readBlock(),
+                                readList {
+                                    JsCatch(nameTable[readInt()]).apply {
+                                        body = readBlock()
+                                    }
+                                },
+                                ifTrue { readBlock() }
+                            )
+                        }
+                        EMPTY -> {
+                            JsEmpty
+                        }
+                        SINGLE_LINE_COMMENT -> {
+                            JsSingleLineComment(readString())
+                        }
+                        MULTI_LINE_COMMENT -> {
+                            JsMultiLineComment(readString())
+                        }
+                        else -> error("Unknown statement id: $id")
+                    }
+                }
+            }
+        }.apply {
+            synthetic = readBoolean()
+        }
+    }
+
+    private val sideEffectKindValues = SideEffectKind.values()
+    private val jsBinaryOperatorValues = JsBinaryOperator.values()
+    private val jsUnaryOperatorValues = JsUnaryOperator.values()
+
+    private fun readExpression(): JsExpression {
+        return withComments {
+            withLocation {
+                with(ExpressionIds) {
+                    when (val id = readByte().toInt()) {
+                        THIS_REF -> {
+                            JsThisRef()
+                        }
+                        NULL -> {
+                            JsNullLiteral()
+                        }
+                        TRUE_LITERAL -> {
+                            JsBooleanLiteral(true)
+                        }
+                        FALSE_LITERAL -> {
+                            JsBooleanLiteral(false)
+                        }
+                        STRING_LITERAL -> {
+                            JsStringLiteral(stringTable[readInt()])
+                        }
+                        REG_EXP -> {
+                            JsRegExp().apply {
+                                pattern = stringTable[readInt()]
+                                ifTrue { flags = stringTable[readInt()] }
+                            }
+                        }
+                        INT_LITERAL -> {
+                            JsIntLiteral(readInt())
+                        }
+                        DOUBLE_LITERAL -> {
+                            JsDoubleLiteral(readDouble())
+                        }
+                        ARRAY_LITERAL -> {
+                            JsArrayLiteral(readList { readExpression() })
+                        }
+                        OBJECT_LITERAL -> {
+                            JsObjectLiteral(
+                                readList { JsPropertyInitializer(readExpression(), readExpression()) },
+                                readBoolean()
+                            )
+                        }
+                        FUNCTION -> {
+                            JsFunction(scope, readBlock(), "").apply {
+                                readRepeated { parameters += readParameter() }
+                                ifTrue { name = nameTable[readInt()] }
+                                isLocal = readBoolean()
+                            }
+                        }
+                        DOC_COMMENT -> {
+                            val tags = hashMapOf<String, Any>()
+                            readRepeated {
+                                tags[stringTable[readInt()]] = ifTrue { readExpression() } ?: stringTable[readInt()]
+                            }
+                            JsDocComment(tags)
+                        }
+                        BINARY_OPERATION -> {
+                            JsBinaryOperation(
+                                jsBinaryOperatorValues[readInt()],
+                                readExpression(),
+                                readExpression()
+                            )
+                        }
+                        PREFIX_OPERATION -> {
+                            JsPrefixOperation(jsUnaryOperatorValues[readInt()], readExpression())
+                        }
+                        POSTFIX_OPERATION -> {
+                            JsPostfixOperation(jsUnaryOperatorValues[readInt()], readExpression())
+                        }
+                        CONDITIONAL -> {
+                            JsConditional(
+                                readExpression(),
+                                readExpression(),
+                                readExpression()
+                            )
+                        }
+                        ARRAY_ACCESS -> {
+                            JsArrayAccess(readExpression(), readExpression())
+                        }
+                        NAME_REFERENCE -> {
+                            JsNameRef(nameTable[readInt()]).apply {
+                                ifTrue { qualifier = readExpression() }
+                                ifTrue { isInline = readBoolean() }
+                            }
+                        }
+                        SIMPLE_NAME_REFERENCE -> {
+                            JsNameRef(nameTable[readInt()])
+                        }
+                        PROPERTY_REFERENCE -> {
+                            JsNameRef(stringTable[readInt()]).apply {
+                                ifTrue { qualifier = readExpression() }
+                                ifTrue { isInline = readBoolean() }
+                            }
+                        }
+                        INVOCATION -> {
+                            JsInvocation(readExpression(), readList { readExpression() }).apply {
+                                ifTrue { isInline = readBoolean() }
+                            }
+                        }
+                        NEW -> {
+                            JsNew(readExpression(), readList { readExpression() })
+                        }
+                        else -> error("Unknown expression id: $id")
+                    }
+                }
+            }
+        }.apply {
+            synthetic = readBoolean()
+            sideEffects = sideEffectKindValues[readInt()]
+            ifTrue { localAlias = readJsImportedModule() }
+        }
+    }
+
+    private fun readJsImportedModule(): JsImportedModule {
+        return JsImportedModule(
+            stringTable[readInt()],
+            nameTable[readInt()],
+            ifTrue { readExpression() }
+        )
+    }
+
+    private fun readParameter(): JsParameter {
+        return JsParameter(nameTable[readInt()]).apply {
+            hasDefaultValue = readBoolean()
+        }
+    }
+
+    private fun readCompositeBlock(): JsCompositeBlock {
+        return JsCompositeBlock().apply {
+            readRepeated { statements += readStatement() }
+        }
+    }
+
+    private fun readBlock(): JsBlock {
+        return ifTrue { readCompositeBlock() } ?: JsBlock().apply {
+            readRepeated { statements += readStatement() }
+        }
+    }
+
+    private fun readVars(): JsVars {
+        return JsVars(readBoolean()).apply {
+            readRepeated {
+                vars += withLocation {
+                    JsVars.JsVar(nameTable[readInt()], ifTrue { readExpression() })
+                }
+            }
+            ifTrue { exportedPackage = stringTable[readInt()] }
+        }
+    }
+
+    private val specialFunctionValues = SpecialFunction.values()
+
+    private fun readName(): JsName {
+        val identifier = stringTable[readInt()]
+        val name = ifTrue {
+            JsScope.declareTemporaryName(identifier)
+        } ?: JsDynamicScope.declareName(identifier)
+        ifTrue { name.localAlias = readLocalAlias() }
+        ifTrue { name.imported = true }
+        ifTrue { name.specialFunction = specialFunctionValues[readInt()] }
+        return name
+    }
+
+    private fun readLocalAlias(): LocalAlias {
+        return LocalAlias(
+            nameTable[readInt()],
+            ifTrue { stringTable[readInt()] }
+        )
+    }
+
+    private fun readComment(): JsComment {
+        val text = readString()
+        return ifTrue { JsMultiLineComment(text) } ?: JsSingleLineComment(text)
+    }
+
+    private inline fun <T : JsNode> withLocation(action: () -> T): T {
+        return ifTrue {
+            val deserializedFile = ifTrue { stringTable[readInt()] }
+            val file = deserializedFile ?: fileStack.peek()
+
+            val startLine = readInt()
+            val startChar = readInt()
+            val deserializedLocation = file?.let { JsLocation(it, startLine, startChar) }
+
+            val shouldUpdateFile = deserializedFile != null && deserializedFile != fileStack.peek()
+
+            if (shouldUpdateFile) {
+                fileStack.push(deserializedFile)
+            }
+            val node = action()
+            if (deserializedLocation != null) {
+                node.source = deserializedLocation
+            }
+            if (shouldUpdateFile) {
+                fileStack.pop()
+            }
+
+            node
+        } ?: action()
+    }
+
+    private inline fun <T : JsNode> withComments(action: () -> T): T {
+        return action().apply {
+            ifTrue { this.commentsBeforeNode = readArray { readComment() }.toList() }
+            ifTrue { this.commentsAfterNode = readArray { readComment() }.toList() }
+        }
+    }
 }

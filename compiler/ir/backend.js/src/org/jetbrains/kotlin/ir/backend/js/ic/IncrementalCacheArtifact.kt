@@ -6,17 +6,18 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
-import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
+import org.jetbrains.kotlin.konan.file.use
 import java.io.BufferedOutputStream
 import java.io.File
 
 internal sealed class SourceFileCacheArtifact(val srcFile: KotlinSourceFile, val binaryAstFile: File) {
     abstract fun commitMetadata()
 
-    fun commitBinaryAst(fragment: JsIrProgramFragment, serializer: JsIrAstSerializer) {
+    fun commitBinaryAst(fragment: JsIrProgramFragment) {
         binaryAstFile.recreate()
-        BufferedOutputStream(binaryAstFile.outputStream()).use { bufferedOutStream ->
-            serializer.serialize(fragment, bufferedOutStream)
+        BufferedOutputStream(binaryAstFile.outputStream()).use {
+            fragment.serializeTo(it)
         }
     }
 
@@ -61,12 +62,10 @@ internal class IncrementalCacheArtifact(
         moduleName: String,
         rebuiltFileFragments: Map<KotlinSourceFile, JsIrProgramFragment>,
     ): ModuleArtifact {
-        val serializer = JsIrAstSerializer()
-
         val fileArtifacts = srcCacheActions.map { srcFileAction ->
             val rebuiltFileFragment = rebuiltFileFragments[srcFileAction.srcFile]
             if (rebuiltFileFragment != null) {
-                srcFileAction.commitBinaryAst(rebuiltFileFragment, serializer)
+                srcFileAction.commitBinaryAst(rebuiltFileFragment)
             }
             srcFileAction.commitMetadata()
             SrcFileArtifact(srcFileAction.srcFile.path, rebuiltFileFragment, srcFileAction.binaryAstFile)

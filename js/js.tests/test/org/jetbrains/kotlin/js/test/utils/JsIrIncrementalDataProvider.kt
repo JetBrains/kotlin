@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
-import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstDeserializer
-import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.jsLibraryProvider
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 
 private class TestArtifactCache(val moduleName: String, val binaryAsts: MutableMap<String, ByteArray> = mutableMapOf()) {
     fun fetchArtifacts(): ModuleArtifact {
-        val deserializer = JsIrAstDeserializer()
         return ModuleArtifact(
             moduleName = moduleName,
             fileArtifacts = binaryAsts.entries.map {
@@ -39,7 +37,7 @@ private class TestArtifactCache(val moduleName: String, val binaryAsts: MutableM
                     // TODO: It will be better to use saved fragments, but it doesn't work
                     //  Merger.merge() + JsNode.resolveTemporaryNames() modify fragments,
                     //  therefore the sequential calls produce different results
-                    fragment = deserializer.deserialize(ByteArrayInputStream(it.value))
+                    fragment = deserializeJsIrProgramFragment(it.value)
                 )
             }
         )
@@ -149,11 +147,10 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
         val moduleCache = icCache[canonicalPath] ?: TestArtifactCache(mainModuleIr.name.asString())
 
-        val serializer = JsIrAstSerializer()
         for (rebuiltFile in rebuiltFiles) {
             if (rebuiltFile.first.module == mainModuleIr) {
                 val output = ByteArrayOutputStream()
-                serializer.serialize(rebuiltFile.second, output)
+                rebuiltFile.second.serializeTo(output)
                 moduleCache.binaryAsts[rebuiltFile.first.fileEntry.name] = output.toByteArray()
             }
         }
