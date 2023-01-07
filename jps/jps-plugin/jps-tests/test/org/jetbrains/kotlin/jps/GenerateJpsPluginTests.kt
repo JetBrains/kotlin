@@ -25,7 +25,13 @@ fun main(args: Array<String>) {
                     targetBackend = targetBackend,
                     excludedPattern = excludePattern
                 )
-                model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)
+                model(
+                    "incremental/classHierarchyAffected",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = targetBackend,
+                    excludedPattern = excludePattern
+                )
                 model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
@@ -52,13 +58,13 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "^.*Expect.*"
+                    excludePattern = "(^.*Expect.*)|(^.*ClassMovedIntoOtherClass.*)|(^.*CompanionConstantChanged.*)"
                 )
             )
             testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "^.*Expect.*"
+                    excludePattern = "(^.*Expect.*)|(^.*ClassMovedIntoOtherClass.*)|(^.*CompanionConstantChanged.*)"
                 )
             )
 

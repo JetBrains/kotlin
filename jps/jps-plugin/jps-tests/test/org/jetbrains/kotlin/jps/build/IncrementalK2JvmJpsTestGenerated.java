@@ -697,7 +697,7 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
         }
 
         public void testAllFilesPresentInClassHierarchyAffected() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^.*Expect.*"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotationFlagRemoved")
