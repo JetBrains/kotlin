@@ -206,7 +206,7 @@ class FieldList(
     override val name: String,
     val baseType: Importable,
     override var withReplace: Boolean,
-    override val overrideTypeRequire: Boolean,
+    override val overrideTypeRequire: Boolean = true,
     useMutableOrEmpty: Boolean = false
 ) : Field() {
     override var defaultValueInImplementation: String? = null

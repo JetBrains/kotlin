@@ -353,15 +353,16 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 println("${field.name}.addAll($newValue)")
                             }
 
-                        else -> {
-                            if (field.useNullableForReplace) {
-                                println("require($newValue != null)")
+                            else -> {
+                                if (field.useNullableForReplace) {
+                                    println("require($newValue != null)")
+                                }
+                                print("${field.name} = $newValue")
+                                if (field.origin is FieldList && field.isMutableOrEmpty) {
+                                    print(".toMutableOrEmpty()")
+                                }
+                                println()
                             }
-                            print("${field.name} = $newValue")
-                            if (field.origin is FieldList && field.isMutableOrEmpty) {
-                                print(".toMutableOrEmpty()")
-                            }
-                            println()
                         }
                     }
                 }

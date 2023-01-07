@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Self
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
@@ -48,7 +49,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     protected val computationSession: CompilerRequiredAnnotationsComputationSession
 ) : FirDefaultTransformer<Nothing?>() {
     companion object {
-        private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord)
+        private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord, Self)
 
         private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
     }

@@ -5,25 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.isRaw
-import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.types.Variance
 
 sealed class TypeArgumentMapping {
@@ -86,7 +76,7 @@ internal object MapTypeArguments : ResolutionStage() {
                 if (classLikeSymbol != null) {
                     val firClassSymbol = classLikeSymbol as FirClassSymbol
 
-                    val isSelf = firClassSymbol.hasAnnotation(StandardClassIds.Annotations.Self)
+                    val isSelf = firClassSymbol.hasAnnotation(StandardClassIds.Annotations.Self, context.session)
 
                     if (isSelf && callInfo.callKind is CallKind.Function) {
                         val constructorTypeParametersSize = firConstructorSymbol.typeParameterSymbols.size

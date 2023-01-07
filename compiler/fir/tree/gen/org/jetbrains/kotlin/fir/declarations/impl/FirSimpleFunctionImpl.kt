@@ -170,13 +170,13 @@ internal class FirSimpleFunctionImpl(
         contractDescription = newContractDescription
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
         require(newTypeParameters.all { it is FirTypeParameter })
         typeParameters.clear()
         typeParameters.addAll(newTypeParameters.map { it as FirTypeParameter })
-    }
-
-    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

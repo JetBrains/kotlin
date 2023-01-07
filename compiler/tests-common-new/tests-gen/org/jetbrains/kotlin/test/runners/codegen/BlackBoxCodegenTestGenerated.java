@@ -17480,12 +17480,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
-        @TestMetadata("ControlFlowInfoSelfTypes.kt")
-        public void testControlFlowInfoSelfTypes() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
-        }
-
-        @Test
         @TestMetadata("differentSinceKotlin.kt")
         public void testDifferentSinceKotlin() throws Exception {
             runTest("compiler/testData/codegen/box/fir/differentSinceKotlin.kt");

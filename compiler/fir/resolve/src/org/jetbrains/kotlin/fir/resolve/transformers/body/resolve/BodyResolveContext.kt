@@ -444,7 +444,7 @@ class BodyResolveContext(
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
         val selfTypeScope: FirSelfTypeScope? =
-            if (owner.hasAnnotation(StandardClassIds.Annotations.Self)) {
+            if (owner.hasAnnotation(StandardClassIds.Annotations.Self, holder.session)) {
                 FirSelfTypeScope(owner)
             } else
                 null
