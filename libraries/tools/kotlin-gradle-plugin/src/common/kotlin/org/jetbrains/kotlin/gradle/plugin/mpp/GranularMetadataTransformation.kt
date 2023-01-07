@@ -95,13 +95,6 @@ internal class GranularMetadataTransformation(
 ) {
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    // Keep parents of each dependency, too. We need a dependency's parent when it's an MPP's metadata module dependency:
-    // in this case, the parent is the MPP's root module.
-    private data class ResolvedDependencyWithParent(
-        val dependency: ResolvedComponentResult,
-        val parent: ResolvedComponentResult?
-    )
-
     private val requestedDependencies: Iterable<Dependency> by lazy {
         kotlinSourceSet.internal.resolvableMetadataConfiguration.incoming.dependencies
     }
@@ -122,7 +115,7 @@ internal class GranularMetadataTransformation(
         val allModuleDependencies =
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
 
-        val resolvedDependencyQueue: Queue<ResolvedDependencyWithParent> = ArrayDeque<ResolvedDependencyWithParent>().apply {
+        val resolvedDependencyQueue: Queue<ResolvedComponentResult> = ArrayDeque<ResolvedComponentResult>().apply {
             val requestedModules: Set<ModuleDependencyIdentifier> = allRequestedDependencies.mapTo(mutableSetOf()) {
                 ModuleIds.fromDependency(it)
             }
@@ -131,14 +124,14 @@ internal class GranularMetadataTransformation(
                 resolutionResult.root.dependencies
                     .filter { ModuleIds.fromComponentSelector(project, it.requested) in requestedModules }
                     .filterIsInstance<ResolvedDependencyResult>()
-                    .map { ResolvedDependencyWithParent(it.selected, null) }
+                    .map { it.selected }
             )
         }
 
         val visitedDependencies = mutableSetOf<ResolvedComponentResult>()
 
         while (resolvedDependencyQueue.isNotEmpty()) {
-            val (resolvedDependency: ResolvedComponentResult, parent: ResolvedComponentResult?) = resolvedDependencyQueue.poll()
+            val resolvedDependency: ResolvedComponentResult = resolvedDependencyQueue.poll()
 
             if (!visitedDependencies.add(resolvedDependency)) {
                 /* Already processed this dependency */
@@ -147,8 +140,7 @@ internal class GranularMetadataTransformation(
 
             val dependencyResult = processDependency(
                 resolvedDependency,
-                parentResolutions[ModuleIds.fromComponent(project, resolvedDependency)].orEmpty(),
-                parent
+                parentResolutions[ModuleIds.fromComponent(project, resolvedDependency)].orEmpty()
             )
 
             result.add(dependencyResult)
@@ -164,7 +156,7 @@ internal class GranularMetadataTransformation(
 
             resolvedDependencyQueue.addAll(
                 transitiveDependenciesToVisit.filter { it.selected !in visitedDependencies }
-                    .map { ResolvedDependencyWithParent(it.selected, resolvedDependency) }
+                    .map { it.selected }
             )
         }
 
@@ -199,7 +191,6 @@ internal class GranularMetadataTransformation(
     private fun processDependency(
         module: ResolvedComponentResult,
         parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
-        parent: ResolvedComponentResult?
     ): MetadataDependencyResolution {
         val mppDependencyMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
             project, module, configurationToResolve,
@@ -211,10 +202,14 @@ internal class GranularMetadataTransformation(
         val projectStructureMetadata = mppDependencyMetadataExtractor?.getProjectStructureMetadata()
             ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 
+        if (!projectStructureMetadata.isPublishedAsRoot) {
+            error("Artifacts of dependency ${module.id.displayName} is built by old Kotlin Gradle Plugin and can't be consumed in this way")
+        }
+
         val sourceSetVisibility =
             SourceSetVisibilityProvider(project).getVisibleSourceSets(
                 kotlinSourceSet,
-                if (projectStructureMetadata.isPublishedAsRoot) module else parent, module,
+                module,
                 projectStructureMetadata,
                 resolvedToProject != null
             )
