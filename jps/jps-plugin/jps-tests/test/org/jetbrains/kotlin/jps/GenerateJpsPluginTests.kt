@@ -58,13 +58,13 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "(^.*Expect.*)|(^.*ClassMovedIntoOtherClass.*)|(^.*CompanionConstantChanged.*)"
+                    excludePattern = "(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"
                 )
             )
             testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "(^.*Expect.*)|(^.*ClassMovedIntoOtherClass.*)|(^.*CompanionConstantChanged.*)"
+                    excludePattern = "(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"
                 )
             )
 
