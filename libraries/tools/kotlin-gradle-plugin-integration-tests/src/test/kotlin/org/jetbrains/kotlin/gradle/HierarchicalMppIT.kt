@@ -871,8 +871,8 @@ class HierarchicalMppIT : KGPBaseTest() {
                 """
                 ${"\n"}
                 dependencies {
-                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
                 }
             """.trimIndent()
             )
