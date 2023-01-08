@@ -61,3 +61,7 @@ private constructor(
         return artifactsByComponentId[componentId] ?: emptyList()
     }
 }
+
+internal val ResolvedDependencyGraph.allResolvedDependencies: Set<ResolvedDependencyResult> get() = allDependencies
+    .filterIsInstance<ResolvedDependencyResult>()
+    .toSet()

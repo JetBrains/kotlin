@@ -10,6 +10,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesProvider
@@ -21,9 +23,31 @@ import org.jetbrains.kotlin.project.model.KpmMavenModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
 internal object ModuleIds {
+//internal class ModuleIds(private val projectData: Map<String, ProjectModuleIdentifier>) {
+
+    private val projectData: Map<String, ProjectModuleIdentifier> = emptyMap()
+
+    internal class ProjectModuleIdentifier(
+        val path: String,
+        val moduleId: Provider<ModuleDependencyIdentifier>
+    )
+
+    private fun projectModuleId(path: String): ModuleDependencyIdentifier {
+        return projectData[path]?.moduleId?.get() ?: error("Can't find project '$path'")
+    }
+
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
         is ProjectDependency -> idOfRootModule(dependency.dependencyProject)
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
+    }
+
+    fun fromResolvedDependency(dependency: ResolvedDependencyResult): ModuleDependencyIdentifier {
+        val componentIdentifier = dependency.selected.id
+        return when (componentIdentifier) {
+            is ProjectComponentIdentifier -> projectModuleId(componentIdentifier.projectPath)
+            is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentIdentifier.group, componentIdentifier.module)
+            else -> error("Unexpected component identifier '$componentIdentifier' of type ${componentIdentifier.javaClass}")
+        }
     }
 
     fun fromComponentSelector(

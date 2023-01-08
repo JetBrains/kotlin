@@ -357,8 +357,10 @@ class KotlinMetadataTargetConfigurator :
         sourceSet: KotlinSourceSet
     ) {
         val granularMetadataTransformation = GranularMetadataTransformation(
-            project = project,
-            kotlinSourceSet = sourceSet,
+            params = GranularMetadataTransformation.Params(
+                project = project,
+                kotlinSourceSet = sourceSet
+            ),
             parentTransformations = lazy {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                     .map { it.compileDependenciesTransformationOrFail }
@@ -369,31 +371,31 @@ class KotlinMetadataTargetConfigurator :
             sourceSet.compileDependenciesTransformation = granularMetadataTransformation
     }
 
-    /** Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as
-     * [MetadataDependencyResolution.Exclude], and uses exactly the same versions as were resolved for the requested
-     * dependencies during the transformation. */
-    private fun GranularMetadataTransformation.applyToConfiguration(configuration: Configuration) {
-        // Run this action immediately before the configuration first takes part in dependency resolution:
-        configuration.withDependencies {
-            val (unrequested, requested) = metadataDependencyResolutions
-                .partition { it is MetadataDependencyResolution.Exclude }
-
-            unrequested.forEach {
-                val (group, name) = it.projectDependency(project)?.run {
-                    /** Note: the project dependency notation here should be exactly this, group:name,
-                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
-                    ModuleDependencyIdentifier(group.toString(), name)
-                } ?: ModuleIds.fromComponent(project, it.dependency)
-                configuration.exclude(mapOf("group" to group, "module" to name))
-            }
-
-            requested.filter { it.dependency.projectIdOrNull == null }.forEach {
-                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
-                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
-                configuration.resolutionStrategy.force(notation)
-            }
-        }
-    }
+//    /** Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as
+//     * [MetadataDependencyResolution.Exclude], and uses exactly the same versions as were resolved for the requested
+//     * dependencies during the transformation. */
+//    private fun GranularMetadataTransformation.applyToConfiguration(configuration: Configuration) {
+//        // Run this action immediately before the configuration first takes part in dependency resolution:
+//        configuration.withDependencies {
+//            val (unrequested, requested) = metadataDependencyResolutions
+//                .partition { it is MetadataDependencyResolution.Exclude }
+//
+//            unrequested.forEach {
+//                val (group, name) = it.projectDependency(project)?.run {
+//                    /** Note: the project dependency notation here should be exactly this, group:name,
+//                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
+//                    ModuleDependencyIdentifier(group.toString(), name)
+//                } ?: ModuleIds.fromComponent(project, it.dependency)
+//                configuration.exclude(mapOf("group" to group, "module" to name))
+//            }
+//
+//            requested.filter { it.dependency.projectIdOrNull == null }.forEach {
+//                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
+//                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
+//                configuration.resolutionStrategy.force(notation)
+//            }
+//        }
+//    }
 
     private fun createMetadataDependencyTransformationClasspath(
         fromFiles: Configuration,

@@ -56,84 +56,84 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 
         val results = mutableSetOf<MetadataDependencyResolution>()
 
-        while (fragmentResolutionQueue.isNotEmpty()) {
-            val dependencyNode = fragmentResolutionQueue.removeFirst()
-            if (!visited.add(dependencyNode)) {
-                continue
-            }
-
-            val dependencyModule = dependencyNode.module
-
-            val fragmentVisibility = fragmentResolver.getChosenFragments(requestingFragment, dependencyModule)
-            val chosenFragments = fragmentVisibility as? KpmFragmentResolution.ChosenFragments
-            val visibleFragments = chosenFragments?.visibleFragments?.toList().orEmpty()
-
-            val visibleTransitiveDependencies =
-                dependencyNode.dependenciesByFragment.filterKeys { it in visibleFragments }.values.flattenTo(mutableSetOf())
-
-            fragmentResolutionQueue.addAll(visibleTransitiveDependencies.filter { it !in visited })
-
-            val resolvedComponentResult = dependencyNode.selectedComponent
-            val result = when (dependencyModule) {
-                is GradleKpmExternalPlainModule -> {
-                    MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult)
-                }
-
-                else -> run {
-
-                    val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
-
-                    val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
-                    val visibleFragmentNamesExcludingVisibleByParents =
-                        visibleFragmentNames.minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleKpmModuleIdentifier()))
-
-                    /*
-                    We can safely assume that a metadata extractor can be created, because the project structure metadata already
-                    had to be read in order to create the Kotlin module and infer fragment visibility.
-                    */
-                    val projectStructureMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
-                        project, resolvedComponentResult, configurationToResolve, true
-                    ) ?: error(
-                        "Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id} despite " +
-                                "the presence of a proper Kotlin Module"
-                    )
-
-                    val projectStructureMetadata = (dependencyModule as? GradleKpmExternalImportedModule)?.projectStructureMetadata
-                        ?: checkNotNull(projectStructureMetadataExtractor.getProjectStructureMetadata())
-
-
-                    val metadataProvider = when (projectStructureMetadataExtractor) {
-                        is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
-                            dependencyProject = projectStructureMetadataExtractor.dependencyProject,
-                            moduleIdentifier = projectStructureMetadataExtractor.moduleIdentifier
-                        )
-
-                        is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
-                            CompositeMetadataArtifactImpl(
-                                moduleDependencyIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent),
-                                moduleDependencyVersion = metadataSourceComponent.moduleVersion?.version ?: "unspecified",
-                                kotlinProjectStructureMetadata = projectStructureMetadata,
-                                primaryArtifactFile = projectStructureMetadataExtractor.primaryArtifactFile,
-                                hostSpecificArtifactFilesBySourceSetName = if (
-                                    dependencyModule is GradleKpmExternalImportedModule && chosenFragments != null
-                                ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
-                            )
-                        )
-                    }
-
-                    MetadataDependencyResolution.ChooseVisibleSourceSets(
-                        dependency = metadataSourceComponent,
-                        projectStructureMetadata = projectStructureMetadata,
-                        allVisibleSourceSetNames = visibleFragmentNames,
-                        visibleSourceSetNamesExcludingDependsOn = visibleFragmentNamesExcludingVisibleByParents,
-                        visibleTransitiveDependencies =
-                        visibleTransitiveDependencies.map { resolvedDependenciesByModuleId.getValue(it.module.moduleIdentifier) }.toSet(),
-                        metadataProvider = metadataProvider
-                    )
-                }
-            }
-            results.add(result)
-        }
+//        while (fragmentResolutionQueue.isNotEmpty()) {
+//            val dependencyNode = fragmentResolutionQueue.removeFirst()
+//            if (!visited.add(dependencyNode)) {
+//                continue
+//            }
+//
+//            val dependencyModule = dependencyNode.module
+//
+//            val fragmentVisibility = fragmentResolver.getChosenFragments(requestingFragment, dependencyModule)
+//            val chosenFragments = fragmentVisibility as? KpmFragmentResolution.ChosenFragments
+//            val visibleFragments = chosenFragments?.visibleFragments?.toList().orEmpty()
+//
+//            val visibleTransitiveDependencies =
+//                dependencyNode.dependenciesByFragment.filterKeys { it in visibleFragments }.values.flattenTo(mutableSetOf())
+//
+//            fragmentResolutionQueue.addAll(visibleTransitiveDependencies.filter { it !in visited })
+//
+//            val resolvedComponentResult = dependencyNode.selectedComponent
+//            val result = when (dependencyModule) {
+//                is GradleKpmExternalPlainModule -> {
+//                    MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult)
+//                }
+//
+//                else -> run {
+//
+//                    val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
+//
+//                    val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
+//                    val visibleFragmentNamesExcludingVisibleByParents =
+//                        visibleFragmentNames.minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleKpmModuleIdentifier()))
+//
+//                    /*
+//                    We can safely assume that a metadata extractor can be created, because the project structure metadata already
+//                    had to be read in order to create the Kotlin module and infer fragment visibility.
+//                    */
+//                    val projectStructureMetadataExtractor = MppDependencyProjectStructureMetadataExtractorFactory.create(
+//                        project, resolvedComponentResult, configurationToResolve, true
+//                    ) ?: error(
+//                        "Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id} despite " +
+//                                "the presence of a proper Kotlin Module"
+//                    )
+//
+//                    val projectStructureMetadata = (dependencyModule as? GradleKpmExternalImportedModule)?.projectStructureMetadata
+//                        ?: checkNotNull(projectStructureMetadataExtractor.getProjectStructureMetadata())
+//
+//
+//                    val metadataProvider = when (projectStructureMetadataExtractor) {
+//                        is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
+//                            dependencyProject = projectStructureMetadataExtractor.dependencyProject,
+//                            moduleIdentifier = projectStructureMetadataExtractor.moduleIdentifier
+//                        )
+//
+//                        is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
+//                            CompositeMetadataArtifactImpl(
+//                                moduleDependencyIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent),
+//                                moduleDependencyVersion = metadataSourceComponent.moduleVersion?.version ?: "unspecified",
+//                                kotlinProjectStructureMetadata = projectStructureMetadata,
+//                                primaryArtifactFile = projectStructureMetadataExtractor.primaryArtifactFile,
+//                                hostSpecificArtifactFilesBySourceSetName = if (
+//                                    dependencyModule is GradleKpmExternalImportedModule && chosenFragments != null
+//                                ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
+//                            )
+//                        )
+//                    }
+//
+//                    MetadataDependencyResolution.ChooseVisibleSourceSets(
+//                        dependency = metadataSourceComponent,
+//                        projectStructureMetadata = projectStructureMetadata,
+//                        allVisibleSourceSetNames = visibleFragmentNames,
+//                        visibleSourceSetNamesExcludingDependsOn = visibleFragmentNamesExcludingVisibleByParents,
+//                        visibleTransitiveDependencies =
+//                        visibleTransitiveDependencies.map { resolvedDependenciesByModuleId.getValue(it.module.moduleIdentifier) }.toSet(),
+//                        metadataProvider = metadataProvider
+//                    )
+//                }
+//            }
+//            results.add(result)
+//        }
 
         // FIXME this code is based on whole components; use module IDs with classifiers instead
         val resultSourceComponents = results.mapTo(mutableSetOf()) { it.dependency }

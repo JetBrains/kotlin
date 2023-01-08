@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
+import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import java.io.File
+
+typealias KotlinSourceSetName = String
 
 internal data class SourceSetVisibilityResult(
     /**
@@ -30,10 +29,33 @@ internal data class SourceSetVisibilityResult(
     val hostSpecificMetadataArtifactBySourceSet: Map<String, File>
 )
 
+private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilityProvider.PlatformCompilationData> {
+    val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyList()
+    return multiplatformExtension
+        .targets
+        .filter { it.platformType != KotlinPlatformType.common }
+        .flatMap { target -> target.compilations.map { it.toPlatformCompilationData() } }
+}
+
+private fun KotlinCompilation<*>.toPlatformCompilationData() = SourceSetVisibilityProvider.PlatformCompilationData(
+    sourceSets = allKotlinSourceSets.map { it.name }.toSet(),
+    resolvedDependenciesConfiguration = ResolvedDependencyGraph(project.configurations.getByName(compileDependencyConfigurationName)),
+    hostSpecificMetadataConfiguration = null // TODO: Implement!
+)
+
 internal class SourceSetVisibilityProvider(
-    private val project: Project
+    private val platformCompilations: List<PlatformCompilationData>,
 ) {
-    private val resolvedVariantsProvider = ResolvedMppVariantsProvider.get(project)
+
+    constructor(project: Project) : this(
+        platformCompilations = project.collectAllPlatformCompilationData()
+    )
+
+    class PlatformCompilationData(
+        val sourceSets: Set<KotlinSourceSetName>,
+        val resolvedDependenciesConfiguration: ResolvedDependencyGraph,
+        val hostSpecificMetadataConfiguration: ResolvedDependencyGraph?
+    )
 
     /**
      * Determine which source sets of the [resolvedRootMppDependency] are visible in the [visibleFrom] source set.
@@ -48,28 +70,30 @@ internal class SourceSetVisibilityProvider(
      * the Gradle API for dependency variants behaves differently for project dependencies and published ones.
      */
     fun getVisibleSourceSets(
-        visibleFrom: KotlinSourceSet,
-        resolvedRootMppDependency: ResolvedComponentResult,
+        visibleFrom: KotlinSourceSetName,
+        resolvedRootMppDependency: ResolvedDependencyResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean
     ): SourceSetVisibilityResult {
-        val compilations = visibleFrom.internal.compilations
+        val component = resolvedRootMppDependency.selected
+        val componentId = component.id
 
-        val component = resolvedRootMppDependency
-        val mppModuleIdentifier = component.toSingleKpmModuleIdentifier()
-
-        val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
+        val firstConfigurationByVariant = mutableMapOf<String, PlatformCompilationData>()
 
         val visiblePlatformVariantNames: Set<String?> =
-            compilations
-                .filter { it.target.platformType != KotlinPlatformType.common }
-                .map { compilation -> project.configurations.getByName(compilation.compileDependencyConfigurationName) }
-                .mapTo(mutableSetOf()) { configuration ->
-                    val resolvedVariant = resolvedVariantsProvider.getResolvedVariantName(mppModuleIdentifier, configuration)
-                        ?.let { kotlinVariantNameFromPublishedVariantName(it) }
+            platformCompilations
+                .filter { visibleFrom in it.sourceSets }
+                //.filter { it.target.platformType != KotlinPlatformType.common }
+                //.map { compilation -> project.configurations.getByName(compilation.compileDependencyConfigurationName) }
+                .mapTo(mutableSetOf()) { resolvedConfiguration ->
+                    val resolvedVariant = resolvedConfiguration
+                        .resolvedDependenciesConfiguration
+                        .allResolvedDependencies
+                        .find { it.selected.id == componentId }
+                        ?.let { kotlinVariantNameFromPublishedVariantName(it.resolvedVariant.displayName) }
                         ?: return@mapTo null
 
-                    firstConfigurationByVariant.putIfAbsent(resolvedVariant, configuration)
+                    firstConfigurationByVariant.putIfAbsent(resolvedVariant, resolvedConfiguration)
                     resolvedVariant
                 }
 
@@ -107,9 +131,22 @@ internal class SourceSetVisibilityProvider(
                     }
 
                 someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
-                    val configuration = firstConfigurationByVariant.getValue(variantName)
-                    resolvedVariantsProvider.getHostSpecificMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
-                        ?.let { sourceSetName to it }
+                    val resolvedHostSpecificMetadataConfiguration = firstConfigurationByVariant
+                        .getValue(variantName)
+                        .hostSpecificMetadataConfiguration
+                        ?: return@mapNotNull null
+
+                    val dependency = resolvedHostSpecificMetadataConfiguration
+                        .allResolvedDependencies
+                        .find { it.selected.id == componentId }
+                        ?: return@mapNotNull null
+
+                    val metadataArtifact = resolvedHostSpecificMetadataConfiguration
+                        .dependencyArtifacts(dependency)
+                        .singleOrNull()
+                        ?: return@mapNotNull null
+
+                    sourceSetName to metadataArtifact.file
                 }.toMap()
             }
 
