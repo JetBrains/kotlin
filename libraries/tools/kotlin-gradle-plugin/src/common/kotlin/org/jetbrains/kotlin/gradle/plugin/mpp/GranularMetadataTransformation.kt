@@ -89,7 +89,7 @@ internal sealed class MetadataDependencyResolution(
 internal class GranularMetadataTransformation(
     //val project: Project,
     //val kotlinSourceSet: KotlinSourceSet,
-    private val params: Params,
+    private val _params: Lazy<Params>,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
     private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
@@ -110,6 +110,8 @@ internal class GranularMetadataTransformation(
             platformCompilationSourceSets = project.multiplatformExtension.platformCompilationSourceSets
         )
     }
+
+    private val params get() = _params.value
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 

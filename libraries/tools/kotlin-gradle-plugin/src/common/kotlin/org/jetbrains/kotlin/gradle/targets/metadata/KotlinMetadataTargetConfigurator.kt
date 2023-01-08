@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.Callable
@@ -357,10 +358,10 @@ class KotlinMetadataTargetConfigurator :
         sourceSet: KotlinSourceSet
     ) {
         val granularMetadataTransformation = GranularMetadataTransformation(
-            params = GranularMetadataTransformation.Params(
+            _params = lazy { GranularMetadataTransformation.Params(
                 project = project,
                 kotlinSourceSet = sourceSet
-            ),
+            ) },
             parentTransformations = lazy {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                     .map { it.compileDependenciesTransformationOrFail }

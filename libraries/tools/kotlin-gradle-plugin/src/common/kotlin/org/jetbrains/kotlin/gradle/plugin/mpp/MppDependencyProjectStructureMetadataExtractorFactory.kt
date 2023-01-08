@@ -45,12 +45,12 @@ class MppDependencyProjectStructureMetadataExtractorFactory(
     companion object {
         private val extensionName = MppDependencyProjectStructureMetadataExtractorFactory::class.java.simpleName
         fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory {
-            val existing = project.extensions.findExtension<MppDependencyProjectStructureMetadataExtractorFactory>(extensionName)
+            val existing = project.findExtension<MppDependencyProjectStructureMetadataExtractorFactory>(extensionName)
             if (existing != null) return existing
 
             val projectStructureMetadataByProjectPath = collectProjectStructureMetadataFromAllProjects(project)
             val newFactory = MppDependencyProjectStructureMetadataExtractorFactory(projectStructureMetadataByProjectPath)
-            project.extensions.addExtension(extensionName, newFactory)
+            project.addExtension(extensionName, newFactory)
             return newFactory
         }
 
