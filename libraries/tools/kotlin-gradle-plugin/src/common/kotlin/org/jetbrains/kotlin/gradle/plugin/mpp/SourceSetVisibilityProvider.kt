@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
 import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import java.io.File
@@ -40,7 +42,11 @@ private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilit
 private fun KotlinCompilation<*>.toPlatformCompilationData() = SourceSetVisibilityProvider.PlatformCompilationData(
     sourceSets = allKotlinSourceSets.map { it.name }.toSet(),
     resolvedDependenciesConfiguration = ResolvedDependencyGraph(project.configurations.getByName(compileDependencyConfigurationName)),
-    hostSpecificMetadataConfiguration = null // TODO: Implement!
+    hostSpecificMetadataConfiguration = project
+        .configurations
+        .getByName(compileDependencyConfigurationName)
+        .copyRecursive().apply { attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA)) }
+        .let(::ResolvedDependencyGraph)
 )
 
 internal class SourceSetVisibilityProvider(
