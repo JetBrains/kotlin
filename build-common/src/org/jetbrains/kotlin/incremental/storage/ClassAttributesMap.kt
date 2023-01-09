@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.name.FqName
 import java.io.DataInput
 import java.io.DataOutput
@@ -35,8 +36,9 @@ internal object ICClassesAttributesExternalizer : DataExternalizer<ICClassesAttr
 }
 
 internal open class ClassAttributesMap(
-    storageFile: File
-) : BasicStringMap<ICClassesAttributes>(storageFile, ICClassesAttributesExternalizer) {
+    storageFile: File,
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<ICClassesAttributes>(storageFile, ICClassesAttributesExternalizer, icContext) {
     override fun dumpValue(value: ICClassesAttributes): String = value.toString()
 
     operator fun set(key: FqName, value: ICClassesAttributes) {

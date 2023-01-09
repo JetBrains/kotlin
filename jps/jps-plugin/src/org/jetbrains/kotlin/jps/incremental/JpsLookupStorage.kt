@@ -21,8 +21,8 @@ import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupStorage
-import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import java.io.File
 import java.io.IOException
 
@@ -30,9 +30,9 @@ private object LookupStorageLock
 
 class JpsLookupStorageManager(
     private val buildDataManager: BuildDataManager,
-    pathConverter: FileToPathConverter
+    icContext: IncrementalCompilationContext,
 ) {
-    private val storageProvider = JpsLookupStorageProvider(pathConverter)
+    private val storageProvider = JpsLookupStorageProvider(icContext)
 
     fun cleanLookupStorage(log: Logger) {
         synchronized(LookupStorageLock) {
@@ -58,14 +58,14 @@ class JpsLookupStorageManager(
     }
 
     private class JpsLookupStorageProvider(
-        private val pathConverter: FileToPathConverter
+        private val icContext: IncrementalCompilationContext
     ) : StorageProvider<JpsLookupStorage>() {
         override fun createStorage(targetDataDir: File): JpsLookupStorage =
-            JpsLookupStorage(targetDataDir, pathConverter)
+            JpsLookupStorage(targetDataDir, icContext)
     }
 
     private class JpsLookupStorage(
         targetDataDir: File,
-        pathConverter: FileToPathConverter
-    ) : StorageOwner, LookupStorage(targetDataDir, pathConverter)
+        icContext: IncrementalCompilationContext
+    ) : StorageOwner, LookupStorage(targetDataDir, icContext)
 }

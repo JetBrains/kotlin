@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.ExternalIntegerKeyDescriptor
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import java.io.File
 
 internal class IdToFileMap(
     file: File,
-    private val pathConverter: FileToPathConverter
-) : BasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE) {
+    icContext: IncrementalCompilationContext,
+) : BasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE, icContext) {
     override fun dumpKey(key: Int): String = key.toString()
 
     override fun dumpValue(value: String): String = value

@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import java.io.File
 
 internal class FileToIdMap(
     file: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Int>(file, IntExternalizer) {
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<Int>(file, IntExternalizer, icContext) {
     override fun dumpValue(value: Int): String = value.toString()
 
     operator fun get(file: File): Int? = storage[pathConverter.toPath(file)]

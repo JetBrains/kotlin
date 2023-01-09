@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before
@@ -23,7 +24,10 @@ class SourceToOutputFilesMapTest : TestWithWorkingDir() {
         val caches = File(workingDir, "caches").apply { mkdirs() }
         val stofMapFile = File(caches, "stof.tab")
         pathConverter = IncrementalFileToPathConverter((workingDir.canonicalFile))
-        stofMap = SourceToOutputFilesMap(stofMapFile, pathConverter)
+        val icContext = IncrementalCompilationContext(
+            pathConverter = pathConverter
+        )
+        stofMap = SourceToOutputFilesMap(stofMapFile, icContext)
     }
 
     @After

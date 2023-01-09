@@ -214,7 +214,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
     }
 
     override fun createCacheStorage(paths: BuildDataPaths) =
-        JpsIncrementalJsCache(jpsModuleBuildTarget, paths, kotlinContext.fileToPathConverter)
+        JpsIncrementalJsCache(jpsModuleBuildTarget, paths, kotlinContext.icContext)
 
     override fun updateCaches(
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,

@@ -203,7 +203,8 @@ object ClasspathChangesComputer {
     ): ProgramSymbolSet {
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
-        val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToAbsolutePathConverter)
+        val icContext = IncrementalCompilationContext(pathConverter = FileToAbsolutePathConverter)
+        val incrementalJvmCache = IncrementalJvmCache(workingDir, icContext, null)
 
         // Step 1:
         //   - Add previous class snapshots to incrementalJvmCache.

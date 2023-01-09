@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.dumpCollection
 import java.io.File
 
-class SourceToJsOutputMap(storageFile: File, private val pathConverter: FileToPathConverter) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+class SourceToJsOutputMap(
+    storageFile: File,
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, icContext) {
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 
     @Synchronized

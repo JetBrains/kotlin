@@ -40,10 +40,9 @@ import java.io.File
 
 open class IncrementalJsCache(
     cachesDir: File,
-    pathConverter: FileToPathConverter,
+    private val icContext: IncrementalCompilationContext,
     serializerProtocol: SerializerExtensionProtocol,
-    private val transaction: CompilationTransaction,
-) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter) {
+) : AbstractIncrementalCache<FqName>(cachesDir, icContext) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
@@ -57,13 +56,13 @@ open class IncrementalJsCache(
 
     private val protoData = ProtoDataProvider(serializerProtocol)
 
-    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
-    override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
-    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, pathConverter, protoData))
-    private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, pathConverter))
-    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter))
-    private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile))
-    private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, pathConverter))
+    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, icContext))
+    override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
+    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
+    private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
+    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, icContext))
+    private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile, icContext))
+    private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -73,7 +72,7 @@ open class IncrementalJsCache(
     var header: ByteArray
         get() = headerFile.readBytes()
         set(value) {
-            transaction.registerAddedOrChangedFile(headerFile.toPath())
+            icContext.transaction.registerAddedOrChangedFile(headerFile.toPath())
             cachesDir.mkdirs()
             headerFile.writeBytes(value)
         }
@@ -229,10 +228,10 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
 
 private class TranslationResultMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter,
-    private val protoData: ProtoDataProvider
+    private val protoData: ProtoDataProvider,
+    icContext: IncrementalCompilationContext,
 ) :
-    BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer) {
+    BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer, icContext) {
     override fun dumpValue(value: TranslationResultValue): String =
         "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
 
@@ -313,9 +312,9 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
 
 private class IrTranslationResultMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
+    icContext: IncrementalCompilationContext,
 ) :
-    BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer) {
+    BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer, icContext) {
     override fun dumpValue(value: IrTranslationResultValue): String =
         "Filedata: ${value.fileData.md5()}, " +
                 "Types: ${value.types.md5()}, " +
@@ -395,8 +394,8 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 
 private class InlineFunctionsMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer, icContext) {
     @Synchronized
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
         val key = pathConverter.toPath(srcFile)
@@ -439,7 +438,10 @@ private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
 }
 
 
-private class PackageMetadataMap(storageFile: File) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer) {
+private class PackageMetadataMap(
+    storageFile: File,
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer, icContext) {
     fun put(packageName: String, newMetadata: ByteArray) {
         storage[packageName] = newMetadata
     }

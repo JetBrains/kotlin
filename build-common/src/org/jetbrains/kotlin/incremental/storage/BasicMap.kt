@@ -20,15 +20,20 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 abstract class BasicMap<K : Comparable<K>, V>(
-        internal val storageFile: File,
-        keyDescriptor: KeyDescriptor<K>,
-        valueExternalizer: DataExternalizer<V>
+    internal val storageFile: File,
+    keyDescriptor: KeyDescriptor<K>,
+    valueExternalizer: DataExternalizer<V>,
+    protected val icContext: IncrementalCompilationContext,
 ) {
     protected val storage: LazyStorage<K, V> = CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
+
+    protected val pathConverter
+        get() = icContext.pathConverter
 
     fun clean() {
         storage.clean()
@@ -74,14 +79,16 @@ abstract class BasicMap<K : Comparable<K>, V>(
 }
 
 abstract class BasicStringMap<V>(
-        storageFile: File,
-        keyDescriptor: KeyDescriptor<String>,
-        valueExternalizer: DataExternalizer<V>
-) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer) {
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<String>,
+    valueExternalizer: DataExternalizer<V>,
+    icContext: IncrementalCompilationContext,
+) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer, icContext) {
     constructor(
-            storageFile: File,
-            valueExternalizer: DataExternalizer<V>
-    ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer)
+        storageFile: File,
+        valueExternalizer: DataExternalizer<V>,
+        icContext: IncrementalCompilationContext,
+    ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer, icContext)
 
     override fun dumpKey(key: String): String = key
 }

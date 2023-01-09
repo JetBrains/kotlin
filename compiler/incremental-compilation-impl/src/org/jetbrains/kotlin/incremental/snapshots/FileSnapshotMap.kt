@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
-import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import java.io.File
 import java.util.*
 
 class FileSnapshotMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer, icContext) {
 
     override fun dumpValue(value: FileSnapshot): String =
         value.toString()

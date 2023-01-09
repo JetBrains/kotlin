@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -23,19 +24,19 @@ import java.io.File
 
 internal class SourceToJvmNameMap(
     storageFile: File,
-    pathConverter: FileToPathConverter
-) : AbstractSourceToOutputMap<JvmClassName>(JvmClassNameTransformer, storageFile, pathConverter)
+    icContext: IncrementalCompilationContext,
+) : AbstractSourceToOutputMap<JvmClassName>(JvmClassNameTransformer, storageFile, icContext)
 
 internal class SourceToFqNameMap(
     storageFile: File,
-    pathConverter: FileToPathConverter
-) : AbstractSourceToOutputMap<FqName>(FqNameTransformer, storageFile, pathConverter)
+    icContext: IncrementalCompilationContext,
+) : AbstractSourceToOutputMap<FqName>(FqNameTransformer, storageFile, icContext)
 
 internal abstract class AbstractSourceToOutputMap<Name>(
     private val nameTransformer: NameTransformer<Name>,
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
+    icContext: IncrementalCompilationContext,
+) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
     fun clearOutputsForSource(sourceFile: File) {
         remove(pathConverter.toPath(sourceFile))
     }
