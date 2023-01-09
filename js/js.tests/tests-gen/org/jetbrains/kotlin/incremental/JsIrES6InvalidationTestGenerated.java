@@ -215,6 +215,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionWithObject/");
     }
 
+    @TestMetadata("interfaceSuperUsage")
+    public void testInterfaceSuperUsage() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/interfaceSuperUsage/");
+    }
+
     @TestMetadata("interfaceWithDefaultParams")
     public void testInterfaceWithDefaultParams() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/interfaceWithDefaultParams/");
