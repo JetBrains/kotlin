@@ -50,6 +50,13 @@ sealed class SymbolData {
         }
     }
 
+    data class TypeAliasData(val classId: ClassId) : SymbolData() {
+        override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
+            val symbol = getTypeAliasByClassId(classId) ?: error("Type alias $classId is not found")
+            return listOf(symbol)
+        }
+    }
+
     data class CallableData(val callableId: CallableId) : SymbolData() {
         override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
             val classId = callableId.classId
@@ -71,10 +78,11 @@ sealed class SymbolData {
     }
 
     companion object {
-        val identifiers = arrayOf("callable:", "class:")
+        val identifiers = arrayOf("callable:", "class:", "typealias:")
 
         fun create(data: String): SymbolData = when {
             data.startsWith("class:") -> ClassData(ClassId.fromString(data.removePrefix("class:").trim()))
+            data.startsWith("typealias:") -> TypeAliasData(ClassId.fromString(data.removePrefix("typealias:").trim()))
             data.startsWith("callable:") -> {
                 val fullName = data.removePrefix("callable:").trim()
                 val name = if ('.' in fullName) fullName.substringAfterLast(".") else fullName.substringAfterLast('/')

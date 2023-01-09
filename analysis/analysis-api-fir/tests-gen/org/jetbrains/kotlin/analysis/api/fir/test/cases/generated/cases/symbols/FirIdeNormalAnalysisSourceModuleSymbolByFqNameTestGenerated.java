@@ -106,6 +106,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
         runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
     }
 
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled")
     @TestDataPath("$PROJECT_ROOT")

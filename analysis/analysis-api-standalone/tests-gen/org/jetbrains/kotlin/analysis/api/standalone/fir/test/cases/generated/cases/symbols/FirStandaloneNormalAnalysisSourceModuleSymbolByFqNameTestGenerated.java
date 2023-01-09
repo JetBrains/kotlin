@@ -105,4 +105,10 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
     public void testNestedClass() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
     }
+
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");
+    }
 }
