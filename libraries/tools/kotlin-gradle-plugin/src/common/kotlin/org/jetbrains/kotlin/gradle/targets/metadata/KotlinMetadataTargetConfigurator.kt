@@ -358,10 +358,10 @@ class KotlinMetadataTargetConfigurator :
         sourceSet: KotlinSourceSet
     ) {
         val granularMetadataTransformation = GranularMetadataTransformation(
-            _params = lazy { GranularMetadataTransformation.Params(
+            params = GranularMetadataTransformation.Params(
                 project = project,
                 kotlinSourceSet = sourceSet
-            ) },
+            ),
             parentTransformations = lazy {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                     .map { it.compileDependenciesTransformationOrFail }

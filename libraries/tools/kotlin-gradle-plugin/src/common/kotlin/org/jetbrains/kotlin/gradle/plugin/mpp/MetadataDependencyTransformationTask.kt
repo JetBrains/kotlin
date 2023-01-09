@@ -83,10 +83,10 @@ open class MetadataDependencyTransformationTask
 
     private val transformation: GranularMetadataTransformation by lazy {
         GranularMetadataTransformation(
-            _params = lazy { GranularMetadataTransformation.Params(
+            GranularMetadataTransformation.Params(
                 project,
                 kotlinSourceSet,
-            ) },
+            ),
             lazy {
                 dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).map {
                     project.tasks.withType(MetadataDependencyTransformationTask::class.java)
