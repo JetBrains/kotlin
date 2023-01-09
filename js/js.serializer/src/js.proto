@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.metadata.js;
 
+// Whenever you change this proto in an incompatible way, don't forget to bump JsMetadataVersion
+
 import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JsProtoBuf";

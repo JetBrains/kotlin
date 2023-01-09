@@ -237,6 +237,9 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         val candidateAbiVersion = candidate.versions.abiVersion
         val candidateLibraryVersion = candidate.versions.libraryVersion
 
+        // Rejecting a library at this stage has disadvantages - the diagnostics are not-understandable.
+        // Please, don't add checks for other versions here. For example, check for the metadata version should be
+        // implemented in KlibDeserializedContainerSource.incompatibility
         if (candidateAbiVersion?.isCompatible() != true) {
             logger.warning("skipping $candidatePath. Incompatible abi version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
             return false

@@ -34,7 +34,7 @@ class KlibDeserializedContainerSource private constructor(
     )
 
     override val incompatibility: IncompatibleVersionErrorData<*>?
-        get() = null
+        get() = null // TODO KT-55808
 
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE
