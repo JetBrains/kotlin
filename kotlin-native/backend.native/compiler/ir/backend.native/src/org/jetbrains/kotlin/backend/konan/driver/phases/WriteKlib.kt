@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -31,13 +30,11 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
     val compilerVersion = CompilerVersion.CURRENT.toString()
     val libraryVersion = configuration.get(KonanConfigKeys.LIBRARY_VERSION)
     val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
-    val irVersion = KlibIrVersion.INSTANCE.toString()
     val versions = KotlinLibraryVersioning(
             abiVersion = abiVersion,
             libraryVersion = libraryVersion,
             compilerVersion = compilerVersion,
             metadataVersion = metadataVersion,
-            irVersion = irVersion
     )
     val target = config.target
     val manifestProperties = config.manifestProperties

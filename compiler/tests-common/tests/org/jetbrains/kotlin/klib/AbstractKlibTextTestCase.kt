@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
@@ -193,7 +192,6 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             libraryVersion = null,
             compilerVersion = KotlinCompilerVersion.VERSION,
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-            irVersion = KlibIrVersion.INSTANCE.toString()
         )
 
         val klibDir = org.jetbrains.kotlin.konan.file.createTempDir("testKlib")

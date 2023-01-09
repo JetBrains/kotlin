@@ -116,7 +116,6 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
         val headerCompilerVersion = library.versions.compilerVersion
         val headerLibraryVersion = library.versions.libraryVersion
         val headerMetadataVersion = library.versions.metadataVersion
-        val headerIrVersion = library.versions.irVersion
         val moduleName = ModuleDeserializer(library.moduleHeaderData).moduleName
 
         println("")
@@ -126,7 +125,6 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
         println("Compiler version: ${headerCompilerVersion}")
         println("Library version: $headerLibraryVersion")
         println("Metadata version: $headerMetadataVersion")
-        println("IR version: $headerIrVersion")
 
         if (library is KonanLibrary) {
             val targets = library.targetList.joinToString(", ")
