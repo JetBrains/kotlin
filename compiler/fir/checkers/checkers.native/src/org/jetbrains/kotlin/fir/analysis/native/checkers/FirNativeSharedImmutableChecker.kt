@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -48,7 +48,7 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker() {
 
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
-        if (context.containingDeclarations.lastOrNull() !is FirFile) {
+        if (!context.isTopLevel) {
             reporter.reportIfHasAnnotation(
                 declaration,
                 sharedImmutableClassId,

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirJsModuleChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -33,12 +32,8 @@ object FirJsModuleChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE, context)
         }
 
-        if (context.isTopLevel) {
-            val file = context.containingDeclarations.lastIsInstanceOrNull<FirFile>()
-
-            if (file != null && file.isEitherModuleOrNonModule(context.session)) {
-                reporter.reportOn(declaration.source, FirJsErrors.NESTED_JS_MODULE_PROHIBITED, context)
-            }
+        if (context.isTopLevel && context.containingFile?.isEitherModuleOrNonModule(context.session) == true) {
+            reporter.reportOn(declaration.source, FirJsErrors.NESTED_JS_MODULE_PROHIBITED, context)
         }
     }
 

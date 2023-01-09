@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirJsExternalFileChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -28,8 +26,7 @@ object FirJsExternalFileChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val targetAnnotations = context.containingDeclarations
-            .lastIsInstanceOrNull<FirFile>()
+        val targetAnnotations = context.containingFile
             ?.annotations
             ?.firstOrNull { it.fullyExpandedClassId(context.session) in JsStandardClassIds.Annotations.annotationsRequiringExternal }
 

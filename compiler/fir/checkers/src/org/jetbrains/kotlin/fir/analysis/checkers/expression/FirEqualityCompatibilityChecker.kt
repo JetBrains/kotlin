@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -49,7 +48,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             throw IllegalStateException(
                 "Exception while determining type compatibility: lType: $lType, rType: $rType, " +
                         "equality ${expression.render()}, " +
-                        "file ${context.containingDeclarations.filterIsInstance<FirFile>().firstOrNull()?.name}",
+                        "file ${context.containingFile?.name}",
                 e
             )
         }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -159,7 +158,7 @@ object FirOverrideChecker : FirClassChecker() {
         }
 
         if (this is FirPropertyAccessorSymbol) return
-        val file = context.findClosest<FirFile>() ?: return
+        val file = context.containingFile ?: return
         val containingDeclarations = context.containingDeclarations + containingClass
         val visibilityChecker = context.session.visibilityChecker
         val hasVisibleBase = overriddenSymbols.any {
@@ -270,7 +269,7 @@ object FirOverrideChecker : FirClassChecker() {
             if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
             val visibilityChecker = context.session.visibilityChecker
-            val file = context.findClosest<FirFile>() ?: return
+            val file = context.containingFile ?: return
             val containingDeclarations = context.containingDeclarations + containingClass
 
             @OptIn(SymbolInternals::class)
