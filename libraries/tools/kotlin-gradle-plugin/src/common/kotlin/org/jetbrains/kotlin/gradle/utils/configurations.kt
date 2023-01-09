@@ -46,12 +46,16 @@ private constructor(
     private val artifactsByComponentId by TransientLazy { artifacts.groupBy { it.id.componentIdentifier } }
 
     val allDependencies: List<DependencyResult> get() {
-        fun DependencyResult.allDependenciesRecursive(): List<DependencyResult> =
-            if (this is ResolvedDependencyResult) {
+        val visited = mutableSetOf<DependencyResult>()
+        fun DependencyResult.allDependenciesRecursive(): List<DependencyResult> {
+            if (this in visited) return emptyList()
+            visited += this
+            return if (this is ResolvedDependencyResult) {
                 listOf(this) + selected.dependencies.flatMap { it.allDependenciesRecursive() }
             } else {
                 listOf(this)
             }
+        }
 
         return root.dependencies.flatMap { it.allDependenciesRecursive() }
     }
