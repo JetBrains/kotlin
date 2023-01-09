@@ -82,7 +82,6 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             libraryVersion = null,
             compilerVersion = KotlinCompilerVersion.getVersion(),
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-            irVersion = null
         )
 
         buildKotlinLibrary(
