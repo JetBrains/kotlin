@@ -11,7 +11,6 @@ import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.cexport.produceCAdapterBitcode
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
