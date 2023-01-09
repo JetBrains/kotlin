@@ -392,14 +392,9 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                 traceEventStart(<>, %changed, -1, <>)
               }
               Example({ %composer: Composer?, %changed: Int ->
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C:Test.kt#2487m")
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                  Unit
-                } else {
-                  %composer.skipToGroupEnd()
-                }
-                %composer.endReplaceableGroup()
+                sourceInformationMarkerStart(%composer, <>, "C:Test.kt#2487m")
+                Unit
+                sourceInformationMarkerEnd(%composer)
               }, %composer, 0)
               if (isTraceInProgress()) {
                 traceEventEnd()
@@ -655,23 +650,13 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                       traceEventStart(<>, %dirty, -1, <>)
                     }
                     emit({ %composer: Composer?, %changed: Int ->
-                      %composer.startReplaceableGroup(<>)
-                      sourceInformation(%composer, "C<emit>:Test.kt#2487m")
-                      if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                        emit({ %composer: Composer?, %changed: Int ->
-                          %composer.startReplaceableGroup(<>)
-                          sourceInformation(%composer, "C<compos...>:Test.kt#2487m")
-                          if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                            composable(%composer, 0b1110 and %dirty)
-                          } else {
-                            %composer.skipToGroupEnd()
-                          }
-                          %composer.endReplaceableGroup()
-                        }, %composer, 0)
-                      } else {
-                        %composer.skipToGroupEnd()
-                      }
-                      %composer.endReplaceableGroup()
+                      sourceInformationMarkerStart(%composer, <>, "C<emit>:Test.kt#2487m")
+                      emit({ %composer: Composer?, %changed: Int ->
+                        sourceInformationMarkerStart(%composer, <>, "C<compos...>:Test.kt#2487m")
+                        composable(%composer, 0b1110 and %dirty)
+                        sourceInformationMarkerEnd(%composer)
+                      }, %composer, 0)
+                      sourceInformationMarkerEnd(%composer)
                     }, %composer, 0)
                     if (isTraceInProgress()) {
                       traceEventEnd()
