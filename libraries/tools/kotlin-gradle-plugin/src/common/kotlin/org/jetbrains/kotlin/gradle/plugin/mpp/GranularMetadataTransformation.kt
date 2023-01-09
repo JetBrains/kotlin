@@ -205,7 +205,9 @@ internal class GranularMetadataTransformation(
             .resolvedMetadataConfiguration
             .dependencyArtifacts(dependency)
             .singleOrNull()
-            ?: error("Expected only one Composite Metadata klib for dependency $dependency")
+            // expected only ony Composite Metadata Klib, but if dependency got resolved into platform variant
+            // when source set is a leaf then we might get multiple artifacts in such case we must return KeepOriginal
+            ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 
         val mppDependencyMetadataExtractor = params.projectStructureMetadataExtractorFactory.create(compositeMetadataArtifact)
 
