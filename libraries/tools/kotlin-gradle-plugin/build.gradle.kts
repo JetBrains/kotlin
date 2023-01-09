@@ -253,19 +253,19 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                 targets.create("functionalRegressionTest") {
                     testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/regression/**")
+                        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
                     }
                 }
 
                 targets.create("functionalIdeTest") {
                     testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/ide/**")
+                        include("**/org/jetbrains/kotlin/gradle/ideTests/**")
                     }
                 }
 
                 targets.create("functionalUnitTest") {
                     testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/unit/**")
+                        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
                     }
                 }
 
