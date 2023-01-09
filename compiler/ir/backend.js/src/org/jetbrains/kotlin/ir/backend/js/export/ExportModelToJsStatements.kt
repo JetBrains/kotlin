@@ -266,15 +266,11 @@ class ExportModelToJsStatements(
         }
 
         secondaryConstructors.forEach {
-            val currentFunRef = staticContext.getNameForStaticDeclaration(it.ir)
-                .run {
-                    if (it.ir.isEs6ConstructorReplacement) {
-                        JsNameRef(this, innerClassRef)
-                    } else {
-                        makeRef()
-                    }
-                }
-
+            val currentFunRef = if (it.ir.isEs6ConstructorReplacement) {
+                JsNameRef(staticContext.getNameForMemberFunction(it.ir), innerClassRef)
+            } else {
+                staticContext.getNameForStaticDeclaration(it.ir).makeRef()
+            }
 
             val assignment = jsAssignment(
                 JsNameRef(it.name, bindConstructor.makeRef()),

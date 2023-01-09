@@ -28,10 +28,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val classNameRef = className.makeRef()
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
 
+    private val classPrototypeRef by lazy { prototypeOf(classNameRef, context.staticContext) }
     private val baseClassRef by lazy { // Lazy in case was not collected by namer during JsClassGenerator construction
         if (baseClass != null && !baseClass.isAny()) baseClass.getClassRef(context) else null
     }
-    private val classPrototypeRef = prototypeOf(classNameRef, context.staticContext)
     private val classBlock = JsCompositeBlock()
     private val classModel = JsIrClassModel(irClass)
 
@@ -74,13 +74,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     if (es6mode) {
                         if (declaration.isEs6ConstructorReplacement && irClass.isInterface) continue
-                        val (memberRef, function) = generateMemberFunction(declaration)
+                        val (memberName, function) = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it.escapedIfNeed() }
-                        declaration.generateAssignmentIfMangled(memberRef)
+                        declaration.generateAssignmentIfMangled(memberName)
                     } else {
-                        val (memberRef, function) = generateMemberFunction(declaration)
+                        val (memberName, function) = generateMemberFunction(declaration)
+                        val memberRef = jsElementAccess(memberName, classPrototypeRef)
                         function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
-                        declaration.generateAssignmentIfMangled(memberRef)
+                        declaration.generateAssignmentIfMangled(memberName)
                     }
                 }
                 is IrClass -> {
@@ -209,10 +210,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         if (irClass.hasAnnotation(JsAnnotations.PrioritizedInitialization)) {
             context.staticContext.classesWithPrioritizedInitialization.add(irClass.symbol)
-        } else {
-            classModel.preDeclarationBlock.statements += generateSetMetadataCall()
         }
 
+        classModel.preDeclarationBlock.statements += generateSetMetadataCall()
         context.staticContext.classModels[irClass.symbol] = classModel
 
         return classBlock
@@ -238,13 +238,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             )
         }
 
-    private fun IrSimpleFunction.generateAssignmentIfMangled(memberRef: JsExpression) {
+    private fun IrSimpleFunction.generateAssignmentIfMangled(memberName: JsName) {
         if (
             irClass.isExported(context.staticContext.backendContext) &&
             visibility.isPublicAPI && hasMangledName() &&
             correspondingPropertySymbol == null
         ) {
-            classBlock.statements += jsAssignment(prototypeAccessRef(), memberRef).makeStmt()
+            classBlock.statements += jsAssignment(prototypeAccessRef(), jsElementAccess(memberName, classPrototypeRef)).makeStmt()
         }
     }
 
@@ -260,9 +260,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return isInterface && !isEffectivelyExternal()
     }
 
-    private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsExpression, JsFunction?> {
+    private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsName, JsFunction?> {
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
-        val memberRef = jsElementAccess(memberName.ident, classPrototypeRef)
 
         if (declaration.isReal && declaration.body != null) {
             val translatedFunction: JsFunction = declaration.accept(IrFunctionToJsTransformer(), context)
@@ -270,10 +269,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
             if (irClass.isInterface) {
                 classModel.preDeclarationBlock.statements += translatedFunction.makeStmt()
-                return Pair(memberRef, null)
+                return Pair(memberName, null)
             }
 
-            return Pair(memberRef, translatedFunction)
+            return Pair(memberName, translatedFunction)
         }
 
         // do not generate code like
@@ -295,7 +294,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     if (implClassDeclaration.shouldCopyFrom()) {
                         val reference = context.getNameForStaticDeclaration(it).makeRef()
-                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
+                        classModel.postDeclarationBlock.statements += jsAssignment(
+                            jsElementAccess(memberName, classPrototypeRef),
+                            reference
+                        ).makeStmt()
                         if (isFakeOverride) {
                             classModel.postDeclarationBlock.statements += missedOverrides
                                 .map { missedOverride ->
@@ -308,7 +310,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
         }
 
-        return Pair(memberRef, null)
+        return Pair(memberName, null)
     }
 
     private fun maybeGeneratePrimaryConstructor() {
