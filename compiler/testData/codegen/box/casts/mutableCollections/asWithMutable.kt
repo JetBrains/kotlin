@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// KT-55828
+// IGNORE_BACKEND_K2: NATIVE
 
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()
