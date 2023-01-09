@@ -1,13 +1,13 @@
 package linkableContent
 
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.base.transformers.pages.samples.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.*
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.Assertions
@@ -199,7 +199,6 @@ class LinkableContentTest : BaseAbstractTest() {
                     val text = function.cast<MemberPageNode>().content.cast<ContentGroup>().children.last()
                         .cast<ContentDivergentGroup>().children.single()
                         .cast<ContentDivergentInstance>().after
-                        .cast<ContentGroup>().children.last()
                         .cast<ContentGroup>().children.last()
                         .cast<ContentGroup>().children.single()
                         .cast<ContentCodeBlock>().children.single().cast<ContentText>().text
