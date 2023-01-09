@@ -104,19 +104,19 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                         arguments.languageVersion == null -> {
                             messageCollector.report(
                                 STRONG_WARNING,
-                                "Compiler flag -Xuse-k2 is deprecated, please use -language-version 2.0 instead"
+                                "Compiler flag -Xuse-k2 is deprecated, please use \"-language-version 2.0\" instead"
                             )
                         }
                         languageVersion.usesK2 -> {
                             messageCollector.report(
                                 STRONG_WARNING,
-                                "Compiler flag -Xuse-k2 is redundant"
+                                "Compiler flag -Xuse-k2 is redundant, the \"-language-version 2.0\" is used instead"
                             )
                         }
                         else -> {
                             messageCollector.report(
                                 STRONG_WARNING,
-                                "With -Xuse-k2 compiler flag -language-version $languageVersion has no effect, please remove -Xuse-k2 flag or use -language-version 2.0 instead"
+                                "With -Xuse-k2 compiler flag \"-language-version $languageVersion\" has no effect, please remove -Xuse-k2 flag and use \"-language-version 2.0\" instead"
                             )
                         }
                     }
@@ -202,7 +202,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
         val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
 
-        if (!checkPluginsArguments(messageCollector, arguments.useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+        val useK2 = configuration.get(CommonConfigurationKeys.USE_FIR) == true
+        if (!checkPluginsArguments(messageCollector, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return INTERNAL_ERROR
         }
 
@@ -274,7 +275,7 @@ fun checkPluginsArguments(
             hasErrors = true
             messageCollector.report(
                 ERROR,
-                "-Xcompiler-plugin argument is allowed only for for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2"
+                "-Xcompiler-plugin argument is allowed only for language version 2.0. Please use -Xplugin argument for language version 1.9 and below"
             )
         }
         if (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty()) {

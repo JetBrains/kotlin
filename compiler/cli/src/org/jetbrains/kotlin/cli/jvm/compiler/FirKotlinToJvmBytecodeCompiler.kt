@@ -86,7 +86,7 @@ object FirKotlinToJvmBytecodeCompiler {
                 """
                     |There are some plugins incompatible with language version 2.0:
                     |${notSupportedPlugins.joinToString(separator = "\n|") { "  $it" }}
-                    |Please use language version 1.* (e.g. 1.9)
+                    |Please use language version 1.9 or below
                 """.trimMargin()
             )
             return false

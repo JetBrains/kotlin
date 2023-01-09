@@ -175,15 +175,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         ExitCode exitCode = OK;
 
-        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
-        LanguageVersion languageVersion = languageVersionSettings.getLanguageVersion();
-        if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments) || languageVersion.getUsesK2()) {
+        boolean useFir = Boolean.TRUE.equals(configuration.get(CommonConfigurationKeys.USE_FIR));
+        if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments) || useFir) {
             exitCode = getIrCompiler().doExecute(arguments, configuration.copy(), rootDisposable, paths);
         }
-        if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments) || languageVersion.getUsesK2()) {
+        if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments) || useFir) {
             return exitCode;
         }
 
+        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
 
         if (CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.getValue() != "true" && languageVersionSettings.getLanguageVersion().compareTo(LanguageVersion.KOTLIN_1_9) >= 0) {
             messageCollector.report(ERROR, "Old Kotlin/JS compiler is no longer supported. Please migrate to the new JS IR backend", null);

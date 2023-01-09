@@ -146,7 +146,7 @@ private val apiVersionValues = ApiVersion.run {
         KOTLIN_1_7,
         KOTLIN_1_8,
         KOTLIN_1_9,
-        KOTLIN_2_0
+        KOTLIN_2_0,
     )
 }
 

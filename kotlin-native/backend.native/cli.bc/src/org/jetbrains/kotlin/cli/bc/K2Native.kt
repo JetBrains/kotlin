@@ -58,9 +58,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
-        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(WARNING, "New compiler pipeline K2 is experimental in Kotlin/Native. No compatibility guarantees are yet provided")
-        }
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {
