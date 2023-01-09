@@ -22,7 +22,6 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
         libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.getVersion(),
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-        irVersion = null
     )
 
     buildKotlinLibrary(
