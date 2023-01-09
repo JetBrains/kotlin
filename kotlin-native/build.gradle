@@ -81,8 +81,6 @@ ext {
 
     kotlinCompilerModule = project(":kotlin-compiler")
     kotlinStdLibModule= project(":kotlin-stdlib")
-    kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
-    kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
 
     konanVersionFull = ext.kotlinNativeVersion
     gradlePluginVersion = konanVersionFull
