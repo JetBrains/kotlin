@@ -10,9 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":kotlin-gradle-plugin:functionalTest" />
-          <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.gradle.unit.*&quot;" />
+          <option value=":kotlin-gradle-plugin:functionalUnitTest" />
         </list>
       </option>
       <option name="vmOptions" />

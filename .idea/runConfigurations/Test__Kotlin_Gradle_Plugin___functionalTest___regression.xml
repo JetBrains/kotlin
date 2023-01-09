@@ -10,9 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":kotlin-gradle-plugin:functionalTest" />
-          <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.gradle.regression.*&quot;" />
+          <option value=":kotlin-gradle-plugin:functionalRegressionTest" />
         </list>
       </option>
       <option name="vmOptions" />
