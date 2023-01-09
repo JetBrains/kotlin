@@ -20,6 +20,7 @@ import kotlin.io.path.relativeTo
 )
 @DisplayName("Scripting plugin")
 @OtherGradlePluginTests
+@GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3) // workaround for a Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450
 class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
