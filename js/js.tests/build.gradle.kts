@@ -16,10 +16,12 @@ plugins {
     id("de.undercouch.download")
 }
 
+val nodeDir = buildDir.resolve("node")
+
 node {
     download.set(true)
     version.set(nodejsVersion)
-    nodeProjectDir.set(buildDir)
+    nodeProjectDir.set(nodeDir)
 }
 
 val antLauncherJar by configurations.creating
@@ -354,7 +356,7 @@ fun Test.setUpBoxTests() {
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
-    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
+    systemProperty("kotlin.js.test.root.out.dir", "$nodeDir/")
     systemProperty(
         "overwrite.output", project.providers.gradleProperty("overwrite.output")
             .forUseAtConfigurationTime().orNull ?: "false"
@@ -447,16 +449,16 @@ val prepareNpmTestData by tasks.registering(Copy::class) {
         include("package.json")
         include("test.js")
     }
-    into(buildDir)
+    into(nodeDir)
 }
 
 val npmInstall by tasks.getting(NpmTask::class) {
-    workingDir.set(buildDir)
+    workingDir.set(nodeDir)
     dependsOn(prepareNpmTestData)
 }
 
 val mochaTest by task<MochaTestTask> {
-    workingDir.set(buildDir)
+    workingDir.set(nodeDir)
 
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
     args.set(listOf("run", target))
