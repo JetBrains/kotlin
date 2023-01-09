@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.build.report
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
-import kotlin.reflect.KFunction1
 
 interface ICReporter {
 

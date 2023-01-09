@@ -47,20 +47,22 @@ interface IncrementalCacheCommon {
 }
 
 /**
- * Incremental cache common for JVM and JS for specifit ClassName type
+ * Incremental cache common for JVM and JS for specific ClassName type
  */
 abstract class AbstractIncrementalCache<ClassName>(
     workingDir: File,
     protected val pathConverter: FileToPathConverter
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
-        private val CLASS_ATTRIBUTES = "class-attributes"
-        private val SUBTYPES = "subtypes"
-        private val SUPERTYPES = "supertypes"
-        private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
-        private val COMPLEMENTARY_FILES = "complementary-files"
+        private const val CLASS_ATTRIBUTES = "class-attributes"
+        private const val SUBTYPES = "subtypes"
+        private const val SUPERTYPES = "supertypes"
+        private const val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
+        private const val COMPLEMENTARY_FILES = "complementary-files"
+
         @JvmStatic
         protected val SOURCE_TO_CLASSES = "source-to-classes"
+
         @JvmStatic
         protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
     }
@@ -82,6 +84,7 @@ abstract class AbstractIncrementalCache<ClassName>(
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
+
     /**
      * A file X is a complementary to a file Y if they contain corresponding expect/actual declarations.
      * Complementary files should be compiled together during IC so the compiler does not complain
@@ -218,7 +221,7 @@ abstract class AbstractIncrementalCache<ClassName>(
                 if (complementaryFiles.add(it) && !processedFiles.contains(it)) filesQueue.add(it)
             }
             val classes2recompile = sourceToClassesMap.getFqNames(file)
-            classes2recompile.filter { !processedClasses.contains(it) }.forEach {class2recompile ->
+            classes2recompile.filter { !processedClasses.contains(it) }.forEach { class2recompile ->
                 processedClasses.add(class2recompile)
                 val sealedClasses = findSealedSupertypes(class2recompile, listOf(this))
                 val allSubtypes = sealedClasses.flatMap { withSubtypes(it, listOf(this)) }.also {

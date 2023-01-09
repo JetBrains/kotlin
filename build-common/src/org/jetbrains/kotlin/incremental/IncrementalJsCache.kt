@@ -102,7 +102,7 @@ open class IncrementalJsCache(
     }
 
     fun getOutputsBySource(sourceFile: File): Collection<File> {
-        return sourceToJsOutputsMap.get(sourceFile)
+        return sourceToJsOutputsMap[sourceFile]
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {

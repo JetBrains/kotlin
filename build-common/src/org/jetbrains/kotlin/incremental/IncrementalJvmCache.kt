@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.security.MessageDigest
 
-val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
+const val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
 open class IncrementalJvmCache(
     targetDataRoot: File,
@@ -51,17 +51,17 @@ open class IncrementalJvmCache(
     pathConverter = pathConverter
 ), IncrementalCache {
     companion object {
-        private val PROTO_MAP = "proto"
-        private val FE_PROTO_MAP = "fe-proto"
-        private val CONSTANTS_MAP = "constants"
-        private val PACKAGE_PARTS = "package-parts"
-        private val MULTIFILE_CLASS_FACADES = "multifile-class-facades"
-        private val MULTIFILE_CLASS_PARTS = "multifile-class-parts"
-        private val INLINE_FUNCTIONS = "inline-functions"
-        private val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
-        private val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
+        private const val PROTO_MAP = "proto"
+        private const val FE_PROTO_MAP = "fe-proto"
+        private const val CONSTANTS_MAP = "constants"
+        private const val PACKAGE_PARTS = "package-parts"
+        private const val MULTIFILE_CLASS_FACADES = "multifile-class-facades"
+        private const val MULTIFILE_CLASS_PARTS = "multifile-class-parts"
+        private const val INLINE_FUNCTIONS = "inline-functions"
+        private const val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
+        private const val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
 
-        private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
+        private const val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
     override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
@@ -366,7 +366,7 @@ open class IncrementalJvmCache(
             changesCollector.collectProtoChanges(oldMapValue?.toProtoData(className.packageFqName), newProtoData, packageProtoKey = key)
         }
 
-        internal fun check(
+        fun check(
             className: JvmClassName, classProto: ProtoBuf.Class, stringTable: JvmStringTable, changesCollector: ChangesCollector
         ) {
             val key = className.internalName
