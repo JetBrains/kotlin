@@ -39,10 +39,6 @@ data class CompilerTestLanguageVersionSettings(
 
     override fun isPreRelease(): Boolean = false
 
-    override fun copy(languageVersion: LanguageVersion): LanguageVersionSettings {
-        return CompilerTestLanguageVersionSettings(initialLanguageFeatures, apiVersion, languageVersion, analysisFlags)
-    }
-
     @Suppress("UNCHECKED_CAST")
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 }

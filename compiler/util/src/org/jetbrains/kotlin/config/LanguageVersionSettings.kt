@@ -507,8 +507,6 @@ interface LanguageVersionSettings {
     // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
     val languageVersion: LanguageVersion
 
-    fun copy(languageVersion: LanguageVersion): LanguageVersionSettings = this
-
     companion object {
         const val RESOURCE_NAME_TO_ALLOW_READING_FROM_ENVIRONMENT = "META-INF/allow-configuring-from-environment"
     }
@@ -556,9 +554,6 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
             specificFeatures.any { (feature, state) ->
                 state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()
             }
-
-    override fun copy(languageVersion: LanguageVersion): LanguageVersionSettings =
-        LanguageVersionSettingsImpl(languageVersion, apiVersion, analysisFlags, specificFeatures)
 
     companion object {
         @JvmField

@@ -602,10 +602,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         collector: MessageCollector,
         additionalAnalysisFlags: Map<AnalysisFlag<*>, Any>
     ): LanguageVersionSettings {
-        // If only "-api-version" is specified, language version is assumed to be the latest stable
-        val languageVersion = parseVersion(collector, languageVersion, "language")
-            ?: defaultLanguageVersion(collector)
-
+        val languageVersion = parseOrConfigureLanguageVersion(collector)
         // If only "-language-version" is specified, API version is assumed to be equal to the language version
         // (API version cannot be greater than the language version)
         val apiVersion = ApiVersion.createByLanguageVersion(parseVersion(collector, apiVersion, "API") ?: languageVersion)
@@ -707,6 +704,37 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     private enum class VersionKind(val text: String) {
         LANGUAGE("Language"), API("API")
+    }
+
+    private fun parseOrConfigureLanguageVersion(collector: MessageCollector): LanguageVersion {
+        // If only "-api-version" is specified, language version is assumed to be the latest stable (or 2.0 with -Xuse-k2)
+        val explicitVersion = parseVersion(collector, languageVersion, "language")
+        val explicitOrDefaultVersion = explicitVersion ?: defaultLanguageVersion(collector)
+        if (useK2) {
+            when {
+                explicitVersion?.usesK2 == true -> {
+                    collector.report(
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        "Compiler flag -Xuse-k2 is redundant, the \"-language-version 2.0\" is used instead"
+                    )
+                }
+                explicitVersion != null -> {
+                    collector.report(
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        "With -Xuse-k2 compiler flag \"-language-version $explicitVersion\" has no effect," +
+                                " please remove -Xuse-k2 flag and use \"-language-version 2.0\" instead"
+                    )
+                }
+                else -> {
+                    collector.report(
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        "Compiler flag -Xuse-k2 is deprecated, please use \"-language-version 2.0\" instead"
+                    )
+                }
+            }
+        }
+        return if (useK2 && !explicitOrDefaultVersion.usesK2) LanguageVersion.KOTLIN_2_0
+        else explicitOrDefaultVersion
     }
 
     private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =

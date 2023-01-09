@@ -108,8 +108,6 @@ object FirSessionFactoryHelper {
 
                     override fun <T> getFlag(flag: AnalysisFlag<T>): T = stub()
 
-                    override fun copy(languageVersion: LanguageVersion): LanguageVersionSettings = this
-
                     override val apiVersion: ApiVersion
                         get() = stub()
                     override val languageVersion: LanguageVersion

@@ -97,36 +97,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             try {
                 setIdeaIoUseFallback()
 
-                val useK2FromFlag = arguments.useK2
-                val languageVersion = configuration.languageVersionSettings.languageVersion
-                if (useK2FromFlag) {
-                    when {
-                        arguments.languageVersion == null -> {
-                            messageCollector.report(
-                                STRONG_WARNING,
-                                "Compiler flag -Xuse-k2 is deprecated, please use \"-language-version 2.0\" instead"
-                            )
-                        }
-                        languageVersion.usesK2 -> {
-                            messageCollector.report(
-                                STRONG_WARNING,
-                                "Compiler flag -Xuse-k2 is redundant, the \"-language-version 2.0\" is used instead"
-                            )
-                        }
-                        else -> {
-                            messageCollector.report(
-                                STRONG_WARNING,
-                                "With -Xuse-k2 compiler flag \"-language-version $languageVersion\" has no effect, please remove -Xuse-k2 flag and use \"-language-version 2.0\" instead"
-                            )
-                        }
-                    }
-                    if (!languageVersion.usesK2) {
-                        val languageVersionSettings = configuration.languageVersionSettings
-                        configuration.languageVersionSettings = languageVersionSettings.copy(LanguageVersion.KOTLIN_2_0)
-                        arguments.checkLanguageVersionIsStable(LanguageVersion.KOTLIN_2_0, messageCollector)
-                    }
-                }
-
                 val code = doExecute(arguments, configuration, rootDisposable, paths)
 
                 performanceManager.notifyCompilationFinished()
