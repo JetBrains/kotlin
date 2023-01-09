@@ -56,6 +56,14 @@ inline fun <reified T> stringifyByIteration(arr: VArray<T>): String {
     return stringBuilder.toString()
 }
 
+@JvmInline
+value class IC(val x: Int)
+
+fun testICVarray(): Boolean {
+    val arr = VArray(3) { IC(it) }
+    return stringifyByIteration(arr) == "IC(x=0)IC(x=1)IC(x=2)"
+}
+
 fun box(): String {
     if (!testBoolVarray()) return "Fail 1"
     if (!testCharVArray()) return "Fail 2"
@@ -66,6 +74,7 @@ fun box(): String {
     if (!testFloatVArray()) return "Fail 7"
     if (!testDoubleVArray()) return "Fail 8"
     if (!testStringVArray()) return "Fail 9"
+    if (!testICVarray()) return "Fail 10"
 
     return "OK"
 }
