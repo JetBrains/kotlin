@@ -248,7 +248,7 @@ internal class GranularMetadataTransformation(
             .filterIsInstance<ResolvedDependencyResult>()
             .filterTo(mutableSetOf()) { it.selected.id.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
 
-        if (params.sourceSetName in params.platformCompilationSourceSets && isResolvedToProject)
+        if (params.sourceSetName in params.platformCompilationSourceSets && !isResolvedToProject)
             return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(module, transitiveDependenciesToVisit)
 
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
