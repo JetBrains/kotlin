@@ -11,11 +11,11 @@ data class KotlinLibraryVersioning(
 )
 
 fun Properties.writeKonanLibraryVersioning(versions: KotlinLibraryVersioning) {
-    versions.abiVersion ?. let { this.setProperty(KLIB_PROPERTY_ABI_VERSION, it.toString()) }
-    versions.libraryVersion ?. let { this.setProperty(KLIB_PROPERTY_LIBRARY_VERSION, it) }
-    versions.compilerVersion ?. let { this.setProperty(KLIB_PROPERTY_COMPILER_VERSION, it) }
-    versions.metadataVersion ?. let { this.setProperty(KLIB_PROPERTY_METADATA_VERSION, it) }
-    versions.irVersion ?. let { this.setProperty(KLIB_PROPERTY_IR_VERSION, it) }
+    versions.abiVersion?.let { this.setProperty(KLIB_PROPERTY_ABI_VERSION, it.toString()) }
+    versions.libraryVersion?.let { this.setProperty(KLIB_PROPERTY_LIBRARY_VERSION, it) }
+    versions.compilerVersion?.let { this.setProperty(KLIB_PROPERTY_COMPILER_VERSION, it) }
+    versions.metadataVersion?.let { this.setProperty(KLIB_PROPERTY_METADATA_VERSION, it) }
+    versions.irVersion?.let { this.setProperty(KLIB_PROPERTY_IR_VERSION, it) }
 }
 
 fun Properties.readKonanLibraryVersioning(): KotlinLibraryVersioning {

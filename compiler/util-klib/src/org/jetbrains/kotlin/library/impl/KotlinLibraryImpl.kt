@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
 
-open class BaseKotlinLibraryImpl(
+class BaseKotlinLibraryImpl(
     val access: BaseLibraryAccess<KotlinLibraryLayout>,
     override val isDefault: Boolean
 ) : BaseKotlinLibrary {
@@ -53,7 +53,7 @@ open class BaseKotlinLibraryImpl(
     }
 }
 
-open class MetadataLibraryImpl(
+class MetadataLibraryImpl(
     val access: MetadataLibraryAccess<MetadataKotlinLibraryLayout>
 ) : MetadataLibrary {
 
@@ -292,7 +292,7 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
     }
 }
 
-open class KotlinLibraryImpl(
+class KotlinLibraryImpl(
     val base: BaseKotlinLibraryImpl,
     val metadata: MetadataLibraryImpl,
     val ir: IrLibraryImpl
