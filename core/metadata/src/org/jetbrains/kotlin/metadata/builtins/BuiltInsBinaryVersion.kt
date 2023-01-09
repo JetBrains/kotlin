@@ -10,8 +10,15 @@ import java.io.DataInputStream
 import java.io.InputStream
 
 /**
- * The version of the format in which the .kotlin_builtins file is stored. This version also includes the version
- * of the core protobuf messages (metadata.proto).
+ * The version of the format in which the `.kotlin_builtins` (`builtins.proto`) file is stored. This version also includes the version
+ * of the core protobuf messages (`metadata.proto`).
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `builtins.proto`
+ * - Incompatible changes are made in `metadata.proto`
+ * - Incompatible changes are made in builtins serialization/deserialization logic
+ *
+ * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc).
  */
 class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatibleWithCurrentCompilerVersion(): Boolean =
