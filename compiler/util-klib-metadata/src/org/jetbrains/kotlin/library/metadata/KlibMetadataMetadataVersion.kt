@@ -9,6 +9,16 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
+/**
+ * The version for `KlibMetadataProtoBuf.proto`. This version also includes the version of the core protobuf messages (`metadata.proto`).
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `KlibMetadataProtoBuf.proto`
+ * - Incompatible changes are made in `metadata.proto`
+ * - Incompatible changes are made in Klib metadata serialization/deserialization logic
+ *
+ * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc).
+ */
 class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     override fun isCompatibleWithCurrentCompilerVersion(): Boolean = isCompatibleTo(INSTANCE)

@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.metadata;
 
 import "core/metadata/src/ext_options.proto";
 
+// Whenever you change this proto in an incompatible way, don't forget to bump versions of protobufs that import `metadata.proto`
+// (namely BuiltInsBinaryVersion, JvmMetadataVersion, JsMetadataVersion, KlibMetadataVersion, and probably something else)
+
 option java_outer_classname = "ProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
