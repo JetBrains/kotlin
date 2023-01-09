@@ -73,11 +73,11 @@ open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component:
 }
 
 
-open class MetadataLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) : BaseLibraryAccess<L>(klib, component) {
+class MetadataLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) : BaseLibraryAccess<L>(klib, component) {
     override val layout = MetadataLibraryLayoutImpl(klib, component)
 }
 
-open class IrLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) : BaseLibraryAccess<L>(klib, component) {
+class IrLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) : BaseLibraryAccess<L>(klib, component) {
     override val layout = IrLibraryLayoutImpl(klib, component)
 }
 
@@ -123,7 +123,7 @@ open class ExtractingKotlinLibraryLayout(zipped: KotlinLibraryLayoutImpl) : Kotl
     override val component = zipped.component
 }
 
-open class ExtractingBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl) :
+class ExtractingBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl) :
     ExtractingKotlinLibraryLayout(zipped) {
     override val manifestFile: File by lazy { zipped.extract(zipped.manifestFile) }
     override val resourcesDir: File by lazy { zipped.extractDir(zipped.resourcesDir) }
