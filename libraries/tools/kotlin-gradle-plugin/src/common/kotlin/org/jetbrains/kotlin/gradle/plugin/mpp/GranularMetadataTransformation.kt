@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
@@ -21,11 +27,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
 import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
+import java.io.StringWriter
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
-    val dependency: ResolvedComponentResult,
+    val resolvedDependency: ResolvedDependencyResult,
 ) {
+    val dependency: ResolvedComponentResult = resolvedDependency.selected
     /** Evaluate and store the value, as the [dependency] will be lost during Gradle instant execution */
 //    val originalArtifactFiles: List<File> = dependency.dependents.flatMap {  it.allModuleArtifacts } .map { it.file }
 
@@ -39,16 +47,16 @@ internal sealed class MetadataDependencyResolution(
     }
 
     class KeepOriginalDependency(
-        dependency: ResolvedComponentResult
-    ) : MetadataDependencyResolution(dependency)
+        resolvedDependency: ResolvedDependencyResult,
+    ) : MetadataDependencyResolution(resolvedDependency)
 
     sealed class Exclude(
-        dependency: ResolvedComponentResult
-    ) : MetadataDependencyResolution(dependency) {
+        resolvedDependency: ResolvedDependencyResult
+    ) : MetadataDependencyResolution(resolvedDependency) {
 
         class Unrequested(
-            dependency: ResolvedComponentResult
-        ) : Exclude(dependency)
+            resolvedDependency: ResolvedDependencyResult
+        ) : Exclude(resolvedDependency)
 
         /**
          * Resolution for metadata dependencies of leaf platform source sets.
@@ -57,19 +65,19 @@ internal sealed class MetadataDependencyResolution(
          * See KT-52216
          */
         class PublishedPlatformSourceSetDependency(
-            dependency: ResolvedComponentResult,
+            resolvedDependency: ResolvedDependencyResult,
             val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
-        ) : Exclude(dependency)
+        ) : Exclude(resolvedDependency)
     }
 
     class ChooseVisibleSourceSets internal constructor(
-        dependency: ResolvedComponentResult,
+        resolvedDependency: ResolvedDependencyResult,
         val projectStructureMetadata: KotlinProjectStructureMetadata,
         val allVisibleSourceSetNames: Set<String>,
         val visibleSourceSetNamesExcludingDependsOn: Set<String>,
         val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
         internal val metadataProvider: MetadataProvider
-    ) : MetadataDependencyResolution(dependency) {
+    ) : MetadataDependencyResolution(resolvedDependency) {
 
         internal sealed class MetadataProvider {
             class ArtifactMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataArtifact) :
@@ -90,6 +98,309 @@ internal sealed class MetadataDependencyResolution(
     }
 }
 
+internal class MetadataDependencyResolutionSerializer(
+    private val params: GranularMetadataTransformation.Params
+) {
+    private val resolvedMetadataConfiguration get() = params.resolvedMetadataConfiguration
+
+    private val dependenciesByModuleId: Map<String, ResolvedDependencyResult> by lazy {
+        resolvedMetadataConfiguration
+            .allResolvedDependencies
+            .mapNotNull {
+                val id = it.selected.id
+                when {
+                    id is ModuleComponentIdentifier -> "${id.group}:${id.module}" to it
+                    id is ProjectComponentIdentifier && !id.build.isCurrentBuild -> {
+                        val requested = it.requested
+                        if (requested is ModuleComponentSelector) {
+                            "${requested.group}:${requested.module}" to it
+                        } else {
+                            null
+                        }
+                    }
+                    else -> null
+                }
+            }.toMap()
+    }
+
+    private val dependenciesByProjectPath: Map<String, ResolvedDependencyResult> by lazy {
+        resolvedMetadataConfiguration
+            .allResolvedDependencies
+            .mapNotNull {
+                val id = it.selected.id
+                if (id is ProjectComponentIdentifier && id.build.isCurrentBuild) {
+                    id.projectPath to it
+                } else {
+                    null
+                }
+            }.toMap()
+    }
+
+    private val gson = GsonBuilder().setLenient().setPrettyPrinting().create()
+    fun serializeList(resolutions: Iterable<MetadataDependencyResolution>): String {
+        val stringWriter = StringWriter()
+        val writer = gson.newJsonWriter(stringWriter)
+        writer.beginArray()
+        resolutions.forEach { resolution -> writer.serialize(resolution) }
+        writer.endArray()
+
+        return stringWriter.toString()
+    }
+
+    fun parseList(string: String): List<MetadataDependencyResolution> {
+        val json = JsonParser.parseString(string)
+
+        return json.asJsonArray.map { it.asJsonObject.parseMetadataDependencyResolution() }
+    }
+
+    private fun JsonWriter.serialize(resolution: MetadataDependencyResolution) {
+        when (resolution) {
+            is MetadataDependencyResolution.ChooseVisibleSourceSets -> serialize(resolution)
+            is MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency -> serialize(resolution)
+            is MetadataDependencyResolution.Exclude.Unrequested -> serialize(resolution)
+            is MetadataDependencyResolution.KeepOriginalDependency -> serialize(resolution)
+        }
+    }
+
+    private fun JsonObject.parseMetadataDependencyResolution(): MetadataDependencyResolution {
+        val type = get("type").asJsonPrimitive.asString
+        return when (type) {
+            "ChooseVisibleSourceSets" -> parseChooseVisibleSourceSets()
+            "Exclude.PublishedPlatformSourceSetDependency" -> parseExcludePublishedPlatformSourceSetDependency()
+            "Exclude.Unrequested" -> parseExcludeUnrequested()
+            "KeepOriginalDependency" -> parseKeepOriginalDependency()
+            else -> error("Unknown MetadataDependencyResolution type: '$type'")
+        }
+    }
+
+    private fun JsonWriter.serialize(resolution: MetadataDependencyResolution.ChooseVisibleSourceSets) {
+        beginObject()
+        name("type"); value("ChooseVisibleSourceSets")
+        name("dependencyId"); serialize(resolution.resolvedDependency)
+        name("allVisibleSourceSetNames"); serializeStrings(resolution.allVisibleSourceSetNames)
+        name("visibleSourceSetNamesExcludingDependsOn"); serializeStrings(resolution.visibleSourceSetNamesExcludingDependsOn)
+        name("visibleTransitiveDependencies"); serialize(resolution.visibleTransitiveDependencies)
+        endObject()
+    }
+
+    private fun ResolvedDependencyResult.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
+        return when(val componentId = selected.id) {
+            is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
+            is ProjectComponentIdentifier -> {
+                if (componentId.build.isCurrentBuild) {
+                    params.projectData[componentId.projectPath]?.moduleId?.get()
+                        ?: error("Cant find project Module ID by ${componentId.projectPath}")
+                } else {
+                    when (val requestedModule = requested) {
+                        is ProjectComponentSelector -> params.projectData[requestedModule.projectPath]?.moduleId?.get()
+                            ?: error("Cant find project Module ID by ${requestedModule.projectPath}")
+                        is ModuleComponentSelector -> ModuleDependencyIdentifier(requestedModule.group, requestedModule.module)
+                        else -> error("Unknown ComponentSelector: '$requestedModule'")
+                    }
+                }
+            }
+
+            else -> error("Unknown ComponentIdentifier: $this")
+        }
+    }
+
+    private fun JsonObject.parseChooseVisibleSourceSets(): MetadataDependencyResolution.ChooseVisibleSourceSets {
+        val dependencyId = get("dependencyId").asJsonObject
+        val dependency = lookupDependency(dependencyId)
+        val module = dependency.selected
+        val moduleId = module.id
+        val artifact = resolvedMetadataConfiguration.dependencyArtifacts(dependency).single()
+
+        val isResolvedToProject: Boolean = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild
+
+        val mppDependencyMetadataExtractor = params.projectStructureMetadataExtractorFactory.create(artifact)
+        val projectStructureMetadata = mppDependencyMetadataExtractor.getProjectStructureMetadata()!!
+
+        val sourceSetVisibility =
+            params.sourceSetVisibilityProvider.getVisibleSourceSets(
+                params.sourceSetName,
+                dependency,
+                projectStructureMetadata,
+                isResolvedToProject
+            )
+
+        val metadataProvider = when (mppDependencyMetadataExtractor) {
+            is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
+                sourceSetMetadataOutputs = params.projectData[mppDependencyMetadataExtractor.projectPath]?.sourceSetMetadataOutputs?.get()
+                    ?: error("Unexpected project path '${mppDependencyMetadataExtractor.projectPath}'")
+            )
+
+            is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
+                CompositeMetadataArtifactImpl(
+                    moduleDependencyIdentifier = dependency.toModuleDependencyIdentifier(),
+                    moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
+                    kotlinProjectStructureMetadata = projectStructureMetadata,
+                    primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
+                    hostSpecificArtifactFilesBySourceSetName = sourceSetVisibility.hostSpecificMetadataArtifactBySourceSet
+                )
+            )
+        }
+
+
+        return MetadataDependencyResolution.ChooseVisibleSourceSets(
+            resolvedDependency = dependency,
+            projectStructureMetadata = projectStructureMetadata,
+            allVisibleSourceSetNames = get("allVisibleSourceSetNames")
+                .asJsonArray.map { it.asJsonPrimitive.asString }.toSet(),
+            visibleSourceSetNamesExcludingDependsOn = get("visibleSourceSetNamesExcludingDependsOn")
+                .asJsonArray.map { it.asJsonPrimitive.asString }.toSet(),
+            visibleTransitiveDependencies = get("visibleTransitiveDependencies")
+                .asJsonArray.map { lookupDependency(it.asJsonObject) }.toSet(),
+            metadataProvider = metadataProvider
+        )
+    }
+
+    private fun JsonWriter.serialize(resolution: MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency) {
+        beginObject()
+        name("type"); value("Exclude.PublishedPlatformSourceSetDependency")
+        name("dependencyId"); serialize(resolution.resolvedDependency)
+        name("visibleTransitiveDependencies"); serialize(resolution.visibleTransitiveDependencies)
+        endObject()
+    }
+
+    private fun JsonObject.parseExcludePublishedPlatformSourceSetDependency(): MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency {
+        val dependencyId = get("dependencyId").asJsonObject
+        val dependency = lookupDependency(dependencyId)
+
+        return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(
+            resolvedDependency = dependency,
+            visibleTransitiveDependencies = get("visibleTransitiveDependencies")
+                .asJsonArray
+                .map { lookupDependency(it.asJsonObject) }
+                .toSet()
+        )
+    }
+
+    private fun JsonWriter.serialize(resolution: MetadataDependencyResolution.Exclude.Unrequested) {
+        beginObject()
+        name("type"); value("Exclude.Unrequested")
+        name("dependencyId"); serialize(resolution.resolvedDependency)
+        endObject()
+    }
+
+    private fun JsonObject.parseExcludeUnrequested(): MetadataDependencyResolution.Exclude.Unrequested {
+        val dependencyId = get("dependencyId").asJsonObject
+        val dependency = lookupDependency(dependencyId)
+
+        return MetadataDependencyResolution.Exclude.Unrequested(dependency)
+    }
+
+    private fun JsonWriter.serialize(resolution: MetadataDependencyResolution.KeepOriginalDependency) {
+        beginObject()
+        name("type"); value("KeepOriginalDependency")
+        name("dependencyId"); serialize(resolution.resolvedDependency)
+        endObject()
+    }
+
+    private fun JsonObject.parseKeepOriginalDependency(): MetadataDependencyResolution.KeepOriginalDependency {
+        val dependencyId = get("dependencyId").asJsonObject
+        val dependency = lookupDependency(dependencyId)
+
+        return MetadataDependencyResolution.KeepOriginalDependency(dependency)
+    }
+
+    private fun JsonWriter.serialize(component: ResolvedComponentResult) {
+        val id = component.id
+        when (id) {
+            is ModuleComponentIdentifier -> serialize(id)
+            is ProjectComponentIdentifier -> serialize(id)
+            else -> error("Unknown Component ID: '$id'")
+        }
+    }
+
+    private fun JsonWriter.serialize(dependency: ResolvedDependencyResult) {
+        val id = dependency.selected.id
+        when (id) {
+            is ModuleComponentIdentifier -> serialize(id)
+            is ProjectComponentIdentifier -> {
+                if (id.build.isCurrentBuild) {
+                    serialize(id)
+                } else {
+                    val selector = dependency.requested
+                    when (selector) {
+                        is ModuleComponentSelector -> serialize(selector)
+                        is ProjectComponentSelector -> serialize(selector)
+                        else -> error("Unknown selector '$selector'")
+                    }
+                }
+            }
+            else -> error("Unknown Component ID: '$id'")
+        }
+    }
+
+    private fun JsonWriter.serialize(componentId: ModuleComponentIdentifier) {
+        beginObject()
+        name("type"); value("ModuleComponentIdentifier")
+        name("group"); value(componentId.group)
+        name("module"); value(componentId.module)
+        endObject()
+    }
+
+    private fun JsonWriter.serialize(componentId: ProjectComponentIdentifier) {
+        beginObject()
+        name("type"); value("ProjectComponentIdentifier")
+        name("projectPath"); value(componentId.projectPath)
+        name("isCurrentBuild"); value(componentId.build.isCurrentBuild)
+        endObject()
+    }
+
+    private fun JsonWriter.serialize(selector: ModuleComponentSelector) {
+        beginObject()
+        name("type"); value("ModuleComponentSelector")
+        name("group"); value(selector.group)
+        name("module"); value(selector.module)
+        endObject()
+    }
+
+    private fun JsonWriter.serialize(selector: ProjectComponentSelector) {
+        beginObject()
+        name("type"); value("ProjectComponentSelector")
+        name("projectPath"); value(selector.projectPath)
+        endObject()
+    }
+
+    private fun JsonWriter.serializeStrings(strings: Iterable<String>) {
+        beginArray()
+        strings.forEach { string -> value(string) }
+        endArray()
+    }
+
+    private fun JsonWriter.serialize(visibleTransitiveDependencies: Iterable<ResolvedDependencyResult>) {
+        beginArray()
+        visibleTransitiveDependencies.forEach { dependency -> serialize(dependency) }
+        endArray()
+    }
+
+    private fun <T> JsonObject.lookupByDependency(
+        lookupByModuleId: (ModuleDependencyIdentifier) -> T,
+        lookupByProjectPath: (String) -> T
+    ): T {
+        val type = get("type").asJsonPrimitive.asString
+
+        return when (type) {
+            "ModuleComponentIdentifier", "ModuleComponentSelector" -> ModuleDependencyIdentifier(
+                groupId = get("group").takeIf { !it.isJsonNull }?.asString,
+                moduleId = get("module").asJsonPrimitive.asString,
+            ).let(lookupByModuleId)
+            "ProjectComponentIdentifier", "ProjectComponentSelector" -> lookupByProjectPath(get("projectPath").asJsonPrimitive.asString)
+            else -> error("Unknown Dependency ID type: '$type'")
+        }
+    }
+
+    private fun lookupDependency(dependencyId: JsonObject): ResolvedDependencyResult {
+        return dependencyId.lookupByDependency(
+            lookupByModuleId = { id -> dependenciesByModuleId["${id.groupId}:${id.moduleId}"] },
+            lookupByProjectPath = { dependenciesByProjectPath[it] }
+        ) ?: error("Cant find dependency by '$dependencyId'")
+    }
+}
+
+
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
         GranularMetadataTransformation.ProjectData(
@@ -102,7 +413,7 @@ private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransf
 }
 
 internal class GranularMetadataTransformation(
-    private val params: Params,
+    val params: Params,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
     private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
@@ -133,11 +444,23 @@ internal class GranularMetadataTransformation(
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    private fun ComponentIdentifier.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
-        return when(this) {
-            is ModuleComponentIdentifier -> ModuleDependencyIdentifier(group, module)
-            is ProjectComponentIdentifier -> params.projectData[projectPath]?.moduleId?.get()
-                ?: error("Cant find project Module ID by $projectPath")
+    private fun ResolvedDependencyResult.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
+        return when(val componentId = selected.id) {
+            is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
+            is ProjectComponentIdentifier -> {
+                if (componentId.build.isCurrentBuild) {
+                    params.projectData[componentId.projectPath]?.moduleId?.get()
+                        ?: error("Cant find project Module ID by ${componentId.projectPath}")
+                } else {
+                    when (val requestedModule = requested) {
+                        is ProjectComponentSelector -> params.projectData[requestedModule.projectPath]?.moduleId?.get()
+                            ?: error("Cant find project Module ID by ${requestedModule.projectPath}")
+                        is ModuleComponentSelector -> ModuleDependencyIdentifier(requestedModule.group, requestedModule.module)
+                        else -> error("Unknown ComponentSelector: '$requestedModule'")
+                    }
+                }
+            }
+
             else -> error("Unknown ComponentIdentifier: $this")
         }
     }
@@ -196,7 +519,7 @@ internal class GranularMetadataTransformation(
             if (resolvedDependency.selected.id !in visitedDependencies) {
                 result.add(
                     MetadataDependencyResolution.Exclude.Unrequested(
-                        resolvedDependency.selected,
+                        resolvedDependency,
                     )
                 )
             }
@@ -232,14 +555,14 @@ internal class GranularMetadataTransformation(
             .singleOrNull()
             // expected only ony Composite Metadata Klib, but if dependency got resolved into platform variant
             // when source set is a leaf then we might get multiple artifacts in such case we must return KeepOriginal
-            ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+            ?: return MetadataDependencyResolution.KeepOriginalDependency(dependency)
 
         val mppDependencyMetadataExtractor = params.projectStructureMetadataExtractorFactory.create(compositeMetadataArtifact)
 
         val isResolvedToProject: Boolean = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild
 
         val projectStructureMetadata = mppDependencyMetadataExtractor.getProjectStructureMetadata()
-            ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+            ?: return MetadataDependencyResolution.KeepOriginalDependency(dependency)
 
         if (!projectStructureMetadata.isPublishedAsRoot) {
             error("Artifacts of dependency ${moduleId.displayName} is built by old Kotlin Gradle Plugin and can't be consumed in this way")
@@ -273,10 +596,10 @@ internal class GranularMetadataTransformation(
 
         val transitiveDependenciesToVisit = module.dependencies
             .filterIsInstance<ResolvedDependencyResult>()
-            .filterTo(mutableSetOf()) { it.selected.id.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
+            .filterTo(mutableSetOf()) { it.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
 
         if (params.sourceSetName in params.platformCompilationSourceSets && !isResolvedToProject)
-            return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(module, transitiveDependenciesToVisit)
+            return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(dependency, transitiveDependenciesToVisit)
 
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
 
@@ -288,7 +611,7 @@ internal class GranularMetadataTransformation(
 
             is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
                 CompositeMetadataArtifactImpl(
-                    moduleDependencyIdentifier = dependency.selected.id.toModuleDependencyIdentifier(),
+                    moduleDependencyIdentifier = dependency.toModuleDependencyIdentifier(),
                     moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
                     kotlinProjectStructureMetadata = projectStructureMetadata,
                     primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
@@ -298,7 +621,7 @@ internal class GranularMetadataTransformation(
         }
 
         return MetadataDependencyResolution.ChooseVisibleSourceSets(
-            dependency = module,
+            resolvedDependency = dependency,
             projectStructureMetadata = projectStructureMetadata,
             allVisibleSourceSetNames = allVisibleSourceSets,
             visibleSourceSetNamesExcludingDependsOn = visibleSourceSetsExcludingDependsOn,

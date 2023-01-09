@@ -8,10 +8,18 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import com.google.gson.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
@@ -24,6 +32,7 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
         task.description = "Debugging/Diagnosing task that will resolve dependencies for the IDE"
         task.group = "ide"
         task.notCompatibleWithConfigurationCacheCompat("Just a debugging util")
+        task.dependsOn("transformSourceSetsMetadata")
     }
 }
 
@@ -33,6 +42,13 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  * Outputs are written as json and protobufs
  */
 internal open class IdeResolveDependenciesTask : DefaultTask() {
+
+    @get:InputFiles
+    val sourceSetInputs: List<FileCollection> get() = project
+        .multiplatformExtension
+        .sourceSets
+        .toList()
+        .map { it.internal.resolvableMetadataConfiguration }
 
     @TaskAction
     fun resolveDependencies() {

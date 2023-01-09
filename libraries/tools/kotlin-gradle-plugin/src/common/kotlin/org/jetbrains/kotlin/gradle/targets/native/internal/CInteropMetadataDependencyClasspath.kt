@@ -51,7 +51,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
     forIde: Boolean
 ): FileCollection {
     return filesProvider {
-        sourceSet.compileDependenciesTransformation
+        sourceSet
             .metadataDependencyResolutionsOrEmpty
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { chooseVisibleSourceSets ->

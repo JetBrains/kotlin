@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
 internal inline fun <reified T : MetadataDependencyResolution> KotlinSourceSet.resolveMetadata(): List<T> {
     if (this !is DefaultKotlinSourceSet) return emptyList()
-    return compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty.filterIsInstance<T>()
+    return metadataDependencyResolutionsOrEmpty.filterIsInstance<T>()
 }

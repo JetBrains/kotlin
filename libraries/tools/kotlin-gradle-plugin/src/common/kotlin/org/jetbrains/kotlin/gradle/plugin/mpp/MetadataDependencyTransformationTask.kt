@@ -12,10 +12,10 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -133,6 +133,46 @@ open class MetadataDependencyTransformationTask
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .forEach { chooseVisibleSourceSets ->
                 project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, true)
+            }
+
+        metadataDependencyResolutionsFile.writeText(serializer.serializeList(metadataDependencyResolutions))
+    }
+
+    @get:OutputFile
+    val metadataDependencyResolutionsFile: File = outputsDir.resolve("${kotlinSourceSet.name}.metadataDependencyResolutions")
+
+    private val serializer = MetadataDependencyResolutionSerializer(transformation.params)
+
+    @get:Internal
+    val transformedLibraries: List<File> by lazy {
+        serializer
+            .parseList(metadataDependencyResolutionsFile.readText())
+            .flatMap { resolution ->
+                val files: Iterable<File> = when (resolution) {
+                    is MetadataDependencyResolution.ChooseVisibleSourceSets -> when (val metadataProvider = resolution.metadataProvider) {
+                        is ArtifactMetadataProvider -> metadataProvider.read { content ->
+                            resolution.allVisibleSourceSetNames.mapNotNull { sourceSet ->
+                                val metadataBinary = content.getSourceSet(sourceSet).metadataBinary ?: return@mapNotNull null
+                                val outputBinaryFile = outputsDir.resolve(metadataBinary.relativeFile)
+                                metadataBinary.copyTo(outputBinaryFile)
+                                outputBinaryFile
+                            }
+                        }
+                        is ProjectMetadataProvider -> {
+                            resolution.allVisibleSourceSetNames.flatMap { sourceSet ->
+                                metadataProvider.getSourceSetCompiledMetadata(sourceSet).files
+                            }
+                        }
+                    }
+                    is MetadataDependencyResolution.Exclude -> emptySet()
+                    is MetadataDependencyResolution.KeepOriginalDependency -> transformation
+                        .params
+                        .resolvedMetadataConfiguration
+                        .dependencyArtifacts(resolution.resolvedDependency)
+                        .map { it.file }
+                }
+
+                files
             }
     }
 }

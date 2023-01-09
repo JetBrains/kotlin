@@ -36,8 +36,6 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 
     private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(requestingFragment.containingModule)
-        val resolvedComponentsByModuleId =
-            configurationToResolve.incoming.resolutionResult.allComponents.associateBy { it.toSingleKpmModuleIdentifier() }
         val resolvedDependenciesByModuleId =
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
                 .flatMap { dependency -> dependency.requested.toKpmModuleIdentifiers().map { id -> id to dependency } }.toMap()
@@ -136,8 +134,8 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 //        }
 
         // FIXME this code is based on whole components; use module IDs with classifiers instead
-        val resultSourceComponents = results.mapTo(mutableSetOf()) { it.dependency }
-        resolvedComponentsByModuleId.values.minus(resultSourceComponents).forEach {
+        val resultSourceComponents = results.mapTo(mutableSetOf()) { it.resolvedDependency }
+        resolvedDependenciesByModuleId.values.minus(resultSourceComponents).forEach {
             results.add(MetadataDependencyResolution.Exclude.Unrequested(it))
         }
 
