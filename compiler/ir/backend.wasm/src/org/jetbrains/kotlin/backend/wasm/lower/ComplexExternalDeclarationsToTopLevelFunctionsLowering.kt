@@ -183,7 +183,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         val jsFun = function.getJsFunAnnotation()
         // Wrap external functions without @JsFun to lambdas `foo` -> `(a, b) => foo(a, b)`.
         // This way we wouldn't fail if we don't call them.
-        if (jsFun != null && function.valueParameters.all { it.defaultValue == null })
+        if (jsFun != null && function.valueParameters.all { it.defaultValue == null && it.varargElementType == null })
             return
         processFunctionOrConstructor(
             function = function,
@@ -241,9 +241,23 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             }
             append(jsFunctionReference)
             append("(")
-            appendParameterList(numValueParameters - numDefaultParameters, isEnd = numDefaultParameters == 0)
+
+            val numNonDefaultParamters = numValueParameters - numDefaultParameters
+            repeat(numNonDefaultParamters) {
+                if (function.valueParameters[it].isVararg) {
+                    append("...")
+                }
+                append("p$it")
+                if (numDefaultParameters != 0 || it + 1 < numNonDefaultParamters)
+                    append(", ")
+            }
             repeat(numDefaultParameters) {
-                append("isDefault$it ? undefined : p${numValueParameters - numDefaultParameters + it}, ")
+                if (function.valueParameters[numNonDefaultParamters + it].isVararg) {
+                    append("...")
+                } else {
+                    append("isDefault$it ? undefined : ")
+                }
+                append("p${numNonDefaultParamters + it}, ")
             }
             append(")")
         }
@@ -276,7 +290,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (dispatchReceiver != null) {
             res.addValueParameter("_this", dispatchReceiver.type)
         }
-        function.valueParameters.forEach { res.addValueParameter(it.name, it.type) }
+        function.valueParameters.forEach { res.addValueParameter(it.name, it.type).apply { varargElementType = it.varargElementType } }
         // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
         repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
         externalFunToTopLevelMapping[function] = res

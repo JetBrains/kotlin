@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.absoluteValue
 
 /**
@@ -89,8 +91,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         // Patch function types for Number parameters as double
         function.returnType = doubleIfNumber(function.returnType)
 
-        val valueParametersAdapters = function.valueParameters.map {
-            it.type.kotlinToJsAdapterIfNeeded(isReturn = false)
+        val valueParametersAdapters = function.valueParameters.map { parameter ->
+            val varargElementType = parameter.varargElementType
+            if (varargElementType != null) {
+                CopyToJsArrayAdapter(parameter.type, varargElementType)
+            } else {
+                parameter.type.kotlinToJsAdapterIfNeeded(isReturn = false)
+            }
         }
         val resultAdapter =
             function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
@@ -191,6 +198,16 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         )
     }
 
+    val primitivesToExternRefAdapters: Map<IrType, InteropTypeAdapter> = mapOf(
+        builtIns.byteType to adapters.kotlinByteToExternRefAdapter,
+        builtIns.shortType to adapters.kotlinShortToExternRefAdapter,
+        builtIns.charType to adapters.kotlinCharToExternRefAdapter,
+        builtIns.intType to adapters.kotlinIntToExternRefAdapter,
+        builtIns.longType to adapters.kotlinLongToExternRefAdapter,
+        builtIns.floatType to adapters.kotlinFloatToExternRefAdapter,
+        builtIns.doubleType to adapters.kotlinDoubleToExternRefAdapter,
+    ).mapValues { FunctionBasedAdapter(it.value.owner) }
+
     private fun IrType.kotlinToJsAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
         if (isReturn && this == builtIns.unitType)
             return null
@@ -213,18 +230,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             )
         }
 
-        val primitiveToExternRefAdapter = when (notNullType) {
-            builtIns.byteType -> adapters.kotlinByteToExternRefAdapter.owner
-            builtIns.shortType -> adapters.kotlinShortToExternRefAdapter.owner
-            builtIns.charType -> adapters.kotlinCharToExternRefAdapter.owner
-            builtIns.intType -> adapters.kotlinIntToExternRefAdapter.owner
-            builtIns.longType -> adapters.kotlinLongToExternRefAdapter.owner
-            builtIns.floatType -> adapters.kotlinFloatToExternRefAdapter.owner
-            builtIns.doubleType -> adapters.kotlinDoubleToExternRefAdapter.owner
-            else -> null
-        }
+        val primitiveToExternRefAdapter = primitivesToExternRefAdapters[notNullType]
 
-        val typeAdapter = primitiveToExternRefAdapter?.let(::FunctionBasedAdapter)
+        val typeAdapter = primitiveToExternRefAdapter
             ?: notNullType.kotlinToJsAdapterIfNeededNotNullable(isReturn)
             ?: return null
 
@@ -767,6 +775,68 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                     thenPart = irCall(this@JsInteropFunctionsLowering.context.wasmSymbols.throwNullPointerException),
                     elsePart = adapter.adapt(irImplicitCast(irGet(temp), adapter.fromType.makeNotNull()), builder),
                 )
+            }
+        }
+    }
+
+    /**
+     * Vararg parameter adapter
+     */
+    inner class CopyToJsArrayAdapter(
+        override val fromType: IrType,
+        private val fromElementType: IrType,
+    ) : InteropTypeAdapter {
+        override val toType: IrType =
+            context.wasmSymbols.externalInterfaceType
+
+        private val elementAdapter =
+            primitivesToExternRefAdapters[fromElementType]
+                ?: fromElementType.kotlinToJsAdapterIfNeeded(false)
+
+        private val arrayClass = fromType.classOrNull!!
+        private val getMethod = arrayClass.getSimpleFunction("get")!!.owner
+        private val sizeMethod = arrayClass.getPropertyGetter("size")!!.owner
+
+        override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
+            return builder.irComposite {
+                val originalArrayVar = irTemporary(expression)
+
+                //  val newJsArray = []
+                //  var index = 0
+                //  while(index != size) {
+                //      newJsArray.push(adapt(originalArray[index]));
+                //      index++
+                //  }
+                val newJsArrayVar = irTemporary(irCall(symbols.newJsArray))
+                val indexVar = irTemporary(irInt(0), isMutable = true)
+                val arraySizeVar = irTemporary(irCall(sizeMethod).apply { dispatchReceiver = irGet(originalArrayVar) })
+
+                +irWhile().apply {
+                    condition = irNotEquals(irGet(indexVar), irGet(arraySizeVar))
+                    body = irBlock {
+                        val adaptedValue = elementAdapter.adaptIfNeeded(
+                            irImplicitCast(
+                                irCall(getMethod).apply {
+                                    dispatchReceiver = irGet(originalArrayVar)
+                                    putValueArgument(0, irGet(indexVar))
+                                },
+                                fromElementType
+                            ),
+                            this@irBlock
+                        )
+                        +irCall(symbols.jsArrayPush).apply {
+                            putValueArgument(0, irGet(newJsArrayVar))
+                            putValueArgument(1, adaptedValue)
+                        }
+                        val inc = indexVar.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
+                        +irSet(
+                            indexVar,
+                            irCallOp(inc.symbol, indexVar.type, irGet(indexVar)),
+                            origin = IrStatementOrigin.PREFIX_INCR
+                        )
+                    }
+                }
+                +irGet(newJsArrayVar)
             }
         }
     }

@@ -211,6 +211,10 @@ class WasmSymbols(
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
+
+    val newJsArray = getInternalFunction("newJsArray")
+    val jsArrayPush = getInternalFunction("jsArrayPush")
+
     val startCoroutineUninterceptedOrReturnIntrinsics =
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 

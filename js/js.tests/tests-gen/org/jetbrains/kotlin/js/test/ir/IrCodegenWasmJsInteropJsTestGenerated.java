@@ -84,4 +84,10 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
     public void testTypes() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
     }
+
+    @Test
+    @TestMetadata("vararg.kt")
+    public void testVararg() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
+    }
 }
