@@ -11,7 +11,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.useK2 = false
         args.jvmDefault = "compatibility"
-        args.apiVersion = LANGUAGE_VERSION
+        args.apiVersion = API_VERSION
         args.optIn = arrayOf(
             "kotlin.RequiresOptIn",
             "kotlin.contracts.ExperimentalContracts",
