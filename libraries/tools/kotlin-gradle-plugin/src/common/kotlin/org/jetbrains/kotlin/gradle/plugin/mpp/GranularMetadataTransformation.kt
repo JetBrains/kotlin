@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
+import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -175,6 +176,16 @@ internal class GranularMetadataTransformation(
             resolvedDependencyQueue.addAll(
                 transitiveDependenciesToVisit.filter { it.selected.id !in visitedDependencies }
             )
+        }
+
+        params.resolvedMetadataConfiguration.allResolvedDependencies.forEach { resolvedDependency ->
+            if (resolvedDependency.selected.id !in visitedDependencies) {
+                result.add(
+                    MetadataDependencyResolution.Exclude.Unrequested(
+                        resolvedDependency.selected,
+                    )
+                )
+            }
         }
 
         return result
