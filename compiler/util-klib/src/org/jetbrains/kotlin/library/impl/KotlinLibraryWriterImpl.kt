@@ -24,7 +24,7 @@ open class KotlinLibraryLayoutForWriter(
         get() = File(unzippedDir, KLIB_MANIFEST_FILE_NAME)
 }
 
-open class BaseWriterImpl(
+class BaseWriterImpl(
     val libraryLayout: KotlinLibraryLayoutForWriter,
     moduleName: String,
     _versions: KotlinLibraryVersioning,

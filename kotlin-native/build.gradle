@@ -80,8 +80,6 @@ ext {
 
     kotlinCompilerModule = project(":kotlin-compiler")
     kotlinStdLibModule= project(":kotlin-stdlib")
-    kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
-    kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
 
     // A separate map for each build for automatic cleaning the daemon after the build have finished.
     toolClassLoadersMap = new ConcurrentHashMap<Object, URLClassLoader>()
