@@ -64,6 +64,8 @@ abstract class LibraryPathFilter {
 
 typealias DeserializedClassPostProcessor = (FirRegularClassSymbol) -> Unit
 
+typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
+
 abstract class AbstractFirDeserializedSymbolProvider(
     session: FirSession,
     val moduleDataProvider: ModuleDataProvider,
@@ -74,7 +76,15 @@ abstract class AbstractFirDeserializedSymbolProvider(
     // ------------------------ Caches ------------------------
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
-    private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
+    private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, FirDeserializationContext?> =
+        session.firCachesFactory.createCacheWithPostCompute(
+            createValue = { classId, _ -> findAndDeserializeTypeAlias(classId) },
+            postCompute = { _, symbol, postProcessor ->
+                if (postProcessor != null && symbol != null) {
+                    postProcessor.invoke(symbol)
+                }
+            }
+        )
     private val classCache: FirCache<ClassId, FirRegularClassSymbol?, FirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId, context -> findAndDeserializeClass(classId, context) },
@@ -120,13 +130,14 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return computePackagePartsInfos(packageFqName)
     }
 
-    private fun findAndDeserializeTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
+    private fun findAndDeserializeTypeAlias(classId: ClassId): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
         return getPackageParts(classId.packageFqName).firstNotNullOfOrNull { part ->
             val ids = part.typeAliasNameIndex[classId.shortClassName]
             if (ids == null || ids.isEmpty()) return@firstNotNullOfOrNull null
             val aliasProto = part.proto.getTypeAlias(ids.single())
-            part.context.memberDeserializer.loadTypeAlias(aliasProto).symbol
-        }
+            val postProcessor: DeserializedTypeAliasPostProcessor = { part.context.memberDeserializer.loadTypeAlias(aliasProto, it) }
+            FirTypeAliasSymbol(classId) to postProcessor
+        } ?: (null to null)
     }
 
     private fun findAndDeserializeClass(

@@ -191,11 +191,15 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return lowSixBits + rest
     }
 
-    fun loadTypeAlias(proto: ProtoBuf.TypeAlias): FirTypeAlias {
+    /**
+     * If loading happens in post-compute, then symbol for type alias is already computed and should be provided in [preComputedSymbol]
+     * @See AbstractFirDeserializedSymbolProvider.findAndDeserializeTypeAlias
+     */
+    fun loadTypeAlias(proto: ProtoBuf.TypeAlias, preComputedSymbol: FirTypeAliasSymbol? = null): FirTypeAlias {
         val flags = proto.flags
         val name = c.nameResolver.getName(proto.name)
         val classId = ClassId(c.packageFqName, name)
-        val symbol = FirTypeAliasSymbol(classId)
+        val symbol = preComputedSymbol ?: FirTypeAliasSymbol(classId)
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
         return buildTypeAlias {
             moduleData = c.moduleData
