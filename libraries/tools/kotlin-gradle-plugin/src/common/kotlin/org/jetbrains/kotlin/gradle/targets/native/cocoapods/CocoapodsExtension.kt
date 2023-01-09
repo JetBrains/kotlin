@@ -53,7 +53,12 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     /**
      * Setup plugin to generate synthetic xcodeproj compatible with static libraries
+     *
+     * This option is not supported and scheduled to be removed. If you are using this please
+     * file an issue with your case to [https://kotl.in/issue](https://kotl.in/issue)
      */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("This option is not supported and scheduled to be removed")
     fun useLibraries() {
         useLibraries = true
     }
