@@ -10,6 +10,14 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 /**
  * The version of the metadata serialized by the compiler and deserialized by the compiler and reflection.
  * This version includes the version of the core protobuf messages (metadata.proto) as well as JVM extensions (jvm_metadata.proto).
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `jvm_metadata.proto`
+ * - Incompatible changes are made in `jvm_module.proto`
+ * - Incompatible changes are made in `metadata.proto`
+ * - Incompatible changes are made in JVM metadata serialization/deserialization logic
+ *
+ * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc).
  */
 class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean) : BinaryVersion(*versionArray) {
     constructor(vararg numbers: Int) : this(numbers, isStrictSemantics = false)
