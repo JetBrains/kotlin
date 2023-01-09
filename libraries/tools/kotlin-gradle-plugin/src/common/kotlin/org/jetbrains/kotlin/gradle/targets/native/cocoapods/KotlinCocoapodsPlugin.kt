@@ -305,7 +305,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             val defTask = project.registerTask<DefFileTask>(
                 lowerCamelCaseName("generateDef", pod.moduleName).asValidTaskName()
             ) {
-                it.pod = project.provider { pod }
+                it.pod.set(pod)
+                it.useLibraries.set(cocoapodsExtension.useLibraries)
                 it.description = "Generates a def file for CocoaPods dependencies with module ${pod.moduleName}"
                 // This task is an implementation detail so we don't add it in any group
                 // to avoid showing it in the `tasks` output.

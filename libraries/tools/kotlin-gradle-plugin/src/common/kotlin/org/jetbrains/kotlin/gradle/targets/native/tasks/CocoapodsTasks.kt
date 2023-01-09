@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.wrapper.Wrapper
@@ -318,10 +319,13 @@ open class DummyFrameworkTask : DefaultTask() {
 /**
  * Generates a def-file for the given CocoaPods dependency.
  */
-open class DefFileTask : DefaultTask() {
+abstract class DefFileTask : DefaultTask() {
 
     @get:Nested
-    lateinit var pod: Provider<CocoapodsDependency>
+    abstract val pod: Property<CocoapodsDependency>
+
+    @get:Input
+    abstract val useLibraries: Property<Boolean>
 
     @get:OutputFile
     val outputFile: File
@@ -333,8 +337,22 @@ open class DefFileTask : DefaultTask() {
         outputFile.writeText(buildString {
             appendLine("language = Objective-C")
             with(pod.get()) {
-                if (headers != null) appendLine("headers = $headers")
-                else appendLine("modules = $moduleName")
+                when {
+                    headers != null -> appendLine("headers = $headers")
+                    useLibraries.get() -> logger.warn(
+                        """
+                        w: Pod '$moduleName' should have 'headers' property specified when using 'useLibraries()'.
+                        Otherwise code from this pod won't be accessible from Kotlin.
+                        """.trimIndent()
+                    )
+                    else -> {
+                        appendLine("modules = $moduleName")
+
+                        // Linker opt with framework name is added so produced cinterop klib would have this flag inside its manifest
+                        // This way error will be more obvious when someone will try to depend on a library with this cinterop
+                        appendLine("linkerOpts = -framework $moduleName")
+                    }
+                }
             }
         })
     }
