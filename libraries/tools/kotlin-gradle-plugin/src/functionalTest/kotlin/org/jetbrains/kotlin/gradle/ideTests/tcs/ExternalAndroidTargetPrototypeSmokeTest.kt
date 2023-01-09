@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName")
 
-package org.jetbrains.kotlin.gradle.ideTests.tcs.externalTargetApi
+package org.jetbrains.kotlin.gradle.ideTests.tcs
 
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
