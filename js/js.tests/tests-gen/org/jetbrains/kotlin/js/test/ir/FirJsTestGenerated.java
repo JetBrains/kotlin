@@ -4296,6 +4296,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
             }
 
             @Test
+            @TestMetadata("kt55758.kt")
+            public void testKt55758() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/kt55758.kt");
+            }
+
+            @Test
             @TestMetadata("simpleAsClass.kt")
             public void testSimpleAsClass() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsClass.kt");
