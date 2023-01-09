@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -99,6 +100,7 @@ internal class GranularMetadataTransformation(
         val projectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory,
         val sourceSetVisibilityProvider: SourceSetVisibilityProvider,
         val allProjectsSourceSetMetadataOutputs: Map<String, Map<String, SourceSetMetadataOutputs>>,
+        val projectModuleIdentifiers: Map<String, ModuleDependencyIdentifier>,
         val platformCompilationSourceSets: Set<String>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet): this(
@@ -107,6 +109,7 @@ internal class GranularMetadataTransformation(
             projectStructureMetadataExtractorFactory = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(project),
             sourceSetVisibilityProvider = SourceSetVisibilityProvider(project),
             allProjectsSourceSetMetadataOutputs = project.collectAllProjectsSourceSetMetadataOutputs(),
+            projectModuleIdentifiers = ModuleIds.collectAllProjectsModuleIdentifiers(project),
             platformCompilationSourceSets = project.multiplatformExtension.platformCompilationSourceSets
         )
     }
@@ -114,6 +117,15 @@ internal class GranularMetadataTransformation(
     private val params get() = _params.value
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
+
+    private fun ComponentIdentifier.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
+        return when(this) {
+            is ModuleComponentIdentifier -> ModuleDependencyIdentifier(group, module)
+            is ProjectComponentIdentifier -> params.projectModuleIdentifiers[projectPath]
+                ?: error("Cant find project Module ID by $projectPath")
+            else -> error("Unknown ComponentIdentifier: $this")
+        }
+    }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
@@ -234,7 +246,7 @@ internal class GranularMetadataTransformation(
 
         val transitiveDependenciesToVisit = module.dependencies
             .filterIsInstance<ResolvedDependencyResult>()
-            .filterTo(mutableSetOf()) { ModuleIds.fromResolvedDependency(it) in requestedTransitiveDependencies }
+            .filterTo(mutableSetOf()) { it.selected.id.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
 
         if (params.sourceSetName in params.platformCompilationSourceSets && isResolvedToProject)
             return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(module, transitiveDependenciesToVisit)
@@ -249,7 +261,7 @@ internal class GranularMetadataTransformation(
 
             is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
                 CompositeMetadataArtifactImpl(
-                    moduleDependencyIdentifier = ModuleIds.fromResolvedDependency(dependency),
+                    moduleDependencyIdentifier = dependency.selected.id.toModuleDependencyIdentifier(),
                     moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
                     kotlinProjectStructureMetadata = projectStructureMetadata,
                     primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
