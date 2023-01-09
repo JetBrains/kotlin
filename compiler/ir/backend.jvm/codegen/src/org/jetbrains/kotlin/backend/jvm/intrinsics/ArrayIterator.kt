@@ -18,27 +18,50 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
-import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isVArray
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.org.objectweb.asm.Type
 
 object ArrayIterator : IntrinsicMethod() {
+
+    private val arrayTypeToIteratorType = mapOf(
+        "Z" to "Boolean",
+        "C" to "Char",
+        "B" to "Byte",
+        "S" to "Short",
+        "I" to "Int",
+        "F" to "Float",
+        "J" to "Long",
+        "D" to "Double"
+    ).mapKeys { "[${it.key}" }.mapValues { "Lkotlin/collections/${it.value}Iterator;" }
+
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
-        val owner = classCodegen.typeMapper.mapType(expression.dispatchReceiver!!.type)
+        val receiverTypeMapped = classCodegen.typeMapper.mapType(expression.dispatchReceiver!!.type)
+        val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
         return IrIntrinsicFunction.create(expression, signature, classCodegen, owner) {
-            val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
-            val intrinsicOwner =
-                if (AsmUtil.isPrimitive(owner.elementType))
-                    "kotlin/jvm/internal/ArrayIteratorsKt"
-                else
-                    "kotlin/jvm/internal/ArrayIteratorKt"
-            it.invokestatic(intrinsicOwner, "iterator", methodSignature, false)
+            if (AsmUtil.isPrimitive(receiverTypeMapped.elementType)) {
+                it.invokestatic(
+                    "kotlin/jvm/internal/ArrayIteratorsKt",
+                    "iterator",
+                    "(${receiverTypeMapped.descriptor})${arrayTypeToIteratorType[receiverTypeMapped.descriptor]!!}",
+                    false
+                )
+            } else {
+                it.invokestatic(
+                    "kotlin/jvm/internal/ArrayIteratorKt",
+                    "iterator",
+                    "(${owner.descriptor})${signature.returnType.descriptor}",
+                    false
+                )
+            }
         }
     }
 }

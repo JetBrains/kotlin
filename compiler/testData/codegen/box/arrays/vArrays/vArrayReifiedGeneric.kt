@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +ValueClasses
 // ENABLE_JVM_IR_INLINER
 
 inline fun <reified T> getFirst(p: VArray<T>) = p[0]

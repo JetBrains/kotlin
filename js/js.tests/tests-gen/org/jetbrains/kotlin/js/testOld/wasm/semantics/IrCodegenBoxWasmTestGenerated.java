@@ -858,11 +858,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInVArrays() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/vArrays"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
-
-            @TestMetadata("vArrayIterator.kt")
-            public void testVArrayIterator() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayIterator.kt");
-            }
         }
     }
 
