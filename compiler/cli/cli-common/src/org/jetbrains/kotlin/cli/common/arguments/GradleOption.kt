@@ -26,7 +26,8 @@ import kotlin.reflect.KVisibility
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleOption(
     val value: Int,
-    val gradleInputType: String
+    val gradleInputType: String,
+    val shouldGenerateDeprecatedKotlinOptions: Boolean = false
 )
 
 // Enum class here is not possible due to bug in K2 compiler:

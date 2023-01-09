@@ -22,7 +22,8 @@ import kotlin.reflect.full.withNullability
 interface AdditionalGradleProperties {
     @GradleOption(
         value = DefaultValue.EMPTY_STRING_LIST_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "", description = "A list of additional compiler arguments")
     var freeCompilerArgs: List<String>
@@ -488,12 +489,17 @@ private fun Printer.generateDeprecatedInterface(
     val modifier = """
     interface
     """.trimIndent()
-    generateDeclaration(modifier, type, afterType = afterType) {
+    val deprecatedProperties = properties.filter { it.generateDeprecatedKotlinOption }
+    // KotlinMultiplatformCommonOptions doesn't have any options, but it is being kept for backward compatibility
+    if (deprecatedProperties.isNotEmpty() || type.asString().endsWith("KotlinMultiplatformCommonOptions")) {
+        generateDeclaration(modifier, type, afterType = afterType) {
 
-        println("${if (parentType != null) "override " else ""}val options: $compilerOptionType")
-        properties.forEach {
-            println()
-            generatePropertyGetterAndSetter(it)
+            println("${if (parentType != null) "override " else ""}val options: $compilerOptionType")
+            deprecatedProperties
+                .forEach {
+                    println()
+                    generatePropertyGetterAndSetter(it)
+                }
         }
     }
 }
@@ -789,6 +795,9 @@ private val KProperty1<*, *>.gradleLazyReturnTypeInstantiator: String
 
 private val KProperty1<*, *>.gradleInputType: String get() =
     findAnnotation<GradleOption>()!!.gradleInputType
+
+private val KProperty1<*, *>.generateDeprecatedKotlinOption: Boolean
+    get() = findAnnotation<GradleOption>()!!.shouldGenerateDeprecatedKotlinOptions
 
 private inline fun <reified T> KAnnotatedElement.findAnnotation(): T? =
     annotations.filterIsInstance<T>().firstOrNull()

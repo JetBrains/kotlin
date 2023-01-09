@@ -33,7 +33,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.LANGUAGE_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-language-version",
@@ -47,7 +48,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.API_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-api-version",
@@ -298,7 +300,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-Xuse-k2",
