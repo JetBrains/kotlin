@@ -1,0 +1,67 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Object {
+    @org.jetbrains.annotations.NotNull()
+    public static final Object INSTANCE = null;
+    private static final double objectProperty = 1.0;
+    @kotlin.jvm.JvmField()
+    public static final char objectFieldProperty = 'c';
+    public static final float constObjectProperty = 1.0F;
+
+    private Object() {
+        super();
+    }
+
+    public final double getObjectProperty() {
+        return 0.0;
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class RegularClass {
+    private final int constructorProperty;
+    private final int dependentProperty;
+    private final boolean staticProperty = true;
+    @org.jetbrains.annotations.NotNull()
+    public static final RegularClass.Companion Companion = null;
+    private static final double companionProperty = 1.0;
+    public static final float constCompanionProperty = 1.0F;
+
+    public RegularClass() {
+        super();
+    }
+
+    public RegularClass(int constructorProperty) {
+        super();
+    }
+
+    public final int getConstructorProperty() {
+        return 0;
+    }
+
+    public final int getDependentProperty() {
+        return 0;
+    }
+
+    public final boolean getStaticProperty() {
+        return false;
+    }
+
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        public final double getCompanionProperty() {
+            return 0.0;
+        }
+    }
+}

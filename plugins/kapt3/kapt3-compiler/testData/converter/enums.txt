@@ -31,8 +31,8 @@ public enum Enum2 {
     /*public static final*/ RED /* = new Enum2() */,
     /*public static final*/ WHITE /* = new Enum2() */;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String col = null;
-    private final int col2 = 0;
+    private final java.lang.String col;
+    private final int col2;
 
     Enum2(@Anno1(value = "first")
     java.lang.String col, @Anno1(value = "second")

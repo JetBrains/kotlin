@@ -130,7 +130,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test2 {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
+    private final java.lang.String a;
 
     public Test2(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
@@ -154,7 +154,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test3 {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
+    private final java.lang.String a;
 
     protected Test3(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {

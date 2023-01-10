@@ -16,17 +16,17 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
-    private final boolean z = false;
-    private final byte b = 0;
-    private final char c = '\u0000';
-    private final char c2 = '\u0000';
-    private final short sh = 0;
-    private final int i = 0;
-    private final long l = 0L;
-    private final float f = 0.0F;
-    private final double d = 0.0;
+    private final boolean z;
+    private final byte b;
+    private final char c;
+    private final char c2;
+    private final short sh;
+    private final int i;
+    private final long l;
+    private final float f;
+    private final double d;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String s = null;
+    private final java.lang.String s;
     @org.jetbrains.annotations.NotNull()
     private final int[] iarr = null;
     @org.jetbrains.annotations.NotNull()

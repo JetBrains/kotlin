@@ -5,7 +5,7 @@ public final class Boo {
     @org.jetbrains.annotations.NotNull()
     public static final Boo INSTANCE = null;
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String z = null;
+    private static final java.lang.String z;
 
     private Boo() {
         super();
@@ -41,17 +41,17 @@ public final class Foo {
     private static java.lang.String cString = "baz";
     private static int cInt = 7;
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String d = null;
-    private static final int e = 0;
+    private static final java.lang.String d;
+    private static final int e;
     private static final int f = 8;
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String g = "ab";
     private static final int h = -4;
     private static final int i = 2147483647;
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String j = null;
+    private static final java.lang.String j;
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String k = null;
+    private static final java.lang.String k;
 
     private Foo() {
         super();

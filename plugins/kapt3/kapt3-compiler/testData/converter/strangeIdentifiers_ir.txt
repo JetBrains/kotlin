@@ -18,7 +18,7 @@ import java.lang.System;
 public enum StrangeEnum {
     /*public static final*/ InvalidFieldName /* = new StrangeEnum() */;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String size = null;
+    private final java.lang.String size;
 
     StrangeEnum(java.lang.String size) {
     }
@@ -36,7 +36,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Test {
-    public final java.lang.String simpleName = null;
+    public final java.lang.String simpleName;
 
     public Test() {
         super();

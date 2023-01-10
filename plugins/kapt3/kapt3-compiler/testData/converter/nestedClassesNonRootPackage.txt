@@ -104,7 +104,7 @@ public final class Experiment {
     @test.Experiment.Type()
     public static final class Group {
         @org.jetbrains.annotations.NotNull()
-        private final java.lang.String s = null;
+        private final java.lang.String s;
 
         @org.jetbrains.annotations.NotNull()
         public final test.Experiment.Group copy(@org.jetbrains.annotations.NotNull()

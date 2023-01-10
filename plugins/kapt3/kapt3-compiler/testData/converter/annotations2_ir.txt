@@ -55,7 +55,7 @@ public enum Enum {
     /*public static final*/ WHITE /* = new Enum() */,
     @Anno(value = "black")
     /*public static final*/ BLACK /* = new Enum() */;
-    private final int x = 0;
+    private final int x;
 
     @Anno(value = "enum-constructor")
     Enum(@Anno(value = "x")

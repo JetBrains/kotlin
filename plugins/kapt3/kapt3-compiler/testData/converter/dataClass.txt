@@ -3,10 +3,10 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class User {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String firstName = null;
+    private final java.lang.String firstName;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String secondName = null;
-    private final int age = 0;
+    private final java.lang.String secondName;
+    private final int age;
 
     @org.jetbrains.annotations.NotNull()
     public final User copy(@org.jetbrains.annotations.NotNull()

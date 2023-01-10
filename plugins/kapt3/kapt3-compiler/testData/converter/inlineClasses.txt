@@ -8,7 +8,7 @@ public final class Cl {
         super();
     }
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
+    private final java.lang.String a;
 
     @java.lang.Override()
     public boolean equals(java.lang.Object other) {

@@ -61,7 +61,7 @@ public enum E3 {
     /*public static final*/ X /* = new E3() */,
     /*public static final*/ Y /* = new E3() */;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
+    private final java.lang.String a;
 
     E3(java.lang.String a) {
     }
@@ -81,10 +81,10 @@ import java.lang.System;
 public enum E4 {
     /*public static final*/ X /* = new E4() */;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
-    private final int b = 0;
-    private final long c = 0L;
-    private final boolean d = false;
+    private final java.lang.String a;
+    private final int b;
+    private final long c;
+    private final boolean d;
 
     E4(java.lang.String a, int b, long c, boolean d) {
     }

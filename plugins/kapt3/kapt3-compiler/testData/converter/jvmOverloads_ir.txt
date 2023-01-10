@@ -2,10 +2,10 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class State {
-    private final int someInt = 0;
-    private final long someLong = 0L;
+    private final int someInt;
+    private final long someLong;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String someString = null;
+    private final java.lang.String someString;
 
     @kotlin.jvm.JvmOverloads()
     public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
@@ -40,12 +40,12 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class State2 {
     @kotlin.jvm.JvmField()
-    public final int someInt = 0;
+    public final int someInt;
     @kotlin.jvm.JvmField()
-    public final long someLong = 0L;
+    public final long someLong;
     @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmField()
-    public final java.lang.String someString = null;
+    public final java.lang.String someString;
 
     @kotlin.jvm.JvmOverloads()
     public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull()

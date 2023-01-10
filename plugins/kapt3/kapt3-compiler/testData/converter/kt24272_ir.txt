@@ -3,7 +3,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Foo {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String string = null;
+    private final java.lang.String string;
     @org.jetbrains.annotations.NotNull()
     private final Foo.Bar bar = null;
 
@@ -20,7 +20,7 @@ public final class Foo {
     @kotlin.Metadata()
     public static final class Bar {
         @org.jetbrains.annotations.NotNull()
-        private final java.lang.String string = null;
+        private final java.lang.String string;
         @org.jetbrains.annotations.NotNull()
         private final java.util.ArrayList<Foo.Bar.Bar> bars = null;
 
