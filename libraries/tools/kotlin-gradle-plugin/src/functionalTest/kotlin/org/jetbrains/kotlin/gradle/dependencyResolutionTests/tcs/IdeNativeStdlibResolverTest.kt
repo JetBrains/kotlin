@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName", "DuplicatedCode")
 
-package org.jetbrains.kotlin.gradle.ideTests.tcs
+package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension

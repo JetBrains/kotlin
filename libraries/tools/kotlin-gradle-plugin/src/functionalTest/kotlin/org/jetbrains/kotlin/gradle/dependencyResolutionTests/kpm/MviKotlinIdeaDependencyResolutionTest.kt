@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName", "DuplicatedCode")
 
-package org.jetbrains.kotlin.gradle.ideTests.kpm
+package org.jetbrains.kotlin.gradle.dependencyResolutionTests.kpm
 
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin

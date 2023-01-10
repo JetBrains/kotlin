@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName", "DuplicatedCode")
 
-package org.jetbrains.kotlin.gradle.ideTests.kpm
+package org.jetbrains.kotlin.gradle.dependencyResolutionTests.kpm
 
 import org.jetbrains.kotlin.gradle.idea.kpm.name
 import org.jetbrains.kotlin.gradle.unitTests.kpm.applyKpmPlugin

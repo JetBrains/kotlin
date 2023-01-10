@@ -6,7 +6,7 @@
 @file:Suppress("FunctionName")
 @file:OptIn(Idea222Api::class)
 
-package org.jetbrains.kotlin.gradle.ideTests.tcs
+package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder

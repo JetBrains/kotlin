@@ -5,10 +5,10 @@
 
 @file:Suppress("FunctionName", "DuplicatedCode")
 
-package org.jetbrains.kotlin.gradle.ideTests.tcs
+package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.ideTests.kpm.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kpm.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.documentationClasspathKey
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath

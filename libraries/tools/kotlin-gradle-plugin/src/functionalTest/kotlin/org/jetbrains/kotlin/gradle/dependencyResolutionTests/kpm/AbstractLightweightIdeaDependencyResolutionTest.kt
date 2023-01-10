@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName")
 
-package org.jetbrains.kotlin.gradle.ideTests.kpm
+package org.jetbrains.kotlin.gradle.dependencyResolutionTests.kpm
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler

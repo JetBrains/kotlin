@@ -257,9 +257,9 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     }
                 }
 
-                targets.create("functionalIdeTest") {
+                targets.create("functionalDependencyResolutionTest") {
                     testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/ideTests/**")
+                        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
                     }
                 }
 
