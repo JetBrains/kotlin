@@ -34,6 +34,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
@@ -349,6 +350,10 @@ class PsiSourceCompilerForInline(
 
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
         org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor(callElement, state, stackTraceElement)
+    }
+
+    override fun unboxSealedInlineClass(lambdaInfo: LambdaInfo, argumentIndex: Int, mv: InstructionAdapter) {
+        // Unsupported in old BE
     }
 
     companion object {

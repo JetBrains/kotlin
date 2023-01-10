@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineMutableMap<K, V>(private val mmap: MutableMap<K, V>) : MutableMap<K, V> {

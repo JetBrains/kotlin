@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.SealedInlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 
@@ -20,5 +21,8 @@ val FirRegularClass.inlineClassRepresentation: InlineClassRepresentation<ConeSim
 
 val FirRegularClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<ConeSimpleKotlinType>?
     get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<ConeSimpleKotlinType>
+
+val FirRegularClass.sealedInlineClassRepresentation: SealedInlineClassRepresentation<ConeSimpleKotlinType>?
+    get() = valueClassRepresentation as? SealedInlineClassRepresentation<ConeSimpleKotlinType>
 
 

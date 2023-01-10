@@ -32,6 +32,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun TypeConstructorMarker.isInlineClass(): Boolean
     fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean
+    fun TypeConstructorMarker.isSealedInlineClass(): Boolean
     fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>?
     fun TypeConstructorMarker.isInnerClass(): Boolean
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker

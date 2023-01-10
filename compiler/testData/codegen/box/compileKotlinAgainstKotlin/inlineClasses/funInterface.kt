@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // KT-44622
 // MODULE: lib
 // FILE: A.kt

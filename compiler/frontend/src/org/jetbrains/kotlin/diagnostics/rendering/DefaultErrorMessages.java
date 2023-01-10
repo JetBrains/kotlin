@@ -792,7 +792,9 @@ public class DefaultErrorMessages {
         MAP.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class");
 
         MAP.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value classes cannot be local or inner");
-        MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes can be only final");
+        MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes must be final or sealed");
+        MAP.put(SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR, "Sealed inline class cannot have primary constructor");
+        MAP.put(SEALED_INLINE_CLASS_WRONG_MODIFIER, "Sealed inline class should use 'value' modifier instead of 'inline'");
         MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value class");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
         MAP.put(VALUE_CLASS_EMPTY_CONSTRUCTOR, "Value class must have at least one primary constructor parameter");
@@ -809,6 +811,9 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections");
         MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
+        MAP.put(VALUE_OBJECT_NOT_SEALED_INLINE_CHILD, "Value object must be subclass of sealed inline class");
+        MAP.put(SEALED_INLINE_CHILD_NOT_VALUE, "Subclass of sealed inline class must be value");
+        MAP.put(SEALED_INLINE_CHILD_IMPLEMENTING_INTERFACE, "Subclass of sealed inline class cannot implement interfaces");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
         MAP.put(VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Value classes cannot have context receivers");
         MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,

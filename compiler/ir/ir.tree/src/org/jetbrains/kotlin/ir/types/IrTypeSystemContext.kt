@@ -464,10 +464,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         this as? IrTypeParameterSymbol
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass == true
+        (this as? IrClassSymbol)?.owner?.isInline == true
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isMultiFieldValueClass == true
+
+    override fun TypeConstructorMarker.isSealedInlineClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isSealedInline == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
         (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
@@ -482,7 +485,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         } ?: owner.superTypes.first()
 
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
+        (this as IrType).classOrNull?.owner?.let {
+            if (it.isSealedInline) irBuiltIns.anyNType
+            else it.inlineClassRepresentation?.underlyingType
+        }
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? =
         getUnsubstitutedUnderlyingType()?.let { type ->

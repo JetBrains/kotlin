@@ -29,7 +29,7 @@ private fun TypeSystemCommonBackendContext.getOptimalModeForSignaturePart(
 ): TypeMappingMode {
     if (type.argumentsCount() == 0) return TypeMappingMode.DEFAULT
 
-    val isInlineClassType = type.typeConstructor().isInlineClass()
+    val isInlineClassType = type.typeConstructor().isInlineClass() || type.typeConstructor().isSealedInlineClass()
     if (isInlineClassType && shouldUseUnderlyingType(type)) {
         val underlyingType = computeUnderlyingType(type)
         if (underlyingType != null) {

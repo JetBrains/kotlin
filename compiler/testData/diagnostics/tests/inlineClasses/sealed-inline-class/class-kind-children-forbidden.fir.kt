@@ -1,0 +1,15 @@
+// LANGUAGE: +SealedInlineClasses
+// SKIP_TXT
+// !SKIP_JAVAC
+// !DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+
+package kotlin.jvm
+
+annotation class JvmInline
+
+@JvmInline
+sealed value class SVC
+
+<!SEALED_INLINE_CHILD_NOT_VALUE!>interface I : <!INTERFACE_WITH_SUPERCLASS, SUPERTYPE_INITIALIZED_IN_INTERFACE!>SVC<!>()<!>
+<!SEALED_INLINE_CHILD_NOT_VALUE!>enum class EC : <!CLASS_IN_SUPERTYPE_FOR_ENUM!>SVC<!>()<!>
+<!SEALED_INLINE_CHILD_NOT_VALUE!>annotation class AC : <!SUPERTYPES_FOR_ANNOTATION_CLASS!>SVC()<!><!>

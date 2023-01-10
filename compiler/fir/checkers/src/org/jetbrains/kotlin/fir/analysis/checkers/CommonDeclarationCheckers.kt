@@ -111,6 +111,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunInterfaceDeclarationChecker,
             FirNestedClassChecker,
             FirValueClassDeclarationChecker,
+            FirSealedInlineClassChildChecker,
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
         )

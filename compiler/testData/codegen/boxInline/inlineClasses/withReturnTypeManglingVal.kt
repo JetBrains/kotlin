@@ -1,4 +1,5 @@
-// !LANGUAGE: +InlineClasses +MangleClassMembersReturningInlineClasses
+// !LANGUAGE: +MangleClassMembersReturningInlineClasses
+// WITH_STDLIB
 
 // FILE: 1.kt
 

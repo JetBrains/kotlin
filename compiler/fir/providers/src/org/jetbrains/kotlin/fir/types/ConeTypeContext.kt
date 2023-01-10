@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassKind
-import org.jetbrains.kotlin.descriptors.valueClassLoweringKind
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -556,13 +553,15 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
-        val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
+        return toFirRegularClass()?.valueClassRepresentation is InlineClassRepresentation<*>
     }
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
-        val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.MultiField
+        return toFirRegularClass()?.valueClassRepresentation is ValueClassRepresentation<*>
+    }
+
+    override fun TypeConstructorMarker.isSealedInlineClass(): Boolean {
+        return toFirRegularClass()?.valueClassRepresentation is SealedInlineClassRepresentation<*>
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? {

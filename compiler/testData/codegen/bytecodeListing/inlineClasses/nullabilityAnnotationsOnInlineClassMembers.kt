@@ -1,3 +1,4 @@
+// WITH_STDLIB
 inline class Test(val s: String) {
     fun memberFun(x: String) = s
 

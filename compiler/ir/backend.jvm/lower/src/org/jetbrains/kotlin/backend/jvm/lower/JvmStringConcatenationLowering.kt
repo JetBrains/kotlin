@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -23,7 +21,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val jvmStringConcatenationLowering = makeIrFilePhase(
@@ -41,8 +41,12 @@ internal val jvmStringConcatenationLowering = makeIrFilePhase(
 )
 
 private val IrClass.toStringFunction: IrSimpleFunction
-    get() = functions.single {
-        with(FlattenStringConcatenationLowering) { it.isToString }
+    get() {
+        val irClass = if (isChildOfSealedInlineClass()) defaultType.findTopSealedInlineSuperClass() else this
+
+        return irClass.functions.singleOrNull {
+            with(FlattenStringConcatenationLowering) { it.isToString }
+        } ?: error("Could not find 'toString' function in ${this.render()}")
     }
 
 private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
@@ -100,7 +104,8 @@ private fun JvmIrBuilder.normalizeArgument(expression: IrExpression): IrExpressi
 
 
 private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrExpression? {
-    if (InlineClassAbi.unboxType(expression.type) == null)
+    // TODO: Change after KT-52706 is fixed
+    if (expression.type.classOrNull?.owner?.isSealedInline != true && InlineClassAbi.unboxType(expression.type) == null)
         return null
     val toStringFunction = expression.type.classOrNull?.owner?.toStringFunction
         ?.let { (it as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: it }

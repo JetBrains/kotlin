@@ -116,3 +116,4 @@ inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
     get() = origin.isJavaOrEnhancement ||
             (fir as? FirCallableDeclaration)?.importedFromObjectOrStaticData?.original?.isJavaOrEnhancement == true
 
+fun FirRegularClassSymbol.isValueObject(): Boolean = classKind == ClassKind.OBJECT && isInline

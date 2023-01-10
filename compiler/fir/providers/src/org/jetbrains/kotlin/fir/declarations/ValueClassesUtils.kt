@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -34,6 +33,11 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
         ?.toSymbol(session) as? FirRegularClassSymbol
         ?: return null
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+
+    if (symbol.fir.sealedInlineClassRepresentation != null) {
+        return session.builtinTypes.nullableAnyType.type
+    }
+
     return symbol.fir.inlineClassRepresentation?.underlyingType
 }
 

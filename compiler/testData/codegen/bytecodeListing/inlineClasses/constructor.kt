@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 inline class IC1 public constructor(val i: Int)
 inline class IC11 internal constructor(val i: Int)

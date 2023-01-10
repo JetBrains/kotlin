@@ -1542,6 +1542,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.VALUE_OBJECT_NOT_SEALED_INLINE_CHILD) { firDiagnostic ->
+        ValueObjectNotSealedInlineChildImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR) { firDiagnostic ->
+        SealedInlineClassWithPrimaryConstructorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SEALED_INLINE_CHILD_NOT_VALUE) { firDiagnostic ->
+        SealedInlineChildNotValueImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SEALED_INLINE_CHILD_OVERLAPPING_TYPE) { firDiagnostic ->
+        SealedInlineChildOverlappingTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NONE_APPLICABLE) { firDiagnostic ->
         NoneApplicableImpl(
             firDiagnostic.a.map { firBasedSymbol ->

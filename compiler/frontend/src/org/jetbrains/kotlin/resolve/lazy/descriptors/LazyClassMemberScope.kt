@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -310,6 +311,7 @@ open class LazyClassMemberScope(
         fromSupertypes: List<SimpleFunctionDescriptor>
     ) {
         if (!thisDescriptor.isValueClass()) return
+        if (thisDescriptor.getSuperClassOrAny().isValueClass() && thisDescriptor.modality == Modality.SEALED) return
         FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
     }
 

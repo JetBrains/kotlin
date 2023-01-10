@@ -116,11 +116,31 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
     }
 }
 
-fun IrType.isInlineClassType(): Boolean = erasedUpperBound.isSingleFieldValueClass
-
 fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
 
 fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
+
+fun IrType.isInlineClassType(): Boolean =
+    erasedUpperBound.isInlineOrSealedInline
+
+fun IrType.findTopSealedInlineSuperClass(): IrClass {
+    var result: IrClass = this.classOrNull!!.owner
+    while (result.isChildOfSealedInlineClass()) {
+        result = result.sealedInlineClassParent()
+    }
+    return result
+}
+
+fun IrClass.sealedInlineClassParent(): IrClass =
+    superTypes.single { it.isInlineClassType() }.classOrNull!!.owner
+
+fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
+
+fun IrType.isNoinlineChildOfSealedInlineClass(): Boolean =
+    classOrNull?.owner?.let { !it.isInlineOrSealedInline && it.isChildOfSealedInlineClass() } == true
+
+fun IrType.isInlineChildOfSealedInlineClass(): Boolean =
+    classOrNull?.owner?.let { it.isInlineOrSealedInline && it.isChildOfSealedInlineClass() } == true
 
 val IrType.upperBound: IrType
     get() = erasedUpperBound.symbol.starProjectedType

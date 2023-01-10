@@ -455,3 +455,6 @@ val ClassDescriptor?.inlineClassRepresentation: InlineClassRepresentation<Simple
 
 val ClassDescriptor?.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<SimpleType>?
     get() = this?.valueClassRepresentation as? MultiFieldValueClassRepresentation<SimpleType>
+
+val ClassDescriptor?.sealedInlineClassRepresentation: SealedInlineClassRepresentation<SimpleType>?
+    get() = this?.valueClassRepresentation as? SealedInlineClassRepresentation<SimpleType>

@@ -28,6 +28,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     SuspendLimitationsChecker,
     ValueClassDeclarationChecker,
     MultiFieldValueClassAnnotationsChecker,
+    SealedInlineClassChildChecker,
     PropertiesWithBackingFieldsInsideValueClass(),
     InnerClassInsideValueClass(),
     AnnotationClassTargetAndRetentionChecker(),

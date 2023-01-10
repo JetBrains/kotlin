@@ -1,3 +1,4 @@
+@JvmInline
 value class IT {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
@@ -30,6 +31,7 @@ value class IT {
 
 }
 
+@JvmInline
 value class InlineMutableSet : MutableSet<IT> {
   constructor(ms: MutableSet<IT>) /* primary */ {
     super/*Any*/()

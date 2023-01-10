@@ -1,5 +1,7 @@
 FILE fqName:<root> fileName:/inlineClass.kt
   CLASS CLASS name:Test modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
+    annotations:
+      JvmInline
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int

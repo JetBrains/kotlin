@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineMutableList<T>(private val mlist: MutableList<T>) : MutableList<T> {

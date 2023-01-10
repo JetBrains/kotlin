@@ -1238,7 +1238,7 @@ open class IrFileSerializer(
             is MultiFieldValueClassRepresentation ->
                 proto.multiFieldValueClassRepresentation = serializeMultiFieldValueClassRepresentation(representation)
             is InlineClassRepresentation -> proto.inlineClassRepresentation = serializeInlineClassRepresentation(representation)
-            null -> Unit
+            is SealedInlineClassRepresentation, null -> Unit
         }
 
         clazz.declarations.forEach {

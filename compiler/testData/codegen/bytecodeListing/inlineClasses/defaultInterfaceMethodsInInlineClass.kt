@@ -1,3 +1,4 @@
+// WITH_STDLIB
 interface IFoo<T> {
     fun foo(x: T): String = "OK"
     fun T.bar(): String = "OK"

@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 // FILE: inline.kt
 
