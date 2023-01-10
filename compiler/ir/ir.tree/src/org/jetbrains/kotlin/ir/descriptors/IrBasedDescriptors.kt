@@ -926,12 +926,18 @@ open class IrBasedPropertyGetterDescriptor(owner: IrSimpleFunction) : IrBasedPro
     override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertyGetterDescriptor }
 
     override fun getOriginal(): IrBasedPropertyGetterDescriptor = this
+
+    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R =
+        visitor!!.visitPropertyGetterDescriptor(this, data)
 }
 
 open class IrBasedPropertySetterDescriptor(owner: IrSimpleFunction) : IrBasedPropertyAccessorDescriptor(owner), PropertySetterDescriptor {
     override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertySetterDescriptor }
 
     override fun getOriginal(): IrBasedPropertySetterDescriptor = this
+
+    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R =
+        visitor!!.visitPropertySetterDescriptor(this, data)
 }
 
 open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDescriptor<IrTypeAlias>(owner), TypeAliasDescriptor {
