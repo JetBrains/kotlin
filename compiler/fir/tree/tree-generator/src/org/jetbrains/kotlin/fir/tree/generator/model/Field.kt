@@ -14,6 +14,7 @@ sealed class Field : Importable {
     abstract var isVolatile: Boolean
     open var withReplace: Boolean = false
     abstract val isFirType: Boolean
+    open val overrideTypeRequire: Boolean = true
 
     var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
@@ -205,6 +206,7 @@ class FieldList(
     override val name: String,
     val baseType: Importable,
     override var withReplace: Boolean,
+    override val overrideTypeRequire: Boolean = true,
     useMutableOrEmpty: Boolean = false
 ) : Field() {
     override var defaultValueInImplementation: String? = null
@@ -224,6 +226,7 @@ class FieldList(
             name,
             baseType,
             withReplace,
+            overrideTypeRequire,
             isMutableOrEmpty
         )
     }

@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.isRaw
-import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
 sealed class TypeArgumentMapping {
@@ -33,7 +32,7 @@ sealed class TypeArgumentMapping {
 
 internal object MapTypeArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val typeArguments = callInfo.typeArguments
+        val typeArguments = enrichedTypeArgumentsWithSelfType(candidate, callInfo, context, callInfo.typeArguments)
         val owner = candidate.symbol.fir as FirTypeParameterRefsOwner
 
         if (typeArguments.isEmpty()) {
@@ -58,6 +57,59 @@ internal object MapTypeArguments : ResolutionStage() {
             )
             sink.yieldDiagnostic(InapplicableCandidate)
         }
+    }
+
+    private fun enrichedTypeArgumentsWithSelfType(
+        candidate: Candidate,
+        callInfo: CallInfo,
+        context: ResolutionContext,
+        typeArguments: List<FirTypeProjection>
+    ): List<FirTypeProjection> {
+        if (candidate.symbol is FirConstructorSymbol) {
+
+            val firConstructorSymbol = candidate.symbol
+
+            if (firConstructorSymbol.callableId.classId != null) {
+
+                val classLikeSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(firConstructorSymbol.callableId.classId!!)
+
+                if (classLikeSymbol != null) {
+                    val firClassSymbol = classLikeSymbol as FirClassSymbol
+
+                    val isSelf = firClassSymbol.hasAnnotation(StandardClassIds.Annotations.Self, context.session)
+
+                    if (isSelf && callInfo.callKind is CallKind.Function) {
+                        val constructorTypeParametersSize = firConstructorSymbol.typeParameterSymbols.size
+                        val callTypeArgumentsSize = typeArguments.size
+
+                        if (constructorTypeParametersSize != callTypeArgumentsSize) {
+                            val coneArgumentsWithStar =
+                                (typeArguments.map { it.toConeTypeProjection() }.toList() + ConeStarProjection).toTypedArray()
+                            val typeRef = firConstructorSymbol.fir.returnTypeRef
+                            val oldConeType = typeRef.coneType as ConeClassLikeType
+                            val coneTypeWithStar =
+                                ConeClassLikeTypeImpl(
+                                    oldConeType.lookupTag,
+                                    coneArgumentsWithStar,
+                                    oldConeType.isNullable,
+                                    oldConeType.attributes
+                                )
+
+                            val typeRefWithStar = typeRef.withReplacedConeType(coneTypeWithStar)
+                            val baseClassStarProjection = buildTypeProjectionWithVariance {
+                                source = typeRefWithStar.source
+                                this.typeRef = typeRefWithStar
+                                variance = Variance.INVARIANT
+                            }
+
+                            return typeArguments + baseClassStarProjection
+                        }
+                    }
+                }
+
+            }
+        }
+        return typeArguments
     }
 
     private fun computeDefaultMappingForRawTypeMember(

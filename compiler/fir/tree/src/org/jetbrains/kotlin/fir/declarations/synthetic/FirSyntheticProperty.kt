@@ -189,4 +189,8 @@ class FirSyntheticProperty(
     private fun notSupported(): Nothing {
         throw AssertionError("Transformation of synthetic property isn't supported")
     }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
 }

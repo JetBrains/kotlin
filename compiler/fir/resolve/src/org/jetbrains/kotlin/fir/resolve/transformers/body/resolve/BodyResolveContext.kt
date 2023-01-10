@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
@@ -441,15 +443,23 @@ class BodyResolveContext(
             .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
+        val selfTypeScope: FirSelfTypeScope? =
+            if (owner.hasAnnotation(StandardClassIds.Annotations.Self, holder.session)) {
+                FirSelfTypeScope(owner)
+            } else
+                null
 
         val forMembersResolution =
             staticsAndCompanion
                 .addReceiver(labelName, towerElementsForClass.thisReceiver)
                 .addContextReceiverGroup(towerElementsForClass.contextReceivers)
                 .addNonLocalScopeIfNotNull(typeParameterScope)
+                .addNonLocalScopeIfNotNull(selfTypeScope)
 
         val scopeForConstructorHeader =
-            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
+            staticsAndCompanion
+                .addNonLocalScopeIfNotNull(typeParameterScope)
+                .addNonLocalScopeIfNotNull(selfTypeScope)
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header

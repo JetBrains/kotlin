@@ -67,7 +67,7 @@ class FirCallCompleter(
             mayBeCoercionToUnitApplied = false,
             expectedTypeMismatchIsReportedInChecker,
             isFromCast = false,
-            shouldEnforceExpectedType = true,
+            shouldEnforceExpectedType = true
         )
 
     fun <T> completeCall(call: T, data: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement =
@@ -95,7 +95,6 @@ class FirCallCompleter(
         }
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
-
         val candidate = reference.candidate
         val initialType = components.initialTypeOfCandidate(candidate, call)
 

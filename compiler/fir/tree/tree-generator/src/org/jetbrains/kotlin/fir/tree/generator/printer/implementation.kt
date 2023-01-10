@@ -339,32 +339,45 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             for (field in allFields.filter { it.withReplace }) {
                 val capitalizedFieldName = field.name.replaceFirstChar(Char::uppercaseChar)
                 val newValue = "new$capitalizedFieldName"
-                generateReplace(field, forceNullable = field.useNullableForReplace) {
-                    when {
-                        field.withGetter -> {}
 
-                        field.origin is FieldList && !field.isMutableOrEmpty -> {
-                            println("${field.name}.clear()")
-                            println("${field.name}.addAll($newValue)")
-                        }
+                val overridenTypeRequire = (field.overridenTypes.filterIsInstance<Field>()
+                    .any { !it.overrideTypeRequire })
 
-                        else -> {
-                            if (field.useNullableForReplace) {
-                                println("require($newValue != null)")
+                if (!overridenTypeRequire) {
+                    generateReplace(field, forceNullable = field.useNullableForReplace) {
+                        when {
+                            field.withGetter -> {}
+
+                            field.origin is FieldList && !field.isMutableOrEmpty -> {
+                                println("${field.name}.clear()")
+                                println("${field.name}.addAll($newValue)")
                             }
-                            print("${field.name} = $newValue")
-                            if (field.origin is FieldList && field.isMutableOrEmpty) {
-                                print(".toMutableOrEmpty()")
+
+                            else -> {
+                                if (field.useNullableForReplace) {
+                                    println("require($newValue != null)")
+                                }
+                                print("${field.name} = $newValue")
+                                if (field.origin is FieldList && field.isMutableOrEmpty) {
+                                    print(".toMutableOrEmpty()")
+                                }
+                                println()
                             }
-                            println()
                         }
                     }
                 }
-
                 for (overridenType in field.overridenTypes) {
                     generateReplace(field, overridenType) {
-                        println("require($newValue is ${field.typeWithArguments})")
-                        println("replace$capitalizedFieldName($newValue)")
+                        if (overridenType is Field && overridenType.overrideTypeRequire) {
+                            println("require($newValue is ${field.typeWithArguments})")
+                            println("replace$capitalizedFieldName($newValue)")
+                        } else if (overridenType is Field && field.origin is FieldList) {
+                            val genericType =
+                                field.type.substring(field.type.indexOfFirst { it == '<' } + 1, field.type.indexOfLast { it == '>' })
+                            println("require($newValue.all { it is $genericType })")
+                            println("${field.name}.clear()")
+                            println("${field.name}.addAll($newValue.map { it as $genericType })")
+                        }
                     }
                 }
             }

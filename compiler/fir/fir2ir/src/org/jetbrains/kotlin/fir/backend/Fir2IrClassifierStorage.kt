@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.SELF_TYPE
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -112,7 +113,7 @@ class Fir2IrClassifierStorage(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ) {
         typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
-            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
+            if (typeParameter !is FirTypeParameter || (typeParameter.name == SELF_TYPE && owner is FirConstructor)) return@mapIndexedNotNull null
             getIrTypeParameter(typeParameter, index, symbol, typeContext).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
@@ -388,6 +389,7 @@ class Fir2IrClassifierStorage(
         require(index >= 0)
         val origin = typeParameter.computeIrOrigin()
         val irTypeParameter = with(typeParameter) {
+            val replacedSelfName = if (name == SELF_TYPE) SELF_TYPE_IDENTIFIER else name
             convertWithOffsets { startOffset, endOffset ->
                 signatureComposer.composeTypeParameterSignature(
                     typeParameter, index, ownerSymbol.signature
@@ -399,7 +401,7 @@ class Fir2IrClassifierStorage(
                         ) { symbol ->
                             irFactory.createTypeParameter(
                                 startOffset, endOffset, origin, symbol,
-                                name, if (index < 0) 0 else index,
+                                replacedSelfName, if (index < 0) 0 else index,
                                 isReified,
                                 variance
                             )
@@ -411,7 +413,7 @@ class Fir2IrClassifierStorage(
                         ) { symbol ->
                             irFactory.createTypeParameter(
                                 startOffset, endOffset, origin, symbol,
-                                name, if (index < 0) 0 else index,
+                                replacedSelfName, if (index < 0) 0 else index,
                                 isReified,
                                 variance
                             )
@@ -420,7 +422,7 @@ class Fir2IrClassifierStorage(
                     }
                 } ?: irFactory.createTypeParameter(
                     startOffset, endOffset, origin, IrTypeParameterSymbolImpl(),
-                    name, if (index < 0) 0 else index,
+                    replacedSelfName, if (index < 0) 0 else index,
                     isReified,
                     variance
                 )
@@ -621,5 +623,9 @@ class Fir2IrClassifierStorage(
         ).apply {
             parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT)
         }
+    }
+
+    companion object Fir2IrClassifierStorage {
+        private val SELF_TYPE_IDENTIFIER = Name.identifier("\$Self")
     }
 }

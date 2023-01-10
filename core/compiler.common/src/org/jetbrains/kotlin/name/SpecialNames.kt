@@ -65,6 +65,9 @@ object SpecialNames {
     val IMPLICIT_SET_PARAMETER = Name.special("<set-?>")
 
     @JvmField
+    val SELF_TYPE = Name.special("<Self>")
+
+    @JvmField
     val ARRAY = Name.special("<array>")
 
     @JvmField

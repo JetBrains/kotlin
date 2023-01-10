@@ -150,6 +150,8 @@ internal class FirValueParameterImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {}
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }

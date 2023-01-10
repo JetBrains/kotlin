@@ -18224,6 +18224,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("ControlFlowInfoSelfTypes.kt")
+        public void testControlFlowInfoSelfTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
+        }
+
+        @Test
         @TestMetadata("CustomHashSetSize.kt")
         public void testCustomHashSetSize() throws Exception {
             runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");
@@ -18371,6 +18377,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
         public void testSamWithReceiverMavenProjectImportHandler() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
+        }
+
+        @Test
+        @TestMetadata("selfTypeBuilderTest.kt")
+        public void testSelfTypeBuilderTest() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/selfTypeBuilderTest.kt");
+        }
+
+        @Test
+        @TestMetadata("selfTypes.kt")
+        public void testSelfTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/selfTypes.kt");
         }
 
         @Test

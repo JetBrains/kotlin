@@ -8,44 +8,48 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -316,7 +320,7 @@ open class FirSupertypeResolverVisitor(
         val classId = classLikeDeclaration.symbol.classId
         val classModuleSession = classLikeDeclaration.moduleData.session
 
-        val result = when {
+        val result: PersistentList<FirScope> = when {
             classId.isLocal -> {
                 // Local classes should be treated specially and supplied with localClassesNavigationInfo, normally
                 // But it seems to be too strict to add an assertion here
@@ -340,7 +344,12 @@ open class FirSupertypeResolverVisitor(
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()
         }
 
-        return result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
+        return result.pushIfNotNull(
+            if (classLikeDeclaration.typeParameters.any { it.symbol.name == SpecialNames.SELF_TYPE })
+                FirSelfTypeScope(classLikeDeclaration)
+            else
+                null
+        ).pushIfNotNull(classLikeDeclaration.typeParametersScope())
     }
 
     private fun resolveSpecificClassLikeSupertypes(
@@ -360,12 +369,13 @@ open class FirSupertypeResolverVisitor(
         }
 
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
-        val scopes = prepareScopes(classLikeDeclaration)
 
         val transformer = FirSpecificTypeResolverTransformer(session, supertypeSupplier = supertypeComputationSession.supertypesSupplier)
 
         @OptIn(PrivateForInline::class)
         val resolvedTypesRefs = transformer.withFile(useSiteFile) {
+            addSelfToTypeParameters(classLikeDeclaration, session)
+            val scopes = prepareScopes(classLikeDeclaration)
             resolveSuperTypeRefs(
                 transformer,
                 ScopeClassDeclaration(scopes, classDeclarationsStack)
@@ -434,6 +444,51 @@ open class FirSupertypeResolverVisitor(
                 }
             }.also {
                 addSupertypesFromExtensions(classLikeDeclaration, it, transformer, scopeDeclaration)
+            }
+        }
+    }
+
+    private fun addSelfToTypeParameters(firClass: FirClassLikeDeclaration, session: FirSession) {
+        val isSelf = firClass.getAnnotationByClassId(StandardClassIds.Annotations.Self, session) != null
+        val params = firClass.typeParameters
+        if (params is MutableList && isSelf) {
+            val selfSymbol = FirTypeParameterSymbol()
+            val firTypeParameterBuilder = FirTypeParameterBuilder()
+            firTypeParameterBuilder.bounds.add(buildResolvedTypeRef {
+                source = firClass.source
+                type = ConeClassLikeLookupTagImpl(firClass.classId).constructClassType(
+                    typeArguments = params.map {
+                        ConeTypeParameterTypeImpl(
+                            lookupTag = ConeTypeParameterLookupTag(it.symbol),
+                            isNullable = false
+                        )
+                    }.toTypedArray() + arrayOf(
+                        ConeTypeParameterTypeImpl(lookupTag = ConeTypeParameterLookupTag(selfSymbol), isNullable = false)
+                    ), isNullable = false
+                )
+            })
+
+            val selfTypeParameter = firTypeParameterBuilder.apply {
+                source = firClass.source?.fakeElement(KtFakeSourceElementKind.ClassSelfTypeRef)
+                moduleData = session.moduleData
+                resolvePhase = FirResolvePhase.TYPES
+                origin = FirDeclarationOrigin.Source
+                name = SpecialNames.SELF_TYPE
+                symbol = selfSymbol
+                containingDeclarationSymbol = firClass.symbol
+                variance = Variance.OUT_VARIANCE
+                isReified = false
+            }.build()
+
+            firClass.replaceTypeParameters(params + selfTypeParameter)
+
+            if (firClass is FirClass) {
+                firClass.declarations.filterIsInstance<FirConstructor>().forEach {
+                    val constructorTypeParams = it.typeParameters
+                    it.replaceTypeParameters(constructorTypeParams + selfTypeParameter)
+                    val firClassTypeRef = it.returnTypeRef.resolvedTypeFromPrototype(firClass.defaultType())
+                    it.replaceReturnTypeRef(firClassTypeRef)
+                }
             }
         }
     }
