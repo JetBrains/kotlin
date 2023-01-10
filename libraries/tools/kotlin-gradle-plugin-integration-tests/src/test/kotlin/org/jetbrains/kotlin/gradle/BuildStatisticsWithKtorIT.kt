@@ -15,6 +15,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.util.*
 import io.ktor.util.collections.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.stat.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
 import java.net.HttpURLConnection
+import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.URL
 import java.util.*
@@ -35,37 +37,48 @@ import kotlin.test.*
 class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     companion object {
+        private val portSelectLock = java.util.concurrent.locks.ReentrantLock()
+
         fun runWithKtorService(action: (Int) -> Unit) {
-            val port = getEmptyPort().localPort
-            val server = embeddedServer(Netty, host = "localhost", port = port)
-            {
-                val requests = ArrayBlockingQueue<String>(10)
+            var server: ApplicationEngine? = null
+            try {
+                portSelectLock.lock()
+                val port = getEmptyPort().localPort
+                server = embeddedServer(Netty, host = "localhost", port = port)
+                {
+                    val requests = ArrayBlockingQueue<String>(10)
 
-                routing {
-                    get("/isReady") {
-                        call.respond(HttpStatusCode.OK)
-                    }
-                    post("/badRequest") {
-                        call.respond(HttpStatusCode.BadRequest, "Some reason")
-                    }
-                    post("/put") {
-                        val body = call.receive<String>()
-                        requests.add(body)
-                        call.respond(HttpStatusCode.OK)
-                    }
-                    get("/validate") {
-                        try {
-                            call.respond(status = HttpStatusCode.OK, requests.poll(2, TimeUnit.SECONDS))
-                        } catch (e: Exception) {
-                            call.respond(status = HttpStatusCode.NotFound, e.message ?: e::class)
+                    routing {
+                        get("/isReady") {
+                            call.respond(HttpStatusCode.OK)
                         }
-                    }
+                        post("/badRequest") {
+                            call.respond(HttpStatusCode.BadRequest, "Some reason")
+                        }
+                        post("/put") {
+                            val body = call.receive<String>()
+                            requests.add(body)
+                            call.respond(HttpStatusCode.OK)
+                        }
+                        get("/validate") {
+                            try {
+                                call.respond(status = HttpStatusCode.OK, requests.poll(2, TimeUnit.SECONDS))
+                            } catch (e: Exception) {
+                                call.respond(status = HttpStatusCode.NotFound, e.message ?: e::class)
+                            }
+                        }
 
+                    }
+                }.start()
+                awaitInitialization(port)
+                portSelectLock.unlock()
+                action(port)
+            } finally {
+                if (portSelectLock.isLocked) {
+                    portSelectLock.unlock()
                 }
-            }.start()
-            awaitInitialization(port)
-            action(port)
-            server.stop(1000, 1000)
+                server?.stop(1000, 1000)
+            }
         }
 
         private fun getEmptyPort(): ServerSocket {
@@ -73,7 +86,9 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             val endPort = 8180
             for (port in startPort..endPort) {
                 try {
-                    return ServerSocket(port).also {
+                    return ServerSocket().apply {
+                        bind(InetSocketAddress("localhost", port))
+                    }.also {
                         println("Use $port port")
                         it.close()
                     }
