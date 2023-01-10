@@ -4548,6 +4548,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("closureCapturingGenericParam.kt")
+        public void testClosureCapturingGenericParam() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/closureCapturingGenericParam.kt");
+        }
+
+        @Test
         @TestMetadata("closureInsideConstrucor.kt")
         public void testClosureInsideConstrucor() throws Exception {
             runTest("compiler/testData/codegen/box/closures/closureInsideConstrucor.kt");

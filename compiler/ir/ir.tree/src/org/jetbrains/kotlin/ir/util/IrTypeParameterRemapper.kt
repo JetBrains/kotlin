@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 
-/* After moving an IrElement, some type parameter references within it may become out of scope.
-   This remapper restores validity by redirecting those references to new type parameters.
+/**
+ * After moving an [org.jetbrains.kotlin.ir.IrElement], some type parameter references within it may become out of scope.
+ * This remapper restores validity by redirecting those references to new type parameters.
  */
 class IrTypeParameterRemapper(
-    val typeParameterMap: Map<IrTypeParameter, IrTypeParameter>
+    private val typeParameterMap: Map<IrTypeParameter, IrTypeParameter>
 ) : TypeRemapper {
     override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
     override fun leaveScope() {}
