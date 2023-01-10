@@ -145,6 +145,7 @@ class KlibBasedSymbolProvider(
         resolvedLibrary: KotlinResolvedLibrary,
         packageFqName: FqName
     ) = KlibDeserializedContainerSource(
+        resolvedLibrary.library,
         moduleHeaders[resolvedLibrary]!!,
         deserializationConfiguration,
         packageFqName

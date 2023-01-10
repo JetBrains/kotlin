@@ -33,7 +33,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
 
         return packageFragmentNames.flatMap {
             val fqName = FqName(it)
-            val containerSource = KlibDeserializedContainerSource(libraryHeader, configuration, fqName)
+            val containerSource = KlibDeserializedContainerSource(library, libraryHeader, configuration, fqName)
             val parts = library.packageMetadataParts(fqName.asString())
             val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
             parts.map { partName ->

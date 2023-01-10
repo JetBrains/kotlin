@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Header
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -15,13 +17,20 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class KlibDeserializedContainerSource private constructor(
     override val isPreReleaseInvisible: Boolean,
-    override val presentableString: String
+    override val presentableString: String,
+    val isFromNativeInteropLibrary: Boolean
 ) : DeserializedContainerSource {
 
-    constructor(header: Header, configuration: DeserializationConfiguration, packageFqName: FqName) : this(
+    constructor(
+        library: KotlinLibrary,
+        header: Header,
+        configuration: DeserializationConfiguration,
+        packageFqName: FqName
+    ) : this(
         configuration.reportErrorsOnPreReleaseDependencies &&
                 (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
-        "Package '$packageFqName'"
+        "Package '$packageFqName'",
+        library.isInteropLibrary()
     )
 
     override val incompatibility: IncompatibleVersionErrorData<*>?
@@ -33,3 +42,6 @@ class KlibDeserializedContainerSource private constructor(
     // TODO: move [CallableMemberDescriptor.findSourceFile] here.
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
+
+private fun KotlinLibrary.isInteropLibrary() =
+    manifestProperties["ir_provider"] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
