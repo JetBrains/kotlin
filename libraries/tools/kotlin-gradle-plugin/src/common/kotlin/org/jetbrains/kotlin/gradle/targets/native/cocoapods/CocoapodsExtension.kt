@@ -10,22 +10,17 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.tasks.addArg
-import org.jetbrains.kotlin.gradle.tasks.addArgs
-import org.jetbrains.kotlin.gradle.utils.relativeToRoot
-import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
+@Suppress("unused") // Public API
 abstract class CocoapodsExtension @Inject constructor(private val project: Project) {
     /**
      * Configure version of the pod

@@ -70,9 +70,10 @@ class CocoaPodsIT : BaseGradleIT() {
     private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
     private val defaultTarget = "IOS"
-    private val defaultFamily = "IOS"
+    private val defaultFamily = "ios"
     private val defaultSDK = "iphonesimulator"
     private val defaultPodGenTaskName = podGenFullTaskName()
+    private val defaultPodInstallSyntheticTaskName = ":podInstallSyntheticIos"
     private val defaultBuildTaskName = podBuildFullTaskName()
     private val defaultSetupBuildTaskName = podSetupBuildFullTaskName()
     private val defaultCinteropTaskName = cinteropTaskName + defaultPodName + defaultTarget
@@ -245,7 +246,7 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testSyntheticProjectPodspecGeneration() {
+    fun testSyntheticProjectPodfileGeneration() {
         val gradleProject = transformProjectWithPluginsDsl(cocoapodsSingleKtPod, gradleVersion)
         gradleProject.gradleBuildScript().appendToCocoapodsBlock("""
             ios.deploymentTarget = "14.1"
@@ -257,9 +258,11 @@ class CocoaPodsIT : BaseGradleIT() {
                 }
             }
         """.trimIndent())
-        gradleProject.build("podGenIOS", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+        gradleProject.build("podInstallSyntheticIos", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
             assertSuccessful()
-            val podfileText = gradleProject.projectDir.resolve("build/cocoapods/synthetic/IOS/Podfile").readText().trim()
+            assertTasksExecuted(":podGenIos")
+
+            val podfileText = gradleProject.projectDir.resolve("build/cocoapods/synthetic/ios/Podfile").readText().trim()
             assertTrue(podfileText.contains("platform :ios, '14.1'"))
             assertTrue(podfileText.contains("pod 'SSZipArchive'"))
             assertTrue(podfileText.contains("pod 'AFNetworking', '~> 4.0.1'"))
@@ -267,6 +270,27 @@ class CocoaPodsIT : BaseGradleIT() {
             assertTrue(podfileText.contains("config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = \"\""))
             assertTrue(podfileText.contains("config.build_settings['CODE_SIGNING_REQUIRED'] = \"NO\""))
             assertTrue(podfileText.contains("config.build_settings['CODE_SIGNING_ALLOWED'] = \"NO\""))
+        }
+    }
+
+    @Test
+    fun testSyntheticProjectPodfilePostprocessing() {
+        project.gradleBuildScript().apply {
+            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.29.1")""")
+
+            appendText("""
+                
+                tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.PodGenTask>().configureEach {
+                    doLast {
+                        podfile.get().appendText("ENV['SWIFT_VERSION'] = '5'")
+                    }
+                }
+            """.trimIndent())
+        }
+
+        project.build("podInstallSyntheticIos", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+            assertSuccessful()
+            assertFileContains(path = "build/cocoapods/synthetic/ios/Podfile", "ENV['SWIFT_VERSION'] = '5'")
         }
     }
 
@@ -378,9 +402,10 @@ class CocoaPodsIT : BaseGradleIT() {
         val tasks = listOf(
             podspecTaskName,
             defaultPodGenTaskName,
+            defaultPodInstallSyntheticTaskName,
             defaultSetupBuildTaskName,
             defaultBuildTaskName,
-            defaultCinteropTaskName
+            defaultCinteropTaskName,
         )
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock(defaultPodRepo))
@@ -416,21 +441,21 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testPodGenInvalidatesUTD() {
+    fun testPodInstallInvalidatesUTD() {
         with(project.gradleBuildScript()) {
             addPod("AFNetworking")
         }
 
         hooks.addHook {
-            assertTasksExecuted(defaultPodGenTaskName)
-            assertTrue { fileInWorkingDir("build/cocoapods/synthetic/IOS/Pods/AFNetworking").deleteRecursively() }
+            assertTasksExecuted(defaultPodInstallSyntheticTaskName)
+            assertTrue { fileInWorkingDir("build/cocoapods/synthetic/ios/Pods/AFNetworking").deleteRecursively() }
         }
-        project.testSynthetic(defaultPodGenTaskName)
+        project.testSynthetic(defaultPodInstallSyntheticTaskName)
 
         hooks.rewriteHooks {
-            assertTasksExecuted(defaultPodGenTaskName)
+            assertTasksExecuted(defaultPodInstallSyntheticTaskName)
         }
-        project.testSynthetic(defaultPodGenTaskName)
+        project.testSynthetic(defaultPodInstallSyntheticTaskName)
     }
 
     @Test
@@ -499,7 +524,7 @@ class CocoaPodsIT : BaseGradleIT() {
 
         val anotherTarget = "MacosX64"
         val anotherSdk = "macosx"
-        val anotherFamily = "OSX"
+        val anotherFamily = "macos"
         with(project.gradleBuildScript()) {
             appendToKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
         }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.cocoapods
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.SpecRepos
 
@@ -20,8 +19,7 @@ class MissingSpecReposMessage(override val missingInfo: SpecRepos) : MissingInfo
 }
 
 class MissingCocoapodsMessage(
-    override val missingInfo: CocoapodsDependency,
-    private val project: Project
+    override val missingInfo: CocoapodsDependency
 ) : MissingInfoMessage<CocoapodsDependency> {
     override val missingMessage: String
         get() = "pod '${missingInfo.name}'${missingInfo.source?.let { ", ${it.getPodSourcePath()}" }.orEmpty()}"
