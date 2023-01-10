@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
-import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,11 +19,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.allOverridden
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -41,24 +36,17 @@ internal fun MethodNode.acceptWithStateMachine(
     val state = context.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
-    val element = if (irFunction.isSuspend)
-        irFunction.psiElement ?: classCodegen.irClass.psiElement
-    else
-        context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.psiElement
 
-    val lineNumber = if (irFunction.isSuspend) {
-        val irFile = irFunction.file
-        if (irFunction.startOffset >= 0) {
-            // if it suspend function like `suspend fun foo(...)`
-            irFile.fileEntry.getLineNumber(irFunction.startOffset) + 1
-        } else {
-            val klass = classCodegen.irClass
-            if (klass.startOffset >= 0) {
-                // if it suspend lambda transformed into class `runSuspend { .... }`
-                irFile.fileEntry.getLineNumber(klass.startOffset) + 1
-            } else 0
-        }
-    } else element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
+    val lineNumber = if (irFunction.startOffset >= 0) {
+        // if it suspend function like `suspend fun foo(...)`
+        irFunction.file.fileEntry.getLineNumber(irFunction.startOffset) + 1
+    } else {
+        val klass = classCodegen.irClass
+        if (klass.startOffset >= 0) {
+            // if it suspend lambda transformed into class `runSuspend { .... }`
+            irFunction.file.fileEntry.getLineNumber(klass.startOffset) + 1
+        } else error("Cannot determine lineNumber of element ${irFunction.render()}")
+    }
 
     val visitor = CoroutineTransformerMethodVisitor(
         methodVisitor, access, name, desc, signature, exceptions.toTypedArray(),
@@ -68,7 +56,10 @@ internal fun MethodNode.acceptWithStateMachine(
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
         },
-        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element as KtElement, state, it) },
+        reportSuspensionPointInsideMonitor = {
+            classCodegen.context.ktDiagnosticReporter.at(irFunction, classCodegen.irClass)
+                .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, it)
+        },
         lineNumber = lineNumber,
         sourceFile = classCodegen.irClass.file.name, // SuspendLambda.invokeSuspend is not suspend
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
