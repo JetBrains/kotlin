@@ -9,37 +9,25 @@ package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.BOTH
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.junit.Test
 import kotlin.test.assertTrue
 
 class KT55347JsProjectImport {
-    private fun `GranularMetadataTransformation should be accessible in pure js projects`(jsCompiler: KotlinJsCompilerType) {
+
+    @Test
+    fun `GranularMetadataTransformation should be accessible in pure js projects -- IR`() {
         val project = buildProject { plugins.apply("org.jetbrains.kotlin.js") }
         val kotlin = project.kotlinExtension as KotlinJsProjectExtension
         with(kotlin) {
-            js(jsCompiler) {
+            js(IR) {
                 nodejs()
             }
         }
-
         project.evaluate()
-
         kotlin.sourceSets
             .filterIsInstance<DefaultKotlinSourceSet>()
             .forEach { assertTrue(it.getDependenciesTransformation().toList().isEmpty()) }
     }
-
-    @Test
-    fun `GranularMetadataTransformation should be accessible in pure js projects -- IR`() =
-        `GranularMetadataTransformation should be accessible in pure js projects`(IR)
-
-    @Suppress("DEPRECATION")
-    @Test
-    fun `GranularMetadataTransformation should be accessible in pure js projects -- BOTH`() =
-        `GranularMetadataTransformation should be accessible in pure js projects`(BOTH)
 }
