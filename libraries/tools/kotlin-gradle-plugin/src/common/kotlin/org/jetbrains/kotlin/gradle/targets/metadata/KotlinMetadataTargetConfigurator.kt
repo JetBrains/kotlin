@@ -349,7 +349,7 @@ class KotlinMetadataTargetConfigurator :
 
         compilation.compileDependencyFiles += project.filesProvider { artifacts.filterNot { it.isMpp }.map { it.file } }
 
-        compilation.compileDependencyFiles += project.filesProvider(transformationTask) { transformationTask.map { it.transformedLibraries } }
+        compilation.compileDependencyFiles += project.files(transformationTask.flatMap { it.transformedLibraries })
 
         if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
