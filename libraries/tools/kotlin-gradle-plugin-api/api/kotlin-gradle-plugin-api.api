@@ -874,6 +874,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecuti
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecution$ExecutionSource {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinFactory {
+	public abstract fun addCompilerPluginDependency (Lorg/gradle/api/provider/Provider;)V
+	public abstract fun getCompilerPlugins ()Lorg/gradle/api/file/FileCollection;
+	public abstract fun getKotlinExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinGradleSubplugin {
 }
 
@@ -912,16 +918,28 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeKt {
 	public static final fun removeJsCompilerSuffix (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;)Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory {
-	public abstract fun addCompilerPluginDependency (Lorg/gradle/api/provider/Provider;)V
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJsFactory : org/jetbrains/kotlin/gradle/plugin/KotlinFactory {
+	public abstract fun createCompilerJsOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions;
+	public abstract fun registerKotlinJsCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory : org/jetbrains/kotlin/gradle/plugin/KotlinFactory {
 	public abstract fun createCompilerJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
 	public abstract fun createKotlinJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;
-	public abstract fun getCompilerPlugins ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getKaptExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig;
-	public abstract fun getKotlinExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig;
 	public abstract fun registerKaptGenerateStubsTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun registerKaptTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun registerKotlinJvmCompileWithJavaTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinMetadataFactory : org/jetbrains/kotlin/gradle/plugin/KotlinFactory {
+	public abstract fun createCompilerMultiplatformCommonOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonCompilerOptions;
+	public abstract fun registerKotlinMetadataCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinNativeFactory : org/jetbrains/kotlin/gradle/plugin/KotlinFactory {
+	public abstract fun registerKotlinNativeCompileTask (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
@@ -1454,13 +1472,26 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKapt : org
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile : org/jetbrains/kotlin/gradle/tasks/KotlinCompileTool {
+	public abstract fun getChangesToPluginOptionsTransformers ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getFriendPaths ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getIncremental ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMultiPlatformEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPluginClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getPluginOptions ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getSourceSetName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseModuleDetection ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/ChangedFiles {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/ChangedFiles$Known : org/jetbrains/kotlin/gradle/tasks/ChangedFiles {
+	public abstract fun getModified ()Ljava/util/List;
+	public abstract fun getRemoved ()Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/ChangedFiles$Unknown : org/jetbrains/kotlin/gradle/tasks/ChangedFiles {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/CompileUsingKotlinDaemon : org/gradle/api/Task {
@@ -1541,6 +1572,14 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain$JdkSett
 	public static fun use (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain$JdkSetter;Ljava/lang/String;Ljava/lang/Object;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinJsCompileTask : org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/KotlinJsCompileTask$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJsCompileTask;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJsCompileTask;Lorg/gradle/api/Action;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
 	public abstract fun getParentKotlinOptions ()Lorg/gradle/api/provider/Property;
 }
@@ -1551,6 +1590,22 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile$DefaultImp
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lgroovy/lang/Closure;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask : org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinMetadataCompileTask;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask : org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeCompileTask;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinToolTask : org/gradle/api/Task {

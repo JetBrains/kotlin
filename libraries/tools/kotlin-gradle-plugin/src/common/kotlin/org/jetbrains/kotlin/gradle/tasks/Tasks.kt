@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.*
@@ -271,20 +272,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal val buildHistoryFile
         get() = taskBuildLocalStateDirectory.file("build-history.bin")
 
-    // indicates that task should compile kotlin incrementally if possible
-    // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
-    // todo: deprecate and remove (we may need to design api for configuring IC)
-    // don't rely on it to check if IC is enabled, use isIncrementalCompilationEnabled instead
-    @get:Internal
-    var incremental: Boolean = false
-        set(value) {
-            field = value
-            logger.kotlinDebug { "Set $this.incremental=$value" }
-        }
-
     @Input
     internal open fun isIncrementalCompilationEnabled(): Boolean =
-        incremental
+        incremental.get()
 
     @Deprecated("Scheduled for removal with Kotlin 1.9", ReplaceWith("moduleName"))
     @get:Input
@@ -457,6 +447,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         val args = prepareCompilerArguments()
         taskBuildCacheableOutputDirectory.get().asFile.mkdirs()
         taskBuildLocalStateDirectory.get().asFile.mkdirs()
+
+        args.updateByChangedFiles(
+            changesToPluginOptionsTransformers.get(),
+            getChangedFiles(inputChanges, incrementalProps)
+        )
+
         callCompilerAsync(
             args,
             allKotlinSources,
@@ -682,10 +678,6 @@ abstract class KotlinCompile @Inject constructor(
         .matching { patternFilterable ->
             patternFilterable.include(ScriptFilterSpec(scriptExtensions))
         }
-
-    init {
-        incremental = true
-    }
 
     override fun skipCondition(): Boolean = sources.isEmpty && scriptSources.isEmpty
 
@@ -924,6 +916,33 @@ abstract class KotlinCompile @Inject constructor(
     }
 }
 
+/**
+ * KotlinCompile is skipped when there is no Kotlin souces.
+ * KotlinCompileWithJava runs when any of Kotlin or Java sources exist.
+ */
+@CacheableTask
+abstract class KotlinCompileWithJava @Inject constructor(
+    compilerOptions: KotlinJvmCompilerOptions,
+    workerExecutor: WorkerExecutor,
+    objectFactory: ObjectFactory
+) : KotlinCompile(compilerOptions, workerExecutor, objectFactory) {
+
+    override fun skipCondition(): Boolean = super.skipCondition() && javaSources.isEmpty
+
+    @get:SkipWhenEmpty
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    override val javaSources: FileCollection
+        get() = super.javaSources
+
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+        args.allowNoSourceFiles = true
+    }
+}
+
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
     override val compilerOptions: KotlinJsCompilerOptions,
@@ -931,10 +950,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
+    KotlinJsCompileTask,
     KotlinJsCompile {
 
     init {
-        incremental = true
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
@@ -958,11 +977,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
     )
 
     @get:Input
+    internal var incrementalJs: Boolean = true
+
+    @get:Input
     internal var incrementalJsKlib: Boolean = true
 
     override fun isIncrementalCompilationEnabled(): Boolean {
         val freeArgs = enhancedFreeCompilerArgs.get()
-        return when {
+        return incremental.get() && when {
             PRODUCE_JS in freeArgs -> false
 
             PRODUCE_UNZIPPED_KLIB in freeArgs -> {
@@ -979,7 +1001,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 incrementalJsKlib
             }
 
-            else -> incremental
+            else -> incrementalJs
         }
     }
 

@@ -14,12 +14,20 @@ import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.configuration.*
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 
 /** Plugin that can be used by third-party plugins to create Kotlin-specific DSL and tasks (compilation and KAPT) for JVM platform. */
-abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory {
+abstract class KotlinBaseApiPlugin :
+    DefaultKotlinBasePlugin(),
+    KotlinJvmFactory,
+    KotlinJsFactory,
+    KotlinMetadataFactory,
+    KotlinNativeFactory
+{
 
     private lateinit var myProject: Project
     private val taskCreator = KotlinTasksProvider()
@@ -45,6 +53,18 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
     }
 
+    override fun createCompilerJsOptions(): KotlinJsCompilerOptions {
+        return myProject.objects.newInstance(KotlinJsCompilerOptionsDefault::class.java)
+    }
+
+    override fun createCompilerMultiplatformCommonOptions(): KotlinMultiplatformCommonCompilerOptions {
+        return myProject.objects.newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
+    }
+
+    private fun createCompilerCommonOptions(): KotlinCommonCompilerOptions {
+        return myProject.objects.newInstance(KotlinCommonCompilerOptionsDefault::class.java)
+    }
+
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerJvmOptions", replaceWith = ReplaceWith("createCompilerJvmOptions()"))
     override fun createKotlinJvmOptions(): KotlinJvmOptions {
@@ -67,6 +87,47 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             taskName,
             createCompilerJvmOptions(),
             KotlinCompileConfig(myProject, kotlinExtension)
+        )
+    }
+
+    override fun registerKotlinJvmCompileWithJavaTask(taskName: String): TaskProvider<out KotlinJvmCompile> {
+        return taskCreator.registerKotlinJVMWithJavaTask(
+            myProject,
+            taskName,
+            createCompilerJvmOptions(),
+            BaseKotlinCompileConfig<KotlinCompileWithJava>(myProject, kotlinExtension)
+        )
+    }
+
+    override fun registerKotlinJsCompileTask(taskName: String): TaskProvider<out KotlinJsCompileTask> {
+        return taskCreator.registerKotlinJSTask(
+            myProject,
+            taskName,
+            createCompilerJsOptions(),
+            Kotlin2JsCompileConfig(myProject, kotlinExtension)
+        )
+    }
+
+    override fun registerKotlinMetadataCompileTask(taskName: String): TaskProvider<out KotlinMetadataCompileTask> {
+        return taskCreator.registerKotlinCommonTask(
+            myProject,
+            taskName,
+            createCompilerMultiplatformCommonOptions(),
+            KotlinCompileCommonConfig(myProject, kotlinExtension)
+        )
+    }
+
+    override fun registerKotlinNativeCompileTask(
+        taskName: String,
+        targetName: String,
+        compilationName: String
+    ): TaskProvider<out KotlinNativeCompileTask> {
+        return taskCreator.registerKotlinNativeTask(
+            myProject,
+            taskName,
+            targetName,
+            compilationName,
+            createCompilerCommonOptions(),
         )
     }
 

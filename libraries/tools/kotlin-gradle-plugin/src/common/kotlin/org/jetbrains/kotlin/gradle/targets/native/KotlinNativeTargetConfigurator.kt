@@ -485,7 +485,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             val project = compilationInfo.project
             val compileTaskProvider = project.registerTask<KotlinNativeCompile>(
                 compilationInfo.compileKotlinTaskName,
-                listOf(compilationInfo)
+                listOf(compilationInfo, compilationInfo.compilerOptions.options)
             ) {
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
@@ -493,6 +493,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 it.enabled = konanTarget.enabledOnCurrentHost
 
                 it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).resolve("klib"))
+
+                it.moduleName.convention(project.provider { compilationInfo.moduleName })
+                it.useModuleDetection.convention(false)
+                it.incremental.value(false)
+                it.multiPlatformEnabled.value(true)
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })
