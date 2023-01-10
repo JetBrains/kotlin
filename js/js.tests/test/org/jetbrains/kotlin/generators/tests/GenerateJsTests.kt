@@ -34,6 +34,15 @@ fun main(args: Array<String>) {
             testClass<AbstractJsTranslatorWasmTest> {
                 model("box/main", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
                 model("box/native/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
+                model("box/esModules/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM,
+                    excludeDirs = listOf(
+                        // JsExport is not supported for classes
+                        "jsExport", "native", "export",
+                        // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
+                        "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
+                    )
+                )
+                model("box/jsQualifier/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
             }
 
             testClass<AbstractJsTranslatorUnitWasmTest> {

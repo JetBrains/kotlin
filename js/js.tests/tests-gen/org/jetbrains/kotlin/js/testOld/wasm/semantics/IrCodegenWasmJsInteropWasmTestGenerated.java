@@ -70,6 +70,21 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
     }
 
+    @TestMetadata("jsModule.kt")
+    public void testJsModule() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
+    }
+
+    @TestMetadata("jsModuleWithQualifier.kt")
+    public void testJsModuleWithQualifier() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifier.kt");
+    }
+
+    @TestMetadata("jsQualifier.kt")
+    public void testJsQualifier() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
+    }
+
     @TestMetadata("jsToKotlinAdapters.kt")
     public void testJsToKotlinAdapters() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");

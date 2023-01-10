@@ -9,3 +9,10 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 
 fun String.toJsStringLiteral(): CharSequence =
     JsToStringGenerationVisitor.javaScriptString(this)
+
+data class JsExternalReferenceLocation(
+    val module: String?,
+    val qualifier: String?,
+) {
+    fun jsVariableName() = "_loc${hashCode().toUInt()}"
+}
