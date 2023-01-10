@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName")
 
-package org.jetbrains.kotlin.gradle.regressionTests
+package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.MultiplatformExtensionTest
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
