@@ -87,7 +87,7 @@ class KlibBasedSymbolProvider(
                         packageFqName, packageProto, nameResolver, moduleData,
                         annotationDeserializer,
                         constDeserializer,
-                        null,
+                        createDeserializedContainerSource(resolvedLibrary, packageFqName),
                     ),
                 )
             }
@@ -116,11 +116,7 @@ class KlibBasedSymbolProvider(
                 val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
 
                 return ClassMetadataFindResult.NoMetadata { symbol ->
-                    val source = KlibDeserializedContainerSource(
-                        moduleHeaders[resolvedLibrary]!!,
-                        deserializationConfiguration,
-                        classId.packageFqName
-                    )
+                    val source = createDeserializedContainerSource(resolvedLibrary, classId.packageFqName)
 
                     deserializeClassToSymbol(
                         classId,
@@ -144,6 +140,15 @@ class KlibBasedSymbolProvider(
 
         return null
     }
+
+    private fun createDeserializedContainerSource(
+        resolvedLibrary: KotlinResolvedLibrary,
+        packageFqName: FqName
+    ) = KlibDeserializedContainerSource(
+        moduleHeaders[resolvedLibrary]!!,
+        deserializationConfiguration,
+        packageFqName
+    )
 
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class) = false
 
