@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.getByType
 internal interface BasePluginConfiguration {
     val archivesName: Property<String>
     val distsDirectory: DirectoryProperty
+    val libsDirectory: DirectoryProperty
 
     interface BasePluginConfigurationVariantFactory : VariantImplementationFactories.VariantImplementationFactory {
         fun getInstance(project: Project): BasePluginConfiguration
@@ -40,4 +41,7 @@ internal class DefaultBasePluginConfiguration(
 
     override val distsDirectory: DirectoryProperty
         get() = basePluginExtension.distsDirectory
+
+    override val libsDirectory: DirectoryProperty
+        get() = basePluginExtension.libsDirectory
 }

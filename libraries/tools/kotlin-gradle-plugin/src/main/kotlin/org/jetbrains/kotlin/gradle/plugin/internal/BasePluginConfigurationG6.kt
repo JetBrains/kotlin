@@ -25,6 +25,9 @@ internal class BasePluginConfigurationG6(
     override val distsDirectory: DirectoryProperty
         get() = basePluginConvention.distsDirectory
 
+    override val libsDirectory: DirectoryProperty
+        get() = basePluginConvention.libsDirectory
+
     internal class BasePluginConfigurationVariantFactoryG6 : BasePluginConfiguration.BasePluginConfigurationVariantFactory {
         override fun getInstance(project: Project): BasePluginConfiguration {
             return BasePluginConfigurationG6(

@@ -282,6 +282,9 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 ) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation) {
     open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
 
+    open val archiveTaskType: Class<out Zip>
+        get() = Jar::class.java
+
     internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>
 
     override fun configureCompilations(target: KotlinTargetType) {
@@ -297,8 +300,10 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
     /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
     protected open fun createArchiveTasks(target: KotlinTargetType): TaskProvider<out Zip> {
-        //TODO Change Jar on Zip
-        return target.project.registerTask<Jar>(target.artifactsTaskName) {
+        return target.project.registerTask(
+            target.artifactsTaskName,
+            archiveTaskType
+        ) {
             it.description = "Assembles an archive containing the main classes."
             it.group = BasePlugin.BUILD_GROUP
             it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
@@ -397,7 +402,7 @@ internal fun Project.usageByName(usageName: String): Usage =
 internal fun Project.categoryByName(categoryName: String): Category =
     objects.named(Category::class.java, categoryName)
 
-internal inline fun <reified T: Named> Project.attributeValueByName(attributeValueName: String): T =
+internal inline fun <reified T : Named> Project.attributeValueByName(attributeValueName: String): T =
     objects.named(T::class.java, attributeValueName)
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {

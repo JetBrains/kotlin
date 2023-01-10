@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
@@ -397,7 +398,7 @@ internal open class GradleCompilerRunner(
             if (sourceSetName != KotlinCompilation.MAIN_COMPILATION_NAME) return null
             val jarTaskName = project.extensions.findByType<KotlinJsProjectExtension>()?.js()?.artifactsTaskName
 
-            val jarTask = jarTaskName?.let { project.tasks.findByName(jarTaskName) } as? Jar
+            val jarTask = jarTaskName?.let { project.tasks.findByName(jarTaskName) } as? Zip
             return jarTask?.archiveFile?.get()?.asFile
         }
 
