@@ -214,18 +214,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
-        @TestMetadata("derivedClassPropertyShadowsBaseClassField.kt")
-        public void testDerivedClassPropertyShadowsBaseClassField() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/derivedClassPropertyShadowsBaseClassField.kt");
-        }
-
-        @Test
-        @TestMetadata("derivedClassPropertyShadowsBaseClassField13.kt")
-        public void testDerivedClassPropertyShadowsBaseClassField13() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/derivedClassPropertyShadowsBaseClassField13.kt");
-        }
-
-        @Test
         @TestMetadata("derivedIntersectionPropertyShadowsBaseClassField.kt")
         public void testDerivedIntersectionPropertyShadowsBaseClassField() throws Exception {
             runTest("compiler/testData/diagnostics/tests/derivedIntersectionPropertyShadowsBaseClassField.kt");
@@ -409,24 +397,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
             runTest("compiler/testData/diagnostics/tests/IsExpressions.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldKotlinPropertyJavaFieldInPackagePrivate.kt")
-        public void testJavaFieldKotlinPropertyJavaFieldInPackagePrivate() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/javaFieldKotlinPropertyJavaFieldInPackagePrivate.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldKotlinPropertyJavaPackagePrivateField.kt")
-        public void testJavaFieldKotlinPropertyJavaPackagePrivateField() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/javaFieldKotlinPropertyJavaPackagePrivateField.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyReference.kt")
-        public void testJavaProtectedFieldAndKotlinInvisiblePropertyReference() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/javaProtectedFieldAndKotlinInvisiblePropertyReference.kt");
         }
 
         @Test
@@ -11498,6 +11468,46 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("noExternalModifierInheritance.kt")
             public void testNoExternalModifierInheritance() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/external/noExternalModifierInheritance.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/fieldRename")
+        @TestDataPath("$PROJECT_ROOT")
+        public class FieldRename {
+            @Test
+            public void testAllFilesPresentInFieldRename() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/fieldRename"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("derivedClassPropertyShadowsBaseClassField.kt")
+            public void testDerivedClassPropertyShadowsBaseClassField() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/derivedClassPropertyShadowsBaseClassField.kt");
+            }
+
+            @Test
+            @TestMetadata("derivedClassPropertyShadowsBaseClassField13.kt")
+            public void testDerivedClassPropertyShadowsBaseClassField13() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/derivedClassPropertyShadowsBaseClassField13.kt");
+            }
+
+            @Test
+            @TestMetadata("javaFieldKotlinPropertyJavaFieldInPackagePrivate.kt")
+            public void testJavaFieldKotlinPropertyJavaFieldInPackagePrivate() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/javaFieldKotlinPropertyJavaFieldInPackagePrivate.kt");
+            }
+
+            @Test
+            @TestMetadata("javaFieldKotlinPropertyJavaPackagePrivateField.kt")
+            public void testJavaFieldKotlinPropertyJavaPackagePrivateField() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/javaFieldKotlinPropertyJavaPackagePrivateField.kt");
+            }
+
+            @Test
+            @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyReference.kt")
+            public void testJavaProtectedFieldAndKotlinInvisiblePropertyReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/javaProtectedFieldAndKotlinInvisiblePropertyReference.kt");
             }
         }
 
