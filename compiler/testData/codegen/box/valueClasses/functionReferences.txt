@@ -786,17 +786,20 @@ final class TestKt$box$20 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class TestKt$box$21$1 {
     // source: 'test.kt'
     enclosing method TestKt$box$21.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    public final static field INSTANCE: TestKt$box$21$1
+    synthetic field L$0: java.lang.Object
+    field label: int
     inner (anonymous) class TestKt$box$21
     inner (anonymous) class TestKt$box$21$1
-    static method <clinit>(): void
-    method <init>(): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -816,17 +819,20 @@ final class TestKt$box$21 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class TestKt$box$22$2 {
     // source: 'test.kt'
     enclosing method TestKt$box$22.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    public final static field INSTANCE: TestKt$box$22$2
+    synthetic field L$0: java.lang.Object
+    field label: int
     inner (anonymous) class TestKt$box$22
     inner (anonymous) class TestKt$box$22$2
-    static method <clinit>(): void
-    method <init>(): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -846,17 +852,20 @@ final class TestKt$box$22 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class TestKt$box$23$2 {
     // source: 'test.kt'
     enclosing method TestKt$box$23.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    public final static field INSTANCE: TestKt$box$23$2
+    synthetic field L$0: java.lang.Object
+    field label: int
     inner (anonymous) class TestKt$box$23
     inner (anonymous) class TestKt$box$23$2
-    static method <clinit>(): void
-    method <init>(): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1155,17 +1164,20 @@ final class TestKt$box$32 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class TestKt$box$33$1 {
     // source: 'test.kt'
     enclosing method TestKt$box$33.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    public final static field INSTANCE: TestKt$box$33$1
+    synthetic field L$0: java.lang.Object
+    field label: int
     inner (anonymous) class TestKt$box$33
     inner (anonymous) class TestKt$box$33$1
-    static method <clinit>(): void
-    method <init>(): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1185,17 +1197,20 @@ final class TestKt$box$33 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class TestKt$box$34$2 {
     // source: 'test.kt'
     enclosing method TestKt$box$34.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    public final static field INSTANCE: TestKt$box$34$2
+    synthetic field L$0: java.lang.Object
+    field label: int
     inner (anonymous) class TestKt$box$34
     inner (anonymous) class TestKt$box$34$2
-    static method <clinit>(): void
-    method <init>(): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1215,17 +1230,20 @@ final class TestKt$box$34 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class TestKt$box$35$2 {
     // source: 'test.kt'
     enclosing method TestKt$box$35.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    public final static field INSTANCE: TestKt$box$35$2
+    synthetic field L$0: java.lang.Object
+    field label: int
     inner (anonymous) class TestKt$box$35
     inner (anonymous) class TestKt$box$35$2
-    static method <clinit>(): void
-    method <init>(): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata

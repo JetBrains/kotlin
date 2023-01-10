@@ -439,10 +439,16 @@ internal fun IrFunction.isTailCallSuspendLambda(): Boolean {
         }
 
         override fun visitReturn(expression: IrReturn) {
-            if (expression.value is IrCall) {
-                tailCalls += expression.value as IrCall
-            }
+            addToTailCallsIfNoInline(expression.value as? IrCall)
             super.visitReturn(expression)
+        }
+
+        // We do not support tail-call optimization for suspend lambdas with
+        // inline calls before IR inliner.
+        private fun addToTailCallsIfNoInline(irCall: IrCall?) {
+            if (irCall != null && !irCall.symbol.owner.isInline) {
+                tailCalls += irCall
+            }
         }
 
         override fun visitCall(expression: IrCall) {
@@ -454,10 +460,7 @@ internal fun IrFunction.isTailCallSuspendLambda(): Boolean {
         }
 
         override fun visitBlockBody(body: IrBlockBody) {
-            val implicitReturn = body.statements.lastOrNull()
-            if (implicitReturn is IrCall) {
-                tailCalls += implicitReturn
-            }
+            addToTailCallsIfNoInline(body.statements.lastOrNull() as? IrCall)
             super.visitBlockBody(body)
         }
 

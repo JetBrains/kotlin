@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
@@ -26,7 +25,8 @@ fun box(): String {
     builder {
         result = suspendThere("OK")()
     }
-    TailCallOptimizationChecker.checkNoStateMachineIn("invokeSuspend", "suspendThere$1")
+    // TODO: Update tail-call optimization for suspend lambdas after IR inliner is enabled.
+    TailCallOptimizationChecker.checkStateMachineIn("invokeSuspend", "suspendThere$1")
     TailCallOptimizationChecker.checkNoStateMachineIn("invoke", "suspendThere$1")
 
     return result
