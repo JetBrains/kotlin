@@ -271,8 +271,11 @@ d8Plugin.version = v8Version
 
 fun Test.setupV8() {
     dependsOn(d8Plugin.setupTaskProvider)
+    val v8ExecutablePath = project.provider {
+        d8Plugin.requireConfigured().executablePath.absolutePath
+    }
     doFirst {
-        systemProperty("javascript.engine.path.V8", d8Plugin.requireConfigured().executablePath.absolutePath)
+        systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
     }
 }
 
