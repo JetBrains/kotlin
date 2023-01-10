@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -24,7 +25,7 @@ interface FirElement {
 
     fun accept(visitor: FirVisitorVoid) = accept(visitor, null)
 
-    fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
+    fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D)
 
     fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)
 

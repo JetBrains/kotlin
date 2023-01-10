@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -27,7 +28,7 @@ internal class FirResolvedErrorReferenceImpl(
 ) : FirResolvedErrorReference() {
     override val candidateSymbol: FirBasedSymbol<*>? get() = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedErrorReferenceImpl {
         return this

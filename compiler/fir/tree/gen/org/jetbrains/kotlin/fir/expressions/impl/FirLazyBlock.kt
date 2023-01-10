@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -26,7 +27,7 @@ class FirLazyBlock : FirBlock() {
     override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
     override val typeRef: FirTypeRef get() = error("FirLazyBlock should be calculated before accessing")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {

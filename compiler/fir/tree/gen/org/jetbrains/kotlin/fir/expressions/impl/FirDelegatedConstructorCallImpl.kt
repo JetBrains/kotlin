@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -35,7 +36,7 @@ internal class FirDelegatedConstructorCallImpl(
 ) : FirDelegatedConstructorCall() {
     override val isSuper: Boolean get() = !isThis
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
         contextReceiverArguments.forEach { it.accept(visitor, data) }

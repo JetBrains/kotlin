@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -27,7 +28,7 @@ internal class FirDoWhileLoopImpl(
     override var condition: FirExpression,
     override var label: FirLabel?,
 ) : FirDoWhileLoop() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         block.accept(visitor, data)
         condition.accept(visitor, data)

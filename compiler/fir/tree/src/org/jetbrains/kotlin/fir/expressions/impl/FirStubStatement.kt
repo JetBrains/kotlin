@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 object FirStubStatement : FirPureAbstractElement(), FirStatement {
     override val source: KtSourceElement?
@@ -24,7 +25,7 @@ object FirStubStatement : FirPureAbstractElement(), FirStatement {
         return this
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this

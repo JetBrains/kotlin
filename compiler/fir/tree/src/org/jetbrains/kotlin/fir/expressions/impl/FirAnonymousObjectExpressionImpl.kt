@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -26,7 +27,7 @@ internal class FirAnonymousObjectExpressionImpl(
     override val annotations: List<FirAnnotation>
         get() = anonymousObject.annotations
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         typeRef.accept(visitor, data)
         anonymousObject.accept(visitor, data)
     }

@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationArgumentMappingImpl(
     override val source: KtSourceElement?,
     override val mapping: Map<Name, FirExpression>
 ) : FirAnnotationArgumentMapping() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
@@ -31,7 +32,7 @@ object FirEmptyAnnotationArgumentMapping : FirAnnotationArgumentMapping() {
     override val mapping: Map<Name, FirExpression>
         get() = emptyMap()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this

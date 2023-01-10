@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 open class FirDeclarationStatusImpl(
     override val visibility: Visibility,
@@ -161,7 +162,7 @@ open class FirDeclarationStatusImpl(
         FUN(0x20000)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDeclarationStatusImpl {
         return this

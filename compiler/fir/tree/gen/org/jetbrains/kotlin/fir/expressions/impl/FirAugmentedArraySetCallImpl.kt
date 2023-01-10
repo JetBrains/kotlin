@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -30,7 +31,7 @@ internal class FirAugmentedArraySetCallImpl(
     override var calleeReference: FirReference,
     override val arrayAccessSource: KtSourceElement?,
 ) : FirAugmentedArraySetCall() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         lhsGetCall.accept(visitor, data)
         rhs.accept(visitor, data)

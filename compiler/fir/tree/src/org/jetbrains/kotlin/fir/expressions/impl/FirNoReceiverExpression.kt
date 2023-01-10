@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 object FirNoReceiverExpression : FirExpression() {
     override val source: KtSourceElement? = null
     override val typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: List<FirAnnotation> get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirNoReceiverExpression {
         return this

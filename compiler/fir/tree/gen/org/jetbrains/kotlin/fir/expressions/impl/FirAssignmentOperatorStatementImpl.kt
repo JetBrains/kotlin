@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -26,7 +27,7 @@ internal class FirAssignmentOperatorStatementImpl(
     override var leftArgument: FirExpression,
     override var rightArgument: FirExpression,
 ) : FirAssignmentOperatorStatement() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         leftArgument.accept(visitor, data)
         rightArgument.accept(visitor, data)

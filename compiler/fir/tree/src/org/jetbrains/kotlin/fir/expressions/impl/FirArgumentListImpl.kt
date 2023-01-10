@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 internal class FirArgumentListImpl(
     override val source: KtSourceElement?,
     override val arguments: MutableList<FirExpression>,
 ) : FirArgumentList() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         arguments.forEach { it.accept(visitor, data) }
     }
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
@@ -87,7 +88,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverParameter?.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)

@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirAbstractArgumentList : FirArgumentList() {
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
         return this
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         // DO NOTHING
     }
 

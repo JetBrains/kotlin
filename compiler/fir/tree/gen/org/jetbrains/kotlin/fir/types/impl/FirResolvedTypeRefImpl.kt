@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -27,7 +28,7 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override var delegatedTypeRef: FirTypeRef?,
     override val isFromStubType: Boolean,
 ) : FirResolvedTypeRef() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }
 

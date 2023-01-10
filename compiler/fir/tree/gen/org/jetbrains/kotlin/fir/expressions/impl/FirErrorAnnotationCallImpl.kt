@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -39,7 +40,7 @@ internal class FirErrorAnnotationCallImpl(
     override val annotations: List<FirAnnotation> get() = emptyList()
     override var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Types
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         annotationTypeRef.accept(visitor, data)
         typeArguments.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)

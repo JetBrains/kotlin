@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirPureAbstractElement : FirElement {
-    abstract override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
+    abstract override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D)
 
     abstract override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
 }

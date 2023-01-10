@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 internal class FirAnonymousFunctionExpressionImpl(
     override val source: KtSourceElement?,
@@ -23,7 +24,7 @@ internal class FirAnonymousFunctionExpressionImpl(
     override val annotations: List<FirAnnotation>
         get() = anonymousFunction.annotations
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         anonymousFunction.accept(visitor, data)
     }
 

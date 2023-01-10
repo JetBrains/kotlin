@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -25,7 +26,7 @@ class FirLazyExpression @FirImplementationDetail constructor(
     override val typeRef: FirTypeRef get() = error("FirLazyExpression should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyExpression should be calculated before accessing")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyExpression {

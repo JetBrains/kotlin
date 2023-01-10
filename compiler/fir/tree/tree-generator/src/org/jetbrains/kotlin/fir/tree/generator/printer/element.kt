@@ -25,6 +25,7 @@ fun Element.generateCode(generationPath: File): GeneratedFile {
         println()
         val imports = collectImports()
         imports.forEach { println("import $it") }
+        println("import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic")
         if (imports.isNotEmpty()) {
             println()
         }
@@ -136,9 +137,10 @@ fun SmartPrinter.printElement(element: Element) {
                 println()
                 println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
                 println()
-                println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+                println("fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D)")
                 println()
                 println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
+//              TODO: println("fun <@Monomorphic VT: FirVisitorVoid> acceptChildren(visitor: VT) = acceptChildren(visitor, null)")
                 println()
                 println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
             }

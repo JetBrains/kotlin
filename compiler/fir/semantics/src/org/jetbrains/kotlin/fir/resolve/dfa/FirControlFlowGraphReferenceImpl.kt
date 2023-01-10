@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 class FirControlFlowGraphReferenceImpl(
     val controlFlowGraph: ControlFlowGraph,
@@ -18,7 +19,7 @@ class FirControlFlowGraphReferenceImpl(
 ) : FirControlFlowGraphReference() {
     override val source: KtSourceElement? get() = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirControlFlowGraphReference {
         return this

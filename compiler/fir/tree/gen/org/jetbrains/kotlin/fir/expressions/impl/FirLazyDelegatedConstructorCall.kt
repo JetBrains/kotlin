@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /*
  * This file was generated automatically
@@ -34,7 +35,7 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
     override val dispatchReceiver: FirExpression get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val isSuper: Boolean get() = !isThis
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         constructedTypeRef.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }

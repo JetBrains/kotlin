@@ -25,6 +25,7 @@ fun Implementation.generateCode(generationPath: File): GeneratedFile {
         println()
         val imports = collectImports()
         imports.forEach { println("import $it") }
+        println("import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic")
         if (imports.isNotEmpty()) {
             println()
         }
@@ -127,7 +128,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
             fun Field.acceptString(): String = "${name}${call()}accept(visitor, data)"
             if (!isInterface && !isAbstract) {
-                print("override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {")
+                print("override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {")
 
                 if (element.allFirFields.isNotEmpty()) {
                     println()

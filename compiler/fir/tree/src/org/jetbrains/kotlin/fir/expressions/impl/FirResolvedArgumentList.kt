@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
     abstract override val source: KtSourceElement?
@@ -22,7 +23,7 @@ abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = mapping.keys.toList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
         for (argument in arguments) {
             argument.accept(visitor, data)
         }
