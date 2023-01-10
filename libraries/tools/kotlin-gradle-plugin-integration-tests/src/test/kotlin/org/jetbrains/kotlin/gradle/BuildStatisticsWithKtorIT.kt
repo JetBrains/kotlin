@@ -42,11 +42,14 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     companion object {
         fun runWithKtorService(action: (Int) -> Unit) {
             val port = getEmptyPort().localPort
-            val server = embeddedServer(Netty, host="localhost", port = port)
+            val server = embeddedServer(Netty, host = "localhost", port = port)
             {
                 val requests = ArrayBlockingQueue<String>(10)
 
                 routing {
+                    get("/isReady") {
+                        call.respond(HttpStatusCode.OK)
+                    }
                     post("/badRequest") {
                         call.respond(HttpStatusCode.BadRequest, "Some reason")
                     }
@@ -65,6 +68,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                 }
             }.start()
+            awaitInitialization(port)
             action(port)
             server.stop(1000, 1000)
         }
@@ -85,6 +89,29 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             throw IOException("Failed to find free IP port in range $startPort..$endPort")
         }
 
+        private fun awaitInitialization(port: Int, maxAttempts: Int = 20) {
+            var attempts = 0
+            val waitingTime = 500L
+            while (initCall(port) != HttpStatusCode.OK.value) {
+                attempts += 1
+                if (attempts == maxAttempts) {
+                    fail("Failed to await server initialization for ${waitingTime * attempts}ms")
+                }
+                Thread.sleep(waitingTime)
+            }
+        }
+
+        private fun initCall(port: Int): Int {
+            return try {
+                val connection = URL("http://localhost:$port/isReady").openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connect()
+                connection.responseCode
+            } catch (e: IOException) {
+                fail("Unable to open connection: ${e.message}", e)
+            }
+        }
+
         private fun validateCall(port: Int, validate: (JsonObject) -> Unit) {
             try {
                 val connection = URL("http://localhost:$port/validate").openConnection() as HttpURLConnection
@@ -95,7 +122,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 val jsonObject = JsonParser.parseString(body).asJsonObject
                 validate(jsonObject)
             } catch (e: IOException) {
-                assertFails { "Unable to open connection : ${e.message}" }
+                fail("Unable to open connection: ${e.message}", e)
             }
         }
 
