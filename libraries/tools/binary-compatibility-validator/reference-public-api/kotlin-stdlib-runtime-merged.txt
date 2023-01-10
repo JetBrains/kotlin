@@ -3299,6 +3299,9 @@ public final class kotlin/io/encoding/Base64IOStreamKt {
 	public static final fun wrapForEncoding (Ljava/io/OutputStream;Lkotlin/io/encoding/Base64;)Ljava/io/OutputStream;
 }
 
+public abstract interface annotation class kotlin/io/encoding/ExperimentalBaseEncodingApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class kotlin/io/path/CopyActionContext {
 	public abstract fun copyToIgnoringExistingDirectory (Ljava/nio/file/Path;Ljava/nio/file/Path;Z)Lkotlin/io/path/CopyActionResult;
 }
