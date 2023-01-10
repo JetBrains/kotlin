@@ -45,6 +45,7 @@ interface ObjCExportLazy {
         fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
         val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
+        val objcFqnames: Boolean
     }
 
     fun generateBase(): List<ObjCTopLevel<*>>
@@ -447,6 +448,8 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
         }
 
         override val objcGenerics = configuration.objcGenerics
+
+        override val useFqname = configuration.objcFqnames
     }
 }
 

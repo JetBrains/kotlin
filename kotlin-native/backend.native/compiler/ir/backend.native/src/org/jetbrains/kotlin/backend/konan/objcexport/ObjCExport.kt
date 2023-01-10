@@ -54,7 +54,8 @@ internal fun produceObjCExportInterface(
             mapper,
             topLevelNamePrefix,
             local = false,
-            objcGenerics = objcGenerics
+            objcGenerics = objcGenerics,
+            useFqnames = context.config.objcFqnames
     )
     val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
     headerGenerator.translateModule()
@@ -115,7 +116,8 @@ internal class ObjCExport(
                 moduleDescriptor.builtIns,
                 mapper,
                 topLevelNamePrefix,
-                local = false
+                local = false,
+                useFqnames = context.config.objcFqnames
         )
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)

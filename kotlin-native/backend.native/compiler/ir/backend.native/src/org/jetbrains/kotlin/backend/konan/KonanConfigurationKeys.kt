@@ -83,6 +83,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("don't link with stdlib")
         val NOPACK: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("don't the library into a klib file")
+        val OBJC_FQNAMES: CompilerConfigurationKey<Boolean> 
+                = CompilerConfigurationKey.create("use kotlin fqnames to generate objc class names")
         val OPTIMIZATION: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("optimized compilation")
         val OUTPUT: CompilerConfigurationKey<String> 
