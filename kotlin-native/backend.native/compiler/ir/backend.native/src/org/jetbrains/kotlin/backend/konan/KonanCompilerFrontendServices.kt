@@ -45,6 +45,9 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 
             override val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
                 get() = config.unitSuspendFunctionObjCExport
+
+            override val ignoreInterfaceMethodCollisions: Boolean
+                get() = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
         })
     }
 }
