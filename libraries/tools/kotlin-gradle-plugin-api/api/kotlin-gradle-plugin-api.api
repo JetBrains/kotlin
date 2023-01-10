@@ -1454,6 +1454,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKapt : org
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile : org/jetbrains/kotlin/gradle/tasks/KotlinCompileTool {
+	public abstract fun getChangesToPluginOptionsTransformers ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getFriendPaths ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMultiPlatformEnabled ()Lorg/gradle/api/provider/Property;
@@ -1461,6 +1462,17 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKotlinComp
 	public abstract fun getPluginOptions ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getSourceSetName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseModuleDetection ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/ChangedFiles {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/ChangedFiles$Known : org/jetbrains/kotlin/gradle/tasks/ChangedFiles {
+	public abstract fun getModified ()Ljava/util/List;
+	public abstract fun getRemoved ()Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/ChangedFiles$Unknown : org/jetbrains/kotlin/gradle/tasks/ChangedFiles {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/CompileUsingKotlinDaemon : org/gradle/api/Task {
