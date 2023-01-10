@@ -619,6 +619,7 @@ internal fun isInMimeAlphabet(symbol: Int): Boolean {
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 internal expect fun Base64.platformCharsToBytes(
     source: CharSequence,
     startIndex: Int,
@@ -628,6 +629,7 @@ internal expect fun Base64.platformCharsToBytes(
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 internal expect fun Base64.platformEncodeToString(
     source: ByteArray,
     startIndex: Int,
@@ -636,6 +638,7 @@ internal expect fun Base64.platformEncodeToString(
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 internal expect fun Base64.platformEncodeIntoByteArray(
     source: ByteArray,
     destination: ByteArray,
@@ -646,6 +649,7 @@ internal expect fun Base64.platformEncodeIntoByteArray(
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 internal expect fun Base64.platformEncodeToByteArray(
     source: ByteArray,
     startIndex: Int,

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 internal actual fun Base64.platformCharsToBytes(source: CharSequence, startIndex: Int, endIndex: Int): ByteArray {
     return if (source is String) {
         checkSourceBounds(source.length, startIndex, endIndex)
@@ -22,6 +23,7 @@ internal actual fun Base64.platformCharsToBytes(source: CharSequence, startIndex
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 internal actual fun Base64.platformEncodeToString(source: ByteArray, startIndex: Int, endIndex: Int): String {
     val subArray = if (startIndex == 0 && endIndex == source.size) {
         source
@@ -33,6 +35,7 @@ internal actual fun Base64.platformEncodeToString(source: ByteArray, startIndex:
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 internal actual fun Base64.platformEncodeIntoByteArray(
     source: ByteArray,
     destination: ByteArray,
@@ -50,6 +53,7 @@ internal actual fun Base64.platformEncodeIntoByteArray(
 
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 internal actual fun Base64.platformEncodeToByteArray(
     source: ByteArray,
     startIndex: Int,
