@@ -140,7 +140,12 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
             }
         }
 
-        // TODO: docs
+        /**
+         * Writes the metadata of the Kotlin module file.
+         *
+         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
+         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default
+         */
         fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
             Writer().also { kmModule.accept(it) }.write(metadataVersion)
     }

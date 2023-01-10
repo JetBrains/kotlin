@@ -1,5 +1,15 @@
 # kotlinx-metadata-jvm
 
+## 0.6.0
+
+This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md).
+
+- Update to Kotlin 1.8 with metadata version 1.8, support reading/writing metadata of version 1.9 which will be used in Kotlin 1.9
+- Deprecate Visitors API
+- Replace usages of `KotlinClassHeader` with direct usage of `kotlin.Metadata` annotation. Former reserved exclusively for use from Java clients.
+- `impl` package renamed to `internal`
+- Writers are deprecated. Special function family `KotlinClassMetadata.write` is introduced instead.
+
 ## 0.5.0
 
 - Update to Kotlin 1.7 with metadata version 1.7, support reading/writing metadata of version 1.8 which will be used in Kotlin 1.8.
