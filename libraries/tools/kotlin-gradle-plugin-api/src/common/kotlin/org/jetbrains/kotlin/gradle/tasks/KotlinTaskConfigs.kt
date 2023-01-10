@@ -74,6 +74,9 @@ interface BaseKotlinCompile : KotlinCompileTool {
 
     @get:Nested
     val pluginOptions: ListProperty<CompilerPluginConfig>
+
+    @get:Input
+    val incremental: Property<Boolean>
 }
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
