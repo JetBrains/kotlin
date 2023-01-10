@@ -63,9 +63,7 @@ val jsMainSources by task<Sync> {
         "libraries/stdlib/js/src/generated/**",
 
         // JS-specific optimized version of emptyArray() already defined
-        "core/builtins/src/kotlin/ArrayIntrinsics.kt",
-        // Need to have a special @PrioritizedInitialization annotation to work with ES6 classes
-        "core/builtins/src/kotlin/Unit.kt",
+        "core/builtins/src/kotlin/ArrayIntrinsics.kt"
     )
 
     sources.forEach { path ->

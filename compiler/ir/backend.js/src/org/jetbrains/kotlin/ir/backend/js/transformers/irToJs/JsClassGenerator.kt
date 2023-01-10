@@ -210,9 +210,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         if (irClass.hasAnnotation(JsAnnotations.PrioritizedInitialization)) {
             context.staticContext.classesWithPrioritizedInitialization.add(irClass.symbol)
+        } else {
+            classModel.preDeclarationBlock.statements += generateSetMetadataCall()
         }
 
-        classModel.preDeclarationBlock.statements += generateSetMetadataCall()
         context.staticContext.classModels[irClass.symbol] = classModel
 
         return classBlock
