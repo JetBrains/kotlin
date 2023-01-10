@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -148,12 +148,19 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val nestedClassifiers = klass.declarations.filterIsInstance<FirClassLikeDeclaration>()
+        fun FirClass.nestedClassifiers(): List<FirClassifierSymbol<*>> {
+            val scope = defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: return emptyList()
+            return buildList {
+                scope.getClassifierNames().mapNotNullTo(this) { scope.getSingleClassifier(it) }
+            }
+        }
+
+        val nestedClassifiers = klass.nestedClassifiers()
         for (nestedClassifier in nestedClassifiers) {
-            if (nestedClassifier is FirTypeAlias) {
-                typeAliasProto(nestedClassifier)?.let { builder.addTypeAlias(it) }
-            } else if (nestedClassifier is FirRegularClass) {
-                if (!extension.shouldSerializeNestedClass(nestedClassifier)) {
+            if (nestedClassifier is FirTypeAliasSymbol) {
+                typeAliasProto(nestedClassifier.fir)?.let { builder.addTypeAlias(it) }
+            } else if (nestedClassifier is FirRegularClassSymbol) {
+                if (!extension.shouldSerializeNestedClass(nestedClassifier.fir)) {
                     continue
                 }
 

@@ -68,6 +68,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
+    public void testGeneratedClassifiersViaLibraryDependency() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/generatedClassifiersViaLibraryDependency.kt");
+    }
+
+    @Test
     @TestMetadata("genericBaseClassMultiple.kt")
     public void testGenericBaseClassMultiple() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
