@@ -52,10 +52,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -214,9 +211,12 @@ public class KotlinJavaPsiFacade implements Disposable {
         return javaClass;
     }
 
+    /**
+     * @return null in case the set of names is impossible to compute correctly
+     */
     @Nullable
     public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
-        if (scope == GlobalSearchScope.EMPTY_SCOPE) return null;
+        if (scope == GlobalSearchScope.EMPTY_SCOPE) return Collections.emptySet();
 
         KotlinPsiElementFinderWrapper[] finders = finders();
 
