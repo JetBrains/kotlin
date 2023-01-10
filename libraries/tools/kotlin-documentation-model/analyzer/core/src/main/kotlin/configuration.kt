@@ -12,30 +12,38 @@ import java.net.URL
 
 object DokkaDefaults {
     val moduleName: String = "root"
+    val moduleVersion: String? = null
     val outputDir = File("./dokka")
-    const val format: String = "html"
-    val cacheRoot: File? = null
-    const val offlineMode: Boolean = false
     const val failOnWarning: Boolean = false
-    const val delayTemplateSubstitution: Boolean = false
-
-    const val includeNonPublic: Boolean = false
-    val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
-    const val reportUndocumented: Boolean = false
-    const val skipEmptyPackages: Boolean = true
-    const val skipDeprecated: Boolean = false
-    const val jdkVersion: Int = 8
-    const val noStdlibLink: Boolean = false
-    const val noJdkLink: Boolean = false
-    val analysisPlatform: Platform = Platform.DEFAULT
-    const val suppress: Boolean = false
+    const val suppressObviousFunctions = true
+    const val suppressInheritedMembers = false
+    const val offlineMode: Boolean = false
 
     const val sourceSetDisplayName = "JVM"
     const val sourceSetName = "main"
-    val moduleVersion: String? = null
+    val analysisPlatform: Platform = Platform.DEFAULT
+
+    const val suppress: Boolean = false
+    const val suppressGeneratedFiles: Boolean = true
+
+    const val skipEmptyPackages: Boolean = true
+    const val skipDeprecated: Boolean = false
+
+    const val reportUndocumented: Boolean = false
+
+    const val noStdlibLink: Boolean = false
+    const val noAndroidSdkLink: Boolean = false
+    const val noJdkLink: Boolean = false
+    const val jdkVersion: Int = 8
+
+    const val includeNonPublic: Boolean = false
+    val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
+
     val pluginsConfiguration = mutableListOf<PluginConfigurationImpl>()
-    const val suppressObviousFunctions = true
-    const val suppressInheritedMembers = false
+
+    const val delayTemplateSubstitution: Boolean = false
+
+    val cacheRoot: File? = null
 }
 
 enum class Platform(val key: String) {
@@ -88,10 +96,12 @@ data class DokkaSourceSetID(
 fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
 
 /**
- * Global options are applied to all packages and modules and overwrite package configuration.
+ * Global options can be configured and applied to all packages and modules at once, overwriting package configuration.
  *
- * These are handy if we have multiple sourcesets sharing the same global options as it reduces the size of the boilerplate.
- * Otherwise, the user would be enforced to repeat all these options per each sourceset.
+ * These are handy if we have multiple source sets sharing the same global options as it reduces the size of the
+ * boilerplate. Otherwise, the user would be forced to repeat all these options for each source set.
+ *
+ * @see [apply] to learn how to apply global configuration
  */
 data class GlobalDokkaConfiguration(
     val perPackageOptions: List<PackageOptionsImpl>?,
