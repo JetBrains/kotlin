@@ -95,6 +95,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 stepReq.addClassExclusionFilter("java.*")
                                 stepReq.addClassExclusionFilter("sun.*")
                                 stepReq.addClassExclusionFilter("kotlin.*")
+                                stepReq.addClassExclusionFilter("jdk.internal.*")
                                 // Create class prepare request to be able to set breakpoints on class initializer lines.
                                 // There are no line stepping events for class initializers, so we depend on breakpoints.
                                 val prepareReq = manager.createClassPrepareRequest()
@@ -102,6 +103,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 prepareReq.addClassExclusionFilter("java.*")
                                 prepareReq.addClassExclusionFilter("sun.*")
                                 prepareReq.addClassExclusionFilter("kotlin.*")
+                                prepareReq.addClassExclusionFilter("jdk.internal.*")
                             }
                             manager.stepRequests().map { it.enable() }
                             manager.classPrepareRequests().map { it.enable() }
