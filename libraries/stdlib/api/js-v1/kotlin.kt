@@ -1336,6 +1336,7 @@ public open class ConcurrentModificationException : kotlin.RuntimeException {
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
 @kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.7")
 public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
     public constructor ContextFunctionTypeParams(count: kotlin.Int)
 

@@ -361,7 +361,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.7)) public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
     public final val count: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
