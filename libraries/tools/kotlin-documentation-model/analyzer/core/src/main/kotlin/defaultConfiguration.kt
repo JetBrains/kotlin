@@ -71,9 +71,9 @@ data class SourceLinkDefinitionImpl(
         fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinitionImpl {
             val (path, urlAndLine) = srcLink.split('=')
             return SourceLinkDefinitionImpl(
-                File(path).canonicalPath,
-                URL(urlAndLine.substringBefore("#")),
-                urlAndLine.substringAfter("#", "").let { if (it.isEmpty()) null else "#$it" })
+                localDirectory = File(path).canonicalPath,
+                remoteUrl = URL(urlAndLine.substringBefore("#")),
+                remoteLineSuffix = urlAndLine.substringAfter("#", "").let { if (it.isEmpty()) null else "#$it" })
         }
     }
 }
@@ -85,7 +85,7 @@ data class PackageOptionsImpl(
     override val reportUndocumented: Boolean?,
     override val skipDeprecated: Boolean,
     override val suppress: Boolean,
-    override val documentedVisibilities: Set<DokkaConfiguration.Visibility>,
+    override val documentedVisibilities: Set<DokkaConfiguration.Visibility>, // TODO add default to DokkaDefaults.documentedVisibilities
 ) : DokkaConfiguration.PackageOptions
 
 
