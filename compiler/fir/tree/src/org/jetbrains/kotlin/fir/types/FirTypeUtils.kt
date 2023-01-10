@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -111,47 +107,6 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
     StandardClassIds.UByte -> ConstantValueKind.UnsignedByte
     else -> null
 }
-
-fun List<FirAnnotation>.computeTypeAttributes(session: FirSession, predefined: List<ConeAttribute<*>> = emptyList()): ConeAttributes {
-    if (this.isEmpty()) {
-        if (predefined.isEmpty()) return ConeAttributes.Empty
-        return ConeAttributes.create(predefined)
-    }
-    val attributes = mutableListOf<ConeAttribute<*>>()
-    attributes += predefined
-    val customAnnotations = mutableListOf<FirAnnotation>()
-    for (annotation in this) {
-        val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        when (type.lookupTag.classId) {
-            CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
-            CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
-            CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
-            CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID ->
-                attributes +=
-                    CompilerConeAttributes.ContextFunctionTypeParams(
-                        annotation.extractContextReceiversCount() ?: 0
-                    )
-            CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
-            else -> {
-                val attributeFromPlugin = session.extensionService.typeAttributeExtensions.firstNotNullOfOrNull {
-                    it.extractAttributeFromAnnotation(annotation)
-                }
-                if (attributeFromPlugin != null) {
-                    attributes += attributeFromPlugin
-                } else {
-                    customAnnotations += annotation
-                }
-            }
-        }
-    }
-    if (customAnnotations.isNotEmpty()) {
-        attributes += CustomAnnotationTypeAttribute(customAnnotations)
-    }
-    return ConeAttributes.create(attributes)
-}
-
-private fun FirAnnotation.extractContextReceiversCount() =
-    (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirConstExpression<*>)?.value as? Int
 
 fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
     when (this) {
