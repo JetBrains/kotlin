@@ -119,8 +119,8 @@ fun List<FirAnnotation>.computeTypeAttributes(session: FirSession, predefined: L
 }
 
 private fun FirAnnotation.tryExpandClassId(session: FirSession): ClassId? {
-    return when (val directlyExpanded = coneClassLikeType?.directExpansionType(session) { it.expandedConeType }) {
-        null -> coneClassLikeType?.classId // mutually recursive typealiases
+    return when (val directlyExpanded = unexpandedConeClassLikeType?.directExpansionType(session) { it.expandedConeType }) {
+        null -> unexpandedConeClassLikeType?.classId // mutually recursive typealiases
         else -> directlyExpanded.fullyExpandedType(session).classId
     }
 }

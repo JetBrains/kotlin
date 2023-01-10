@@ -28,13 +28,13 @@ class FirAnnotationTypeQualifierResolver(
 ) : AbstractAnnotationTypeQualifierResolver<FirAnnotation>(javaTypeEnhancementState), FirSessionComponent {
 
     override val FirAnnotation.metaAnnotations: Iterable<FirAnnotation>
-        get() = coneClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
+        get() = unexpandedConeClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
 
     override val FirAnnotation.key: Any
-        get() = coneClassLikeType!!.lookupTag
+        get() = unexpandedConeClassLikeType!!.lookupTag
 
     override val FirAnnotation.fqName: FqName?
-        get() = coneClassLikeType?.lookupTag?.classId?.asSingleFqName()
+        get() = unexpandedConeClassLikeType?.lookupTag?.classId?.asSingleFqName()
 
     override fun FirAnnotation.enumArguments(onlyValue: Boolean): Iterable<String> =
         argumentMapping.mapping.values.flatMap { argument ->

@@ -231,4 +231,4 @@ fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any
 }
 
 fun FirAnnotation.fullyExpandedClassId(useSiteSession: FirSession): ClassId? =
-    coneClassLikeType?.fullyExpandedType(useSiteSession)?.classId
+    unexpandedConeClassLikeType?.fullyExpandedType(useSiteSession)?.classId

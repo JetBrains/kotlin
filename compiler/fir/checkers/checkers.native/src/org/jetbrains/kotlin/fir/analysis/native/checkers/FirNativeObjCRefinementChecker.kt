@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.coneClassLikeType
+import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -44,7 +44,8 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
         val objCAnnotations = mutableListOf<FirAnnotation>()
         val swiftAnnotations = mutableListOf<FirAnnotation>()
         for (annotation in annotations) {
-            val metaAnnotations = annotation.coneClassLikeType?.lookupTag?.toSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
+            val metaAnnotations = annotation.unexpandedConeClassLikeType?.lookupTag
+                ?.toSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
             for (metaAnnotation in metaAnnotations) {
                 when (metaAnnotation.toAnnotationClassId(session)) {
                     hidesFromObjCClassId -> {
