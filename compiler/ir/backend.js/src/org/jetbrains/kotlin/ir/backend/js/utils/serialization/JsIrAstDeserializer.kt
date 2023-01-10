@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
+import java.nio.ByteBuffer
 import java.util.*
 import java.util.ArrayDeque
 
@@ -23,16 +24,16 @@ fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragment {
 
 private class JsIrAstDeserializer(private val source: ByteArray) {
 
-    private var offset = 0
-
-    private val stringTable = readArray { readString() }
-    private val nameTable = readArray { readName() }
+    private val buffer = ByteBuffer.wrap(source)
 
     private val scope = emptyScope
     private val fileStack: Deque<String> = ArrayDeque()
 
+    private val stringTable = readArray { readString() }
+    private val nameTable = readArray { readName() }
+
     private fun readByte(): Byte {
-        return source[offset++]
+        return buffer.get()
     }
 
     private fun readBoolean(): Boolean {
@@ -40,33 +41,18 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readInt(): Int {
-        var result = readByte().toInt() // no need to mask the highest bit
-        result = (result shl 8) or (readByte().toInt() and 0xFF)
-        result = (result shl 8) or (readByte().toInt() and 0xFF)
-        result = (result shl 8) or (readByte().toInt() and 0xFF)
-        return result
-    }
-
-    private fun readLong(): Long {
-        var result = readByte().toLong() // no need to mask the highest bit
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        result = (result shl 8) or (readByte().toLong() and 0xFF)
-        return result
+        return buffer.int
     }
 
     private fun readDouble(): Double {
-        return Double.fromBits(readLong())
+        return buffer.double
     }
 
     private fun readString(): String {
         val length = readInt()
+        val offset = buffer.position()
         val result = String(source, offset, length, SerializationCharset)
-        offset += length
+        buffer.position(offset + length)
         return result
     }
 
