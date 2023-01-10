@@ -12,12 +12,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.constructors
-import org.jetbrains.kotlin.fir.declarations.delegateFieldsMap
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -124,10 +120,10 @@ fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
     }
 
     if (this == null) return false
-    if (this.annotations.any { it.classId in PARCELIZE_CLASS_CLASS_IDS }) return true
-    return resolvedSuperTypeRefs.any {
-        val symbol = it.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
-        symbol.annotations.any { it.classId in PARCELIZE_CLASS_CLASS_IDS }
+    if (this.annotations.any { it.toAnnotationClassId(session) in PARCELIZE_CLASS_CLASS_IDS }) return true
+    return resolvedSuperTypeRefs.any { superTypeRef ->
+        val symbol = superTypeRef.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
+        symbol.annotations.any { it.toAnnotationClassId(session) in PARCELIZE_CLASS_CLASS_IDS }
     }
 }
 
