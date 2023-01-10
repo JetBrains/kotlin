@@ -20837,6 +20837,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("friendModule.kt")
+            public void testFriendModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multimodule/friendModule.kt");
+            }
+
+            @Test
+            @TestMetadata("friendModulePrivate.kt")
+            public void testFriendModulePrivate() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multimodule/friendModulePrivate.kt");
+            }
+
+            @Test
             @TestMetadata("internal.kt")
             public void testInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multimodule/internal.kt");

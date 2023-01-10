@@ -44,7 +44,7 @@ class LLFirModuleData(
     }
 
     override val friendDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ktModule.directRefinementDependencies.map(::LLFirModuleData)
+        ktModule.directFriendDependencies.map(::LLFirModuleData)
     }
 
     override val platform: TargetPlatform get() = ktModule.platform
