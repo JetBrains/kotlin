@@ -138,8 +138,7 @@ open class MetadataDependencyTransformationTask
         metadataDependencyResolutionsFile.writeText(serializer.serializeList(metadataDependencyResolutions))
     }
 
-    @get:OutputFile
-    val metadataDependencyResolutionsFile: File = outputsDir.resolve("${kotlinSourceSet.name}.metadataDependencyResolutions")
+    private val metadataDependencyResolutionsFile: File = outputsDir.resolve("${kotlinSourceSet.name}.metadataDependencyResolutions")
 
     private val serializer = MetadataDependencyResolutionSerializer(transformation.params)
 
