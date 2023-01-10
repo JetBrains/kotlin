@@ -47,7 +47,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
 
         val session = context.session
         for (annotation in annotations) {
-            val unexpandedClassId = annotation.classId ?: continue
+            val unexpandedClassId = annotation.unexpandedClassId ?: continue
             val annotationClassId = annotation.toAnnotationClassId(session) ?: continue
             if (annotationClassId.isLocal) continue
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
@@ -87,7 +87,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Java.Repeatable }
+            val javaRepeatable = annotations.find { it.unexpandedClassId == StandardClassIds.Annotations.Java.Repeatable }
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {

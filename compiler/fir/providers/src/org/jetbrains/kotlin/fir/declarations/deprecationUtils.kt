@@ -190,12 +190,12 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
 
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
         for ((deprecated, fromJavaAnnotation) in annotations) {
-            if (deprecated.classId == StandardClassIds.Annotations.SinceKotlin) {
+            if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
                 val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
                     ?.let(ApiVersion.Companion::parse) ?: continue
                 val wasExperimental = this@extractDeprecationAnnotationInfoPerUseSite.any {
-                    it.classId == StandardClassIds.Annotations.WasExperimental
+                    it.unexpandedClassId == StandardClassIds.Annotations.WasExperimental
                 }
                 if (!wasExperimental) {
                     add(deprecated.useSiteTarget, SinceKotlinInfo(apiVersion))
