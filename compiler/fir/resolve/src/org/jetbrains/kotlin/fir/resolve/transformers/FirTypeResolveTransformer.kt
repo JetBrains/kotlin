@@ -60,6 +60,17 @@ open class FirTypeResolveTransformer(
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
     private val scopes = mutableListOf<FirScope>()
     private val towerScope = scopes.asReversed()
+    private var currentDeclaration: FirDeclaration? = null
+
+    private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
+        val oldDeclaration = currentDeclaration
+        return try {
+            currentDeclaration = declaration
+            action()
+        } finally {
+            currentDeclaration = oldDeclaration
+        }
+    }
 
     init {
         scopes.addAll(initialScopes.asReversed())
@@ -208,11 +219,15 @@ open class FirTypeResolveTransformer(
         return implicitTypeRef
     }
 
+    override fun transformDeclaration(declaration: FirDeclaration, data: Any?): FirDeclaration = withDeclaration(declaration) {
+        super.transformDeclaration(declaration, data)
+    }
+
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) {
             typeRef.transform(
                 typeResolverTransformer,
-                ScopeClassDeclaration(towerScope, classDeclarationsStack)
+                ScopeClassDeclaration(towerScope, classDeclarationsStack, currentDeclaration)
             )
         }
     }
