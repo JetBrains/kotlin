@@ -143,7 +143,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        pipelineType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {

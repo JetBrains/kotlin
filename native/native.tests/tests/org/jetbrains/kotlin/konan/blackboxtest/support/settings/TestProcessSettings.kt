@@ -239,9 +239,9 @@ internal sealed interface CacheMode {
     }
 }
 
-internal enum class PipelineType(val compilerFlag: String?) {
-    K1(null),
-    K2("-Xuse-k2");
+internal enum class PipelineType(val compilerFlags: List<String>) {
+    K1(emptyList()),
+    K2(listOf("-language-version", "2.0"));
 
-    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+    override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
 }

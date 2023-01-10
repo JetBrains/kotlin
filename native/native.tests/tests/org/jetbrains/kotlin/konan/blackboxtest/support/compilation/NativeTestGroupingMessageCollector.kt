@@ -123,7 +123,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val PRE_RELEASE_WARNING_PREFIX = "Following manually enabled features will force generation of pre-release binaries: "
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
-        private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "New compiler pipeline K2 is experimental in Kotlin/Native."
+        private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex(".+ uses unlinked symbols(:.*)?")
 
         private fun parseLanguageFeatureArg(arg: String): String? =
