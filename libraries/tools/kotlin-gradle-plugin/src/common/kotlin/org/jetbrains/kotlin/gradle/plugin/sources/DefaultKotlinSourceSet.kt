@@ -163,7 +163,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
-            val projectPath = resolution.dependency.projectIdOrNull?.projectPath
+            val projectPath = resolution.dependency.currentBuildProjectIdOrNull?.projectPath
             when (resolution) {
                 // No metadata transformation leads to original dependency being used during import
                 is MetadataDependencyResolution.KeepOriginalDependency -> null

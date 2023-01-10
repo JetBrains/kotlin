@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.Callable
@@ -387,7 +386,7 @@ class KotlinMetadataTargetConfigurator :
                 configuration.exclude(mapOf("group" to group, "module" to name))
             }
 
-            requested.filter { it.dependency.projectIdOrNull == null }.forEach {
+            requested.filter { it.dependency.currentBuildProjectIdOrNull == null }.forEach {
                 val (group, name) = ModuleIds.fromComponent(project, it.dependency)
                 val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
                 configuration.resolutionStrategy.force(notation)

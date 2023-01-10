@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import java.util.*
 
@@ -269,7 +268,7 @@ internal class GranularMetadataTransformation(
     }
 }
 
-internal val ResolvedComponentResult.projectIdOrNull get(): ProjectComponentIdentifier? {
+internal val ResolvedComponentResult.currentBuildProjectIdOrNull get(): ProjectComponentIdentifier? {
     val identifier = id
     return when {
         identifier is ProjectComponentIdentifier && identifier.build.isCurrentBuild -> identifier
@@ -281,7 +280,7 @@ internal fun MetadataDependencyResolution.projectDependency(currentProject: Proj
     dependency.toProjectOrNull(currentProject)
 
 internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): Project? {
-    val projectId = projectIdOrNull ?: return null
+    val projectId = currentBuildProjectIdOrNull ?: return null
     return currentProject.project(projectId.projectPath)
 }
 
