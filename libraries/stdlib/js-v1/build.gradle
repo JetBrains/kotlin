@@ -261,7 +261,7 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
     from jsOutputFileName
     from jsOutputMetaFileName
     from "${jsOutputFileName}.map"
-    from sourceSets.main.output
+    from sourceSets.main.kotlin.classesDirectory
     filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
 
