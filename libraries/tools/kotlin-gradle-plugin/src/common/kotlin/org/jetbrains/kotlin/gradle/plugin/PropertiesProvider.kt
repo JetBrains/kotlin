@@ -102,6 +102,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportHttpIncludeGitBranchName: Boolean
         get() = property("kotlin.build.report.http.include_git_branch.name")?.toBoolean() ?: false
 
+    val buildReportIncludeCompilerArguments: Boolean
+        get() = booleanProperty("kotlin.build.report.include_compiler_arguments") ?: true
+
     val buildReportBuildScanCustomValuesLimit: Int
         get() = property("kotlin.build.report.build_scan.custom_values_limit")?.toInt() ?: 1000
 
