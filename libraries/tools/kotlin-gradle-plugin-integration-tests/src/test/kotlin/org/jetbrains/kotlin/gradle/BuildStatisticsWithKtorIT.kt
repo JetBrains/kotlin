@@ -20,7 +20,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.stat.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertNotEmpty
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -29,11 +28,7 @@ import java.net.URL
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
-import kotlin.test.assertContains
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @DisplayName("Build statistics")
 @JvmGradlePluginTests
@@ -159,11 +154,14 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Validate mandatory field for http request body")
-    @GradleTest
-    fun testHttpRequest(gradleVersion: GradleVersion) {
+    private fun simpleTestHttpReport(
+        gradleVersion: GradleVersion,
+        additionalProjectSetup: (TestProject) -> Unit = {},
+        compileTaskAssertions: (CompileStatisticsData) -> Unit,
+    ) {
         runWithKtorService { port ->
             project("incrementalMultiproject", gradleVersion) {
+                additionalProjectSetup(this)
                 setProjectForTest(port)
                 build("clean", "assemble") {
                     assertOutputDoesNotContain("Failed to send statistic to")
@@ -171,29 +169,54 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.taskName)
-                assertContains(taskData.tags, "NON_INCREMENTAL")
-                assertContains(taskData.nonIncrementalAttributes.map { it.name }, "UNKNOWN_CHANGES_IN_GRADLE_INPUTS")
-                assertTrue(taskData.performanceMetrics.keys.isNotEmpty())
-                assertTrue(taskData.buildTimesMetrics.keys.isNotEmpty())
-                assertEquals(
-                    defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
-                    "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
-                )
+                compileTaskAssertions(taskData)
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContains(taskData.tags, "NON_INCREMENTAL")
-                assertContains(taskData.nonIncrementalAttributes.map { it.name }, "UNKNOWN_CHANGES_IN_GRADLE_INPUTS")
-                assertTrue(taskData.performanceMetrics.keys.isNotEmpty())
-                assertTrue(taskData.buildTimesMetrics.keys.isNotEmpty())
-                assertEquals(
-                    defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
-                    "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
-                )
+                compileTaskAssertions(taskData)
             }
             validateBuildData(port) { buildData ->
                 assertContains(buildData.startParameters.tasks, "assemble")
             }
+        }
+    }
+
+    @DisplayName("Validate mandatory field for http request body")
+    @GradleTest
+    fun testHttpRequest(gradleVersion: GradleVersion) {
+        simpleTestHttpReport(gradleVersion) { taskData ->
+            assertContains(taskData.tags, "NON_INCREMENTAL")
+            assertContains(taskData.nonIncrementalAttributes.map { it.name }, "UNKNOWN_CHANGES_IN_GRADLE_INPUTS")
+            assertFalse(taskData.performanceMetrics.keys.isEmpty())
+            assertFalse(taskData.buildTimesMetrics.keys.isEmpty())
+            assertFalse(taskData.compilerArguments.isEmpty())
+            assertEquals(
+                defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
+                "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
+            )
+        }
+    }
+
+    @DisplayName("Compiler arguments reporting can be disabled")
+    @GradleTest
+    fun testDisablingCompilerArgumentsReporting(gradleVersion: GradleVersion) {
+        simpleTestHttpReport(gradleVersion, { project ->
+            project.gradleProperties.append(
+                """
+                |
+                |kotlin.build.report.include_compiler_arguments=false
+                """.trimMargin()
+            )
+        }) { taskData ->
+            assertContains(taskData.tags, "NON_INCREMENTAL")
+            assertContains(taskData.nonIncrementalAttributes.map { it.name }, "UNKNOWN_CHANGES_IN_GRADLE_INPUTS")
+            assertFalse(taskData.performanceMetrics.keys.isEmpty())
+            assertFalse(taskData.buildTimesMetrics.keys.isEmpty())
+            assertTrue(taskData.compilerArguments.isEmpty())
+            assertEquals(
+                defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
+                "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
+            )
         }
     }
 
