@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.backend.wasm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -108,7 +111,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             val dispatchReceiver = getter.dispatchReceiverParameter
             val jsCode =
                 if (dispatchReceiver == null)
-                    "() => $propName"
+                    "() => ${referenceTopLevelExternalDeclaration(property)}"
                 else
                     "(_this) => _this.$propName"
 
@@ -130,7 +133,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             val dispatchReceiver = setter.dispatchReceiverParameter
             val jsCode =
                 if (dispatchReceiver == null)
-                    "(v) => $propName = v"
+                    "(v) => ${referenceTopLevelExternalDeclaration(property)} = v"
                 else
                     "(_this, v) => _this.$propName = v"
 
@@ -159,12 +162,19 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 return
             }
             append('.')
+            append(klass.getJsNameOrKotlinName())
+        } else {
+            append(referenceTopLevelExternalDeclaration(klass))
         }
-        append(klass.getJsNameOrKotlinName())
     }
 
     fun processExternalConstructor(constructor: IrConstructor) {
         val klass = constructor.constructedClass
+
+        // External interfaces can have synthetic primary constructors in K/JS
+        if (klass.isInterface)
+            return
+
         processFunctionOrConstructor(
             function = constructor,
             name = klass.name,
@@ -183,14 +193,26 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         val jsFun = function.getJsFunAnnotation()
         // Wrap external functions without @JsFun to lambdas `foo` -> `(a, b) => foo(a, b)`.
         // This way we wouldn't fail if we don't call them.
-        if (jsFun != null && function.valueParameters.all { it.defaultValue == null && it.varargElementType == null })
+        if (jsFun != null &&
+            function.valueParameters.all { it.defaultValue == null && it.varargElementType == null } &&
+            currentFile.getJsQualifier() == null &&
+            currentFile.getJsModule() == null
+        ) {
             return
+        }
+
+        val jsFunctionReference = when {
+            jsFun != null -> "($jsFun)"
+            function.isTopLevelDeclaration -> referenceTopLevelExternalDeclaration(function)
+            else -> function.getJsNameOrKotlinName().identifier
+        }
+
         processFunctionOrConstructor(
             function = function,
             name = function.name,
             returnType = function.returnType,
             isConstructor = false,
-            jsFunctionReference = jsFun?.let { "($it)" } ?: function.getJsNameOrKotlinName().identifier
+            jsFunctionReference = jsFunctionReference
         )
     }
 
@@ -340,6 +362,25 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         res.parent = currentFile
         addedDeclarations += res
         return res
+    }
+
+    private fun referenceTopLevelExternalDeclaration(declaration: IrDeclarationWithName): String {
+        var name = declaration.getJsNameOrKotlinName().identifier
+
+        val qualifier = currentFile.getJsQualifier()
+
+        val module = currentFile.getJsModule()
+            ?: declaration.getJsModule()?.also {
+                // JsModule on top level declarations imports "default"
+                name = "default"
+            }
+
+        if (qualifier == null && module == null)
+            return name
+
+        val qualifieReference = JsModuleAndQualifierReference(module, qualifier)
+        context.jsModuleAndQualifierReferences += qualifieReference
+        return qualifieReference.jsVariableName + "." + name
     }
 }
 

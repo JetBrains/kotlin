@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
@@ -107,7 +108,10 @@ fun compileWasm(
         null
     }
 
-    val jsUninstantiatedWrapper = compiledWasmModule.generateAsyncJsWrapper("./$baseFileName.wasm")
+    val jsUninstantiatedWrapper = compiledWasmModule.generateAsyncJsWrapper(
+        "./$baseFileName.wasm",
+        backendContext.jsModuleAndQualifierReferences
+    )
     val jsWrapper = generateEsmExportsWrapper("./$baseFileName.uninstantiated.mjs")
 
     val os = ByteArrayOutputStream()
@@ -172,43 +176,74 @@ private fun generateSourceMap(
     return sourceMapBuilder.build()
 }
 
-fun WasmCompiledModuleFragment.generateAsyncJsWrapper(wasmFilePath: String): String {
+fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
+    wasmFilePath: String,
+    jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>
+): String {
+
     val jsCodeBody = jsFuns.joinToString(",\n") {
         "${it.importName.toJsStringLiteral()} : ${it.jsCode}"
     }
 
-    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
+    val jsCodeBodyIndented = jsCodeBody.prependIndent("        ")
 
     val imports = jsModuleImports
         .toList()
         .sorted()
         .joinToString("") {
             val moduleSpecifier = it.toJsStringLiteral()
-            "        $moduleSpecifier: imports[$moduleSpecifier] ?? await import($moduleSpecifier),\n"
+            "        $moduleSpecifier: await _importModule($moduleSpecifier),\n"
         }
+
+    val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
+        .map {
+            val module = it.module
+            val qualifier = it.qualifier
+            buildString {
+                append("    const ")
+                append(it.jsVariableName)
+                append(" = ")
+                if (module != null) {
+                    append("(await _importModule(${module.toJsStringLiteral()}))")
+                    if (qualifier != null)
+                        append(".")
+                }
+                if (qualifier != null) {
+                    append(qualifier)
+                }
+                append(";")
+            }
+        }.sorted()
+        .joinToString("\n")
 
     //language=js
     return """
-const externrefBoxes = new WeakMap();
-// ref must be non-null
-function tryGetOrSetExternrefBox(ref, ifNotCached) {
-    if (typeof ref !== 'object') return ifNotCached;
-    const cachedBox = externrefBoxes.get(ref);
-    if (cachedBox !== void 0) return cachedBox;
-    externrefBoxes.set(ref, ifNotCached);
-    return ifNotCached;
-}
-
-const js_code = {
-$jsCodeBodyIndented
-}
-
-// Placed here to give access to it from externals (js_code)
-let wasmInstance;
-let require; 
-let wasmExports;
-
 export async function instantiate(imports={}, runInitializer=true) {
+    const externrefBoxes = new WeakMap();
+    // ref must be non-null
+    function tryGetOrSetExternrefBox(ref, ifNotCached) {
+        if (typeof ref !== 'object') return ifNotCached;
+        const cachedBox = externrefBoxes.get(ref);
+        if (cachedBox !== void 0) return cachedBox;
+        externrefBoxes.set(ref, ifNotCached);
+        return ifNotCached;
+    }
+    
+    async function _importModule(x) { 
+        return imports[x] ?? await import(x);
+    }
+
+$referencesToQualifiedAndImportedDeclarations
+    
+    const js_code = {
+$jsCodeBodyIndented
+    }
+    
+    // Placed here to give access to it from externals (js_code)
+    let wasmInstance;
+    let require; 
+    let wasmExports;
+
     const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
     const isD8 = !isNodeJs && (typeof d8 !== 'undefined');
     const isBrowser = !isNodeJs && !isD8 && (typeof window !== 'undefined');

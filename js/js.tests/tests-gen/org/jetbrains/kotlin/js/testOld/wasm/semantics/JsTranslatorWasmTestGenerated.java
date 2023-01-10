@@ -205,4 +205,162 @@ public class JsTranslatorWasmTestGenerated extends AbstractJsTranslatorWasmTest 
             runTest("js/js.translator/testData/box/native/vararg.kt");
         }
     }
+
+    @TestMetadata("js/js.translator/testData/box/esModules")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EsModules extends AbstractJsTranslatorWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEsModules() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/incremental")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Incremental extends AbstractJsTranslatorWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIncremental() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("jsModule.kt")
+            public void testJsModule() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/incremental/jsModule.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/inline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inline extends AbstractJsTranslatorWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInline() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsModule extends AbstractJsTranslatorWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("externalClass.kt")
+            public void testExternalClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalClass.kt");
+            }
+
+            @TestMetadata("externalClassNameClash.kt")
+            public void testExternalClassNameClash() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalClassNameClash.kt");
+            }
+
+            @TestMetadata("externalFunction.kt")
+            public void testExternalFunction() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalFunction.kt");
+            }
+
+            @TestMetadata("externalFunctionNameClash.kt")
+            public void testExternalFunctionNameClash() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalFunctionNameClash.kt");
+            }
+
+            @TestMetadata("externalObject.kt")
+            public void testExternalObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalObject.kt");
+            }
+
+            @TestMetadata("externalPackage.kt")
+            public void testExternalPackage() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalPackage.kt");
+            }
+
+            @TestMetadata("externalPackageInDifferentFile.kt")
+            public void testExternalPackageInDifferentFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalPackageInDifferentFile.kt");
+            }
+
+            @TestMetadata("externalProperty.kt")
+            public void testExternalProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalProperty.kt");
+            }
+
+            @TestMetadata("interfaces.kt")
+            public void testInterfaces() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
+            }
+
+            @TestMetadata("topLevelVarargFun.kt")
+            public void testTopLevelVarargFun() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsName")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsName extends AbstractJsTranslatorWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("defaultJsName.kt")
+            public void testDefaultJsName() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsName/defaultJsName.kt");
+            }
+
+            @TestMetadata("jsTopLevelClashes.kt")
+            public void testJsTopLevelClashes() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsName/jsTopLevelClashes.kt");
+            }
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/box/jsQualifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JsQualifier extends AbstractJsTranslatorWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJsQualifier() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("classes.kt")
+        public void testClasses() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/classes.kt");
+        }
+
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/simple.kt");
+        }
+    }
 }

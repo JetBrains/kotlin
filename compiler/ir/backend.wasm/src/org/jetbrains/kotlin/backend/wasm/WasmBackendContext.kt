@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -62,6 +62,9 @@ class WasmBackendContext(
     val kotlinClosureToJsConverters = mutableMapOf<IrSimpleType, IrSimpleFunction>()
     val jsClosureCallers = mutableMapOf<IrSimpleType, IrSimpleFunction>()
     val jsToKotlinClosures = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+
+    val jsModuleAndQualifierReferences =
+        mutableSetOf<JsModuleAndQualifierReference>()
 
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module,this)

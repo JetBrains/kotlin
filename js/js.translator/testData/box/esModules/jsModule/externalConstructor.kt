@@ -2,6 +2,9 @@
 // ES_MODULES
 // DONT_TARGET_EXACT_BACKEND: JS
 
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
+
 package foo
 
 @JsModule("./externalConstructor.mjs")
