@@ -63,8 +63,9 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     private fun checkMetaSerializableApplicable(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
         if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
         if (!classSymbol.classId.isNestedClass) return
-        val anno = classSymbol.resolvedAnnotationsWithClassIds.find { it.classId == SerializationAnnotations.metaSerializableAnnotationClassId }
-        if (anno == null) return
+        val anno = classSymbol.resolvedAnnotationsWithClassIds
+            .find { it.toAnnotationClassId(session) == SerializationAnnotations.metaSerializableAnnotationClassId }
+            ?: return
         reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE)
     }
 
@@ -92,7 +93,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         fun annotationsFilter(annotations: List<FirAnnotation>): List<Pair<ClassId, FirAnnotation>> {
             return annotations
                 .filter { it.annotationTypeRef.toRegularClassSymbol(session)?.isInheritableSerialInfoAnnotation(session) == true }
-                .mapNotNull { annotation -> annotation.classId?.let { it to annotation } }
+                .mapNotNull { annotation -> annotation.toAnnotationClassId(session)?.let { it to annotation } }
         }
 
         val annotationByClassId = buildMap {
