@@ -139,7 +139,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         } finally {
             val taskInfo = TaskExecutionInfo(
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
-                compilerArguments = compilerArgs,
+                compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
                 withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,
                 withArtifactTransform = incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
             )

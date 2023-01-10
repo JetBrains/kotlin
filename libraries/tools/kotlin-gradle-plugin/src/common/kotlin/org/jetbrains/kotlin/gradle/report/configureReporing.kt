@@ -70,6 +70,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         buildScanReportSettings = buildScanSettings,
         buildReportOutputs = buildReportOutputTypes,
         singleOutputFile = singleOutputFile ?: oldSingleBuildMetric,
+        includeCompilerArguments = properties.buildReportIncludeCompilerArguments,
     )
 }
 
