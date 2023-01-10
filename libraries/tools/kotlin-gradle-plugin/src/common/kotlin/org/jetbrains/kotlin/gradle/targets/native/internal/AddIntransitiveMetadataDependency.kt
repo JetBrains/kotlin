@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
  * In this mode, every source set will receive exactly one commonized library to analyze its source code with.
  */
 internal fun Project.addIntransitiveMetadataDependencyIfPossible(sourceSet: DefaultKotlinSourceSet, dependency: FileCollection) {
-    if (project.isIntransitiveMetadataConfigurationEnabled) {
-        project.dependencies.add(sourceSet.intransitiveMetadataConfigurationName, dependency)
-    } /*else {
-        project.dependencies.add(sourceSet.internal.resolvableMetadataConfiguration.name, dependency)
-    }*/
+    val dependencyConfigurationName =
+        if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
+        else sourceSet.implementationMetadataConfigurationName
+    project.dependencies.add(dependencyConfigurationName, dependency)
 }

@@ -96,8 +96,11 @@ private fun Project.addDependencies(
         }
     }
 
-    if (isIdeDependency && sourceSet is DefaultKotlinSourceSet && project.isIntransitiveMetadataConfigurationEnabled) {
-        dependencies.add(sourceSet.intransitiveMetadataConfigurationName, libraries)
+    if (isIdeDependency && sourceSet is DefaultKotlinSourceSet) {
+        val metadataConfigurationName =
+            if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
+            else sourceSet.implementationMetadataConfigurationName
+        dependencies.add(metadataConfigurationName, libraries)
     }
 }
 
