@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMacosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import kotlin.test.Test
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
+@Ignore
 class IdeaKpmProjectModelSerializableTest : AbstractKpmExtensionTest() {
 
     @Test

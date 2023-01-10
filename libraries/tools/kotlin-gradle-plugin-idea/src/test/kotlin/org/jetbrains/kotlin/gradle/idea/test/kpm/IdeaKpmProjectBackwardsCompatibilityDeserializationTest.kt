@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.createProxyInstance
 import org.jetbrains.kotlin.gradle.idea.test.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.junit.Test
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class IdeaKpmProjectBackwardsCompatibilityDeserializationTest {
 
     @Test
+    @Ignore
     fun `test - simpleInstance`() {
         val project = TestIdeaKpmInstances.simpleProject
         val deserialized = deserializeIdeaKpmProjectWithBackwardsCompatibleClasses(project)

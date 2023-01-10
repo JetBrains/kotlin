@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosArm64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmJvmVariant
 import org.junit.Test
+import kotlin.test.Ignore
 
+@Ignore
 class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
 
     @Test

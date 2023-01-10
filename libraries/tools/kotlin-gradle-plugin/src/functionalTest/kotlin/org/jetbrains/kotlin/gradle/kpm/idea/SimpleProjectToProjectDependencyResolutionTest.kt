@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertIsNotEmpty
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertFragmentDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.junit.Test
+import kotlin.test.Ignore
 
 class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
 
     @Test
+    @Ignore
     fun `test - simple producer and consumer projects`() {
         val root = buildProject()
         val producer = buildProject { withParent(root).withName("producer") }

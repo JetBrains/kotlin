@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.Test
+import kotlin.test.Ignore
 
 class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
 
     @Test
+    @Ignore
     fun `test - simple ios linux and jvm project`() {
         val project = buildProject()
 

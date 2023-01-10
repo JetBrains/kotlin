@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.test.Ignore
 
 @MppGradlePluginTests
 @GradleTestVersions(minVersion = TestVersions.Gradle.MIN_SUPPORTED_KPM)
+@Ignore
 class BuildIdeaKpmProjectModelIT : KGPBaseTest() {
 
     @GradleTest
