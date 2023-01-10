@@ -32,32 +32,10 @@ internal val String.synthesizedName get() = Name.identifier(this.synthesizedStri
 internal val String.synthesizedString get() = "\$$this"
 
 
-internal val DeclarationDescriptor.propertyIfAccessor
-    get() = if (this is PropertyAccessorDescriptor)
-                this.correspondingProperty
-                else this
-
 internal val CallableMemberDescriptor.propertyIfAccessor
     get() = if (this is PropertyAccessorDescriptor)
                 this.correspondingProperty
                 else this
-
-internal val FunctionDescriptor.deserializedPropertyIfAccessor: DeserializedCallableMemberDescriptor
-    get() {
-        val member = this.propertyIfAccessor
-        if (member is DeserializedCallableMemberDescriptor) 
-            return member
-        else 
-            error("Unexpected deserializable callable descriptor")
-    }
-
-internal val CallableMemberDescriptor.isDeserializableCallable
-    get () = (this.propertyIfAccessor is DeserializedCallableMemberDescriptor)
-
-fun DeclarationDescriptor.findTopLevelDescriptor(): DeclarationDescriptor {
-    return if (this.containingDeclaration is org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor) this.propertyIfAccessor
-    else this.containingDeclaration!!.findTopLevelDescriptor()
-}
 
 private fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when (val parent = this.parent) {
     is IrDeclaration -> parent.findTopLevelDeclaration()
