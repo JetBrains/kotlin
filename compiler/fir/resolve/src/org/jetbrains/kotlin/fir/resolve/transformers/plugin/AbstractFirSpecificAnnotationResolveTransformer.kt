@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
@@ -49,7 +50,19 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     containingDeclarations: List<FirDeclaration> = emptyList()
 ) : FirDefaultTransformer<Nothing?>() {
     companion object {
-        private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord)
+        private val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
+            Deprecated,
+            Annotations.Retention,
+            Annotations.Target,
+        )
+
+        private val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
+            DeprecatedSinceKotlin,
+            WasExperimental,
+            JvmRecord,
+            Annotations.Repeatable,
+            Annotations.Java.Repeatable,
+        )
 
         private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
     }
@@ -104,9 +117,10 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         annotationCall.replaceAnnotationTypeRef(transformedAnnotationType)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.CompilerRequiredAnnotations)
         // TODO: what if we have type alias here?
-        if (transformedAnnotationType.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == Deprecated) {
+        if (transformedAnnotationType.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId in REQUIRED_ANNOTATIONS_WITH_ARGUMENTS) {
             argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
         }
+
         return annotationCall
     }
 
