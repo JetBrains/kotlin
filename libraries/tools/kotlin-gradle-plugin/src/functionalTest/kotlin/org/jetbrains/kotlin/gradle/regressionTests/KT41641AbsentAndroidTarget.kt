@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import com.android.build.gradle.LibraryExtension
-import org.jetbrains.kotlin.gradle.MultiplatformExtensionTest
+import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
 import org.jetbrains.kotlin.gradle.plugin.runMissingAndroidTargetProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.util.propertiesExtension

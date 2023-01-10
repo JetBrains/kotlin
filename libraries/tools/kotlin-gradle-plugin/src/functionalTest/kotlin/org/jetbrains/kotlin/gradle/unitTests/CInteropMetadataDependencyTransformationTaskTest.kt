@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.TaskInternal
-import org.jetbrains.kotlin.gradle.MultiplatformExtensionTest
+import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTask

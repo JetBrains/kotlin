@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
-import org.jetbrains.kotlin.gradle.MultiplatformExtensionTest
+import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import kotlin.test.Test
 

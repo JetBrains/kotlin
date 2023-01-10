@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 /* Associate compilations are not yet supported by the IDE. KT-34102 */
 @file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
-import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotNull
 
