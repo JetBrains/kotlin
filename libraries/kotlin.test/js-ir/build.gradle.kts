@@ -4,8 +4,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-suppressYarnAndNpmForAssemble()
-
 val commonMainSources by task<Sync> {
     from(
         "$rootDir/libraries/kotlin.test/common/src/main",

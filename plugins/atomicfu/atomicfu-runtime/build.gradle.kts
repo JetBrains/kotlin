@@ -28,8 +28,6 @@ kotlin {
     }
 }
 
-suppressYarnAndNpmForAssemble()
-
 configureCommonPublicationSettingsForGradle(signLibraryPublication)
 
 publishing {

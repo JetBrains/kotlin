@@ -7,8 +7,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-suppressYarnAndNpmForAssemble()
-
 description = "Kotlin Standard Library for experimental WebAssembly platform"
 
 val unimplementedNativeBuiltIns =

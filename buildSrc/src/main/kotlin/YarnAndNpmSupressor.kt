@@ -11,7 +11,6 @@ import org.gradle.api.tasks.TaskProvider
 /* This file is solely needed to suppress implicit dependencies on npm and yarn tasks registered by Kotlin Gradle Plugin */
 
 private val rootNpmRelatedTasks = setOf("kotlinNpmInstall", "kotlinStoreYarnLock")
-private val ownNpmRelatedTasks = setOf("jsGenerateExternalsIntegrated", "irGenerateExternalsIntegrated", "wasmGenerateExternalsIntegrated")
 
 private val forbidImplicitDependOnNpmRelatedTasks = setOf(
     "jsPackageJson",
@@ -26,40 +25,6 @@ private val forbidImplicitDependOnNpmRelatedTasks = setOf(
     "compileKotlinJsLegacy"
 )
 private val allowImplicitDependOnNpmForTasks = setOf("compileTestKotlinJs", "compileTestKotlinWasm")
-
-/**
- * Kotlin JS gradle plugin implicitly define dependency to installing NPM and Yarn
- * https://youtrack.jetbrains.com/issue/KT-53687/Dont-trigger-npm-and-yarn-related-tasks-if-it-not-relevant-for-assemble
- * We would like to explicitly disable this behaviour for kotlin standard library publication as it's shouldn't be needed but make the
- * build slower, make it less stable, generated additional traffic, make the build less secure and so on.
- *
- * Implemented by manually removing dependencies set by Kotlin Gradle Plugin.
- */
-fun Project.suppressYarnAndNpmForAssemble() {
-    afterEvaluate {
-        for (npmYarnTaskName in rootNpmRelatedTasks) {
-            tasks.findByPath(":$npmYarnTaskName") ?: error("Can't find root task $npmYarnTaskName")
-        }
-
-        val npmRelatedTasksNames = rootNpmRelatedTasks + ownNpmRelatedTasks
-
-        for (taskName in forbidImplicitDependOnNpmRelatedTasks) {
-            val task = project.tasks.findByName(taskName) ?: continue
-            if (!task.enabled) continue
-
-            val removeDependencies = task.dependsOn
-                .filterIsInstance(TaskProvider::class.java)
-                .filter { it.name in npmRelatedTasksNames }
-                .toSet()
-
-            if (removeDependencies.isNotEmpty()) {
-                task.setDependsOn(task.dependsOn - removeDependencies)
-                logger.info("Disable NPM/Yarn dependency tasks in $project - " +
-                                    "remove ${removeDependencies.joinToString(", ") { "'${it.name}'" }} dependencies from $task")
-            }
-        }
-    }
-}
 
 private fun findRootTasks(taskGraph: TaskExecutionGraph): List<Task> {
     val allDependentTasksPaths = mutableSetOf<String>()

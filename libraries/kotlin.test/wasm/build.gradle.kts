@@ -35,8 +35,6 @@ kotlin {
     }
 }
 
-suppressYarnAndNpmForAssemble()
-
 tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",

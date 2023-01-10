@@ -10,8 +10,6 @@ kotlin {
     }
 }
 
-suppressYarnAndNpmForAssemble()
-
 val commonMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib-js-ir:commonMainSources")
     from {
