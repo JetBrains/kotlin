@@ -334,7 +334,7 @@ open class FirTypeResolveTransformer(
         delegatedConstructorCall: FirDelegatedConstructorCall
     ) {
         delegatedConstructorCall.replaceConstructedTypeRef(
-            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Any?>(this, null)
+            delegatedConstructorCall.constructedTypeRef.transform(this, null)
         )
 
         delegatedConstructorCall.transformCalleeReference(this, null)

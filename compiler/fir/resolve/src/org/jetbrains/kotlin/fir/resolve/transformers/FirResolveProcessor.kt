@@ -45,6 +45,6 @@ abstract class FirTransformerBasedResolveProcessor(
     abstract val transformer: FirTransformer<Nothing?>
 
     open fun processFile(file: FirFile) {
-        file.transform<FirFile, Nothing?>(transformer, null)
+        file.transform<FirFile, Nothing?, FirTransformer<Nothing?>>(transformer, null)
     }
 }

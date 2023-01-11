@@ -20,7 +20,7 @@ interface FirElement {
     fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitElement(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    fun <E: FirElement, D, @Monomorphic TT: FirTransformer<D>> transform(transformer: TT, data: D): E = 
         transformer.transformElement(this, data) as E
 
     fun <@Monomorphic VT: FirVisitorVoid> accept(visitor: VT) = accept(visitor, null)

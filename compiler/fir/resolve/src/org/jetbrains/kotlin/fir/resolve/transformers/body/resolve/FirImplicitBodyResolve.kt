@@ -106,7 +106,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     val members = localClassesNavigationInfo.allMembers
     graphBuilder.prepareForLocalClassMembers(members)
 
-    return this.transform<F, ResolutionMode>(transformer, resolutionMode).also {
+    return this.transform<F, ResolutionMode, FirImplicitAwareBodyResolveTransformer>(transformer, resolutionMode).also {
         graphBuilder.cleanAfterForLocalClassMembers(members)
     }
 }
@@ -325,7 +325,7 @@ private class ReturnTypeCalculatorWithJump(
             outerBodyResolveContext
         )
 
-        designation.first().transform<FirElement, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
+        designation.first().transform<FirElement, ResolutionMode, FirDesignatedBodyResolveTransformerForReturnTypeCalculator>(transformer, ResolutionMode.ContextDependent)
 
         val transformedDeclaration = transformer.lastResult as? FirCallableDeclaration
             ?: error("Unexpected lastResult: ${transformer.lastResult?.render()}")
@@ -365,7 +365,7 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         if (designation.hasNext()) {
-            val result = designation.next().transform<FirDeclaration, ResolutionMode>(this, data)
+            val result = designation.next().transform<FirDeclaration, ResolutionMode, FirDesignatedBodyResolveTransformerForReturnTypeCalculator>(this, data)
             if (!designation.hasNext() && lastResult == null) {
                 lastResult = result
             }

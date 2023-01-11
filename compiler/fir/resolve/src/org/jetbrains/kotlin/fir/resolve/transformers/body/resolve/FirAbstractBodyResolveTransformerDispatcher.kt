@@ -430,7 +430,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     // --------------------------------------------------------------------------
 
     fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
-        val result = this.transform<FirElement, D>(transformer, data)
+        val result = this.transform<FirElement, D, FirTransformer<D>>(transformer, data)
         require(result === this) { "become $result: `${result.render()}`, was ${this}: `${this.render()}`" }
     }
 }

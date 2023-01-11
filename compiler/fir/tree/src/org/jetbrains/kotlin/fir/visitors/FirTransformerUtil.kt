@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
-    return (this as FirPureAbstractElement).transform<T, D>(transformer, data)
+    return (this as FirPureAbstractElement).transform(transformer, data)
 }
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
     val iterator = this.listIterator()
     while (iterator.hasNext()) {
         val next = iterator.next() as FirPureAbstractElement
-        val result = next.transform<T, D>(transformer, data)
+        val result = next.transform<T, D, FirTransformer<D>>(transformer, data)
         if (result !== next) {
             iterator.set(result)
         }
@@ -37,7 +37,7 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
             is TransformData.Data<D> -> data.value
             TransformData.Nothing -> continue
         }
-        val result = next.transform<T, D>(transformer, data)
+        val result = next.transform<T, D, FirTransformer<D>>(transformer, data)
         if (result !== next) {
             iterator.set(result)
         }

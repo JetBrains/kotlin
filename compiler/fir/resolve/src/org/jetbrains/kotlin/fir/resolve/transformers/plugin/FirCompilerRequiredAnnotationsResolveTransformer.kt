@@ -87,7 +87,7 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
 
     private fun FirFile.resolveAnnotations() {
         this.transformImports(importTransformer, null)
-        this.transform<FirFile, Nothing?>(annotationTransformer, null)
+        this.transform<FirFile, Nothing?,  AbstractFirSpecificAnnotationResolveTransformer>(annotationTransformer, null)
     }
 }
 

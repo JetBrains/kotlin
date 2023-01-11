@@ -23,6 +23,6 @@ abstract class FirLegacyRawContractDescription : FirContractDescription() {
     override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitLegacyRawContractDescription(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E: FirElement, D, @Monomorphic TT: FirTransformer<D>> transform(transformer: TT, data: D): E = 
         transformer.transformLegacyRawContractDescription(this, data) as E
 }

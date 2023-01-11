@@ -21,6 +21,6 @@ abstract class FirStarProjection : FirTypeProjection() {
     override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitStarProjection(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E: FirElement, D, @Monomorphic TT: FirTransformer<D>> transform(transformer: TT, data: D): E = 
         transformer.transformStarProjection(this, data) as E
 }

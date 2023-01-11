@@ -21,6 +21,6 @@ abstract class FirLabel : FirPureAbstractElement(), FirElement {
     override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitLabel(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E: FirElement, D, @Monomorphic TT: FirTransformer<D>> transform(transformer: TT, data: D): E = 
         transformer.transformLabel(this, data) as E
 }

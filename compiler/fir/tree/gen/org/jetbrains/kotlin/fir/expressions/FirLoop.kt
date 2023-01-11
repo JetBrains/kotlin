@@ -28,7 +28,7 @@ sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement 
     override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitLoop(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E: FirElement, D, @Monomorphic TT: FirTransformer<D>> transform(transformer: TT, data: D): E = 
         transformer.transformLoop(this, data) as E
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop

@@ -108,7 +108,7 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     supertypeComputationSession.breakLoops(session)
 
     val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
-    return this.transform<F, Nothing?>(applySupertypesTransformer, null)
+    return this.transform(applySupertypesTransformer, null)
 }
 
 open class FirApplySupertypesTransformer(
@@ -416,7 +416,7 @@ open class FirSupertypeResolverVisitor(
               So we create a copy of supertypeRefs to avoid it
              */
             supertypeRefs.createCopy().mapTo(mutableListOf()) {
-                val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration>(transformer, scopeDeclaration)
+                val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration, FirTransformer<ScopeClassDeclaration>>(transformer, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
                 when {
                     typeParameterType != null ->

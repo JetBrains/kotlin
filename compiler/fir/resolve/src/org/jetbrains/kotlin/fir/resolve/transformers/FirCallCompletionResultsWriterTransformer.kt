@@ -657,7 +657,7 @@ class FirCallCompletionResultsWriterTransformer(
         val result = transformElement(anonymousFunction, null)
 
         for (expression in returnExpressionsOfAnonymousFunction) {
-            expression.transform<FirElement, ExpectedArgumentType?>(this, finalType?.toExpectedType())
+            expression.transform<FirElement, ExpectedArgumentType?, FirCallCompletionResultsWriterTransformer>(this, finalType?.toExpectedType())
         }
 
         if (result.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {

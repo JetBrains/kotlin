@@ -28,7 +28,7 @@ abstract class FirElvisExpression : FirExpression(), FirResolvable {
     override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitElvisExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E: FirElement, D, @Monomorphic TT: FirTransformer<D>> transform(transformer: TT, data: D): E = 
         transformer.transformElvisExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
