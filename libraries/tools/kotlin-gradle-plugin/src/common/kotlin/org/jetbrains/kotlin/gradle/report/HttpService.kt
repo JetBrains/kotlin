@@ -25,21 +25,19 @@ class HttpReportServiceImpl(
 ) : HttpReportService, Serializable {
     constructor(httpSettings: HttpReportSettings) : this(httpSettings.url, httpSettings.password, httpSettings.user)
 
-    companion object {
-        private var invalidUrl = false
-        private var requestPreviousFailed = false
+    private var invalidUrl = false
+    private var requestPreviousFailed = false
 
-        private fun checkResponseAndLog(connection: HttpURLConnection, log: Logger) {
-            val isResponseBad = connection.responseCode !in 200..299
-            if (isResponseBad) {
-                val message = "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}"
-                if (!requestPreviousFailed) {
-                    log.warn(message)
-                } else {
-                    log.debug(message)
-                }
-                requestPreviousFailed = true
+    private fun checkResponseAndLog(connection: HttpURLConnection, log: Logger) {
+        val isResponseBad = connection.responseCode !in 200..299
+        if (isResponseBad) {
+            val message = "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}"
+            if (!requestPreviousFailed) {
+                log.warn(message)
+            } else {
+                log.debug(message)
             }
+            requestPreviousFailed = true
         }
     }
 
