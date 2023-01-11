@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 
-class Fir2IrLocalStorage(existingClassCache: MutableMap<FirClass, IrClass>? = null) {
+class Fir2IrLocalCallableStorage {
 
     private val cacheStack = mutableListOf<Fir2IrScopeCache>()
-
-    private val localClassCache = existingClassCache ?: mutableMapOf()
-
-    fun getLocalClassCache() = localClassCache
 
     fun enterCallable() {
         cacheStack += Fir2IrScopeCache()
@@ -36,10 +32,6 @@ class Fir2IrLocalStorage(existingClassCache: MutableMap<FirClass, IrClass>? = nu
     fun getVariable(variable: FirVariable): IrVariable? =
         last { getVariable(variable) }
 
-    fun getLocalClass(localClass: FirClass): IrClass? {
-        return localClassCache[localClass]
-    }
-
     fun getLocalFunction(localFunction: FirFunction): IrSimpleFunction? =
         last { getLocalFunction(localFunction) }
 
@@ -59,10 +51,6 @@ class Fir2IrLocalStorage(existingClassCache: MutableMap<FirClass, IrClass>? = nu
 
     fun putVariable(firVariable: FirVariable, irVariable: IrVariable) {
         cacheStack.last().putVariable(firVariable, irVariable)
-    }
-
-    fun putLocalClass(firClass: FirClass, irClass: IrClass) {
-        localClassCache[firClass] = irClass
     }
 
     fun putLocalFunction(firFunction: FirFunction, irFunction: IrSimpleFunction) {

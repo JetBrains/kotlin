@@ -120,7 +120,7 @@ class Fir2IrDeclarationStorage(
 
     private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrField> = ConcurrentHashMap()
 
-    private val localStorage: Fir2IrLocalStorage by threadLocal { Fir2IrLocalStorage() }
+    private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
     private fun <K, V> merge(
         dependentStorages: List<Fir2IrDeclarationStorage>,

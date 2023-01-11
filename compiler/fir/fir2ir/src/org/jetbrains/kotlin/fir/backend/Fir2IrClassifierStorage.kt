@@ -60,11 +60,13 @@ class Fir2IrClassifierStorage(
 
     private val fieldsForContextReceivers: MutableMap<IrClass, List<IrField>> = mutableMapOf()
 
-    private val localStorage: Fir2IrLocalStorage = Fir2IrLocalStorage(
+    private val localStorage: Fir2IrLocalClassStorage = Fir2IrLocalClassStorage(
+        // Merge is necessary here to be able to serialize local classes from common code in expression codegen
         dependentStorages.map { it.localStorage }.fold(mutableMapOf()) { result, storage ->
-            result.putAll(storage.getLocalClassCache())
+            result.putAll(storage.localClassCache)
             result
-        })
+        }
+    )
 
     private fun <K, V> merge(mapFunc: (Fir2IrClassifierStorage) -> MutableMap<K, V>): MutableMap<K, V> {
         return dependentStorages.map { mapFunc(it) }.fold(mutableMapOf()) { result, map ->
@@ -78,7 +80,7 @@ class Fir2IrClassifierStorage(
 
     fun preCacheBuiltinClasses() {
         // dependentStorages are only actual for MPP scenario
-        // There is no need to precache them twice since the same library session is used and FIR and IR elements are the same
+        // There is no need to precache them twice: the same library session is used and FIR and IR elements are the same
         if (dependentStorages.isNotEmpty()) return
         for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
             val firClass = ConeClassLikeLookupTagImpl(classId).toSymbol(session)!!.fir as FirRegularClass
@@ -192,14 +194,14 @@ class Fir2IrClassifierStorage(
 
     fun getCachedIrClass(klass: FirClass): IrClass? {
         return if (klass is FirAnonymousObject || klass is FirRegularClass && klass.visibility == Visibilities.Local) {
-            localStorage.getLocalClass(klass)
+            localStorage[klass]
         } else {
             classCache[klass]
         }
     }
 
-    internal fun getCachedLocalClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
-        return localStorage.getLocalClass(lookupTag.toSymbol(session)!!.fir as FirClass)
+    private fun getCachedLocalClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
+        return localStorage[lookupTag.toSymbol(session)!!.fir as FirClass]
     }
 
     private fun FirRegularClass.enumClassModality(): Modality {
@@ -221,8 +223,8 @@ class Fir2IrClassifierStorage(
     private fun createLocalIrClassOnTheFly(klass: FirClass): IrClass {
         // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
         val classOrLocalParent = generateSequence(klass) { c ->
-            (c as? FirRegularClass)?.containingClassForLocalAttr?.let {
-                (firProvider.symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.takeIf {
+            (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
+                (firProvider.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirClass)?.takeIf {
                     it.declarations.contains(c)
                 }
             }
@@ -356,7 +358,7 @@ class Fir2IrClassifierStorage(
             irClass.parent = parent
         }
         if (regularClass.visibility == Visibilities.Local) {
-            localStorage.putLocalClass(regularClass, irClass)
+            localStorage[regularClass] = irClass
         } else {
             classCache[regularClass] = irClass
         }
@@ -385,12 +387,12 @@ class Fir2IrClassifierStorage(
                 }
             }
         }.declareSupertypesAndTypeParameters(anonymousObject)
-        localStorage.putLocalClass(anonymousObject, result)
+        localStorage[anonymousObject] = result
         return result
     }
 
     private fun getIrAnonymousObjectForEnumEntry(anonymousObject: FirAnonymousObject, name: Name, irParent: IrClass?): IrClass {
-        localStorage.getLocalClass(anonymousObject)?.let { return it }
+        localStorage[anonymousObject]?.let { return it }
         return createIrAnonymousObject(anonymousObject, Visibilities.Private, name, irParent)
     }
 
@@ -477,7 +479,7 @@ class Fir2IrClassifierStorage(
     }
 
     fun putEnumEntryClassInScope(enumEntry: FirEnumEntry, correspondingClass: IrClass) {
-        localStorage.putLocalClass((enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, correspondingClass)
+        localStorage[(enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject] = correspondingClass
     }
 
     internal fun getCachedIrEnumEntry(enumEntry: FirEnumEntry): IrEnumEntry? = enumEntryCache[enumEntry]
