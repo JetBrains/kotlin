@@ -2,52 +2,16 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 
-fun testBoolVarray(): Boolean {
-    val arr = VArray(3) { it > 0 }
-    return stringifyByIteration(arr) == "falsetruetrue"
+inline fun <reified T> stringifyByIterationExplicitToString(arr: VArray<T>): String {
+    val stringBuilder = StringBuilder()
+    val iterator = arr.iterator()
+    while (iterator.hasNext()) {
+        stringBuilder.append(iterator.next().toString())
+    }
+    return stringBuilder.toString()
 }
 
-fun testCharVArray(): Boolean {
-    val arr = VArray(3) { (it + 'a'.code).toChar() }
-    return stringifyByIteration(arr) == "abc"
-}
-
-fun testByteVArray(): Boolean {
-    val arr = VArray(3) { it.toByte() }
-    return stringifyByIteration(arr) == "012"
-}
-
-fun testShortVArray(): Boolean {
-    val arr = VArray(3) { it.toShort() }
-    return stringifyByIteration(arr) == "012"
-}
-
-fun testIntVArray(): Boolean {
-    val arr = VArray(3) { it }
-    return stringifyByIteration(arr) == "012"
-}
-
-fun testLongVArray(): Boolean {
-    val arr = VArray(3) { it }
-    return stringifyByIteration(arr) == "012"
-}
-
-fun testFloatVArray(): Boolean {
-    val arr = VArray(3) { it.toFloat() }
-    return stringifyByIteration(arr) == "0.01.02.0"
-}
-
-fun testDoubleVArray(): Boolean {
-    val arr = VArray(3) { it.toFloat() }
-    return stringifyByIteration(arr) == "0.01.02.0"
-}
-
-fun testStringVArray(): Boolean {
-    val arr = VArray(3) { it.toString() }
-    return stringifyByIteration(arr) == "012"
-}
-
-inline fun <reified T> stringifyByIteration(arr: VArray<T>): String {
+inline fun <reified T> stringifyByIterationImplicitToString(arr: VArray<T>): String {
     val stringBuilder = StringBuilder()
     val iterator = arr.iterator()
     while (iterator.hasNext()) {
@@ -56,13 +20,54 @@ inline fun <reified T> stringifyByIteration(arr: VArray<T>): String {
     return stringBuilder.toString()
 }
 
-@JvmInline
-value class IC(val x: Int)
+inline fun <reified T> testArray(arr: VArray<T>, expected: String) =
+    stringifyByIterationExplicitToString(arr) == expected && stringifyByIterationImplicitToString((arr)) == expected
 
-fun testICVarray(): Boolean {
-    val arr = VArray(3) { IC(it) }
-    return stringifyByIteration(arr) == "IC(x=0)IC(x=1)IC(x=2)"
-}
+@JvmInline
+value class IcInt(val x: Int)
+
+@JvmInline
+value class IcIcInt(val x: IcInt)
+
+@JvmInline
+value class IcStr(val x: String)
+
+@JvmInline
+value class IcIntN(val x: Int?)
+
+@JvmInline
+value class IcIcIntN(val x : IcInt?)
+
+fun testBoolVarray() = testArray(VArray(3) { it > 0 }, "falsetruetrue")
+
+fun testCharVArray() = testArray(VArray(3) { (it + 'a'.code).toChar() }, "abc")
+
+fun testByteVArray() = testArray(VArray(3) { it.toByte() }, "012")
+
+fun testShortVArray() = testArray(VArray(3) { it.toShort() }, "012")
+
+fun testIntVArray() = testArray(VArray(3) { it }, "012")
+
+fun testLongVArray() = testArray(VArray(3) { it }, "012")
+
+fun testFloatVArray() = testArray(VArray(3) { it.toFloat() }, "0.01.02.0")
+
+fun testDoubleVArray() = testArray(VArray(3) { it.toFloat() }, "0.01.02.0")
+
+fun testStringVArray() = testArray(VArray(3) { it.toString() }, "012")
+
+fun testIntNVArray() = testArray(VArray(3){if (it > 0) it else null}, "null12")
+fun testStringNVArray() = testArray(VArray(3){if (it > 0) it.toString() else null}, "null12")
+
+fun testIcIntVarray() = testArray(VArray(3) { IcInt(it) }, "IcInt(x=0)IcInt(x=1)IcInt(x=2)")
+
+fun testIcIcIntVArray() = testArray(VArray(3) { IcIcInt(IcInt(it)) }, "IcIcInt(x=IcInt(x=0))IcIcInt(x=IcInt(x=1))IcIcInt(x=IcInt(x=2))")
+
+fun testIcStrVArray() = testArray(VArray(3) { IcStr(it.toString()) }, "IcStr(x=0)IcStr(x=1)IcStr(x=2)")
+
+fun testIcIntNVArray() = testArray(VArray(3) { IcIntN(if (it > 0) it else null) }, "IcIntN(x=null)IcIntN(x=1)IcIntN(x=2)")
+
+fun testIcIcIntNVArray() = testArray(VArray(3){IcIcIntN(if (it > 0) IcInt(it) else null)}, "IcIcIntN(x=null)IcIcIntN(x=IcInt(x=1))IcIcIntN(x=IcInt(x=2))")
 
 fun box(): String {
     if (!testBoolVarray()) return "Fail 1"
@@ -73,8 +78,17 @@ fun box(): String {
     if (!testLongVArray()) return "Fail 6"
     if (!testFloatVArray()) return "Fail 7"
     if (!testDoubleVArray()) return "Fail 8"
+
     if (!testStringVArray()) return "Fail 9"
-    if (!testICVarray()) return "Fail 10"
+
+    if (!testIntNVArray()) return "Fail 10"
+    if (!testStringNVArray()) return "Fail 11"
+
+    if (!testIcIntVarray()) return "Fail 12"
+    if (!testIcIcIntVArray()) return "Fail 13"
+    if (!testIcStrVArray()) return "Fail 14"
+    if (!testIcIntNVArray()) return "Fail 15"
+    if (!testIcIcIntNVArray()) return "Fail 16"
 
     return "OK"
 }

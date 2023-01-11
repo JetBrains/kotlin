@@ -1525,18 +1525,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
-            @TestMetadata("debug.kt")
-            public void testDebug() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/vArrays/debug.kt");
-            }
-
-            @Test
-            @TestMetadata("debug2.kt")
-            public void testDebug2() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/vArrays/debug2.kt");
-            }
-
-            @Test
             @TestMetadata("multidimensionalVArray.kt")
             public void testMultidimensionalVArray() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/multidimensionalVArray.kt");

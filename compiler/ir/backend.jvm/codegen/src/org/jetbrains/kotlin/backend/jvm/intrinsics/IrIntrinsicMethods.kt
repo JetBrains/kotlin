@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
-import kotlin.VArrayIterator
 
 class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val kotlinFqn = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
@@ -119,7 +118,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     createKeyMapping(Not, irBuiltIns.booleanClass, "not") +
                     createKeyMapping(StringGetChar, irBuiltIns.stringClass, "get", irBuiltIns.intClass) +
                     symbols.primitiveIteratorsByType.values.map { iteratorClass ->
-                        createKeyMapping(IteratorNext, iteratorClass, "next")
+                        createKeyMapping(PrimitiveArrayIteratorNext, iteratorClass, "next")
                     } +
                     arrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
