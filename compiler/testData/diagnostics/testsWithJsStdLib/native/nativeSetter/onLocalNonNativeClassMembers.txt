@@ -1,3 +1,5 @@
 package
 
 public fun foo(): kotlin.Unit
+public typealias NS = kotlin.js.nativeSetter
+
