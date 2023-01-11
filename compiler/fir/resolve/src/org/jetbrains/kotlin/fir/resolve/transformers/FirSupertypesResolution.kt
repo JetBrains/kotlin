@@ -451,7 +451,7 @@ open class FirSupertypeResolverVisitor(
     private fun addSelfToTypeParameters(firClass: FirClassLikeDeclaration, session: FirSession) {
         val isSelf = firClass.getAnnotationByClassId(StandardClassIds.Annotations.Self, session) != null
         val params = firClass.typeParameters
-        if (params is MutableList && isSelf) {
+        if (params is MutableList && isSelf && params.find { it.symbol.name == SpecialNames.SELF_TYPE } == null) {
             val selfSymbol = FirTypeParameterSymbol()
             val firTypeParameterBuilder = FirTypeParameterBuilder()
             firTypeParameterBuilder.bounds.add(buildResolvedTypeRef {
