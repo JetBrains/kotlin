@@ -136,9 +136,9 @@ internal class MetadataDependencyResolutionSerializer(
             }.toMap()
     }
 
-    private val gson = GsonBuilder().setLenient().setPrettyPrinting().create()
     fun serializeList(resolutions: Iterable<MetadataDependencyResolution>): String {
         val stringWriter = StringWriter()
+        val gson = GsonBuilder().setLenient().setPrettyPrinting().create()
         val writer = gson.newJsonWriter(stringWriter)
         writer.beginArray()
         resolutions.forEach { resolution -> writer.serialize(resolution) }
@@ -415,7 +415,7 @@ private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransf
 internal class GranularMetadataTransformation(
     val params: Params,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
-    private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
+    private val parentVisibleSourceSets: Lazy<Map<String, Set<String>>>
 ) {
     data class Params(
         val sourceSetName: String,
@@ -444,6 +444,14 @@ internal class GranularMetadataTransformation(
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
+    val ownVisibleSourceSets: Map<String, Set<String>> get() {
+        val result = metadataDependencyResolutions
+            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+            .groupBy { it.dependency.id.displayName }
+            .mapValues { (_, chooseVisibleSourceSets) -> chooseVisibleSourceSets.flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames } }
+        return result
+    }
+
     private fun ResolvedDependencyResult.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
         return when(val componentId = selected.id) {
             is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
@@ -468,11 +476,6 @@ internal class GranularMetadataTransformation(
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
 
-        val parentResolutions =
-            parentTransformations.value.flatMap { it.metadataDependencyResolutions }.groupBy {
-                it.dependency.id
-            }
-
         val resolvedDependencyQueue: Queue<ResolvedDependencyResult> = ArrayDeque<ResolvedDependencyResult>().apply {
             addAll(
                 params.resolvedMetadataConfiguration
@@ -496,7 +499,7 @@ internal class GranularMetadataTransformation(
 
             val dependencyResult = processDependency(
                 resolvedDependency,
-                parentResolutions[componentId].orEmpty()
+                parentVisibleSourceSets.value[componentId.displayName].orEmpty()
             )
 
             result.add(dependencyResult)
@@ -544,7 +547,7 @@ internal class GranularMetadataTransformation(
      */
     private fun processDependency(
         dependency: ResolvedDependencyResult,
-        parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
+        sourceSetsVisibleInParents: Set<String>,
     ): MetadataDependencyResolution {
         val module = dependency.selected
         val moduleId = module.id
@@ -577,10 +580,6 @@ internal class GranularMetadataTransformation(
             )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
-
-        val sourceSetsVisibleInParents = parentResolutionsForModule
-            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
 
         // Keep only the transitive dependencies requested by the visible source sets:
         // Visit the transitive dependencies visible by parents, too (i.e. allVisibleSourceSets), as this source set might get a more

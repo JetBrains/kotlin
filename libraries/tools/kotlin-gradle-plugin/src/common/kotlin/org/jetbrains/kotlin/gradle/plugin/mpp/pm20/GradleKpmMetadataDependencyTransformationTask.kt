@@ -72,7 +72,7 @@ internal open class GradleKpmMetadataDependencyTransformationTask
         get() = metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .associateWith { chooseVisibleSourceSets ->
-                project.files(project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false))
+                project.files(project.objects.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false))
                     .builtBy(this)
             }
 
@@ -86,7 +86,7 @@ internal open class GradleKpmMetadataDependencyTransformationTask
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .forEach { chooseVisibleSourceSets ->
-                project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = true)
+                project.objects.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = true)
             }
     }
 }
