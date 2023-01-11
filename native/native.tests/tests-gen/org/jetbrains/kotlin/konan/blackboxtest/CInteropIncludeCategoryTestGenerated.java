@@ -35,4 +35,22 @@ public class CInteropIncludeCategoryTestGenerated extends AbstractNativeCInterop
     public void testSmoke1() throws Exception {
         runTest("native/native.tests/testData/CInterop/frameworkIncludeCategory/cases/smoke1/");
     }
+
+    @Test
+    @TestMetadata("smoke2")
+    public void testSmoke2() throws Exception {
+        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategory/cases/smoke2/");
+    }
+
+    @Test
+    @TestMetadata("smoke3")
+    public void testSmoke3() throws Exception {
+        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategory/cases/smoke3/");
+    }
+
+    @Test
+    @TestMetadata("smoke4")
+    public void testSmoke4() throws Exception {
+        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategory/cases/smoke4/");
+    }
 }

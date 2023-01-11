@@ -99,7 +99,6 @@ private class ObjCMethodStubBuilder(
         private val container: ObjCContainer,
         private val isDesignatedInitializer: Boolean,
         override val context: StubsBuildingContext,
-        private val deprecated: Boolean = false
 ) : StubElementBuilder {
     private val isStret: Boolean
     private val stubReturnType: StubType
@@ -112,6 +111,9 @@ private class ObjCMethodStubBuilder(
     private val modality: MemberStubModality
     private val isOverride: Boolean =
             container is ObjCClassOrProtocol && method.isOverride(container)
+
+    private val isDeprecatedCategoryMethod: Boolean =
+            container is ObjCCategory && container in container.clazz.includedCategories
 
     init {
         val returnType = method.getReturnType(container.classOrProtocol)
@@ -127,9 +129,6 @@ private class ObjCMethodStubBuilder(
                 isStret
         )
         annotations += buildObjCMethodAnnotations(methodAnnotation)
-        if (deprecated) {
-            annotations += AnnotationStub.Deprecated(message = "Use class method instead", replaceWith = "", level = DeprecationLevel.WARNING)
-        }
         kotlinMethodParameters = method.getKotlinParameters(context, forConstructorOrFactory = false)
         external = (container !is ObjCProtocol)
         modality = when (container) {
@@ -225,12 +224,17 @@ private class ObjCMethodStubBuilder(
                             annotations = annotations,
                             modality = MemberStubModality.FINAL
                     )
+                    // TODO: Should we deprecate it as well?
                     createMethod
                 }
                 is ObjCProtocol -> null
             }
         } else {
             null
+        }
+        if (isDeprecatedCategoryMethod && annotations.filterIsInstance<AnnotationStub.Deprecated>().isEmpty()) {
+            val target = if (method.isClass) "class" else "instance"
+            annotations += AnnotationStub.Deprecated(message = "Use $target method instead", replaceWith = "", level = DeprecationLevel.WARNING)
         }
         return listOfNotNull(
                 FunctionStub(
@@ -415,7 +419,7 @@ internal abstract class ObjCContainerStubBuilder(
     }.toMap()
 
     private val propertyBuilders = properties.mapNotNull {
-        createObjCPropertyBuilder(context, it, container, this.methodToStub, deprecated = false)
+        createObjCPropertyBuilder(context, it, container, this.methodToStub)
     }
 
     private val modality = when (container) {
@@ -564,19 +568,17 @@ internal class ObjCCategoryStubBuilder(
         private val category: ObjCCategory
 ) : StubElementBuilder {
 
-    private val isIncludedIntoClass = category in category.clazz.includedCategories
-
     private val generatedMembers = context.generatedObjCCategoriesMembers
             .getOrPut(category.clazz, { GeneratedObjCCategoriesMembers() })
 
     private val methodToBuilder = category.methods.filter { generatedMembers.register(it) }.map {
-        it to ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context, deprecated = isIncludedIntoClass)
+        it to ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context)
     }.toMap()
 
     private val methodBuilders get() = methodToBuilder.values
 
     private val propertyBuilders = category.properties.filter { generatedMembers.register(it) }.mapNotNull {
-        createObjCPropertyBuilder(context, it, category, methodToBuilder, deprecated = isIncludedIntoClass)
+        createObjCPropertyBuilder(context, it, category, methodToBuilder)
     }
 
     override fun build(): List<StubIrElement> {
@@ -599,13 +601,12 @@ private fun createObjCPropertyBuilder(
         property: ObjCProperty,
         container: ObjCContainer,
         methodToStub: Map<ObjCMethod, ObjCMethodStubBuilder>,
-        deprecated: Boolean
 ): ObjCPropertyStubBuilder? {
     // Note: the code below assumes that if the property is generated,
     // then its accessors are also generated as explicit methods.
     val getterStub = methodToStub[property.getter] ?: return null
     val setterStub = property.setter?.let { methodToStub[it] ?: return null }
-    return ObjCPropertyStubBuilder(context, property, container, getterStub, setterStub, deprecated = deprecated)
+    return ObjCPropertyStubBuilder(context, property, container, getterStub, setterStub)
 }
 
 private class ObjCPropertyStubBuilder(
@@ -614,8 +615,11 @@ private class ObjCPropertyStubBuilder(
         private val container: ObjCContainer,
         private val getterBuilder: ObjCMethodStubBuilder,
         private val setterMethod: ObjCMethodStubBuilder?,
-        private val deprecated: Boolean
 ) : StubElementBuilder {
+
+    private val isDeprecatedCategoryProperty =
+            container is ObjCCategory && container in container.clazz.includedCategories
+
     override fun build(): List<PropertyStub> {
         val type = property.getType(container.classOrProtocol)
         val kotlinType = context.mirror(type).argType
@@ -628,8 +632,8 @@ private class ObjCPropertyStubBuilder(
             is ObjCCategory -> ClassifierStubType(context.getKotlinClassFor(container.clazz, isMeta = property.getter.isClass))
         }
         val origin = StubOrigin.ObjCProperty(property, container)
-        val annotations = if (deprecated) {
-            listOf(AnnotationStub.Deprecated(message = "Use class property instead", replaceWith = "", level = DeprecationLevel.WARNING))
+        val annotations = if (isDeprecatedCategoryProperty) {
+            listOf(AnnotationStub.Deprecated(message = "Use instance property instead", replaceWith = "", level = DeprecationLevel.WARNING))
         } else {
             emptyList()
         }
