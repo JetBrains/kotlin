@@ -177,7 +177,9 @@ class ModuleStructureExtractorImpl(
                     } else {
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
+                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(
+                        values.joinToString(separator = " ")
+                    )
                     currentModuleName = moduleName
                     val kind = defaultsProvider.defaultDependencyKind
                     dependencies.mapTo(dependenciesOfCurrentModule) { name ->
@@ -287,14 +289,11 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun finishGlobalDirectives() {
-            globalDirectives = directivesBuilder.build().also { directives ->
-                directives.forEach { it.checkDirectiveApplicability(contextIsGlobal = true) }
-            }
+            globalDirectives = directivesBuilder.build().onEach { it.checkDirectiveApplicability(contextIsGlobal = true) }
             resetModuleCaches()
             resetFileCaches()
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun Directive.checkDirectiveApplicability(
             contextIsGlobal: Boolean = false,
             contextIsModule: Boolean = false,
@@ -364,7 +363,6 @@ class ModuleStructureExtractorImpl(
             }
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun finishFile(lineNumber: Int) {
             val actualDefaultFileName = if (currentModuleName == null) {
                 defaultFileName
@@ -375,9 +373,7 @@ class ModuleStructureExtractorImpl(
             if (!allowFilesWithSameNames && filesOfCurrentModule.any { it.name == filename }) {
                 error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
-            val directives = fileDirectivesBuilder?.build()?.also { directives ->
-                directives.forEach { it.checkDirectiveApplicability(contextIsFile = true) }
-            }
+            val directives = fileDirectivesBuilder?.build()?.onEach { it.checkDirectiveApplicability(contextIsFile = true) }
             val fileContent = buildString {
                 for (i in 0 until endLineNumberOfLastFile) {
                     appendLine()
