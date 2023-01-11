@@ -381,6 +381,12 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
             public void testRecordPropertyAccess() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordPropertyAccess.kt");
             }
+
+            @Test
+            @TestMetadata("recordWithCompanion.kt")
+            public void testRecordWithCompanion() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordWithCompanion.kt");
+            }
         }
 
         @Nested
