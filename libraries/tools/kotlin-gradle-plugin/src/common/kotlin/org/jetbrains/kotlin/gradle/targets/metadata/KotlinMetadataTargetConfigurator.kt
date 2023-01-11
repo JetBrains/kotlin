@@ -22,6 +22,9 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
+import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
+import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -386,6 +389,8 @@ class KotlinMetadataTargetConfigurator :
                 "Generates serialized dependencies metadata for compilation '${sourceSet.name}' (for tooling)"
         }
         project.locateOrRegisterTask<Task>("transformSourceSetsMetadata").dependsOn(task)
+        @OptIn(Idea222Api::class)
+        project.ideaImportDependsOn(task)
 
         if (sourceSet is DefaultKotlinSourceSet)
             sourceSet.compileDependenciesTransformationTask = task
