@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.cli.common.repl.replEscapeLineBreaks
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.Names.COLUM_GROUP_CLASS_ID
@@ -29,6 +30,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
+import kotlin.math.abs
 
 class SchemaContext(val properties: List<SchemaProperty>)
 
@@ -37,7 +39,7 @@ class FirDataFrameReceiverInjector(
     private val scopeState: MutableMap<ClassId, SchemaContext>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
     val path: String?,
-    val nextName: () -> ClassId,
+    val nextName: (String?) -> ClassId,
     val nextScope: () -> ClassId,
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
@@ -70,26 +72,32 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     tokenState: MutableMap<ClassId, SchemaContext>,
     associatedScopes: MutableMap<ClassId, List<ConeKotlinType>>,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT,
-    nextName: () -> ClassId,
+    nextName: (String?) -> ClassId,
     nextScope: () -> ClassId,
 ): List<ConeKotlinType> {
+    // root marker is generated as return type of intercepted function
     val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
 
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
-    fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
+    fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null, suggestedName: String? = null): ConeTypeProjection {
         val scopeId = nextScope()
         var tokenId = rootMarker?.type?.classId
         if (tokenId == null) {
-            tokenId = nextName()
+            tokenId = nextName(suggestedName)
         }
         val marker = rootMarker ?: ConeClassLikeLookupTagImpl(tokenId)
             .constructClassType(emptyArray(), isNullable = false)
         val properties = columns().map {
+            fun PluginDataFrameSchema.materialize(column: SimpleCol): ConeTypeProjection {
+                // TODO
+                val name = "${column.name.titleCase().replEscapeLineBreaks()}_${abs(functionCall.calleeReference.name.hashCode() + tokenId.hashCode())}"
+                return materialize(suggestedName = name)
+            }
             @Suppress("USELESS_IS_CHECK")
             when (it) {
                 is SimpleColumnGroup -> {
-                    val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
+                    val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize(it)
                     val columnsContainerReturnType =
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(COLUM_GROUP_CLASS_ID),
@@ -108,7 +116,7 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
                 }
 
                 is SimpleFrameColumn -> {
-                    val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
+                    val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize(it)
                     val frameColumnReturnType =
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(DF_CLASS_ID),
@@ -139,10 +147,13 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
         types += ConeClassLikeLookupTagImpl(scopeId).constructClassType(emptyArray(), isNullable = false)
         return marker
     }
+
     dataFrameSchema.materialize(rootMarker)
     associatedScopes[rootMarker.classId!!] = types
     return types
 }
+
+private fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }
 
 data class CallResult(val rootMarker: ConeClassLikeType, val dataFrameSchema: PluginDataFrameSchema)
 

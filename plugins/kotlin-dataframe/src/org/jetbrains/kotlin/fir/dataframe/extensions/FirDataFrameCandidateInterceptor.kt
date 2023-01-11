@@ -35,7 +35,7 @@ class FirDataFrameCandidateInterceptor(
     session: FirSession,
     val callableNames: ArrayDeque<CallableId>,
     val callableState: MutableMap<Name, FirSimpleFunction>,
-    val nextName: () -> ClassId
+    val nextName: (String?) -> ClassId
 ) : FirCandidateFactoryInterceptor(session) {
     val Key = FirDataFrameExtensionsGenerator.DataFramePlugin
 
@@ -52,7 +52,7 @@ class FirDataFrameCandidateInterceptor(
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
         val generatedName = callableNames.removeLast()
         val newSymbol = FirNamedFunctionSymbol(generatedName)
-        val tokenId = nextName()
+        val tokenId = nextName(null)
         val typeRef = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
                 lookupTag,
