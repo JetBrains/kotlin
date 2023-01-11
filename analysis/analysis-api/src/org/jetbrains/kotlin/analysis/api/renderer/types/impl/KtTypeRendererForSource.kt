@@ -18,7 +18,7 @@ public object KtTypeRendererForSource {
         definitelyNotNullTypeRenderer = KtDefinitelyNotNullTypeRenderer.AS_TYPE_INTERSECTION
         dynamicTypeRenderer = KtDynamicTypeRenderer.AS_DYNAMIC_WORD
         flexibleTypeRenderer = KtFlexibleTypeRenderer.AS_SHORT
-        functionalTypeRenderer = KtFunctionalTypeRenderer.AS_FUNCTIONAL_TYPE
+        functionalTypeRenderer = KtFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
         integerLiteralTypeRenderer = KtIntegerLiteralTypeRenderer.AS_ILT_WITH_VALUE
         intersectionTypeRenderer = KtIntersectionTypeRenderer.AS_INTERSECTION
         typeErrorTypeRenderer = KtTypeErrorTypeRenderer.AS_CODE_IF_POSSIBLE
