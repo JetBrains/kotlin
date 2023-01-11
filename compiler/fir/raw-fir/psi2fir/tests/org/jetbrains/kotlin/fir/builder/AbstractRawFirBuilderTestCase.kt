@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
@@ -154,7 +155,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     private class ConsistencyVisitor : FirVisitorVoid() {
         var result = hashSetOf<FirElement>()
 
-        override fun visitElement(element: FirElement) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
             // NB: types are reused sometimes (e.g. in accessors)
             if (!result.add(element)) {
                 throwTwiceVisitingError(element)

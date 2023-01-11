@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -416,7 +417,7 @@ fun findMainClass(fir: List<FirFile>): FqName? {
     val visitor = object : FirVisitorVoid() {
         lateinit var file: FirFile
 
-        override fun visitElement(element: FirElement) {}
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {}
 
         override fun visitFile(file: FirFile) {
             this.file = file

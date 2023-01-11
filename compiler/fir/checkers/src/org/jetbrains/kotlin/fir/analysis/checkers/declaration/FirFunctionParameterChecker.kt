@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirFunctionParameterChecker : FirFunctionChecker() {
@@ -83,7 +84,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             // Alas, CheckerContext.qualifiedAccesses stack is not available at this point.
             // Thus, manually visit default value expression and report the diagnostic on qualified accesses of interest.
             parameter.defaultValue?.accept(object : FirVisitorVoid() {
-                override fun visitElement(element: FirElement) {
+                override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                     element.acceptChildren(this)
                 }
 

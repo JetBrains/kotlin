@@ -94,8 +94,7 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
         println("abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {")
 
         withIndent {
-//            println("abstract fun <@Monomorphic TE: FirElement> visitElement(element: TE)")
-            println("abstract fun visitElement(element: FirElement)")
+            println("abstract fun <@Monomorphic TE: FirElement> visitElement(element: TE)")
             println()
             for (element in elements) {
                 if (element == AbstractFirTreeBuilder.baseFirElement) continue

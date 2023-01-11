@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartSet
@@ -361,7 +362,7 @@ class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
 private fun FirRegularClass.onConstructors(action: (ctor: FirConstructor) -> Unit) {
 
     class ClassConstructorVisitor : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {}
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {}
 
         override fun visitConstructor(constructor: FirConstructor) {
             action(constructor)

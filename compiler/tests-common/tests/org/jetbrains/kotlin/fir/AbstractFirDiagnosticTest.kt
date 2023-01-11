@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -140,7 +141,7 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
 
         object : FirDefaultVisitorVoid() {
-            override fun visitElement(element: FirElement) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                 if (element is FirExpression) {
                     result.addIfNotNull(
                         createExpressionTypeDiagnosticIfExpected(

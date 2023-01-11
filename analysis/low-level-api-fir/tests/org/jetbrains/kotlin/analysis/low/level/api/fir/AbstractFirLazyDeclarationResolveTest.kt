@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -38,7 +39,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
     private fun FirFile.findResolveMe(): FirDeclaration {
         val visitor = object : FirVisitorVoid() {
             var result: FirDeclaration? = null
-            override fun visitElement(element: FirElement) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                 if (result != null) return
                 if (element is FirDeclaration) {
                     val declaration = element.realPsi as? KtDeclaration

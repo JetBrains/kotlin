@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
@@ -659,7 +660,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
     val allUsedTypeParameters = mutableSetOf<ConeTypeParameterLookupTag>()
 
     declaration.accept(object : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
             element.acceptChildren(this)
         }
 

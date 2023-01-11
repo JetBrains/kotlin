@@ -27,7 +27,7 @@ interface FirElement {
 
     fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D)
 
-    fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)
+    fun <@Monomorphic VT: FirVisitorVoid> acceptChildren(visitor: VT) = acceptChildren(visitor, null)
 
     fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
 }

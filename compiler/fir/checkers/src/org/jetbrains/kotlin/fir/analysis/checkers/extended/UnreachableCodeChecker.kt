@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 object UnreachableCodeChecker : FirControlFlowChecker() {
 
@@ -69,7 +70,7 @@ object UnreachableCodeChecker : FirControlFlowChecker() {
     }
 
     class CollectNodesVisitor(private val nodes: MutableSet<FirElement>) : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
             nodes.add(element)
             element.acceptChildren(this)
         }

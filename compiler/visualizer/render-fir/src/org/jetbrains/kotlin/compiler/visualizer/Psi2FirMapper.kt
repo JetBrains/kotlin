@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 
 class Psi2FirMapper(val map: MutableMap<PsiElement, MutableList<FirElement>>) : FirVisitorVoid() {
-    override fun visitElement(element: FirElement) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
         val psi = element.psi
         if (psi != null) {
             if (map.putIfAbsent(psi, mutableListOf(element)) != null) {

@@ -242,7 +242,7 @@ private inline fun FirFile.forEachElementWithContainers(
  */
 private inline fun FirDeclaration.forEachDirectChildDeclaration(crossinline action: (child: FirDeclaration) -> Unit) {
     this.acceptChildren(object : FirDefaultVisitorVoid() {
-        override fun visitElement(element: FirElement) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
             // we must visit only direct children
         }
 

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -83,7 +84,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             var result: FirElement? = null
                 private set
 
-            override fun visitElement(element: FirElement) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                 if (element.realPsi == elementToResolve) result = element
                 if (result != null) return
                 element.acceptChildren(this)

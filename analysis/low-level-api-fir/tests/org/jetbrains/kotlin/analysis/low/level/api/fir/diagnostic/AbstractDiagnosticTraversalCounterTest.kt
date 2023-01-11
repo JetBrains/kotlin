@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -91,7 +92,7 @@ abstract class AbstractDiagnosticTraversalCounterTest  : AbstractLowLevelApiSing
             }
         }
         firFile.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                 if (element !in nonDuplicatingElements) return
                 val visitedTimes = handler.visitedTimes[element] ?: 0
                 if (visitedTimes != 1) {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -46,7 +47,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
         }
 
         class DelegatedPropertyAccessorVisitor(private val isGet: Boolean) : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) = element.acceptChildren(this)
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) = element.acceptChildren(this)
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
                 checkFunctionCall(functionCall)

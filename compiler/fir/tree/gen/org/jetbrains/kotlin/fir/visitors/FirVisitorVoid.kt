@@ -155,7 +155,7 @@ import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
  */
 
 abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
-    abstract fun visitElement(element: FirElement)
+    abstract fun <@Monomorphic TE: FirElement> visitElement(element: TE)
 
     open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer) {
         visitElement(annotationContainer)

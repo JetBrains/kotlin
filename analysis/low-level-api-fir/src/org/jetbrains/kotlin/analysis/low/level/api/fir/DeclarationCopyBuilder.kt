@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 internal object DeclarationCopyBuilder {
     fun FirSimpleFunction.withBodyFrom(
@@ -90,7 +91,7 @@ internal object DeclarationCopyBuilder {
 
     private fun FirFunction.reassignAllReturnTargets(from: FirFunction) {
         this.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                 if (element is FirReturnExpression && element.target.labeledElement == from) {
                     element.target.bind(this@reassignAllReturnTargets)
                 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirEnumCompanionInEnumConstructorCallChecker : FirEnumEntryChecker() {
@@ -39,7 +40,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirEnumEntryChecker() {
         val reporter: DiagnosticReporter,
         val companionSymbol: FirRegularClassSymbol
     ) : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
+        override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
             element.acceptChildren(this)
         }
 

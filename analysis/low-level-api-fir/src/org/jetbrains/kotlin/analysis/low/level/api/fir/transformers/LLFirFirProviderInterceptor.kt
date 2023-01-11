@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 
 internal class LLFirFirProviderInterceptor private constructor(
@@ -33,7 +34,7 @@ internal class LLFirFirProviderInterceptor private constructor(
             val nodeInfoCollector = object : FirVisitorVoid() {
                 val symbolSet = mutableSetOf<FirClassLikeSymbol<*>>()
                 val classIdToElementMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
-                override fun visitElement(element: FirElement) {
+                override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                     if (element is FirClassLikeDeclaration) {
                         symbolSet.add(element.symbol)
                         classIdToElementMap[element.symbol.classId] = element

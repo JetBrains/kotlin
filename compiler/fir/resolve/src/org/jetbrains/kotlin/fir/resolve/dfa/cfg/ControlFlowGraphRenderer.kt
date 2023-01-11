@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
@@ -174,7 +175,7 @@ class FirControlFlowGraphRenderVisitor(
         }
     }
 
-    override fun visitElement(element: FirElement) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
         element.acceptChildren(this)
     }
 

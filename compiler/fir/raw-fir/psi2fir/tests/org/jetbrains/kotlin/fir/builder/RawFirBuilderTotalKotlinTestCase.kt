@@ -219,7 +219,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
             val psiSetViaFir = mutableSetOf<KtElement>()
             val psiSetDirect = mutableSetOf<KtElement>()
             firFile.accept(object : FirVisitorVoid() {
-                override fun visitElement(element: FirElement) {
+                override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                     val psi = element.psi as? KtElement
                     if (psi != null) {
                         psiSetViaFir += psi

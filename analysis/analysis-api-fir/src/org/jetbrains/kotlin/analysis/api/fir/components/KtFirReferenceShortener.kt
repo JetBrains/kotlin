@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -305,7 +306,7 @@ private class ElementsToShortenCollector(
         }
     }
 
-    override fun visitElement(element: FirElement) {
+    override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
         element.acceptChildren(this)
     }
 

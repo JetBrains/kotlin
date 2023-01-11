@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 
 object FirElementFinder {
@@ -61,7 +62,7 @@ object FirElementFinder {
     ): E? {
         var result: E? = null
         container.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
+            override fun <@Monomorphic TE : FirElement> visitElement(element: TE) {
                 if (result != null) return
                 when {
                     element !is E || element is FirFile -> {
