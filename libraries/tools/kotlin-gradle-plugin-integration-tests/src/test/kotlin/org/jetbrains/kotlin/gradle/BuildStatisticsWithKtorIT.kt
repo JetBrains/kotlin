@@ -37,12 +37,9 @@ import kotlin.test.*
 class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     companion object {
-        private val portSelectLock = java.util.concurrent.locks.ReentrantLock()
-
         fun runWithKtorService(action: (Int) -> Unit) {
             var server: ApplicationEngine? = null
             try {
-                portSelectLock.lock()
                 val port = getEmptyPort().localPort
                 server = embeddedServer(Netty, host = "localhost", port = port)
                 {
@@ -71,12 +68,8 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                     }
                 }.start()
                 awaitInitialization(port)
-                portSelectLock.unlock()
                 action(port)
             } finally {
-                if (portSelectLock.isLocked) {
-                    portSelectLock.unlock()
-                }
                 server?.stop(1000, 1000)
             }
         }
