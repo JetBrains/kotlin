@@ -40,5 +40,8 @@ fun box(): String {
     TailCallOptimizationChecker.checkNoStateMachineIn("invokeSuspend", "returnsLambda$1")
     TailCallOptimizationChecker.checkNoStateMachineIn("invoke", "returnsLambda$1")
 
+    TailCallOptimizationChecker.checkStateMachineIn("invokeSuspend", "returnsLambda$1\$l$1")
+    TailCallOptimizationChecker.checkNoStateMachineIn("invoke", "returnsLambda$1\$l$1")
+
     return result
 }

@@ -13250,6 +13250,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 public void testStartCoroutine() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/startCoroutine.kt");
                 }
+
+                @Test
+                @TestMetadata("unit.kt")
+                public void testUnit() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/unit.kt");
+                }
             }
 
             @Nested

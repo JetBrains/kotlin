@@ -10485,11 +10485,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/function.kt");
                 }
 
-                @TestMetadata("inlineLambda.kt")
-                public void ignoreInlineLambda() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/inlineLambda.kt");
-                }
-
                 @TestMetadata("lambda.kt")
                 public void ignoreLambda() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/lambda.kt");
@@ -10505,6 +10500,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/simple.kt");
                 }
 
+                @TestMetadata("unit.kt")
+                public void ignoreUnit() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/unit.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -10516,6 +10516,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("indy.kt")
                 public void testIndy() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/indy.kt");
+                }
+
+                @TestMetadata("inlineLambda.kt")
+                public void testInlineLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/inlineLambda.kt");
                 }
 
                 @TestMetadata("startCoroutine.kt")

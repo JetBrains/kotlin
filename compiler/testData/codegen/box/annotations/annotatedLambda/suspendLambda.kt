@@ -28,20 +28,32 @@ fun testDoesNotHaveAnnotation(method: Method, name: String) {
     )
 }
 
-fun testClass(clazz: Class<*>, name: String) {
+fun testNonTailCallSuspendLambda(clazz: Class<*>, name: String) {
     // Check that non-bridge `invokeSuspend` contains the suspend lambda annotation.
     val invokeSuspends = clazz.getDeclaredMethods().filter { !it.isBridge() && it.name == "invokeSuspend" }
     invokeSuspends.forEach { testHasAnnotation(it, name) }
     // Check that non-bridge `invoke` does not contain the suspend lambda annotation.
     val invokes = clazz.getDeclaredMethods().filter { !it.isBridge() && it.name == "invoke" }
     invokes.forEach { testDoesNotHaveAnnotation(it, name) }
+}
 
+fun testTailCallSuspendLambda(clazz: Class<*>, name: String) {
+    val invokeSuspends = clazz.getDeclaredMethods().filter { !it.isBridge() && it.name == "invokeSuspend" }
+    if (invokeSuspends.isNotEmpty()) {
+        error("$clazz contains invokeSuspend")
+    }
+    // Check that non-bridge `invoke` contains the suspend lambda annotation.
+    val invokes = clazz.getDeclaredMethods().filter { !it.isBridge() && it.name == "invoke" }
+    invokes.forEach { testHasAnnotation(it, name) }
 }
 
 suspend fun dummy() {}
 
 fun box(): String {
-    testClass(foo0(@Ann("OK") { dummy(); dummy() }), "1")
-    testClass(foo0() @Ann("OK") { dummy(); dummy() }, "2")
+    testNonTailCallSuspendLambda(foo0(@Ann("OK") { dummy(); dummy() }), "1")
+    testNonTailCallSuspendLambda(foo0() @Ann("OK") { dummy(); dummy() }, "2")
+
+    testTailCallSuspendLambda(foo0(@Ann("OK") { }), "1")
+    testTailCallSuspendLambda(foo0() @Ann("OK") { }, "2")
     return "OK"
 }

@@ -58,7 +58,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
     private fun IrFunctionReference.isTailCallSuspendFunctionReference(): Boolean = isSuspend &&
             (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION
-                    || ((symbol.owner as? IrFunction)?.isTailCallSuspendLambda() == true && origin == IrStatementOrigin.LAMBDA))
+                    || ((symbol.owner as? IrFunction)?.isTailCallSuspendLambda(context) == true && origin == IrStatementOrigin.LAMBDA))
 
     override fun lower(irFile: IrFile) {
         irFile.findInlineLambdas(context) { argument, _, parameter, _ ->

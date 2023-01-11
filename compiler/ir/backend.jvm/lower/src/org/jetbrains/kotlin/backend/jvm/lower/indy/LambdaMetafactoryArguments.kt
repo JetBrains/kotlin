@@ -116,7 +116,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val samMethod = samClass.getSingleAbstractMethod()
             ?: throw AssertionError("SAM class has no single abstract method: ${samClass.render()}")
 
-        val isTailCallSuspendLambda = samClass.defaultType.isSuspendFunction() && reference.symbol.owner.isTailCallSuspendLambda()
+        val isTailCallSuspendLambda = samClass.defaultType.isSuspendFunction() && reference.symbol.owner.isTailCallSuspendLambda(context)
 
         // Can't use JDK LambdaMetafactory for fun interface with suspend fun and non-tail-call suspend lambdas.
         if (samMethod.isSuspend && !isTailCallSuspendLambda) {

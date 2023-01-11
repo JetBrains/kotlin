@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -113,7 +114,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                 if (reference.isSuspend && reference.origin.isLambda) {
                     assert(expression.statements.size == 2 && expression.statements[0] is IrFunction)
                     expression.transformChildrenVoid(this)
-                    val isTailCall = (expression.statements[0] as IrFunction).isTailCallSuspendLambda()
+                    val isTailCall = (expression.statements[0] as IrFunction).isTailCallSuspendLambda(context)
                     if (isTailCall) return super.visitBlock(expression)
                     val parent = currentDeclarationParent ?: error("No current declaration parent at ${reference.dump()}")
                     return generateAnonymousObjectForLambda(reference, parent)
@@ -423,8 +424,31 @@ private data class ParameterInfo(val field: IrField?, val type: IrType, val name
     val isUsed = field != null
 }
 
-internal fun IrFunction.isTailCallSuspendLambda(): Boolean {
+private fun List<IrStatement>?.findLastStatements(): List<IrExpression> {
+    val lastStatement = this?.lastOrNull() as? IrExpression
+    if (lastStatement is IrWhen) {
+        return buildList {
+            for (branch in lastStatement.branches) {
+                val expression = branch.result
+                if (expression is IrStatementContainer) {
+                    addAll(expression.statements.findLastStatements())
+                } else {
+                    add(expression)
+                }
+            }
+        }
+    }
+    return listOfNotNull(lastStatement)
+}
+
+internal fun IrFunction.isTailCallSuspendLambda(context: JvmBackendContext): Boolean {
     if (!isSuspend || origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return false
+
+    // We cannot optimize suspend lambdas returning Unit, if the implicit return value is not Unit.
+    if (returnType == context.irBuiltIns.unitType) {
+        val lastStatements = body?.statements.findLastStatements()
+        if (lastStatements.any { it is IrTypeOperatorCall && it.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT }) return false
+    }
 
     var isTailCall = true
 
