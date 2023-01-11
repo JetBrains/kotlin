@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.Closeable
@@ -270,6 +271,7 @@ abstract class BasicWasmBoxTest(
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
+        configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.ES)
         configuration.languageVersionSettings = languageVersionSettings
             ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, specificFeatures = extraLanguageFeatures)
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
