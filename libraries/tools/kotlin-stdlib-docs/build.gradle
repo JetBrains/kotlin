@@ -79,13 +79,15 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
         moduleName.set("stdlib")
         if (isLatest) {
             outputDirectory.set(new File(outputDir, "/kotlin-stdlib/latest"))
-            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"             : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
-                                         "org.jetbrains.dokka.versioning.VersioningPlugin": """{ "version": "$version", "olderVersionsDir": "${outputDir.toString().replace('\\', '/')}//kotlin-stdlib/old" }"""])
+            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                       : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
+                                         "org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin": """{ "ignoreCommonBuiltIns": "true" }""",
+                                         "org.jetbrains.dokka.versioning.VersioningPlugin"         : """{ "version": "$version", "olderVersionsDir": "${outputDir.toString().replace('\\', '/')}//kotlin-stdlib/old" }"""])
         } else {
             outputDirectory.set(new File(outputDir, "/kotlin-stdlib/old/" + version))
-            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
-                                         "org.jetbrains.dokka.kotlinlang.VersionFilterPlugin": """{ "targetVersion": "$version" }""",
-                                         "org.jetbrains.dokka.versioning.VersioningPlugin"   : """{ "version": "$version" }"""])
+            pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                      : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
+                                         "org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin": """{ "ignoreCommonBuiltIns": "true" }""",
+                                         "org.jetbrains.dokka.kotlinlang.VersionFilterPlugin"      : """{ "targetVersion": "$version" }""",
+                                         "org.jetbrains.dokka.versioning.VersioningPlugin"         : """{ "version": "$version" }"""])
         }
         dokkaSourceSets {
             if (version != "1.0" && version != "1.1") { // Common platform since Kotlin 1.2
