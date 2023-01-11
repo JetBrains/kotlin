@@ -20,6 +20,13 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+@TY /* = Y */ public final external class BB {
+    public constructor BB()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @X public final class C {
     public constructor C()
     @X public final val p: kotlin.Int = 0
@@ -55,3 +62,5 @@ package
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias TY = Y
+

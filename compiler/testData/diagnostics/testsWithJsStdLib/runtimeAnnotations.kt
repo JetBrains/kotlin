@@ -30,6 +30,11 @@ external class B {
     val r: Int
 }
 
+typealias TY = Y
+
+<!RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION!>@TY<!>
+external class BB
+
 @X
 class C {
     @X

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -35,8 +36,11 @@ fun FirAnnotation.toAnnotationClassId(session: FirSession): ClassId? =
 private fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
     toAnnotationLookupTagSafe(session)?.classId
 
+fun FirAnnotation.toAnnotationClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? =
+    toAnnotationLookupTag(session)?.toSymbol(session)
+
 private fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
-    toAnnotationLookupTag(session)?.toSymbol(session)?.fir as? FirRegularClass
+    toAnnotationClassLikeSymbol(session)?.fir as? FirRegularClass
 
 // TODO: this is temporary solution, we need something better
 private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
