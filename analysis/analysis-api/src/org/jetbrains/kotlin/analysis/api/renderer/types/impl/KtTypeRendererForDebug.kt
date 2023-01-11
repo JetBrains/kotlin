@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUnresolvedCl
 
 public object KtTypeRendererForDebug {
     public val WITH_QUALIFIED_NAMES: KtTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
-        capturedTypeRenderer = KtCapturedTypeRenderer.AS_CAPUTRED_TYPE_WITH_PROJECTION
+        capturedTypeRenderer = KtCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
         flexibleTypeRenderer = KtFlexibleTypeRenderer.AS_SHORT
         typeErrorTypeRenderer = KtTypeErrorTypeRenderer.WITH_ERROR_MESSAGE
         unresolvedClassErrorTypeRenderer = KtUnresolvedClassErrorTypeRenderer.WITH_ERROR_MESSAGE

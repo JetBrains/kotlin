@@ -80,7 +80,7 @@ public object KtDeclarationRendererForSource {
 
         typeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES
         annotationRenderer = KtAnnotationRendererForSource.WITH_QUALIFIED_NAMES
-        declarationTypeApproximator = KtRendererTypeApproximator.TO_DENNOTABLE
+        declarationTypeApproximator = KtRendererTypeApproximator.TO_DENOTABLE
         returnTypeFilter = KtCallableReturnTypeFilter.NO_UNIT_FOR_FUNCTIONS
     }
 
