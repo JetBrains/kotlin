@@ -16,4 +16,3 @@ class VArray<T> {
     public operator fun iterator(): VArrayIterator<T>
 }
 
-interface VArrayIterator<T> : Iterator<T>

@@ -26,7 +26,7 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
         for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
-            out.println("private class Array${s}Iterator(private val array: ${s}Array) : ${s}Iterator() {")
+            out.println("private class Array${s}Iterator(private val array: ${s}Array) : ${s}Iterator(), VArrayIterator<$s> {")
             out.println("    private var index = 0")
             out.println("    override fun hasNext() = index < array.size")
             out.println("    override fun next$s() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }")

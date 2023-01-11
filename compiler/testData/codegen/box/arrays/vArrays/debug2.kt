@@ -8,9 +8,12 @@ inline fun <reified T> foo(p: VArray<T>): String {
     return p.iterator().next().toString()
 }
 
+@JvmInline
+value class IC(val x: Int)
+
 
 fun box(): String {
-    val x = foo(VArray(1) { 42 })
+    if (foo(VArray(1) { IC(42) }) != "IC(x=42)") return "Fail"
 
-    return "OK"
+    return "OK1"
 }
