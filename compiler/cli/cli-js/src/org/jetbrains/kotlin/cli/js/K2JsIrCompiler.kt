@@ -797,6 +797,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
             moduleKind = ModuleKind.PLAIN
         }
+        if (arguments.wasm) {
+            // K/Wasm support ES modules only.
+            moduleKind = ModuleKind.ES
+        }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
 
         configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, services[IncrementalDataProvider::class.java])
