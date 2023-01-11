@@ -35,10 +35,10 @@ class SchemaContext(val properties: List<SchemaProperty>)
 class FirDataFrameReceiverInjector(
     session: FirSession,
     private val scopeState: MutableMap<ClassId, SchemaContext>,
-    private val scopeIds: ArrayDeque<ClassId>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
     val path: String?,
     val nextName: () -> ClassId,
+    val nextScope: () -> ClassId,
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override val resolutionPath: String?
@@ -56,7 +56,7 @@ class FirDataFrameReceiverInjector(
                     addAll(it)
                 }
             }
-            addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenState, associatedScopes, nextName = nextName))
+            addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, tokenState, associatedScopes, nextName = nextName, nextScope = nextScope))
         }
         return types
     }
@@ -67,18 +67,18 @@ class FirDataFrameReceiverInjector(
 fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     functionCall: FirFunctionCall,
     scopeState: MutableMap<ClassId, SchemaContext>,
-    scopeIds: ArrayDeque<ClassId>,
     tokenState: MutableMap<ClassId, SchemaContext>,
     associatedScopes: MutableMap<ClassId, List<ConeKotlinType>>,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT,
-    nextName: () -> ClassId
+    nextName: () -> ClassId,
+    nextScope: () -> ClassId,
 ): List<ConeKotlinType> {
     val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
 
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
     fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
-        val scopeId = scopeIds.removeLast()
+        val scopeId = nextScope()
         var tokenId = rootMarker?.type?.classId
         if (tokenId == null) {
             tokenId = nextName()

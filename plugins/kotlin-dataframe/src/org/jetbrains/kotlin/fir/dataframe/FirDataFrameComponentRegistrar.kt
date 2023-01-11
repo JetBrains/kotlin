@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.name.Name
 val size = 500
 
 class GeneratedNames {
-    val scopes = List(size) {
-        val name = Name.identifier("Scope$it")
-        ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
-    }.toSet()
+    val scopes = mutableSetOf<ClassId>()
     val callables = List(size) {
         CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
     }
@@ -39,8 +36,11 @@ class GeneratedNames {
 //    }.toMutableSet()
 
     val tokens = mutableSetOf<ClassId>()
-    val scopeIds = ArrayDeque(scopes)
-    val tokenIds = ArrayDeque(List(size) {
+    private val scopeIds = ArrayDeque(List(size) {
+        val name = Name.identifier("Scope$it")
+        ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
+    })
+    private val tokenIds = ArrayDeque(List(size) {
         ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
     })
     val callableNames = ArrayDeque(callables)
@@ -48,6 +48,18 @@ class GeneratedNames {
     val scopeState = mutableMapOf<ClassId, SchemaContext>()
     val tokenState = mutableMapOf<ClassId, SchemaContext>()
     val callableState = mutableMapOf<Name, FirSimpleFunction>()
+
+    fun nextName(): ClassId {
+        val newId = tokenIds.removeLast()
+        tokens.add(newId)
+        return newId
+    }
+
+    fun nextScope(): ClassId {
+        val newId = scopeIds.removeLast()
+        scopes.add(newId)
+        return newId
+    }
 }
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
@@ -73,17 +85,12 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
 class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         with(GeneratedNames()) {
-            val f = {
-                val newId = tokenIds.removeLast()
-                tokens.add(newId)
-                newId
-            }
             +::FirDataFrameExtensionsGenerator
             +{ it: FirSession ->
-                FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, path, f)
+                FirDataFrameReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
             }
             +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
-            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, callableState, f) }
+            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, callableState, this::nextName) }
             +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
         }
     }
