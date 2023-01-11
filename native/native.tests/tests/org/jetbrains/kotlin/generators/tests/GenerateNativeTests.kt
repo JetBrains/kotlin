@@ -34,7 +34,7 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "K2NativeCodegenBoxTestGenerated",
-                annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>(), provider<K2Pipeline>())
+                annotations = listOf(codegenK2(), provider<UseExtTestCaseGroupProvider>(), provider<K2Pipeline>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -121,5 +121,6 @@ private fun debugOnly() = annotation(
 )
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
+private fun codegenK2() = annotation(Tag::class.java, "codegenK2")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")

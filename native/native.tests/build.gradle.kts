@@ -44,6 +44,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
 val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
 val codegenBoxTest = nativeTest("codegenBoxTest", "codegen")
+val codegenK2BoxTest = nativeTest("codegenK2BoxTest", "codegenK2")
 val stdlibTest = nativeTest("stdlibTest", "stdlib")
 val kotlinTestLibraryTest = nativeTest("kotlinTestLibraryTest", "kotlin-test")
 val klibAbiTest = nativeTest("klibAbiTest", "klib-abi")
