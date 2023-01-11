@@ -169,8 +169,13 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
 
     /**
      * Matches declarations, which are annotated with annotations which are annotated with [metaAnnotations]
+     *
+     * [includeItself] flag determines if declaration, annotated with meta-annotation itself will
+     *   be considered as matching to predicate
+     *
      * Relation "annotation with meta annotation" is transitive. E.g. in snippet below some declaration will
-     *   be matched with predicate MetaAnnotatedWith("Ann") if it is annotated with `@Ann`, `@Some` or `@Other`
+     *   be matched with predicate MetaAnnotatedWith("Ann") if it is annotated with `@Ann` (if [includeItself] set to true),
+     *   `@Some` or `@Other`
      *
      * @Ann
      * annotation class Some
@@ -200,6 +205,8 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
      *   and can not be used for global lookup
      */
     sealed interface MetaAnnotatedWith<P : AbstractPredicate<P>> : AbstractPredicate<P> {
+        val includeItself: Boolean
+
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitMetaAnnotatedWith(this, data)
         }

@@ -134,7 +134,7 @@ internal class LLFirIdePredicateBasedProvider(
 
         override fun visitMetaAnnotatedWith(predicate: AbstractPredicate.MetaAnnotatedWith<P>, data: FirDeclaration): Boolean {
             return data.annotations.any { annotation ->
-                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations)
+                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations, predicate.includeItself)
             }
         }
 

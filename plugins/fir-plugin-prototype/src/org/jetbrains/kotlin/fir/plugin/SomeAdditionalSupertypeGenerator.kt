@@ -31,7 +31,7 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
     companion object {
         private val myInterfaceClassId = ClassId(FqName("foo"), Name.identifier("MyInterface"))
         private val PREDICATE = DeclarationPredicate.create {
-            annotated("MyInterfaceSupertype".fqn()) or metaAnnotated("MetaSupertype".fqn())
+            annotated("MyInterfaceSupertype".fqn()) or metaAnnotated("MetaSupertype".fqn(), includeItself = false)
         }
     }
 

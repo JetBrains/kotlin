@@ -24,14 +24,14 @@ FILE: main.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MetaSupertype|() public final class Zero : R|kotlin/Any|, R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/fir/plugin/MetaSupertype|() public final class Zero : R|kotlin/Any| {
         public constructor(): R|foo/Zero| {
             super<R|kotlin/Any|>()
         }
 
     }
     public final fun test(a: R|foo/Zero|, b: R|foo/First|, c: R|foo/Second|, d: R|foo/Third|): R|kotlin/Unit| {
-        R|<local>/a|.R|foo/MyInterface.foo|()
+        R|<local>/a|.<Unresolved name: foo>#()
         R|<local>/b|.R|foo/MyInterface.foo|()
         R|<local>/c|.R|foo/MyInterface.foo|()
         R|<local>/d|.R|foo/MyInterface.foo|()

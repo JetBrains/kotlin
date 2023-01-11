@@ -21,7 +21,7 @@ class First
 class Zero
 
 fun test(a: Zero, b: First, c: Second, d: Third) {
-    a.foo()
+    a.<!UNRESOLVED_REFERENCE!>foo<!>() // should be an error, because meta predicate has inludeItself = false
     b.foo()
     c.foo()
     d.foo()

@@ -91,7 +91,8 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
     // ------------------------------------ MetaAnnotated ------------------------------------
 
     class MetaAnnotatedWith(
-        override val metaAnnotations: Set<AnnotationFqn>
+        override val metaAnnotations: Set<AnnotationFqn>,
+        override val includeItself: Boolean
     ) : DeclarationPredicate(), AbstractPredicate.MetaAnnotatedWith<DeclarationPredicate> {
         init {
             require(metaAnnotations.isNotEmpty()) {
@@ -122,7 +123,8 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         override fun annotatedOrUnder(vararg annotations: AnnotationFqn): DeclarationPredicate =
             annotated(*annotations) or ancestorAnnotated(*annotations)
 
-        fun metaAnnotated(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = MetaAnnotatedWith(metaAnnotations.toSet())
+        fun metaAnnotated(vararg metaAnnotations: AnnotationFqn, includeItself: Boolean): DeclarationPredicate =
+            MetaAnnotatedWith(metaAnnotations.toSet(), includeItself)
 
         // ------------------- collections -------------------
         override fun annotated(annotations: Collection<AnnotationFqn>): DeclarationPredicate = AnnotatedWith(annotations.toSet())
@@ -137,7 +139,8 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         override fun annotatedOrUnder(annotations: Collection<AnnotationFqn>): DeclarationPredicate =
             annotated(annotations) or ancestorAnnotated(annotations)
 
-        fun metaAnnotated(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = MetaAnnotatedWith(metaAnnotations.toSet())
+        fun metaAnnotated(metaAnnotations: Collection<AnnotationFqn>, includeItself: Boolean): DeclarationPredicate =
+            MetaAnnotatedWith(metaAnnotations.toSet(), includeItself)
     }
 
     companion object {

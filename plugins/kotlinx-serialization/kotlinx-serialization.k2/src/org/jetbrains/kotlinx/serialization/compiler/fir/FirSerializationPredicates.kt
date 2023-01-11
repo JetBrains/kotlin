@@ -13,9 +13,10 @@ object FirSerializationPredicates {
         annotated(setOf(SerializationAnnotations.serializerAnnotationFqName)) // @Serializer(for=...)
     }
     internal val hasMetaAnnotation = DeclarationPredicate.create {
-        metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
+        metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName, includeItself = false)
     }
     internal val annotatedWithSerializableOrMeta = DeclarationPredicate.create {
-        annotated(setOf(SerializationAnnotations.serializableAnnotationFqName)) or metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
+        annotated(setOf(SerializationAnnotations.serializableAnnotationFqName)) or
+                metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName, includeItself = false)
     }
 }

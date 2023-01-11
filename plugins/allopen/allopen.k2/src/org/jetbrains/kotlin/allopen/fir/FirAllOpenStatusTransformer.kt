@@ -57,7 +57,7 @@ class FirAllOpenPredicateMatcher(
 
     override val predicate = DeclarationPredicate.create {
         val annotationFqNames = allOpenAnnotationFqNames.map { FqName(it) }
-        annotated(annotationFqNames) or metaAnnotated(annotationFqNames)
+        annotated(annotationFqNames) or metaAnnotated(annotationFqNames, includeItself = true)
     }
 }
 

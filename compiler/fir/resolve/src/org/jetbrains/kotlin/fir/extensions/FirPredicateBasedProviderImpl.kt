@@ -140,7 +140,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
         override fun visitMetaAnnotatedWith(predicate: AbstractPredicate.MetaAnnotatedWith<P>, data: FirDeclaration): Boolean {
             return data.annotations.any { annotation ->
-                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations)
+                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations, predicate.includeItself)
             }
         }
 
@@ -190,23 +190,25 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 fun FirAnnotation.markedWithMetaAnnotation(
     session: FirSession,
     containingDeclaration: FirDeclaration,
-    metaAnnotations: Set<AnnotationFqn>
+    metaAnnotations: Set<AnnotationFqn>,
+    includeItself: Boolean
 ): Boolean {
     containingDeclaration.symbol.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
     return annotationTypeRef.coneTypeSafe<ConeKotlinType>()
         ?.toRegularClassSymbol(session)
-        .markedWithMetaAnnotationImpl(session, metaAnnotations, mutableSetOf())
+        .markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself, mutableSetOf())
 }
 
 fun FirRegularClassSymbol?.markedWithMetaAnnotationImpl(
     session: FirSession,
     metaAnnotations: Set<AnnotationFqn>,
+    includeItself: Boolean,
     visited: MutableSet<FirRegularClassSymbol>
 ): Boolean {
     if (this == null) return false
     if (!visited.add(this)) return false
-    if (this.classId.asSingleFqName() in metaAnnotations) return true
+    if (this.classId.asSingleFqName() in metaAnnotations) return includeItself
     return this.resolvedCompilerAnnotationsWithClassIds
         .mapNotNull { it.annotationTypeRef.coneTypeSafe<ConeKotlinType>()?.toRegularClassSymbol(session) }
-        .any { it.markedWithMetaAnnotationImpl(session, metaAnnotations, visited) }
+        .any { it.markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself = true, visited) }
 }

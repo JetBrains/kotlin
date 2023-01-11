@@ -20,7 +20,7 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
     companion object {
         private val ALL_OPEN = FqName("org.jetbrains.kotlin.fir.plugin.AllOpen")
         private val PREDICATE = DeclarationPredicate.create {
-            annotatedOrUnder(ALL_OPEN) or metaAnnotated(ALL_OPEN)
+            annotatedOrUnder(ALL_OPEN) or metaAnnotated(ALL_OPEN, includeItself = true)
         }
     }
 

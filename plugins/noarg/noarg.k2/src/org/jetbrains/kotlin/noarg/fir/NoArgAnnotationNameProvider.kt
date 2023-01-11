@@ -22,7 +22,7 @@ class FirNoArgPredicateMatcher(
 
     override val predicate = DeclarationPredicate.create {
         val annotationFqNames = noArgAnnotationFqNames.map { FqName(it) }
-        annotated(annotationFqNames) or metaAnnotated(annotationFqNames)
+        annotated(annotationFqNames) or metaAnnotated(annotationFqNames, includeItself = true)
     }
 }
 
