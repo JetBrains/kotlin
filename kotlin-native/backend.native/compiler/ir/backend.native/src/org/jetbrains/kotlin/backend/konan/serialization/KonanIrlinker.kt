@@ -70,6 +70,8 @@ private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
 }
 
 private val byteArrayBaseOffset = unsafe.arrayBaseOffset(ByteArray::class.java).toLong()
+private val charArrayBaseOffset = unsafe.arrayBaseOffset(CharArray::class.java).toLong()
+private val intArrayBaseOffset = unsafe.arrayBaseOffset(IntArray::class.java).toLong()
 
 internal class ByteArrayStream(val buf: ByteArray) {
     private var offset = 0
@@ -86,12 +88,93 @@ internal class ByteArrayStream(val buf: ByteArray) {
         unsafe.putInt(buf, byteArrayBaseOffset + offset, value).also { offset += Int.SIZE_BYTES }
     }
 
+    fun readString(length: Int): String {
+        checkSize(offset + Char.SIZE_BYTES * length) {
+            "Can't read a string of length $length at $offset, size = ${buf.size}"
+        }
+        val chars = CharArray(length)
+        unsafe.copyMemory(buf, byteArrayBaseOffset + offset, chars, charArrayBaseOffset, length * Char.SIZE_BYTES.toLong())
+        offset += length * Char.SIZE_BYTES
+        return String(chars)
+    }
+
+    fun writeString(string: String) {
+        checkSize(offset + Char.SIZE_BYTES * string.length) {
+            "Can't write a string of length ${string.length} at $offset, size = ${buf.size}"
+        }
+        unsafe.copyMemory(string.toCharArray(), charArrayBaseOffset, buf, byteArrayBaseOffset + offset, string.length * Char.SIZE_BYTES.toLong())
+        offset += string.length * Char.SIZE_BYTES
+    }
+
+    fun readIntArray(): IntArray {
+        val size = readInt()
+        checkSize(offset + Int.SIZE_BYTES * size) {
+            "Can't read an int array of size $size at $offset, size = ${buf.size}"
+        }
+        val array = IntArray(size)
+        unsafe.copyMemory(buf, byteArrayBaseOffset + offset, array, intArrayBaseOffset, size * Int.SIZE_BYTES.toLong())
+        offset += size * Int.SIZE_BYTES
+        return array
+    }
+
+    fun writeIntArray(array: IntArray) {
+        checkSize(offset + Int.SIZE_BYTES + Int.SIZE_BYTES * array.size) {
+            "Can't write an int array of size ${array.size} at $offset, size = ${buf.size}"
+        }
+        unsafe.putInt(buf, byteArrayBaseOffset + offset, array.size).also { offset += Int.SIZE_BYTES }
+        unsafe.copyMemory(array, intArrayBaseOffset, buf, byteArrayBaseOffset + offset, array.size * Int.SIZE_BYTES.toLong())
+        offset += array.size * Int.SIZE_BYTES
+    }
+
     private fun checkSize(at: Int, messageBuilder: () -> String) {
         if (at > buf.size) error(messageBuilder())
     }
 }
 
-class SerializedInlineFunctionReference(val file: Int, val functionSignature: Int, val body: Int,
+data class SerializedFileReference(val fqName: String, val path: String) {
+    constructor(irFile: IrFile) : this(irFile.fqName.asString(), irFile.path)
+}
+
+private class StringTableBuilder {
+    private val indices = mutableMapOf<String, Int>()
+    private var index = 0
+
+    operator fun String.unaryPlus() {
+        this@StringTableBuilder.indices.getOrPut(this) { index++ }
+    }
+
+    fun build() = StringTable(indices)
+}
+
+private inline fun buildStringTable(block: StringTableBuilder.() -> Unit): StringTable {
+    val builder = StringTableBuilder()
+    builder.block()
+    return builder.build()
+}
+
+private class StringTable(val indices: Map<String, Int>) {
+    val sizeBytes: Int get() = Int.SIZE_BYTES + indices.keys.sumOf { Int.SIZE_BYTES + it.length * Char.SIZE_BYTES }
+
+    fun serialize(stream: ByteArrayStream) {
+        val lengths = IntArray(indices.size)
+        val strings = Array(indices.size) { "" }
+        indices.forEach { (string, index) ->
+            lengths[index] = string.length
+            strings[index] = string
+        }
+        stream.writeIntArray(lengths)
+        strings.forEach { stream.writeString(it) }
+    }
+
+    companion object {
+        fun deserialize(stream: ByteArrayStream): Array<String> {
+            val lengths = stream.readIntArray()
+            return Array(lengths.size) { stream.readString(lengths[it]) }
+        }
+    }
+}
+
+class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
                                         val startOffset: Int, val endOffset: Int,
                                         val extensionReceiverSig: Int, val dispatchReceiverSig: Int, val outerReceiverSigs: IntArray,
                                         val valueParameterSigs: IntArray, val typeParameterSigs: IntArray,
@@ -99,50 +182,55 @@ class SerializedInlineFunctionReference(val file: Int, val functionSignature: In
 
 internal object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
-        val size = bodies.sumOf {
-            Int.SIZE_BYTES * (11 + it.outerReceiverSigs.size + it.valueParameterSigs.size + it.typeParameterSigs.size + it.defaultValues.size)
+        val stringTable = buildStringTable {
+            bodies.forEach {
+                +it.file.fqName
+                +it.file.path
+            }
+        }
+        val size = stringTable.sizeBytes + bodies.sumOf {
+            Int.SIZE_BYTES * (12 + it.outerReceiverSigs.size + it.valueParameterSigs.size + it.typeParameterSigs.size + it.defaultValues.size)
         }
         val stream = ByteArrayStream(ByteArray(size))
+        stringTable.serialize(stream)
         bodies.forEach {
-            stream.writeInt(it.file)
+            stream.writeInt(stringTable.indices[it.file.fqName]!!)
+            stream.writeInt(stringTable.indices[it.file.path]!!)
             stream.writeInt(it.functionSignature)
             stream.writeInt(it.body)
             stream.writeInt(it.startOffset)
             stream.writeInt(it.endOffset)
             stream.writeInt(it.extensionReceiverSig)
             stream.writeInt(it.dispatchReceiverSig)
-            stream.writeInt(it.outerReceiverSigs.size)
-            it.outerReceiverSigs.forEach { sig -> stream.writeInt(sig) }
-            stream.writeInt(it.valueParameterSigs.size)
-            it.valueParameterSigs.forEach { sig -> stream.writeInt(sig) }
-            stream.writeInt(it.typeParameterSigs.size)
-            it.typeParameterSigs.forEach { sig -> stream.writeInt(sig) }
-            stream.writeInt(it.defaultValues.size)
-            it.defaultValues.forEach { stream.writeInt(it) }
+            stream.writeIntArray(it.outerReceiverSigs)
+            stream.writeIntArray(it.valueParameterSigs)
+            stream.writeIntArray(it.typeParameterSigs)
+            stream.writeIntArray(it.defaultValues)
         }
         return stream.buf
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedInlineFunctionReference>) {
         val stream = ByteArrayStream(data)
+        val stringTable = StringTable.deserialize(stream)
         while (stream.hasData()) {
-            val file = stream.readInt()
+            val fileFqName = stringTable[stream.readInt()]
+            val filePath = stringTable[stream.readInt()]
             val functionSignature = stream.readInt()
             val body = stream.readInt()
             val startOffset = stream.readInt()
             val endOffset = stream.readInt()
             val extensionReceiverSig = stream.readInt()
             val dispatchReceiverSig = stream.readInt()
-            val outerReceiverSigsCount = stream.readInt()
-            val outerReceiverSigs = IntArray(outerReceiverSigsCount) { stream.readInt() }
-            val valueParameterSigsCount = stream.readInt()
-            val valueParameterSigs = IntArray(valueParameterSigsCount) { stream.readInt() }
-            val typeParameterSigsCount = stream.readInt()
-            val typeParameterSigs = IntArray(typeParameterSigsCount) { stream.readInt() }
-            val defaultValuesCount = stream.readInt()
-            val defaultValues = IntArray(defaultValuesCount) { stream.readInt() }
-            result.add(SerializedInlineFunctionReference(file, functionSignature, body, startOffset, endOffset,
-                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, valueParameterSigs, typeParameterSigs, defaultValues))
+            val outerReceiverSigs = stream.readIntArray()
+            val valueParameterSigs = stream.readIntArray()
+            val typeParameterSigs = stream.readIntArray()
+            val defaultValues = stream.readIntArray()
+            result.add(SerializedInlineFunctionReference(
+                    SerializedFileReference(fileFqName, filePath), functionSignature, body, startOffset, endOffset,
+                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, valueParameterSigs,
+                    typeParameterSigs, defaultValues)
+            )
         }
     }
 }
@@ -155,18 +243,25 @@ class SerializedClassFieldInfo(val name: Int, val binaryType: Int, val type: Int
     }
 }
 
-class SerializedClassFields(val file: Int, val classSignature: Int, val typeParameterSigs: IntArray,
+class SerializedClassFields(val file: SerializedFileReference, val classSignature: Int, val typeParameterSigs: IntArray,
                             val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
 
 internal object ClassFieldsSerializer {
     fun serialize(classFields: List<SerializedClassFields>): ByteArray {
-        val size = classFields.sumOf { Int.SIZE_BYTES * (5 + it.typeParameterSigs.size + it.fields.size * 5) }
+        val stringTable = buildStringTable {
+            classFields.forEach {
+                +it.file.fqName
+                +it.file.path
+            }
+        }
+        val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (6 + it.typeParameterSigs.size + it.fields.size * 5) }
         val stream = ByteArrayStream(ByteArray(size))
+        stringTable.serialize(stream)
         classFields.forEach {
-            stream.writeInt(it.file)
+            stream.writeInt(stringTable.indices[it.file.fqName]!!)
+            stream.writeInt(stringTable.indices[it.file.path]!!)
             stream.writeInt(it.classSignature)
-            stream.writeInt(it.typeParameterSigs.size)
-            it.typeParameterSigs.forEach { stream.writeInt(it) }
+            stream.writeIntArray(it.typeParameterSigs)
             stream.writeInt(it.outerThisIndex)
             stream.writeInt(it.fields.size)
             it.fields.forEach { field ->
@@ -182,11 +277,12 @@ internal object ClassFieldsSerializer {
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {
         val stream = ByteArrayStream(data)
+        val stringTable = StringTable.deserialize(stream)
         while (stream.hasData()) {
-            val file = stream.readInt()
+            val fileFqName = stringTable[stream.readInt()]
+            val filePath = stringTable[stream.readInt()]
             val classSignature = stream.readInt()
-            val typeParameterSigsCount = stream.readInt()
-            val typeParameterSigs = IntArray(typeParameterSigsCount) { stream.readInt() }
+            val typeParameterSigs = stream.readIntArray()
             val outerThisIndex = stream.readInt()
             val fieldsCount = stream.readInt()
             val fields = Array(fieldsCount) {
@@ -197,28 +293,40 @@ internal object ClassFieldsSerializer {
                 val alignment = stream.readInt()
                 SerializedClassFieldInfo(name, binaryType, type, flags, alignment)
             }
-            result.add(SerializedClassFields(file, classSignature, typeParameterSigs, outerThisIndex, fields))
+            result.add(SerializedClassFields(
+                    SerializedFileReference(fileFqName, filePath), classSignature, typeParameterSigs, outerThisIndex, fields)
+            )
         }
     }
 }
 
-class SerializedEagerInitializedFile(val file: Int)
+class SerializedEagerInitializedFile(val file: SerializedFileReference)
 
 internal object EagerInitializedPropertySerializer {
     fun serialize(properties: List<SerializedEagerInitializedFile>): ByteArray {
-        val size = properties.sumOf { Int.SIZE_BYTES }
+        val stringTable = buildStringTable {
+            properties.forEach {
+                +it.file.fqName
+                +it.file.path
+            }
+        }
+        val size = stringTable.sizeBytes + properties.sumOf { Int.SIZE_BYTES * 2 }
         val stream = ByteArrayStream(ByteArray(size))
+        stringTable.serialize(stream)
         properties.forEach {
-            stream.writeInt(it.file)
+            stream.writeInt(stringTable.indices[it.file.fqName]!!)
+            stream.writeInt(stringTable.indices[it.file.path]!!)
         }
         return stream.buf
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedEagerInitializedFile>) {
         val stream = ByteArrayStream(data)
+        val stringTable = StringTable.deserialize(stream)
         while (stream.hasData()) {
-            val file = stream.readInt()
-            result.add(SerializedEagerInitializedFile(file))
+            val fileFqName = stringTable[stream.readInt()]
+            val filePath = stringTable[stream.readInt()]
+            result.add(SerializedEagerInitializedFile(SerializedFileReference(fileFqName, filePath)))
         }
     }
 }
@@ -488,6 +596,13 @@ internal class KonanIrLinker(
             }
         }
 
+        private val fileReferenceToFileDeserializationState by lazy {
+            fileDeserializationStates.associateBy { SerializedFileReference(it.file.fqName.asString(), it.file.path) }
+        }
+
+        private val SerializedFileReference.deserializationState
+            get() = fileReferenceToFileDeserializationState[this] ?: error("Unknown file $this")
+
         fun getFileNameOf(declaration: IrDeclaration): String {
             fun IrDeclaration.getSignature() = symbol.signature ?: descriptorSignatures[descriptor]
 
@@ -562,8 +677,9 @@ internal class KonanIrLinker(
                 BinarySymbolData.decode(protoFunction.base.dispatchReceiver.base.symbol).signatureId
             } ?: InvalidIndex
 
-            return SerializedInlineFunctionReference(fileDeserializationState.fileIndex, functionSignature, protoFunction.base.body,
-                    irFunction.startOffset, irFunction.endOffset, extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
+            return SerializedInlineFunctionReference(SerializedFileReference(fileDeserializationState.file),
+                    functionSignature, protoFunction.base.body, irFunction.startOffset, irFunction.endOffset,
+                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
                     valueParameterSigs.toIntArray(), typeParameterSigs.toIntArray(), defaultValues.toIntArray())
         }
 
@@ -623,7 +739,7 @@ internal class KonanIrLinker(
             val outerThisIndex = fields.indexOfFirst { it.irField?.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS }
             val compatibleMode = CompatibilityMode(libraryAbiVersion).oldSignatures
             return SerializedClassFields(
-                    fileDeserializationState.fileIndex,
+                    SerializedFileReference(fileDeserializationState.file),
                     BinarySymbolData.decode(protoClass.base.symbol).signatureId,
                     typeParameterSigs.toIntArray(),
                     outerThisIndex,
@@ -660,11 +776,8 @@ internal class KonanIrLinker(
                     })
         }
 
-        fun buildEagerInitializedFile(irFile: IrFile): SerializedEagerInitializedFile {
-            val fileDeserializationState = fileToFileDeserializationState[irFile]
-                    ?: error("No file deserializer for ${irFile.render()}")
-            return SerializedEagerInitializedFile(fileDeserializationState.fileIndex)
-        }
+        fun buildEagerInitializedFile(irFile: IrFile) =
+                SerializedEagerInitializedFile(SerializedFileReference(irFile))
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
@@ -712,7 +825,7 @@ internal class KonanIrLinker(
         private val inlineFunctionReferences by lazy {
             val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
             cache.serializedInlineFunctionBodies.associateBy {
-                fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
+                it.file.deserializationState.declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
             }
         }
 
@@ -742,7 +855,7 @@ internal class KonanIrLinker(
             ?: error("No signature for ${function.render()}")
             val inlineFunctionReference = inlineFunctionReferences[signature]
                     ?: error("No inline function reference for ${function.render()}, sig = ${signature.render()}")
-            val fileDeserializationState = fileDeserializationStates[inlineFunctionReference.file]
+            val fileDeserializationState = inlineFunctionReference.file.deserializationState
             val declarationDeserializer = fileDeserializationState.declarationDeserializer
             val symbolDeserializer = declarationDeserializer.symbolDeserializer
 
@@ -815,7 +928,7 @@ internal class KonanIrLinker(
         private val classesFields by lazy {
             val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
             cache.serializedClassFields.associateBy {
-                fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
+                it.file.deserializationState.declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
             }
         }
 
@@ -828,7 +941,7 @@ internal class KonanIrLinker(
                     ?: error("No signature for ${irClass.render()}")
             val serializedClassFields = classesFields[signature]
                     ?: error("No class fields for ${irClass.render()}, sig = ${signature.render()}")
-            val fileDeserializationState = fileDeserializationStates[serializedClassFields.file]
+            val fileDeserializationState = serializedClassFields.file.deserializationState
             val declarationDeserializer = fileDeserializationState.declarationDeserializer
             val symbolDeserializer = declarationDeserializer.symbolDeserializer
 
@@ -891,7 +1004,7 @@ internal class KonanIrLinker(
         val eagerInitializedFiles by lazy {
             val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
             cache.serializedEagerInitializedFiles
-                    .map { fileDeserializationStates[it.file].file }
+                    .map { it.file.deserializationState.file }
                     .distinct()
         }
 
