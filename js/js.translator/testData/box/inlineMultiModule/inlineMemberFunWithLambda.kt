@@ -20,7 +20,7 @@ internal inline fun test1(): String {
 
 internal fun callTest1(): String = test1()
 
-// MODULE: main(lib)(lib)
+// MODULE: main()(lib)
 // FILE: lib.kt
 internal inline fun test2(): String {
     val x = C()

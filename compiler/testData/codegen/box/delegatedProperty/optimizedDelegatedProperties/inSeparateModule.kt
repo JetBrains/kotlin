@@ -16,7 +16,7 @@ class Mut<T>(var _value: T) {
     }
 }
 
-// MODULE: main(lib)(lib)
+// MODULE: main()(lib)
 // FILE: main.kt
 import lib.*
 

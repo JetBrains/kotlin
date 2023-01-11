@@ -280,11 +280,25 @@ class ModuleStructureExtractorImpl(
                     dependenciesNames = dependenciesNames.filter { it != "support" }
                 }
             }
+            val friendsNames = friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+            val dependsOnNames = dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+
+            val intersection = buildSet {
+                addAll(dependenciesNames intersect friendsNames)
+                addAll(dependenciesNames intersect dependsOnNames)
+                addAll(friendsNames intersect dependsOnNames)
+            }
+            require(intersection.isEmpty()) {
+                val m = if (intersection.size == 1) "module" else "modules"
+                val names = if (intersection.size == 1) "`${intersection.first()}`" else intersection.joinToArrayString()
+                """Module `$name` depends on $m $names with different kinds simultaneously"""
+            }
+
             return ModuleNameAndDependencies(
                 name,
                 dependenciesNames,
-                friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
-                dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+                friendsNames,
+                dependsOnNames,
             )
         }
 

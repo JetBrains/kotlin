@@ -7,6 +7,6 @@ internal fun bar() = "OK"
 
 internal inline fun foo() = bar()
 
-// MODULE: main(lib)(lib)
+// MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String = foo()
