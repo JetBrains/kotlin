@@ -412,6 +412,11 @@ private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransf
     }
 }
 
+internal fun Iterable<MetadataDependencyResolution>.visibleSourceSets(): Map<String, Set<String>> = this
+    .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+    .groupBy { it.dependency.id.displayName }
+    .mapValues { (_, chooseVisibleSourceSets) -> chooseVisibleSourceSets.flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames } }
+
 internal class GranularMetadataTransformation(
     val params: Params,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
@@ -444,13 +449,7 @@ internal class GranularMetadataTransformation(
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    val ownVisibleSourceSets: Map<String, Set<String>> get() {
-        val result = metadataDependencyResolutions
-            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .groupBy { it.dependency.id.displayName }
-            .mapValues { (_, chooseVisibleSourceSets) -> chooseVisibleSourceSets.flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames } }
-        return result
-    }
+    val ownVisibleSourceSets: Map<String, Set<String>> get() = metadataDependencyResolutions.visibleSourceSets()
 
     private fun ResolvedDependencyResult.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
         return when(val componentId = selected.id) {

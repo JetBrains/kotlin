@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.mergeWith
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.Callable
 
@@ -389,11 +390,27 @@ class KotlinMetadataTargetConfigurator :
                 "Generates serialized dependencies metadata for compilation '${sourceSet.name}' (for tooling)"
         }
         project.locateOrRegisterTask<Task>("transformSourceSetsMetadata").dependsOn(task)
-        @OptIn(Idea222Api::class)
-        project.ideaImportDependsOn(task)
 
-        if (sourceSet is DefaultKotlinSourceSet)
-            sourceSet.compileDependenciesTransformationTask = task
+        if (sourceSet is DefaultKotlinSourceSet) {
+            val parentVisibleSourceSets: Lazy<Map<String, Set<String>>> = lazy {
+                dependsOnClosureWithInterCompilationDependencies(sourceSet)
+                    .filterIsInstance<DefaultKotlinSourceSet>().map { parentSourceSet ->
+                        parentSourceSet
+                            .metadataDependencyResolutionsOrEmpty
+                            .visibleSourceSets()
+                    }.reduceOrNull { acc, map -> acc mergeWith map }.orEmpty()
+            }
+
+            sourceSet._metadataDependencyResolutions = lazy {
+                GranularMetadataTransformation(
+                    GranularMetadataTransformation.Params(
+                        project,
+                        sourceSet,
+                    ),
+                    parentVisibleSourceSets
+                ).metadataDependencyResolutions
+            }
+        }
     }
 
 //    /** Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as

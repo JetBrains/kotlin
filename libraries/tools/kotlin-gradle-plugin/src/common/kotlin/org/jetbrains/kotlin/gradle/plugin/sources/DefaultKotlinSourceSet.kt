@@ -123,14 +123,14 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    internal var compileDependenciesTransformationTask: TaskProvider<MetadataDependencyTransformationTask>? = null
+    internal var _metadataDependencyResolutions: Lazy<Iterable<MetadataDependencyResolution>>? = null
 
     /**
      * Returns [GranularMetadataTransformation] for all requested compile dependencies
      * scopes: API, IMPLEMENTATION, COMPILE_ONLY; See [KotlinDependencyScope.compileScopes]
      */
     internal val metadataDependencyResolutionsOrEmpty: Iterable<MetadataDependencyResolution>
-        get() = compileDependenciesTransformationTask?.get()?.metadataDependencyResolutions ?: emptyList()
+        get() = _metadataDependencyResolutions?.value ?: emptyList() //compileDependenciesTransformationTask?.get()?.metadataDependencyResolutions ?: emptyList()
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 
