@@ -278,12 +278,11 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         val iosX64 = kotlin.iosX64()
         val iosArm64 = kotlin.iosArm64()
         val windows64 = kotlin.mingwX64("windows64")
-        val windows32 = kotlin.mingwX86("windows32")
         kotlin.jvm()
         kotlin.js().browser()
 
-        val nativeTargets = listOf(linux, macos, iosX64, iosArm64, windows64, windows32)
-        val windowsTargets = listOf(windows64, windows32)
+        val nativeTargets = listOf(linux, macos, iosX64, iosArm64, windows64)
+        val windowsTargets = listOf(windows64)
         val unixLikeTargets = listOf(linux, macos, iosX64, iosArm64)
         val appleTargets = listOf(macos, iosX64, iosArm64)
         val iosTargets = listOf(iosX64, iosArm64)
@@ -373,7 +372,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
         assertCInteropDependentEqualsForSourceSetAndCompilation(nativeMain)
         assertCInteropDependentEqualsForSourceSetAndCompilation(unixMain)
-        assertCInteropDependentEqualsForSourceSetAndCompilation(windowsMain)
         assertCInteropDependentEqualsForSourceSetAndCompilation(appleMain)
         assertCInteropDependentEqualsForSourceSetAndCompilation(iosMain)
 
@@ -382,13 +380,12 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
         val nativeCommonizerTarget = SharedCommonizerTarget(nativeTargets.map { it.konanTarget })
         val unixLikeCommonizerTarget = SharedCommonizerTarget(unixLikeTargets.map { it.konanTarget })
-        val windowsCommonizerTarget = SharedCommonizerTarget(windowsTargets.map { it.konanTarget })
         val appleCommonizerTarget = SharedCommonizerTarget(appleTargets.map { it.konanTarget })
         val iosCommonizerTarget = SharedCommonizerTarget(iosTargets.map { it.konanTarget })
 
         val expectedMainGroup = CInteropCommonizerGroup(
             targets = setOf(
-                nativeCommonizerTarget, unixLikeCommonizerTarget, windowsCommonizerTarget,
+                nativeCommonizerTarget, unixLikeCommonizerTarget,
                 appleCommonizerTarget, iosCommonizerTarget
             ),
             interops = nativeTargets.map { target -> target.mainCinteropIdentifier("nativeHelper") }.toSet() +
@@ -427,11 +424,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         assertEquals(
             mainGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(unixMain)),
             "Expected unixMain being part of the mainGroup"
-        )
-
-        assertEquals(
-            mainGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(windowsMain)),
-            "Expected windowsMain being part of the mainGroup"
         )
 
         assertEquals(
