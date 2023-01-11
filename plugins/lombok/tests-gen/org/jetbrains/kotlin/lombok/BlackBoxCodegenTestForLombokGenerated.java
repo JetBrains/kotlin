@@ -39,6 +39,12 @@ public class BlackBoxCodegenTestForLombokGenerated extends AbstractBlackBoxCodeg
     }
 
     @Test
+    @TestMetadata("allArgsConstructorInference.kt")
+    public void testAllArgsConstructorInference() throws Exception {
+        runTest("plugins/lombok/testData/box/allArgsConstructorInference.kt");
+    }
+
+    @Test
     @TestMetadata("allArgsConstructorStatic.kt")
     public void testAllArgsConstructorStatic() throws Exception {
         runTest("plugins/lombok/testData/box/allArgsConstructorStatic.kt");

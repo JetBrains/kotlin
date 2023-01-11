@@ -215,7 +215,7 @@ private class JavaTypeSubstitutorByMap(val map: Map<JavaClassifier, JavaType>) :
         var hasNewArguments = false
         val newArguments = type.typeArguments.map { argument ->
             if (argument == null) return@map null
-            val newArgument = substituteOrNull(argument)
+            val newArgument = substituteOrSelf(argument)
             if (newArgument !== argument) {
                 hasNewArguments = true
                 newArgument
