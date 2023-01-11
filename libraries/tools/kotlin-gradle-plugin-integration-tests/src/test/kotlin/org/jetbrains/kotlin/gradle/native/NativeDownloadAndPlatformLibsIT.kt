@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCo
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
@@ -329,6 +330,18 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun `download light Native bundle with maven`() {
+        if (HostManager.hostIsMac) {
+            val xcodeVersion = Xcode!!.currentVersion
+            val versionSplit = xcodeVersion.split("(\\s+|\\.|-)".toRegex())
+            check(versionSplit.size >= 2) {
+                "Unrecognised version of Xcode $xcodeVersion was split to $versionSplit"
+            }
+            val major = versionSplit[0].toInt()
+            val minor = versionSplit[1].toInt()
+            // Building platform libs require Xcode 14.1
+            Assume.assumeTrue(major >= 14 && minor >= 1)
+        }
+
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
             gradleProperties().appendText(
                 "kotlin.native.distribution.downloadFromMaven=true"
