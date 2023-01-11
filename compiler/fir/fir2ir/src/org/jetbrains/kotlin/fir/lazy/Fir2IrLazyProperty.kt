@@ -162,7 +162,6 @@ class Fir2IrLazyProperty(
             containingClass?.symbol?.toLookupTag(),
             forceTopLevelPrivate = symbol.signature.isComposite()
         )!!
-        symbolTable.referenceSimpleFunctionIfAny(signature)?.let { if (it.isBound) return@lazyVar it.owner }
         symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
             Fir2IrLazyPropertyAccessor(
                 components, startOffset, endOffset,
@@ -197,7 +196,6 @@ class Fir2IrLazyProperty(
                 containingClass?.symbol?.toLookupTag(),
                 forceTopLevelPrivate = symbol.signature.isComposite()
             )!!
-            symbolTable.referenceSimpleFunctionIfAny(signature)?.let { if (it.isBound) return@lazyVar it.owner }
             symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
                 Fir2IrLazyPropertyAccessor(
                     components, startOffset, endOffset,
