@@ -657,7 +657,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         buildFile.appendText(
             """
 
-            tasks.create("$printingTaskName") {
+            tasks.register("$printingTaskName") {
+                if ("transformSourceSetsMetadata" in tasks.names) dependsOn("transformSourceSetsMetadata")
                 doLast {
                     println("###$printingTaskName " + $itemsExpression)
                 }

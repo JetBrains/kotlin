@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ResolveException
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -148,8 +150,10 @@ internal class SourceSetVisibilityProvider(
                         ?: return@mapNotNull null
 
                     val metadataArtifact = resolvedHostSpecificMetadataConfiguration
-                        .dependencyArtifacts(dependency)
-                        .singleOrNull()
+                        // it can happen that related host-specific metadata artifact doesn't exist
+                        // for example on linux machines, then just gracefully return null
+                        .dependencyArtifactsOrNull(dependency)
+                        ?.singleOrNull()
                         ?: return@mapNotNull null
 
                     sourceSetName to metadataArtifact.file
@@ -160,6 +164,14 @@ internal class SourceSetVisibilityProvider(
             visibleSourceSetNames,
             hostSpecificArtifactBySourceSet
         )
+    }
+}
+
+private fun ResolvedDependencyGraph.dependencyArtifactsOrNull(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult>? {
+    return try {
+        dependencyArtifacts(dependency)
+    } catch (e: ResolveException) {
+        null
     }
 }
 

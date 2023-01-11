@@ -100,8 +100,9 @@ private class ProjectMetadataProviderImpl2(
     override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection =
         sourceSetMetadataOutputs[sourceSetName]?.metadata ?: error("Unexpected source set '$sourceSetName'")
 
-    override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection {
-        val cinteropMetadata = sourceSetMetadataOutputs[sourceSetName]?.cinterop ?: error("Unexpected source set '$sourceSetName'")
+    override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection? {
+        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: error("Unexpected source set '$sourceSetName'")
+        val cinteropMetadata = metadataOutputs.cinterop ?: return null
         return when (consumer) {
             MetadataConsumer.Ide -> cinteropMetadata.forIde
             MetadataConsumer.Cli -> cinteropMetadata.forCli
@@ -131,17 +132,17 @@ private class ProjectMetadataProviderImpl(
         }
     }
 
-    override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection {
+    override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection? {
         val multiplatformExtension = dependencyProject.topLevelExtension as? KotlinMultiplatformExtension
             ?: return dependencyProject.files()
 
         val commonizeCInteropTask = when (consumer) {
-            MetadataConsumer.Ide -> dependencyProject.copyCommonizeCInteropForIdeTask ?: return dependencyProject.files()
-            MetadataConsumer.Cli -> dependencyProject.commonizeCInteropTask ?: return dependencyProject.files()
+            MetadataConsumer.Ide -> dependencyProject.copyCommonizeCInteropForIdeTask ?: return null
+            MetadataConsumer.Cli -> dependencyProject.commonizeCInteropTask ?: return null
         }
 
-        val sourceSet = multiplatformExtension.sourceSets.findByName(sourceSetName) ?: return dependencyProject.files()
-        val dependent = CInteropCommonizerDependent.from(sourceSet) ?: return dependencyProject.files()
+        val sourceSet = multiplatformExtension.sourceSets.findByName(sourceSetName) ?: return null
+        val dependent = CInteropCommonizerDependent.from(sourceSet) ?: return null
         return commonizeCInteropTask.get().commonizedOutputLibraries(dependent)
     }
 }

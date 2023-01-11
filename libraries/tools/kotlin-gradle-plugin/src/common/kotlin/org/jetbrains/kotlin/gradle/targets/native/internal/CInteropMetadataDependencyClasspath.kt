@@ -61,7 +61,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
                     is ArtifactMetadataProvider -> return@flatMap emptyList()
                 }
 
-                chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops.map { visibleSourceSetName ->
+                chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops.mapNotNull { visibleSourceSetName ->
                     projectMetadataProvider.getSourceSetCInteropMetadata(visibleSourceSetName, if (forIde) Ide else Cli)
                 }
             }

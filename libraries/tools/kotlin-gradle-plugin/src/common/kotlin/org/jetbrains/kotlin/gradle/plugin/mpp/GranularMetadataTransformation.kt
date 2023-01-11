@@ -87,7 +87,7 @@ internal sealed class MetadataDependencyResolution(
                 enum class MetadataConsumer { Ide, Cli }
 
                 abstract fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection
-                abstract fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection
+                abstract fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection?
             }
         }
 
