@@ -63,4 +63,12 @@ public interface KtFunctionalTypeRenderer {
         }
     }
 
+    public object AS_CLASS_TYPE_FOR_REFLECTION_TYPES : KtFunctionalTypeRenderer {
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtFunctionalType, printer: PrettyPrinter): Unit {
+            val renderer = if (type.isReflectType) AS_CLASS_TYPE else AS_FUNCTIONAL_TYPE
+            renderer.renderType(type, printer)
+        }
+    }
+
 }

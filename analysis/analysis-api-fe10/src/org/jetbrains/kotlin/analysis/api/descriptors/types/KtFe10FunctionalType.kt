@@ -53,6 +53,9 @@ internal class KtFe10FunctionalType(
     override val isSuspend: Boolean
         get() = withValidityAssertion { descriptor.functionKind.isSuspendType }
 
+    override val isReflectType: Boolean
+        get() = withValidityAssertion { descriptor.functionKind.isReflectType }
+
     override val arity: Int
         get() = withValidityAssertion { descriptor.arity }
 

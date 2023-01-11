@@ -55,6 +55,7 @@ public sealed class KtNonErrorClassType : KtClassType() {
 
 public abstract class KtFunctionalType : KtNonErrorClassType(), KtContextReceiversOwner {
     public abstract val isSuspend: Boolean
+    public abstract val isReflectType: Boolean
     public abstract val arity: Int
     public abstract val hasContextReceivers: Boolean
     public abstract val receiverType: KtType?
