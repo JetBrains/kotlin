@@ -135,7 +135,7 @@ fun SmartPrinter.printElement(element: Element) {
             if (element == AbstractFirTreeBuilder.baseFirElement) {
                 require(isInterface)
                 println()
-                println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
+                println("fun <@Monomorphic VT: FirVisitorVoid> accept(visitor: VT) = accept(visitor, null)")
                 println()
                 println("fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D)")
                 println()
