@@ -32,7 +32,7 @@ class FirDataFrameTokenGenerator(session: FirSession, val tokens: Set<ClassId>, 
     object Key : GeneratedDeclarationKey()
 
     override fun getTopLevelClassIds(): Set<ClassId> {
-        return tokens
+        return tokens.sortedBy { it.asString() }.toSet()
     }
 
     override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {

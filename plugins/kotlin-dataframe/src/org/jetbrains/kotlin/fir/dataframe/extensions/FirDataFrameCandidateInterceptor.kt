@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
@@ -35,8 +34,8 @@ import org.jetbrains.kotlin.name.Name
 class FirDataFrameCandidateInterceptor(
     session: FirSession,
     val callableNames: ArrayDeque<CallableId>,
-    val tokenIds: ArrayDeque<ClassId>,
-    val callableState: MutableMap<Name, FirSimpleFunction>
+    val callableState: MutableMap<Name, FirSimpleFunction>,
+    val nextName: () -> ClassId
 ) : FirCandidateFactoryInterceptor(session) {
     val Key = FirDataFrameExtensionsGenerator.DataFramePlugin
 
@@ -53,7 +52,7 @@ class FirDataFrameCandidateInterceptor(
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
         val generatedName = callableNames.removeLast()
         val newSymbol = FirNamedFunctionSymbol(generatedName)
-        val tokenId = tokenIds.removeLast()
+        val tokenId = nextName()
         val typeRef = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
                 lookupTag,
