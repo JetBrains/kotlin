@@ -70,7 +70,7 @@ internal class FirRegularClassImpl(
         contextReceivers.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirRegularClassImpl {
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformDeclarations(transformer, data)

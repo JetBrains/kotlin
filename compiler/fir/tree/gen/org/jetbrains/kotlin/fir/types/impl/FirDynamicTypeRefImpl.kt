@@ -27,7 +27,7 @@ internal class FirDynamicTypeRefImpl(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirDynamicTypeRefImpl {
         transformAnnotations(transformer, data)
         return this
     }

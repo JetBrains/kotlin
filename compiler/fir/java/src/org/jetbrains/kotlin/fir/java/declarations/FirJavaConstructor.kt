@@ -88,7 +88,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirJavaConstructor {
         transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformValueParameters(transformer, data)

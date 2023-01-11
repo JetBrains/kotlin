@@ -85,7 +85,7 @@ internal class FirValueParameterImpl(
         defaultValue?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirValueParameterImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformBackingField(transformer, data)

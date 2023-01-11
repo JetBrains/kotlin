@@ -34,7 +34,7 @@ internal class FirBlockImpl(
         typeRef.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBlockImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirBlockImpl {
         transformStatements(transformer, data)
         transformOtherChildren(transformer, data)
         return this

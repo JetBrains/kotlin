@@ -38,7 +38,7 @@ internal class FirBinaryLogicExpressionImpl(
         rightOperand.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirBinaryLogicExpressionImpl {
         transformLeftOperand(transformer, data)
         transformRightOperand(transformer, data)
         transformOtherChildren(transformer, data)

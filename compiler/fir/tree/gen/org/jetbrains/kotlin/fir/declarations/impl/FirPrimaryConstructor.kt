@@ -77,7 +77,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         body?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirPrimaryConstructor {
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)

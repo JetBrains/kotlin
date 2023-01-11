@@ -34,7 +34,7 @@ internal class FirConstExpressionImpl<T> (
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstExpressionImpl<T> {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirConstExpressionImpl<T> {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this

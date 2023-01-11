@@ -55,7 +55,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirIntegerLiteralOperatorCallImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         contextReceiverArguments.transformInplace(transformer, data)

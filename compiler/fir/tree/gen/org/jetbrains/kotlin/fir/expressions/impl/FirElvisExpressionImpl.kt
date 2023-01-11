@@ -39,7 +39,7 @@ internal class FirElvisExpressionImpl(
         rhs.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirElvisExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         transformCalleeReference(transformer, data)

@@ -48,7 +48,7 @@ internal class FirWhenExpressionImpl(
         branches.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirWhenExpressionImpl {
         transformCalleeReference(transformer, data)
         transformSubject(transformer, data)
         transformBranches(transformer, data)

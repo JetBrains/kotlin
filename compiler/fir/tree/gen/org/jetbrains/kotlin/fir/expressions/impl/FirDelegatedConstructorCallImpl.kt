@@ -44,7 +44,7 @@ internal class FirDelegatedConstructorCallImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirDelegatedConstructorCallImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)
         contextReceiverArguments.transformInplace(transformer, data)

@@ -36,7 +36,7 @@ internal class FirComparisonExpressionImpl(
         compareToCall.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComparisonExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirComparisonExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         compareToCall = compareToCall.transform(transformer, data)

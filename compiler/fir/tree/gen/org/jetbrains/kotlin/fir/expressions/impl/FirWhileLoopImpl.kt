@@ -35,7 +35,7 @@ internal class FirWhileLoopImpl(
         block.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirWhileLoopImpl {
         transformCondition(transformer, data)
         transformBlock(transformer, data)
         transformOtherChildren(transformer, data)

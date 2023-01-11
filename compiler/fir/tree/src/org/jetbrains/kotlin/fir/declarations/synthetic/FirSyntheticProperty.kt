@@ -91,7 +91,7 @@ class FirSyntheticProperty(
         status.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirSyntheticProperty {
         notSupported()
     }
 

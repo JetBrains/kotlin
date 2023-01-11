@@ -108,7 +108,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         defaultValue?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameter {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirValueParameter {
         transformReturnTypeRef(transformer, data)
         transformOtherChildren(transformer, data)
         return this

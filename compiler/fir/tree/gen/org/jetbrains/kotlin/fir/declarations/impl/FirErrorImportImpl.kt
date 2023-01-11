@@ -35,7 +35,7 @@ internal class FirErrorImportImpl(
         delegate.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorImportImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirErrorImportImpl {
         delegate = delegate.transform(transformer, data)
         return this
     }

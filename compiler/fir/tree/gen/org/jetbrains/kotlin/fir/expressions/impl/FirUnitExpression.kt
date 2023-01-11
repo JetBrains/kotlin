@@ -34,7 +34,7 @@ class FirUnitExpression @FirImplementationDetail constructor(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirUnitExpression {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirUnitExpression {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this

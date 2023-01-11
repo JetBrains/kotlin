@@ -29,7 +29,7 @@ internal class FirReceiverParameterImpl(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReceiverParameterImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirReceiverParameterImpl {
         transformTypeRef(transformer, data)
         transformAnnotations(transformer, data)
         return this

@@ -30,7 +30,7 @@ class FirLazyBlock : FirBlock() {
     override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D) {
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirLazyBlock {
         transformOtherChildren(transformer, data)
         return this
     }

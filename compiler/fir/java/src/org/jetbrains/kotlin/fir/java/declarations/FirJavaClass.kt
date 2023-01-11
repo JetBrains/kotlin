@@ -90,7 +90,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         superTypeRefs.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirJavaClass {
         transformTypeParameters(transformer, data)
         transformDeclarations(transformer, data)
         status = status.transformSingle(transformer, data)

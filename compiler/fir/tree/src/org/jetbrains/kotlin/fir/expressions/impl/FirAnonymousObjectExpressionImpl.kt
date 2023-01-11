@@ -32,7 +32,7 @@ internal class FirAnonymousObjectExpressionImpl(
         anonymousObject.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirAnonymousObjectExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnonymousObject(transformer, data)
         return this

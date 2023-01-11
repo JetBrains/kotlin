@@ -19,7 +19,7 @@ abstract class FirAbstractArgumentList : FirArgumentList() {
         // DO NOTHING
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirElement {
         return this
     }
 }

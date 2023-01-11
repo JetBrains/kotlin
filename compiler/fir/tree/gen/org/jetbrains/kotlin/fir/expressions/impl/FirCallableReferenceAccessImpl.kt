@@ -51,7 +51,7 @@ internal class FirCallableReferenceAccessImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirCallableReferenceAccessImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         contextReceiverArguments.transformInplace(transformer, data)

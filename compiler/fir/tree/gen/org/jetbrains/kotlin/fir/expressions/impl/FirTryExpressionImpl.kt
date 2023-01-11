@@ -40,7 +40,7 @@ internal class FirTryExpressionImpl(
         finallyBlock?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirTryExpressionImpl {
         transformCalleeReference(transformer, data)
         transformTryBlock(transformer, data)
         transformCatches(transformer, data)

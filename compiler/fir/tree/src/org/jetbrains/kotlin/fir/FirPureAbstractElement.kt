@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 abstract class FirPureAbstractElement : FirElement {
     abstract override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> acceptChildren(visitor: VT, data: D)
 
-    abstract override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
+    abstract override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirElement
 }

@@ -192,7 +192,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
 
             abstract()
-            print("override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): $typeWithArguments")
+            print("override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): $typeWithArguments")
             if (!isInterface && !isAbstract) {
                 println(" {")
                 withIndent {

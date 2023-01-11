@@ -33,7 +33,7 @@ internal class FirAssignmentOperatorStatementImpl(
         rightArgument.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirAssignmentOperatorStatementImpl {
         transformAnnotations(transformer, data)
         transformLeftArgument(transformer, data)
         transformRightArgument(transformer, data)

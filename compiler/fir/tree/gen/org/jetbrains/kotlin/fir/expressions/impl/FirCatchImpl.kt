@@ -29,7 +29,7 @@ internal class FirCatchImpl(
         block.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCatchImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirCatchImpl {
         transformParameter(transformer, data)
         transformBlock(transformer, data)
         transformOtherChildren(transformer, data)

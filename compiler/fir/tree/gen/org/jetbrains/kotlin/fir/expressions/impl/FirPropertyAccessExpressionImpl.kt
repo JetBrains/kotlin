@@ -51,7 +51,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirPropertyAccessExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         transformCalleeReference(transformer, data)

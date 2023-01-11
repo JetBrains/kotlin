@@ -34,7 +34,7 @@ class FirElseIfTrueCondition @FirImplementationDetail constructor(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElseIfTrueCondition {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirElseIfTrueCondition {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this

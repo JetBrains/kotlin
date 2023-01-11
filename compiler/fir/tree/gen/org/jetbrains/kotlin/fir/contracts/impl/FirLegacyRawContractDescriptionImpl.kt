@@ -26,7 +26,7 @@ internal class FirLegacyRawContractDescriptionImpl(
         contractCall.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLegacyRawContractDescriptionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirLegacyRawContractDescriptionImpl {
         contractCall = contractCall.transform(transformer, data)
         return this
     }

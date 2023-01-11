@@ -35,7 +35,7 @@ internal class FirGetClassCallImpl(
         argumentList.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirGetClassCallImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirGetClassCallImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)

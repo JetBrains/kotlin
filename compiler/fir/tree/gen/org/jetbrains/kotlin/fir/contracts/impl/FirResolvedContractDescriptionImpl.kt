@@ -29,7 +29,7 @@ internal class FirResolvedContractDescriptionImpl(
         unresolvedEffects.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedContractDescriptionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirResolvedContractDescriptionImpl {
         effects.transformInplace(transformer, data)
         unresolvedEffects.transformInplace(transformer, data)
         return this

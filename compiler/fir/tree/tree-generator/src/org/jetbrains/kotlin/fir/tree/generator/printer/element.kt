@@ -141,7 +141,7 @@ fun SmartPrinter.printElement(element: Element) {
                 println()
                 println("fun <@Monomorphic VT: FirVisitorVoid> acceptChildren(visitor: VT) = acceptChildren(visitor, null)")
                 println()
-                println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+                println("fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirElement")
             }
         }
         println("}")

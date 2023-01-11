@@ -39,7 +39,7 @@ internal class FirReturnExpressionImpl(
         result.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirReturnExpressionImpl {
         transformResult(transformer, data)
         transformOtherChildren(transformer, data)
         return this

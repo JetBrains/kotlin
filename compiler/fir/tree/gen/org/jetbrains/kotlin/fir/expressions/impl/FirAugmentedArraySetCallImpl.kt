@@ -38,7 +38,7 @@ internal class FirAugmentedArraySetCallImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirAugmentedArraySetCallImpl {
         transformAnnotations(transformer, data)
         lhsGetCall = lhsGetCall.transform(transformer, data)
         rhs = rhs.transform(transformer, data)

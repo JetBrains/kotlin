@@ -34,7 +34,7 @@ internal class FirVarargArgumentsExpressionImpl(
         varargElementType.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirVarargArgumentsExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         arguments.transformInplace(transformer, data)

@@ -58,7 +58,7 @@ internal class FirFileImpl(
         declarations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFileImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirFileImpl {
         transformAnnotationsContainer(transformer, data)
         packageDirective = packageDirective.transform(transformer, data)
         transformImports(transformer, data)

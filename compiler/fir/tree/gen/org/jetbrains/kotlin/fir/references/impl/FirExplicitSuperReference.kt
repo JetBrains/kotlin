@@ -27,7 +27,7 @@ internal class FirExplicitSuperReference(
         superTypeRef.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExplicitSuperReference {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirExplicitSuperReference {
         superTypeRef = superTypeRef.transform(transformer, data)
         return this
     }

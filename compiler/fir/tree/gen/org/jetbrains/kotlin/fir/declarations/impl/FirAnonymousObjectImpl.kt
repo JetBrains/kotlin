@@ -63,7 +63,7 @@ internal class FirAnonymousObjectImpl(
         controlFlowGraphReference?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirAnonymousObjectImpl {
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformSuperTypeRefs(transformer, data)

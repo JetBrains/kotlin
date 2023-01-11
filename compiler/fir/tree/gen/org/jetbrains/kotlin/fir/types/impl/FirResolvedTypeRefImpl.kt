@@ -32,7 +32,7 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirResolvedTypeRefImpl {
         transformAnnotations(transformer, data)
         return this
     }

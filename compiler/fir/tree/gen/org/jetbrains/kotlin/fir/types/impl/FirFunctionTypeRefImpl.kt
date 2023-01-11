@@ -38,7 +38,7 @@ internal class FirFunctionTypeRefImpl(
         contextReceiverTypeRefs.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirFunctionTypeRefImpl {
         transformAnnotations(transformer, data)
         receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         parameters.transformInplace(transformer, data)

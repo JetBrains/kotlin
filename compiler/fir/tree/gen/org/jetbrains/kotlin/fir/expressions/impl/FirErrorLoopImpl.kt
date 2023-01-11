@@ -40,7 +40,7 @@ internal class FirErrorLoopImpl(
         label?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirErrorLoopImpl {
         transformBlock(transformer, data)
         transformCondition(transformer, data)
         transformOtherChildren(transformer, data)

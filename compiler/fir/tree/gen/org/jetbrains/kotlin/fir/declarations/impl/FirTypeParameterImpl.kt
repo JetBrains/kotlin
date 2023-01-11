@@ -51,7 +51,7 @@ internal class FirTypeParameterImpl(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirTypeParameterImpl {
         bounds.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this

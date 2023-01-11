@@ -40,7 +40,7 @@ internal class FirQualifiedErrorAccessExpressionImpl(
         receiver.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirQualifiedErrorAccessExpressionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirQualifiedErrorAccessExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         selector = selector.transform(transformer, data)

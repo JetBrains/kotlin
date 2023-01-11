@@ -81,7 +81,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         status.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirBackingFieldImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
         transformDelegate(transformer, data)

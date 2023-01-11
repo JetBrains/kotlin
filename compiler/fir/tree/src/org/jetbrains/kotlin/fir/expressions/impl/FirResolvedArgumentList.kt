@@ -31,7 +31,7 @@ abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
 
     abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirElement {
         transformArguments(transformer, data)
         return this
     }

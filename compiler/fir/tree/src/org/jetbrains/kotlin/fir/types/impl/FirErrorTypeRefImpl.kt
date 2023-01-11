@@ -38,7 +38,7 @@ internal class FirErrorTypeRefImpl(
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirErrorTypeRefImpl {
         transformAnnotations(transformer, data)
         return this
     }

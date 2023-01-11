@@ -45,7 +45,7 @@ internal class FirAnnotationCallImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirAnnotationCallImpl {
         transformAnnotationTypeRef(transformer, data)
         transformTypeArguments(transformer, data)
         argumentList = argumentList.transform(transformer, data)

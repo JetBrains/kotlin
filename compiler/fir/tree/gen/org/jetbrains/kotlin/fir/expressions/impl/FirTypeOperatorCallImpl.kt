@@ -38,7 +38,7 @@ internal class FirTypeOperatorCallImpl(
         conversionTypeRef.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeOperatorCallImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirTypeOperatorCallImpl {
         transformConversionTypeRef(transformer, data)
         transformOtherChildren(transformer, data)
         return this

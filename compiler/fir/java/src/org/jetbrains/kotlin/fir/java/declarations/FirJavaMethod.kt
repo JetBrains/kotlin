@@ -100,7 +100,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
         typeParameters.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirSimpleFunction {
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)

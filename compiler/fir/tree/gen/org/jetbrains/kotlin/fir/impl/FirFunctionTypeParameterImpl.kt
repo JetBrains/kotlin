@@ -28,7 +28,7 @@ internal class FirFunctionTypeParameterImpl(
         returnTypeRef.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeParameterImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirFunctionTypeParameterImpl {
         returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }

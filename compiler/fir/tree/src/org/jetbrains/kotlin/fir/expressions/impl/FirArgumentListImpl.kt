@@ -23,7 +23,7 @@ internal class FirArgumentListImpl(
         arguments.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirArgumentListImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirArgumentListImpl {
         transformArguments(transformer, data)
         return this
     }

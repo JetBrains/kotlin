@@ -26,7 +26,7 @@ internal class FirRawContractDescriptionImpl(
         rawEffects.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRawContractDescriptionImpl {
+    override fun <D, @Monomorphic TT: FirTransformer<D>> transformChildren(transformer: TT, data: D): FirRawContractDescriptionImpl {
         rawEffects.transformInplace(transformer, data)
         return this
     }
