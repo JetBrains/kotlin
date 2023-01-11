@@ -496,8 +496,7 @@ class Fir2IrConverter(
         ): SymbolTable =
             dependentComponents.lastOrNull()?.symbolTable ?: SymbolTable(
                 signaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer),
-                irFactory = irFactory,
-                dependentTables = dependentComponents.map { it.symbolTable }
+                irFactory = irFactory
             )
 
         private fun createModuleFragmentWithSymbolTable(

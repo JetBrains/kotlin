@@ -84,8 +84,7 @@ interface ReferenceSymbolTable {
 open class SymbolTable(
     val signaturer: IdSignatureComposer,
     val irFactory: IrFactory,
-    val nameProvider: NameProvider = NameProvider.DEFAULT,
-    val dependentTables: List<SymbolTable> = emptyList(),
+    val nameProvider: NameProvider = NameProvider.DEFAULT
 ) : ReferenceSymbolTable {
 
     val lock = IrLock()
@@ -213,10 +212,10 @@ open class SymbolTable(
         }
     }
 
-    private open inner class FlatSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>>(
-        val descriptorToSymbol: HashMap<D, S> = hashMapOf(),
-        val idSigToSymbol: HashMap<IdSignature, S> = hashMapOf()
-    ) : SymbolTableBase<D, B, S>(lock) {
+    private open inner class FlatSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> :
+        SymbolTableBase<D, B, S>(lock) {
+        val descriptorToSymbol = hashMapOf<D, S>()
+        val idSigToSymbol = hashMapOf<IdSignature, S>()
 
         override fun signature(descriptor: D): IdSignature? =
             signaturer.composeSignature(descriptor)
@@ -245,17 +244,11 @@ open class SymbolTable(
         }
     }
 
-    private inner class EnumEntrySymbolTable(
-        descriptorToSymbol: HashMap<ClassDescriptor, IrEnumEntrySymbol> = hashMapOf(),
-        idSigToSymbol: HashMap<IdSignature, IrEnumEntrySymbol> = hashMapOf()
-    ) : FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>(descriptorToSymbol, idSigToSymbol) {
+    private inner class EnumEntrySymbolTable : FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>() {
         override fun signature(descriptor: ClassDescriptor): IdSignature? = signaturer.composeEnumEntrySignature(descriptor)
     }
 
-    private inner class FieldSymbolTable(
-        descriptorToSymbol: HashMap<PropertyDescriptor, IrFieldSymbol> = hashMapOf(),
-        idSigToSymbol: HashMap<IdSignature, IrFieldSymbol> = hashMapOf()
-    ) : FlatSymbolTable<PropertyDescriptor, IrField, IrFieldSymbol>(descriptorToSymbol, idSigToSymbol) {
+    private inner class FieldSymbolTable : FlatSymbolTable<PropertyDescriptor, IrField, IrFieldSymbol>() {
         override fun signature(descriptor: PropertyDescriptor): IdSignature? = signaturer.composeFieldSignature(descriptor)
     }
 
@@ -372,32 +365,18 @@ open class SymbolTable(
             currentScope?.dump() ?: "<none>"
     }
 
-    private val externalPackageFragmentTable: FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol> =
-        mergeFlatTables(dependentTables) { it.externalPackageFragmentTable }
-    private val scriptSymbolTable: FlatSymbolTable<ScriptDescriptor, IrScript, IrScriptSymbol> =
-        mergeFlatTables(dependentTables) { it.scriptSymbolTable }
-    private val classSymbolTable: FlatSymbolTable<ClassDescriptor, IrClass, IrClassSymbol> =
-        mergeFlatTables(dependentTables) { it.classSymbolTable }
-    private val constructorSymbolTable: FlatSymbolTable<ClassConstructorDescriptor, IrConstructor, IrConstructorSymbol> =
-        mergeFlatTables(dependentTables) { it.constructorSymbolTable }
-    private val enumEntrySymbolTable: EnumEntrySymbolTable = run {
-        val (descriptorToSymbol, idSigToSymbol) = mergeTables(dependentTables) { it.enumEntrySymbolTable }
-        EnumEntrySymbolTable(descriptorToSymbol, idSigToSymbol)
-    }
-    private val fieldSymbolTable: FieldSymbolTable = run {
-        val (descriptorToSymbol, idSigToSymbol) = mergeTables(dependentTables) { it.fieldSymbolTable }
-        FieldSymbolTable(descriptorToSymbol, idSigToSymbol)
-    }
-    private val simpleFunctionSymbolTable: FlatSymbolTable<FunctionDescriptor, IrSimpleFunction, IrSimpleFunctionSymbol> =
-        mergeFlatTables(dependentTables) { it.simpleFunctionSymbolTable }
-    private val propertySymbolTable: FlatSymbolTable<PropertyDescriptor, IrProperty, IrPropertySymbol> =
-        mergeFlatTables(dependentTables) { it.propertySymbolTable }
-    private val typeAliasSymbolTable: FlatSymbolTable<TypeAliasDescriptor, IrTypeAlias, IrTypeAliasSymbol> =
-        mergeFlatTables(dependentTables) { it.typeAliasSymbolTable }
+    private val externalPackageFragmentTable =
+        FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol>()
+    private val scriptSymbolTable = FlatSymbolTable<ScriptDescriptor, IrScript, IrScriptSymbol>()
+    private val classSymbolTable = FlatSymbolTable<ClassDescriptor, IrClass, IrClassSymbol>()
+    private val constructorSymbolTable = FlatSymbolTable<ClassConstructorDescriptor, IrConstructor, IrConstructorSymbol>()
+    private val enumEntrySymbolTable = EnumEntrySymbolTable()
+    private val fieldSymbolTable = FieldSymbolTable()
+    private val simpleFunctionSymbolTable = FlatSymbolTable<FunctionDescriptor, IrSimpleFunction, IrSimpleFunctionSymbol>()
+    private val propertySymbolTable = FlatSymbolTable<PropertyDescriptor, IrProperty, IrPropertySymbol>()
+    private val typeAliasSymbolTable = FlatSymbolTable<TypeAliasDescriptor, IrTypeAlias, IrTypeAliasSymbol>()
 
-    private val globalTypeParameterSymbolTable: FlatSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol> =
-        mergeFlatTables(dependentTables) { it.globalTypeParameterSymbolTable }
-
+    private val globalTypeParameterSymbolTable = FlatSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
     private val scopedTypeParameterSymbolTable by threadLocal {
         ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
     }
@@ -412,28 +391,6 @@ open class SymbolTable(
     }
     private val scopedSymbolTables by threadLocal {
         listOf(valueParameterSymbolTable, variableSymbolTable, scopedTypeParameterSymbolTable, localDelegatedPropertySymbolTable)
-    }
-
-    private fun <D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> mergeFlatTables(
-        dependentTables: List<SymbolTable>,
-        mapFunc: (SymbolTable) -> FlatSymbolTable<D, B, S>
-    ): FlatSymbolTable<D, B, S> {
-        val (descriptorToSymbol, idSigToSymbol) = mergeTables(dependentTables, mapFunc)
-        return FlatSymbolTable(descriptorToSymbol, idSigToSymbol)
-    }
-
-    private fun <D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> mergeTables(
-        dependentTables: List<SymbolTable>,
-        mapFunc: (SymbolTable) -> FlatSymbolTable<D, B, S>
-    ): Pair<HashMap<D, S>, HashMap<IdSignature, S>> {
-        val descriptorToSymbol = hashMapOf<D, S>()
-        val idSigToSymbol = hashMapOf<IdSignature, S>()
-        for (dependentTable in dependentTables) {
-            val flatSymbolTable = mapFunc(dependentTable)
-            descriptorToSymbol.putAll(flatSymbolTable.descriptorToSymbol)
-            idSigToSymbol.putAll(flatSymbolTable.idSigToSymbol)
-        }
-        return Pair(descriptorToSymbol, idSigToSymbol)
     }
 
     @ObsoleteDescriptorBasedAPI
