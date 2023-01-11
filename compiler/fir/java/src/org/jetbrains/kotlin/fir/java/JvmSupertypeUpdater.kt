@@ -59,7 +59,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
         if (anyFound || !hasExplicitSuperClass) {
             firClass.replaceSuperTypeRefs(newSuperTypeRefs)
-            firClass.transformSingle(jvmRecordUpdater, scopeSession)
+            firClass.transformDeclarations(jvmRecordUpdater, scopeSession)
         }
     }
 
@@ -73,7 +73,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ScopeSession): FirStatement {
-            return regularClass.transformDeclarations(this, data)
+            return regularClass
         }
 
         override fun transformConstructor(constructor: FirConstructor, data: ScopeSession): FirStatement {
