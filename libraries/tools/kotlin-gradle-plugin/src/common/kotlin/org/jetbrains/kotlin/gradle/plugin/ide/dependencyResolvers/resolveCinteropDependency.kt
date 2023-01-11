@@ -32,16 +32,28 @@ private fun createCinteropLibraryDependency(project: Project, libraryFile: java.
         return null
     }
 
+    val (group, module) = cinteropGroupAndModule(library)
+
     return IdeaKotlinResolvedBinaryDependency(
         binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
         classpath = IdeaKotlinClasspath(libraryFile),
         coordinates = IdeaKotlinBinaryCoordinates(
-            group = project.group.toString(),
-            module = library.moduleDisplayName,
+            group = group,
+            module = module,
             version = null, // TODO (kirpichenkov): if/when used for published cinterops, should be set up correctly
             sourceSetName = library.nativeTargets.singleOrNull() ?: library.nativeTargets.joinToString(prefix = "(", postfix = ")")
         ),
     ).apply {
         klibExtra = KlibExtra(library)
+    }
+}
+
+private fun cinteropGroupAndModule(library: KotlinLibrary): Pair<String, String> {
+    val nameParts = library.uniqueName.split(":")
+
+    return when (nameParts.size) {
+        0 -> "<unknown>" to "<unknown>"
+        1 -> "<unknown>" to nameParts.single()
+        else -> nameParts[0] to nameParts[1]
     }
 }
