@@ -74,8 +74,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     private boolean multiPlatform = false;
 
     protected List<String> getSourceFilePaths() {
-        if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
-        return project.getCompileSourceRoots();
+        List<String> list = new ArrayList<>();
+        if (sourceDirs != null && !sourceDirs.isEmpty()) list.addAll(sourceDirs);
+        list.addAll(project.getCompileSourceRoots());
+        return list;
     }
 
     @NotNull

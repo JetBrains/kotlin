@@ -13,7 +13,6 @@
         <junit.version>4.13.1</junit.version>
         <main.class>coffee.CoffeeApp</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.8.255-SNAPSHOT</kotlin.version>
     </properties>
 
     <dependencies>
