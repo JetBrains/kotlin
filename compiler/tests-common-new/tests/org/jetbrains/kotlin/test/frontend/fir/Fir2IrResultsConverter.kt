@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -67,6 +68,7 @@ class Fir2IrResultsConverter(
         val dependentIrParts = mutableListOf<JvmIrCodegenFactory.JvmIrBackendInput>()
         lateinit var mainIrPart: JvmIrCodegenFactory.JvmIrBackendInput
 
+        var currentSymbolTable: SymbolTable? = null
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val dependentComponents = mutableListOf<Fir2IrComponents>()
             if (isMppSupported) {
@@ -75,7 +77,10 @@ class Fir2IrResultsConverter(
                 }
             }
 
-            val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(fir2IrExtensions, dependentComponents)
+            val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(
+                fir2IrExtensions, dependentComponents, currentSymbolTable
+            )
+            currentSymbolTable = components.symbolTable
             componentsMap[firOutputPart.module.name] = components
 
             val irPart = JvmIrCodegenFactory.JvmIrBackendInput(

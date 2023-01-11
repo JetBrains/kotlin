@@ -597,7 +597,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             IrGenerationExtension.getInstances(environmentForJS.project),
             generateSignatures = false,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
-            dependentComponents = emptyList()
+            dependentComponents = emptyList(),
+            currentSymbolTable = null
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }

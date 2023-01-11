@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 
@@ -38,7 +39,11 @@ abstract class AbstractFirAnalyzerFacade {
 
     abstract fun runResolution(): List<FirFile>
 
-    abstract fun convertToIr(fir2IrExtensions: Fir2IrExtensions, dependentComponents: List<Fir2IrComponents>): Fir2IrResult
+    abstract fun convertToIr(
+        fir2IrExtensions: Fir2IrExtensions,
+        dependentComponents: List<Fir2IrComponents>,
+        symbolTable: SymbolTable?
+    ): Fir2IrResult
 }
 
 class FirAnalyzerFacade(
@@ -87,7 +92,6 @@ class FirAnalyzerFacade(
         return firFiles!!
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
         if (_scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
@@ -104,7 +108,11 @@ class FirAnalyzerFacade(
         return collectedDiagnostics!!
     }
 
-    override fun convertToIr(fir2IrExtensions: Fir2IrExtensions, dependentComponents: List<Fir2IrComponents>): Fir2IrResult {
+    override fun convertToIr(
+        fir2IrExtensions: Fir2IrExtensions,
+        dependentComponents: List<Fir2IrComponents>,
+        symbolTable: SymbolTable?
+    ): Fir2IrResult {
         if (_scopeSession == null) runResolution()
         val mangler = JvmDescriptorMangler(null)
         val signaturer = JvmIdSignatureDescriptor(mangler)
@@ -119,7 +127,8 @@ class FirAnalyzerFacade(
             irGeneratorExtensions,
             generateSignatures,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            dependentComponents = dependentComponents
+            dependentComponents = dependentComponents,
+            currentSymbolTable = symbolTable
         )
     }
 }

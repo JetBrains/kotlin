@@ -79,7 +79,8 @@ internal fun PhaseContext.fir2Ir(
             IrGenerationExtension.getInstances(config.project),
             generateSignatures = false,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
-            dependentComponents = emptyList()
+            dependentComponents = emptyList(),
+            currentSymbolTable = null
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
