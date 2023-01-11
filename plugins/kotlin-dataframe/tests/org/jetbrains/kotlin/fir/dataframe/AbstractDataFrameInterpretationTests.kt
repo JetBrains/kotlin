@@ -85,7 +85,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
         val state: MutableMap<ClassId, SchemaContext>,
         val tokenState: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String,
-        val nextName: () -> ClassId,
+        val nextName: (String?) -> ClassId,
         val nextScope: () -> ClassId
     ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {

@@ -49,8 +49,12 @@ class GeneratedNames {
     val tokenState = mutableMapOf<ClassId, SchemaContext>()
     val callableState = mutableMapOf<Name, FirSimpleFunction>()
 
-    fun nextName(): ClassId {
-        val newId = tokenIds.removeLast()
+    fun nextName(s: String?): ClassId {
+        val newId = if (s == null) {
+            tokenIds.removeLast()
+        } else {
+            ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(s))
+        }
         tokens.add(newId)
         return newId
     }
