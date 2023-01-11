@@ -23,19 +23,26 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+//val size = 5000
+val size = 500
+
 class GeneratedNames {
-    val scopes = List(500) {
+    val scopes = List(size) {
         val name = Name.identifier("Scope$it")
         ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
     }.toSet()
-    val callables = List(500) {
+    val callables = List(size) {
         CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
     }
-    val tokens = List(500) {
-        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
-    }.toSet()
+//    val tokens = List(size) {
+//        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
+//    }.toMutableSet()
+
+    val tokens = mutableSetOf<ClassId>()
     val scopeIds = ArrayDeque(scopes)
-    val tokenIds = ArrayDeque(tokens)
+    val tokenIds = ArrayDeque(List(size) {
+        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
+    })
     val callableNames = ArrayDeque(callables)
 
     val scopeState = mutableMapOf<ClassId, SchemaContext>()
@@ -66,10 +73,17 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
 class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         with(GeneratedNames()) {
+            val f = {
+                val newId = tokenIds.removeLast()
+                tokens.add(newId)
+                newId
+            }
             +::FirDataFrameExtensionsGenerator
-            +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, tokenIds, path) }
+            +{ it: FirSession ->
+                FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, path, f)
+            }
             +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
-            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, tokenIds, callableState) }
+            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, callableState, f) }
             +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
         }
     }

@@ -65,7 +65,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     with(GeneratedNames()) {
                         +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
-                        +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, tokenIds, tokenState, getTestFilePath) }
+                        +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, tokenIds, tokenState, getTestFilePath, { tokens.add(it) }) }
                         +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
                     }
                 }
@@ -79,7 +79,8 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
         val state: MutableMap<ClassId, SchemaContext>,
         val tokenIds: ArrayDeque<ClassId>,
         val tokenState: MutableMap<ClassId, SchemaContext>,
-        val getTestFilePath: () -> String
+        val getTestFilePath: () -> String,
+        val append: (ClassId) -> Unit
     ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
@@ -97,7 +98,11 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
             }
             val file = getTestFilePath()
             val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
-            return generateAccessorsScopesForRefinedCall(functionCall, state, queue, tokenIds, tokenState, associatedScopes)
+            return generateAccessorsScopesForRefinedCall(functionCall, state, queue, tokenState, associatedScopes) {
+                val newId = tokenIds.removeLast()
+                append(newId)
+                newId
+            }
         }
 
 //        fun expectedResult(id: String): Any? {

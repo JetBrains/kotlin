@@ -37,8 +37,8 @@ class FirDataFrameReceiverInjector(
     private val scopeState: MutableMap<ClassId, SchemaContext>,
     private val scopeIds: ArrayDeque<ClassId>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
-    val tokenIds: ArrayDeque<ClassId>,
-    val path: String?
+    val path: String?,
+    val nextName: () -> ClassId,
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override val resolutionPath: String?
@@ -56,7 +56,7 @@ class FirDataFrameReceiverInjector(
                     addAll(it)
                 }
             }
-            addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenIds, tokenState, associatedScopes))
+            addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenState, associatedScopes, nextName = nextName))
         }
         return types
     }
@@ -68,10 +68,10 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     functionCall: FirFunctionCall,
     scopeState: MutableMap<ClassId, SchemaContext>,
     scopeIds: ArrayDeque<ClassId>,
-    tokenIds: ArrayDeque<ClassId>,
     tokenState: MutableMap<ClassId, SchemaContext>,
     associatedScopes: MutableMap<ClassId, List<ConeKotlinType>>,
-    reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT
+    reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT,
+    nextName: () -> ClassId
 ): List<ConeKotlinType> {
     val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
 
@@ -81,7 +81,7 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
         val scopeId = scopeIds.removeLast()
         var tokenId = rootMarker?.type?.classId
         if (tokenId == null) {
-            tokenId = tokenIds.removeLast()
+            tokenId = nextName()
         }
         val marker = rootMarker ?: ConeClassLikeLookupTagImpl(tokenId)
             .constructClassType(emptyArray(), isNullable = false)

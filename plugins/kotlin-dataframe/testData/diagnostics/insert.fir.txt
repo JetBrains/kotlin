@@ -15,222 +15,1010 @@ FILE: insert.kt
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    local final class 0 {
+    internal final class Scope0 {
     }
-    local final class 1 {
+    internal final class Scope1 {
     }
-    local final class 2 {
+    internal final class Scope2 {
     }
-    local final class 3 {
+    internal final class Scope3 {
     }
-    local final class 4 {
+    internal final class Scope4 {
     }
-    local final class 5 {
+    internal final class Scope5 {
     }
-    local final class 6 {
+    internal final class Scope6 {
     }
-    local final class 7 {
+    internal final class Scope7 {
     }
-    local final class 8 {
+    internal final class Scope8 {
     }
-    local final class 9 {
+    internal final class Scope9 {
     }
-    local final class 10 {
+    internal final class Scope10 {
     }
-    local final class 11 {
+    internal final class Scope11 {
     }
-    local final class 12 {
+    internal final class Scope12 {
     }
-    local final class 13 {
+    internal final class Scope13 {
     }
-    local final class 14 {
+    internal final class Scope14 {
     }
-    local final class 15 {
+    internal final class Scope15 {
     }
-    local final class 16 {
+    internal final class Scope16 {
     }
-    local final class 17 {
+    internal final class Scope17 {
     }
-    local final class 18 {
+    internal final class Scope18 {
     }
-    local final class 19 {
+    internal final class Scope19 {
     }
-    local final class 20 {
+    internal final class Scope20 {
     }
-    local final class 21 {
+    internal final class Scope21 {
     }
-    local final class 22 {
+    internal final class Scope22 {
     }
-    local final class 23 {
+    internal final class Scope23 {
     }
-    local final class 24 {
+    internal final class Scope24 {
     }
-    local final class 25 {
+    internal final class Scope25 {
     }
-    local final class 26 {
+    internal final class Scope26 {
     }
-    local final class 27 {
+    internal final class Scope27 {
     }
-    local final class 28 {
+    internal final class Scope28 {
     }
-    local final class 29 {
+    internal final class Scope29 {
     }
-    local final class 30 {
+    internal final class Scope30 {
     }
-    local final class 31 {
+    internal final class Scope31 {
     }
-    local final class 32 {
+    internal final class Scope32 {
     }
-    local final class 33 {
+    internal final class Scope33 {
     }
-    local final class 34 {
+    internal final class Scope34 {
     }
-    local final class 35 {
+    internal final class Scope35 {
     }
-    local final class 36 {
+    internal final class Scope36 {
     }
-    local final class 37 {
+    internal final class Scope37 {
     }
-    local final class 38 {
+    internal final class Scope38 {
     }
-    local final class 39 {
+    internal final class Scope39 {
     }
-    local final class 40 {
+    internal final class Scope40 {
     }
-    local final class 41 {
+    internal final class Scope41 {
     }
-    local final class 42 {
+    internal final class Scope42 {
     }
-    local final class 43 {
+    internal final class Scope43 {
     }
-    local final class 44 {
+    internal final class Scope44 {
     }
-    local final class 45 {
+    internal final class Scope45 {
     }
-    local final class 46 {
+    internal final class Scope46 {
     }
-    local final class 47 {
+    internal final class Scope47 {
     }
-    local final class 48 {
+    internal final class Scope48 {
     }
-    local final class 49 {
+    internal final class Scope49 {
     }
-    local final class 50 {
+    internal final class Scope50 {
     }
-    local final class 51 {
+    internal final class Scope51 {
     }
-    local final class 52 {
+    internal final class Scope52 {
     }
-    local final class 53 {
+    internal final class Scope53 {
     }
-    local final class 54 {
+    internal final class Scope54 {
     }
-    local final class 55 {
+    internal final class Scope55 {
     }
-    local final class 56 {
+    internal final class Scope56 {
     }
-    local final class 57 {
+    internal final class Scope57 {
     }
-    local final class 58 {
+    internal final class Scope58 {
     }
-    local final class 59 {
+    internal final class Scope59 {
     }
-    local final class 60 {
+    internal final class Scope60 {
     }
-    local final class 61 {
+    internal final class Scope61 {
     }
-    local final class 62 {
+    internal final class Scope62 {
     }
-    local final class 63 {
+    internal final class Scope63 {
     }
-    local final class 64 {
+    internal final class Scope64 {
     }
-    local final class 65 {
+    internal final class Scope65 {
     }
-    local final class 66 {
+    internal final class Scope66 {
     }
-    local final class 67 {
+    internal final class Scope67 {
     }
-    local final class 68 {
+    internal final class Scope68 {
     }
-    local final class 69 {
+    internal final class Scope69 {
     }
-    local final class 70 {
+    internal final class Scope70 {
     }
-    local final class 71 {
+    internal final class Scope71 {
     }
-    local final class 72 {
+    internal final class Scope72 {
     }
-    local final class 73 {
+    internal final class Scope73 {
     }
-    local final class 74 {
+    internal final class Scope74 {
     }
-    local final class 75 {
+    internal final class Scope75 {
     }
-    local final class 76 {
+    internal final class Scope76 {
     }
-    local final class 77 {
+    internal final class Scope77 {
     }
-    local final class 78 {
+    internal final class Scope78 {
     }
-    local final class 79 {
+    internal final class Scope79 {
     }
-    local final class 80 {
+    internal final class Scope80 {
     }
-    local final class 81 {
+    internal final class Scope81 {
     }
-    local final class 82 {
+    internal final class Scope82 {
     }
-    local final class 83 {
+    internal final class Scope83 {
     }
-    local final class 84 {
+    internal final class Scope84 {
     }
-    local final class 85 {
+    internal final class Scope85 {
     }
-    local final class 86 {
+    internal final class Scope86 {
     }
-    local final class 87 {
+    internal final class Scope87 {
     }
-    local final class 88 {
+    internal final class Scope88 {
     }
-    local final class 89 {
+    internal final class Scope89 {
     }
-    local final class 90 {
+    internal final class Scope90 {
     }
-    local final class 91 {
+    internal final class Scope91 {
     }
-    local final class 92 {
+    internal final class Scope92 {
     }
-    local final class 93 {
+    internal final class Scope93 {
     }
-    local final class 94 {
+    internal final class Scope94 {
     }
-    local final class 95 {
+    internal final class Scope95 {
     }
-    local final class 96 {
+    internal final class Scope96 {
     }
-    local final class 97 {
+    internal final class Scope97 {
     }
-    local final class 98 {
+    internal final class Scope98 {
     }
-    local final class 99 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.age: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.test: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.test: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
-
+    internal final class Scope99 {
+    }
+    internal final class Scope100 {
+    }
+    internal final class Scope101 {
+    }
+    internal final class Scope102 {
+    }
+    internal final class Scope103 {
+    }
+    internal final class Scope104 {
+    }
+    internal final class Scope105 {
+    }
+    internal final class Scope106 {
+    }
+    internal final class Scope107 {
+    }
+    internal final class Scope108 {
+    }
+    internal final class Scope109 {
+    }
+    internal final class Scope110 {
+    }
+    internal final class Scope111 {
+    }
+    internal final class Scope112 {
+    }
+    internal final class Scope113 {
+    }
+    internal final class Scope114 {
+    }
+    internal final class Scope115 {
+    }
+    internal final class Scope116 {
+    }
+    internal final class Scope117 {
+    }
+    internal final class Scope118 {
+    }
+    internal final class Scope119 {
+    }
+    internal final class Scope120 {
+    }
+    internal final class Scope121 {
+    }
+    internal final class Scope122 {
+    }
+    internal final class Scope123 {
+    }
+    internal final class Scope124 {
+    }
+    internal final class Scope125 {
+    }
+    internal final class Scope126 {
+    }
+    internal final class Scope127 {
+    }
+    internal final class Scope128 {
+    }
+    internal final class Scope129 {
+    }
+    internal final class Scope130 {
+    }
+    internal final class Scope131 {
+    }
+    internal final class Scope132 {
+    }
+    internal final class Scope133 {
+    }
+    internal final class Scope134 {
+    }
+    internal final class Scope135 {
+    }
+    internal final class Scope136 {
+    }
+    internal final class Scope137 {
+    }
+    internal final class Scope138 {
+    }
+    internal final class Scope139 {
+    }
+    internal final class Scope140 {
+    }
+    internal final class Scope141 {
+    }
+    internal final class Scope142 {
+    }
+    internal final class Scope143 {
+    }
+    internal final class Scope144 {
+    }
+    internal final class Scope145 {
+    }
+    internal final class Scope146 {
+    }
+    internal final class Scope147 {
+    }
+    internal final class Scope148 {
+    }
+    internal final class Scope149 {
+    }
+    internal final class Scope150 {
+    }
+    internal final class Scope151 {
+    }
+    internal final class Scope152 {
+    }
+    internal final class Scope153 {
+    }
+    internal final class Scope154 {
+    }
+    internal final class Scope155 {
+    }
+    internal final class Scope156 {
+    }
+    internal final class Scope157 {
+    }
+    internal final class Scope158 {
+    }
+    internal final class Scope159 {
+    }
+    internal final class Scope160 {
+    }
+    internal final class Scope161 {
+    }
+    internal final class Scope162 {
+    }
+    internal final class Scope163 {
+    }
+    internal final class Scope164 {
+    }
+    internal final class Scope165 {
+    }
+    internal final class Scope166 {
+    }
+    internal final class Scope167 {
+    }
+    internal final class Scope168 {
+    }
+    internal final class Scope169 {
+    }
+    internal final class Scope170 {
+    }
+    internal final class Scope171 {
+    }
+    internal final class Scope172 {
+    }
+    internal final class Scope173 {
+    }
+    internal final class Scope174 {
+    }
+    internal final class Scope175 {
+    }
+    internal final class Scope176 {
+    }
+    internal final class Scope177 {
+    }
+    internal final class Scope178 {
+    }
+    internal final class Scope179 {
+    }
+    internal final class Scope180 {
+    }
+    internal final class Scope181 {
+    }
+    internal final class Scope182 {
+    }
+    internal final class Scope183 {
+    }
+    internal final class Scope184 {
+    }
+    internal final class Scope185 {
+    }
+    internal final class Scope186 {
+    }
+    internal final class Scope187 {
+    }
+    internal final class Scope188 {
+    }
+    internal final class Scope189 {
+    }
+    internal final class Scope190 {
+    }
+    internal final class Scope191 {
+    }
+    internal final class Scope192 {
+    }
+    internal final class Scope193 {
+    }
+    internal final class Scope194 {
+    }
+    internal final class Scope195 {
+    }
+    internal final class Scope196 {
+    }
+    internal final class Scope197 {
+    }
+    internal final class Scope198 {
+    }
+    internal final class Scope199 {
+    }
+    internal final class Scope200 {
+    }
+    internal final class Scope201 {
+    }
+    internal final class Scope202 {
+    }
+    internal final class Scope203 {
+    }
+    internal final class Scope204 {
+    }
+    internal final class Scope205 {
+    }
+    internal final class Scope206 {
+    }
+    internal final class Scope207 {
+    }
+    internal final class Scope208 {
+    }
+    internal final class Scope209 {
+    }
+    internal final class Scope210 {
+    }
+    internal final class Scope211 {
+    }
+    internal final class Scope212 {
+    }
+    internal final class Scope213 {
+    }
+    internal final class Scope214 {
+    }
+    internal final class Scope215 {
+    }
+    internal final class Scope216 {
+    }
+    internal final class Scope217 {
+    }
+    internal final class Scope218 {
+    }
+    internal final class Scope219 {
+    }
+    internal final class Scope220 {
+    }
+    internal final class Scope221 {
+    }
+    internal final class Scope222 {
+    }
+    internal final class Scope223 {
+    }
+    internal final class Scope224 {
+    }
+    internal final class Scope225 {
+    }
+    internal final class Scope226 {
+    }
+    internal final class Scope227 {
+    }
+    internal final class Scope228 {
+    }
+    internal final class Scope229 {
+    }
+    internal final class Scope230 {
+    }
+    internal final class Scope231 {
+    }
+    internal final class Scope232 {
+    }
+    internal final class Scope233 {
+    }
+    internal final class Scope234 {
+    }
+    internal final class Scope235 {
+    }
+    internal final class Scope236 {
+    }
+    internal final class Scope237 {
+    }
+    internal final class Scope238 {
+    }
+    internal final class Scope239 {
+    }
+    internal final class Scope240 {
+    }
+    internal final class Scope241 {
+    }
+    internal final class Scope242 {
+    }
+    internal final class Scope243 {
+    }
+    internal final class Scope244 {
+    }
+    internal final class Scope245 {
+    }
+    internal final class Scope246 {
+    }
+    internal final class Scope247 {
+    }
+    internal final class Scope248 {
+    }
+    internal final class Scope249 {
+    }
+    internal final class Scope250 {
+    }
+    internal final class Scope251 {
+    }
+    internal final class Scope252 {
+    }
+    internal final class Scope253 {
+    }
+    internal final class Scope254 {
+    }
+    internal final class Scope255 {
+    }
+    internal final class Scope256 {
+    }
+    internal final class Scope257 {
+    }
+    internal final class Scope258 {
+    }
+    internal final class Scope259 {
+    }
+    internal final class Scope260 {
+    }
+    internal final class Scope261 {
+    }
+    internal final class Scope262 {
+    }
+    internal final class Scope263 {
+    }
+    internal final class Scope264 {
+    }
+    internal final class Scope265 {
+    }
+    internal final class Scope266 {
+    }
+    internal final class Scope267 {
+    }
+    internal final class Scope268 {
+    }
+    internal final class Scope269 {
+    }
+    internal final class Scope270 {
+    }
+    internal final class Scope271 {
+    }
+    internal final class Scope272 {
+    }
+    internal final class Scope273 {
+    }
+    internal final class Scope274 {
+    }
+    internal final class Scope275 {
+    }
+    internal final class Scope276 {
+    }
+    internal final class Scope277 {
+    }
+    internal final class Scope278 {
+    }
+    internal final class Scope279 {
+    }
+    internal final class Scope280 {
+    }
+    internal final class Scope281 {
+    }
+    internal final class Scope282 {
+    }
+    internal final class Scope283 {
+    }
+    internal final class Scope284 {
+    }
+    internal final class Scope285 {
+    }
+    internal final class Scope286 {
+    }
+    internal final class Scope287 {
+    }
+    internal final class Scope288 {
+    }
+    internal final class Scope289 {
+    }
+    internal final class Scope290 {
+    }
+    internal final class Scope291 {
+    }
+    internal final class Scope292 {
+    }
+    internal final class Scope293 {
+    }
+    internal final class Scope294 {
+    }
+    internal final class Scope295 {
+    }
+    internal final class Scope296 {
+    }
+    internal final class Scope297 {
+    }
+    internal final class Scope298 {
+    }
+    internal final class Scope299 {
+    }
+    internal final class Scope300 {
+    }
+    internal final class Scope301 {
+    }
+    internal final class Scope302 {
+    }
+    internal final class Scope303 {
+    }
+    internal final class Scope304 {
+    }
+    internal final class Scope305 {
+    }
+    internal final class Scope306 {
+    }
+    internal final class Scope307 {
+    }
+    internal final class Scope308 {
+    }
+    internal final class Scope309 {
+    }
+    internal final class Scope310 {
+    }
+    internal final class Scope311 {
+    }
+    internal final class Scope312 {
+    }
+    internal final class Scope313 {
+    }
+    internal final class Scope314 {
+    }
+    internal final class Scope315 {
+    }
+    internal final class Scope316 {
+    }
+    internal final class Scope317 {
+    }
+    internal final class Scope318 {
+    }
+    internal final class Scope319 {
+    }
+    internal final class Scope320 {
+    }
+    internal final class Scope321 {
+    }
+    internal final class Scope322 {
+    }
+    internal final class Scope323 {
+    }
+    internal final class Scope324 {
+    }
+    internal final class Scope325 {
+    }
+    internal final class Scope326 {
+    }
+    internal final class Scope327 {
+    }
+    internal final class Scope328 {
+    }
+    internal final class Scope329 {
+    }
+    internal final class Scope330 {
+    }
+    internal final class Scope331 {
+    }
+    internal final class Scope332 {
+    }
+    internal final class Scope333 {
+    }
+    internal final class Scope334 {
+    }
+    internal final class Scope335 {
+    }
+    internal final class Scope336 {
+    }
+    internal final class Scope337 {
+    }
+    internal final class Scope338 {
+    }
+    internal final class Scope339 {
+    }
+    internal final class Scope340 {
+    }
+    internal final class Scope341 {
+    }
+    internal final class Scope342 {
+    }
+    internal final class Scope343 {
+    }
+    internal final class Scope344 {
+    }
+    internal final class Scope345 {
+    }
+    internal final class Scope346 {
+    }
+    internal final class Scope347 {
+    }
+    internal final class Scope348 {
+    }
+    internal final class Scope349 {
+    }
+    internal final class Scope350 {
+    }
+    internal final class Scope351 {
+    }
+    internal final class Scope352 {
+    }
+    internal final class Scope353 {
+    }
+    internal final class Scope354 {
+    }
+    internal final class Scope355 {
+    }
+    internal final class Scope356 {
+    }
+    internal final class Scope357 {
+    }
+    internal final class Scope358 {
+    }
+    internal final class Scope359 {
+    }
+    internal final class Scope360 {
+    }
+    internal final class Scope361 {
+    }
+    internal final class Scope362 {
+    }
+    internal final class Scope363 {
+    }
+    internal final class Scope364 {
+    }
+    internal final class Scope365 {
+    }
+    internal final class Scope366 {
+    }
+    internal final class Scope367 {
+    }
+    internal final class Scope368 {
+    }
+    internal final class Scope369 {
+    }
+    internal final class Scope370 {
+    }
+    internal final class Scope371 {
+    }
+    internal final class Scope372 {
+    }
+    internal final class Scope373 {
+    }
+    internal final class Scope374 {
+    }
+    internal final class Scope375 {
+    }
+    internal final class Scope376 {
+    }
+    internal final class Scope377 {
+    }
+    internal final class Scope378 {
+    }
+    internal final class Scope379 {
+    }
+    internal final class Scope380 {
+    }
+    internal final class Scope381 {
+    }
+    internal final class Scope382 {
+    }
+    internal final class Scope383 {
+    }
+    internal final class Scope384 {
+    }
+    internal final class Scope385 {
+    }
+    internal final class Scope386 {
+    }
+    internal final class Scope387 {
+    }
+    internal final class Scope388 {
+    }
+    internal final class Scope389 {
+    }
+    internal final class Scope390 {
+    }
+    internal final class Scope391 {
+    }
+    internal final class Scope392 {
+    }
+    internal final class Scope393 {
+    }
+    internal final class Scope394 {
+    }
+    internal final class Scope395 {
+    }
+    internal final class Scope396 {
+    }
+    internal final class Scope397 {
+    }
+    internal final class Scope398 {
+    }
+    internal final class Scope399 {
+    }
+    internal final class Scope400 {
+    }
+    internal final class Scope401 {
+    }
+    internal final class Scope402 {
+    }
+    internal final class Scope403 {
+    }
+    internal final class Scope404 {
+    }
+    internal final class Scope405 {
+    }
+    internal final class Scope406 {
+    }
+    internal final class Scope407 {
+    }
+    internal final class Scope408 {
+    }
+    internal final class Scope409 {
+    }
+    internal final class Scope410 {
+    }
+    internal final class Scope411 {
+    }
+    internal final class Scope412 {
+    }
+    internal final class Scope413 {
+    }
+    internal final class Scope414 {
+    }
+    internal final class Scope415 {
+    }
+    internal final class Scope416 {
+    }
+    internal final class Scope417 {
+    }
+    internal final class Scope418 {
+    }
+    internal final class Scope419 {
+    }
+    internal final class Scope420 {
+    }
+    internal final class Scope421 {
+    }
+    internal final class Scope422 {
+    }
+    internal final class Scope423 {
+    }
+    internal final class Scope424 {
+    }
+    internal final class Scope425 {
+    }
+    internal final class Scope426 {
+    }
+    internal final class Scope427 {
+    }
+    internal final class Scope428 {
+    }
+    internal final class Scope429 {
+    }
+    internal final class Scope430 {
+    }
+    internal final class Scope431 {
+    }
+    internal final class Scope432 {
+    }
+    internal final class Scope433 {
+    }
+    internal final class Scope434 {
+    }
+    internal final class Scope435 {
+    }
+    internal final class Scope436 {
+    }
+    internal final class Scope437 {
+    }
+    internal final class Scope438 {
+    }
+    internal final class Scope439 {
+    }
+    internal final class Scope440 {
+    }
+    internal final class Scope441 {
+    }
+    internal final class Scope442 {
+    }
+    internal final class Scope443 {
+    }
+    internal final class Scope444 {
+    }
+    internal final class Scope445 {
+    }
+    internal final class Scope446 {
+    }
+    internal final class Scope447 {
+    }
+    internal final class Scope448 {
+    }
+    internal final class Scope449 {
+    }
+    internal final class Scope450 {
+    }
+    internal final class Scope451 {
+    }
+    internal final class Scope452 {
+    }
+    internal final class Scope453 {
+    }
+    internal final class Scope454 {
+    }
+    internal final class Scope455 {
+    }
+    internal final class Scope456 {
+    }
+    internal final class Scope457 {
+    }
+    internal final class Scope458 {
+    }
+    internal final class Scope459 {
+    }
+    internal final class Scope460 {
+    }
+    internal final class Scope461 {
+    }
+    internal final class Scope462 {
+    }
+    internal final class Scope463 {
+    }
+    internal final class Scope464 {
+    }
+    internal final class Scope465 {
+    }
+    internal final class Scope466 {
+    }
+    internal final class Scope467 {
+    }
+    internal final class Scope468 {
+    }
+    internal final class Scope469 {
+    }
+    internal final class Scope470 {
+    }
+    internal final class Scope471 {
+    }
+    internal final class Scope472 {
+    }
+    internal final class Scope473 {
+    }
+    internal final class Scope474 {
+    }
+    internal final class Scope475 {
+    }
+    internal final class Scope476 {
+    }
+    internal final class Scope477 {
+    }
+    internal final class Scope478 {
+    }
+    internal final class Scope479 {
+    }
+    internal final class Scope480 {
+    }
+    internal final class Scope481 {
+    }
+    internal final class Scope482 {
+    }
+    internal final class Scope483 {
+    }
+    internal final class Scope484 {
+    }
+    internal final class Scope485 {
+    }
+    internal final class Scope486 {
+    }
+    internal final class Scope487 {
+    }
+    internal final class Scope488 {
+    }
+    internal final class Scope489 {
+    }
+    internal final class Scope490 {
+    }
+    internal final class Scope491 {
+    }
+    internal final class Scope492 {
+    }
+    internal final class Scope493 {
+    }
+    internal final class Scope494 {
+    }
+    internal final class Scope495 {
+    }
+    internal final class Scope496 {
+    }
+    internal final class Scope497 {
+    }
+    internal final class Scope498 {
+    }
+    internal final class Scope499 {
     }
 FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.age: R|kotlin/Int|
         public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe.api
