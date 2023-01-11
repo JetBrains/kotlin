@@ -7,25 +7,34 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver {
-    private val platformDependencyResolver = IdeBinaryDependencyResolver(
-        resolvedArtifactHandler = handler@{ artifact, context ->
-            val identifier = artifact.id.componentIdentifier as? ProjectComponentIdentifier
-                ?: return@handler null
-
-            val projectArtifact = context.allArtifacts.filter { otherArtifact ->
-                val otherIdentifier = otherArtifact.id.componentIdentifier
-                otherIdentifier is ProjectComponentIdentifier && otherIdentifier.projectName == identifier.projectName
-            }
-
-            null
-        }
-    )
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        return platformDependencyResolver.resolve(sourceSet)
+        if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
+
+        val compilation = sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common }
+            ?.safeAs<KotlinNativeCompilation>() ?: return emptySet()
+
+        val project = sourceSet.project
+        val configuration = project.locateOrCreateCInteropDependencyConfiguration(compilation)
+
+        val cinteropFiles = project.files(
+            {
+                configuration.incoming.artifactView {
+                    it.componentFilter { identifier -> identifier is ProjectComponentIdentifier }
+                }.artifacts.map { it.file }
+            }
+        )
+
+        return resolveCinteropDependencies(project, cinteropFiles)
     }
 }

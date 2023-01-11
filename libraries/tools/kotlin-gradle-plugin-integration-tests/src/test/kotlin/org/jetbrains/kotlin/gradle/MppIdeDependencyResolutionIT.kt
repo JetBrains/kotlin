@@ -123,11 +123,14 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 dependencies["commonTest"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
 
-                // TODO (kirpichenkov): project to project dependency, platform source set cinterops
-                dependencies["linuxX64Main"].cinteropDependencies().assertMatches()
-                dependencies["linuxX64Test"].cinteropDependencies().assertMatches()
-                dependencies["linuxArm64Main"].cinteropDependencies().assertMatches()
-                dependencies["linuxArm64Test"].cinteropDependencies().assertMatches()
+                dependencies["linuxX64Main"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_x64")))
+                dependencies["linuxX64Test"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_x64")))
+                dependencies["linuxArm64Main"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
+                dependencies["linuxArm64Test"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
             }
         }
     }

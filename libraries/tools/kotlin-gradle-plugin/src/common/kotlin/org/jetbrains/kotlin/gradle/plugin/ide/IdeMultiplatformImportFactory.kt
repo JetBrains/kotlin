@@ -107,6 +107,13 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
 
+        registerDependencyResolver(
+            resolver = IdeProjectToProjectCInteropDependencyResolver,
+            constraint = { SourceSetConstraint.isNative(it) && SourceSetConstraint.isLeaf(it) },
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+        )
+
         /*
         Register resolution of dependencies for jvm+android dependencies:
         This resolver will resolve dependencies visible to the source set from a 'jvm' perspective.
