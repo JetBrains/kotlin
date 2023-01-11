@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -84,7 +85,7 @@ class JvmPlatformOverloadsConflictResolver(
     private fun ConeClassLikeLookupTag.strictlyDerivedFrom(other: ConeClassLikeLookupTag): Boolean {
         if (this == other) return false
         val session = inferenceComponents.session
-        val thisClass = this.toFirRegularClassSymbol(session)?.fir ?: return false
+        val thisClass = this.toSymbol(session)?.fir as? FirClass ?: return false
 
         return thisClass.isSubclassOf(other, session, isStrict = true)
     }

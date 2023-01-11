@@ -3166,6 +3166,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/fieldPropertyShadow.kt");
         }
 
+        @TestMetadata("javaFieldAndKotlinPropertyReferenceFromInner.kt")
+        public void testJavaFieldAndKotlinPropertyReferenceFromInner() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/javaFieldAndKotlinPropertyReferenceFromInner.kt");
+        }
+
         @TestMetadata("propertyAndTwoFields.kt")
         public void testPropertyAndTwoFields() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/propertyAndTwoFields.kt");

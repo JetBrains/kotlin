@@ -3590,6 +3590,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("javaFieldAndKotlinPropertyReferenceFromInner.kt")
+            public void testJavaFieldAndKotlinPropertyReferenceFromInner() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/javaFieldAndKotlinPropertyReferenceFromInner.kt");
+            }
+
+            @Test
             @TestMetadata("propertyAndTwoFields.kt")
             public void testPropertyAndTwoFields() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/propertyAndTwoFields.kt");
