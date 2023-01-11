@@ -72,9 +72,14 @@ private class DispatchedContinuation<T>(
 fun box(): String {
     if (builder(false) { "OK" } != "OK") return "fail 4"
     if (builder(true) { suspendHere() } != "OK") return "fail 5"
+    if (builder(true) { suspend{}(); suspendHere() } != "OK") return "fail 51"
 
     if (builder(false) { throw RuntimeException("OK") } != "Exception: OK") return "fail 6"
     if (builder(true) { suspendWithException() } != "Exception: OK") return "fail 7"
+    if (builder(true) { suspend{}(); suspendWithException() } != "Exception: OK") return "fail 71"
+
+    if (builder(true, ::suspendHere) != "OK") return "fail 8"
+    if (builder(true, ::suspendWithException) != "Exception: OK") return "fail 9"
 
     return "OK"
 }

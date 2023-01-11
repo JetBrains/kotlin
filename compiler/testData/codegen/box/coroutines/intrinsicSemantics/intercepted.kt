@@ -29,23 +29,18 @@ fun builder(expectedCount: Int, c: suspend () -> String): String {
     var fromSuspension: String? = null
     var counter = 0
 
-    val result = try {
-        // TODO: UNDO after bootstrap
-        c.createCoroutineUnintercepted(object: ContinuationAdapter<String>() {
-            override val context: CoroutineContext
-                get() =  ContinuationDispatcher { counter++ }
+    c.startCoroutineUninterceptedOrReturn(object : ContinuationAdapter<String>() {
+        override val context: CoroutineContext
+            get() = ContinuationDispatcher { counter++ }
 
-            override fun resumeWithException(exception: Throwable) {
-                fromSuspension = "Exception: " + exception.message!!
-            }
+        override fun resumeWithException(exception: Throwable) {
+            fromSuspension = "Exception: " + exception.message!!
+        }
 
-            override fun resume(value: String) {
-                fromSuspension = value
-            }
-        }).resume(Unit)
-    } catch (e: Exception) {
-        "Exception: ${e.message}"
-    }
+        override fun resume(value: String) {
+            fromSuspension = value
+        }
+    })
 
     if (counter != expectedCount) throw RuntimeException("fail 0 $counter != $expectedCount")
     return fromSuspension!!
@@ -78,6 +73,30 @@ fun box(): String {
 
     if (builder(0) { suspendWithExceptionUnintercepted() } != "Exception: OK") return "fail 4"
     if (builder(1) { suspendWithExceptionIntercepted() } != "Exception: OK") return "fail 5"
+
+    if (builder(0, ::suspendHereUnintercepted) != "OK") return "fail 6"
+    if (builder(1, ::suspendHereIntercepted) != "OK") return "fail 7"
+
+    if (builder(0, ::suspendWithExceptionUnintercepted) != "Exception: OK") return "fail 8"
+    if (builder(1, ::suspendWithExceptionIntercepted) != "Exception: OK") return "fail 9"
+
+    if (builder(0) {
+            suspend {}()
+            suspendHereUnintercepted()
+    } != "OK") return "fail 21"
+    if (builder(1) {
+            suspend {}()
+            suspendHereIntercepted()
+    } != "OK") return "fail 31"
+
+    if (builder(0) {
+            suspend {}()
+            suspendWithExceptionUnintercepted()
+    } != "Exception: OK") return "fail 41"
+    if (builder(1) {
+            suspend {}()
+            suspendWithExceptionIntercepted()
+    } != "Exception: OK") return "fail 51"
 
     return "OK"
 }

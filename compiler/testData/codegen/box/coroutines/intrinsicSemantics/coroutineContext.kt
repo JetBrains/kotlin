@@ -55,6 +55,17 @@ fun box(): String {
     if (res != "OK") {
         return "fail 3 $res"
     }
+    res = builder(::suspendHere)
+    if (res != "OK") {
+        return "fail 4 $res"
+    }
+    res = builder {
+        suspend {}()
+        suspendHere()
+    }
+    if (res != "OK") {
+        return "fail 5 $res"
+    }
 
     return "OK"
 }

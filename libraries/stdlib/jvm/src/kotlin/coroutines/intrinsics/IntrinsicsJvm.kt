@@ -48,25 +48,14 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any? =
-    // For tail-call lambdas we create a wrapper continuation
-    if (this !is Continuation<*>) createCoroutineUnintercepted(receiver, completion).resumeWith(Result.success(Unit))
-    else (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
 
 @InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? =
-    // For tail-call lambdas we create a wrapper continuation,
-    // otherwise, they have no root continuation, and thus, we will be unable to [intercept] them.
-    if (this !is Continuation<*>) {
-        val intermediate: suspend R.() -> T = {
-            this@startCoroutineUninterceptedOrReturn.invoke(this, param) // Tail-call suspend lambda.
-        }
-        intermediate.createCoroutineUnintercepted(receiver, completion).resumeWith(Result.success(Unit))
-    } else (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+): Any? = (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
 
 // JVM declarations
 
@@ -151,7 +140,9 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  */
 @SinceKotlin("1.3")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-    (this as? ContinuationImpl)?.intercepted() ?: this
+    (this as? ContinuationImpl)?.intercepted()
+        ?: context[ContinuationInterceptor]?.interceptContinuation(this)
+        ?: this
 
 // INTERNAL DEFINITIONS
 

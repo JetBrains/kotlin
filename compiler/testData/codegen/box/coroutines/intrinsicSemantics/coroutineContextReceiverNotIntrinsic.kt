@@ -55,6 +55,27 @@ fun box(): String {
     if (res != "OK") {
         return "fail 3 $res"
     }
+    res = v.builder {
+        suspend {}()
+        controllerMultipleArgs(1, 1, 1)
+    }
+    if (res != "OK") {
+        return "fail 4 $res"
+    }
+    res = v.builder {
+        suspend {}()
+        if (coroutineContext == EmptyCoroutineContext) "$coroutineContext == $EmptyCoroutineContext" else "OK"
+    }
+    if (res != "OK") {
+        return "fail 5 $res"
+    }
+    res = v.builder {
+        suspend {}()
+        controllerSuspendHere()
+    }
+    if (res != "OK") {
+        return "fail 6 $res"
+    }
 
     return "OK"
 }
