@@ -30,7 +30,7 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

@@ -29,7 +29,7 @@ abstract class FirErrorImport : FirPureAbstractElement(), FirImport, FirDiagnost
     abstract override val diagnostic: ConeDiagnostic
     abstract val delegate: FirImport
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorImport(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitErrorImport(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

@@ -241,7 +241,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
             val assignedInside: Set<FirProperty>,
         )
 
-        private class MiniFlow(val parents: Set<MiniFlow>) {
+        class MiniFlow(val parents: Set<MiniFlow>) {
             val assignedLater: MutableSet<FirProperty> = mutableSetOf()
 
             fun fork(): MiniFlow = MiniFlow(setOf(this))
@@ -251,7 +251,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
             }
         }
 
-        private class MiniCfgBuilder : FirVisitor<Unit, MiniCfgBuilder.MiniCfgData>() {
+        class MiniCfgBuilder : FirVisitor<Unit, MiniCfgBuilder.MiniCfgData>() {
             override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: MiniCfgData) {
                 element.acceptChildren(this, data)
             }

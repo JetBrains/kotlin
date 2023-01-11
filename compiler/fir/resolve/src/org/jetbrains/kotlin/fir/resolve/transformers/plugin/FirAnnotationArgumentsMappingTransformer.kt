@@ -31,7 +31,7 @@ open class FirAnnotationArgumentsMappingTransformer(
         FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(this)
 }
 
-private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
+class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {

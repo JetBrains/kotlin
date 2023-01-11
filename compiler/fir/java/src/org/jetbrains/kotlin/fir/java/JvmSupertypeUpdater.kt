@@ -61,7 +61,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         }
     }
 
-    private class DelegatedConstructorCallTransformer(private val session: FirSession) : FirTransformer<ScopeSession>() {
+    class DelegatedConstructorCallTransformer(private val session: FirSession) : FirTransformer<ScopeSession>() {
         companion object {
             val recordType = StandardClassIds.Java.Record.constructClassLikeType(emptyArray(), isNullable = false)
         }

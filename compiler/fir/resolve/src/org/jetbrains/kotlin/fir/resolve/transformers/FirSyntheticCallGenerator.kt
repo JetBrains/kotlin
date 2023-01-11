@@ -382,7 +382,7 @@ class FirSyntheticCallGenerator(
     }
 }
 
-private object UpdateReference : FirTransformer<FirNamedReferenceWithCandidate>() {
+object UpdateReference : FirTransformer<FirNamedReferenceWithCandidate>() {
     override fun <E : FirElement> transformElement(element: E, data: FirNamedReferenceWithCandidate): E {
         return element
     }

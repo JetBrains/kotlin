@@ -92,13 +92,13 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         file.acceptChildren(FirRecorder, FirRecorderData(state, file, session.nameConflictsTracker))
     }
 
-    private class FirRecorderData(
+    class FirRecorderData(
         val state: State,
         val file: FirFile,
         val nameConflictsTracker: FirNameConflictsTrackerComponent?
     )
 
-    private object FirRecorder : FirDefaultVisitor<Unit, FirRecorderData>() {
+    object FirRecorder : FirDefaultVisitor<Unit, FirRecorderData>() {
         override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: FirRecorderData) {}
 
         override fun visitRegularClass(regularClass: FirRegularClass, data: FirRecorderData) {
@@ -166,7 +166,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
     private val state = State()
 
-    private class State {
+    class State {
         val fileMap = mutableMapOf<FqName, List<FirFile>>()
         val allSubPackages = mutableSetOf<FqName>()
         val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()

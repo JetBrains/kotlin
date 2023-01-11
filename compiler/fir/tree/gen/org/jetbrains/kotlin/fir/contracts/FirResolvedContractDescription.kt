@@ -21,7 +21,7 @@ abstract class FirResolvedContractDescription : FirContractDescription() {
     abstract val effects: List<FirEffectDeclaration>
     abstract val unresolvedEffects: List<FirStatement>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedContractDescription(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitResolvedContractDescription(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

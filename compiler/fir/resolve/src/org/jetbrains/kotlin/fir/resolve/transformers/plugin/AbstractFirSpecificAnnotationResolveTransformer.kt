@@ -43,9 +43,9 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
-    protected val session: FirSession,
-    protected val scopeSession: ScopeSession,
+abstract class AbstractFirSpecificAnnotationResolveTransformer(
+    val session: FirSession,
+    val scopeSession: ScopeSession,
     protected val computationSession: CompilerRequiredAnnotationsComputationSession
 ) : FirDefaultTransformer<Nothing?>() {
     companion object {
@@ -198,7 +198,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
-    protected lateinit var scopes: List<FirScope>
+    lateinit var scopes: List<FirScope>
 
     inline fun <T> withFileScopes(file: FirFile, f: () -> T): T {
         scopes = createImportingScopes(file, session, scopeSession, useCaching = false)

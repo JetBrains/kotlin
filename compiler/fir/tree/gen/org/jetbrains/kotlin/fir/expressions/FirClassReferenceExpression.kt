@@ -22,7 +22,7 @@ abstract class FirClassReferenceExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val classTypeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassReferenceExpression(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitClassReferenceExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

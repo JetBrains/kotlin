@@ -22,7 +22,7 @@ abstract class FirNamedReference : FirReference() {
     abstract val name: Name
     abstract val candidateSymbol: FirBasedSymbol<*>?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedReference(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitNamedReference(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

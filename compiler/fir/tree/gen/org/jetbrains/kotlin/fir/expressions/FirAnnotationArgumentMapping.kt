@@ -21,7 +21,7 @@ abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirEleme
     abstract override val source: KtSourceElement?
     abstract val mapping: Map<Name, FirExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationArgumentMapping(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitAnnotationArgumentMapping(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

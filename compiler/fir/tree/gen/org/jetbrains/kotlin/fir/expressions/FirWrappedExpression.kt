@@ -22,7 +22,7 @@ abstract class FirWrappedExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val expression: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedExpression(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitWrappedExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

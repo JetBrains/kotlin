@@ -54,7 +54,7 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract val bodyResolveState: FirPropertyBodyResolveState
     abstract override val typeParameters: List<FirTypeParameter>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitProperty(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitProperty(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

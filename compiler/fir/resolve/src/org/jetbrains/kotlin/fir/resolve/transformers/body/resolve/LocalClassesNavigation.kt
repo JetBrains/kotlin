@@ -43,7 +43,7 @@ fun FirClassLikeDeclaration.collectLocalClassesNavigationInfo(): LocalClassesNav
         LocalClassesNavigationInfo(parentForClass, resultingMap, allMembers)
     }
 
-private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
+class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     val resultingMap: MutableMap<FirCallableDeclaration, FirClassLikeDeclaration> = mutableMapOf()
     val parentForClass: MutableMap<FirClassLikeDeclaration, FirClassLikeDeclaration?> = mutableMapOf()
     val allMembers: MutableList<FirDeclaration> = mutableListOf()

@@ -68,7 +68,7 @@ object UnreachableCodeChecker : FirControlFlowChecker() {
         acceptChildren(CollectNodesVisitor(nodes))
     }
 
-    private class CollectNodesVisitor(private val nodes: MutableSet<FirElement>) : FirVisitorVoid() {
+    class CollectNodesVisitor(private val nodes: MutableSet<FirElement>) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             nodes.add(element)
             element.acceptChildren(this)

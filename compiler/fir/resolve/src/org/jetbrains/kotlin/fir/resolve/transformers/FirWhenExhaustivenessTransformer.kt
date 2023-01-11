@@ -168,7 +168,7 @@ private sealed class WhenExhaustivenessChecker {
         destination: MutableCollection<WhenMissingCase>
     )
 
-    protected abstract class AbstractConditionChecker<in D : Any> : FirVisitor<Unit, D>() {
+    abstract class AbstractConditionChecker<in D : Any> : FirVisitor<Unit, D>() {
         override fun <@Monomorphic TE : FirElement> visitElement(element: TE, data: D) {}
 
         override fun visitWhenExpression(whenExpression: FirWhenExpression, data: D) {
@@ -205,11 +205,11 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
         }
     }
 
-    private class Flags {
+    class Flags {
         var containsNull = false
     }
 
-    private object ConditionChecker : AbstractConditionChecker<Flags>() {
+    object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             val argument = equalityOperatorCall.arguments[1]
             if (argument.typeRef.isNullableNothing) {
@@ -230,7 +230,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         return subjectType.classId == StandardClassIds.Boolean
     }
 
-    private class Flags {
+    class Flags {
         var containsTrue = false
         var containsFalse = false
     }
@@ -251,7 +251,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         }
     }
 
-    private object ConditionChecker : AbstractConditionChecker<Flags>() {
+    object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
                 val argument = equalityOperatorCall.arguments[1]
@@ -286,7 +286,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         notCheckedEntries.mapTo(destination) { WhenMissingCase.EnumCheckIsMissing(it.symbol.callableId) }
     }
 
-    private object ConditionChecker : AbstractConditionChecker<MutableSet<FirEnumEntry>>() {
+    object ConditionChecker : AbstractConditionChecker<MutableSet<FirEnumEntry>>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: MutableSet<FirEnumEntry>) {
             if (!equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) return
             val argument = equalityOperatorCall.arguments[1]
@@ -320,13 +320,13 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
     }
 
-    private class Flags(
+    class Flags(
         val allSubclasses: Set<FirBasedSymbol<*>>,
         val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
         val session: FirSession
     )
 
-    private object ConditionChecker : AbstractConditionChecker<Flags>() {
+    object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             val isNegated = when (equalityOperatorCall.operation) {
                 FirOperation.EQ, FirOperation.IDENTITY -> false

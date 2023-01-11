@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 interface FirElement {
     val source: KtSourceElement?
 
-    fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
+    fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitElement(this, data)
 
     @Suppress("UNCHECKED_CAST")
     fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

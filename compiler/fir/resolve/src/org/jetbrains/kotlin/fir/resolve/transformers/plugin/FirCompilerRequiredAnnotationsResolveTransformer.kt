@@ -137,7 +137,7 @@ class CompilerRequiredAnnotationsComputationSession {
     }
 }
 
-private class FirPartialImportResolveTransformer(
+class FirPartialImportResolveTransformer(
     session: FirSession,
     private val computationSession: CompilerRequiredAnnotationsComputationSession
 ) : FirImportResolveTransformer(session, COMPILER_REQUIRED_ANNOTATIONS) {
@@ -154,7 +154,7 @@ private class FirPartialImportResolveTransformer(
     }
 }
 
-private class FirSpecificAnnotationResolveTransformer(
+class FirSpecificAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     computationSession: CompilerRequiredAnnotationsComputationSession
@@ -164,7 +164,7 @@ private class FirSpecificAnnotationResolveTransformer(
     }
 }
 
-private class FirDesignatedSpecificAnnotationResolveTransformer(
+class FirDesignatedSpecificAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     computationSession: CompilerRequiredAnnotationsComputationSession,

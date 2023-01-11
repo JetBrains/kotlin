@@ -29,7 +29,7 @@ sealed class FirDeclaration : FirElementWithResolvePhase(), FirAnnotationContain
     abstract val origin: FirDeclarationOrigin
     abstract val attributes: FirDeclarationAttributes
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

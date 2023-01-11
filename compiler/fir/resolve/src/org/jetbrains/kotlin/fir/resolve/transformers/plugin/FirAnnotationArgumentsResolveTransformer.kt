@@ -30,7 +30,7 @@ open class FirAnnotationArgumentsResolveTransformer(
     final override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformerForArgumentAnnotations(this)
 }
 
-private class FirDeclarationsResolveTransformerForArgumentAnnotations(
+class FirDeclarationsResolveTransformerForArgumentAnnotations(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
@@ -138,7 +138,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     }
 }
 
-private class FirExpressionsResolveTransformerForSpecificAnnotations(
+class FirExpressionsResolveTransformerForSpecificAnnotations(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirExpressionsResolveTransformer(transformer) {
 

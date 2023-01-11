@@ -50,7 +50,7 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirFieldSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitField(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitField(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

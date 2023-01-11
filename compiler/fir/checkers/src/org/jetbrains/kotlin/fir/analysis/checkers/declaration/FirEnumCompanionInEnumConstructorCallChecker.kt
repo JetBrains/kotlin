@@ -34,7 +34,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirEnumEntryChecker() {
         delegatingConstructorCall.argumentList.acceptChildren(visitor)
     }
 
-    private class Visitor(
+    class Visitor(
         val context: CheckerContext,
         val reporter: DiagnosticReporter,
         val companionSymbol: FirRegularClassSymbol

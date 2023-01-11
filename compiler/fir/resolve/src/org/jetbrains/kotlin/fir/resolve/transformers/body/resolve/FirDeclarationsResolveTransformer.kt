@@ -1123,7 +1123,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
     }
 
-    private object ImplicitToErrorTypeTransformer : FirTransformer<Any?>() {
+    object ImplicitToErrorTypeTransformer : FirTransformer<Any?>() {
         override fun <E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }

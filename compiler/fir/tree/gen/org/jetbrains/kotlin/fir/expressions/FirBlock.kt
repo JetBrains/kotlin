@@ -22,7 +22,7 @@ abstract class FirBlock : FirExpression() {
     abstract val statements: List<FirStatement>
     abstract override val typeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitBlock(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

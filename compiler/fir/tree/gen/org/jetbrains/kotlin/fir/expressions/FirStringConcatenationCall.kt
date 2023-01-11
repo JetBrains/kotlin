@@ -22,7 +22,7 @@ abstract class FirStringConcatenationCall : FirCall, FirExpression() {
     abstract override val argumentList: FirArgumentList
     abstract override val typeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStringConcatenationCall(this, data)
+    override fun <R, D, @Monomorphic VT : FirVisitor<R, D>> accept(visitor: VT, data: D): R = visitor.visitStringConcatenationCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
