@@ -299,7 +299,7 @@ class ClassicFrontendFacade(
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
         val transitiveLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.RegularDependency)
         val friendLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
-        val allDependencies = runtimeKlibs + dependencyDescriptors + friendsDescriptors + transitiveLibraries
+        val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
         val analyzer = AnalyzerWithCompilerReport(configuration)
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule

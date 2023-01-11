@@ -264,8 +264,8 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         val libraries = when (module.targetBackend) {
             null -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST
-            TargetBackend.JS_IR -> dependencies
-            TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies
+            TargetBackend.JS_IR -> dependencies + friends
+            TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies + friends
             else -> error("Unsupported target backend: ${module.targetBackend}")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
