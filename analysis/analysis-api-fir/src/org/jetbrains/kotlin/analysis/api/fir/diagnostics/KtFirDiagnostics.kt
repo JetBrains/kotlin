@@ -703,6 +703,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeFromTypesPhase: KtType
     }
 
+    abstract class SelfTypeInapplicableTarget : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = SelfTypeInapplicableTarget::class
+        abstract val actualTarget: String
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName

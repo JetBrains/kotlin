@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 
 object FirAnnotationChecker : FirBasicDeclarationChecker() {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
+    private val selfClassId = FqName("kotlin.Self")
 
     override fun check(
         declaration: FirDeclaration,
@@ -41,13 +43,20 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     ) {
         var deprecated: FirAnnotation? = null
         var deprecatedSinceKotlin: FirAnnotation? = null
+        var self: FirAnnotation? = null
 
         for (annotation in declaration.annotations) {
             val fqName = annotation.fqName(context.session) ?: continue
-            if (fqName == deprecatedClassId) {
-                deprecated = annotation
-            } else if (fqName == deprecatedSinceKotlinClassId) {
-                deprecatedSinceKotlin = annotation
+            when (fqName) {
+                deprecatedClassId -> {
+                    deprecated = annotation
+                }
+                deprecatedSinceKotlinClassId -> {
+                    deprecatedSinceKotlin = annotation
+                }
+                selfClassId -> {
+                    self = annotation
+                }
             }
 
             checkAnnotationTarget(declaration, annotation, context, reporter)
@@ -60,6 +69,10 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                     reportIfMfvc(context, reporter, receiverAnnotation, "receivers", receiverParameter.typeRef)
                 }
             }
+        }
+
+        if (declaration is FirClass && declaration.isEnumClass && self != null) {
+            reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, "", context)
         }
 
         if (deprecatedSinceKotlin != null) {

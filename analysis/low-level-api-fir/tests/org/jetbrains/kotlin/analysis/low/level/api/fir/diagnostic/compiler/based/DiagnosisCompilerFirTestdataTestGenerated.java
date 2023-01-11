@@ -1682,6 +1682,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("selfTypeForEnumClass.kt")
+            public void testSelfTypeForEnumClass() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypeForEnumClass.kt");
+            }
+
+            @Test
             @TestMetadata("someOverridesTest.kt")
             public void testSomeOverridesTest() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/someOverridesTest.kt");

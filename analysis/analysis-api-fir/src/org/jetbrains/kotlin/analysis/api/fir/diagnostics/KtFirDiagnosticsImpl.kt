@@ -844,6 +844,12 @@ internal class PluginAnnotationAmbiguityImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.PluginAnnotationAmbiguity(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class SelfTypeInapplicableTargetImpl(
+    override val actualTarget: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SelfTypeInapplicableTarget(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,

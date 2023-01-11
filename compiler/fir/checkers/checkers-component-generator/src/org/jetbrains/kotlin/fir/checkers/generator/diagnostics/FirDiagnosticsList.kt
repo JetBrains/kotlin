@@ -298,6 +298,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("typeFromCompilerPhase")
             parameter<ConeKotlinType>("typeFromTypesPhase")
         }
+
+        val SELF_TYPE_INAPPLICABLE_TARGET by error<KtAnnotationEntry>() {
+            parameter<String>("actualTarget")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

@@ -1,0 +1,6 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
+import kotlin.Self
+<!TYPE_PARAMETERS_IN_ENUM!><!SELF_TYPE_INAPPLICABLE_TARGET!>@Self<!>
+enum class EnumClass {
+
+}<!>
