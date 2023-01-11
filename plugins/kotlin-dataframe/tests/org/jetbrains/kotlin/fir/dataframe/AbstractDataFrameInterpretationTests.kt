@@ -65,7 +65,14 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     with(GeneratedNames()) {
                         +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
-                        +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, tokenIds, tokenState, getTestFilePath, { tokens.add(it) }) }
+                        +{ it: FirSession ->
+                            InterpretersRunner(it,
+                                scopeState,
+                                tokenState,
+                                getTestFilePath,
+                                this::nextName,
+                                this::nextScope)
+                        }
                         +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
                     }
                 }
@@ -75,12 +82,11 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
 
     class InterpretersRunner(
         session: FirSession,
-        val queue: ArrayDeque<ClassId>,
         val state: MutableMap<ClassId, SchemaContext>,
-        val tokenIds: ArrayDeque<ClassId>,
         val tokenState: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String,
-        val append: (ClassId) -> Unit
+        val nextName: () -> ClassId,
+        val nextScope: () -> ClassId
     ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
@@ -89,7 +95,8 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
 
-                    val result = interpret(call, interpreter, reporter = InterpretationErrorReporter.DEFAULT)?.value ?: return emptyList()
+                    val result = interpret(call, interpreter, reporter = InterpretationErrorReporter.DEFAULT)?.value
+                        ?: return emptyList()
 
 //                    withClue(id) {
 //                        result shouldBe expectedResult(id)
@@ -98,11 +105,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
             }
             val file = getTestFilePath()
             val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
-            return generateAccessorsScopesForRefinedCall(functionCall, state, queue, tokenState, associatedScopes) {
-                val newId = tokenIds.removeLast()
-                append(newId)
-                newId
-            }
+            return generateAccessorsScopesForRefinedCall(functionCall, state, tokenState, associatedScopes, nextName = nextName, nextScope = nextScope)
         }
 
 //        fun expectedResult(id: String): Any? {
