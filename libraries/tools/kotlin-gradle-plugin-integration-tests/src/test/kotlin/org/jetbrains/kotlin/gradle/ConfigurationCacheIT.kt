@@ -90,6 +90,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             ":lib:linkSharedDebugSharedLinuxX64",
             ":lib:linkStaticDebugStaticLinuxX64",
             ":lib:linkDebugTestLinuxX64",
+            ":lib:transformCommonMainDependenciesMetadata",
         )
 
         if (HostManager.hostIsMac) {
@@ -115,7 +116,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                     warningMode = WarningMode.All,
                     freeArgs = listOf(
                         // remove after KT-49933 is fixed
-                        "-x", ":lib:transformCommonMainDependenciesMetadata",
                         "-x", ":lib:transformCommonMainCInteropDependenciesMetadata",
                     )
                 )
