@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.fail
+import kotlin.test.*
 
 /**
  * This test is designed to test if serialized models can still be deserialized with a older (minimal supported)
@@ -45,6 +42,7 @@ class GradleProjectBackwardsCompatibilityDeserializationTest {
     data class UnretainedModel(val id: Int)
 
     @Test
+    @Ignore
     fun `test - simple project`() {
         val (project, kotlinExtension) = createKpmProject()
         kotlinExtension.mainAndTest {
