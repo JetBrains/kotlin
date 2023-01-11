@@ -181,6 +181,10 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
 private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     session: FirSession, fromJava: Boolean
 ): DeprecationAnnotationInfoPerUseSiteStorage {
+    // NB: We can't expand typealiases (`toAnnotationClassId`), because it
+    // requires `lookupTag.tySymbol()`, but we can have cycles in annotations.
+    // See the commit message for an example.
+
     @Suppress("RemoveExplicitTypeArguments")
     val annotations = buildList<Pair<FirAnnotation, Boolean>> {
         mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Deprecated, this) { it to false }
