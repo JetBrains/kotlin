@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.ir.isProperExpect
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
@@ -32,7 +34,7 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
         val allActualDeclarations = mutableSetOf<IrDeclaration>()
         val typeAliasMap = mutableMapOf<FqName, FqName>() // It's used to link members from expect class that have typealias actual
 
-        ActualClassifiersCollector(actualClassifiers, allActualDeclarations, typeAliasMap).visitModuleFragment(mainFragment)
+        ActualClassifiersCollector(actualClassifiers, allActualDeclarations, typeAliasMap).visitModuleFragment(mainFragment, false)
 
         val linkCollector = ClassifiersLinkCollector(this, actualClassifiers)
         dependentFragments.forEach { linkCollector.visitModuleFragment(it) }
@@ -44,8 +46,8 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
         private val actualClassifiers: MutableMap<FqName, IrSymbol>,
         private val allActualClassifiers: MutableSet<IrDeclaration>,
         private val typeAliasMap: MutableMap<FqName, FqName>
-    ) : IrElementVisitorVoid {
-        override fun visitTypeAlias(declaration: IrTypeAlias) {
+    ) : IrElementVisitor<Unit, Boolean> {
+        override fun visitTypeAlias(declaration: IrTypeAlias, data: Boolean) {
             if (declaration.isActual) {
                 val expandedTypeSymbol = declaration.expandedType.classifierOrFail
                 actualClassifiers[declaration.kotlinFqName] = expandedTypeSymbol
@@ -54,18 +56,18 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
                     typeAliasMap[declaration.kotlinFqName] = expandedTypeSymbol.owner.kotlinFqName
                 }
             }
-            visitElement(declaration)
+            visitElement(declaration, data)
         }
 
-        override fun visitClass(declaration: IrClass) {
-            if (!declaration.isExpect) {
+        override fun visitClass(declaration: IrClass, data: Boolean) {
+            if (!data && !declaration.isExpect) {
                 actualClassifiers[declaration.kotlinFqName] = declaration.symbol
             }
-            visitDeclaration(declaration)
+            visitDeclaration(declaration, data)
         }
 
-        override fun visitEnumEntry(declaration: IrEnumEntry) {
-            if (!declaration.isProperExpect) {
+        override fun visitEnumEntry(declaration: IrEnumEntry, data: Boolean) {
+            if (!data && !declaration.isExpect) {
                 actualClassifiers[FqName.fromSegments(
                     listOf(
                         declaration.parent.kotlinFqName.asString(),
@@ -73,27 +75,27 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
                     )
                 )] = declaration.symbol
             }
-            visitDeclaration(declaration)
+            visitDeclaration(declaration, data)
         }
 
-        override fun visitTypeParameter(declaration: IrTypeParameter) {
-            if (!declaration.isProperExpect) {
+        override fun visitTypeParameter(declaration: IrTypeParameter, data: Boolean) {
+            if (!data && !declaration.isExpect) {
                 actualClassifiers[FqName.fromSegments(
                     listOf(declaration.parent.kotlinFqName.asString(), declaration.name.asString())
                 )] = declaration.symbol
             }
-            visitDeclaration(declaration)
+            visitDeclaration(declaration, data)
         }
 
-        override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (!declaration.isProperExpect) {
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Boolean) {
+            if (!data && !declaration.isExpect) {
                 allActualClassifiers.add(declaration)
             }
-            visitElement(declaration)
+            visitElement(declaration, data || declaration.isExpect)
         }
 
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
+        override fun visitElement(element: IrElement, data: Boolean) {
+            element.acceptChildren(this, data)
         }
     }
 
