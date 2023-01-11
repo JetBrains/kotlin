@@ -327,7 +327,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         target.compilations.all { compilation ->
             createCInteropTasks(compilation, compilation.cinterops)
             compilation.cinterops.all { cinterop ->
-                cinterop.dependencyFiles += locateOrCreateCInteropDependencyConfiguration(compilation, cinterop, target)
+                cinterop.dependencyFiles += locateOrCreateCInteropDependencyConfiguration(compilation)
             }
         }
     }

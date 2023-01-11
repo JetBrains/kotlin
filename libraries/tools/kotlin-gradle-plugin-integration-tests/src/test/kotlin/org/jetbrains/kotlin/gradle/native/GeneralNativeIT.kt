@@ -1123,7 +1123,7 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
 
-        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", "org.example:publishedLibrary") {
+        build(":dependencyInsight", "--configuration", "hostTestCInterop", "--dependency", "org.example:publishedLibrary") {
             assertSuccessful()
             assertVariantInDependencyInsight("hostApiElements-published")
         }
@@ -1137,7 +1137,7 @@ class GeneralNativeIT : BaseGradleIT() {
         """.trimIndent()
         )
 
-        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", ":projectLibrary") {
+        build(":dependencyInsight", "--configuration", "hostTestCInterop", "--dependency", ":projectLibrary") {
             assertSuccessful()
             assertVariantInDependencyInsight("hostCInteropApiElements")
         }
