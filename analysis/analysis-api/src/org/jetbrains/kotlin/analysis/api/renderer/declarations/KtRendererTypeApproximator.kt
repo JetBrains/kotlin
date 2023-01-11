@@ -13,7 +13,7 @@ public interface KtRendererTypeApproximator {
     context(KtAnalysisSession)
     public fun approximateType(type: KtType, position: Variance): KtType
 
-    public object TO_DENNOTABLE : KtRendererTypeApproximator {
+    public object TO_DENOTABLE : KtRendererTypeApproximator {
         context(KtAnalysisSession)
         override fun approximateType(type: KtType, position: Variance): KtType {
             return when (position) {
