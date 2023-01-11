@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -751,7 +752,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+            override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
                 return element
             }
 
@@ -977,7 +978,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             getClassCall.argumentList.transformArguments(object : FirTransformer<Nothing?>() {
                 @Suppress("UNCHECKED_CAST")
-                override fun <E : FirElement> transformElement(element: E, data: Nothing?): E = replacedArgument as E
+                override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Nothing?): E = replacedArgument as E
             }, null)
 
             getClassCall

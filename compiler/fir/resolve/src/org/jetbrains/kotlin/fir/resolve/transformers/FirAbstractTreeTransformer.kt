@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirAbstractTreeTransformer<D>(phase: FirResolvePhase) : FirAbstractPhaseTransformer<D>(phase) {
-    override fun <E : FirElement> transformElement(element: E, data: D): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: D): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
     }

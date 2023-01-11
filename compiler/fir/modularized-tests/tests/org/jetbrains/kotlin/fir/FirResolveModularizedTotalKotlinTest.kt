@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import sun.management.ManagementFactoryHelper
 import java.io.File
 import java.io.FileOutputStream
@@ -331,7 +332,7 @@ class FirCheckersResolveProcessor(
 }
 
 class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiagnosticCollector) : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
     }
 

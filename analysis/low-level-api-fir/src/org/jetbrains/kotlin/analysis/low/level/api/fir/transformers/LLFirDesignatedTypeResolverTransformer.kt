@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /**
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
@@ -27,7 +28,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
 
     private val declarationTransformer = LLFirDeclarationTransformer(designation)
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         return if (element is FirDeclaration && (element is FirRegularClass || element is FirFile)) {
             @Suppress("UNCHECKED_CAST")
             declarationTransformer.transformDeclarationContent(this, element, data) {

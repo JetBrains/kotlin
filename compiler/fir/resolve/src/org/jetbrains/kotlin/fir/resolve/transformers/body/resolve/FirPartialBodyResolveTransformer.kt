@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirPartialBodyResolveTransformer(
     val transformer: FirAbstractBodyResolveTransformerDispatcher
@@ -32,7 +33,7 @@ abstract class FirPartialBodyResolveTransformer(
             transformer.implicitTypeOnly = value
         }
 
-    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: ResolutionMode): E {
         return element.transform(transformer, data)
     }
 }

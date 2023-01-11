@@ -73,7 +73,7 @@ open class FirSupertypeResolverTransformer(
     private val supertypeResolverVisitor = FirSupertypeResolverVisitor(session, supertypeComputationSession, scopeSession)
     private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
@@ -117,7 +117,7 @@ open class FirApplySupertypesTransformer(
     private val scopeSession: ScopeSession
 ) : FirDefaultTransformer<Any?>() {
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.SpecialNames
 
 class FirCompanionGenerationProcessor(
@@ -29,7 +30,7 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
 
     lateinit var generatedDeclarationProvider: FirSwitchableExtensionDeclarationsSymbolProvider
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
     }
 

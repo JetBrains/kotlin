@@ -92,7 +92,7 @@ class FirSealedClassInheritorsProcessor(
     }
 
     class InheritorsTransformer(private val inheritorsMap: MutableMap<FirRegularClass, MutableList<ClassId>>) : FirTransformer<Any?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+        override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }
 

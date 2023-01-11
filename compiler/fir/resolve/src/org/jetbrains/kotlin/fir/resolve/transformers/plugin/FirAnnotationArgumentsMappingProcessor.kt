@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirAnnotationArgumentsMappingProcessor(
@@ -27,7 +28,7 @@ class FirAnnotationArgumentsMappingProcessor(
 class FirAnnotationArgumentsMappingTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
     private val transformer = FirAnnotationArgumentsMappingTransformer(session, scopeSession, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         error("Should only be called via transformFile()")
     }
 

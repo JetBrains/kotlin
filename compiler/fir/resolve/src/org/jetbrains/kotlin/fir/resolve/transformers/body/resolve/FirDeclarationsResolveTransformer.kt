@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 
 open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) : FirPartialBodyResolveTransformer(transformer) {
@@ -993,7 +994,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         if (lastStatement is FirExpression && !returnNothing) {
             body?.transformChildren(
                 object : FirDefaultTransformer<FirExpression>() {
-                    override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
+                    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirExpression): E {
                         if (element == lastStatement) {
                             val returnExpression = buildReturnExpression {
                                 source = element.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
@@ -1124,7 +1125,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     }
 
     object ImplicitToErrorTypeTransformer : FirTransformer<Any?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+        override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }
 

@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -439,7 +440,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     inner class TypeUpdaterForDelegateArguments : FirTransformer<Any?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+        override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }
 
@@ -685,7 +686,7 @@ class FirCallCompletionResultsWriterTransformer(
         anonymousFunction: FirAnonymousFunction
     ): FirStatement {
         val implicitTypeTransformer = object : FirDefaultTransformer<Any?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+            override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
                 @Suppress("UNCHECKED_CAST")
                 return (element.transformChildren(this, data) as E)
             }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariable
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -259,7 +260,7 @@ class FirStubTypeTransformer(
     private val substitutor: ConeSubstitutor
 ) : FirDefaultTransformer<Nothing?>() {
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Nothing?): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
     }

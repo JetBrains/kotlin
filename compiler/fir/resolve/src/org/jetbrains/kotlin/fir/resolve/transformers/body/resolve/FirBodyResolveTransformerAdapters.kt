@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
@@ -31,7 +32,7 @@ class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeS
         scopeSession = scopeSession
     )
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 

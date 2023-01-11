@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -383,7 +384,7 @@ class FirSyntheticCallGenerator(
 }
 
 object UpdateReference : FirTransformer<FirNamedReferenceWithCandidate>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReferenceWithCandidate): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirNamedReferenceWithCandidate): E {
         return element
     }
 

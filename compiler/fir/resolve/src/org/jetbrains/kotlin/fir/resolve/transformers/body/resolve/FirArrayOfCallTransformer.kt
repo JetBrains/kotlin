@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 /**
  * A transformer that converts resolved arrayOf() call to [FirArrayOfCall].
@@ -57,7 +58,7 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
         return toArrayOfCall(functionCall) ?: functionCall
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Nothing?): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
     }

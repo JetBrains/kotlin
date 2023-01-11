@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirAbstractBodyResolveTransformerDispatcher(
     session: FirSession,
@@ -61,7 +62,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return declarationsTransformer.transformScript(script, data)
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: ResolutionMode): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
     }

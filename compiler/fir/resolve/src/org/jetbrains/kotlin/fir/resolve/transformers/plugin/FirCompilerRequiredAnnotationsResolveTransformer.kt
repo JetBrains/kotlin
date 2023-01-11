@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
@@ -60,7 +61,7 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
 
     val extensionService = session.extensionService
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Nothing?): E {
         throw IllegalStateException("Should not be here")
     }
 

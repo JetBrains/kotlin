@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedParentInImport
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -34,7 +35,7 @@ open class FirImportResolveTransformer protected constructor(
     final override val session: FirSession,
     phase: FirResolvePhase
 ) : FirAbstractTreeTransformer<Any?>(phase) {
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 

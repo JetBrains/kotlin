@@ -28,7 +28,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
         println("abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {")
         println()
         withIndent {
-            println("abstract fun <E : FirElement> transformElement(element: E, data: D): E")
+            println("abstract fun <@Monomorphic E : FirElement> transformElement(element: E, data: D): E")
             println()
             for (element in elements) {
                 if (element == AbstractFirTreeBuilder.baseFirElement) continue

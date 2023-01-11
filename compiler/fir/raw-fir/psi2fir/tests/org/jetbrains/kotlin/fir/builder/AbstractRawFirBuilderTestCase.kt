@@ -168,7 +168,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     private class ConsistencyTransformer : FirTransformer<Unit>() {
         var result = hashSetOf<FirElement>()
 
-        override fun <E : FirElement> transformElement(element: E, data: Unit): E {
+        override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Unit): E {
             if (!result.add(element)) {
                 throwTwiceVisitingError(element)
             } else {

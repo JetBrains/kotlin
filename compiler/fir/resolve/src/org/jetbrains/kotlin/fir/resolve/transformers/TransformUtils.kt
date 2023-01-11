@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirTypeRef): E {
         return element
     }
 
@@ -29,7 +30,7 @@ internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
 }
 
 internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirTypeRef): E {
         return element
     }
 
@@ -43,7 +44,7 @@ internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
 
 
 internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirNamedReference): E {
         return element
     }
 
@@ -67,7 +68,7 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
 }
 
 internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirNamedReference): E {
         return element
     }
 
@@ -87,7 +88,7 @@ internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
 }
 
 internal object StoreReceiver : FirTransformer<FirExpression>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: FirExpression): E {
         @Suppress("UNCHECKED_CAST")
         return (data as E)
     }

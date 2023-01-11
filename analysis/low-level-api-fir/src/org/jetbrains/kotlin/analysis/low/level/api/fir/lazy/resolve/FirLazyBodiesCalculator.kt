@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.psi.*
 
 internal object FirLazyBodiesCalculator {
@@ -180,7 +181,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
         return file
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirRegularClass>): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: PersistentList<FirRegularClass>): E {
         if (element is FirRegularClass) {
             val newList = data.add(element)
             element.declarations.forEach {

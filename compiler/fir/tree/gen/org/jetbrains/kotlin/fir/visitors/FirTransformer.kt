@@ -156,7 +156,7 @@ import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 
 abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
-    abstract fun <E : FirElement> transformElement(element: E, data: D): E
+    abstract fun <@Monomorphic E : FirElement> transformElement(element: E, data: D): E
 
     open fun transformAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): FirAnnotationContainer {
         return transformElement(annotationContainer, data)

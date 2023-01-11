@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -53,7 +54,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         return receiverType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)!!.getFunctions(name).single()
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: ConeKotlinType?): E {
         return element
     }
 

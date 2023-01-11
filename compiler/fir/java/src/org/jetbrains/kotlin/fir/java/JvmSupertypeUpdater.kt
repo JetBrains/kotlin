@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.jvm.specialization.annotations.Monomorphic
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUpdater() {
@@ -66,7 +67,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             val recordType = StandardClassIds.Java.Record.constructClassLikeType(emptyArray(), isNullable = false)
         }
 
-        override fun <E : FirElement> transformElement(element: E, data: ScopeSession): E {
+        override fun <@Monomorphic E : FirElement> transformElement(element: E, data: ScopeSession): E {
             return element
         }
 

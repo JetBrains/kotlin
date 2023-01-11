@@ -88,7 +88,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <@Monomorphic E : FirElement> transformElement(element: E, data: Any?): E {
         throw IllegalArgumentException("Should not be there")
     }
 
