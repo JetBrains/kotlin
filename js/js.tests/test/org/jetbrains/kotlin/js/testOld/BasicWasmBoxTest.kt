@@ -47,6 +47,7 @@ abstract class BasicWasmBoxTest(
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
     private val COMMON_FILES_NAME = "_common"
+    private val COMMON_FILES_DIR = "_commonFiles"
 
     private val extraLanguageFeatures = mapOf(
         LanguageFeature.JsAllowImplementingFunctionInterface to LanguageFeature.State.ENABLED,
@@ -98,11 +99,18 @@ abstract class BasicWasmBoxTest(
             if (File(additionalJsFile).exists()) {
                 jsFilesBefore += additionalJsFile
             }
+            val additionalMjsFile = filePath.removeSuffix(".kt") + ".mjs"
+            if (File(additionalMjsFile).exists()) {
+                mjsFiles += additionalMjsFile
+            }
 
             val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + "." + KotlinFileType.EXTENSION
             val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
 
-            val allSourceFiles = kotlinFiles + localCommonFiles
+            val globalCommonFilesDir = File(File(pathToTestDir).parent, COMMON_FILES_DIR)
+            val globalCommonFiles = globalCommonFilesDir.listFiles().orEmpty().map { it.absolutePath }
+
+            val allSourceFiles = kotlinFiles + localCommonFiles + globalCommonFiles
 
             val psiFiles = createPsiFiles(allSourceFiles.map { File(it).canonicalPath }.sorted())
             val config = createConfig(languageVersionSettings)
