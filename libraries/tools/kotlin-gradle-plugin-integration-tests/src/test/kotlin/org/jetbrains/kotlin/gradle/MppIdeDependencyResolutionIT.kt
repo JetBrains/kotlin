@@ -110,7 +110,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 dependencies["commonTest"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
 
-                // TODO (kirpichenkov): consider extracting cinterops from platform libraries (they are library roots currently)
+                // CInterops are currently imported as extra roots of a platform publication, not as separate libraries
+                // This is a bit inconsistent with other CInterop dependencies, but correctly represents the published artifacts
                 dependencies["linuxX64Main"].cinteropDependencies().assertMatches()
                 dependencies["linuxX64Test"].cinteropDependencies().assertMatches()
                 dependencies["linuxArm64Main"].cinteropDependencies().assertMatches()
@@ -131,6 +132,47 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
                 dependencies["linuxArm64Test"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
+            }
+
+            resolveIdeDependencies("client-with-complex-hierarchy") { dependencies ->
+                dependencies["commonMain"].cinteropDependencies().assertMatches()
+                dependencies["commonTest"].cinteropDependencies().assertMatches()
+                dependencies["nativeMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*\\(ios_arm64, ios_x64, linux_x64\\)"))
+                )
+                dependencies["nativeTest"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*\\(ios_arm64, ios_x64, linux_x64\\)"))
+                )
+
+                dependencies["iosMain"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*\\(ios_arm64, ios_x64\\)")))
+                dependencies["iosTest"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*\\(ios_arm64, ios_x64\\)")))
+                dependencies["iosX64Main"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:ios_x64$")))
+                dependencies["iosX64Test"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:ios_x64$")))
+                dependencies["iosArm64Main"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:ios_arm64$")))
+                dependencies["iosArm64Test"].cinteropDependencies()
+                    .assertMatches(binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:ios_arm64$")))
+
+                dependencies["linuxOtherMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*:linux_x64$")),
+                    binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:linux_x64$")),
+                )
+                dependencies["linuxOtherTest"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*:linux_x64$")),
+                    binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:linux_x64$")),
+                )
+                dependencies["linuxMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*:linux_x64$")),
+                    binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:linux_x64$")),
+                )
+                dependencies["linuxTest"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*:linux_x64$")),
+                    binaryCoordinates(Regex("a:client-with-complex-hierarchy-cinterop-w.*:linux_x64$"))
+                )
             }
         }
     }

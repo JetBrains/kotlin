@@ -88,7 +88,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdePlatformCinteropDependencyResolver,
-            constraint = { sourceSet -> SourceSetConstraint.isLeaf(sourceSet) && SourceSetConstraint.isNative(sourceSet) },
+            constraint = { sourceSet -> SourceSetConstraint.isSingleKotlinTarget(sourceSet) && SourceSetConstraint.isNative(sourceSet) },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
@@ -102,14 +102,14 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeCInteropMetadataDependencyClasspathResolver,
-            constraint = { SourceSetConstraint.isNative(it) && !SourceSetConstraint.isLeaf(it) },
+            constraint = { SourceSetConstraint.isNative(it) && !SourceSetConstraint.isSingleKotlinTarget(it) },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
 
         registerDependencyResolver(
             resolver = IdeProjectToProjectCInteropDependencyResolver,
-            constraint = { SourceSetConstraint.isNative(it) && SourceSetConstraint.isLeaf(it) },
+            constraint = { SourceSetConstraint.isNative(it) && SourceSetConstraint.isSingleKotlinTarget(it) },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
