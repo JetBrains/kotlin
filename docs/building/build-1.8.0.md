@@ -57,6 +57,5 @@ docker run --rm -it --name kotlin-build-repack-zip-with-stable-entries-order-$DE
 
 This generates a ZIP file: `build/repo-reproducible/reproducible-maven-1.8.0.zip`.
 
-Check that the SHA 256 checksum is equal to the published one for [maven-1.8.0.zip](https://github.com/JetBrains/kotlin/releases/download/v1.8.0/maven-1.8.0.zip):
-
-`98573938b708c193ca68c7269d29e6ac777dfe780b3935bc733d4c428a45d4e5`
+Check that the SHA 256 checksum is equal to 
+`98573938b708c193ca68c7269d29e6ac777dfe780b3935bc733d4c428a45d4e5`.
