@@ -1,6 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1281
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: LAZY_INIT_PROPERTIES
 package foo
 
 external interface Chrome {
