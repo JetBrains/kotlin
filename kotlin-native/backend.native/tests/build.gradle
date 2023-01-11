@@ -5715,6 +5715,38 @@ if (isAppleTarget(project)) {
         }
     }
 
+    frameworkTest('testObjCExportNoSwiftMemberNameMangling') {
+        final String frameworkName = 'KtNoSwiftMemberNameMangling'
+        final String frameworkArtifactName = 'Kt'
+        final String dir = "$testOutputFramework/testObjCExportNoSwiftMemberNameMangling"
+
+        def libraryName = frameworkName + "Library"
+        konanArtifacts {
+            library(libraryName, targets: [target.name]) {
+                srcDir "objcexport/library"
+                artifactName "test-library"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
+
+                extraOpts "-Xshort-module-name=MyLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+            }
+        }
+        framework(frameworkName) {
+            sources = ['objcexport']
+            artifact = frameworkArtifactName
+            library = libraryName
+            opts = ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"]
+        }
+        swiftSources = ['objcexport']
+        swiftExtraOpts = [ '-D', 'DISABLE_MEMBER_NAME_MANGLING' ]
+        if (isNoopGC) {
+            swiftExtraOpts += ["-D", "NOOP_GC"]
+        }
+    }
+
     frameworkTest('testObjCExportStatic') {
         final String frameworkName = 'KtStatic'
         final String frameworkArtifactName = 'Kt'

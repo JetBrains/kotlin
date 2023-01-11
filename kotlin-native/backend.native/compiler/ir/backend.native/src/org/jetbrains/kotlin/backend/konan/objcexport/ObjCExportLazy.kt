@@ -44,6 +44,10 @@ interface ObjCExportLazy {
         fun isIncluded(moduleInfo: ModuleInfo): Boolean
         fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
+
+        val disableSwiftMemberNameMangling: Boolean
+            get() = false
+
         val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
     }
 
@@ -447,6 +451,7 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
         }
 
         override val objcGenerics = configuration.objcGenerics
+        override val disableSwiftMemberNameMangling = configuration.disableSwiftMemberNameMangling
     }
 }
 

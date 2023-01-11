@@ -29,6 +29,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportSuspendFunctionLaunchThreadRestriction by option<ObjCExportSuspendFunctionLaunchThreadRestriction>()
 
+    val objcExportDisableSwiftMemberNameMangling by booleanOption()
+
     val gcSchedulerType by option<GCSchedulerType>()
 
     val gcMarkSingleThreaded by booleanOption()

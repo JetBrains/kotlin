@@ -54,6 +54,9 @@ interface ObjCExportNamer {
         val topLevelNamePrefix: String
         fun getAdditionalPrefix(module: ModuleDescriptor): String?
         val objcGenerics: Boolean
+
+        val disableSwiftMemberNameMangling: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -278,7 +281,8 @@ internal class ObjCExportNamerImpl(
             mapper: ObjCExportMapper,
             topLevelNamePrefix: String,
             local: Boolean,
-            objcGenerics: Boolean = false
+            objcGenerics: Boolean = false,
+            disableSwiftMemberNameMangling: Boolean = false,
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
@@ -289,6 +293,9 @@ internal class ObjCExportNamerImpl(
 
                 override val objcGenerics: Boolean
                     get() = objcGenerics
+
+                override val disableSwiftMemberNameMangling: Boolean
+                    get() = disableSwiftMemberNameMangling
 
             },
             builtIns,
@@ -332,20 +339,24 @@ internal class ObjCExportNamerImpl(
     }
 
     private val methodSwiftNames = object : Mapping<FunctionDescriptor, String>() {
-        override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean =
-                !mapper.canHaveSameSelector(first, second)
+        override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
+            if (configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
+            return !mapper.canHaveSameSelector(first, second)
+        }
         // Note: this condition is correct but can be too strict.
     }
 
-    private inner class PropertyNameMapping : Mapping<PropertyDescriptor, String>() {
+    private inner class PropertyNameMapping(val forSwift: Boolean) : Mapping<PropertyDescriptor, String>() {
         override fun reserved(name: String) = name in Reserved.propertyNames
 
-        override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean =
-                !mapper.canHaveSameName(first, second)
+        override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
+            if (forSwift && configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
+            return !mapper.canHaveSameName(first, second)
+        }
     }
 
-    private val objCPropertyNames = PropertyNameMapping()
-    private val swiftPropertyNames = PropertyNameMapping()
+    private val objCPropertyNames = PropertyNameMapping(forSwift = false)
+    private val swiftPropertyNames = PropertyNameMapping(forSwift = true)
 
     private open inner class GlobalNameMapping<in T : Any, N> : Mapping<T, N>() {
         final override fun conflict(first: T, second: T): Boolean = true

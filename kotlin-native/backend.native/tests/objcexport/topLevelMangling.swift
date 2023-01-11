@@ -12,7 +12,12 @@ private func testPropertiesInDifferentFilesAreNotMangled() throws {
 
 private func testFunctionsInSameFileAreMangled() throws {
     try assertEquals(actual: TopLevelManglingAKt.sameNumber(value: Int32(1)), expected: 1)
-    try assertEquals(actual: TopLevelManglingAKt.sameNumber(value_: Int64(2)), expected: 2)
+#if DISABLE_MEMBER_NAME_MANGLING
+    let sameNumberLong = TopLevelManglingAKt.sameNumber(value: Int64(2))
+#else
+    let sameNumberLong = TopLevelManglingAKt.sameNumber(value_: Int64(2))
+#endif
+    try assertEquals(actual: sameNumberLong, expected: 2)
 }
 
 class TopLevelManglingTests : SimpleTestProvider {

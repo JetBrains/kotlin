@@ -1564,6 +1564,33 @@ __attribute__((swift_name("Person.WorkerContractor")))
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end
 
+__attribute__((swift_name("SwiftNameManglingI1")))
+@protocol KtSwiftNameManglingI1
+@required
+- (int32_t)clashingMethod __attribute__((swift_name("clashingMethod()")));
+- (int32_t)clashingMethodWithObjCNameInI1 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI1()")));
+- (int32_t)swiftClashingMethodWithObjCNameInI2 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI2()")));
+- (int32_t)clashingMethodWithObjCNameInBoth __attribute__((swift_name("swiftClashingMethodWithObjCNameInBoth()")));
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((swift_name("SwiftNameManglingI2")))
+@protocol KtSwiftNameManglingI2
+@required
+- (id)clashingMethod __attribute__((swift_name("clashingMethod()")));
+- (id)swiftClashingMethodWithObjCNameInI1 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI1()")));
+- (id)clashingMethodWithObjCNameInI2 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI2()")));
+- (id)clashingMethodWithObjCNameInBoth __attribute__((swift_name("swiftClashingMethodWithObjCNameInBoth()")));
+@property (readonly) id clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SwiftNameManglingKt")))
+@interface KtSwiftNameManglingKt : KtBase
++ (id<KtSwiftNameManglingI1>)i1 __attribute__((swift_name("i1()")));
++ (id<KtSwiftNameManglingI2>)i2 __attribute__((swift_name("i2()")));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ThrowableAsError")))
 @interface KtThrowableAsError : KtKotlinThrowable
