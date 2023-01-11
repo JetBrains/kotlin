@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.jvm.abi
 
 import kotlinx.metadata.*
@@ -32,17 +34,17 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
             is KotlinClassMetadata.Class -> {
                 val writer = KotlinClassMetadata.Class.Writer()
                 metadata.accept(AbiKmClassVisitor(writer))
-                writer.write(metadataVersion, header.extraInt).header
+                writer.write(metadataVersion, header.extraInt).annotationData
             }
             is KotlinClassMetadata.FileFacade -> {
                 val writer = KotlinClassMetadata.FileFacade.Writer()
                 metadata.accept(AbiKmPackageVisitor(writer))
-                writer.write(metadataVersion, header.extraInt).header
+                writer.write(metadataVersion, header.extraInt).annotationData
             }
             is KotlinClassMetadata.MultiFileClassPart -> {
                 val writer = KotlinClassMetadata.MultiFileClassPart.Writer()
                 metadata.accept(AbiKmPackageVisitor(writer))
-                writer.write(metadata.facadeClassName, metadataVersion, header.extraInt).header
+                writer.write(metadata.facadeClassName, metadataVersion, header.extraInt).annotationData
             }
             else -> header
         }
@@ -105,7 +107,7 @@ private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): Annotat
 /**
  * Serialize a KotlinClassHeader to an existing Kotlin Metadata annotation visitor.
  */
-private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
+private fun AnnotationVisitor.visitKotlinMetadata(header: Metadata) {
     visit(KIND_FIELD_NAME, header.kind)
     visit(METADATA_VERSION_FIELD_NAME, header.metadataVersion)
     if (header.data1.isNotEmpty()) {
@@ -136,7 +138,6 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-@Suppress("DEPRECATION")
 private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(delegate) {
     override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
         if (!isPrivateDeclaration(flags))
@@ -173,7 +174,6 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-@Suppress("DEPRECATION")
 private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor(delegate) {
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
         if (!isPrivateDeclaration(flags))
