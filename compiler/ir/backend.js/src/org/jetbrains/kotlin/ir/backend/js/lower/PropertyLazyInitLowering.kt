@@ -284,7 +284,7 @@ private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> 
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext) =
     correspondingProperty?.let {
-        it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
+        !it.isExternal && it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
     } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
 
 private val compatibleOrigins = listOf(
