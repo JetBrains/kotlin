@@ -93,6 +93,11 @@ fun main() {
             ) {
                 model("CInterop/KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
             }
+            testClass<AbstractNativeCInteropIncludeCategoriesTest>(
+                suiteTestClassName = "CInteropIncludeCategoryTestGenerated"
+            ) {
+                model("CInterop/frameworkIncludeCategory/cases", pattern = "^([^_](.+))$", recursive = false)
+            }
         }
 
         // LLDB integration tests.

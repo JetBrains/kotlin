@@ -25,15 +25,29 @@ import java.io.File
 
 abstract class AbstractNativeCInteropFModulesTest : AbstractNativeCInteropTest() {
     override val fmodules = true
+
+    override val defFileName: String = "pod1.def"
 }
 
 abstract class AbstractNativeCInteropNoFModulesTest : AbstractNativeCInteropTest() {
     override val fmodules = false
+
+    override val defFileName: String = "pod1.def"
+}
+
+abstract class AbstractNativeCInteropIncludeCategoriesTest : AbstractNativeCInteropTest() {
+    override val fmodules: Boolean
+        get() = false
+
+    override val defFileName: String
+        get() = "dependency.def"
 }
 
 @Tag("cinterop")
 abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
     abstract val fmodules: Boolean
+
+    abstract val defFileName: String
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
@@ -46,7 +60,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
         val testPathFull = getAbsoluteFile(testPath)
         val testDataDir = testPathFull.parentFile.parentFile
         val includeFolder = testDataDir.resolve("include")
-        val defFile = testPathFull.resolve("pod1.def")
+        val defFile = testPathFull.resolve(defFileName)
         val defContents = defFile.readText().split("\n").map { it.trim() }
         val defHasObjC = defContents.any { it.endsWith("Objective-C") }
         Assumptions.assumeFalse(defHasObjC && !targets.testTarget.family.isAppleFamily)

@@ -1,0 +1,21 @@
+
+package dependency {
+
+    @ExternalObjCClass open class MyClass : ObjCObjectBase {
+        protected constructor()
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+    }
+
+}
+
+package dependency {
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") external fun MyClassMeta.categoryClassMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") external fun MyClass.categoryInstanceMethod()
+}
+
