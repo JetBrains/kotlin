@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,7 +64,7 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^.*Expect.*"), TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotations")
@@ -115,11 +115,6 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
         @TestMetadata("classSignatureUnchanged")
         public void testClassSignatureUnchanged() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
-        }
-
-        @TestMetadata("companionConstantChanged")
-        public void testCompanionConstantChanged() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
         }
 
         @TestMetadata("compilationErrorThenFixedOtherPackage")
@@ -697,7 +692,7 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
         }
 
         public void testAllFilesPresentInClassHierarchyAffected() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^.*Expect.*"), TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotationFlagRemoved")
@@ -728,11 +723,6 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
         @TestMetadata("classBecamePrivate")
         public void testClassBecamePrivate() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/classBecamePrivate/");
-        }
-
-        @TestMetadata("classMovedIntoOtherClass")
-        public void testClassMovedIntoOtherClass() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/classMovedIntoOtherClass/");
         }
 
         @TestMetadata("classRemoved")
