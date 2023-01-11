@@ -922,12 +922,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("debug.kt")
-        public void testDebug() throws Exception {
-            runTest("compiler/testData/codegen/box/arrays/debug.kt");
-        }
-
-        @Test
         @TestMetadata("forEachBooleanArray.kt")
         public void testForEachBooleanArray() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
@@ -1528,6 +1522,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @Test
             public void testAllFilesPresentInVArrays() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("debug.kt")
+            public void testDebug() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/debug.kt");
+            }
+
+            @Test
+            @TestMetadata("debug2.kt")
+            public void testDebug2() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/debug2.kt");
             }
 
             @Test

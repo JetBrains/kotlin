@@ -13,6 +13,7 @@ class VArray<T> {
     public inline constructor(size: Int, init: (Int) -> T)
 
     public val size: Int
-    public operator fun iterator(): Iterator<T>
+    public operator fun iterator(): VArrayIterator<T>
 }
 
+interface VArrayIterator<T> : Iterator<T>
