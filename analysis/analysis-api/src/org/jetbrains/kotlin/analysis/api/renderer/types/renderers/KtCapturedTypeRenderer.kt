@@ -15,18 +15,18 @@ public interface KtCapturedTypeRenderer {
     context(KtAnalysisSession, KtTypeRenderer)
     public fun renderType(type: KtCapturedType, printer: PrettyPrinter)
 
-    public object AS_RPOJECTION : KtCapturedTypeRenderer {
+    public object AS_PROJECTION : KtCapturedTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
         override fun renderType(type: KtCapturedType, printer: PrettyPrinter) {
             typeProjectionRenderer.renderTypeProjection(type.projection, printer)
         }
     }
 
-    public object AS_CAPUTRED_TYPE_WITH_PROJECTION : KtCapturedTypeRenderer {
+    public object AS_CAPTURED_TYPE_WITH_PROJECTION : KtCapturedTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
         override fun renderType(type: KtCapturedType, printer: PrettyPrinter) {
             printer.append("CapturedType(")
-            AS_RPOJECTION.renderType(type, printer)
+            AS_PROJECTION.renderType(type, printer)
             printer.append(")")
         }
     }

@@ -25,7 +25,7 @@ open class KtRendererProviderImpl(
 
     override fun renderType(type: KtType, renderer: KtTypeRenderer, position: Variance): String {
         return with(analysisSession) {
-            val approximatedType = KtRendererTypeApproximator.TO_DENNOTABLE.approximateType(type, position)
+            val approximatedType = KtRendererTypeApproximator.TO_DENOTABLE.approximateType(type, position)
             prettyPrint { renderer.renderType(approximatedType, this) }
         }
     }
