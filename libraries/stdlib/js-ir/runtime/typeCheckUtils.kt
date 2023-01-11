@@ -34,7 +34,6 @@ internal fun setMetadataFor(
 // There was a problem with per-module compilation (KT-55758) when the top-level state (iid) was reinitialized during stdlib module initialization
 // As a result we miss already incremented iid and had the same iids in two different modules
 // So, to keep the state consistent it was moved into the object
-@PrioritizedInitialization
 private object InterfaceIdService {
     var iid: Int = 0
 }

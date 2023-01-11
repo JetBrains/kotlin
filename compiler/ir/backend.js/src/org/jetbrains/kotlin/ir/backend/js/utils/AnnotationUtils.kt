@@ -30,7 +30,6 @@ object JsAnnotations {
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
     val jsFunFqn = FqName("kotlin.js.JsFun")
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
-    val PrioritizedInitialization = FqName("kotlin.js.PrioritizedInitialization")
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -439,7 +439,6 @@ message Fragment {
     repeated int32 definitions = 17;
     optional CompositeBlock polyfills = 18;
     repeated int32 optionalCrossModuleImports = 19;
-    repeated int32 classes_with_prioritized_initialization = 20;
 }
 
 message InlinedLocalDeclarations {

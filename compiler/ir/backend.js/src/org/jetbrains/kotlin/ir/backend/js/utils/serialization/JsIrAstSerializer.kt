@@ -74,10 +74,6 @@ class JsIrAstSerializer: JsAstSerializerBase() {
 
         fragment.classes.entries.forEach { (name, model) -> fragmentBuilder.addIrClassModel(serialize(name, model)) }
 
-        fragment.classesWithPrioritizedInitialization.forEach {
-            fragmentBuilder.addClassesWithPrioritizedInitialization(serialize(it))
-        }
-
         fragment.testFunInvocation?.let {
             fragmentBuilder.setTestsInvocation(serialize(it))
         }

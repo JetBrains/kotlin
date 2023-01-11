@@ -72,8 +72,6 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
 
         proto.irClassModelList.associateTo(fragment.classes) { clsProto -> deserialize(clsProto) }
 
-        proto.classesWithPrioritizedInitializationList.mapTo(fragment.classesWithPrioritizedInitialization) { deserializeName(it) }
-
 
         if (proto.hasTestsInvocation()) {
             fragment.testFunInvocation = deserialize(proto.testsInvocation)

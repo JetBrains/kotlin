@@ -34613,19 +34613,6 @@ public final class JsAstProtoBuf {
      * <code>repeated int32 optionalCrossModuleImports = 19;</code>
      */
     int getOptionalCrossModuleImports(int index);
-
-    /**
-     * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-     */
-    java.util.List<java.lang.Integer> getClassesWithPrioritizedInitializationList();
-    /**
-     * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-     */
-    int getClassesWithPrioritizedInitializationCount();
-    /**
-     * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-     */
-    int getClassesWithPrioritizedInitialization(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Fragment}
@@ -34878,27 +34865,6 @@ public final class JsAstProtoBuf {
               input.popLimit(limit);
               break;
             }
-            case 160: {
-              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
-                classesWithPrioritizedInitialization_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00080000;
-              }
-              classesWithPrioritizedInitialization_.add(input.readInt32());
-              break;
-            }
-            case 162: {
-              int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000) && input.getBytesUntilLimit() > 0) {
-                classesWithPrioritizedInitialization_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00080000;
-              }
-              while (input.getBytesUntilLimit() > 0) {
-                classesWithPrioritizedInitialization_.add(input.readInt32());
-              }
-              input.popLimit(limit);
-              break;
-            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -34936,9 +34902,6 @@ public final class JsAstProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
           optionalCrossModuleImports_ = java.util.Collections.unmodifiableList(optionalCrossModuleImports_);
-        }
-        if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
-          classesWithPrioritizedInitialization_ = java.util.Collections.unmodifiableList(classesWithPrioritizedInitialization_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -35479,28 +35442,6 @@ public final class JsAstProtoBuf {
       return optionalCrossModuleImports_.get(index);
     }
 
-    public static final int CLASSES_WITH_PRIORITIZED_INITIALIZATION_FIELD_NUMBER = 20;
-    private java.util.List<java.lang.Integer> classesWithPrioritizedInitialization_;
-    /**
-     * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-     */
-    public java.util.List<java.lang.Integer>
-        getClassesWithPrioritizedInitializationList() {
-      return classesWithPrioritizedInitialization_;
-    }
-    /**
-     * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-     */
-    public int getClassesWithPrioritizedInitializationCount() {
-      return classesWithPrioritizedInitialization_.size();
-    }
-    /**
-     * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-     */
-    public int getClassesWithPrioritizedInitialization(int index) {
-      return classesWithPrioritizedInitialization_.get(index);
-    }
-
     private void initFields() {
       importedModule_ = java.util.Collections.emptyList();
       importEntry_ = java.util.Collections.emptyList();
@@ -35521,7 +35462,6 @@ public final class JsAstProtoBuf {
       definitions_ = java.util.Collections.emptyList();
       polyfills_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CompositeBlock.getDefaultInstance();
       optionalCrossModuleImports_ = java.util.Collections.emptyList();
-      classesWithPrioritizedInitialization_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -35677,9 +35617,6 @@ public final class JsAstProtoBuf {
       for (int i = 0; i < optionalCrossModuleImports_.size(); i++) {
         output.writeInt32(19, optionalCrossModuleImports_.get(i));
       }
-      for (int i = 0; i < classesWithPrioritizedInitialization_.size(); i++) {
-        output.writeInt32(20, classesWithPrioritizedInitialization_.get(i));
-      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -35774,15 +35711,6 @@ public final class JsAstProtoBuf {
         }
         size += dataSize;
         size += 2 * getOptionalCrossModuleImportsList().size();
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < classesWithPrioritizedInitialization_.size(); i++) {
-          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(classesWithPrioritizedInitialization_.get(i));
-        }
-        size += dataSize;
-        size += 2 * getClassesWithPrioritizedInitializationList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -35916,8 +35844,6 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00020000);
         optionalCrossModuleImports_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00040000);
-        classesWithPrioritizedInitialization_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00080000);
         return this;
       }
 
@@ -36027,11 +35953,6 @@ public final class JsAstProtoBuf {
           bitField0_ = (bitField0_ & ~0x00040000);
         }
         result.optionalCrossModuleImports_ = optionalCrossModuleImports_;
-        if (((bitField0_ & 0x00080000) == 0x00080000)) {
-          classesWithPrioritizedInitialization_ = java.util.Collections.unmodifiableList(classesWithPrioritizedInitialization_);
-          bitField0_ = (bitField0_ & ~0x00080000);
-        }
-        result.classesWithPrioritizedInitialization_ = classesWithPrioritizedInitialization_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -36166,16 +36087,6 @@ public final class JsAstProtoBuf {
           } else {
             ensureOptionalCrossModuleImportsIsMutable();
             optionalCrossModuleImports_.addAll(other.optionalCrossModuleImports_);
-          }
-          
-        }
-        if (!other.classesWithPrioritizedInitialization_.isEmpty()) {
-          if (classesWithPrioritizedInitialization_.isEmpty()) {
-            classesWithPrioritizedInitialization_ = other.classesWithPrioritizedInitialization_;
-            bitField0_ = (bitField0_ & ~0x00080000);
-          } else {
-            ensureClassesWithPrioritizedInitializationIsMutable();
-            classesWithPrioritizedInitialization_.addAll(other.classesWithPrioritizedInitialization_);
           }
           
         }
@@ -37963,72 +37874,6 @@ public final class JsAstProtoBuf {
       public Builder clearOptionalCrossModuleImports() {
         optionalCrossModuleImports_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00040000);
-        
-        return this;
-      }
-
-      private java.util.List<java.lang.Integer> classesWithPrioritizedInitialization_ = java.util.Collections.emptyList();
-      private void ensureClassesWithPrioritizedInitializationIsMutable() {
-        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
-          classesWithPrioritizedInitialization_ = new java.util.ArrayList<java.lang.Integer>(classesWithPrioritizedInitialization_);
-          bitField0_ |= 0x00080000;
-         }
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public java.util.List<java.lang.Integer>
-          getClassesWithPrioritizedInitializationList() {
-        return java.util.Collections.unmodifiableList(classesWithPrioritizedInitialization_);
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public int getClassesWithPrioritizedInitializationCount() {
-        return classesWithPrioritizedInitialization_.size();
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public int getClassesWithPrioritizedInitialization(int index) {
-        return classesWithPrioritizedInitialization_.get(index);
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public Builder setClassesWithPrioritizedInitialization(
-          int index, int value) {
-        ensureClassesWithPrioritizedInitializationIsMutable();
-        classesWithPrioritizedInitialization_.set(index, value);
-        
-        return this;
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public Builder addClassesWithPrioritizedInitialization(int value) {
-        ensureClassesWithPrioritizedInitializationIsMutable();
-        classesWithPrioritizedInitialization_.add(value);
-        
-        return this;
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public Builder addAllClassesWithPrioritizedInitialization(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureClassesWithPrioritizedInitializationIsMutable();
-        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-            values, classesWithPrioritizedInitialization_);
-        
-        return this;
-      }
-      /**
-       * <code>repeated int32 classes_with_prioritized_initialization = 20;</code>
-       */
-      public Builder clearClassesWithPrioritizedInitialization() {
-        classesWithPrioritizedInitialization_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00080000);
         
         return this;
       }
