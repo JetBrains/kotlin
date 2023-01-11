@@ -590,7 +590,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             session, scopeSession, firFiles + commonFirFiles,
             configuration.languageVersionSettings, signaturer,
             fir2IrExtensions,
-            FirJvmKotlinMangler(session), // TODO: replace with potentially simpler JS version
+            FirJvmKotlinMangler(), // TODO: replace with potentially simpler JS version
             JsManglerIr, IrFactoryImpl,
             Fir2IrVisibilityConverter.Default,
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation

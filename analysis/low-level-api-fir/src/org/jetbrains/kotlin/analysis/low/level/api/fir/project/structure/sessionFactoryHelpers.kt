@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.load.java.createJavaClassFinder
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(project: Project) {
-    register(IdeSessionComponents::class, IdeSessionComponents.create(this))
+    register(IdeSessionComponents::class, IdeSessionComponents.create())
     register(FirCachesFactory::class, FirThreadSafeCachesFactory)
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())

@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 open class FirJvmMangleComputer(
     private val builder: StringBuilder,
-    private val mode: MangleMode,
-    private val session: FirSession
+    private val mode: MangleMode
 ) : FirVisitor<Unit, Boolean>(), KotlinMangleComputer<FirDeclaration> {
 
     private val typeParameterContainer = ArrayList<FirMemberDeclaration>(4)
@@ -43,7 +42,7 @@ open class FirJvmMangleComputer(
 
     open fun FirFunction.platformSpecificSuffix(): String? =
         if (this is FirSimpleFunction && name.asString() == "main")
-            this@FirJvmMangleComputer.session.firProvider.getFirCallableContainerFile(symbol)?.name
+            this.moduleData.session.firProvider.getFirCallableContainerFile(symbol)?.name
         else null
 
     open fun FirFunction.specialValueParamPrefix(param: FirValueParameter): String = ""
@@ -51,7 +50,7 @@ open class FirJvmMangleComputer(
     private fun addReturnType(): Boolean = true
 
     override fun copy(newMode: MangleMode): FirJvmMangleComputer =
-        FirJvmMangleComputer(builder, newMode, session)
+        FirJvmMangleComputer(builder, newMode)
 
     private fun StringBuilder.appendName(s: String) {
         if (mode.fqn) {
@@ -90,7 +89,7 @@ open class FirJvmMangleComputer(
             else -> return
         }
         if (parentClassId != null && !parentClassId.isLocal) {
-            val parentClassLike = this@FirJvmMangleComputer.session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir
+            val parentClassLike = this.moduleData.session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir
                 ?: error("Attempt to find parent ($parentClassId) for probably-local declaration!")
             if (parentClassLike is FirRegularClass || parentClassLike is FirTypeAlias) {
                 parentClassLike.accept(this@FirJvmMangleComputer, false)
@@ -151,13 +150,13 @@ open class FirJvmMangleComputer(
 
         contextReceivers.forEach {
             builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
-            mangleType(builder, it.typeRef.coneType)
+            mangleType(builder, it.typeRef.coneType, moduleData.session)
         }
 
         val receiverType = receiverParameter?.typeRef ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverParameter?.typeRef
         receiverType?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it.coneType)
+            mangleType(builder, it.coneType, moduleData.session)
         }
 
         valueParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
@@ -170,7 +169,7 @@ open class FirJvmMangleComputer(
             }
 
         if (!isCtor && !returnTypeRef.isUnit && addReturnType()) {
-            mangleType(builder, returnTypeRef.coneType)
+            mangleType(builder, returnTypeRef.coneType, moduleData.session)
         }
     }
 
@@ -190,7 +189,7 @@ open class FirJvmMangleComputer(
     }
 
     private fun mangleValueParameter(vpBuilder: StringBuilder, param: FirValueParameter) {
-        mangleType(vpBuilder, param.returnTypeRef.coneType)
+        mangleType(vpBuilder, param.returnTypeRef.coneType, param.moduleData.session)
 
         if (param.isVararg) {
             vpBuilder.appendSignature(MangleConstant.VAR_ARG_MARK)
@@ -202,7 +201,7 @@ open class FirJvmMangleComputer(
         tpBuilder.appendSignature(MangleConstant.UPPER_BOUND_SEPARATOR)
 
         param.bounds.map { it.coneType }.collectForMangler(tpBuilder, MangleConstant.UPPER_BOUNDS) {
-            mangleType(this, it)
+            mangleType(this, it, param.moduleData.session)
         }
     }
 
@@ -215,12 +214,12 @@ open class FirJvmMangleComputer(
         appendSignature(parent.typeParameters.indexOf(typeParameter))
     }
 
-    private fun mangleType(tBuilder: StringBuilder, type: ConeKotlinType) {
+    private fun mangleType(tBuilder: StringBuilder, type: ConeKotlinType, declarationSiteSession: FirSession) {
         when (type) {
             is ConeLookupTagBasedType -> {
-                when (val symbol = type.lookupTag.toSymbol(session)) {
+                when (val symbol = type.lookupTag.toSymbol(declarationSiteSession)) {
                     is FirTypeAliasSymbol -> {
-                        mangleType(tBuilder, type.fullyExpandedType(session))
+                        mangleType(tBuilder, type.fullyExpandedType(declarationSiteSession), declarationSiteSession)
                         return
                     }
 
@@ -242,7 +241,7 @@ open class FirJvmMangleComputer(
                                     appendSignature(MangleConstant.VARIANCE_SEPARATOR)
                                 }
 
-                                mangleType(this, arg.type)
+                                mangleType(this, arg.type, declarationSiteSession)
                             }
                         }
                     }
@@ -258,11 +257,11 @@ open class FirJvmMangleComputer(
             }
 
             is ConeRawType -> {
-                mangleType(tBuilder, type.lowerBound)
+                mangleType(tBuilder, type.lowerBound, declarationSiteSession)
             }
 
             is ConeFlexibleType -> {
-                with(session.typeContext) {
+                with(declarationSiteSession.typeContext) {
                     // Need to reproduce type approximation done for flexible types in TypeTranslator.
                     // For now, we replicate the current behaviour of Fir2IrTypeConverter and just take the upper bound
                     val upper = type.upperBound
@@ -272,23 +271,23 @@ open class FirJvmMangleComputer(
                             lower.replaceArguments(upper.getArguments())
                         } else lower
                         val mixed = if (upper.isNullable) intermediate.makeNullable() else intermediate.makeDefinitelyNotNullOrNotNull()
-                        mangleType(tBuilder, mixed as ConeKotlinType)
-                    } else mangleType(tBuilder, upper)
+                        mangleType(tBuilder, mixed as ConeKotlinType, declarationSiteSession)
+                    } else mangleType(tBuilder, upper, declarationSiteSession)
                 }
             }
 
             is ConeDefinitelyNotNullType -> {
                 // E.g. not-null type parameter in Java
-                mangleType(tBuilder, type.original)
+                mangleType(tBuilder, type.original, declarationSiteSession)
             }
 
             is ConeCapturedType -> {
-                mangleType(tBuilder, type.lowerType ?: type.constructor.supertypes!!.first())
+                mangleType(tBuilder, type.lowerType ?: type.constructor.supertypes!!.first(), declarationSiteSession)
             }
 
             is ConeIntersectionType -> {
                 // TODO: add intersectionTypeApproximation
-                mangleType(tBuilder, type.intersectedTypes.first())
+                mangleType(tBuilder, type.intersectedTypes.first(), declarationSiteSession)
             }
 
             else -> error("Unexpected type $type")
@@ -319,7 +318,7 @@ open class FirJvmMangleComputer(
 
         variable.receiverParameter?.typeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it.coneType)
+            mangleType(builder, it.coneType, variable.moduleData.session)
         }
 
         variable.typeParameters.withIndex().toList().collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->

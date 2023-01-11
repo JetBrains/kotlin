@@ -72,7 +72,7 @@ internal fun PhaseContext.fir2Ir(
             input.session, input.scopeSession, input.firFiles + commonFirFiles,
             configuration.languageVersionSettings, signaturer,
             fir2IrExtensions,
-            FirJvmKotlinMangler(input.session), // TODO: replace with potentially simpler Konan version
+            FirJvmKotlinMangler(), // TODO: replace with potentially simpler Konan version
             KonanManglerIr, IrFactoryImpl,
             Fir2IrVisibilityConverter.Default,
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation

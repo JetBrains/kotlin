@@ -87,7 +87,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
         return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             session, scopeSession, fir,
             session.languageVersionSettings, signaturer, fir2IrExtensions,
-            FirJvmKotlinMangler(session),
+            FirJvmKotlinMangler(),
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
@@ -100,7 +100,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
         return Fir2IrConverter.createModuleFragmentWithoutSignatures(
             session, scopeSession, fir,
             session.languageVersionSettings, fir2IrExtensions,
-            FirJvmKotlinMangler(session),
+            FirJvmKotlinMangler(),
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,

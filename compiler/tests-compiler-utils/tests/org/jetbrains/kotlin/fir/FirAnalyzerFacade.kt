@@ -121,7 +121,7 @@ class FirAnalyzerFacade(
             session, _scopeSession!!, firFiles!!,
             languageVersionSettings, signaturer,
             fir2IrExtensions,
-            FirJvmKotlinMangler(session), JvmIrMangler, IrFactoryImpl,
+            FirJvmKotlinMangler(), JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
