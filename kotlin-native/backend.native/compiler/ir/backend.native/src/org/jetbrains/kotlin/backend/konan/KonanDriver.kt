@@ -9,12 +9,26 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+
+// Extracted from KonanTarget class to avoid problems with kotlin-native-shared.
+private val deprecatedTargets = setOf(
+        KonanTarget.WATCHOS_X86,
+        KonanTarget.IOS_ARM32,
+        KonanTarget.LINUX_ARM32_HFP,
+        KonanTarget.MINGW_X86,
+        KonanTarget.LINUX_MIPS32,
+        KonanTarget.LINUX_MIPSEL32,
+        KonanTarget.WASM32
+)
 
 class KonanDriver(
         val project: Project,
@@ -44,6 +58,11 @@ class KonanDriver(
             konanConfig.targetManager.list()
         }
         if (konanConfig.infoArgsOnly) return
+
+        // Avoid showing warning twice in 2-phase compilation.
+        if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in deprecatedTargets) {
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "target ${konanConfig.target} is deprecated and will be removed soon.")
+        }
 
         ensureModuleName(konanConfig)
 
