@@ -107,8 +107,8 @@ internal object PartialLinkageUtils {
             override val module = Module.Real(file.module.name)
 
             override fun computeLocationForOffset(offset: Int): Location {
-                val lineNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_LINE_NUMBER else file.fileEntry.getLineNumber(offset)
-                val columnNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_COLUMN_NUMBER else file.fileEntry.getColumnNumber(offset)
+                val lineNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_LINE_NUMBER else file.fileEntry.getLineNumber(offset) + 1 // since humans count from 1, not 0
+                val columnNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_COLUMN_NUMBER else file.fileEntry.getColumnNumber(offset) + 1
 
                 // TODO: should module name still be added here?
                 return Location("${module.name} @ ${file.fileEntry.name}", lineNumber, columnNumber)
