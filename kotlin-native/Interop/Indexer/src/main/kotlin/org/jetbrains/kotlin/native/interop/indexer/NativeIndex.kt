@@ -100,16 +100,23 @@ data class CompilationWithPCH(
         get() = emptyList()
 }
 
-// TODO: Compilation hierarchy seems to require some refactoring.
-
-data class NativeLibrary(override val includes: List<IncludeInfo>,
-                         override val additionalPreambleLines: List<String>,
-                         override val compilerArgs: List<String>,
-                         val headerToIdMapper: HeaderToIdMapper,
-                         override val language: Language,
-                         val excludeSystemLibs: Boolean, // TODO: drop?
-                         val headerExclusionPolicy: HeaderExclusionPolicy,
-                         val headerFilter: NativeLibraryHeaderFilter) : Compilation
+/**
+ *
+ *  @param objCClassesIncludingCategories Objective-C classes that should be merged with categories from the same file.
+ *
+ * TODO: Compilation hierarchy seems to require some refactoring.
+ */
+data class NativeLibrary(
+        override val includes: List<IncludeInfo>,
+        override val additionalPreambleLines: List<String>,
+        override val compilerArgs: List<String>,
+        val headerToIdMapper: HeaderToIdMapper,
+        override val language: Language,
+        val excludeSystemLibs: Boolean, // TODO: drop?
+        val headerExclusionPolicy: HeaderExclusionPolicy,
+        val headerFilter: NativeLibraryHeaderFilter,
+        val objCClassesIncludingCategories: Set<String>,
+) : Compilation
 
 data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
 
@@ -270,6 +277,10 @@ data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: Ob
 abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
     abstract val binaryName: String?
     abstract val baseClass: ObjCClass?
+    /**
+     * Categories whose methods and properties should be generated as members of Kotlin class.
+     */
+    abstract val includedCategories: List<ObjCCategory>
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 

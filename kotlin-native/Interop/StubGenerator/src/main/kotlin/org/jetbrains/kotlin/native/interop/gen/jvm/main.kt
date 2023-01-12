@@ -568,6 +568,7 @@ internal fun buildNativeLibrary(
 
     val headerExclusionPolicy = HeaderExclusionPolicyImpl(imports)
 
+    val objCClassesIncludingCategories = def.config.objcClassesIncludingCategories.toSet()
     return NativeLibrary(
             includes = includes,
             additionalPreambleLines = compilation.additionalPreambleLines,
@@ -576,7 +577,8 @@ internal fun buildNativeLibrary(
             language = compilation.language,
             excludeSystemLibs = excludeSystemLibs,
             headerExclusionPolicy = headerExclusionPolicy,
-            headerFilter = headerFilter
+            headerFilter = headerFilter,
+            objCClassesIncludingCategories = objCClassesIncludingCategories
     )
 }
 

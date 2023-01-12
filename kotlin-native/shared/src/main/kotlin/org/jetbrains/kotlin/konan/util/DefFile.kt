@@ -132,6 +132,9 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getProperty("plugin")
         }
 
+        val objcClassesIncludingCategories by lazy {
+            properties.getSpaceSeparated("objcClassesIncludingCategories")
+        }
     }
 }
 
