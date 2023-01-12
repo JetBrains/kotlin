@@ -199,7 +199,6 @@ private class FirSpecificAnnotationForLocalClassesResolveTransformer(
     private val localClassesNavigationInfo: LocalClassesNavigationInfo
 ) : AbstractFirSpecificAnnotationResolveTransformer(session, scopeSession, computationSession, containingDeclarations) {
     override fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean {
-        localClassesNavigationInfo.allMembers
         return when (declaration) {
             is FirClassLikeDeclaration -> declaration in localClassesNavigationInfo.parentForClass
             else -> true
