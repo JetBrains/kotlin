@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
@@ -314,12 +315,18 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
         IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
     }
 
+    private fun IrClassSymbol.isInterop(): Boolean {
+        if (this is IrPublicSymbolBase<*> && this.signature.isInteropSignature()) return true
+
+        // K2 doesn't properly put signatures into such symbols yet, workaround:
+        return this.isBound && this.owner is Fir2IrLazyClass && this.descriptor.isFromInteropLibrary()
+    }
+
     // This is an alternative to .isObjCClass that doesn't need to walk up all the class heirarchy,
     // rather it only looks at immediate super class symbols.
     private fun IrClass.hasInteropSuperClass() = this.superTypes
         .mapNotNull { it.classOrNull }
-        .filter { it is IrPublicSymbolBase<*> }
-        .any { it.signature?.isInteropSignature() ?: false }
+        .any { it.isInterop() }
 
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean {
         return !clazz.hasInteropSuperClass() && clazz !is IrLazyClass
