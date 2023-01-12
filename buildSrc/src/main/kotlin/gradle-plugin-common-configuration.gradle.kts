@@ -8,7 +8,6 @@ import plugins.signLibraryPublication
 plugins {
     kotlin("jvm")
     `java-gradle-plugin`
-    id("org.jetbrains.dokka")
     `maven-publish`
     id("com.gradle.plugin-publish")
 }

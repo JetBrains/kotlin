@@ -125,15 +125,6 @@ tasks {
         enableStricterValidation.set(true)
     }
 
-    withType<DokkaTask>().configureEach {
-        dokkaSourceSets.configureEach {
-            includes.from("Module.md")
-        }
-    }
-    register("dokka") {
-        dependsOn(named("dokkaJavadoc"))
-    }
-
     withType<ShadowJar>().configureEach {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
         relocate("de.undercouch.gradle.tasks.download", "$kotlinEmbeddableRootPackage.de.undercouch.gradle.tasks.download")

@@ -54,6 +54,8 @@ enum class GradlePluginVariant(
     GRADLE_76("gradle76", "7.6", "7.6"),
 }
 
+val commonSourceSetName = "common"
+
 /**
  * Configures common pom configuration parameters
  */
@@ -103,7 +105,7 @@ fun Project.excludeGradleCommonDependencies(sourceSet: SourceSet) {
  * Should contain classes that are independent of Gradle API version or using minimal supported Gradle api.
  */
 fun Project.createGradleCommonSourceSet(): SourceSet {
-    val commonSourceSet = sourceSets.create("common") {
+    val commonSourceSet = sourceSets.create(commonSourceSetName) {
         excludeGradleCommonDependencies(this)
 
         // Adding Gradle API to separate configuration, so version will not leak into variants
@@ -299,28 +301,6 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 }
         }
 
-        if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
-            plugins.withId("org.jetbrains.dokka") {
-                val dokkaTask = tasks.named<DokkaTask>("dokkaJavadoc") {
-                    dokkaSourceSets {
-                        named(commonSourceSet.name) {
-                            suppress.set(false)
-                        }
-
-                        named("main") {
-                            dependsOn(commonSourceSet)
-                        }
-                    }
-                }
-
-                tasks.withType<Jar>().configureEach {
-                    if (name == javadocJarTaskName) {
-                        from(dokkaTask.flatMap { it.outputDirectory })
-                    }
-                }
-            }
-        }
-
         // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
         val javaComponent = project.components["java"] as AdhocComponentWithVariants
         listOf(
@@ -443,36 +423,6 @@ fun Project.createGradlePluginVariant(
 
         tasks.named<Jar>(variantSourceSet.sourcesJarTaskName) {
             addEmbeddedSources()
-        }
-    }
-
-    if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
-        plugins.withId("org.jetbrains.dokka") {
-            val dokkaTask = tasks.register<DokkaTask>(
-                "dokka${
-                    variantSourceSet.javadocTaskName.replaceFirstChar { it.uppercase() }
-                }") {
-                description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
-
-                plugins.dependencies.add(
-                    project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
-                )
-
-                dokkaSourceSets {
-                    named(commonSourceSet.name) {
-                        suppress.set(false)
-                    }
-
-                    named(variantSourceSet.name) {
-                        dependsOn(commonSourceSet)
-                        suppress.set(false)
-                    }
-                }
-            }
-
-            tasks.named<Jar>(variantSourceSet.javadocJarTaskName) {
-                from(dokkaTask.flatMap { it.outputDirectory })
-            }
         }
     }
 
@@ -631,5 +581,47 @@ fun Project.addBomCheckTask() {
 
     tasks.named("check") {
         dependsOn(checkBomTask)
+    }
+}
+
+fun Project.configureDokkaPublication() {
+    if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
+
+    plugins.apply("org.jetbrains.dokka")
+    plugins.withId("org.jetbrains.dokka") {
+        val commonSourceSet = sourceSets.getByName(commonSourceSetName)
+
+        GradlePluginVariant.values().forEach { pluginVariant ->
+            val variantSourceSet = sourceSets.getByName(pluginVariant.sourceSetName)
+            val dokkaTaskName = "dokka${variantSourceSet.javadocTaskName.replaceFirstChar { it.uppercase() }}"
+
+            val dokkaTask = if (tasks.names.contains(dokkaTaskName)) {
+                tasks.named<DokkaTask>(dokkaTaskName)
+            } else {
+                tasks.register<DokkaTask>(dokkaTaskName)
+            }
+            dokkaTask.configure {
+                description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
+
+                plugins.dependencies.add(
+                    project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
+                )
+
+                dokkaSourceSets {
+                    named(commonSourceSet.name) {
+                        suppress.set(false)
+                    }
+
+                    named(variantSourceSet.name) {
+                        dependsOn(commonSourceSet)
+                        suppress.set(false)
+                    }
+                }
+            }
+
+            tasks.named<Jar>(variantSourceSet.javadocJarTaskName) {
+                from(dokkaTask.flatMap { it.outputDirectory })
+            }
+        }
     }
 }
