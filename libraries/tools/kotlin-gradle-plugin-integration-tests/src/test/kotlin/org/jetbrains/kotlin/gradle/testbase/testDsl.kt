@@ -485,7 +485,6 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
     }
 }
 
-@OptIn(ExperimentalPathApi::class)
 internal fun Path.enableAndroidSdk() {
     val androidSdk = KtTestUtil.findAndroidSdk()
     resolve("local.properties")
@@ -610,3 +609,17 @@ private fun TestProject.configureLocalRepository(localRepoDir: Path) {
 }
 
 internal fun TestProject.disableKotlinNativeCaches() = gradleProperties.toFile().disableKotlinNativeCaches()
+
+internal fun TestProject.enableStableConfigurationCachePreview() {
+    val settingsFile = if (settingsGradleKts.exists()) {
+        settingsGradleKts
+    } else {
+        settingsGradle
+    }
+    settingsFile.append(
+        """
+            |
+            |enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+            """.trimMargin()
+    )
+}
