@@ -5,5 +5,9 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            name = "build"
+            url = rootProject.buildDir.resolve("repo").toURI()
+        }
     }
 }

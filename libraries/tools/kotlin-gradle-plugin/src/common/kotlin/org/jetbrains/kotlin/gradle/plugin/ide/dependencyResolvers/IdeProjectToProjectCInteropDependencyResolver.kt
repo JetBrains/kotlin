@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver {
+internal object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver {
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
@@ -27,14 +27,10 @@ object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver {
         val project = sourceSet.project
         val configuration = project.locateOrCreateCInteropDependencyConfiguration(compilation)
 
-        val cinteropFiles = project.files(
-            {
-                configuration.incoming.artifactView {
-                    it.componentFilter { identifier -> identifier is ProjectComponentIdentifier }
-                }.artifacts.map { it.file }
-            }
-        )
+        val cinteropFiles = configuration.incoming.artifactView {
+            it.componentFilter { identifier -> identifier is ProjectComponentIdentifier }
+        }.files
 
-        return resolveCinteropDependencies(project, cinteropFiles)
+        return project.resolveCinteropDependencies(cinteropFiles)
     }
 }

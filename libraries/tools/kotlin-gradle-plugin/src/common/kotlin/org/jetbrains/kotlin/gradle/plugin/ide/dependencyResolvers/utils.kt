@@ -20,6 +20,3 @@ internal inline fun <reified T : MetadataDependencyResolution> KotlinSourceSet.r
     if (this !is DefaultKotlinSourceSet) return emptyList()
     return compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty.filterIsInstance<T>()
 }
-
-internal val KotlinLibrary.moduleDisplayName: String
-    get() = packageFqName ?: shortName ?: uniqueName

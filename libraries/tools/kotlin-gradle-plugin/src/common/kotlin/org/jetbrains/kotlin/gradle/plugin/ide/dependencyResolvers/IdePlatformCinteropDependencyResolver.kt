@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.getPlatformCinteropDependenciesOrEmpty
 
-object IdePlatformCinteropDependencyResolver : IdeDependencyResolver {
+internal object IdePlatformCinteropDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         val project = sourceSet.project
 
         val cinteropFiles = project.getPlatformCinteropDependenciesOrEmpty(sourceSet)
 
-        return resolveCinteropDependencies(project, cinteropFiles)
+        return project.resolveCinteropDependencies(cinteropFiles)
     }
 }

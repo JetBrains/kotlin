@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadat
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
-object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
+internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
 
@@ -27,7 +27,7 @@ object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyResolver, I
         project.locateDependencyTask(sourceSet) ?: return emptySet()
 
         val cinteropFiles = project.createCInteropMetadataDependencyClasspathForIde(sourceSet)
-        return resolveCinteropDependencies(project, cinteropFiles)
+        return project.resolveCinteropDependencies(cinteropFiles)
     }
 
     override fun dependencies(project: Project): Iterable<Any> {

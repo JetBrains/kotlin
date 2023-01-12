@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 
-fun resolveCinteropDependencies(project: Project, cinteropFiles: FileCollection): Set<IdeaKotlinDependency> {
+internal fun Project.resolveCinteropDependencies(cinteropFiles: FileCollection): Set<IdeaKotlinDependency> {
     return cinteropFiles.files
         .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
         .mapNotNullTo(mutableSetOf()) { libraryFile ->
-            createCinteropLibraryDependency(project, libraryFile)
+            createCinteropLibraryDependency(this, libraryFile)
         }
 }
 

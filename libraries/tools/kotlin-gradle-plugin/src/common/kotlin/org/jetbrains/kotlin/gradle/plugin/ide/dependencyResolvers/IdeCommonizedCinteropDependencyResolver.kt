@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 
-object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
+internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
 
         val project = sourceSet.project
         val cinteropFiles = project.cinteropCommonizerDependencies(sourceSet)
-        return resolveCinteropDependencies(project, cinteropFiles)
+        return project.resolveCinteropDependencies(cinteropFiles)
     }
 
     override fun dependencies(project: Project): Iterable<Any> {

@@ -4,9 +4,7 @@ plugins {
 
 kotlin {
     jvm()
-    ios {
-        compilations.getByName("main").cinterops.create("w")
-    }
+    linuxArm64("linuxArm").compilations.getByName("main").cinterops.create("w")
     linuxX64("linux").compilations.getByName("main").cinterops.create("w")
 
     sourceSets {
@@ -14,17 +12,19 @@ kotlin {
         val commonTest by getting
         val linuxMain by getting
         val linuxTest by getting
+        val linuxArmMain by getting
+        val linuxArmTest by getting
 
         val nativeMain by creating {
             this.dependsOn(commonMain)
-            getByName("iosMain").dependsOn(this)
+            linuxArmMain.dependsOn(this)
         }
         val nativeTest by creating {
             this.dependsOn(commonTest)
-            getByName("iosTest").dependsOn(this)
+            linuxArmTest.dependsOn(this)
         }
 
-        val linuxOtherMain by creating {
+        val linuxIntermediateMain by creating {
             this.dependsOn(nativeMain)
             linuxMain.dependsOn(this)
 
@@ -32,7 +32,7 @@ kotlin {
                 implementation(project(":dep-with-cinterop"))
             }
         }
-        val linuxOtherTest by creating {
+        val linuxIntermediateTest by creating {
             this.dependsOn(nativeTest)
             linuxTest.dependsOn(this)
         }

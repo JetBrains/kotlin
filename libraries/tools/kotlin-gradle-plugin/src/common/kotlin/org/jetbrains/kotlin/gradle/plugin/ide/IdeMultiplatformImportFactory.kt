@@ -95,7 +95,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeCommonizedCinteropDependencyResolver,
-            constraint = { sourceSet -> SourceSetConstraint.isNative(sourceSet) && getCommonizerTarget(sourceSet) is SharedCommonizerTarget },
+            constraint = { sourceSet -> getCommonizerTarget(sourceSet) is SharedCommonizerTarget },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
