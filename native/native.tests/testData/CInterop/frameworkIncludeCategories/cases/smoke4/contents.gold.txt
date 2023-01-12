@@ -1,0 +1,25 @@
+
+package dependency {
+
+    @ExternalObjCClass open class MyClass : ObjCObjectBase {
+        @ObjCConstructor(designated = true, initSelector = "initWithFloat:") constructor(float: Float)
+        @ObjCConstructor(designated = true, initSelector = "initWithPointer:") constructor(pointer: COpaquePointer? /* = CPointer<out CPointed>? */)
+        @ObjCConstructor(designated = true, initSelector = "initWithAnother:") constructor(another: MyClass?)
+        protected constructor()
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass(instance)", imports = {})) @ObjCMethod(encoding = "@24@0:8@16", isStret = false, selector = "initWithAnother:") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun initWithAnother(instance: MyClass?): Any?
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass(number)", imports = {})) @ObjCMethod(encoding = "@20@0:8f16", isStret = false, selector = "initWithFloat:") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun initWithFloat(number: Float): Any?
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass(any)", imports = {})) @ObjCMethod(encoding = "@24@0:8^v16", isStret = false, selector = "initWithPointer:") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun initWithPointer(any: COpaquePointer? /* = CPointer<out CPointed>? */): MyClass?
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+    }
+
+}
+
+package dependency {
+    @ObjCFactory(encoding = "@24@0:8@16", isStret = false, selector = "initWithAnother:") @CCall.ConsumesReceiver @CCall.ReturnsRetained external fun <T : MyClass> ObjCClassOf<T>.create(another: MyClass?): T?
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use factory method instead", replaceWith = ReplaceWith(expression = "MyClass.create(instance)", imports = {})) @ObjCMethod(encoding = "@24@0:8@16", isStret = false, selector = "initWithAnother:") @CCall.ConsumesReceiver @CCall.ReturnsRetained external fun MyClass.initWithAnother(instance: MyClass?): Any?
+}
+

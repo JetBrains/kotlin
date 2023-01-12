@@ -1,0 +1,36 @@
+
+package dependency {
+
+    @ExternalObjCClass open class MyClass : ObjCObjectBase {
+        protected constructor()
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+    }
+
+    @ExternalObjCClass open class SkipClass : ObjCObjectBase {
+        protected constructor()
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
+        companion object : SkipClassMeta, ObjCClassOf<SkipClass>
+    }
+
+    @ExternalObjCClass open class SkipClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+    }
+
+}
+
+package dependency {
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") external fun MyClassMeta.categoryClassMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") external fun SkipClassMeta.categoryClassMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod2") external fun MyClassMeta.categoryClassMethod2()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") external fun MyClass.categoryInstanceMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") external fun SkipClass.categoryInstanceMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod2") external fun MyClass.categoryInstanceMethod2()
+}
+

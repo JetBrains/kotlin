@@ -35,6 +35,14 @@ abstract class AbstractNativeCInteropNoFModulesTest : AbstractNativeCInteropTest
     override val defFileName: String = "pod1.def"
 }
 
+abstract class AbstractNativeCInteropIncludeCategoriesTest : AbstractNativeCInteropTest() {
+    override val fmodules: Boolean
+        get() = false
+
+    override val defFileName: String
+        get() = "dependency.def"
+}
+
 @Tag("cinterop")
 abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
     abstract val fmodules: Boolean

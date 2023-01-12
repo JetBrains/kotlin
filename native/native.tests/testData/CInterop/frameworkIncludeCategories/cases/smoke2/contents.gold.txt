@@ -1,0 +1,32 @@
+
+package dependency {
+
+    @ExternalObjCClass open class MyClass : ObjCObjectBase {
+        protected constructor()
+        var categoryProperty: Float
+            @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") get
+            @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") set
+        var instanceProperty: Float
+            @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "instanceProperty") get
+            @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setInstanceProperty:") set
+        @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") open external fun categoryProperty(): Float
+        @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "instanceProperty") open external fun instanceProperty(): Float
+        @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") open external fun setCategoryProperty(categoryProperty: Float)
+        @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setInstanceProperty:") open external fun setInstanceProperty(instanceProperty: Float)
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+    }
+
+}
+
+package dependency {
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance property instead", replaceWith = ReplaceWith(imports = {})) var MyClass.categoryProperty: Float
+        @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(imports = {})) get
+        @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(imports = {})) set
+    @ObjCMethod(encoding = "f16@0:8", isStret = false, selector = "categoryProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(imports = {})) external fun MyClass.categoryProperty(): Float
+    @ObjCMethod(encoding = "v20@0:8f16", isStret = false, selector = "setCategoryProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(imports = {})) external fun MyClass.setCategoryProperty(categoryProperty: Float)
+}
+
