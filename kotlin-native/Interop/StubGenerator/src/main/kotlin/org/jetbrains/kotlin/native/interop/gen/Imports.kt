@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 
 interface Imports {
     fun getPackage(location: Location): String?
+
+    fun isImported(headerId: HeaderId): Boolean
 }
 
 
@@ -34,6 +36,9 @@ class ImportsImpl(internal val headerIdToPackage: Map<HeaderId, PackageInfo>) : 
         accessedLibraries += packageInfo.library
         return packageInfo.name
     }
+
+    override fun isImported(headerId: HeaderId) =
+            headerId in headerIdToPackage
 
     private val accessedLibraries = mutableSetOf<KonanLibrary>()
 
@@ -63,11 +68,11 @@ class HeaderInclusionPolicyImpl(
 }
 
 class HeaderExclusionPolicyImpl(
-        private val importsImpl: ImportsImpl
+        private val imports: Imports
 ) : HeaderExclusionPolicy {
 
     override fun excludeAll(headerId: HeaderId): Boolean {
-        return headerId in importsImpl.headerIdToPackage
+        return imports.isImported(headerId)
     }
 
 }
