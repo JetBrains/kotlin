@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -297,16 +298,27 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
                 it.replace("'com.example:sample-lib:1.0'", "project('${libProject.projectName}')")
             }
 
+            val testGradleVersion = chooseWrapperVersionOrFinishTest()
+            val isAtLeastGradle75 = GradleVersion.version(testGradleVersion) >= GradleVersion.version("7.5")
+
             listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
                     assertSuccessful()
-                    assertContains("variant \"${target}ApiElements\" [")
+                    if (isAtLeastGradle75) {
+                        assertContains("Variant ${target}ApiElements")
+                    } else {
+                        assertContains("variant \"${target}ApiElements\" [")
+                    }
                 }
 
                 if (suffix == "Classpath") {
                     build("dependencyInsight", "--configuration", "${target}Runtime$suffix", "--dependency", "sample-lib") {
                         assertSuccessful()
-                        assertContains("variant \"${target}RuntimeElements\" [")
+                        if (isAtLeastGradle75) {
+                            assertContains("Variant ${target}RuntimeElements")
+                        } else {
+                            assertContains("variant \"${target}RuntimeElements\" [")
+                        }
                     }
                 }
             }

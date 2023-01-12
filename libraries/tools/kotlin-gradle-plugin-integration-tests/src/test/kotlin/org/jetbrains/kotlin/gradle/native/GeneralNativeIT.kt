@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -1109,10 +1108,21 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         fun CompiledProject.assertVariantInDependencyInsight(variantName: String) {
+            val testGradleVersion = chooseWrapperVersionOrFinishTest()
+            val isAtLeastGradle75 = GradleVersion.version(testGradleVersion) >= GradleVersion.version("7.5")
             try {
-                assertContains("variant \"$variantName\" [")
+                if (isAtLeastGradle75) {
+                    assertContains("Variant $variantName")
+                } else {
+                    assertContains("variant \"$variantName\" [")
+                }
             } catch (originalError: AssertionError) {
-                val matchedVariants = Regex("variant \"(.*?)\" \\[").findAll(output).toList()
+                val regexPattern = if (isAtLeastGradle75) {
+                    "Variant (.*?):"
+                } else {
+                    "variant \"(.*?)\" \\["
+                }
+                val matchedVariants = Regex(regexPattern).findAll(output).toList()
                 throw AssertionError(
                     "Expected variant $variantName. " +
                             if (matchedVariants.isNotEmpty())
