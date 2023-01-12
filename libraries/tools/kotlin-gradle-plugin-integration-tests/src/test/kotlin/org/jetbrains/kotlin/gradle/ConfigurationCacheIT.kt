@@ -101,6 +101,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 ":lib:assembleLibDebugXCFramework",
                 ":lib:compileTestKotlinIosX64",
                 ":lib:linkDebugTestIosX64",
+                ":lib:transformCommonMainDependenciesMetadata",
             )
         }
 
@@ -111,7 +112,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 buildOptions = defaultBuildOptions.copy(
                     freeArgs = listOf(
                         // remove after KT-49933 is fixed
-                        "-x", ":lib:transformCommonMainDependenciesMetadata",
                         "-x", ":lib:transformCommonMainCInteropDependenciesMetadata",
                     )
                 )
