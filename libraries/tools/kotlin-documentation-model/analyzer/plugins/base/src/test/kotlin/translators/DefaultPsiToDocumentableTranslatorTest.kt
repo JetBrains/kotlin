@@ -8,7 +8,6 @@ import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.plugability.DokkaPlugin
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import utils.assertNotNull
@@ -741,4 +740,93 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `should have public default constructor in public class`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.findClasslike(packageName = "test", "A") as DClass
+
+                assertEquals(1, testedClass.constructors.size, "Expect 1 default constructor")
+                assertTrue(
+                    testedClass.constructors.first().parameters.isEmpty(),
+                    "Expect default constructor doesn't have params"
+                )
+                assertEquals(JavaVisibility.Public, testedClass.constructors.first().visibility())
+            }
+        }
+    }
+
+    @Test
+    fun `should have package-private default constructor in package-private class`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |class A {
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.findClasslike(packageName = "test", "A") as DClass
+
+                assertEquals(1, testedClass.constructors.size, "Expect 1 default constructor")
+                assertEquals(JavaVisibility.Default, testedClass.constructors.first().visibility())
+            }
+        }
+    }
+
+    @Test
+    fun `should have private default constructor in private nested class`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |class A {
+            |    private static class PrivateNested{}
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val parentClass = module.findClasslike(packageName = "test", "A") as DClass
+                val testedClass = parentClass.classlikes.single { it.name == "PrivateNested" } as DClass
+
+                assertEquals(1, testedClass.constructors.size, "Expect 1 default constructor")
+                assertEquals(JavaVisibility.Private, testedClass.constructors.first().visibility())
+            }
+        }
+    }
+
+    @Test
+    fun `should not have a default constructor because have explicit private`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |    private A(){}
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.findClasslike(packageName = "test", "A") as DClass
+
+                assertEquals(1, testedClass.constructors.size, "Expect 1 declared constructor")
+                assertEquals(JavaVisibility.Private, testedClass.constructors.first().visibility())
+            }
+        }
+    }
 }
+
+private fun DFunction.visibility() = visibility.values.first()
