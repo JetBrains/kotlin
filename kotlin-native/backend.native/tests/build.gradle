@@ -5223,11 +5223,12 @@ if (PlatformInfo.isAppleTarget(project)) {
         }
     }
 
-// TODO: Inherit from NSView, use parent constuctors.
-//    interopTest("interop_kt55653") {
-//        useGoldenData = true
-//        UtilsKt.dependsOnPlatformLibs(it)
-//    }
+    standaloneTest("interop_kt55653") {
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
+        source = "interop/objc/kt55653/main.kt"
+        useGoldenData = true
+        UtilsKt.dependsOnPlatformLibs(it)
+    }
 }
 
 tasks.register("KT-50983", KonanDriverTest) {
