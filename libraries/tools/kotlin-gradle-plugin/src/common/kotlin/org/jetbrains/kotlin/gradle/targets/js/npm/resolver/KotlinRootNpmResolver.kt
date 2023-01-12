@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
 import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import org.jetbrains.kotlin.gradle.utils.unavailableValueError
@@ -95,6 +98,12 @@ class KotlinRootNpmResolver internal constructor(
 
     internal val compositeNodeModules: CompositeNodeModulesCache
         get() = compositeNodeModulesProvider.get()
+
+    internal fun declareCacheServicesUsage(task: Task) {
+        task.usesService(gradleNodeModulesProvider)
+        task.usesService(compositeNodeModulesProvider)
+        task.usesService(resolverStateHolder)
+    }
 
     @Transient
     private val projectResolvers_: MutableMap<String, KotlinProjectNpmResolver>? = mutableMapOf()
@@ -176,6 +185,9 @@ class KotlinRootNpmResolver internal constructor(
         synchronized(projectResolvers) {
             check(state == RootResolverState.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
             projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
+            target.tasks.withType<Kotlin2JsCompile>().configureEach { task ->
+                nodeJs_.npmResolutionManager.declareBuildServicesUsage(task)
+            }
         }
     }
 

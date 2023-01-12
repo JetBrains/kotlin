@@ -277,4 +277,9 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
             }
         }
     }
+
+    internal fun declareBuildServicesUsage(task: Task) {
+        task.usesService(stateHolderProvider)
+        resolver.declareCacheServicesUsage(task)
+    }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.MayBeUpToDatePackageJ
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.chainedDisallowChanges
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 
@@ -113,13 +114,14 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
                 task.compilation = compilation
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
-                task.mayBeUpToDateTasksRegistry.apply {
-                    set(MayBeUpToDatePackageJsonTasksRegistry.registerIfAbsent(project))
-                    disallowChanges()
+                val packageJsonStateService = MayBeUpToDatePackageJsonTasksRegistry.registerIfAbsent(project)
+                task.mayBeUpToDateTasksRegistry.value(packageJsonStateService).chainedDisallowChanges().also {
+                    task.usesService(packageJsonStateService)
                 }
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.dependsOn(npmCachesSetupTask)
+                nodeJs.npmResolutionManager.declareBuildServicesUsage(task)
             }
             packageJsonUmbrella.configure { task ->
                 task.inputs.file(packageJsonTask.map { it.packageJson })
