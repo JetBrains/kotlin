@@ -35,12 +35,10 @@ fun Assertions.checkTxtAccordingToBackendAndFrontend(module: TestModule, actual:
     if (isFir && firText != null) {
         if (firText == irText) {
             fail { "JVM_IR and FIR golden files are identical. Remove $firTxtFile." }
-        } else if (firText == classicText) {
+        } else if (firText == classicText && irText == null) {
             fail { "JVM and FIR golden files are identical. Remove $firTxtFile." }
         }
-    }
-
-    if (!isFir && isIr && irText != null && irText == classicText) {
+    } else if ((isIr || isFir) && irText != null && irText == classicText) {
         fail { "JVM and JVM_IR golden files are identical. Remove $irTxtFile." }
     }
 }
