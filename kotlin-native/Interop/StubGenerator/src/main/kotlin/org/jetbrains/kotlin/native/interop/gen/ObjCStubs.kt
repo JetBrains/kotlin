@@ -98,7 +98,7 @@ private class ObjCMethodStubBuilder(
         private val method: ObjCMethod,
         private val container: ObjCContainer,
         private val isDesignatedInitializer: Boolean,
-        override val context: StubsBuildingContext
+        override val context: StubsBuildingContext,
 ) : StubElementBuilder {
     private val isStret: Boolean
     private val stubReturnType: StubType
@@ -111,6 +111,9 @@ private class ObjCMethodStubBuilder(
     private val modality: MemberStubModality
     private val isOverride: Boolean =
             container is ObjCClassOrProtocol && method.isOverride(container)
+
+    private val isDeprecatedCategoryMethod: Boolean =
+            container is ObjCCategory && container in container.clazz.includedCategories
 
     init {
         val returnType = method.getReturnType(container.classOrProtocol)
@@ -221,12 +224,17 @@ private class ObjCMethodStubBuilder(
                             annotations = annotations,
                             modality = MemberStubModality.FINAL
                     )
+                    // TODO: Should we deprecate it as well?
                     createMethod
                 }
                 is ObjCProtocol -> null
             }
         } else {
             null
+        }
+        if (isDeprecatedCategoryMethod && annotations.filterIsInstance<AnnotationStub.Deprecated>().isEmpty()) {
+            val target = if (method.isClass) "class" else "instance"
+            annotations += AnnotationStub.Deprecated(message = "Use $target method instead", replaceWith = "", level = DeprecationLevel.WARNING)
         }
         return listOfNotNull(
                 FunctionStub(
@@ -292,8 +300,9 @@ internal val ObjCClassOrProtocol.selfAndSuperTypes: Sequence<ObjCClassOrProtocol
 internal val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
     get() = this.immediateSuperTypes.flatMap { it.selfAndSuperTypes }.distinct()
 
-internal fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
-        this.methods.asSequence().filter { it.isClass == isClass }
+private fun ObjCContainer.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
+        this.methods.asSequence().filter { it.isClass == isClass } +
+                if (this is ObjCClass) { includedCategoriesMethods(isClass) } else emptyList()
 
 @Suppress("UNUSED_PARAMETER")
 internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
@@ -330,6 +339,16 @@ internal fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<Stri
 
 internal fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
         container.superTypes.any { superType -> superType.methods.any(this::replaces) }
+
+private fun ObjCClass.includedCategoriesMethods(isMeta: Boolean): List<ObjCMethod> =
+        includedCategories.flatMap { category ->
+            category.declaredMethods(isMeta)
+        }
+
+private fun ObjCClass.includedCategoriesProperties(isMeta: Boolean): List<ObjCProperty> =
+        includedCategories.flatMap { category ->
+            category.properties.filter { it.getter.isClass == isMeta }
+        }
 
 internal abstract class ObjCContainerStubBuilder(
         final override val context: StubsBuildingContext,
@@ -381,7 +400,13 @@ internal abstract class ObjCContainerStubBuilder(
 
         this.methods = methods.distinctBy { it.selector }.toList()
 
-        this.properties = container.properties.filter { property ->
+        val properties = container.properties + if (container is ObjCClass) {
+            container.includedCategoriesProperties(isMeta)
+        } else {
+            emptyList()
+        }
+
+        this.properties = properties.filter { property ->
             property.getter.isClass == isMeta &&
                     // Select only properties that don't override anything:
                     superMethods.none { property.getter.replaces(it) || property.setter?.replaces(it) ?: false }
@@ -589,6 +614,10 @@ private class ObjCPropertyStubBuilder(
         private val getterBuilder: ObjCMethodStubBuilder,
         private val setterMethod: ObjCMethodStubBuilder?
 ) : StubElementBuilder {
+
+    private val isDeprecatedCategoryProperty =
+            container is ObjCCategory && container in container.clazz.includedCategories
+
     override fun build(): List<PropertyStub> {
         val type = property.getType(container.classOrProtocol)
         val kotlinType = context.mirror(type).argType
@@ -601,7 +630,12 @@ private class ObjCPropertyStubBuilder(
             is ObjCCategory -> ClassifierStubType(context.getKotlinClassFor(container.clazz, isMeta = property.getter.isClass))
         }
         val origin = StubOrigin.ObjCProperty(property, container)
-        return listOf(PropertyStub(mangleSimple(property.name), kotlinType.toStubIrType(), kind, modality, receiver, origin = origin))
+        val annotations = if (isDeprecatedCategoryProperty) {
+            listOf(AnnotationStub.Deprecated(message = "Use instance property instead", replaceWith = "", level = DeprecationLevel.WARNING))
+        } else {
+            emptyList()
+        }
+        return listOf(PropertyStub(mangleSimple(property.name), kotlinType.toStubIrType(), kind, modality, receiver, annotations, origin = origin))
     }
 }
 
