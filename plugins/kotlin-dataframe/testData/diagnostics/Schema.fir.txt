@@ -11,16 +11,16 @@ FILE: Schema.kt
             ^ Int(42)
         }
         )
-        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Scope499.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
-        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Scope499.a|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Schema_124773672Scope.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Schema_124773672Scope.a|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
         lval b: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/With_113141796>| = R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/Schema_124773672|, R|kotlin/Int|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Schema_124773672>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Schema_124773672>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
-            ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope499.a|
+            ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Schema_124773672Scope.a|
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|org/jetbrains/kotlinx/dataframe/Schema_124773672|, R|kotlin/Int|, R|kotlin/String|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Schema_124773672>|.<anonymous>(it: R|kotlin/Int|): R|kotlin/String| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/Int.toString|()
         }
         )
-        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/b|).R|org/jetbrains/kotlinx/dataframe/Scope498.a|
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/b|).R|org/jetbrains/kotlinx/dataframe/With_113141796Scope.a|
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -29,7 +29,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Schema>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-    internal final class Scope499 {
+    internal final class Schema_124773672Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Schema_124773672>|.a: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -42,10 +42,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Schema_124773672>|.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Schema_124773672Scope|
 
     }
-    internal final class Scope498 {
+    internal final class With_113141796Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_113141796>|.a: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -58,7 +58,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/With_113141796>|.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/With_113141796Scope|
 
     }
     internal final interface Schema_124773672 {

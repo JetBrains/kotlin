@@ -39,8 +39,8 @@ class FirDataFrameReceiverInjector(
     private val scopeState: MutableMap<ClassId, SchemaContext>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
     val path: String?,
-    val nextName: (String?) -> ClassId,
-    val nextScope: () -> ClassId,
+    val nextName: (String) -> ClassId,
+    val nextScope: (String) -> ClassId,
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override val resolutionPath: String?
@@ -72,8 +72,8 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     tokenState: MutableMap<ClassId, SchemaContext>,
     associatedScopes: MutableMap<ClassId, List<ConeKotlinType>>,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT,
-    nextName: (String?) -> ClassId,
-    nextScope: () -> ClassId,
+    nextName: (String) -> ClassId,
+    nextScope: (String) -> ClassId,
 ): List<ConeKotlinType> {
     // root marker is generated as return type of intercepted function
     val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
@@ -81,10 +81,14 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
     fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null, suggestedName: String? = null): ConeTypeProjection {
-        val scopeId = nextScope()
+        val scopeId: ClassId
         var tokenId = rootMarker?.type?.classId
         if (tokenId == null) {
+            requireNotNull(suggestedName)
             tokenId = nextName(suggestedName)
+            scopeId = nextScope(suggestedName)
+        } else {
+            scopeId = nextScope(tokenId.shortClassName.asString())
         }
         val marker = rootMarker ?: ConeClassLikeLookupTagImpl(tokenId)
             .constructClassType(emptyArray(), isNullable = false)

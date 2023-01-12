@@ -36,31 +36,20 @@ class GeneratedNames {
 //    }.toMutableSet()
 
     val tokens = mutableSetOf<ClassId>()
-    private val scopeIds = ArrayDeque(List(size) {
-        val name = Name.identifier("Scope$it")
-        ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
-    })
-    private val tokenIds = ArrayDeque(List(size) {
-        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
-    })
     val callableNames = ArrayDeque(callables)
 
     val scopeState = mutableMapOf<ClassId, SchemaContext>()
     val tokenState = mutableMapOf<ClassId, SchemaContext>()
     val callableState = mutableMapOf<Name, FirSimpleFunction>()
 
-    fun nextName(s: String?): ClassId {
-        val newId = if (s == null) {
-            tokenIds.removeLast()
-        } else {
-            ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(s))
-        }
+    fun nextName(s: String): ClassId {
+        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(s))
         tokens.add(newId)
         return newId
     }
 
-    fun nextScope(): ClassId {
-        val newId = scopeIds.removeLast()
+    fun nextScope(s: String): ClassId {
+        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("${s}Scope"))
         scopes.add(newId)
         return newId
     }

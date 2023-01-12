@@ -4,14 +4,14 @@ FILE: join.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|(String(/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json))
         lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_498|<R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
-            ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope499.achievements|
+            ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490Scope.achievements|
         }
         )
         R|<local>/df2|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|): R|kotlin/Boolean| <inline=NoInline>  {
-            ^ !=((this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope497.achievements|).R|org/jetbrains/kotlinx/dataframe/Scope496.preStage|, Null(null))
+            ^ !=((this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023Scope.achievements|).R|org/jetbrains/kotlinx/dataframe/Achievements_1427440413Scope.preStage|, Null(null))
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023|, R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023|>(R|<local>/df2|, <L> = joinDefault@fun R|org/jetbrains/kotlinx/dataframe/api/JoinDsl<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023, org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
-            ^ (this@R|special/anonymous|, (this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope497.achievements|).R|org/jetbrains/kotlinx/dataframe/Scope496.preStage|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/JoinDsl.match: R|org/jetbrains/kotlinx/dataframe/api/ColumnMatch<C>|>|<R|kotlin/Int?|>((this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/JoinDsl.right: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|>|).R|org/jetbrains/kotlinx/dataframe/Scope497.achievements|).R|org/jetbrains/kotlinx/dataframe/Scope496.id|)
+            ^ (this@R|special/anonymous|, (this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023Scope.achievements|).R|org/jetbrains/kotlinx/dataframe/Achievements_1427440413Scope.preStage|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/JoinDsl.match: R|org/jetbrains/kotlinx/dataframe/api/ColumnMatch<C>|>|<R|kotlin/Int?|>((this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/JoinDsl.right: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|>|).R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023Scope.achievements|).R|org/jetbrains/kotlinx/dataframe/Achievements_1427440413Scope.id|)
         }
         )
         ^box String(OK)
@@ -19,7 +19,7 @@ FILE: join.kt
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    internal final class Scope499 {
+    internal final class ReadJsonDefault_1643727490Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|._id: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
@@ -56,10 +56,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490Scope|
 
     }
-    internal final class Scope498 {
+    internal final class Achievements_853157069Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.id: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -102,10 +102,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Achievements_853157069Scope|
 
     }
-    internal final class Scope497 {
+    internal final class ReadJsonDefault_1928912023Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|._id: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
@@ -142,10 +142,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023Scope|
 
     }
-    internal final class Scope496 {
+    internal final class Achievements_1427440413Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.id: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -188,10 +188,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope496|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Achievements_1427440413Scope|
 
     }
-    internal final class Scope495 {
+    internal final class ReadJsonDefault_796890755Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_796890755>|._id: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
@@ -252,7 +252,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_796890755>|.originalId1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope495|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_796890755Scope|
 
     }
     internal final interface Achievements_1427440413 {

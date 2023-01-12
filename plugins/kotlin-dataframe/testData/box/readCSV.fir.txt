@@ -3,13 +3,13 @@ FILE: readCSV.kt
 
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadCSVDefault_1639480572>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv))
-        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/Scope499.full_name|
+        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/ReadCSVDefault_1639480572Scope.full_name|
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    internal final class Scope499 {
+    internal final class ReadCSVDefault_1639480572Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadCSVDefault_1639480572>|.full_name: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -40,7 +40,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadCSVDefault_1639480572>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ReadCSVDefault_1639480572Scope|
 
     }
     internal final interface ReadCSVDefault_1639480572 {

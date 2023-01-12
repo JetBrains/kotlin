@@ -19,14 +19,14 @@ FILE: __GENERATED DECLARATIONS__.kt
         public get(): R|kotlin/collections/List<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
-    internal final class Scope499 {
+    internal final class ExplodeSchema_1928912023Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
             public get(): R|kotlin/collections/List<kotlin/Int>|
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023Scope|
 
     }
     internal final interface ExplodeSchema_1928912023 {

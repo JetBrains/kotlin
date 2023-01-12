@@ -11,7 +11,7 @@ FILE: explode.kt
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamps|
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/explode|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Scope499.timestamps|
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/explode|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023Scope.timestamps|
     }
     public final fun main(): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(timestamps))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(100), Int(113), Int(140))), R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(400), Int(410), Int(453))))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ExplodeSchema|>()
@@ -19,7 +19,7 @@ FILE: explode.kt
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamps|
         }
         )
-        lval timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Scope498.timestamps|
+        lval timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023Scope.timestamps|
         R|<local>/timestamps|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
     }
 FILE: __GENERATED DECLARATIONS__.kt
@@ -29,24 +29,14 @@ FILE: __GENERATED DECLARATIONS__.kt
         public get(): R|kotlin/collections/List<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
-    internal final class Scope499 {
+    internal final class ExplodeSchema_1928912023Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023>|.timestamps: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
-
-    }
-    internal final class Scope498 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023>|.timestamps: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ExplodeSchema_1928912023Scope|
 
     }
     internal final interface ExplodeSchema_1928912023 {

@@ -79,7 +79,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem>|.details: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details>>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details>>|
-    internal final class Scope499 {
+    internal final class HistoryItem_2992324Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.header: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -134,10 +134,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/HistoryItem_2992324Scope|
 
     }
-    internal final class Scope498 {
+    internal final class Subtitles_851709057Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -150,17 +150,17 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Subtitles_851709057Scope|
 
     }
-    internal final class Scope497 {
+    internal final class Details_851709057Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Details_851709057>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Details_851709057>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Details_851709057Scope|
 
     }
     internal final interface Details_851709057 {

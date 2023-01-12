@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRefCopy
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -41,7 +40,7 @@ class FirDataFrameCandidateInterceptor(
     session: FirSession,
     val callableNames: ArrayDeque<CallableId>,
     val callableState: MutableMap<Name, FirSimpleFunction>,
-    val nextName: (String?) -> ClassId
+    val nextName: (String) -> ClassId
 ) : FirCandidateFactoryInterceptor(session) {
     val Key = FirDataFrameExtensionsGenerator.DataFramePlugin
 
