@@ -28,17 +28,6 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object VArrayIterator : IntrinsicMethod() {
 
-    private val arrayTypeToIteratorType = mapOf(
-        "Z" to "Boolean",
-        "C" to "Char",
-        "B" to "Byte",
-        "S" to "Short",
-        "I" to "Int",
-        "F" to "Float",
-        "J" to "Long",
-        "D" to "Double"
-    ).mapKeys { "[${it.key}" }.mapValues { "Lkotlin/collections/${it.value}Iterator;" }
-
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
@@ -51,7 +40,7 @@ object VArrayIterator : IntrinsicMethod() {
                 it.invokestatic(
                     "kotlin/jvm/internal/ArrayIteratorsKt",
                     "iterator",
-                    "(${receiverTypeMapped.descriptor})${arrayTypeToIteratorType[receiverTypeMapped.descriptor]!!}",
+                    "(${receiverTypeMapped.descriptor})${getPrimitiveIteratorType(getKotlinPrimitiveClassName(receiverTypeMapped.elementType))}",
                     false
                 )
             } else {
