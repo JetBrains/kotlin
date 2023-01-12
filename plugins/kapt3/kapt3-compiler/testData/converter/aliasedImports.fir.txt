@@ -73,8 +73,6 @@ public final class Test {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Test2 {
     public java.util.Date date;

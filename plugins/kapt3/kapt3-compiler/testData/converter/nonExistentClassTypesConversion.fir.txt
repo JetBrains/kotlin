@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
@@ -16,8 +14,6 @@ public abstract @interface Anno {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class MyType<T extends java.lang.Object> {
 
@@ -29,8 +25,6 @@ public final class MyType<T extends java.lang.Object> {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
 public final class NonExistentClassTypesConversionKt {
@@ -38,8 +32,6 @@ public final class NonExistentClassTypesConversionKt {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, java.lang.String.class}, d = {boolean.class, NoBar3.class})

@@ -128,12 +128,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         // imports should be collected after class conversion to
         val imports = convertImports(ktFile, unresolvedQualifiersRecorder)
 
-        val nonEmptyImports: JavacList<JCTree> = when {
-            imports.size > 0 -> imports
-            else -> JavacList.of(treeMaker.Import(treeMaker.FqName("java.lang.System"), false))
-        }
-
-        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
+        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
         if (kdocCommentKeeper != null) {
             topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
         }

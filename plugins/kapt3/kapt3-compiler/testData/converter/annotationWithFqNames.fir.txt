@@ -16,8 +16,6 @@ public class Impl {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
 public final class Bar {
@@ -30,8 +28,6 @@ public final class Bar {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class})
@@ -46,8 +42,6 @@ public final class Boo {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class})
 public final class Foo {
@@ -60,8 +54,6 @@ public final class Foo {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"})

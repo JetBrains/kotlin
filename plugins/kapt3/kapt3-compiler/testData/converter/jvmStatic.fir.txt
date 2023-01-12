@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface FooComponent {
     @org.jetbrains.annotations.NotNull()
@@ -30,8 +28,6 @@ public abstract interface FooComponent {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class JvmStaticTest {
