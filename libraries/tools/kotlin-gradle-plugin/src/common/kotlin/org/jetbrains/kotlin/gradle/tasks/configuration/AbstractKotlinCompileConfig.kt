@@ -59,10 +59,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .disallowChanges()
 
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
-            BuildMetricsService.registerIfAbsent(project)?.also {
-                task.buildMetricsService.value(it)
-                BuildReportsService.registerIfAbsent(project, it)?.also {
-                    task.buildReportsService.value(it)
+            BuildMetricsService.registerIfAbsent(project)?.also { metricsService ->
+                task.buildMetricsService.value(metricsService)
+                task.usesService(metricsService)
+                BuildReportsService.registerIfAbsent(project, metricsService)?.also { reportsService ->
+                    task.buildReportsService.value(reportsService)
+                    task.usesService(reportsService)
                 }
             }
 
@@ -110,6 +112,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.internal.configurations.pluginConfiguration
                 )
             }
+            task.declareVariantImplementationFactoryUsage()
             task.moduleName.set(providers.provider { compilationInfo.moduleName })
             @Suppress("DEPRECATION")
             task.ownModuleName.set(project.provider { compilationInfo.moduleName })
