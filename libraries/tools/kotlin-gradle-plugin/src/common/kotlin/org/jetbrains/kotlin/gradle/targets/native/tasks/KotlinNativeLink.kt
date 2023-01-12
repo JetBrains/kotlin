@@ -162,7 +162,7 @@ constructor(
     val exportLibraries: FileCollection get() = exportLibrariesResolvedGraph?.files ?: objectFactory.fileCollection()
 
     private val exportLibrariesResolvedGraph = if (binary is AbstractNativeLibrary) {
-        ResolvedDependencyGraph(project.configurations.getByName(binary.exportConfigurationName))
+        LazyResolvedConfiguration(project.configurations.getByName(binary.exportConfigurationName))
     } else {
         null
     }
@@ -249,7 +249,7 @@ constructor(
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
     @Suppress("DEPRECATION")
-    private val resolvedDependencyGraph = ResolvedDependencyGraph(
+    private val resolvedConfiguration = LazyResolvedConfiguration(
         project.configurations.getByName(compilation.compileDependencyConfigurationName)
     )
 
@@ -317,7 +317,7 @@ constructor(
                         settings = cacheBuilderSettings,
                         konanPropertiesService = konanPropertiesService.get()
                     )
-                    addAll(cacheBuilder.buildCompilerArgs(resolvedDependencyGraph))
+                    addAll(cacheBuilder.buildCompilerArgs(resolvedConfiguration))
                 }
             }
         }
