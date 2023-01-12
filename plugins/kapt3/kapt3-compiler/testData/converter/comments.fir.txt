@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
@@ -8,8 +6,6 @@ public abstract @interface Anno {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum EnumError {
@@ -26,8 +22,6 @@ public enum EnumError {
 ////////////////////
 
 
-import java.lang.System;
-
 /**
  * Obj.
  */
@@ -43,8 +37,6 @@ public final class Obj {
 
 ////////////////////
 
-
-import java.lang.System;
 
 /**
  * Test.
@@ -119,8 +111,6 @@ public final class Test {
 ////////////////////
 
 
-import java.lang.System;
-
 /**
  * Test2
  * Multiline
@@ -145,8 +135,6 @@ public final class Test2 {
 ////////////////////
 
 
-import java.lang.System;
-
 /**
  * constructor.
  */
@@ -169,8 +157,6 @@ public final class Test3 {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Test4 {
 
@@ -184,8 +170,6 @@ public final class Test4 {
 
 ////////////////////
 
-
-import java.lang.System;
 
 /**
  * `/ * Failure * /`

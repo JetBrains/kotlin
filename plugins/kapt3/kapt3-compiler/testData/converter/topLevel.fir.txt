@@ -1,7 +1,5 @@
 package test.another;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
@@ -12,8 +10,6 @@ public abstract @interface Anno {
 ////////////////////
 
 package test.another;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TopLevelKt {

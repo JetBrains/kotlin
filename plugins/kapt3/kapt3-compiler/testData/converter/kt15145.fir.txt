@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface MyInterface {
 

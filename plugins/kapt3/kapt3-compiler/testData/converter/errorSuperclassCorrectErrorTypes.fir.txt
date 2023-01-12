@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String> {
 
@@ -13,8 +11,6 @@ public final class Child extends kotlin.collections.AbstractList<java.lang.Strin
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public class Cl {
@@ -28,8 +24,6 @@ public class Cl {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Generics1 extends Foo<java.lang.String> {
 
@@ -41,8 +35,6 @@ public final class Generics1 extends Foo<java.lang.String> {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Generics2 implements Foo<java.lang.String> {
@@ -56,8 +48,6 @@ public final class Generics2 implements Foo<java.lang.String> {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>>, java.lang.String> {
 
@@ -70,8 +60,6 @@ public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface Intf {
 }
@@ -79,8 +67,6 @@ public abstract interface Intf {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
@@ -105,8 +91,6 @@ public final class MappedList<R extends java.lang.Object> extends kotlin.collect
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface Parent<A extends java.lang.CharSequence, B extends java.lang.Object> {
 }
@@ -114,8 +98,6 @@ public abstract interface Parent<A extends java.lang.CharSequence, B extends jav
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TBarBazCl extends test.Cl implements Bar, Baz {
@@ -129,8 +111,6 @@ public final class TBarBazCl extends test.Cl implements Bar, Baz {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TClBarBaz extends test.Cl implements Bar, Baz {
 
@@ -142,8 +122,6 @@ public final class TClBarBaz extends test.Cl implements Bar, Baz {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TFooBar extends Foo implements Bar, test.Intf {
@@ -162,8 +140,6 @@ public final class TFooBar extends Foo implements Bar, test.Intf {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TFooBar2 implements Foo, Bar {
     private final X a = null;
@@ -181,8 +157,6 @@ public final class TFooBar2 implements Foo, Bar {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TFooBarBaz extends Foo implements Bar, Baz {
 
@@ -194,8 +168,6 @@ public final class TFooBarBaz extends Foo implements Bar, Baz {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TFooBarBaz2 extends Foo implements Baz, test.Intf {
@@ -209,8 +181,6 @@ public final class TFooBarBaz2 extends Foo implements Baz, test.Intf {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TFooBarBaz3 implements Foo, Bar, Baz {
 
@@ -223,8 +193,6 @@ public final class TFooBarBaz3 implements Foo, Bar, Baz {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TFooBarBaz4 implements Foo, Bar, Baz {
 
@@ -236,8 +204,6 @@ public final class TFooBarBaz4 implements Foo, Bar, Baz {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TFooBarBaz5 implements Foo, Bar, Baz {
@@ -256,8 +222,6 @@ public final class TFooBarBaz5 implements Foo, Bar, Baz {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TFooBarBaz6 implements Foo, Bar, Baz {
 
@@ -271,8 +235,6 @@ public final class TFooBarBaz6 implements Foo, Bar, Baz {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Intf {
 
@@ -284,8 +246,6 @@ public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Int
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TxFooxBarxBaz2 extends x.Foo implements x.Bar {
