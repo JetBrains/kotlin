@@ -96,7 +96,7 @@ private typealias ComponentIdentifierKey = String
  */
 private val ComponentIdentifier.uniqueKey get(): ComponentIdentifierKey =
     when (this) {
-        is ProjectComponentIdentifier -> "project ${build.name} :$projectPath"
+        is ProjectComponentIdentifier -> "project ${build.name}$projectPath"
         is ModuleComponentIdentifier -> "module $group:$module:$version"
         else -> error("Unexpected Component Identifier: '$this' of type $javaClass")
     }
