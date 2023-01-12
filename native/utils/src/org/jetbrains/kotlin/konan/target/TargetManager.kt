@@ -18,9 +18,9 @@ internal class TargetManagerImpl(val userRequest: String?, val hostManager: Host
 
     override fun list() {
         hostManager.enabled.forEach {
-            val isDefault = if (it == target) "(default)" else ""
-            val aliasList = HostManager.listAliases(it.visibleName).joinToString(", ")
-            println(String.format("%1$-30s%2$-10s%3\$s", "${it.visibleName}:", isDefault, aliasList))
+            val isDefault = if (it == target) " (default)" else ""
+            val isDeprecated = if (it in KonanTarget.deprecatedTargets) " (deprecated)" else ""
+            println("${it.visibleName}$isDefault$isDeprecated")
         }
     }
 
