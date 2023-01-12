@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
@@ -28,8 +27,7 @@ internal class LLFirDesignatedBodyResolveTransformer(
     private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
-    towerDataContextCollector: FirTowerDataContextCollector?,
-    firProviderInterceptor: FirProviderInterceptor?,
+    towerDataContextCollector: FirTowerDataContextCollector?
 ) : LLFirLazyTransformer, FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.BODY_RESOLVE,
@@ -40,8 +38,7 @@ internal class LLFirDesignatedBodyResolveTransformer(
         ImplicitBodyResolveComputationSession(),
         ::LLFirEnsureBasedTransformerForReturnTypeCalculator
     ),
-    firTowerDataContextCollector = towerDataContextCollector,
-    firProviderInterceptor = firProviderInterceptor,
+    firTowerDataContextCollector = towerDataContextCollector
 ) {
     private val ideDeclarationTransformer = LLFirDeclarationTransformer(designation)
 

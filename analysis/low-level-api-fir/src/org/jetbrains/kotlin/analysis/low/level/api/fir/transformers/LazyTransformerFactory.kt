@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 
 internal object LazyTransformerFactory {
@@ -18,8 +17,7 @@ internal object LazyTransformerFactory {
         designation: FirDesignationWithFile,
         scopeSession: ScopeSession,
         lockProvider: LLFirLockProvider,
-        towerDataContextCollector: FirTowerDataContextCollector?,
-        firProviderInterceptor: FirProviderInterceptor?,
+        towerDataContextCollector: FirTowerDataContextCollector?
     ): LLFirLazyTransformer = when (phase) {
         FirResolvePhase.COMPANION_GENERATION -> LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
             designation = designation,
@@ -30,8 +28,7 @@ internal object LazyTransformerFactory {
             designation = designation,
             session = designation.firFile.moduleData.session,
             scopeSession = scopeSession,
-            lockProvider = lockProvider,
-            firProviderInterceptor = firProviderInterceptor,
+            lockProvider = lockProvider
         )
         FirResolvePhase.TYPES -> LLFirDesignatedTypeResolverTransformer(
             designation,
@@ -73,8 +70,7 @@ internal object LazyTransformerFactory {
             designation,
             designation.firFile.moduleData.session,
             scopeSession,
-            towerDataContextCollector,
-            firProviderInterceptor,
+            towerDataContextCollector
         )
         FirResolvePhase.EXPECT_ACTUAL_MATCHING -> LLFirDesignatedExpectActualMatcherTransformer(
             designation,

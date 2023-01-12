@@ -493,13 +493,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement = whileAnalysing(session, regularClass) {
         return context.withContainingClass(regularClass) {
             if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
-                return regularClass.runAllPhasesForLocalClass(
-                    transformer,
-                    components,
-                    data,
-                    transformer.firTowerDataContextCollector,
-                    transformer.firProviderInterceptor
-                )
+                return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
             }
 
             doTransformTypeParameters(regularClass)
@@ -519,13 +513,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
-            return typeAlias.runAllPhasesForLocalClass(
-                transformer,
-                components,
-                data,
-                transformer.firTowerDataContextCollector,
-                transformer.firProviderInterceptor
-            )
+            return typeAlias.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
         }
         doTransformTypeParameters(typeAlias)
         typeAlias.transformAnnotations(transformer, data)
@@ -554,13 +542,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, anonymousObject) {
         if (anonymousObject !in context.targetedLocalClasses) {
-            return anonymousObject.runAllPhasesForLocalClass(
-                transformer,
-                components,
-                data,
-                transformer.firTowerDataContextCollector,
-                transformer.firProviderInterceptor
-            )
+            return anonymousObject.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
         }
         // TODO: why would there be a graph already?
         val buildGraph = !implicitTypeOnly && anonymousObject.controlFlowGraphReference == null

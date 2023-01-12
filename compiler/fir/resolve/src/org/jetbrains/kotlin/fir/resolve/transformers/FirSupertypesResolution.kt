@@ -50,14 +50,6 @@ class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSess
     override val transformer = FirSupertypeResolverTransformer(session, scopeSession)
 }
 
-/**
- * Interceptor needed by IDE to resolve in-air created declarations.
- */
-interface FirProviderInterceptor {
-    fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile?
-    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration?
-}
-
 open class FirSupertypeResolverTransformer(
     final override val session: FirSession,
     scopeSession: ScopeSession
@@ -84,7 +76,6 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
-    firProviderInterceptor: FirProviderInterceptor?,
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
 ): F {
@@ -93,7 +84,6 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
         session, supertypeComputationSession, scopeSession,
         currentScopeList.toPersistentList(),
         localClassesNavigationInfo,
-        firProviderInterceptor,
         useSiteFile,
         containingDeclarations,
     )
@@ -220,7 +210,6 @@ open class FirSupertypeResolverVisitor(
     private val scopeSession: ScopeSession,
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
     private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
-    private val firProviderInterceptor: FirProviderInterceptor? = null,
     @property:PrivateForInline var useSiteFile: FirFile? = null,
     containingDeclarations: List<FirDeclaration> = emptyList(),
 ) : FirDefaultVisitor<Unit, Any?>() {
@@ -246,13 +235,13 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
-    private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
-        if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
-        else symbol.moduleData.session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
+    private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
+        return symbol.moduleData.session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
+    }
 
-    private fun getFirClassifierByFqName(moduleSession: FirSession, classId: ClassId): FirClassLikeDeclaration? =
-        if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
-        else moduleSession.firProvider.getFirClassifierByFqName(classId)
+    private fun getFirClassifierByFqName(moduleSession: FirSession, classId: ClassId): FirClassLikeDeclaration? {
+        return moduleSession.firProvider.getFirClassifierByFqName(classId)
+    }
 
     override fun visitElement(element: FirElement, data: Any?) {}
 

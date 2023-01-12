@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 
 internal class LLFirLazyTransformerExecutor {
@@ -21,8 +20,7 @@ internal class LLFirLazyTransformerExecutor {
             scopeSession: ScopeSession,
             phaseRunner: LLFirPhaseRunner,
             lockProvider: LLFirLockProvider,
-            towerDataContextCollector: FirTowerDataContextCollector?,
-            firProviderInterceptor: FirProviderInterceptor?,
+            towerDataContextCollector: FirTowerDataContextCollector?
         ) {
 
             val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
@@ -30,8 +28,7 @@ internal class LLFirLazyTransformerExecutor {
                 designation,
                 scopeSession,
                 lockProvider,
-                towerDataContextCollector,
-                firProviderInterceptor,
+                towerDataContextCollector
             )
             lazyTransformer.transformDeclaration(phaseRunner)
         }
