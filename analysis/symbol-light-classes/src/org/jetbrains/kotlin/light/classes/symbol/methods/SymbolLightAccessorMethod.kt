@@ -199,19 +199,22 @@ internal class SymbolLightAccessorMethod private constructor(
                         annotationUseSiteTargetFilter = accessorSite.toFilter(),
                     ),
                 ),
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
-                    val nullabilityApplicable = isGetter &&
-                            !(isParameter && this.containingClass.isAnnotationType) &&
-                            !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    NullabilityAnnotationsProvider {
+                        val nullabilityApplicable = isGetter &&
+                                !(isParameter && this.containingClass.isAnnotationType) &&
+                                !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
 
-                    if (nullabilityApplicable) {
-                        containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
-                            getTypeNullability(propertySymbol.returnType)
+                        if (nullabilityApplicable) {
+                            containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
+                                getTypeNullability(propertySymbol.returnType)
+                            }
+                        } else {
+                            NullabilityType.Unknown
                         }
-                    } else {
-                        NullabilityType.Unknown
-                    }
-                }
+                    },
+                    MethodAdditionalAnnotationsProvider
+                )
             ),
         )
     }
