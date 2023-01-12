@@ -73,7 +73,7 @@ class ClassifierResolutionContext private constructor(
     }
 
     // See com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
-    private fun convertNestedClassInternalNameWithSimpleHeuristic(internalName: String): ClassId? {
+    internal fun convertNestedClassInternalNameWithSimpleHeuristic(internalName: String): ClassId? {
         val splitPoints = SmartList<Int>()
         for (p in internalName.indices) {
             val c = internalName[p]

@@ -1,0 +1,21 @@
+public final annotation class Api : R|kotlin/Annotation| {
+    public constructor(status: R|test/Api.Status|): R|test/Api|
+
+    public final enum class Status : R|kotlin/Enum<test/Api.Status!>| {
+        public final static enum entry Ok: R|@EnhancedNullability test/Api.Status|
+        public final static enum entry Error: R|@EnhancedNullability test/Api.Status|
+        public final static fun values(): R|kotlin/Array<test/Api.Status>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/Api.Status| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/Api.Status>|
+            public get(): R|kotlin/enums/EnumEntries<test/Api.Status>|
+
+    }
+}
+@R|test/Api|(status = R|test/Api.Status.Ok|()) public open class NestedEnumInAnnotation : R|kotlin/Any| {
+    public constructor(): R|test/NestedEnumInAnnotation|
+
+}

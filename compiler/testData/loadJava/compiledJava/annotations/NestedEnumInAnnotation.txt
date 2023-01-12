@@ -1,0 +1,29 @@
+package test
+
+public final annotation class Api : kotlin.Annotation {
+    public constructor Api(/*0*/ status: test.Api.Status)
+    public final val status: test.Api.Status
+
+    public final enum class Status : kotlin.Enum<test.Api.Status!> {
+        enum entry Ok
+
+        enum entry Error
+
+        private constructor Status()
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Api.Status!): kotlin.Int
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Api.Status!>!
+
+        // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.Api.Status>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Api.Status
+        public final /*synthesized*/ fun values(): kotlin.Array<test.Api.Status>
+    }
+}
+
+@test.Api(status = Status.Ok) public open class NestedEnumInAnnotation {
+    public constructor NestedEnumInAnnotation()
+}

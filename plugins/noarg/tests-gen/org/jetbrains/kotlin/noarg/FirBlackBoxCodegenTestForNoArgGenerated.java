@@ -38,6 +38,12 @@ public class FirBlackBoxCodegenTestForNoArgGenerated extends AbstractFirBlackBox
     }
 
     @Test
+    @TestMetadata("javaAnnotationWithInnerEnum.kt")
+    public void testJavaAnnotationWithInnerEnum() throws Exception {
+        runTest("plugins/noarg/testData/box/javaAnnotationWithInnerEnum.kt");
+    }
+
+    @Test
     @TestMetadata("kt18245.kt")
     public void testKt18245() throws Exception {
         runTest("plugins/noarg/testData/box/kt18245.kt");

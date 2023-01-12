@@ -434,6 +434,11 @@ public class IrLoadJavaTestGenerated extends AbstractIrLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/NestedEnumArgument.java");
             }
 
+            @TestMetadata("NestedEnumInAnnotation.java")
+            public void testNestedEnumInAnnotation() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/NestedEnumInAnnotation.java");
+            }
+
             @TestMetadata("PrimitiveValueInParam.java")
             public void testPrimitiveValueInParam() throws Exception {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/PrimitiveValueInParam.java");

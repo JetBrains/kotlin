@@ -246,7 +246,47 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-        val enumClassId = context.mapInternalNameToClassId(Type.getType(desc).internalName)
+        /**
+         * There are cases when enum is an inner class of some class which is not related to current loading Java class.
+         *   And in this cases `mapInternalNameToClassId` leaves `$` in name as is, which may lead to unresolved errors later
+         *   in compiler
+         *
+         *     @Api(status = Api.Status.Ok) // classId will be /Api$Status.Ok
+         *     public class NestedEnumInAnnotation {}
+         *
+         *     public @interface Api {
+         *         Status status();
+         *
+         *         enum Status {
+         *             Ok, Error;
+         *         }
+         *     }
+         *
+         * It's impossible to use `resolveByInternalName` (which always provides correct classId), because it may lead to
+         *   StackOverflowError for cases when enum and annotation are declared in same outer class, which will lead to
+         *   infinite loading of this class
+         *
+         *     public class NestedEnumArgument {
+         *         public enum E {
+         *             FIRST
+         *         }
+         *
+         *         public @interface Anno {
+         *             E value();
+         *         }
+         *
+         *         @Anno(E.FIRST)
+         *         void foo() {}
+         *     }
+         *
+         * So to avoid such recursion and in the same time fix original case we use simple heuristic about names with $
+         *   for enums in annotation arguments which contain `$` in internal name
+         */
+        val internalName = Type.getType(desc).internalName
+        var enumClassId = context.mapInternalNameToClassId(internalName)
+        if (enumClassId.asString().contains("$")) {
+            enumClassId = context.convertNestedClassInternalNameWithSimpleHeuristic(internalName) ?: enumClassId
+        }
         addArgument(PlainJavaEnumValueAnnotationArgument(name, enumClassId, value))
     }
 
