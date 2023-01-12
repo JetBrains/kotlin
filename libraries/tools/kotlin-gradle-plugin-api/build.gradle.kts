@@ -4,7 +4,9 @@ plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
-configureDokkaPublication()
+configureDokkaPublication(
+    shouldLinkGradleApi = true
+)
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))

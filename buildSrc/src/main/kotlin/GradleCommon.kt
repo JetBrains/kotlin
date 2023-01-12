@@ -28,11 +28,14 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
+import java.net.URL
 import java.util.*
 
 /**
@@ -44,14 +47,15 @@ import java.util.*
 enum class GradlePluginVariant(
     val sourceSetName: String,
     val minimalSupportedGradleVersion: String,
-    val gradleApiVersion: String
+    val gradleApiVersion: String,
+    val gradleApiJavadocUrl: String
 ) {
-    GRADLE_MIN("main", "6.7", "6.9"),
-    GRADLE_70("gradle70", "7.0", "7.0"),
-    GRADLE_71("gradle71", "7.1", "7.1"),
-    GRADLE_74("gradle74", "7.4", "7.4"),
-    GRADLE_75("gradle75", "7.5", "7.5"),
-    GRADLE_76("gradle76", "7.6", "7.6"),
+    GRADLE_MIN("main", "6.8.3", "6.9", "https://docs.gradle.org/6.9.3/javadoc/"),
+    GRADLE_70("gradle70", "7.0", "7.0", "https://docs.gradle.org/7.0.2/javadoc/"),
+    GRADLE_71("gradle71", "7.1", "7.1", "https://docs.gradle.org/7.1.1/javadoc/"),
+    GRADLE_74("gradle74", "7.4", "7.4", "https://docs.gradle.org/7.4.2/javadoc/"),
+    GRADLE_75("gradle75", "7.5", "7.5", "https://docs.gradle.org/7.5.1/javadoc/"),
+    GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6/javadoc/"),
 }
 
 val commonSourceSetName = "common"
@@ -584,7 +588,9 @@ fun Project.addBomCheckTask() {
     }
 }
 
-fun Project.configureDokkaPublication() {
+fun Project.configureDokkaPublication(
+    shouldLinkGradleApi: Boolean = false
+) {
     if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
 
     plugins.apply("org.jetbrains.dokka")
@@ -610,11 +616,21 @@ fun Project.configureDokkaPublication() {
                 dokkaSourceSets {
                     named(commonSourceSet.name) {
                         suppress.set(false)
+                        jdkVersion.set(8)
                     }
 
                     named(variantSourceSet.name) {
                         dependsOn(commonSourceSet)
                         suppress.set(false)
+                        jdkVersion.set(8)
+
+                        if (shouldLinkGradleApi) {
+                            externalDocumentationLink {
+                                url.set(URL(pluginVariant.gradleApiJavadocUrl))
+
+                                addWorkaroundForElementList(pluginVariant)
+                            }
+                        }
                     }
                 }
             }
@@ -623,5 +639,13 @@ fun Project.configureDokkaPublication() {
                 from(dokkaTask.flatMap { it.outputDirectory })
             }
         }
+    }
+}
+
+// Workaround for https://github.com/Kotlin/dokka/issues/2097
+// Gradle 7.6 javadoc does not have published 'package-list' file
+private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
+    if (pluginVariant == GradlePluginVariant.GRADLE_76) {
+        packageListUrl.set(URL("${pluginVariant.gradleApiJavadocUrl}element-list"))
     }
 }
