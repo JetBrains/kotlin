@@ -171,9 +171,7 @@ abstract class AbstractKotlinNativeCompile<
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             if (konanTarget.enabledOnCurrentHost)
-                objectFactory.fileCollection().from(
-                    compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
-                )
+                objectFactory.fileCollection().from({ compilation.compileDependencyFiles })
             else objectFactory.fileCollection()
         }
     )
@@ -467,6 +465,8 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
+    private val libDirectories = project.buildLibDirectories()
+
     @TaskAction
     fun compile() {
         val output = outputFile.get()
@@ -482,7 +482,7 @@ internal constructor(
             optimized,
             debuggable,
             konanTarget,
-            libraries.files.filterKlibsPassedToCompiler(),
+            libraries.filterOutPublishableInteropLibs(libDirectories).files.filterKlibsPassedToCompiler(),
             languageSettings,
             enableEndorsedLibs,
             compilerOptions,
