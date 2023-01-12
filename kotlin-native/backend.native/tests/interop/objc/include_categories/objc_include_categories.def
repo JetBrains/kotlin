@@ -1,0 +1,4 @@
+language = Objective-C
+headerFilter = **/objc_include_categories.h
+linkerOpts = -lobjcincludecategories
+objcClassesIncludingCategories = BaseClass DerivedClass
