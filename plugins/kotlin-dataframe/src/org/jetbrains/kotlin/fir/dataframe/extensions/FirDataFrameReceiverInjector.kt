@@ -153,7 +153,7 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     return types
 }
 
-private fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }
+fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }
 
 data class CallResult(val rootMarker: ConeClassLikeType, val dataFrameSchema: PluginDataFrameSchema)
 
