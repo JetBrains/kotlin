@@ -232,6 +232,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
                         GradleCompilerRunner.buildModulesInfo(gradle)
                     }
                 )
+            }.also {
+                task.usesService(it)
             }
         }
     )
@@ -379,7 +381,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         )
 
-    private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
+    private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle).also {
+        usesService(it)
+    }
 
     @get:Internal
     internal abstract val preciseCompilationResultsBackup: Property<Boolean>

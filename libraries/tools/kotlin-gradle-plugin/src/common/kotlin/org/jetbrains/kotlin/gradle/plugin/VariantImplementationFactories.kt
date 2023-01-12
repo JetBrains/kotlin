@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -60,6 +61,10 @@ abstract class VariantImplementationFactories : BuildService<BuildServiceParamet
 
 internal inline fun <reified T : VariantImplementationFactories.VariantImplementationFactory> Gradle.variantImplementationFactory(): T =
     VariantImplementationFactories.get(this)[T::class]
+
+internal fun Task.declareVariantImplementationFactoryUsage() {
+    usesService(VariantImplementationFactories.getProvider(project.gradle))
+}
 
 internal inline fun <
         reified T : VariantImplementationFactories.VariantImplementationFactory
