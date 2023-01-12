@@ -255,7 +255,7 @@ internal class GranularMetadataTransformation(
 
         val metadataProvider = when (mppDependencyMetadataExtractor) {
             is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
-                dependencyProject = mppDependencyMetadataExtractor.dependencyProject,
+                dependencyProject = project.project(mppDependencyMetadataExtractor.projectPath),
                 moduleIdentifier = mppDependencyMetadataExtractor.moduleIdentifier
             )
 

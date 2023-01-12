@@ -27,18 +27,26 @@ sealed class MppDependencyProjectStructureMetadataExtractor {
 
 internal class ProjectMppDependencyProjectStructureMetadataExtractor(
     val moduleIdentifier: KpmModuleIdentifier,
-    val dependencyProject: Project
+    val projectPath: String,
+    private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?
 ) : MppDependencyProjectStructureMetadataExtractor() {
 
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
-        return when {
-            dependencyProject.topLevelExtensionOrNull == null -> null
-            dependencyProject.pm20ExtensionOrNull != null -> buildProjectStructureMetadata(
-                dependencyProject.pm20Extension.modules.single { it.moduleIdentifier == moduleIdentifier }
-            )
+    constructor(
+        moduleIdentifier: KpmModuleIdentifier,
+        dependencyProject: Project
+    ): this(moduleIdentifier, dependencyProject.path, { dependencyProject.getProjectStructureMetadata(moduleIdentifier) })
 
-            else -> dependencyProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata
-        }
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
+}
+
+private fun Project.getProjectStructureMetadata(moduleIdentifier: KpmModuleIdentifier): KotlinProjectStructureMetadata? {
+    return when {
+        topLevelExtensionOrNull == null -> null
+        pm20ExtensionOrNull != null -> buildProjectStructureMetadata(
+            pm20Extension.modules.single { it.moduleIdentifier == moduleIdentifier }
+        )
+
+        else -> multiplatformExtensionOrNull?.kotlinProjectStructureMetadata
     }
 }
 
