@@ -10500,11 +10500,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/simple.kt");
                 }
 
-                @TestMetadata("unit.kt")
-                public void ignoreUnit() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/unit.kt");
-                }
-
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -10526,6 +10521,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("startCoroutine.kt")
                 public void testStartCoroutine() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/startCoroutine.kt");
+                }
+
+                @TestMetadata("unit.kt")
+                public void testUnit() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/unit.kt");
                 }
             }
 
