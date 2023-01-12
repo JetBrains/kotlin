@@ -43,15 +43,15 @@ fun builder(testNum: Int, shouldSuspend: Boolean, expectedCount: Int, c: suspend
 
     callback()
 
-    if (counter != expectedCount) throw RuntimeException("fail 0 $counter != $expectedCount")
+    if (counter != expectedCount) throw RuntimeException("fail 0 $testNum $counter != $expectedCount")
 
     if (shouldSuspend) {
-        if (result !== COROUTINE_SUSPENDED) throw RuntimeException("fail 1 $result")
-        if (fromSuspension == null) throw RuntimeException("fail 2")
+        if (result !== COROUTINE_SUSPENDED) throw RuntimeException("fail 1 $testNum $result")
+        if (fromSuspension == null) throw RuntimeException("fail 2 $testNum")
         return fromSuspension!!
     }
 
-    if (result === COROUTINE_SUSPENDED) throw RuntimeException("fail 3")
+    if (result === COROUTINE_SUSPENDED) throw RuntimeException("fail 3 $testNum")
     return result as String
 }
 
