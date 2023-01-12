@@ -64,16 +64,21 @@ private constructor(
      *  If you need to avoid such behavior see [moduleArtifacts]
      */
     fun dependencyArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
-        fun ResolvedVariantResult.findNonExternalVariant(): ResolvedVariantResult =
-            if (externalVariant.isPresent) {
-                externalVariant.get().findNonExternalVariant()
-            } else {
-                this
-            }
-
         val componentId = dependency.resolvedVariant.findNonExternalVariant().owner
         return artifactsByComponentId[componentId] ?: emptyList()
     }
+
+    fun componentArtifacts(component: ResolvedComponentResult): List<ResolvedArtifactResult> {
+        val componentIds = component.variants.map { it.findNonExternalVariant().owner }
+        return componentIds.flatMap { artifactsByComponentId[it].orEmpty() }
+    }
+
+    private fun ResolvedVariantResult.findNonExternalVariant(): ResolvedVariantResult =
+        if (externalVariant.isPresent) {
+            externalVariant.get().findNonExternalVariant()
+        } else {
+            this
+        }
 
     /**
      * Returns own artifacts of a given dependency.

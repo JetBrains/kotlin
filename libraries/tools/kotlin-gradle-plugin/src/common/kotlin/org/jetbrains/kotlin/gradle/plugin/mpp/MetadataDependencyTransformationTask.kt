@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGU
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
@@ -99,6 +101,37 @@ open class MetadataDependencyTransformationTask
     @delegate:Transient // exclude from Gradle instant execution state
     internal val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by project.provider {
         transformation.metadataDependencyResolutions
+    }
+
+    @get:Internal
+    internal val transformedLibraries: Provider<Iterable<File>> = project.provider {
+        metadataDependencyResolutions.flatMap { resolution ->
+            val files: Iterable<File> = when (resolution) {
+                is MetadataDependencyResolution.ChooseVisibleSourceSets -> when (val metadataProvider = resolution.metadataProvider) {
+                    is MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider -> metadataProvider.read { content ->
+                        resolution.allVisibleSourceSetNames.mapNotNull { sourceSet ->
+                            val metadataBinary = content.getSourceSet(sourceSet).metadataBinary ?: return@mapNotNull null
+                            val outputBinaryFile = outputsDir.resolve(metadataBinary.relativeFile)
+                            metadataBinary.copyTo(outputBinaryFile)
+                            outputBinaryFile
+                        }
+                    }
+                    is MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider -> {
+                        resolution.allVisibleSourceSetNames.flatMap { sourceSet ->
+                            metadataProvider.getSourceSetCompiledMetadata(sourceSet).files
+                        }
+                    }
+                }
+                is MetadataDependencyResolution.Exclude -> emptySet()
+                is MetadataDependencyResolution.KeepOriginalDependency -> transformation
+                    .params
+                    .resolvedMetadataConfiguration
+                    .componentArtifacts(resolution.dependency)
+                    .map { it.file }
+            }
+
+            files
+        }
     }
 
     /**
