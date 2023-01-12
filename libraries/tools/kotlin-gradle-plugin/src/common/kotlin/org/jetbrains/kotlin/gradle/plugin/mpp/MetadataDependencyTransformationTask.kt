@@ -56,7 +56,7 @@ open class MetadataDependencyTransformationTask
     internal val configurationToResolve: FileCollection get() = kotlinSourceSet.internal.resolvableMetadataConfiguration
 
     private val participatingSourceSets: Set<KotlinSourceSet>
-        get() = transformation.kotlinSourceSet.internal.withDependsOnClosure.toMutableSet().apply {
+        get() = kotlinSourceSet.internal.withDependsOnClosure.toMutableSet().apply {
             if (any { it.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME })
                 add(project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
         }
@@ -81,19 +81,19 @@ open class MetadataDependencyTransformationTask
         }
     }
 
-    private val transformation: GranularMetadataTransformation by lazy {
-        GranularMetadataTransformation(
-            project,
-            kotlinSourceSet
-        ) {
-            dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).map {
-                project.tasks.withType(MetadataDependencyTransformationTask::class.java)
-                    .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
-                    .transformation
-                    .visibleSourceSetsByComponentId
-            }
+    private val parentVisibleSourceSets: List<Map<String, Set<String>>> by lazy {
+        dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).map {
+            project.tasks.withType(MetadataDependencyTransformationTask::class.java)
+                .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
+                .transformation
+                .visibleSourceSetsByComponentId
         }
     }
+
+    private val transformation = GranularMetadataTransformation(
+        params = GranularMetadataTransformation.Params(project, kotlinSourceSet),
+        parentVisibleSourceSetsProvider = { parentVisibleSourceSets }
+    )
 
     @get:Internal
     @delegate:Transient // exclude from Gradle instant execution state

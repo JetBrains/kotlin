@@ -52,7 +52,7 @@ internal object ModuleIds {
         else
             fromComponentId(thisProject, component.id)
 
-    private fun idOfRootModule(project: Project): ModuleDependencyIdentifier =
+    fun idOfRootModule(project: Project): ModuleDependencyIdentifier =
         if (project.multiplatformExtensionOrNull != null) {
             val rootPublication = project.multiplatformExtension.rootSoftwareComponent.publicationDelegate
             val group = rootPublication?.groupId ?: project.group.toString()
