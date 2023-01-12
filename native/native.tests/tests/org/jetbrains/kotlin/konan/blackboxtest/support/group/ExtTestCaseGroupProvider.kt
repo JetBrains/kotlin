@@ -823,6 +823,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     }
 
     companion object {
+        private val lock = Object()
+
         private fun createPsiFactory(parentDisposable: Disposable): KtPsiFactory {
             val configuration: CompilerConfiguration = KotlinTestUtils.newConfiguration()
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "native-blackbox-test-patching-module")
@@ -833,7 +835,12 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                 configFiles = EnvironmentConfigFiles.METADATA_CONFIG_FILES
             )
 
-            CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(TreeCopyHandler.EP_NAME.name, TreeCopyHandler::class.java)
+            synchronized(lock) {
+                CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(
+                    TreeCopyHandler.EP_NAME.name,
+                    TreeCopyHandler::class.java
+                )
+            }
 
             val project = environment.project as MockProject
             project.registerService(PomModel::class.java, PomModelImpl::class.java)
