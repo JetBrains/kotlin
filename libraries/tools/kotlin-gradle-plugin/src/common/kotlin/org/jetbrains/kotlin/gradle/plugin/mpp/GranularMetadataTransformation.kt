@@ -131,7 +131,7 @@ internal class GranularMetadataTransformation(
         val allModuleDependencies =
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
 
-        val resolvedDependencyQueue: Queue<ResolvedComponentResult> = ArrayDeque<ResolvedComponentResult>().apply {
+        val resolvedDependencyQueue: Queue<ResolvedDependencyResult> = ArrayDeque<ResolvedDependencyResult>().apply {
             val requestedModules: Set<ModuleDependencyIdentifier> = allRequestedDependencies.mapTo(mutableSetOf()) {
                 ModuleIds.fromDependency(it)
             }
@@ -140,14 +140,14 @@ internal class GranularMetadataTransformation(
                 resolutionResult.root.dependencies
                     .filter { ModuleIds.fromComponentSelector(project, it.requested) in requestedModules }
                     .filterIsInstance<ResolvedDependencyResult>()
-                    .map { it.selected }
             )
         }
 
-        val visitedDependencies = mutableSetOf<ResolvedComponentResult>()
+        val visitedDependencies = mutableSetOf<ResolvedDependencyResult>()
 
         while (resolvedDependencyQueue.isNotEmpty()) {
-            val resolvedDependency: ResolvedComponentResult = resolvedDependencyQueue.poll()
+            val resolvedDependency: ResolvedDependencyResult = resolvedDependencyQueue.poll()
+            val selectedComponent = resolvedDependency.selected
 
             if (!visitedDependencies.add(resolvedDependency)) {
                 /* Already processed this dependency */
@@ -156,14 +156,14 @@ internal class GranularMetadataTransformation(
 
             val dependencyResult = processDependency(
                 resolvedDependency,
-                parentVisibleSourceSets[resolvedDependency.id.uniqueKey].orEmpty()
+                parentVisibleSourceSets[selectedComponent.id.uniqueKey].orEmpty()
             )
 
             result.add(dependencyResult)
 
             val transitiveDependenciesToVisit = when (dependencyResult) {
                 is MetadataDependencyResolution.KeepOriginalDependency ->
-                    resolvedDependency.dependencies.filterIsInstance<ResolvedDependencyResult>()
+                    selectedComponent.dependencies.filterIsInstance<ResolvedDependencyResult>()
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> dependencyResult.visibleTransitiveDependencies
                 is MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency -> dependencyResult.visibleTransitiveDependencies
@@ -171,13 +171,12 @@ internal class GranularMetadataTransformation(
             }
 
             resolvedDependencyQueue.addAll(
-                transitiveDependenciesToVisit.filter { it.selected !in visitedDependencies }
-                    .map { it.selected }
+                transitiveDependenciesToVisit.filter { it !in visitedDependencies }
             )
         }
 
         allModuleDependencies.forEach { resolvedDependency ->
-            if (resolvedDependency.selected !in visitedDependencies) {
+            if (resolvedDependency !in visitedDependencies) {
 //                val files = resolvedDependency.moduleArtifacts.map { it.file }
                 result.add(
                     MetadataDependencyResolution.Exclude.Unrequested(
@@ -205,9 +204,10 @@ internal class GranularMetadataTransformation(
      *   source sets in *S*, then consider only these transitive dependencies, ignore the others;
      */
     private fun processDependency(
-        module: ResolvedComponentResult,
+        dependency: ResolvedDependencyResult,
         sourceSetsVisibleInParents: Set<String>,
     ): MetadataDependencyResolution {
+        val module = dependency.selected
         val mppDependencyMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
             project, module, configurationToResolve,
             resolveViaAvailableAt = false // we will process the available-at module as a dependency later in the queue
@@ -224,8 +224,8 @@ internal class GranularMetadataTransformation(
 
         val sourceSetVisibility =
             SourceSetVisibilityProvider(project).getVisibleSourceSets(
-                kotlinSourceSet,
-                module,
+                kotlinSourceSet.name,
+                dependency,
                 projectStructureMetadata,
                 resolvedToProject != null
             )
