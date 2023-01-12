@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.utils.chainedDisallowChanges
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import java.io.File
 
@@ -67,7 +68,9 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                     )
                 )
 
-            task.libraryCache.set(libraryCacheService).also { task.libraryCache.disallowChanges() }
+            task.libraryCache.value(libraryCacheService).chainedDisallowChanges().also {
+                task.usesService(libraryCacheService)
+            }
         }
     }
 
