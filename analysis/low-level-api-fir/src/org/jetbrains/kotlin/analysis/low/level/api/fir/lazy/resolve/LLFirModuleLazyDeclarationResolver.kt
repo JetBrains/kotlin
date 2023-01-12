@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProviderInterceptor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withSyntheticClasses
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
@@ -163,8 +163,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 scopeSession = scopeSession,
                 phaseRunner = moduleComponents.globalResolveComponents.phaseRunner,
                 lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                towerDataContextCollector = null,
-                firProviderInterceptor = null,
+                towerDataContextCollector = null
             )
         }
     }
@@ -175,31 +174,30 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         resolveFileToImportsWithoutLock(designation.firFile)
-        var currentPhase = maxOf(designation.target.resolvePhase, FirResolvePhase.IMPORTS)
 
-        val scopeSession = ScopeSession()
+        fun runTransformation() {
+            val scopeSession = ScopeSession()
+            var currentPhase = maxOf(designation.target.resolvePhase, FirResolvePhase.IMPORTS)
 
-        val firProviderInterceptor = if (onAirCreatedDeclaration) {
-            LLFirFirProviderInterceptor.createForFirElement(
-                session = designation.firFile.moduleData.session,
-                firFile = designation.firFile,
-                element = designation.target
-            )
-        } else null
+            while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
+                currentPhase = currentPhase.next
+                checkCanceled()
 
-        while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
-            currentPhase = currentPhase.next
-            checkCanceled()
+                LLFirLazyTransformerExecutor.execute(
+                    phase = currentPhase,
+                    designation = designation,
+                    scopeSession = scopeSession,
+                    phaseRunner = moduleComponents.globalResolveComponents.phaseRunner,
+                    lockProvider = moduleComponents.globalResolveComponents.lockProvider,
+                    towerDataContextCollector = towerDataContextCollector
+                )
+            }
+        }
 
-            LLFirLazyTransformerExecutor.execute(
-                phase = currentPhase,
-                designation = designation,
-                scopeSession = scopeSession,
-                phaseRunner = moduleComponents.globalResolveComponents.phaseRunner,
-                lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                towerDataContextCollector = towerDataContextCollector,
-                firProviderInterceptor = firProviderInterceptor,
-            )
+        if (onAirCreatedDeclaration) {
+            withSyntheticClasses(designation, ::runTransformation)
+        } else {
+            runTransformation()
         }
     }
 }

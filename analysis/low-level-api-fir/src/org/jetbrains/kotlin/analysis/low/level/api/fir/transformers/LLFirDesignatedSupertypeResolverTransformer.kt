@@ -35,8 +35,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private val designation: FirDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val lockProvider: LLFirLockProvider,
-    private val firProviderInterceptor: FirProviderInterceptor?,
+    private val lockProvider: LLFirLockProvider
 ) : LLFirLazyTransformer {
 
     private val supertypeComputationSession = SupertypeComputationSession()
@@ -47,8 +46,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             supertypeComputationSession = supertypeComputationSession,
             scopeSession = scopeSession,
             scopeForLocalClass = null,
-            localClassesNavigationInfo = null,
-            firProviderInterceptor = firProviderInterceptor,
+            localClassesNavigationInfo = null
         ) {
         val declarationTransformer = LLFirDeclarationTransformer(classDesignation)
 
