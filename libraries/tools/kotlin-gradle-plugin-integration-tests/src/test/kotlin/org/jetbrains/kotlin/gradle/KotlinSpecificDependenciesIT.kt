@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -654,10 +655,15 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         } else {
             if (isBuildGradleKts) buildGradleKts else buildGradle
         }
+
+        @Suppress("INVISIBLE_MEMBER")
+        val transformAllTaskName = KotlinMetadataTargetConfigurator.TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA
+
         buildFile.appendText(
             """
 
-            tasks.create("$printingTaskName") {
+            tasks.register("$printingTaskName") {
+                if ("$transformAllTaskName" in tasks.names) dependsOn("$transformAllTaskName")
                 doLast {
                     println("###$printingTaskName " + $itemsExpression)
                 }
