@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import java.security.MessageDigest
 
 private fun MessageDigest.digestFile(file: File) =
@@ -166,6 +165,8 @@ class CachedLibraries(
         }
     }
 
+    private val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
+
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
 
@@ -175,7 +176,7 @@ class CachedLibraries(
         } else {
             val libraryPath = library.libraryFile.absolutePath
             if (autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) }) {
-                val dir = computeVersionedCacheDirectory(autoCacheDirectory, library, allLibraries)
+                val dir = computeVersionedCacheDirectory(autoCacheDirectory, library, uniqueNameToLibrary)
                 selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
                         ?: selectCache(library, dir.child(getCachedLibraryName(library)))
             } else {
@@ -214,27 +215,9 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
-        private fun getAllDependencies(library: KotlinLibrary, allLibraries: List<KotlinLibrary>): List<KotlinLibrary> {
-            val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
-            val allDependencies = mutableSetOf<KotlinLibrary>()
-
-            fun traverseDependencies(library: KotlinLibrary) {
-                library.unresolvedDependencies.forEach {
-                    val dependency = uniqueNameToLibrary[it.path]!!
-                    if (dependency !in allDependencies) {
-                        allDependencies += dependency
-                        traverseDependencies(dependency)
-                    }
-                }
-            }
-
-            traverseDependencies(library)
-            return allDependencies.toList()
-        }
-
         @OptIn(ExperimentalUnsignedTypes::class)
-        fun computeVersionedCacheDirectory(baseCacheDirectory: File, library: KotlinLibrary, allLibraries: List<KotlinLibrary>): File {
-            val dependencies = getAllDependencies(library, allLibraries)
+        fun computeVersionedCacheDirectory(baseCacheDirectory: File, library: KotlinLibrary, allLibraries: Map<String, KotlinLibrary>): File {
+            val dependencies = library.getAllTransitiveDependencies(allLibraries)
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.update(compilerMarker)
             messageDigest.digestLibrary(library)

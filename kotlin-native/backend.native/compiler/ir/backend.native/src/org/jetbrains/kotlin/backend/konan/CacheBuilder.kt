@@ -11,9 +11,26 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
+import org.jetbrains.kotlin.library.unresolvedDependencies
+
+internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
+    val allDependencies = mutableSetOf<KotlinLibrary>()
+
+    fun traverseDependencies(library: KotlinLibrary) {
+        library.unresolvedDependencies.forEach {
+            val dependency = allLibraries[it.path]!!
+            if (dependency !in allDependencies) {
+                allDependencies += dependency
+                traverseDependencies(dependency)
+            }
+        }
+    }
+
+    traverseDependencies(this)
+    return allDependencies.toList()
+}
 
 class CacheBuilder(
         val konanConfig: KonanConfig,
@@ -39,7 +56,7 @@ class CacheBuilder(
             if (!isLibraryAutoCacheable)
                 return@librariesLoop
 
-            val dependencies = library.unresolvedDependencies.map { uniqueNameToLibrary[it.path]!! }
+            val dependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary)
             val dependencyCaches = dependencies.map {
                 caches[it] ?: run {
                     configuration.report(CompilerMessageSeverity.LOGGING,
@@ -54,7 +71,7 @@ class CacheBuilder(
             val libraryCacheDirectory = if (library.isDefault)
                 konanConfig.systemCacheDirectory
             else
-                CachedLibraries.computeVersionedCacheDirectory(konanConfig.autoCacheDirectory, library, allLibraries)
+                CachedLibraries.computeVersionedCacheDirectory(konanConfig.autoCacheDirectory, library, uniqueNameToLibrary)
             val libraryCache = libraryCacheDirectory.child(
                     if (makePerFileCache)
                         CachedLibraries.getPerFileCachedLibraryName(library)
