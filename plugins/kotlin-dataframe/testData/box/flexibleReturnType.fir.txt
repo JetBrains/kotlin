@@ -42,7 +42,7 @@ FILE: flexibleReturnType.kt
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/refined_498|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/With_113141796|>(String(tsDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/With_113141796>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/With_113141796>|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/diff|<R|org/jetbrains/kotlinx/dataframe/With_113141796|, R|java/time/LocalDateTime!|>(Q|java/time/temporal/ChronoUnit|.R|java/time/temporal/ChronoUnit.MINUTES|, <L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_113141796>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_113141796>|): R|java/time/LocalDateTime!| <inline=NoInline>  {
-                ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope499.timestamp|
+                ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/With_113141796Scope.timestamp|
             }
             )?.{ $subj$.R|kotlin/let|<R|kotlin/Long|, R|kotlin/Boolean|>(<L> = let@fun <anonymous>(it: R|kotlin/Long|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
                 ^ CMP(>, R|<local>/it|.R|kotlin/Long.compareTo|(Int(20)))
@@ -51,7 +51,7 @@ FILE: flexibleReturnType.kt
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/refined_496|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/With_862661939|>(String(charDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/With_862661939>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/With_862661939>|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/api/diff|<R|org/jetbrains/kotlinx/dataframe/With_862661939|>(<L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_862661939>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_862661939>|): R|kotlin/Int| <inline=NoInline>  {
-                ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope498.char|
+                ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/With_862661939Scope.char|
             }
             )?.{ $subj$.R|kotlin/let|<R|kotlin/Int|, R|kotlin/Boolean|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
                 ^ !=(R|<local>/it|, Int(0))
@@ -95,7 +95,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.timestamp: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-    internal final class Scope499 {
+    internal final class With_113141796Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_113141796>|.char: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -138,10 +138,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/With_113141796>|.timestamp: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime!>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime!>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/With_113141796Scope|
 
     }
-    internal final class Scope498 {
+    internal final class With_862661939Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_862661939>|.char: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -190,10 +190,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/With_862661939>|.tsDiff: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/With_862661939Scope|
 
     }
-    internal final class Scope497 {
+    internal final class With_1438061604Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/With_1438061604>|.char: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -248,7 +248,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/With_1438061604>|.charDiff: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/With_1438061604Scope|
 
     }
     internal final interface With_113141796 {

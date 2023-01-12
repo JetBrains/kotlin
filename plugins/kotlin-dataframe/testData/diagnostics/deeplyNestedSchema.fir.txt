@@ -11,7 +11,7 @@ FILE: deeplyNestedSchema.kt
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    internal final class Scope499 {
+    internal final class ReadJsonDefault_789647496Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_789647496>|.component: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Component_1009267288>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Component_1009267288>|
 
@@ -24,20 +24,20 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_789647496>|.#omit-xml-declaration: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_789647496Scope|
 
     }
-    internal final class Scope498 {
+    internal final class Component_1009267288Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Component_1009267288>|.group: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Group_1477518541>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Group_1477518541>|
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Component_1009267288>|.group: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Group_1477518541>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Group_1477518541>>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Component_1009267288Scope|
 
     }
-    internal final class Scope497 {
+    internal final class Group_1477518541Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Group_1477518541>|.-id: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -50,10 +50,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Group_1477518541>|.feature: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Feature_500449053>|
             public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Feature_500449053>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Group_1477518541Scope|
 
     }
-    internal final class Scope496 {
+    internal final class Feature_500449053Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Feature_500449053>|.-id: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
@@ -84,10 +84,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Feature_500449053>|.array: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_2007019749>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_2007019749>>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope496|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Feature_500449053Scope|
 
     }
-    internal final class Scope495 {
+    internal final class Track-action_2007019749Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Track-action_2007019749>|.-id: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
@@ -100,10 +100,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Track-action_2007019749>|.-self-closing: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope495|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Track-action_2007019749Scope|
 
     }
-    internal final class Scope494 {
+    internal final class Array_2007019749Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Array_2007019749>|.-id: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
@@ -176,10 +176,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Array_2007019749>|.track-intention: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Track-intention_1987707885>|
             public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Track-intention_1987707885>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope494|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Array_2007019749Scope|
 
     }
-    internal final class Scope493 {
+    internal final class Track-action_1987707885Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Track-action_1987707885>|.-id: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
@@ -198,10 +198,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Track-action_1987707885>|.array: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_74492489>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_74492489>>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope493|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Track-action_1987707885Scope|
 
     }
-    internal final class Scope492 {
+    internal final class Array_74492489Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Array_74492489>|.-id: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -214,10 +214,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Array_74492489>|.-self-closing: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope492|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Array_74492489Scope|
 
     }
-    internal final class Scope491 {
+    internal final class Dependency_1987707885Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Dependency_1987707885>|.-id: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
@@ -236,10 +236,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Dependency_1987707885>|.array: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_528207754>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_528207754>>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope491|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Dependency_1987707885Scope|
 
     }
-    internal final class Scope490 {
+    internal final class Array_528207754Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Array_528207754>|.-id: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -252,20 +252,20 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Array_528207754>|.-self-closing: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope490|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Array_528207754Scope|
 
     }
-    internal final class Scope489 {
+    internal final class #diezitem_1987707885Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/#diezitem_1987707885>|.#comment: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/#diezitem_1987707885>|.#comment: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope489|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/#diezitem_1987707885Scope|
 
     }
-    internal final class Scope488 {
+    internal final class Track-intention_1987707885Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Track-intention_1987707885>|.-class-name: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
@@ -284,10 +284,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Track-intention_1987707885>|.array: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_1289765015>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Array_1289765015>>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope488|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Track-intention_1987707885Scope|
 
     }
-    internal final class Scope487 {
+    internal final class Array_1289765015Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Array_1289765015>|.-class-name: R|kotlin/String|
             public get(): R|kotlin/String|
 
@@ -300,7 +300,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Array_1289765015>|.-self-closing: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope487|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Array_1289765015Scope|
 
     }
     internal final interface #diezitem_1987707885 {

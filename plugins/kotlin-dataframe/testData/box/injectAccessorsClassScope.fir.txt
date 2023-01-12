@@ -11,7 +11,7 @@ FILE: injectAccessorsClassScope.kt
 
         public final fun use(): R|kotlin/Unit| {
             R|org/jetbrains/kotlinx/dataframe/api/injectAccessors|<R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490|>(this@R|org/jetbrains/kotlinx/dataframe/ClassScope|.R|org/jetbrains/kotlinx/dataframe/ClassScope.df|)
-            (this@R|org/jetbrains/kotlinx/dataframe/ClassScope.use|, this@R|org/jetbrains/kotlinx/dataframe/ClassScope|.R|org/jetbrains/kotlinx/dataframe/ClassScope.df|).R|org/jetbrains/kotlinx/dataframe/Scope499.originalId|
+            (this@R|org/jetbrains/kotlinx/dataframe/ClassScope.use|, this@R|org/jetbrains/kotlinx/dataframe/ClassScope|.R|org/jetbrains/kotlinx/dataframe/ClassScope.df|).R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490Scope.originalId|
         }
 
     }
@@ -22,7 +22,7 @@ FILE: injectAccessorsClassScope.kt
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    internal final class Scope499 {
+    internal final class ReadJsonDefault_1643727490Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|._id: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
@@ -59,10 +59,10 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490Scope|
 
     }
-    internal final class Scope498 {
+    internal final class Achievements_853157069Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.id: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -105,7 +105,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Achievements_853157069Scope|
 
     }
     internal final interface Achievements_853157069 {

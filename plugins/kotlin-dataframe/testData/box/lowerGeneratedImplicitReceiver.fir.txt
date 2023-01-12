@@ -9,7 +9,7 @@ FILE: lowerGeneratedImplicitReceiver.kt
             ^ Int(2022)
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/api/box|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Scope499.age|
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/api/box|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Cars_3085480Scope.age|
         ^box when () {
             ==(R|<local>/col|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Int|>|(Int(0)), Int(2022)) ->  {
                 String(OK)
@@ -23,14 +23,14 @@ FILE: lowerGeneratedImplicitReceiver.kt
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    internal final class Scope499 {
+    internal final class Cars_3085480Scope {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Cars_3085480>|.age: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Cars_3085480>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Cars_3085480Scope|
 
     }
     internal final interface Cars_3085480 {
