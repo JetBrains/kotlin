@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.api.logging.configuration.WarningMode
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
@@ -311,6 +312,17 @@ class GeneralNativeIT : BaseGradleIT() {
     fun testCanProduceNativeFrameworks() = with(
         transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
     ) {
+        fun assemble(check: CompiledProject.() -> Unit) {
+            build(
+                "assemble",
+                options = defaultBuildOptions().copy(
+                    // Workaround for KT-55751
+                    warningMode = WarningMode.None,
+                ),
+                check = check
+            )
+        }
+
         Assume.assumeTrue(HostManager.hostIsMac)
 
         data class BinaryMeta(val name: String, val isStatic: Boolean = false)
@@ -368,7 +380,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
         // Check building
         // Check dependency exporting and bitcode embedding in frameworks.
-        build("assemble") {
+        assemble {
             assertSuccessful()
             headerPaths.forEach { assertFileExists(it) }
             frameworkPaths.forEach { assertFileExists(it) }
@@ -409,13 +421,13 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
 
-        build("assemble") {
+        assemble {
             assertSuccessful()
             assertTasksUpToDate(frameworkTasks)
         }
 
         assertTrue(projectDir.resolve(headerPaths[0]).delete())
-        build("assemble") {
+        assemble {
             assertSuccessful()
             assertTasksUpToDate(frameworkTasks.drop(1))
             assertTasksExecuted(frameworkTasks[0])

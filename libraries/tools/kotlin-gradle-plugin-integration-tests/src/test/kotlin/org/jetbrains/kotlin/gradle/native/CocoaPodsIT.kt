@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
@@ -1114,7 +1115,10 @@ class CocoaPodsIT : BaseGradleIT() {
         vararg args: String
     ) {
         // check that test executable
-        build(taskName, *args) {
+        build(taskName, *args, options = defaultBuildOptions().copy(
+            // Workaround for KT-55751
+            warningMode = WarningMode.None,
+        )) {
             //base checks
             assertSuccessful()
             hooks.trigger(this)
