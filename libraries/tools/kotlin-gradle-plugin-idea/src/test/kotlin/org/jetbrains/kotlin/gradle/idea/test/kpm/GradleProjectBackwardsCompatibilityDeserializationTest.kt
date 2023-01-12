@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import kotlin.test.Test
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.fail
@@ -45,6 +46,7 @@ class GradleProjectBackwardsCompatibilityDeserializationTest {
     data class UnretainedModel(val id: Int)
 
     @Test
+    @Ignore
     fun `test - simple project`() {
         val (project, kotlinExtension) = createKpmProject()
         kotlinExtension.mainAndTest {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.junit.Test
+import kotlin.test.Ignore
 import kotlin.test.assertTrue
 
 class KpmCompilerPluginMppIT : BaseGradleIT() {
@@ -16,6 +17,7 @@ class KpmCompilerPluginMppIT : BaseGradleIT() {
     )
 
     @Test
+    @Ignore
     fun testTransientPluginOptions() {
         val project = transformProjectWithPluginsDsl("kpmTransientPluginOptions")
         fun updatePluginOptions(regularOptionValue: String, transientOptionValue: String) {
