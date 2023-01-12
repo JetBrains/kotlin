@@ -136,9 +136,12 @@ internal class GranularMetadataTransformation(
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    val visibleSourceSetsByComponentId: Map<ComponentIdentifierKey, Set<String>> = metadataDependencyResolutions
-        .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-        .associate { it.dependency.id.uniqueKey to it.allVisibleSourceSetNames }
+    val visibleSourceSetsByComponentId: Map<ComponentIdentifierKey, Set<String>> by lazy {
+        metadataDependencyResolutions
+            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+            .groupBy { it.dependency.id.uniqueKey }
+            .mapValues { (_, visibleSourceSets) -> visibleSourceSets.flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames } }
+    }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
