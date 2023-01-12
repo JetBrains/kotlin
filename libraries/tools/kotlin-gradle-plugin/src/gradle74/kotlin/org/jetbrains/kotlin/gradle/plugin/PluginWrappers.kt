@@ -139,8 +139,7 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
 }
 
 private fun Project.registerVariantImplementations() {
-    @Suppress("DEPRECATION_ERROR")
-    val factories = VariantImplementationFactories.get(gradle)
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
         MppTestReportHelperG74.MppTestReportHelperVariantFactoryG74()
 }
