@@ -31,7 +31,6 @@ internal class ExternalKotlinTargetImpl internal constructor(
     val sourcesElementsConfiguration: Configuration,
     val apiElementsPublishedConfiguration: Configuration,
     val runtimeElementsPublishedConfiguration: Configuration,
-    val sourcesElementsPublishedConfiguration: Configuration,
     val kotlinTargetComponent: ExternalKotlinTargetComponent,
     private val artifactsTaskLocator: ArtifactsTaskLocator,
 ) : InternalKotlinTarget {

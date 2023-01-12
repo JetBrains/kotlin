@@ -93,12 +93,6 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
         }
 
-        sourcesElementsPublished.configure { _, configuration ->
-            /* TODO w/ Google: Find a way to deprecate this attribute */
-            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-        }
-
         configureIdeImport {
             registerDependencyResolver(
                 AndroidBootClasspathIdeDependencyResolver(project),
