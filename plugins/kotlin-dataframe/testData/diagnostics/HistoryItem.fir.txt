@@ -80,105 +80,95 @@ FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem>|.details: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details>>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details>>|
     internal final class Scope499 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.header: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.header: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.header: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.header: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.title: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.title: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.title: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.title: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.titleUrl: R|kotlin/String?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.titleUrl: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.titleUrl: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.titleUrl: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.subtitles: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.subtitles: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.subtitles: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.subtitles: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.time: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.time: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.time: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.time: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.products: R|kotlin/collections/List<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.products: R|kotlin/collections/List<kotlin/String>|
             public get(): R|kotlin/collections/List<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.products: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/String>>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.products: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/String>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/String>>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.activityControls: R|kotlin/collections/List<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.activityControls: R|kotlin/collections/List<kotlin/String>|
             public get(): R|kotlin/collections/List<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.activityControls: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/String>>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.activityControls: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/String>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/String>>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.details: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_130678243>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_130678243>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.details: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_851709057>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_851709057>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.details: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_130678243>>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_130678243>>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.details: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_851709057>>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_851709057>>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.id: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.id: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
 
     }
     internal final class Scope498 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|.name: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|.url: R|kotlin/String?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|.url: R|kotlin/String?|
             public get(): R|kotlin/String?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
 
     }
     internal final class Scope497 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Details_130678243>|.name: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Details_851709057>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Details_130678243>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Details_851709057>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
 
     }
-    internal final interface Details_130678243 {
+    internal final interface Details_851709057 {
         internal abstract val name: R|kotlin/String|
             internal get(): R|kotlin/String|
 
     }
-    internal final interface Subtitles_130678243 {
-        internal abstract val name: R|kotlin/String|
-            internal get(): R|kotlin/String|
-
-        internal abstract val url: R|kotlin/String?|
-            internal get(): R|kotlin/String?|
-
-    }
-    internal final interface Token498 {
-    }
-    internal final interface Token499 {
+    internal final interface HistoryItem_2992324 {
         internal abstract val header: R|kotlin/String|
             internal get(): R|kotlin/String|
 
@@ -188,8 +178,8 @@ FILE: __GENERATED DECLARATIONS__.kt
         internal abstract val titleUrl: R|kotlin/String?|
             internal get(): R|kotlin/String?|
 
-        internal abstract val subtitles: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|
-            internal get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_130678243>|
+        internal abstract val subtitles: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|
+            internal get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Subtitles_851709057>|
 
         internal abstract val time: R|kotlin/String|
             internal get(): R|kotlin/String|
@@ -200,15 +190,23 @@ FILE: __GENERATED DECLARATIONS__.kt
         internal abstract val activityControls: R|kotlin/collections/List<kotlin/String>|
             internal get(): R|kotlin/collections/List<kotlin/String>|
 
-        internal abstract val details: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_130678243>|
-            internal get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_130678243>|
+        internal abstract val details: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_851709057>|
+            internal get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Details_851709057>|
 
         internal abstract val id: R|kotlin/Int|
             internal get(): R|kotlin/Int|
 
     }
+    internal final interface Subtitles_851709057 {
+        internal abstract val name: R|kotlin/String|
+            internal get(): R|kotlin/String|
+
+        internal abstract val url: R|kotlin/String?|
+            internal get(): R|kotlin/String?|
+
+    }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api
 
-    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_2)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/AddWithDsl|))) public final fun <T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_498(body: R|org/jetbrains/kotlinx/dataframe/api/AddDsl<T>.() -> kotlin/Unit|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|
-    @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_499(name: R|kotlin/String|, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_2)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/AddWithDsl|))) public final fun <T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_498(body: R|org/jetbrains/kotlinx/dataframe/api/AddDsl<T>.() -> kotlin/Unit|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_499(name: R|kotlin/String|, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/HistoryItem_2992324>|

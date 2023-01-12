@@ -2,8 +2,8 @@ FILE: explodeDataFrame.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|(String(/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json))
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_498|<R|org/jetbrains/kotlinx/dataframe/Token499|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|(String(/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json))
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_498|<R|org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
             ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope499.achievements|
         }
         )
@@ -14,178 +14,178 @@ FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
     internal final class Scope499 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|._id: R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|._id: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|._id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|._id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.id: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.id: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.name: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.order: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.order: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_853157069>>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_853157069>>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.originalId: R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.originalId: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
 
     }
     internal final class Scope498 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.id: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.id: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.name: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.desc: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.desc: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.desc: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.desc: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.reward: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.reward: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.reward: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.reward: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.hidden: R|kotlin/Boolean|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.hidden: R|kotlin/Boolean|
             public get(): R|kotlin/Boolean|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.hidden: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.hidden: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.order: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.order: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.preStage: R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.preStage: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
 
     }
     internal final class Scope497 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|._id: R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|._id: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|._id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|._id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.id: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.id: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.name: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.order: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.order: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.achievements: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.achievements: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.originalId: R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.originalId: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
 
     }
     internal final class Scope496 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.id: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.id: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.name: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.desc: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.desc: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.desc: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.desc: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.reward: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.reward: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.reward: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.reward: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.hidden: R|kotlin/Boolean|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.hidden: R|kotlin/Boolean|
             public get(): R|kotlin/Boolean|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.hidden: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.hidden: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.order: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.order: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.preStage: R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.preStage: R|kotlin/Int?|
             public get(): R|kotlin/Int?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|.preStage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope496|
 
     }
-    internal final interface Achievements_1779353087 {
+    internal final interface Achievements_1427440413 {
         internal abstract val id: R|kotlin/Int|
             internal get(): R|kotlin/Int|
 
@@ -208,7 +208,7 @@ FILE: __GENERATED DECLARATIONS__.kt
             internal get(): R|kotlin/Int?|
 
     }
-    internal final interface Achievements_1801222780 {
+    internal final interface Achievements_853157069 {
         internal abstract val id: R|kotlin/Int|
             internal get(): R|kotlin/Int|
 
@@ -231,7 +231,7 @@ FILE: __GENERATED DECLARATIONS__.kt
             internal get(): R|kotlin/Int?|
 
     }
-    internal final interface Token498 {
+    internal final interface ReadJsonDefault_1643727490 {
         internal abstract val _id: R|kotlin/Int?|
             internal get(): R|kotlin/Int?|
 
@@ -244,14 +244,14 @@ FILE: __GENERATED DECLARATIONS__.kt
         internal abstract val order: R|kotlin/Int|
             internal get(): R|kotlin/Int|
 
-        internal abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|
-            internal get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1801222780>|
+        internal abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|
+            internal get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_853157069>|
 
         internal abstract val originalId: R|kotlin/Int?|
             internal get(): R|kotlin/Int?|
 
     }
-    internal final interface Token499 {
+    internal final interface ReadJsonDefault_1928912023 {
         internal abstract val _id: R|kotlin/Int?|
             internal get(): R|kotlin/Int?|
 
@@ -264,8 +264,8 @@ FILE: __GENERATED DECLARATIONS__.kt
         internal abstract val order: R|kotlin/Int|
             internal get(): R|kotlin/Int|
 
-        internal abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|
-            internal get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Achievements_1779353087>|
+        internal abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|
+            internal get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Achievements_1427440413>|
 
         internal abstract val originalId: R|kotlin/Int?|
             internal get(): R|kotlin/Int?|
@@ -274,5 +274,5 @@ FILE: __GENERATED DECLARATIONS__.kt
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api
 
-    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(explode_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/Explode0|))) public final fun <T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_498(selector: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/ColumnsSelector<T, *>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|
-    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(readJsonDefault_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/ReadJson0|))) public final fun R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|.refined_499(path: R|kotlin/String|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(explode_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/Explode0|))) public final fun <T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_498(selector: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/ColumnsSelector<T, *>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1928912023>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(readJsonDefault_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/ReadJson0|))) public final fun R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|.refined_499(path: R|kotlin/String|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ReadJsonDefault_1643727490>|

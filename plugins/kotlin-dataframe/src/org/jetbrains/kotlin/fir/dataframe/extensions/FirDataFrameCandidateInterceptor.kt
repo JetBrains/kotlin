@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.extensions.FirCandidateFactoryInterceptor
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
@@ -22,14 +23,19 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRefCopy
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import kotlin.math.abs
 
 class FirDataFrameCandidateInterceptor(
     session: FirSession,
@@ -52,7 +58,27 @@ class FirDataFrameCandidateInterceptor(
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
         val generatedName = callableNames.removeLast()
         val newSymbol = FirNamedFunctionSymbol(generatedName)
-        val tokenId = nextName(null)
+        var hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
+            when (it) {
+                is FirConstExpression<*> -> it.value.hashCode()
+                else -> 42
+            }
+        }
+        hash = abs(hash)
+        // possibly null if explicit receiver type is AnyFrame
+        val argument = (callInfo.explicitReceiver?.typeRef as? FirResolvedTypeRef)?.type?.typeArguments?.singleOrNull()
+        val suggestedName = if (argument == null) {
+            "${callInfo.name.identifier.titleCase()}_$hash"
+        } else {
+            when (argument) {
+                is ConeStarProjection -> "${callInfo.name.identifier.titleCase()}_$hash"
+                is ConeKotlinTypeProjection -> {
+                    val titleCase = argument.type.classId?.shortClassName?.identifier?.titleCase()?.substringBeforeLast("_")
+                    "${titleCase}_$hash"
+                }
+            }
+        }
+        val tokenId = nextName(suggestedName)
         val typeRef = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
                 lookupTag,
