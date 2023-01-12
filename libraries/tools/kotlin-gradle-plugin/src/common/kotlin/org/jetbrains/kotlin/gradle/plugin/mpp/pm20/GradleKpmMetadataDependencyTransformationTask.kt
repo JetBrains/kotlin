@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
@@ -22,6 +23,7 @@ internal open class GradleKpmMetadataDependencyTransformationTask
     @get:Internal
     @field:Transient
     val fragment: GradleKpmFragment,
+    private val objectFactory: ObjectFactory,
     //FIXME annotations
     private val transformation: GradleKpmFragmentGranularMetadataResolver
 ) : DefaultTask() {
@@ -72,7 +74,7 @@ internal open class GradleKpmMetadataDependencyTransformationTask
         get() = metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .associateWith { chooseVisibleSourceSets ->
-                project.files(project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false))
+                project.files(objectFactory.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false))
                     .builtBy(this)
             }
 
@@ -86,7 +88,7 @@ internal open class GradleKpmMetadataDependencyTransformationTask
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .forEach { chooseVisibleSourceSets ->
-                project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = true)
+                objectFactory.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = true)
             }
     }
 }

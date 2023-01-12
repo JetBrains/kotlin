@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import java.io.File
@@ -37,11 +38,11 @@ internal fun Project.transformMetadataLibrariesForIde(
  *
  * In case the [resolution] points to a project dependency, then the output file collections will be returned.
  */
-internal fun Project.transformMetadataLibrariesForBuild(
+internal fun ObjectFactory.transformMetadataLibrariesForBuild(
     resolution: MetadataDependencyResolution.ChooseVisibleSourceSets, outputDirectory: File, materializeFiles: Boolean
 ): Iterable<File> {
     return when (resolution.metadataProvider) {
-        is ProjectMetadataProvider -> project.files(
+        is ProjectMetadataProvider -> fileCollection().from(
             resolution.visibleSourceSetNamesExcludingDependsOn.map { visibleSourceSetName ->
                 resolution.metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName)
             }
