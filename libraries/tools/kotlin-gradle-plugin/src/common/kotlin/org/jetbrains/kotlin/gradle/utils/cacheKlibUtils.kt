@@ -18,7 +18,7 @@ internal fun getCacheDirectory(
     rootCacheDirectory: File,
     dependency: ResolvedDependencyResult,
     artifact: ResolvedArtifactResult?,
-    resolvedDependencyGraph: ResolvedDependencyGraph,
+    resolvedConfiguration: LazyResolvedConfiguration,
     partialLinkage: Boolean
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
@@ -41,17 +41,17 @@ internal fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedDependencyGraph, partialLinkage))
+    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration, partialLinkage))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
 
-private fun computeDependenciesHash(dependency: ResolvedDependencyResult, resolvedDependencyGraph: ResolvedDependencyGraph, partialLinkage: Boolean): String {
+private fun computeDependenciesHash(dependency: ResolvedDependencyResult, resolvedConfiguration: LazyResolvedConfiguration, partialLinkage: Boolean): String {
     val hashedValue = buildString {
         if (partialLinkage) append("#__PL__#")
 
         (listOf(dependency) + getAllDependencies(dependency))
-            .flatMap { resolvedDependencyGraph.dependencyArtifacts(it) }
+            .flatMap { resolvedConfiguration.dependencyArtifacts(it) }
             .map { it.file.absolutePath }
             .distinct()
             .sortedBy { it }
@@ -66,19 +66,19 @@ private fun computeDependenciesHash(dependency: ResolvedDependencyResult, resolv
 internal fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
     dependency: ResolvedDependencyResult,
-    resolvedDependencyGraph: ResolvedDependencyGraph,
+    resolvedConfiguration: LazyResolvedConfiguration,
     considerArtifact: Boolean,
     partialLinkage: Boolean
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
-            resolvedDependencyGraph.dependencyArtifacts(childDependency).map {
+            resolvedConfiguration.dependencyArtifacts(childDependency).map {
                 if (libraryFilter(it)) {
                     val cacheDirectory = getCacheDirectory(
                         rootCacheDirectory = rootCacheDirectory,
                         dependency = childDependency,
                         artifact = if (considerArtifact) it else null,
-                        resolvedDependencyGraph = resolvedDependencyGraph,
+                        resolvedConfiguration = resolvedConfiguration,
                         partialLinkage = partialLinkage
                     )
                     if (!cacheDirectory.exists()) return null
