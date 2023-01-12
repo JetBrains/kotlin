@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrFail
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -188,8 +189,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @Suppress("unused")
     @get:Classpath
     protected val inputArtifactFiles: FileCollection get() = sourceSet
-        .compileDependenciesTransformationOrFail
-        .configurationToResolve
+        .internal
+        .resolvableMetadataConfiguration
         .withoutProjectDependencies()
 
     @get:Internal

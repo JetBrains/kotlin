@@ -356,8 +356,7 @@ class KotlinMetadataTargetConfigurator :
         sourceSet: KotlinSourceSet
     ) {
         val granularMetadataTransformation = GranularMetadataTransformation(
-            project = project,
-            kotlinSourceSet = sourceSet,
+            params = GranularMetadataTransformation.Params(project, sourceSet),
             parentVisibleSourceSetsProvider = {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                     .map { it.compileDependenciesTransformationOrFail.visibleSourceSetsByComponentId }
