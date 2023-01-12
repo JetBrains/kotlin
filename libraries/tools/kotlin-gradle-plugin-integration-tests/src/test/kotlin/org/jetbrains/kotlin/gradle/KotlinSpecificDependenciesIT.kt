@@ -503,9 +503,9 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
             buildGradle.appendText(
                 """
-                
-                dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
-                configurations.getByName("testImplementation").dependencies.removeAll { it.name == "kotlin-test" }
+                def dependency
+                dependencies { dependency = testImplementation("$kotlinTestMultiplatformDependency") }
+                configurations.getByName("testImplementation").dependencies.remove(dependency)
                 """.trimIndent()
             )
             checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = listOf("kotlin-test"))
