@@ -298,16 +298,16 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         BINARY_OPERATION -> {
                             JsBinaryOperation(
-                                jsBinaryOperatorValues[readInt()],
+                                jsBinaryOperatorValues[readByte().toInt()],
                                 readExpression(),
                                 readExpression()
                             )
                         }
                         PREFIX_OPERATION -> {
-                            JsPrefixOperation(jsUnaryOperatorValues[readInt()], readExpression())
+                            JsPrefixOperation(jsUnaryOperatorValues[readByte().toInt()], readExpression())
                         }
                         POSTFIX_OPERATION -> {
-                            JsPostfixOperation(jsUnaryOperatorValues[readInt()], readExpression())
+                            JsPostfixOperation(jsUnaryOperatorValues[readByte().toInt()], readExpression())
                         }
                         CONDITIONAL -> {
                             JsConditional(
@@ -348,7 +348,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             }
         }.apply {
             synthetic = readBoolean()
-            sideEffects = sideEffectKindValues[readInt()]
+            sideEffects = sideEffectKindValues[readByte().toInt()]
             ifTrue { localAlias = readJsImportedModule() }
         }
     }

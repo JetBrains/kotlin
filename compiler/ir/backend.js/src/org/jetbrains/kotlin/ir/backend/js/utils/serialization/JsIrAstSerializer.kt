@@ -412,20 +412,20 @@ private class JsIrAstSerializer {
 
             override fun visitBinaryExpression(x: JsBinaryOperation) {
                 writeByte(ExpressionIds.BINARY_OPERATION)
-                writeInt(x.operator.ordinal)
+                writeByte(x.operator.ordinal)
                 writeExpression(x.arg1)
                 writeExpression(x.arg2)
             }
 
             override fun visitPrefixOperation(x: JsPrefixOperation) {
                 writeByte(ExpressionIds.PREFIX_OPERATION)
-                writeInt(x.operator.ordinal)
+                writeByte(x.operator.ordinal)
                 writeExpression(x.arg)
             }
 
             override fun visitPostfixOperation(x: JsPostfixOperation) {
                 writeByte(ExpressionIds.POSTFIX_OPERATION)
-                writeInt(x.operator.ordinal)
+                writeByte(x.operator.ordinal)
                 writeExpression(x.arg)
             }
 
@@ -484,7 +484,7 @@ private class JsIrAstSerializer {
         }
 
         writeBoolean(expression.synthetic)
-        writeInt(expression.sideEffects.ordinal)
+        writeByte(expression.sideEffects.ordinal)
         ifNotNull(expression.localAlias) { writeImportedModule(it) }
     }
 
@@ -528,7 +528,7 @@ private class JsIrAstSerializer {
             writeBoolean(name.isTemporary)
             ifNotNull(name.localAlias) { writeLocalAlias(it) }
             writeBoolean(name.imported && name !in importedNames)
-            ifNotNull(name.specialFunction) { writeInt(it.ordinal) }
+            ifNotNull(name.specialFunction) { writeByte(it.ordinal) }
         }
         nameMap.size
     }
