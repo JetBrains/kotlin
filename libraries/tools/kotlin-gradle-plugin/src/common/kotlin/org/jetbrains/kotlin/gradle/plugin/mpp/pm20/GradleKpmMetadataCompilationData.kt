@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
-import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -59,18 +58,8 @@ internal abstract class GradleKpmAbstractFragmentMetadataCompilationData<T : Kot
         get() = compileAllTask.name
 
     override var compileDependencyFiles: FileCollection by project.newProperty {
-        createMetadataDependencyTransformationClasspath(
-            project = project,
-            fromFiles = resolvableMetadataConfiguration(fragment.containingModule),
-            parentCompiledMetadataFiles = lazy {
-                fragment.refinesClosure.map {
-                    val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
-                        ?: return@map project.files()
-                    compilation.output.classesDirs
-                }
-            },
-            metadataResolutionProviders = resolvedMetadataFiles
-        )
+        TODO("""Provide Compile Dependency Files.
+            | See KotlinMetadataTargetConfigurator::configureMetadataDependenciesForCompilation for reference""".trimMargin())
     }
 
     override val output: KotlinCompilationOutput = DefaultKotlinCompilationOutput(
