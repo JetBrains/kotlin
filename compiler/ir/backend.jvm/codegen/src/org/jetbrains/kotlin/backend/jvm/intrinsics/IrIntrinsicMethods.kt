@@ -45,12 +45,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private val intrinsicsMap = (
             listOf(
-                Key(FqName("kotlin.VArray"), null, "set", listOf(intFqn, FqName("T"))) to ArraySet,
-                Key(FqName("kotlin.VArray"), null, "get", listOf(intFqn)) to ArrayGet,
-                Key(FqName("kotlin.VArray"), null, "<init>", listOf(intFqn)) to NewArray,
-                Key(FqName("kotlin.VArray"), null, "<get-size>", emptyList()) to ArraySize,
-                Key(FqName("kotlin.VArray"), null, "iterator", emptyList()) to VArrayIterator,
-                Key(FqName("kotlin.VArrayIterator"), null, "next", emptyList()) to VArrayIteratorNext,
                 Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
@@ -88,7 +82,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.jvmIndyIntrinsic.toKey()!! to JvmInvokeDynamic,
                 symbols.jvmDebuggerInvokeSpecialIntrinsic.toKey()!! to JvmDebuggerInvokeSpecial,
                 symbols.intPostfixIncrDecr.toKey()!! to IntIncr(isPrefix = false),
-                symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true)
+                symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true),
+                createKeyMapping(VArrayIteratorNext, symbols.vArrayIterator, "next"),
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
@@ -121,6 +116,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                         createKeyMapping(PrimitiveArrayIteratorNext, iteratorClass, "next")
                     } +
                     arrayMethods() +
+                    vArrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
@@ -172,18 +168,26 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
                 numberConversionMethods(irBuiltIns.numberClass)
 
-    private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
-                arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+    private fun vArrayMethods() =
+        arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass, VArrayIterator)
 
-    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
+    private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
+        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) ->
+            arrayMethods(
+                primitiveType.symbol,
+                array,
+                ArrayIterator
+            )
+        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array, ArrayIterator)
+
+    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol, arrayIteratorIntrinsic: IntrinsicMethod) =
         listOf(
             createKeyMapping(ArraySize, arrayClass, "<get-size>"),
             createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
             createKeyMapping(ArraySet, arrayClass, "set", irBuiltIns.intClass, elementClass),
             createKeyMapping(ArrayGet, arrayClass, "get", irBuiltIns.intClass),
             createKeyMapping(Clone, arrayClass, "clone"),
-            createKeyMapping(ArrayIterator, arrayClass, "iterator")
+            createKeyMapping(arrayIteratorIntrinsic, arrayClass, "iterator")
         )
 
     private fun primitiveComparisonIntrinsics(
