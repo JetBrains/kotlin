@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.chooseWrapperVersionOrFinishTest
 import org.jetbrains.kotlin.gradle.embedProject
 import org.jetbrains.kotlin.gradle.mpp.ResolvedVariantChecker.ResolvedVariantRequest
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
@@ -216,7 +218,9 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                 """"com.example:lib:1.0""""
             else "project(\":${dependencyProject.projectName}:lib\")"
 
+        val usedConsumerGradleVersion: String
         val consumerProject = Project("AndroidProject", consumerGradleVersion).apply {
+            usedConsumerGradleVersion = chooseWrapperVersionOrFinishTest()
             projectDir.deleteRecursively()
             if (!isPublishedLibrary) {
                 embedProject(dependencyProject)
@@ -284,11 +288,14 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                 "com.example:lib:1.0"
             else ":${dependencyProject.projectName}:lib"
 
+        val consumerWarningMode =
+            if (consumerAgpVersion >= AGPVersion.v7_3_0 || GradleVersion.version(usedConsumerGradleVersion) < GradleVersion.version("7.5")) WarningMode.Fail else WarningMode.None
         val consumerBuildOptions = defaultBuildOptions().copy(
             javaHome = File(System.getProperty("jdk11Home")),
             androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = consumerAgpVersion,
-            kotlinVersion = withKotlinVersion ?: defaultBuildOptions().kotlinVersion
+            kotlinVersion = withKotlinVersion ?: defaultBuildOptions().kotlinVersion,
+            warningMode = consumerWarningMode
         )
 
         val variantCheckRequests = mutableMapOf<ResolvedVariantRequest, String>()
