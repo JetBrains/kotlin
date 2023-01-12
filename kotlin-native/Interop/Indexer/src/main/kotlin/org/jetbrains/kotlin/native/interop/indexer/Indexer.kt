@@ -68,7 +68,8 @@ private class ObjCClassImpl(
 }
 
 private class ObjCCategoryImpl(
-        name: String, clazz: ObjCClass
+        name: String, clazz: ObjCClass,
+        override val location: Location
 ) : ObjCCategory(name, clazz), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -85,7 +86,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         object Protocol : DeclarationID()
     }
 
-    private inner class TypeDeclarationRegistry<D : TypeDeclaration> {
+    private inner class LocatableDeclarationRegistry<D : LocatableDeclaration> {
         private val all = mutableMapOf<DeclarationID, D>()
 
         val included = mutableListOf<D>()
@@ -120,22 +121,23 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     override val structs: List<StructDecl> get() = structRegistry.included
-    private val structRegistry = TypeDeclarationRegistry<StructDeclImpl>()
+    private val structRegistry = LocatableDeclarationRegistry<StructDeclImpl>()
 
     override val enums: List<EnumDef> get() = enumRegistry.included
-    private val enumRegistry = TypeDeclarationRegistry<EnumDefImpl>()
+    private val enumRegistry = LocatableDeclarationRegistry<EnumDefImpl>()
 
     override val objCClasses: List<ObjCClass> get() = objCClassRegistry.included
-    private val objCClassRegistry = TypeDeclarationRegistry<ObjCClassImpl>()
+    private val objCClassRegistry = LocatableDeclarationRegistry<ObjCClassImpl>()
 
     override val objCProtocols: List<ObjCProtocol> get() = objCProtocolRegistry.included
-    private val objCProtocolRegistry = TypeDeclarationRegistry<ObjCProtocolImpl>()
+    private val objCProtocolRegistry = LocatableDeclarationRegistry<ObjCProtocolImpl>()
 
-    override val objCCategories: Collection<ObjCCategory> get() = objCCategoryById.values
-    private val objCCategoryById = mutableMapOf<DeclarationID, ObjCCategoryImpl>()
+    override val objCCategories: Collection<ObjCCategory> get() = objCCategoryById.included
+    private val objCCategoryById = LocatableDeclarationRegistry<ObjCCategoryImpl>()
 
     override val typedefs get() = typedefRegistry.included
-    private val typedefRegistry = TypeDeclarationRegistry<TypedefDef>()
+    private val typedefRegistry = LocatableDeclarationRegistry<TypedefDef>()
+
 
     private val functionById = mutableMapOf<DeclarationID, FunctionDecl?>()
 
@@ -474,11 +476,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         if (!isAvailable(classCursor)) return null
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
-        val declarationId = getDeclarationId(cursor)
 
-        return objCCategoryById.getOrPut(declarationId) {
+        return objCCategoryById.getOrPut(cursor) {
             val clazz = getObjCClassAt(classCursor)
-            val category = ObjCCategoryImpl(name, clazz)
+            val category = ObjCCategoryImpl(name, clazz, getLocation(cursor))
             addChildrenToObjCContainer(cursor, category)
             category
         }

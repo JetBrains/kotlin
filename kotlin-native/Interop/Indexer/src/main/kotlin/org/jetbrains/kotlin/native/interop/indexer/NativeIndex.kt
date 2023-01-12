@@ -151,9 +151,11 @@ data class HeaderId(val value: String)
 
 data class Location(val headerId: HeaderId)
 
-interface TypeDeclaration {
+interface LocatableDeclaration {
     val location: Location
 }
+
+interface TypeDeclaration : LocatableDeclaration
 
 sealed class StructMember(val name: String) {
     abstract val offset: Long?
@@ -284,7 +286,7 @@ abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 
-abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContainer()
+abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContainer(), LocatableDeclaration
 
 /**
  * C function parameter.
