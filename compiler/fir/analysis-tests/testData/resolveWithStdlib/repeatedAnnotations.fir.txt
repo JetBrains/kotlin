@@ -1,0 +1,33 @@
+FILE: test.kt
+    public final fun <T> foo(bar: R|() -> T|): R|kotlin/Unit| {
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun baz(): R|@R|Ann|()  @R|Ann|()  kotlin/String| {
+        ^baz String(12)
+    }
+    public final fun qux(): R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!| {
+        ^qux Q|Some|.R|/Some.foo|().R|SubstitutionOverride<kotlin/collections/MutableList.get: R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!|>|(Int(0))
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|<R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!|>(foo@fun <anonymous>(): R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!| <inline=NoInline>  {
+            ^ Q|Some|.R|/Some.foo|().R|SubstitutionOverride<kotlin/collections/MutableList.get: R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!|>|(Int(0))
+        }
+        )
+        R|/foo|<R|@R|Ann|()  @R|Ann|()  kotlin/String|>(foo@fun <anonymous>(): R|@R|Ann|()  @R|Ann|()  kotlin/String| <inline=NoInline>  {
+            ^ R|/baz|()
+        }
+        )
+        R|/foo|<R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!|>(foo@fun <anonymous>(): R|@R|SomeAnn|(value = Int(1))  @R|SomeAnn|(value = Int(2))  kotlin/String!| <inline=NoInline>  {
+            ^ R|/qux|()
+        }
+        )
+        R|/foo|<R|@R|Ann|()  @R|Ann|()  kotlin/String|>(fun <anonymous>(): R|@R|Ann|()  @R|Ann|()  kotlin/String| <inline=NoInline>  {
+            ^@foo String()
+        }
+        )
+    }

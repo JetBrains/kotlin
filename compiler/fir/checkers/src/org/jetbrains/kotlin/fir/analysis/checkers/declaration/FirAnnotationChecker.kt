@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
@@ -70,7 +71,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         if (declaration is FirProperty) {
             checkRepeatedAnnotationsInProperty(declaration, context, reporter)
         } else if (declaration is FirCallableDeclaration) {
-            if (declaration.source?.kind !is KtFakeSourceElementKind) {
+            if (declaration.source?.kind is KtRealSourceElementKind && declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) {
                 checkRepeatedAnnotations(declaration.returnTypeRef.coneTypeSafe(), context, reporter)
             }
         } else if (declaration is FirTypeAlias) {

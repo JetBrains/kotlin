@@ -4871,6 +4871,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("repeatedAnnotations.kt")
+        public void testRepeatedAnnotations() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/repeatedAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("runOnIntegerLiteral.kt")
         public void testRunOnIntegerLiteral() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/runOnIntegerLiteral.kt");
