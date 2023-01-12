@@ -13,7 +13,6 @@ import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.name
 import kotlin.test.assertEquals
-import  org.jetbrains.dokka.links.Callable as DRICallable
 
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
     val configuration = dokkaConfiguration {
@@ -48,7 +47,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 name equals "Test"
-                children counts 1
+                children counts 2 // default constructor and function
                 with((this / "fn").cast<DFunction>()) {
                     name equals "fn"
                     val params = parameters.map { it.documentation.values.first().children.first() as Param }
@@ -118,7 +117,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 name equals "Test"
-                children counts 1
+                children counts 2 // default constructor and function
 
                 with((this / "arrayToString").cast<DFunction>()) {
                     name equals "arrayToString"
@@ -219,10 +218,10 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             """, configuration = configuration
         ) {
             with((this / "java" / "InnerClass").cast<DClass>()) {
-                children counts 1
+                children counts 2 // default constructor and inner class
                 with((this / "D").cast<DClass>()) {
                     name equals "D"
-                    children counts 0
+                    children counts 1 // default constructor
                 }
             }
         }
@@ -239,7 +238,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         ) {
             with((this / "java" / "Foo").cast<DClass>()) {
                 name equals "Foo"
-                children counts 1
+                children counts 2 // default constructor and function
 
                 with((this / "bar").cast<DFunction>()) {
                     name equals "bar"
@@ -263,7 +262,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             """, configuration = configuration
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
-                children counts 2
+                children counts 3 // default constructor + 2 props
 
                 with((this / "i").cast<DProperty>()) {
                     getter equals null
