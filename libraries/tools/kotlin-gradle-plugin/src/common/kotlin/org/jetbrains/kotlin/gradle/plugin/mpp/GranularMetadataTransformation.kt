@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.utils.mergeWith
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -86,13 +89,32 @@ internal sealed class MetadataDependencyResolution(
     }
 }
 
+private typealias ComponentIdentifierKey = String
+/**
+ * This unique key can be used to lookup various info for related Resolved Dependency
+ * that gets serialized
+ */
+private val ComponentIdentifier.uniqueKey get(): ComponentIdentifierKey =
+    when (this) {
+        is ProjectComponentIdentifier -> "project ${build.name} :$projectPath"
+        is ModuleComponentIdentifier -> "module $group:$module:$version"
+        else -> error("Unexpected Component Identifier: '$this' of type $javaClass")
+    }
+
 internal class GranularMetadataTransformation(
     val project: Project,
     val kotlinSourceSet: KotlinSourceSet,
-    /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
-    private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
+    parentVisibleSourceSetsProvider: () -> Iterable<Map<ComponentIdentifierKey, Set<String>>>
 ) {
+    private val parentVisibleSourceSets: Map<ComponentIdentifierKey, Set<String>> by lazy {
+        parentVisibleSourceSetsProvider().reduceOrNull { acc, map -> acc mergeWith map }.orEmpty()
+    }
+
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
+
+    val visibleSourceSetsByComponentId: Map<ComponentIdentifierKey, Set<String>> = metadataDependencyResolutions
+        .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+        .associate { it.dependency.id.uniqueKey to it.allVisibleSourceSetNames }
 
     private val requestedDependencies: Iterable<Dependency> by lazy {
         kotlinSourceSet.internal.resolvableMetadataConfiguration.incoming.dependencies
@@ -102,11 +124,6 @@ internal class GranularMetadataTransformation(
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
-
-        val parentResolutions =
-            parentTransformations.value.flatMap { it.metadataDependencyResolutions }.groupBy {
-                ModuleIds.fromComponent(project, it.dependency)
-            }
 
         val allRequestedDependencies = requestedDependencies
 
@@ -139,7 +156,7 @@ internal class GranularMetadataTransformation(
 
             val dependencyResult = processDependency(
                 resolvedDependency,
-                parentResolutions[ModuleIds.fromComponent(project, resolvedDependency)].orEmpty()
+                parentVisibleSourceSets[resolvedDependency.id.uniqueKey].orEmpty()
             )
 
             result.add(dependencyResult)
@@ -189,7 +206,7 @@ internal class GranularMetadataTransformation(
      */
     private fun processDependency(
         module: ResolvedComponentResult,
-        parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
+        sourceSetsVisibleInParents: Set<String>,
     ): MetadataDependencyResolution {
         val mppDependencyMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
             project, module, configurationToResolve,
@@ -214,10 +231,6 @@ internal class GranularMetadataTransformation(
             )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
-
-        val sourceSetsVisibleInParents = parentResolutionsForModule
-            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
 
         // Keep only the transitive dependencies requested by the visible source sets:
         // Visit the transitive dependencies visible by parents, too (i.e. allVisibleSourceSets), as this source set might get a more
