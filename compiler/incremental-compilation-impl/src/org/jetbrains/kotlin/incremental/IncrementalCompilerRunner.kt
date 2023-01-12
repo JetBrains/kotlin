@@ -154,6 +154,19 @@ abstract class IncrementalCompilerRunner<
         }
         changedFiles as ChangedFiles.Known?
 
+        // Because `caches` is a Closeable resource, it is important to close them in the event of an exception or before any return
+        // statements.
+        // Note: Historically, closing caches used to throw an exception sometimes, so currently we want to collect those exceptions. In the
+        // future, if closing caches is safe, and we are no longer interested in those exceptions, we can simplify this code by using
+        // Kotlin's `Closable.use` function (see `compileNonIncrementally`).
+        fun closeCaches(caches: CacheManager, activeException: Throwable) {
+            try {
+                caches.close()
+            } catch (e: Throwable) {
+                activeException.addSuppressed(e)
+            }
+        }
+
         val caches = createCacheManager(args, projectDir)
         val exitCode: ExitCode
         try {
@@ -161,7 +174,7 @@ abstract class IncrementalCompilerRunner<
             val knownChangedFiles: ChangedFiles.Known = try {
                 getChangedFiles(changedFiles, allSourceFiles, caches)
             } catch (e: Throwable) {
-                // Don't need to close caches in cases where we return `ICResult.Failed` because we will compile non-incrementally anyway
+                closeCaches(caches, e)
                 return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
             }
 
@@ -173,6 +186,7 @@ abstract class IncrementalCompilerRunner<
                     calculateSourcesToCompile(caches, knownChangedFiles, args, messageCollector, classpathAbiSnapshot ?: emptyMap())
                 }
             } catch (e: Throwable) {
+                closeCaches(caches, e)
                 return ICResult.Failed(IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE, e)
             }
 
@@ -196,16 +210,11 @@ abstract class IncrementalCompilerRunner<
             exitCode = try {
                 compileImpl(compilationMode as CompilationMode.Incremental, allSourceFiles, args, caches, abiSnapshotData, messageCollector)
             } catch (e: Throwable) {
+                closeCaches(caches, e)
                 return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
             }
         } catch (e: Throwable) {
-            // Because `caches` is a Closeable resource, it is good practice to close them in the event of an exception (in addition to
-            // closing them after a normal use).
-            try {
-                caches.close()
-            } catch (e2: Throwable) {
-                e.addSuppressed(e2)
-            }
+            closeCaches(caches, e)
             throw e
         }
         try {
