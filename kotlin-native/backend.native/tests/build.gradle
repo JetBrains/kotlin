@@ -4454,6 +4454,10 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt49034/objcprotocol/kt49034.def'
         it.headers "$projectDir/interop/objc/kt49034/objcprotocol/kt49034.h"
     }
+    createInterop("objc_include_categories") {
+        it.defFile 'interop/objc_include_categories/objc_include_categories.def'
+        it.headers "$projectDir/interop/objc_include_categories/objc_include_categories.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -5201,6 +5205,29 @@ if (PlatformInfo.isAppleTarget(project)) {
         useGoldenData = true
         flags = ["-native-library", "$buildDir/objc_arc_contract.bc"]
     }
+
+    interopTest("interop_objc_include_categories") {
+        useGoldenData = true
+        source = "interop/objc_include_categories/main.kt"
+        interop = "objc_include_categories"
+        doBeforeBuild {
+            mkdir(buildDir)
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc_include_categories/objc_include_categories.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcincludecategories.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjcincludecategories.dylib")
+            }
+        }
+    }
+
+// TODO: Inherit from NSView, use parent constuctors.
+//    interopTest("interop_kt55653") {
+//        useGoldenData = true
+//        UtilsKt.dependsOnPlatformLibs(it)
+//    }
 }
 
 tasks.register("KT-50983", KonanDriverTest) {

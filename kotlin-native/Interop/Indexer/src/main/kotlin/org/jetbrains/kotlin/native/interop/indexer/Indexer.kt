@@ -385,7 +385,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun collectClassCategories(classCursor: CValue<CXCursor>, className: String): List<CValue<CXCursor>> {
         assert(classCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { classCursor.kind }
         val classLocation = getLocation(classCursor)
-        println("Class location: $classLocation")
         val result = mutableListOf<CValue<CXCursor>>()
         // Accessing the whole translation unit (TU) is overkill, but it is the simplest solution which is doable
         // since we use this function for a narrow set of cases.
