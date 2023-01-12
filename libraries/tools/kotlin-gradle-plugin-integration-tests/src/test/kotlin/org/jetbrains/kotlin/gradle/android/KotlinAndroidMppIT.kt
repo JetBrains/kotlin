@@ -505,6 +505,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
     // AGP max version is limited due to https://youtrack.jetbrains.com/issue/KT-51940/HMPP-resolves-configurations-during-configuration
     @DisplayName("android app can depend on mpp lib")
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_72)
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_4) // due AGP version limit ^
     @GradleAndroidTest
     fun testAndroidWithNewMppApp(
         gradleVersion: GradleVersion,
@@ -777,6 +778,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
     @DisplayName("KT-49798: com.android.build.api.attributes.AgpVersionAttr is not published")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testKT49798AgpVersionAttrNotPublished(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -810,6 +812,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
     @DisplayName("produced artifacts are consumable by projects with various AGP versions")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testAndroidMultiplatformPublicationAGPCompatibility(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -862,6 +865,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
     @DisplayName("KT-49877, KT-35916: associate compilation dependencies are passed correctly to android test compilations")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testAssociateCompilationDependenciesArePassedToAndroidTestCompilations(
         gradleVersion: GradleVersion,
         agpVersion: String,
