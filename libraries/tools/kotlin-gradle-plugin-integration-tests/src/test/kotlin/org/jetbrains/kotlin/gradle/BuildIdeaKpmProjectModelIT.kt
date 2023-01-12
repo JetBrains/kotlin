@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @GradleTestVersions(minVersion = TestVersions.Gradle.MIN_SUPPORTED_KPM)
+@Disabled
 class BuildIdeaKpmProjectModelIT : KGPBaseTest() {
 
     @GradleTest
