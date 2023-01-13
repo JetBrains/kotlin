@@ -285,8 +285,8 @@ open class KaptIncrementalIT : KGPBaseTest() {
                 val useBKt = javaSourcesDir().resolve("bar/useB.kt")
                 assertCompiledKotlinSources(
                     listOf(projectPath.relativize(bKt), projectPath.relativize(useBKt)),
-                    getOutputForTask("kaptGenerateStubs"),
-                    errorMessageSuffix = " in task 'kaptGenerateStubs'"
+                    getOutputForTask("kaptGenerateStubsKotlin"),
+                    errorMessageSuffix = " in task 'kaptGenerateStubsKotlin'"
                 )
 
                 // java removal is detected

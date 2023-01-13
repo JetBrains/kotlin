@@ -721,16 +721,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.getOutputForTask(taskName: String): String {
         @Language("RegExp")
         val taskOutputRegex = """
-(?:
-\[LIFECYCLE] \[class org\.gradle(?:\.internal\.buildevents)?\.TaskExecutionLogger] :$taskName|
-\[org\.gradle\.execution\.(?:plan|taskgraph)\.Default(?:Task)?PlanExecutor] :$taskName.*?started
-)
-([\s\S]+?)
-(?:
-Finished executing task ':$taskName'|
-\[org\.gradle\.execution\.(?:plan|taskgraph)\.Default(?:Task)?PlanExecutor] :$taskName.*?completed
-)
-""".trimIndent().replace("\n", "").toRegex()
+            \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task :$taskName' started
+            ([\s\S]+?)
+            \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task :$taskName' completed
+            """.trimIndent()
+            .replace("\n", "")
+            .toRegex()
 
         return taskOutputRegex.find(output)?.run { groupValues[1] } ?: error("Cannot find output for task $taskName")
     }
