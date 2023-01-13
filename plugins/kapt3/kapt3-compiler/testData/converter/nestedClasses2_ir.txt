@@ -32,6 +32,22 @@ public final class A$B {
     }
 
     @kotlin.Metadata()
+    public static final class D$$$E {
+
+        public D$$$E() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$E {
+
+        public D$$E() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
     public static final class D$E {
         @kotlin.jvm.JvmField()
         public A$B.D$E.F f;
@@ -62,22 +78,6 @@ public final class A$B {
             }
         }
     }
-
-    @kotlin.Metadata()
-    public static final class D$$E {
-
-        public D$$E() {
-            super();
-        }
-    }
-
-    @kotlin.Metadata()
-    public static final class D$$$E {
-
-        public D$$$E() {
-            super();
-        }
-    }
 }
 
 ////////////////////
@@ -90,11 +90,6 @@ public final class Experiment {
 
     public Experiment() {
         super();
-    }
-
-    @kotlin.Metadata()
-    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-    public static abstract @interface Type {
     }
 
     @kotlin.Metadata()
@@ -144,6 +139,11 @@ public final class Experiment {
         public java.lang.String toString() {
             return null;
         }
+    }
+
+    @kotlin.Metadata()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    public static abstract @interface Type {
     }
 }
 

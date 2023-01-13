@@ -21,8 +21,8 @@ public class test/BaseClass {
 @kotlin.Metadata
 public final class test/Class$NestedInnerClass$NestedNestedInnerClass {
     // source: 'classes.kt'
-    public final inner class test/Class$NestedInnerClass$NestedNestedInnerClass
     private final inner class test/Class$NestedInnerClass
+    public final inner class test/Class$NestedInnerClass$NestedNestedInnerClass
     public method <init>(): void
 }
 @kotlin.Metadata
