@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -126,7 +127,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
     private val anyArrayTypeRef = buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(StandardClassIds.Array),
+            StandardClassIds.Array.toLookupTag(),
             arrayOf(session.builtinTypes.nullableAnyType.coneType),
             isNullable = false
         )

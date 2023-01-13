@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -463,7 +462,7 @@ abstract class FirJavaFacade(
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = javaOrigin(javaField.isFromSource)
             }.apply {
-                containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                containingClassForStaticMemberAttr = classId.toLookupTag()
                 // TODO: check if this works properly with annotations that take the enum class as an argument
                 setAnnotationsFromJava(session, javaField, javaTypeParameterStack)
             }
@@ -500,7 +499,7 @@ abstract class FirJavaFacade(
                 }
             }.apply {
                 if (javaField.isStatic) {
-                    containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                    containingClassForStaticMemberAttr = classId.toLookupTag()
                 }
             }
         }
@@ -555,7 +554,7 @@ abstract class FirJavaFacade(
             }
         }.apply {
             if (javaMethod.isStatic) {
-                containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                containingClassForStaticMemberAttr = classId.toLookupTag()
             }
             if (containingClass.isRecord && valueParameters.isEmpty() && containingClass.recordComponents.any { it.name == methodName }) {
                 isJavaRecordComponent = true

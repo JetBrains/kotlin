@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -36,7 +35,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
     private fun loadAnnotation(
         annotationClassId: ClassId, result: MutableList<FirAnnotation>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-        val lookupTag = ConeClassLikeLookupTagImpl(annotationClassId)
+        val lookupTag = annotationClassId.toLookupTag()
 
         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
             private val argumentMap = mutableMapOf<Name, FirExpression>()
@@ -48,7 +47,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             }
 
             private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression {
-                val resolvedClassTypeRef = ConeClassLikeLookupTagImpl(classId).toDefaultResolvedTypeRef()
+                val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
                 return buildClassReferenceExpression {
                     classTypeRef = resolvedClassTypeRef
                     typeRef = buildResolvedTypeRef {
@@ -83,7 +82,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
                     typeRef = buildResolvedTypeRef {
                         type = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(this@toEnumEntryReferenceExpression),
+                            this@toEnumEntryReferenceExpression.toLookupTag(),
                             emptyArray(),
                             isNullable = false
                         )

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -104,7 +103,7 @@ fun ConeKotlinType.kFunctionTypeToFunctionType(session: FirSession): ConeClassLi
         if (isSuspendOrKSuspendFunctionType(session)) FunctionClassKind.SuspendFunction
         else FunctionClassKind.Function
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
-    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false)
+    return ConeClassLikeTypeImpl(functionalTypeId.toLookupTag(), typeArguments, isNullable = false)
 }
 
 fun ConeKotlinType.suspendFunctionTypeToFunctionType(session: FirSession): ConeClassLikeType {
@@ -113,7 +112,7 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionType(session: FirSession): ConeC
         if (isKFunctionType(session)) FunctionClassKind.KFunction
         else FunctionClassKind.Function
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
-    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false, attributes = attributes)
+    return ConeClassLikeTypeImpl(functionalTypeId.toLookupTag(), typeArguments, isNullable = false, attributes = attributes)
 }
 
 fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: FirSession, continuationClassId: ClassId): ConeClassLikeType {
@@ -126,8 +125,8 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))
     val lastTypeArgument = typeArguments.last()
     return ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(functionalTypeId),
-        typeArguments = (typeArguments.dropLast(1) + ConeClassLikeLookupTagImpl(continuationClassId).constructClassType(
+        functionalTypeId.toLookupTag(),
+        typeArguments = (typeArguments.dropLast(1) + continuationClassId.toLookupTag().constructClassType(
             arrayOf(lastTypeArgument),
             isNullable = false
         ) + lastTypeArgument).toTypedArray(),

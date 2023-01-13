@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -23,9 +22,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-
-private fun ClassId.toLookupTag(): ConeClassLikeLookupTag =
-    ConeClassLikeLookupTagImpl(this)
 
 private fun ClassId.toConeFlexibleType(
     typeArguments: Array<out ConeTypeProjection>,
@@ -186,7 +182,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 classId = classId.readOnlyToMutable() ?: classId
             }
 
-            val lookupTag = ConeClassLikeLookupTagImpl(classId)
+            val lookupTag = classId.toLookupTag()
             // When converting type parameter bounds we should not attempt to load any classes, as this may trigger
             // enhancement of type parameter bounds on some other class that depends on this one. Also, in case of raw
             // types specifically there could be an infinite recursion on the type parameter itself.

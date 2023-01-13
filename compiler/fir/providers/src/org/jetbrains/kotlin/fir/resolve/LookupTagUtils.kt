@@ -89,7 +89,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
             buildResolvedTypeRef {
                 source = fakeSource
                 type = ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(StandardNames.FqNames.parameterNameClassId),
+                    StandardNames.FqNames.parameterNameClassId.toLookupTag(),
                     emptyArray(),
                     isNullable = false
                 )

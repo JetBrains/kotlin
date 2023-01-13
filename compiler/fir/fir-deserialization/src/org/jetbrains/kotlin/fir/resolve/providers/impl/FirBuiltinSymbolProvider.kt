@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -291,7 +292,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                         kind: FunctionClassKind,
                     ): FirResolvedTypeRef {
                         return buildResolvedTypeRef {
-                            type = ConeClassLikeLookupTagImpl(kind.classId(arity))
+                            type = kind.classId(arity).toLookupTag()
                                 .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
                         }
                     }
@@ -299,21 +300,21 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                     superTypeRefs += when (kind) {
                         FunctionClassKind.Function -> listOf(
                             buildResolvedTypeRef {
-                                type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
+                                type = StandardClassIds.Function.toLookupTag()
                                     .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                             }
                         )
 
                         FunctionClassKind.SuspendFunction -> listOf(
                             buildResolvedTypeRef {
-                                type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
+                                type = StandardClassIds.Function.toLookupTag()
                                     .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                             }
                         )
 
                         FunctionClassKind.KFunction -> listOf(
                             buildResolvedTypeRef {
-                                type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
+                                type = StandardClassIds.KFunction.toLookupTag()
                                     .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                             },
                             createSuperType(FunctionClassKind.Function)
@@ -321,7 +322,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
 
                         FunctionClassKind.KSuspendFunction -> listOf(
                             buildResolvedTypeRef {
-                                type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
+                                type = StandardClassIds.KFunction.toLookupTag()
                                     .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                             },
                             createSuperType(FunctionClassKind.SuspendFunction)

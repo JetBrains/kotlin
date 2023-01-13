@@ -33,12 +33,16 @@ fun ConeClassLikeLookupTag.constructClassType(
     return ConeClassLikeTypeImpl(this, typeArguments, isNullable, attributes)
 }
 
+fun ClassId.toLookupTag(): ConeClassLikeLookupTagImpl {
+    return ConeClassLikeLookupTagImpl(this)
+}
+
 fun ClassId.constructClassLikeType(
     typeArguments: Array<out ConeTypeProjection>,
     isNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), typeArguments, isNullable, attributes)
+    return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
 }
 
 fun FirClassifierSymbol<*>.constructType(

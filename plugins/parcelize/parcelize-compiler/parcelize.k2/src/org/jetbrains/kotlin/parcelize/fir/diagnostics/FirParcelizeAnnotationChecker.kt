@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -123,7 +122,7 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker() {
         val targetType = (context.annotationContainers.lastOrNull() as? FirTypeRef)?.coneType?.withAttributes(ConeAttributes.Empty)
             ?: return
         val expectedType = ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(ParcelizeNames.PARCELER_ID),
+            ParcelizeNames.PARCELER_ID.toLookupTag(),
             arrayOf(targetType),
             isNullable = false
         )

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -49,8 +48,7 @@ import org.jetbrains.org.objectweb.asm.Type
 class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
     companion object {
         val NON_EXISTENT_ID = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
-        private val typeForNonExistentClass = ConeClassLikeLookupTagImpl(NON_EXISTENT_ID)
-            .constructClassType(emptyArray(), isNullable = false)
+        private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(emptyArray(), isNullable = false)
     }
 
     fun mapType(

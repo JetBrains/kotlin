@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -151,7 +150,7 @@ fun FirClass.defaultType(): ConeClassLikeType =
 
 fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLikeType =
     ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(this),
+        this.toLookupTag(),
         parameters.map {
             ConeTypeParameterTypeImpl(
                 it.toLookupTag(),

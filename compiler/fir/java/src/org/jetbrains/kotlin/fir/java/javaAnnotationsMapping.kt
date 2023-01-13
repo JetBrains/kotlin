@@ -154,7 +154,7 @@ private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Nam
         if (classId != null) {
             this.typeRef = buildResolvedTypeRef {
                 type = ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(classId),
+                    classId.toLookupTag(),
                     emptyArray(),
                     isNullable = false
                 )
@@ -174,7 +174,7 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
         resultSet.mapTo(arguments) { buildEnumCall(session, classId, Name.identifier(it.name)) }
         varargElementType = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(classId),
+                classId.toLookupTag(),
                 emptyArray(),
                 isNullable = false,
                 ConeAttributes.Empty
@@ -221,7 +221,7 @@ private fun JavaAnnotation.toFirAnnotationCall(
             StandardClassIds.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
             StandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
             else -> classId
-        }?.let(::ConeClassLikeLookupTagImpl)
+        }?.toLookupTag()
         annotationTypeRef = if (lookupTag != null) {
             buildResolvedTypeRef {
                 type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)

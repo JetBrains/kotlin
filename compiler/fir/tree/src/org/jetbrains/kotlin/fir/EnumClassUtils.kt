@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -44,7 +44,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(StandardClassIds.Array),
+                StandardClassIds.Array.toLookupTag(),
                 arrayOf(
                     ConeClassLikeTypeImpl(this@generateValuesFunction.symbol.toLookupTag(), emptyArray(), isNullable = false)
                 ),
@@ -97,7 +97,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             returnTypeRef = buildResolvedTypeRef {
                 source = sourceElement
                 type = ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(StandardClassIds.String),
+                    StandardClassIds.String.toLookupTag(),
                     emptyArray(),
                     isNullable = false
                 )
@@ -131,7 +131,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(StandardClassIds.EnumEntries),
+                StandardClassIds.EnumEntries.toLookupTag(),
                 arrayOf(
                     ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), emptyArray(), isNullable = false)
                 ),

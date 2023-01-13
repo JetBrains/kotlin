@@ -259,12 +259,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     session
                 )
 
-                val actualTypeParametersCount =
-                    when (symbol) {
-                        is FirTypeAliasSymbol ->
-                            outerDeclarations.sumOf { it?.let { d -> getActualTypeParametersCount(d) } ?: 0 }
-                        else -> symbol.typeParameterSymbols.size
-                    }
+                val actualTypeParametersCount = symbol.typeParameterSymbols.size
 
                 for ((typeParameterIndex, typeParameter) in originalTypeParameters.withIndex()) {
                     val (parameterClass, qualifierPartIndex) = typeParametersAlignedToQualifierParts[typeParameter.symbol] ?: continue

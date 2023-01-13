@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -390,7 +389,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val ownerSymbol = toSymbol(session) as? FirRegularClassSymbol
 
         if (ownerSymbol?.fir?.isCompanion == true) {
-            return ConeClassLikeLookupTagImpl(outerClassId)
+            return outerClassId.toLookupTag()
         }
         return null
     }
@@ -546,7 +545,7 @@ fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag?
         (fir as? FirRegularClass)?.containingClassForLocal()
     } else {
         val ownerId = classId.outerClassId
-        ownerId?.let { ConeClassLikeLookupTagImpl(it) }
+        ownerId?.let { it.toLookupTag() }
     }
 }
 

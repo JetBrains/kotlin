@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
@@ -181,7 +180,7 @@ abstract class AbstractAnnotationDeserializer(
         val classId = nameResolver.getClassId(proto.id)
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
-                type = ConeClassLikeLookupTagImpl(classId).constructClassType(emptyArray(), isNullable = false)
+                type = classId.toLookupTag().constructClassType(emptyArray(), isNullable = false)
             }
             session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
                 this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
@@ -202,7 +201,7 @@ abstract class AbstractAnnotationDeserializer(
             // Used only for annotation parameters of array types
             // Avoid triggering it in other cases, since it's quite expensive
             val parameterByName: Map<Name, FirValueParameter>? by lazy(LazyThreadSafetyMode.NONE) {
-                val lookupTag = ConeClassLikeLookupTagImpl(classId)
+                val lookupTag = classId.toLookupTag()
                 val symbol = lookupTag.toSymbol(session)
                 val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir ?: return@lazy null
 
@@ -259,7 +258,7 @@ abstract class AbstractAnnotationDeserializer(
             ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
             CLASS -> buildGetClassCall {
                 val classId = nameResolver.getClassId(value.classId)
-                val lookupTag = ConeClassLikeLookupTagImpl(classId)
+                val lookupTag = classId.toLookupTag()
                 val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
                 val resolvedTypeRef = buildResolvedTypeRef {
                     type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
@@ -276,7 +275,7 @@ abstract class AbstractAnnotationDeserializer(
                 val classId = nameResolver.getClassId(value.classId)
                 val entryName = nameResolver.getName(value.enumValueId)
 
-                val enumLookupTag = ConeClassLikeLookupTagImpl(classId)
+                val enumLookupTag = classId.toLookupTag()
                 val enumSymbol = enumLookupTag.toSymbol(session)
                 val firClass = enumSymbol?.fir as? FirRegularClass
                 val enumEntries = firClass?.collectEnumEntries() ?: emptyList()

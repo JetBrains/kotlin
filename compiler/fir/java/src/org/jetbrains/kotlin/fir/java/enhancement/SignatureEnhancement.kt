@@ -489,7 +489,7 @@ class FirSignatureEnhancement(
             else -> return null
         }
         return ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(purelyImplementedClassId),
+            purelyImplementedClassId.toLookupTag(),
             parametersAsTypeProjections.toTypedArray(),
             isNullable = false
         )

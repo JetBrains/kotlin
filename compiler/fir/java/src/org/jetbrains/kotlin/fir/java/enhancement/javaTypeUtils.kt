@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
@@ -136,13 +135,13 @@ private fun ConeClassifierLookupTag.enhanceMutability(
         MutabilityQualifier.READ_ONLY -> {
             val readOnlyId = classId.mutableToReadOnly()
             if (position == TypeComponentPosition.FLEXIBLE_LOWER && readOnlyId != null) {
-                return ConeClassLikeLookupTagImpl(readOnlyId)
+                return readOnlyId.toLookupTag()
             }
         }
         MutabilityQualifier.MUTABLE -> {
             val mutableId = classId.readOnlyToMutable()
             if (position == TypeComponentPosition.FLEXIBLE_UPPER && mutableId != null) {
-                return ConeClassLikeLookupTagImpl(mutableId)
+                return mutableId.toLookupTag()
             }
         }
         null -> {}

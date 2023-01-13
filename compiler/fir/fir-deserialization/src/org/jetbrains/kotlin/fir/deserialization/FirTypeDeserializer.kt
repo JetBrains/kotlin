@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -101,7 +100,7 @@ class FirTypeDeserializer(
             // We can't just load local types as is, because later we will get an exception
             // while trying to get corresponding FIR class
             val id = nameResolver.getClassId(fqNameIndex).takeIf { !it.isLocal } ?: StandardClassIds.Any
-            return ConeClassLikeLookupTagImpl(id)
+            return id.toLookupTag()
         } catch (e: Throwable) {
             if (shouldIjPlatformExceptionBeRethrown(e)) throw e
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
@@ -205,7 +204,7 @@ class FirTypeDeserializer(
 
         val kind = FunctionClassKind.SuspendFunction
         return ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size))),
+            ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size)).toLookupTag(),
             (valueParameters + suspendReturnType).toTypedArray(),
             isNullable, attributes
         )
@@ -225,7 +224,7 @@ class FirTypeDeserializer(
                     if (arity >= 0) {
                         val kind = FunctionClassKind.SuspendFunction
                         ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(arity))),
+                            ClassId(kind.packageFqName, kind.numberedClassName(arity)).toLookupTag(),
                             arguments,
                             isNullable,
                             attributes
