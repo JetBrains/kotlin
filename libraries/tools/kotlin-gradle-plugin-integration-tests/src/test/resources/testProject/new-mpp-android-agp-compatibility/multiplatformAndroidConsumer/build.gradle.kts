@@ -4,7 +4,7 @@ plugins {
 }
 
 repositories {
-    maven(rootProject.buildDir.resolve("repo"))
+    maven("<localRepo>")
     mavenCentral()
 }
 

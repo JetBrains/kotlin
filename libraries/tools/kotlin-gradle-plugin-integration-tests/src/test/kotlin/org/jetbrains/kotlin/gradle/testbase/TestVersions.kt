@@ -41,7 +41,7 @@ interface TestVersions {
         const val AGP_42 = "4.2.2"
         const val AGP_70 = "7.0.4"
         const val AGP_71 = "7.1.3"
-        const val AGP_72 = "7.2.1"
+        const val AGP_72 = "7.2.2"
         const val AGP_73 = "7.3.0"
         const val AGP_74 = "7.4.0-rc03"
         const val AGP_80 = "8.0.0-alpha11"
