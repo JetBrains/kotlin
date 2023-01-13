@@ -23,6 +23,8 @@ var varargWithOtherParameters = JS_TESTS.foo.varargWithOtherParameters;
 var varargWithComplexType = JS_TESTS.foo.varargWithComplexType;
 var genericWithConstraint = JS_TESTS.foo.genericWithConstraint;
 var genericWithMultipleConstraints = JS_TESTS.foo.genericWithMultipleConstraints;
+var formatList = JS_TESTS.foo.formatList;
+var createList = JS_TESTS.foo.createList;
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -55,5 +57,6 @@ function box() {
     var result = 0;
     inlineFun(10, function (x) { result = x; });
     assert(result === 10);
+    assert(formatList(createList()) === "1, 2, 3");
     return "OK";
 }
