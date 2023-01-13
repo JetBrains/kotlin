@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
 import org.jetbrains.kotlin.resolve.calls.tower.LambdaContextInfo;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -382,7 +382,51 @@ public class ExpressionTypingServices {
                                              )
                                      );
 
-        if (context.expectedType == NO_EXPECTED_TYPE && statementExpression instanceof KtCallableReferenceExpression) {
+        // This part is necessary for properly handling the case of calls like `foo { ::bar }`.
+        // In NI, `::bar` shouldn't be eagerly resolved, but introduced as a postponed atom to the general inference system.
+        // The correct definition for the case would be satisfaction of three conditions:
+        // (1) lastStatement is KtCallableReferenceExpression
+        // (2) expected type is not Unit
+        // (3) lastStatement.parent.parent [statement -> block -> function literal] is a lambda that is handled by NI
+        //
+        // When the conditions are met, `createCallArgument` at `org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl.analyzeAndGetLambdaReturnArguments`
+        // we just pick that last statement in the lambda.
+        //
+        // But due to a bug in initial implementation `createDontCareTypeInfoForNILambda` (third condition), it was checking that
+        // "lastStatement has a NI lambda among one of the parents".
+        //
+        // That immediately leads to incorrectly treatment of cases like:
+        // foo {
+        //     val x = if (b) {
+        //          ::baz <-- the problem is here
+        //     } else {
+        //        ....
+        //     }
+        //     println()
+        // }
+        //
+        // The problem with the `::baz` is that it should not be processed as a postponed atom for the call, but it has been.
+        // At the same time, it's being ignored by the NI (because it's not the last statement), thus left unresolved.
+        // The bugs are described at KT-52270 and KT-55931.
+        //
+        // During attempt to fix KT-52270, instead of fixing the third condition (that is actually broken), the second one has been changed to
+        // "expected type is NO_EXPECTED_TYPE".
+        // That helped to the main use case from the issue, but still didn't help with KT-55931.
+        //
+        // But the actual problem is that brought another regression bug (KT-55729) because after that we started
+        // resolving last-statement callable references with expected type eagerly as regular top-level references (without conversions).
+        // So, conversions stopped working there since 1.8.0
+        //
+        // While it might be tempting to revert the incorrect fix for KT-52270, and fix the third condition, we can't do it easily
+        // because it should be a language feature (since it allows new green code), that can't be released in 1.8.10.
+        // So, we're just trying to _partially_ revert the change, by allowing skipping reference not only in case of NO_EXPECTED_TYPE
+        // but also in case we have non-trivial expected type AND lastStatement.parent.parent is function literal.
+        //
+        // That would mean that everything will work just the same as in 1.8.0, but the single case of
+        // `expectSomeSpecificFunctionTypeReturnedFromLambda { ::functionNeededAConversion }` (that was been working in 1.7.20).
+        //
+        // On the KT-55931, currently we don't have plans to fix it until K2 (where it already seems to be fixed).
+        if (isCallableReferenceShouldBeAttemptedToBeProcessedByNI(statementExpression, context, isUnitExpectedType)) {
             KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
             if (typeInfo != null) return typeInfo;
         }
@@ -428,6 +472,19 @@ public class ExpressionTypingServices {
             }
         }
         return result;
+    }
+
+    private static boolean isCallableReferenceShouldBeAttemptedToBeProcessedByNI(
+            @NotNull KtExpression statementExpression,
+            @NotNull ExpressionTypingContext context,
+            boolean isUnitExpectedType
+    ) {
+        if (!(statementExpression instanceof KtCallableReferenceExpression)) return false;
+        if (context.expectedType == NO_EXPECTED_TYPE) return true;
+        // This is condition we added after 1.8.0 to fix KT-55729 (see the comment above its single usage)
+        if (!isUnitExpectedType && statementExpression.getParent().getParent() instanceof KtFunctionLiteral) return true;
+
+        return false;
     }
 
     @Nullable

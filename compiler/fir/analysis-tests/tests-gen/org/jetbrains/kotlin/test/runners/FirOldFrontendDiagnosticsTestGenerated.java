@@ -14920,6 +14920,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("conversionLastStatementInLambda.kt")
+                public void testConversionLastStatementInLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/callableReferences/conversionLastStatementInLambda.kt");
+                }
+
+                @Test
                 @TestMetadata("kt55931.kt")
                 public void testKt55931() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/callableReferences/kt55931.kt");
