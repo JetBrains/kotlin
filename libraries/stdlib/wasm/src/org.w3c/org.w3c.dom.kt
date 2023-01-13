@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1506,6 +1506,7 @@ public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack? 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as TrackEventInit
 }
 
@@ -2561,6 +2562,7 @@ public inline fun RelatedEventInit(relatedTarget: EventTarget? = null, bubbles: 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as RelatedEventInit
 }
 
@@ -2701,6 +2703,7 @@ public external interface AssignedNodesOptions {
 public inline fun AssignedNodesOptions(flatten: Boolean? = false): AssignedNodesOptions {
     val o = js("({})")
     o["flatten"] = flatten
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as AssignedNodesOptions
 }
 
@@ -2747,6 +2750,7 @@ public external interface CanvasRenderingContext2DSettings {
 public inline fun CanvasRenderingContext2DSettings(alpha: Boolean? = true): CanvasRenderingContext2DSettings {
     val o = js("({})")
     o["alpha"] = alpha
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CanvasRenderingContext2DSettings
 }
 
@@ -2961,6 +2965,7 @@ public inline fun HitRegionOptions(path: Path2D? = null, fillRule: CanvasFillRul
     o["control"] = control
     o["label"] = label
     o["role"] = role
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as HitRegionOptions
 }
 
@@ -3014,6 +3019,7 @@ public external interface ImageBitmapRenderingContextSettings {
 public inline fun ImageBitmapRenderingContextSettings(alpha: Boolean? = true): ImageBitmapRenderingContextSettings {
     val o = js("({})")
     o["alpha"] = alpha
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ImageBitmapRenderingContextSettings
 }
 
@@ -3037,6 +3043,7 @@ public external interface ElementDefinitionOptions {
 public inline fun ElementDefinitionOptions(extends: String? = undefined): ElementDefinitionOptions {
     val o = js("({})")
     o["extends"] = extends
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ElementDefinitionOptions
 }
 
@@ -3137,6 +3144,7 @@ public inline fun DragEventInit(dataTransfer: DataTransfer? = null, screenX: Int
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as DragEventInit
 }
 
@@ -3278,6 +3286,7 @@ public inline fun PopStateEventInit(state: Any? = null, bubbles: Boolean? = fals
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as PopStateEventInit
 }
 
@@ -3314,6 +3323,7 @@ public inline fun HashChangeEventInit(oldURL: String? = "", newURL: String? = ""
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as HashChangeEventInit
 }
 
@@ -3345,6 +3355,7 @@ public inline fun PageTransitionEventInit(persisted: Boolean? = false, bubbles: 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as PageTransitionEventInit
 }
 
@@ -3441,6 +3452,7 @@ public inline fun ErrorEventInit(message: String? = "", filename: String? = "", 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ErrorEventInit
 }
 
@@ -3475,6 +3487,7 @@ public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as PromiseRejectionEventInit
 }
 
@@ -3939,6 +3952,7 @@ public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = Image
     o["resizeWidth"] = resizeWidth
     o["resizeHeight"] = resizeHeight
     o["resizeQuality"] = resizeQuality
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ImageBitmapOptions
 }
 
@@ -3991,6 +4005,7 @@ public inline fun MessageEventInit(data: Any? = null, origin: String? = "", last
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MessageEventInit
 }
 
@@ -4024,6 +4039,7 @@ public external interface EventSourceInit {
 public inline fun EventSourceInit(withCredentials: Boolean? = false): EventSourceInit {
     val o = js("({})")
     o["withCredentials"] = withCredentials
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as EventSourceInit
 }
 
@@ -4093,6 +4109,7 @@ public inline fun CloseEventInit(wasClean: Boolean? = false, code: Short? = 0, r
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CloseEventInit
 }
 
@@ -4193,6 +4210,7 @@ public inline fun WorkerOptions(type: WorkerType? = WorkerType.CLASSIC, credenti
     val o = js("({})")
     o["type"] = type
     o["credentials"] = credentials
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as WorkerOptions
 }
 
@@ -4315,6 +4333,7 @@ public inline fun StorageEventInit(key: String? = null, oldValue: String? = null
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as StorageEventInit
 }
 
@@ -4538,6 +4557,7 @@ public inline fun EventInit(bubbles: Boolean? = false, cancelable: Boolean? = fa
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as EventInit
 }
 
@@ -4570,6 +4590,7 @@ public inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean? = false
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CustomEventInit
 }
 
@@ -4584,6 +4605,7 @@ public external interface EventListenerOptions {
 public inline fun EventListenerOptions(capture: Boolean? = false): EventListenerOptions {
     val o = js("({})")
     o["capture"] = capture
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as EventListenerOptions
 }
 
@@ -4603,6 +4625,7 @@ public inline fun AddEventListenerOptions(passive: Boolean? = false, once: Boole
     o["passive"] = passive
     o["once"] = once
     o["capture"] = capture
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as AddEventListenerOptions
 }
 
@@ -4736,6 +4759,7 @@ public inline fun MutationObserverInit(childList: Boolean? = false, attributes: 
     o["attributeOldValue"] = attributeOldValue
     o["characterDataOldValue"] = characterDataOldValue
     o["attributeFilter"] = attributeFilter
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MutationObserverInit
 }
 
@@ -4821,6 +4845,7 @@ public external interface GetRootNodeOptions {
 public inline fun GetRootNodeOptions(composed: Boolean? = false): GetRootNodeOptions {
     val o = js("({})")
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as GetRootNodeOptions
 }
 
@@ -5069,6 +5094,7 @@ public external interface ElementCreationOptions {
 public inline fun ElementCreationOptions(param_is: String? = undefined): ElementCreationOptions {
     val o = js("({})")
     o["is"] = param_is
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ElementCreationOptions
 }
 
@@ -5273,6 +5299,7 @@ public external interface ShadowRootInit {
 public inline fun ShadowRootInit(mode: ShadowRootMode?): ShadowRootInit {
     val o = js("({})")
     o["mode"] = mode
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ShadowRootInit
 }
 
@@ -5659,6 +5686,7 @@ public inline fun DOMPointInit(x: Double? = 0.0, y: Double? = 0.0, z: Double? = 
     o["y"] = y
     o["z"] = z
     o["w"] = w
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as DOMPointInit
 }
 
@@ -5709,6 +5737,7 @@ public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double?
     o["y"] = y
     o["width"] = width
     o["height"] = height
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as DOMRectInit
 }
 
@@ -5836,6 +5865,7 @@ public external interface ScrollOptions {
 public inline fun ScrollOptions(behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollOptions {
     val o = js("({})")
     o["behavior"] = behavior
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ScrollOptions
 }
 
@@ -5858,6 +5888,7 @@ public inline fun ScrollToOptions(left: Double? = undefined, top: Double? = unde
     o["left"] = left
     o["top"] = top
     o["behavior"] = behavior
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ScrollToOptions
 }
 
@@ -5907,6 +5938,7 @@ public inline fun MediaQueryListEventInit(media: String? = "", matches: Boolean?
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaQueryListEventInit
 }
 
@@ -5947,6 +5979,7 @@ public inline fun ScrollIntoViewOptions(block: ScrollLogicalPosition? = ScrollLo
     o["block"] = block
     o["inline"] = inline
     o["behavior"] = behavior
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ScrollIntoViewOptions
 }
 
@@ -5965,6 +5998,7 @@ public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeT
     val o = js("({})")
     o["box"] = box
     o["relativeTo"] = relativeTo
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as BoxQuadOptions
 }
 
@@ -5983,6 +6017,7 @@ public inline fun ConvertCoordinateOptions(fromBox: CSSBoxType? = CSSBoxType.BOR
     val o = js("({})")
     o["fromBox"] = fromBox
     o["toBox"] = toBox
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConvertCoordinateOptions
 }
 

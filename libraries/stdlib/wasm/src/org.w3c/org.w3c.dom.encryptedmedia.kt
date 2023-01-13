@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,6 +51,7 @@ public inline fun MediaKeySystemConfiguration(label: String? = "", initDataTypes
     o["distinctiveIdentifier"] = distinctiveIdentifier
     o["persistentState"] = persistentState
     o["sessionTypes"] = sessionTypes
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaKeySystemConfiguration
 }
 
@@ -69,6 +70,7 @@ public inline fun MediaKeySystemMediaCapability(contentType: String? = "", robus
     val o = js("({})")
     o["contentType"] = contentType
     o["robustness"] = robustness
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaKeySystemMediaCapability
 }
 
@@ -144,6 +146,7 @@ public inline fun MediaKeyMessageEventInit(messageType: MediaKeyMessageType?, me
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaKeyMessageEventInit
 }
 
@@ -177,6 +180,7 @@ public inline fun MediaEncryptedEventInit(initDataType: String? = "", initData: 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaEncryptedEventInit
 }
 

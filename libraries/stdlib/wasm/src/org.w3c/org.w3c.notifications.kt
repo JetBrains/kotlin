@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -121,6 +121,7 @@ public inline fun NotificationOptions(dir: NotificationDirection? = Notification
     o["sticky"] = sticky
     o["data"] = data
     o["actions"] = actions
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as NotificationOptions
 }
 
@@ -139,6 +140,7 @@ public inline fun NotificationAction(action: String?, title: String?, icon: Stri
     o["action"] = action
     o["title"] = title
     o["icon"] = icon
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as NotificationAction
 }
 
@@ -153,6 +155,7 @@ public external interface GetNotificationOptions {
 public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions {
     val o = js("({})")
     o["tag"] = tag
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as GetNotificationOptions
 }
 
@@ -187,6 +190,7 @@ public inline fun NotificationEventInit(notification: Notification?, action: Str
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as NotificationEventInit
 }
 
