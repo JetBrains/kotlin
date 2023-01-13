@@ -15,26 +15,30 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class KlibDeserializedContainerSource private constructor(
-    override val isPreReleaseInvisible: Boolean,
-    override val presentableString: String,
-    val isFromNativeInteropLibrary: Boolean
+class KlibDeserializedContainerSource(
+    library: KotlinLibrary,
+    header: Header,
+    configuration: DeserializationConfiguration,
+    packageFqName: FqName
 ) : DeserializedContainerSource {
 
-    constructor(
-        library: KotlinLibrary,
-        header: Header,
-        configuration: DeserializationConfiguration,
-        packageFqName: FqName
-    ) : this(
-        configuration.reportErrorsOnPreReleaseDependencies &&
-                (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
-        "Package '$packageFqName'",
-        library.isInteropLibrary()
-    )
+    override val isPreReleaseInvisible: Boolean =
+        configuration.reportErrorsOnPreReleaseDependencies && (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0
 
-    override val incompatibility: IncompatibleVersionErrorData<*>?
-        get() = null
+    override val presentableString: String = "Package '$packageFqName'"
+
+    val isFromNativeInteropLibrary: Boolean = library.isInteropLibrary()
+
+    override val incompatibility: IncompatibleVersionErrorData<*>? =
+        library.versions.metadataVersion?.takeIf { !it.isCompatibleWithCurrentCompilerVersion() }?.let { actualVersion ->
+            IncompatibleVersionErrorData(
+                actualVersion = actualVersion,
+                compilerVersion = null,
+                languageVersion = null,
+                expectedVersion = KlibMetadataVersion.INSTANCE,
+                filePath = library.libraryFile.canonicalPath,
+            )
+        }
 
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE

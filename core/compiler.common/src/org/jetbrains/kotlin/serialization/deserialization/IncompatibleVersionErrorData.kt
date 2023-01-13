@@ -7,8 +7,14 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 data class IncompatibleVersionErrorData<out T>(
     val actualVersion: T,
-    val compilerVersion: T,
-    val languageVersion: T,
+    val compilerVersion: T?,
+    val languageVersion: T?,
     val expectedVersion: T,
     val filePath: String,
-)
+) {
+    init {
+        require(compilerVersion != null && languageVersion != null || compilerVersion == null && languageVersion == null) {
+            "${::compilerVersion.name} and ${::languageVersion.name} both must be null or both must be not-null"
+        }
+    }
+}

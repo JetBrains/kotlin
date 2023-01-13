@@ -438,12 +438,25 @@ public class DefaultErrorMessages {
         MAP.put(INCOMPATIBLE_CLASS,
                 "{0} was compiled with an incompatible version of Kotlin. {1}",
                 TO_STRING,
-                (incompatibility, renderingContext) ->
-                        "The actual metadata version is " + incompatibility.getActualVersion() +
-                        ", but the compiler version " + incompatibility.getCompilerVersion() +
-                        (incompatibility.getLanguageVersion().equals(incompatibility.getCompilerVersion()) ? "" : " [with language version " + incompatibility.getLanguageVersion() + "]") +
-                        " can read versions up to " + incompatibility.getExpectedVersion() + ".\n" +
-                        "The class is loaded from " + FileUtil.toSystemIndependentName(incompatibility.getFilePath())
+                (incompatibility, renderingContext) -> {
+                    if (incompatibility.getLanguageVersion() != null && incompatibility.getCompilerVersion() != null) {
+                        String optionalLanguageVersion = incompatibility.getLanguageVersion().equals(incompatibility.getCompilerVersion())
+                                                         ? ""
+                                                         : " [with language version " + incompatibility.getLanguageVersion() + "]";
+                        return String.format(
+                                "The actual metadata version is %s, but the compiler version %s%s can read versions up to %s.\n" +
+                                "The class is loaded from %s",
+                                incompatibility.getActualVersion(), incompatibility.getCompilerVersion(), optionalLanguageVersion,
+                                incompatibility.getExpectedVersion(), FileUtil.toSystemIndependentName(incompatibility.getFilePath()));
+                    }
+                    else {
+                        return String.format(
+                                "The actual metadata version is %s, but the compiler can read versions up to %s.\n" +
+                                "The class is loaded from %s",
+                                incompatibility.getActualVersion(), incompatibility.getExpectedVersion(),
+                                FileUtil.toSystemIndependentName(incompatibility.getFilePath()));
+                    }
+                }
         );
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
