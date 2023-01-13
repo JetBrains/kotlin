@@ -69,6 +69,7 @@ public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? 
     o["stroke"] = stroke
     o["markers"] = markers
     o["clipped"] = clipped
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as SVGBoundingBoxOptions
 }
 

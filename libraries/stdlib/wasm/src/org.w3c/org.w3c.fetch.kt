@@ -117,6 +117,7 @@ public inline fun RequestInit(method: String? = undefined, headers: Dynamic? = u
     o["integrity"] = integrity
     o["keepalive"] = keepalive
     o["window"] = window
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as RequestInit
 }
 
@@ -166,6 +167,7 @@ public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK",
     o["status"] = status
     o["statusText"] = statusText
     o["headers"] = headers
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ResponseInit
 }
 

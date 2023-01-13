@@ -51,6 +51,7 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
     o["preserveDrawingBuffer"] = preserveDrawingBuffer
     o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
     o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as WebGLContextAttributes
 }
 
@@ -899,6 +900,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as WebGLContextEventInit
 }
 

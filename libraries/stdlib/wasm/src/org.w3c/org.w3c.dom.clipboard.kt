@@ -27,6 +27,7 @@ public inline fun ClipboardEventInit(clipboardData: DataTransfer? = null, bubble
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ClipboardEventInit
 }
 
@@ -65,5 +66,6 @@ public external interface ClipboardPermissionDescriptor {
 public inline fun ClipboardPermissionDescriptor(allowWithoutGesture: Boolean? = false): ClipboardPermissionDescriptor {
     val o = js("({})")
     o["allowWithoutGesture"] = allowWithoutGesture
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ClipboardPermissionDescriptor
 }

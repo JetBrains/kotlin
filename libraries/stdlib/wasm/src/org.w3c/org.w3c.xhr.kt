@@ -115,6 +115,7 @@ public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ProgressEventInit
 }
 

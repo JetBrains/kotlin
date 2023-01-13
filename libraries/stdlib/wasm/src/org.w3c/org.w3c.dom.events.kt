@@ -45,6 +45,7 @@ public inline fun UIEventInit(view: Window? = null, detail: Int? = 0, bubbles: B
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as UIEventInit
 }
 
@@ -78,6 +79,7 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as FocusEventInit
 }
 
@@ -171,6 +173,7 @@ public inline fun MouseEventInit(screenX: Int? = 0, screenY: Int? = 0, clientX: 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MouseEventInit
 }
 
@@ -242,6 +245,7 @@ public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as EventModifierInit
 }
 
@@ -315,6 +319,7 @@ public inline fun WheelEventInit(deltaX: Double? = 0.0, deltaY: Double? = 0.0, d
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as WheelEventInit
 }
 
@@ -353,6 +358,7 @@ public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = fal
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as InputEventInit
 }
 
@@ -432,6 +438,7 @@ public inline fun KeyboardEventInit(key: String? = "", code: String? = "", locat
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as KeyboardEventInit
 }
 
@@ -465,6 +472,7 @@ public inline fun CompositionEventInit(data: String? = "", view: Window? = null,
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CompositionEventInit
 }
 
