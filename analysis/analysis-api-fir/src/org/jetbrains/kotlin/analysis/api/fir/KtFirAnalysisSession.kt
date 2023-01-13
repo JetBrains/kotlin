@@ -99,6 +99,8 @@ private constructor(
 
     override val inheritorsProviderImpl: KtInheritorsProvider = KtFirInheritorsProvider(this, token)
 
+    override val multiplatformInfoProviderImpl: KtMultiplatformInfoProvider = KtFirMultiplatformInfoProvider(this, token)
+
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFirSymbolInfoProvider(this, token)
 
     override val typesCreatorImpl: KtTypeCreator = KtFirTypeCreator(this, token)

@@ -54,6 +54,7 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtSymbolDeclarationRendererMixIn,
     KtVisibilityCheckerMixIn,
     KtMemberSymbolProviderMixin,
+    KtMultiplatformInfoProviderMixin,
     KtInheritorsProviderMixIn,
     KtTypeCreatorMixIn,
     KtAnalysisScopeProviderMixIn,
@@ -135,6 +136,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 
     internal val inheritorsProvider: KtInheritorsProvider get() = inheritorsProviderImpl
     protected abstract val inheritorsProviderImpl: KtInheritorsProvider
+
+    internal val multiplatformInfoProvider: KtMultiplatformInfoProvider get() = multiplatformInfoProviderImpl
+    protected abstract val multiplatformInfoProviderImpl: KtMultiplatformInfoProvider
 
     internal val symbolInfoProvider: KtSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KtSymbolInfoProvider
