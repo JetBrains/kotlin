@@ -87,11 +87,11 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.find { it.unexpandedClassId == StandardClassIds.Annotations.Java.Repeatable }
+            val javaRepeatable = annotations.getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable, session)
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {
-                val kotlinRepeatable = annotations.find { it.toAnnotationClassId(session) == StandardClassIds.Annotations.Repeatable }
+                val kotlinRepeatable = annotations.getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session)
                 if (kotlinRepeatable != null) {
                     checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
                 }

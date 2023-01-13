@@ -2378,6 +2378,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("javaRepeatableInKotlin.kt")
+                public void testJavaRepeatableInKotlin() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableInKotlin.kt");
+                }
+
+                @Test
                 @TestMetadata("javaRepeatableJvmTarget6.kt")
                 public void testJavaRepeatableJvmTarget6() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableJvmTarget6.kt");
