@@ -60,7 +60,7 @@ open class JvmIrCodegenFactory(
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
-    private val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
+    private val stubSettings: StubSettings = StubSettings(),
 ) : CodegenFactory {
 
     @IDEAPluginsCompatibilityAPI(IDEAPlatforms._221, message = "Please migrate to the other constructor", plugins = "Android Studio")
@@ -81,7 +81,15 @@ open class JvmIrCodegenFactory(
         externalSymbolTable,
         jvmGeneratorExtensions,
         evaluatorFragmentInfoForPsi2Ir,
-        shouldStubAndNotLinkUnboundSymbols
+        StubSettings(shouldStubAndNotLinkUnboundSymbols = shouldStubAndNotLinkUnboundSymbols),
+    )
+
+    /**
+     * @param shouldStubOrphanedExpectSymbols See [stubOrphanedExpectSymbols].
+     */
+    data class StubSettings(
+        val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
+        val shouldStubOrphanedExpectSymbols: Boolean = false,
     )
 
     data class JvmIrBackendInput(
@@ -208,7 +216,7 @@ open class JvmIrCodegenFactory(
         }
 
 
-        val irProviders = if (shouldStubAndNotLinkUnboundSymbols) {
+        val irProviders = if (stubSettings.shouldStubAndNotLinkUnboundSymbols) {
             listOf(stubGenerator)
         } else {
             val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
@@ -231,6 +239,10 @@ open class JvmIrCodegenFactory(
 
         // We need to compile all files we reference in Klibs
         irModuleFragment.files.addAll(dependencies.flatMap { it.files })
+
+        if (stubSettings.shouldStubOrphanedExpectSymbols) {
+            irModuleFragment.stubOrphanedExpectSymbols(stubGenerator)
+        }
 
         if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
             val originalBindingContext = input.bindingContext as? CleanableBindingContext
