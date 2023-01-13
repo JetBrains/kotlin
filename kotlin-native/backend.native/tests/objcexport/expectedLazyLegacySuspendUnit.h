@@ -1033,6 +1033,22 @@ __attribute__((swift_name("Kt54119Kt")))
 + (BOOL)callContainsEntryMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callContainsEntry(map:)")));
 @end
 
+@interface KtKotlinSequenceScope (Kt55736Kt)
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)fillWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("fill(completionHandler:)")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt55736Kt")))
+@interface KtKt55736Kt : KtBase
++ (id<KtKotlinKSuspendFunction1>)getFillFunction __attribute__((swift_name("getFillFunction()")));
++ (NSArray<KtInt *> *)callbackBlock:(id<KtKotlinSuspendFunction1>)block __attribute__((swift_name("callback(block:)")));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
