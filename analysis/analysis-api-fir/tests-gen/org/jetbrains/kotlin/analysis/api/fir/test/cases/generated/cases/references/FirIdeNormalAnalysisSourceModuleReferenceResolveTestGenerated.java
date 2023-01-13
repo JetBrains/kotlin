@@ -161,6 +161,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
+    @TestMetadata("EqualsOperator.kt")
+    public void testEqualsOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/EqualsOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("EqualsOperatorNoInfix.kt")
+    public void testEqualsOperatorNoInfix() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/EqualsOperatorNoInfix.kt");
+    }
+
+    @Test
     @TestMetadata("explicitFunctionalInterfaceInvoke_globalVal.kt")
     public void testExplicitFunctionalInterfaceInvoke_globalVal() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/explicitFunctionalInterfaceInvoke_globalVal.kt");
@@ -350,6 +362,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     @TestMetadata("NamedClassObject.kt")
     public void testNamedClassObject() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/NamedClassObject.kt");
+    }
+
+    @Test
+    @TestMetadata("NotEqualsOperator.kt")
+    public void testNotEqualsOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/NotEqualsOperator.kt");
     }
 
     @Test

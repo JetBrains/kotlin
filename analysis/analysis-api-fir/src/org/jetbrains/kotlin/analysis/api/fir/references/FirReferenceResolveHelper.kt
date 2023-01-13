@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object FirReferenceResolveHelper {
@@ -216,7 +219,30 @@ internal object FirReferenceResolveHelper {
                 getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
+            is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
+        }
+    }
+
+    private fun getSymbolsByEqualsName(
+        expression: FirEqualityOperatorCall,
+        session: FirSession,
+        analysisSession: KtFirAnalysisSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> {
+        val lhs = expression.arguments.firstOrNull() ?: return emptyList()
+        val scope = lhs.typeRef.coneType.scope(
+            session,
+            analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+            FakeOverrideTypeCalculator.DoNothing
+        ) ?: return emptyList()
+        return buildList {
+            scope.processFunctionsByName(OperatorNameConventions.EQUALS) { functionSymbol ->
+                val parameterSymbol = functionSymbol.valueParameterSymbols.singleOrNull()
+                if (parameterSymbol != null && parameterSymbol.fir.returnTypeRef.isNullableAny) {
+                    add(functionSymbol.buildSymbol(symbolBuilder))
+                }
+            }
         }
     }
 
