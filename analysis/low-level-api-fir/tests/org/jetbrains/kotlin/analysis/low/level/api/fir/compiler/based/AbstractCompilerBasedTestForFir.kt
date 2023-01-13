@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -57,22 +56,9 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
 
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices
-    ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
-        private val testModulesByName by lazy { testServices.moduleStructure.modules.associateBy { it.name } }
-
-        override val directiveContainers: List<DirectivesContainer>
-            get() = listOf(FirDiagnosticsDirectives)
-
-        override fun shouldRunAnalysis(module: TestModule): Boolean {
-            if (!super.shouldRunAnalysis(module)) return false
-
-            return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-                testServices.moduleStructure
-                    .modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
-            } else {
-                true
-            }
-        }
+    ) : FirFrontendFacade(testServices) {
+        override val additionalServices: List<ServiceRegistrationData>
+            get() = emptyList()
 
         override fun analyze(module: TestModule): FirOutputArtifact {
             val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
@@ -85,25 +71,6 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             }
 
             return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
-        }
-
-        private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-            val sortedModules = mutableListOf<TestModule>()
-            val visitedModules = mutableSetOf<TestModule>()
-            val modulesQueue = ArrayDeque<TestModule>()
-            modulesQueue.add(module)
-
-            while (modulesQueue.isNotEmpty()) {
-                val currentModule = modulesQueue.removeFirst()
-                if (!visitedModules.add(currentModule)) continue
-                sortedModules.add(currentModule)
-
-                for (dependency in currentModule.dependsOnDependencies) {
-                    modulesQueue.add(testServices.dependencyProvider.getTestModule(dependency.moduleName))
-                }
-            }
-
-            return sortedModules.reversed()
         }
 
         private fun analyzeDependsOnModule(module: TestModule): FirOutputPartForDependsOnModule {

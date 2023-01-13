@@ -108,7 +108,7 @@ open class FirFrontendFacade(
         return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
     }
 
-    private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
+    protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
         val sortedModules = mutableListOf<TestModule>()
         val visitedModules = mutableSetOf<TestModule>()
         val modulesQueue = ArrayDeque<TestModule>()
