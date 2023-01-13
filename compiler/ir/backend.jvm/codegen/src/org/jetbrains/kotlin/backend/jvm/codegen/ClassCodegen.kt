@@ -80,10 +80,7 @@ class ClassCodegen private constructor(
 
     private val state get() = context.state
 
-    // TODO: the order of entries in this set depends on the order in which methods are generated; this means it is unstable
-    //       under incremental compilation, as calls to `inline fun`s declared in this class cause them to be generated out of order.
-    private val innerClasses = linkedSetOf<IrClass>()
-
+    private val innerClasses = mutableSetOf<IrClass>()
     val typeMapper =
         if (context.state.oldInnerClassesLogic)
             context.defaultTypeMapper
@@ -476,7 +473,7 @@ class ClassCodegen private constructor(
             }
         }
 
-        for (klass in innerClasses) {
+        for (klass in innerClasses.sortedBy { it.fqNameWhenAvailable?.asString() }) {
             val innerJavaClassId = klass.mapToJava()
             val innerClass = innerJavaClassId?.internalName ?: typeMapper.classInternalName(klass)
             val outerClass =

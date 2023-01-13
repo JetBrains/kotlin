@@ -81,6 +81,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val DONT_SORT_DECLARATIONS by directive(
+        description = "Do not sort declarations",
+        applicability = Global
+    )
+
     val RUN_DEX_CHECKER by directive(
         description = "Run DxChecker and D8Checker"
     )

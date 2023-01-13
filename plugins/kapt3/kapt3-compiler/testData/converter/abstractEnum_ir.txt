@@ -1,0 +1,100 @@
+@kotlin.Metadata()
+public enum E {
+    /*public static final*/ X /* = new E() */,
+    /*public static final*/ Y /* = new E() */;
+
+    E() {
+    }
+
+    public abstract void a();
+
+    public final void b() {
+    }
+
+    @kotlin.Metadata()
+    public static final class NestedClass {
+
+        public NestedClass() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class Obj {
+        @org.jetbrains.annotations.NotNull()
+        public static final E.Obj INSTANCE = null;
+
+        private Obj() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum E2 {
+    /*public static final*/ X /* = new E2() */,
+    /*public static final*/ Y /* = new E2() */;
+
+    E2(int n) {
+    }
+
+    E2(java.lang.String s) {
+    }
+
+    public abstract void a();
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum E3 {
+    /*public static final*/ X /* = new E3() */,
+    /*public static final*/ Y /* = new E3() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+
+    E3(java.lang.String a) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum E4 {
+    /*public static final*/ X /* = new E4() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+    private final int b = 0;
+    private final long c = 0L;
+    private final boolean d = false;
+
+    E4(java.lang.String a, int b, long c, boolean d) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    public final int getB() {
+        return 0;
+    }
+
+    public final long getC() {
+        return 0L;
+    }
+
+    public final boolean getD() {
+        return false;
+    }
+}

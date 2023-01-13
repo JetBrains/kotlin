@@ -38,6 +38,14 @@ public final class Simple {
     }
 
     @kotlin.Metadata()
+    public final class InnerClass {
+
+        public InnerClass() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
     public static final class NestedClass {
 
         public NestedClass() {
@@ -50,14 +58,6 @@ public final class Simple {
             public NestedNestedClass() {
                 super();
             }
-        }
-    }
-
-    @kotlin.Metadata()
-    public final class InnerClass {
-
-        public InnerClass() {
-            super();
         }
     }
 }

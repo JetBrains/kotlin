@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DONT_SORT_DECLARATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
@@ -36,6 +37,7 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
             BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests,
             withSignatures = WITH_SIGNATURES in module.directives,
             withAnnotations = IGNORE_ANNOTATIONS !in module.directives,
+            sortDeclarations = DONT_SORT_DECLARATIONS !in module.directives,
         )
         multiModuleInfoDumper.builderForModule(module).append(dump)
     }
