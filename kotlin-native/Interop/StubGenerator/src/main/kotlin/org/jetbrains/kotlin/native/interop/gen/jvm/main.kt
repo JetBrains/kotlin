@@ -532,14 +532,14 @@ internal fun buildNativeLibrary(
     }
 
     val compilation = CompilationImpl(
-            includes = headerFiles,
+            includes = headerFiles.map { IncludeInfo(it, null) },
             additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
             compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
             language = language
     )
 
     val headerFilter: NativeLibraryHeaderFilter
-    val includes: List<String>
+    val includes: List<IncludeInfo>
 
     val modules = def.config.modules
 
@@ -552,7 +552,7 @@ internal fun buildNativeLibrary(
         val headerInclusionPolicy = HeaderInclusionPolicyImpl(headerFilterGlobs, excludeFilterGlobs)
 
         headerFilter = NativeLibraryHeaderFilter.NameBased(headerInclusionPolicy, excludeDependentModules)
-        includes = headerFiles
+        includes = headerFiles.map { IncludeInfo(it, null) }
     } else {
         require(language == Language.OBJECTIVE_C) { "cinterop supports 'modules' only when 'language = Objective-C'" }
         require(headerFiles.isEmpty()) { "cinterop doesn't support having headers and modules specified at the same time" }

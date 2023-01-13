@@ -24,14 +24,14 @@ class StubIrContext(
         val plugin: Plugin
 ) {
     val libraryForCStubs = configuration.library.copy(
-            includes = mutableListOf<String>().apply {
-                add("stdint.h")
-                add("string.h")
+            includes = mutableListOf<IncludeInfo>().apply {
+                add(IncludeInfo("stdint.h", null))
+                add(IncludeInfo("string.h", null))
                 if (platform == KotlinPlatform.JVM) {
-                    add("jni.h")
+                    add(IncludeInfo("jni.h", null))
                 }
                 if (configuration.library.language == Language.CPP) {
-                    add("new")
+                    add(IncludeInfo("new", null))
                 }
                 addAll(configuration.library.includes)
             },

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.CachesAutoBuildTest.Companion.TES
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.OptimizationMode
@@ -59,7 +60,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
                 )
             ),
             *dependencies
-        )
+        ).assertSuccess().resultingArtifact
 
     private val autoCacheDir: File get() = buildDir.resolve("__auto_cache__")
     private val cacheFlavor: String

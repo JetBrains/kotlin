@@ -318,18 +318,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             if (clang_isCursorDefinition(definitionCursor) != 0) {
                 return getEnumDefAt(definitionCursor)
             } else {
-                TODO("support enum forward declarations: " +
-                        clang_getTypeSpelling(clang_getCursorType(cursor)).convertAndDispose())
+                // FIXME("enum declaration without constants might be not a typedef, but a forward declaration instead")
+                return enumRegistry.getOrPut(cursor) { createEnumDefImpl(cursor) }
             }
         }
 
         return enumRegistry.getOrPut(cursor) {
-            val cursorType = clang_getCursorType(cursor)
-            val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
-
-            val baseType = convertType(clang_getEnumDeclIntegerType(cursor))
-
-            val enumDef = EnumDefImpl(typeSpelling, baseType, getLocation(cursor))
+            val enumDef = createEnumDefImpl(cursor)
 
             visitChildren(cursor) { childCursor, _ ->
                 if (clang_getCursorKind(childCursor) == CXCursorKind.CXCursor_EnumConstantDecl) {
@@ -345,6 +340,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
             enumDef
         }
+    }
+
+    private fun createEnumDefImpl(cursor: CValue<CXCursor>): EnumDefImpl {
+        val cursorType = clang_getCursorType(cursor)
+        val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
+        val baseType = convertType(clang_getEnumDeclIntegerType(cursor))
+        return EnumDefImpl(typeSpelling, baseType, getLocation(cursor))
     }
 
     private fun getObjCCategoryClassCursor(cursor: CValue<CXCursor>): CValue<CXCursor> {

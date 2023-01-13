@@ -58,10 +58,9 @@ internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
-): TestCompilationArtifact.Executable {
+): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    val compilationResult = compileToExecutable(testCase, dependencies.map { it.asLibraryDependency() })
-    return compilationResult.resultingArtifact
+    return compileToExecutable(testCase, dependencies.map { it.asLibraryDependency() })
 }
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
@@ -109,7 +108,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
 private fun AbstractNativeSimpleTest.compileToExecutable(
     testCase: TestCase,
     dependencies: List<TestCompilationDependency<*>>
-): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
+): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val compilation = ExecutableCompilation(
         settings = testRunSettings,
         freeCompilerArgs = testCase.freeCompilerArgs,
@@ -118,7 +117,7 @@ private fun AbstractNativeSimpleTest.compileToExecutable(
         dependencies = dependencies,
         expectedArtifact = getExecutableArtifact()
     )
-    return compilation.result.assertSuccess()
+    return compilation.result
 }
 
 private fun getLibraryArtifact(testCase: TestCase, dir: File) =

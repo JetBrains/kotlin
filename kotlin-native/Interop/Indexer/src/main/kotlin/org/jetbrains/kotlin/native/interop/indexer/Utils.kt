@@ -354,7 +354,13 @@ internal fun List<String>.toNativeStringArray(scope: AutofreeScope): CArrayPoint
 }
 
 val Compilation.preambleLines: List<String>
-    get() = this.includes.map { "#include <$it>" } + this.additionalPreambleLines
+    get() = this.includes.map {
+        if (it.moduleName != null && it.moduleName != "" && "-fmodules" in this.compilerArgs) {
+            "@import ${it.moduleName};"
+        } else {
+            "#include <${it.headerPath}>"
+        }
+    } + this.additionalPreambleLines
 
 internal fun Appendable.appendPreamble(compilation: Compilation) = this.apply {
     compilation.preambleLines.forEach {
@@ -377,7 +383,7 @@ internal fun Compilation.createTempSource(): File {
 }
 
 fun Compilation.copy(
-        includes: List<String> = this.includes,
+        includes: List<IncludeInfo> = this.includes,
         additionalPreambleLines: List<String> = this.additionalPreambleLines,
         compilerArgs: List<String> = this.compilerArgs,
         language: Language = this.language
@@ -394,7 +400,7 @@ fun Compilation.copyWithArgsForPCH(): Compilation =
         copy(compilerArgs = compilerArgs.filterNot { it.startsWith("-fmodule-map-file") })
 
 data class CompilationImpl(
-        override val includes: List<String>,
+        override val includes: List<IncludeInfo>,
         override val additionalPreambleLines: List<String>,
         override val compilerArgs: List<String>,
         override val language: Language

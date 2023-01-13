@@ -1,0 +1,1 @@
+error: comparison of incompatible enums 'pod1.ForwardEnumPOD' and 'pod2.ForwardEnumPOD' is always unsuccessful

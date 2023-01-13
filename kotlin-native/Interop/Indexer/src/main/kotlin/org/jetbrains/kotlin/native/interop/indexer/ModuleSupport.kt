@@ -4,7 +4,7 @@ import clang.*
 import kotlinx.cinterop.*
 import java.nio.file.Files
 
-data class ModulesInfo(val topLevelHeaders: List<String>, val ownHeaders: Set<String>, val modules: List<String>)
+data class ModulesInfo(val topLevelHeaders: List<IncludeInfo>, val ownHeaders: Set<String>, val modules: List<String>)
 
 fun getModulesInfo(compilation: Compilation, modules: List<String>): ModulesInfo {
     if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet(), emptyList())
@@ -17,9 +17,11 @@ fun getModulesInfo(compilation: Compilation, modules: List<String>): ModulesInfo
     }
 }
 
+data class IncludeInfo(val headerPath: String, val moduleName: String?)
+
 private fun buildModulesInfo(index: CXIndex, modules: List<String>, modulesASTFiles: List<String>): ModulesInfo {
     val ownHeaders = mutableSetOf<String>()
-    val topLevelHeaders = linkedSetOf<String>()
+    val topLevelHeaders = linkedSetOf<IncludeInfo>()
     modulesASTFiles.forEach {
         val moduleTranslationUnit = clang_createTranslationUnit(index, it)!!
         try {
@@ -89,7 +91,7 @@ private fun getModulesHeaders(
         index: CXIndex,
         translationUnit: CXTranslationUnit,
         modules: Set<String>,
-        topLevelHeaders: LinkedHashSet<String>
+        topLevelHeaders: LinkedHashSet<IncludeInfo>
 ): Set<CXFile> {
     val nonModularIncludes = mutableMapOf<CXFile, MutableSet<CXFile>>()
     val result = mutableSetOf<CXFile>()
@@ -99,12 +101,12 @@ private fun getModulesHeaders(
             val file = info.file!!
             val includer = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue()).getContainingFile()
 
+            val module = clang_getModuleForFile(translationUnit, file)
+
             if (includer == null) {
                 // i.e. the header is included by the module itself.
-                topLevelHeaders += file.path
+                topLevelHeaders += IncludeInfo(file.path, clang_Module_getFullName(module).convertAndDispose())
             }
-
-            val module = clang_getModuleForFile(translationUnit, file)
 
             if (module != null) {
                 val moduleWithParents = generateSequence(module, { clang_Module_getParent(it) }).map {

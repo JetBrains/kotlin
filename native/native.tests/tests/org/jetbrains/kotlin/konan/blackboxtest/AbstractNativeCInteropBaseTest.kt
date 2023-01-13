@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import java.io.File
 
 abstract class AbstractNativeCInteropBaseTest : AbstractNativeSimpleTest() {
-    private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
     internal val targets: KotlinNativeTargets get() = testRunSettings.get<KotlinNativeTargets>()
     internal val kotlinNativeClassLoader: KotlinNativeClassLoader get() = testRunSettings.get<KotlinNativeClassLoader>()
 

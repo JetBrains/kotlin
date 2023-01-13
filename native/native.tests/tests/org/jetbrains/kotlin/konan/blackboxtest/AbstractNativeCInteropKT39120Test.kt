@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Tag
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions
+import kotlin.test.assertIs
 
 @Tag("cinterop")
 abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTest() {
@@ -51,10 +52,47 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         val expectedFiltered2Output = golden2File.readText()
         val actualFiltered2Output = filterContentsOutput(contents2, " pod.Version|POD|class Pod")
         assertEquals(StringUtilRt.convertLineSeparators(expectedFiltered2Output), StringUtilRt.convertLineSeparators(actualFiltered2Output))
+
+        val ktFile = testPathFull.resolve(DEFAULT_FILE_NAME)
+        if (ktFile.exists()) {
+            // Just compile "main.kt" with klib1 and klib2, without running resulting executable
+            val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet()).apply {
+                files += TestFile.createCommitted(ktFile, this)
+            }
+            val compilationResult = compileToExecutable(
+                createTestCaseNoTestRun(module, TestCompilerArgs(listOf())),
+                klib1.asLibraryDependency(),
+                klib2.asLibraryDependency()
+            )
+
+            val expectedFailureTxtFile = testPathFull.resolve("expected.compilation.failure.txt")
+            if (expectedFailureTxtFile.exists()) {
+                assertIs<TestCompilationResult.CompilationToolFailure>(compilationResult)
+                val expectedFailureSubstring = expectedFailureTxtFile.readText()
+                val actualFailure = compilationResult.loggedData.toString()
+                assert(actualFailure.contains(expectedFailureSubstring)) {
+                    "Expected failure substring:\n$expectedFailureSubstring\nActual failure logged data:\n$actualFailure"
+                }
+            } else {
+                compilationResult.assertSuccess()
+            }
+        }
     }
 
     private fun filterContentsOutput(contents: String, pattern: String) =
         contents.split("\n").filter {
             it.contains(Regex(pattern))
         }.joinToString(separator = "\n")
+
+    private fun createTestCaseNoTestRun(module: TestModule.Exclusive, compilerArgs: TestCompilerArgs) = TestCase(
+        id = TestCaseId.Named(module.name),
+        kind = TestKind.STANDALONE_NO_TR,
+        modules = setOf(module),
+        freeCompilerArgs = compilerArgs,
+        nominalPackageName = PackageName.EMPTY,
+        checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        extras = TestCase.NoTestRunnerExtras(".${module.name}")
+    ).apply {
+        initialize(null, null)
+    }
 }

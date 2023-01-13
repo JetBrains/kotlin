@@ -52,7 +52,7 @@ sealed class NativeLibraryHeaderFilter {
 }
 
 interface Compilation {
-    val includes: List<String>
+    val includes: List<IncludeInfo>
     val additionalPreambleLines: List<String>
     val compilerArgs: List<String>
     val language: Language
@@ -93,7 +93,7 @@ data class CompilationWithPCH(
     constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
             : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
 
-    override val includes: List<String>
+    override val includes: List<IncludeInfo>
         get() = emptyList()
 
     override val additionalPreambleLines: List<String>
@@ -102,7 +102,7 @@ data class CompilationWithPCH(
 
 // TODO: Compilation hierarchy seems to require some refactoring.
 
-data class NativeLibrary(override val includes: List<String>,
+data class NativeLibrary(override val includes: List<IncludeInfo>,
                          override val additionalPreambleLines: List<String>,
                          override val compilerArgs: List<String>,
                          val headerToIdMapper: HeaderToIdMapper,

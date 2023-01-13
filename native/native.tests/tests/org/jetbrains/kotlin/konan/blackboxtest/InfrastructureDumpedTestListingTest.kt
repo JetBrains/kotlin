@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners
@@ -49,25 +51,23 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
 
         val barTestCase: TestCase = generateTestCaseWithSingleModule(rootDir.resolve("bar"))
 
-        val executableTestCase: TestCase
-        val executableCompilationResult: Success<out Executable>
+        val (executableTestCase: TestCase, executableCompilationResult: TestCompilationResult<out Executable>) =
+            if (fromSources) {
+                barTestCase to compileToExecutable(barTestCase, fooLibrary.asLibraryDependency())
+            } else {
+                val barCompilationResult: Success<out KLIB> = compileToLibrary(barTestCase, fooLibrary.asLibraryDependency())
+                val barLibrary: KLIB = barCompilationResult.resultingArtifact
 
-        if (fromSources) {
-            executableTestCase = barTestCase
-            executableCompilationResult = compileToExecutable(barTestCase, fooLibrary.asLibraryDependency())
-        } else {
-            val barCompilationResult: Success<out KLIB> = compileToLibrary(barTestCase, fooLibrary.asLibraryDependency())
-            val barLibrary: KLIB = barCompilationResult.resultingArtifact
+                val executableTestCase = generateTestCaseWithSingleModule(moduleDir = null) // No sources.
+                executableTestCase to compileToExecutable(
+                    executableTestCase,
+                    fooLibrary.asLibraryDependency(),
+                    barLibrary.asIncludedLibraryDependency()
+                )
+            }
 
-            executableTestCase = generateTestCaseWithSingleModule(moduleDir = null) // No sources.
-            executableCompilationResult = compileToExecutable(
-                executableTestCase,
-                fooLibrary.asLibraryDependency(),
-                barLibrary.asIncludedLibraryDependency()
-            )
-        }
-
-        val executable: Executable = executableCompilationResult.resultingArtifact
+        val executableCompilationSuccess = executableCompilationResult.assertSuccess()
+        val executable: Executable = executableCompilationSuccess.resultingArtifact
 
         // check that the test listing dumped during the compilation matches our expectations:
         val testDumpFile = executable.testDumpFile
@@ -78,7 +78,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
         assertTrue(dumpedTestListing.isNotEmpty())
 
         // parse test listing obtained from executable file with the help of --ktest_list_tests flag:
-        val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationResult)
+        val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationSuccess)
         val extractedTestListing = TestRunners.extractTestNames(testExecutable, testRunSettings).toSet()
 
         assertEquals(extractedTestListing, dumpedTestListing)

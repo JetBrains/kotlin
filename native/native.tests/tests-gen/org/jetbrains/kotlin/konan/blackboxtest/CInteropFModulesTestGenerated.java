@@ -121,6 +121,12 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
         }
 
         @Test
+        @TestMetadata("explicitSubmodule")
+        public void testExplicitSubmodule() throws Exception {
+            runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/explicitSubmodule/");
+        }
+
+        @Test
         @TestMetadata("filterPod1")
         public void testFilterPod1() throws Exception {
             runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/filterPod1/");
@@ -142,6 +148,12 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
         @TestMetadata("filterPod1UmbrellaPod1A")
         public void testFilterPod1UmbrellaPod1A() throws Exception {
             runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/filterPod1UmbrellaPod1A/");
+        }
+
+        @Test
+        @TestMetadata("forwardEnum")
+        public void testForwardEnum() throws Exception {
+            runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/forwardEnum/");
         }
 
         @Test

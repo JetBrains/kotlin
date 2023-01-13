@@ -25,6 +25,12 @@ public class CInteropKT39120TestGenerated extends AbstractNativeCInteropKT39120T
     }
 
     @Test
+    @TestMetadata("ForwardEnum")
+    public void testForwardEnum() throws Exception {
+        runTest("native/native.tests/testData/CInterop/KT-39120/defs/ForwardEnum/");
+    }
+
+    @Test
     @TestMetadata("interModuleImport")
     public void testInterModuleImport() throws Exception {
         runTest("native/native.tests/testData/CInterop/KT-39120/defs/interModuleImport/");
