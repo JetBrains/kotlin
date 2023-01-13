@@ -66,23 +66,16 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _returnedType: PsiType by lazyPub {
         withPropertySymbol { propertySymbol ->
             val isDelegated = (propertySymbol as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
-            when {
-                isDelegated ->
-                    (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
-                        it.getKtType()?.asPsiType(
-                            this@SymbolLightFieldForProperty,
-                            allowErrorTypes = true,
-                            KtTypeMappingMode.RETURN_TYPE
-                        )
-                    }
-
-                else -> propertySymbol.returnType.asPsiType(
-                    this@SymbolLightFieldForProperty,
-                    allowErrorTypes = true,
-                    KtTypeMappingMode.RETURN_TYPE
-                )
-            } ?: nonExistentType()
-        }
+            val ktType = if (isDelegated)
+                (kotlinOrigin as? KtProperty)?.delegateExpression?.getKtType()
+            else
+                propertySymbol.returnType
+            ktType?.asPsiType(
+                this@SymbolLightFieldForProperty,
+                allowErrorTypes = true,
+                KtTypeMappingMode.RETURN_TYPE
+            )
+        } ?: nonExistentType()
     }
 
     private val _isDeprecated: Boolean by lazyPub {

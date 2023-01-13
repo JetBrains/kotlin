@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -77,7 +78,13 @@ internal abstract class SymbolLightParameterCommon(
                     else -> KtTypeMappingMode.VALUE_PARAMETER
                 }
 
-                ktType.asPsiType(this@SymbolLightParameterCommon, allowErrorTypes = true, typeMappingMode)
+                ktType.asPsiTypeElement(
+                    this@SymbolLightParameterCommon,
+                    allowErrorTypes = true,
+                    typeMappingMode
+                )?.let {
+                    annotateByKtType(it.type, ktType, it)
+                }
             } ?: nonExistentType()
 
             if (parameterSymbol.isVararg) {
