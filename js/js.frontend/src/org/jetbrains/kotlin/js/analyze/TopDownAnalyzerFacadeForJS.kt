@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -48,6 +49,8 @@ import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractTopDownAnalyzerFacadeForJS {
+    abstract val analyzerServices: PlatformDependentAnalyzerServices
+    abstract val platform: TargetPlatform
 
     fun analyzeFiles(
         files: Collection<KtFile>,
@@ -74,7 +77,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             ProjectContext(project, "TopDownAnalyzer for JS"),
             Name.special("<$moduleName>"),
             builtIns,
-            platform = JsPlatforms.defaultJsPlatform
+            platform = platform
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
@@ -109,7 +112,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         configuration: CompilerConfiguration,
         targetEnvironment: TargetEnvironment,
         project: Project,
-        additionalPackages: List<PackageFragmentProvider> = emptyList()
+        additionalPackages: List<PackageFragmentProvider> = emptyList(),
     ): JsAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
@@ -130,6 +133,8 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             enumWhenTracker,
             additionalPackages + listOfNotNull(packageFragment),
             targetEnvironment,
+            analyzerServices,
+            platform
         )
 
         val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
@@ -194,6 +199,9 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
 }
 
 object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForJS() {
+
+    override val analyzerServices: PlatformDependentAnalyzerServices = JsPlatformAnalyzerServices
+    override val platform: TargetPlatform = JsPlatforms.defaultJsPlatform
 
     override fun loadIncrementalCacheMetadata(
         incrementalData: IncrementalDataProvider,
