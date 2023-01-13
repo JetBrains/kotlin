@@ -190,7 +190,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             abiVersion = KotlinAbiVersion.CURRENT,
             libraryVersion = null,
             compilerVersion = KotlinCompilerVersion.VERSION,
-            metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+            metadataVersion = KlibMetadataVersion.INSTANCE,
         )
 
         val klibDir = org.jetbrains.kotlin.konan.file.createTempDir("testKlib")

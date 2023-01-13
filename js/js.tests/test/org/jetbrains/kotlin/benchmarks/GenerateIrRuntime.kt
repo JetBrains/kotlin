@@ -251,7 +251,7 @@ class GenerateIrRuntime {
         val libraryVersion = "JSIR"
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
-        val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
+        val metadataVersion = KlibMetadataVersion.INSTANCE
 
         val versions = KotlinLibraryVersioning(libraryVersion, compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()
@@ -272,7 +272,7 @@ class GenerateIrRuntime {
         val libraryVersion = "JSIR"
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
-        val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
+        val metadataVersion = KlibMetadataVersion.INSTANCE
 
         val versions = KotlinLibraryVersioning(libraryVersion, compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()

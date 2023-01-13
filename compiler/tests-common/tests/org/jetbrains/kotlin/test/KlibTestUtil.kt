@@ -94,7 +94,7 @@ object KlibTestUtil {
                 libraryVersion = null,
                 compilerVersion = null,
                 abiVersion = null,
-                metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+                metadataVersion = KlibMetadataVersion.INSTANCE,
             ),
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),
