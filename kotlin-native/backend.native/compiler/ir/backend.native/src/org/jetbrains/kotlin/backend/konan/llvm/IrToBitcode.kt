@@ -734,7 +734,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         private val scope by lazy {
             if (!context.shouldContainLocationDebugInfo() || declaration == null)
                 return@lazy null
-            declaration.scope() ?: llvmFunction.scope(0, debugInfo.subroutineType(codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
+            declaration.scope() ?: llvmFunction.scope(0, debugInfo.subroutineType(codegen.llvmTargetData, listOf(context.irBuiltIns.intType)), false)
         }
 
         private val fileScope = (fileScope() as? FileScope)
@@ -2189,11 +2189,13 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
             else -> codegen.llvmFunctionOrNull(this)?.llvmValue
         }
         return with(debugInfo) {
+            val f = this@scope
+            val nodebug = f is IrConstructor && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
             if (functionLlvmValue != null) {
                 subprograms.getOrPut(functionLlvmValue) {
                     memScoped {
                         val subroutineType = subroutineType(codegen.llvmTargetData)
-                        diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
+                        diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType, nodebug).also {
                             if (!this@scope.isInline)
                                 DIFunctionAddSubprogram(functionLlvmValue, it)
                         }
@@ -2203,7 +2205,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 inlinedSubprograms.getOrPut(this@scope) {
                     memScoped {
                         val subroutineType = subroutineType(codegen.llvmTargetData)
-                        diFunctionScope(name.asString(), "<inlined-out:$name>", startLine, subroutineType)
+                        diFunctionScope(name.asString(), "<inlined-out:$name>", startLine, subroutineType, nodebug)
                     }
                 } as DIScopeOpaqueRef
             }
@@ -2212,19 +2214,19 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun LLVMValueRef.scope(startLine:Int, subroutineType: DISubroutineTypeRef): DIScopeOpaqueRef? {
+    private fun LLVMValueRef.scope(startLine:Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean): DIScopeOpaqueRef? {
         return debugInfo.subprograms.getOrPut(this) {
-            diFunctionScope(name!!, name!!, startLine, subroutineType).also {
+            diFunctionScope(name!!, name!!, startLine, subroutineType, nodebug).also {
                 DIFunctionAddSubprogram(this@scope, it)
             }
         }  as DIScopeOpaqueRef
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef) = DICreateFunction(
+    private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean) = DICreateFunction(
                 builder = debugInfo.builder,
                 scope = debugInfo.compilationUnit,
-                name = name,
+                name = (if (nodebug) "<NODEBUG>" else "") + name,
                 linkageName = linkageName,
                 file = file().file(),
                 lineNo = startLine,

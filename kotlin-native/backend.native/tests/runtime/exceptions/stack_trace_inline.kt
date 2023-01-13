@@ -1,33 +1,41 @@
 import kotlin.text.Regex
 import kotlin.test.*
 
-var inlinesCount = 0
+var expectedInlinesCount = 0
+var expectedExceptionContrFrames = 0
 
 fun exception() {
     error("FAIL!")
 }
 
-fun main() {
+fun main(args: Array<String>) {
+    val sourceInfoType = args.first()
+    val (e, i) = when (sourceInfoType) {
+        "libbacktrace" -> Pair(0, 1)
+        "coresymbolication" -> Pair(4, 0)
+        else -> throw AssertionError("Unknown source info type " + sourceInfoType)
+    }
+    expectedExceptionContrFrames = e
+    expectedInlinesCount = i
+
+    var actualInlinesCount = 0
     try {
         exception()
     }
     catch (e:Exception) {
         val stackTrace = e.getStackTrace()
-        inlinesCount = stackTrace.count { it.contains("[inlined]")}
-        stackTrace.take(6).forEach(::checkFrame)
+        actualInlinesCount = stackTrace.count { it.contains("[inlined]")}
+        stackTrace.take(expectedExceptionContrFrames + 2).forEach(::checkFrame)
     }
-    println(inlinesCount)
+    assertEquals(expectedInlinesCount, actualInlinesCount)
 }
 internal val regex = Regex("^(\\d+)\\ +.*/(.*):(\\d+):.*$")
 internal fun checkFrame(value:String) {
     val goldValues = arrayOf<Pair<String, Int>?>(
-            null,
-            null,
-            null,
-            null,
-            *(if (inlinesCount != 0) arrayOf(null) else emptyArray()),
-            "stack_trace_inline.kt" to 7,
-            "stack_trace_inline.kt" to 12)
+            *arrayOfNulls(expectedExceptionContrFrames),
+            *arrayOfNulls(expectedInlinesCount),
+            "stack_trace_inline.kt" to 8,
+            "stack_trace_inline.kt" to 23)
     val (pos, file, line) = regex.find(value)!!.destructured
     goldValues[pos.toInt()]?.let {
         assertEquals(it.first, file)

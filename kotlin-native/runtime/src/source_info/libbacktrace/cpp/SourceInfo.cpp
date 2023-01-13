@@ -23,7 +23,7 @@ extern "C" int Kotlin_getSourceInfo_libbacktrace(void* addr, SourceInfo *result,
     callback_arg.result_ptr = 0;
     callback_arg.result_size = result_size;
     callback_arg.total_count = 0;
-    auto process_line = [](void *data, uintptr_t pc, const char *filename, int lineno, int column, const char *function) -> int {
+    auto process_line = [](void *data, uintptr_t pc, const char *filename, int lineno, int column, const char *function, int is_nodebug) -> int {
         auto &callback_arg = *static_cast<callback_arg_t*>(data);
         // Non-inlined frame would be last one, it's better to have it, then intermediate ones
         if (callback_arg.result_ptr == callback_arg.result_size) {
@@ -33,6 +33,7 @@ extern "C" int Kotlin_getSourceInfo_libbacktrace(void* addr, SourceInfo *result,
         info.setFilename(filename);
         info.lineNumber = lineno;
         info.column = column;
+        info.nodebug = is_nodebug;
         callback_arg.result_ptr++;
         callback_arg.total_count++;
         // Let's stop at least at some point

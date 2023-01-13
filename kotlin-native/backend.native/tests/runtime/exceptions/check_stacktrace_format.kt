@@ -29,9 +29,16 @@ fun functionB() {
     functionA()
 }
 
-const val depth = 5
+var depth = 3
 
 fun main(args : Array<String>) {
+    val sourceInfoType = args.first()
+    val exceptionalFrames = when (sourceInfoType) {
+        "libbacktrace" -> 0
+        "coresymbolication" -> 2
+        else -> throw AssertionError("Unknown source info type " + sourceInfoType)
+    }
+    depth += exceptionalFrames
     try {
         functionB()
     } catch (e: Throwable) {

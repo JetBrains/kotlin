@@ -2735,15 +2735,10 @@ task extend_exception(type: KonanLocalTest) {
     source = "runtime/exceptions/extend0.kt"
 }
 
-standaloneTest("check_stacktrace_format") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g']
-    source = "runtime/exceptions/check_stacktrace_format.kt"
-}
-
 standaloneTest("check_stacktrace_format_coresymbolication") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
+    arguments = ['coresymbolication']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
@@ -2751,9 +2746,7 @@ standaloneTest("stack_trace_inline") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=sourceInfoType=coresymbolication']
     source = "runtime/exceptions/stack_trace_inline.kt"
-    // test on simulator is writing Invalid connection: com.apple.coresymbolicationd by unknown reason
-    // so we need to use custom checker as workaround
-    outputChecker = { str -> str.split("\n").contains("0") }
+    arguments = ['coresymbolication']
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
@@ -2771,30 +2764,41 @@ standaloneTest("stack_trace_out_of_bounds") {
 standaloneTest("kt-37572") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
+    arguments = ['coresymbolication']
     source = "runtime/exceptions/kt-37572.kt"
-    // test on simulator is writing Invalid connection: com.apple.coresymbolicationd by unknown reason
-    // so we need to use custom checker as workaround
-    outputChecker = { str -> str.split("\n").contains("0") }
 }
 
 standaloneTest("check_stacktrace_format_libbacktrace") {
     disabled = !supportsLibBacktrace(project)|| project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    arguments = ['libbacktrace']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("stack_trace_inline_libbacktrace") {
     disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    arguments = ['libbacktrace']
     source = "runtime/exceptions/stack_trace_inline.kt"
-    outputChecker = { str -> str.split("\n").contains("1") }
 }
 
 standaloneTest("kt-37572-libbacktrace") {
     disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    arguments = ['libbacktrace']
     source = "runtime/exceptions/kt-37572.kt"
-    outputChecker = { str -> str.split("\n").contains("2") }
+}
+
+standaloneTest("except_constr_w_default") {
+    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    source = "runtime/exceptions/except_constr_w_default.kt"
+}
+
+standaloneTest("throw_from_except_constr") {
+    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
 standaloneTest("custom_hook") {

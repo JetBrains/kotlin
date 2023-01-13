@@ -294,10 +294,13 @@ std_support::vector<std_support::string> kotlin::GetStackTraceStrings(std_suppor
             int frames_or_overflow = getSourceInfo(address, buffer, std::size(buffer));
             int frames = std::min<int>(frames_or_overflow, std::size(buffer));
             bool isSomethingPrinted = false;
+            bool isSomethingHidden = false;
             char line[1024];
             for (int frame = 0; frame < frames; frame++) {
                 auto &sourceInfo = buffer[frame];
-                if (!sourceInfo.getFileName().empty()) {
+                if (sourceInfo.nodebug) {
+                    isSomethingHidden = true;
+                } else if (!sourceInfo.getFileName().empty()) {
                     bool is_last = frame == frames - 1;
                     if (is_last && frames_or_overflow != frames) {
                         snprintf_with_addr(line, sizeof(line) - 1, strings.size(), address, false, "[some inlined frames skipped]");
@@ -322,7 +325,7 @@ std_support::vector<std_support::string> kotlin::GetStackTraceStrings(std_suppor
                     strings.push_back(line);
                 }
             }
-            if (!isSomethingPrinted) {
+            if (!isSomethingPrinted && !isSomethingHidden) {
                 snprintf_with_addr(line, sizeof(line) - 1,  strings.size(), address, false, "%s", "");
                 strings.push_back(line);
             }

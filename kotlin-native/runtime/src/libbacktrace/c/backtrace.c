@@ -86,7 +86,7 @@ unwind (struct _Unwind_Context *context, void *vdata)
     --pc;
 
   if (!bdata->can_alloc)
-    bdata->ret = bdata->callback (bdata->data, pc, NULL, 0, 0, NULL);
+    bdata->ret = bdata->callback (bdata->data, pc, NULL, 0, 0, NULL, 0);
   else
     bdata->ret = backtrace_pcinfo (bdata->state, pc, bdata->callback,
 				   bdata->error_callback, bdata->data);
