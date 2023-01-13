@@ -43,7 +43,7 @@ public external interface MediaKeySystemConfiguration {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaKeySystemConfiguration(label: String? = "", initDataTypes: Array<String>? = arrayOf(), audioCapabilities: Array<MediaKeySystemMediaCapability>? = arrayOf(), videoCapabilities: Array<MediaKeySystemMediaCapability>? = arrayOf(), distinctiveIdentifier: MediaKeysRequirement? = MediaKeysRequirement.OPTIONAL, persistentState: MediaKeysRequirement? = MediaKeysRequirement.OPTIONAL, sessionTypes: Array<String>? = undefined): MediaKeySystemConfiguration {
-    val o = js("({})")
+    val o = newJsObject()
     o["label"] = label
     o["initDataTypes"] = initDataTypes
     o["audioCapabilities"] = audioCapabilities
@@ -66,7 +66,7 @@ public external interface MediaKeySystemMediaCapability {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaKeySystemMediaCapability(contentType: String? = "", robustness: String? = ""): MediaKeySystemMediaCapability {
-    val o = js("({})")
+    val o = newJsObject()
     o["contentType"] = contentType
     o["robustness"] = robustness
     return o as MediaKeySystemMediaCapability
@@ -138,7 +138,7 @@ public external interface MediaKeyMessageEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaKeyMessageEventInit(messageType: MediaKeyMessageType?, message: ArrayBuffer?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaKeyMessageEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["messageType"] = messageType
     o["message"] = message
     o["bubbles"] = bubbles
@@ -171,7 +171,7 @@ public external interface MediaEncryptedEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaEncryptedEventInit(initDataType: String? = "", initData: ArrayBuffer? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaEncryptedEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["initDataType"] = initDataType
     o["initData"] = initData
     o["bubbles"] = bubbles

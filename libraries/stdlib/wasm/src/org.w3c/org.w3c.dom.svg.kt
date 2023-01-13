@@ -64,7 +64,7 @@ public external interface SVGBoundingBoxOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? = false, markers: Boolean? = false, clipped: Boolean? = false): SVGBoundingBoxOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["fill"] = fill
     o["stroke"] = stroke
     o["markers"] = markers

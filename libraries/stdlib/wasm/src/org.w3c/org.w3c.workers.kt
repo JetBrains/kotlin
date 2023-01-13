@@ -68,7 +68,7 @@ public external interface RegistrationOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun RegistrationOptions(scope: String? = undefined, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["scope"] = scope
     o["type"] = type
     return o as RegistrationOptions
@@ -113,7 +113,7 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ServiceWorkerMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["data"] = data
     o["origin"] = origin
     o["lastEventId"] = lastEventId
@@ -184,7 +184,7 @@ public external interface ClientQueryOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["includeUncontrolled"] = includeUncontrolled
     o["type"] = type
     return o as ClientQueryOptions
@@ -209,7 +209,7 @@ public external interface ExtendableEventInit : EventInit
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
@@ -238,7 +238,7 @@ public external interface ForeignFetchOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<String>?): ForeignFetchOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["scopes"] = scopes
     o["origins"] = origins
     return o as ForeignFetchOptions
@@ -274,7 +274,7 @@ public external interface FetchEventInit : ExtendableEventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun FetchEventInit(request: Request?, clientId: String? = null, isReload: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FetchEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["request"] = request
     o["clientId"] = clientId
     o["isReload"] = isReload
@@ -307,7 +307,7 @@ public external interface ForeignFetchEventInit : ExtendableEventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "null", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ForeignFetchEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["request"] = request
     o["origin"] = origin
     o["bubbles"] = bubbles
@@ -329,7 +329,7 @@ public external interface ForeignFetchResponse {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ForeignFetchResponse(response: Response?, origin: String? = undefined, headers: Array<String>? = undefined): ForeignFetchResponse {
-    val o = js("({})")
+    val o = newJsObject()
     o["response"] = response
     o["origin"] = origin
     o["headers"] = headers
@@ -375,7 +375,7 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ExtendableMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionClientOrMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["data"] = data
     o["origin"] = origin
     o["lastEventId"] = lastEventId
@@ -418,7 +418,7 @@ public external interface CacheQueryOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = undefined): CacheQueryOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["ignoreSearch"] = ignoreSearch
     o["ignoreMethod"] = ignoreMethod
     o["ignoreVary"] = ignoreVary
@@ -444,7 +444,7 @@ public external interface CacheBatchOperation {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CacheBatchOperation(type: String? = undefined, request: Request? = undefined, response: Response? = undefined, options: CacheQueryOptions? = undefined): CacheBatchOperation {
-    val o = js("({})")
+    val o = newJsObject()
     o["type"] = type
     o["request"] = request
     o["response"] = response

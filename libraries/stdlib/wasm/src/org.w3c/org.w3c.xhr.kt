@@ -108,7 +108,7 @@ public external interface ProgressEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: Number? = 0, total: Number? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ProgressEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["lengthComputable"] = lengthComputable
     o["loaded"] = loaded
     o["total"] = total
