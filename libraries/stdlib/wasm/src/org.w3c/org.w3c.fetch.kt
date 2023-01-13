@@ -104,7 +104,7 @@ public external interface RequestInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun RequestInit(method: String? = undefined, headers: Dynamic? = undefined, body: Dynamic? = undefined, referrer: String? = undefined, referrerPolicy: Dynamic? = undefined, mode: RequestMode? = undefined, credentials: RequestCredentials? = undefined, cache: RequestCache? = undefined, redirect: RequestRedirect? = undefined, integrity: String? = undefined, keepalive: Boolean? = undefined, window: Any? = undefined): RequestInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["method"] = method
     o["headers"] = headers
     o["body"] = body
@@ -163,7 +163,7 @@ public external interface ResponseInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: Dynamic? = undefined): ResponseInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["status"] = status
     o["statusText"] = statusText
     o["headers"] = headers

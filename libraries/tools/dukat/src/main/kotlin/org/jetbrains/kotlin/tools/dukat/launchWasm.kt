@@ -22,10 +22,12 @@ fun main() {
     }
 }
 
+// TODO: Backport to dukat
 fun postProcessIdlBindings(source: String): String {
     return source
         .replace(
             Regex("( {4}return o as \\w+)"),
             "    @Suppress(\"UNCHECKED_CAST_TO_EXTERNAL_INTERFACE\")\n\$1"
         )
+        .replace("js(\"({})\")", "newJsObject()")
 }

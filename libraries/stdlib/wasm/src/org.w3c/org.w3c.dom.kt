@@ -1501,7 +1501,7 @@ public external interface TrackEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): TrackEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["track"] = track
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -2557,7 +2557,7 @@ public external interface RelatedEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun RelatedEventInit(relatedTarget: EventTarget? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): RelatedEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["relatedTarget"] = relatedTarget
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -2701,7 +2701,7 @@ public external interface AssignedNodesOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun AssignedNodesOptions(flatten: Boolean? = false): AssignedNodesOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["flatten"] = flatten
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as AssignedNodesOptions
@@ -2748,7 +2748,7 @@ public external interface CanvasRenderingContext2DSettings {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CanvasRenderingContext2DSettings(alpha: Boolean? = true): CanvasRenderingContext2DSettings {
-    val o = js("({})")
+    val o = newJsObject()
     o["alpha"] = alpha
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CanvasRenderingContext2DSettings
@@ -2956,7 +2956,7 @@ public external interface HitRegionOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun HitRegionOptions(path: Path2D? = null, fillRule: CanvasFillRule? = CanvasFillRule.NONZERO, id: String? = "", parentID: String? = null, cursor: String? = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["path"] = path
     o["fillRule"] = fillRule
     o["id"] = id
@@ -3017,7 +3017,7 @@ public external interface ImageBitmapRenderingContextSettings {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ImageBitmapRenderingContextSettings(alpha: Boolean? = true): ImageBitmapRenderingContextSettings {
-    val o = js("({})")
+    val o = newJsObject()
     o["alpha"] = alpha
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ImageBitmapRenderingContextSettings
@@ -3041,7 +3041,7 @@ public external interface ElementDefinitionOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ElementDefinitionOptions(extends: String? = undefined): ElementDefinitionOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["extends"] = extends
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ElementDefinitionOptions
@@ -3115,7 +3115,7 @@ public external interface DragEventInit : MouseEventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun DragEventInit(dataTransfer: DataTransfer? = null, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, region: String? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): DragEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["dataTransfer"] = dataTransfer
     o["screenX"] = screenX
     o["screenY"] = screenY
@@ -3281,7 +3281,7 @@ public external interface PopStateEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun PopStateEventInit(state: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PopStateEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["state"] = state
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -3317,7 +3317,7 @@ public external interface HashChangeEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun HashChangeEventInit(oldURL: String? = "", newURL: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): HashChangeEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["oldURL"] = oldURL
     o["newURL"] = newURL
     o["bubbles"] = bubbles
@@ -3350,7 +3350,7 @@ public external interface PageTransitionEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun PageTransitionEventInit(persisted: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PageTransitionEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["persisted"] = persisted
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -3443,7 +3443,7 @@ public external interface ErrorEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ErrorEventInit(message: String? = "", filename: String? = "", lineno: Int? = 0, colno: Int? = 0, error: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ErrorEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["message"] = message
     o["filename"] = filename
     o["lineno"] = lineno
@@ -3481,7 +3481,7 @@ public external interface PromiseRejectionEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["promise"] = promise
     o["reason"] = reason
     o["bubbles"] = bubbles
@@ -3945,7 +3945,7 @@ public external interface ImageBitmapOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = ImageOrientation.NONE, premultiplyAlpha: PremultiplyAlpha? = PremultiplyAlpha.DEFAULT, colorSpaceConversion: ColorSpaceConversion? = ColorSpaceConversion.DEFAULT, resizeWidth: Int? = undefined, resizeHeight: Int? = undefined, resizeQuality: ResizeQuality? = ResizeQuality.LOW): ImageBitmapOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["imageOrientation"] = imageOrientation
     o["premultiplyAlpha"] = premultiplyAlpha
     o["colorSpaceConversion"] = colorSpaceConversion
@@ -3996,7 +3996,7 @@ public external interface MessageEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MessageEventInit(data: Any? = null, origin: String? = "", lastEventId: String? = "", source: UnionMessagePortOrWindowProxy? = null, ports: Array<MessagePort>? = arrayOf(), bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MessageEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["data"] = data
     o["origin"] = origin
     o["lastEventId"] = lastEventId
@@ -4037,7 +4037,7 @@ public external interface EventSourceInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun EventSourceInit(withCredentials: Boolean? = false): EventSourceInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["withCredentials"] = withCredentials
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as EventSourceInit
@@ -4102,7 +4102,7 @@ public external interface CloseEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CloseEventInit(wasClean: Boolean? = false, code: Short? = 0, reason: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CloseEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["wasClean"] = wasClean
     o["code"] = code
     o["reason"] = reason
@@ -4207,7 +4207,7 @@ public external interface WorkerOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun WorkerOptions(type: WorkerType? = WorkerType.CLASSIC, credentials: RequestCredentials? = RequestCredentials.OMIT): WorkerOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["type"] = type
     o["credentials"] = credentials
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -4324,7 +4324,7 @@ public external interface StorageEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun StorageEventInit(key: String? = null, oldValue: String? = null, newValue: String? = null, url: String? = "", storageArea: Storage? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): StorageEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["key"] = key
     o["oldValue"] = oldValue
     o["newValue"] = newValue
@@ -4553,7 +4553,7 @@ public external interface EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun EventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): EventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
@@ -4585,7 +4585,7 @@ public external interface CustomEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CustomEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -4603,7 +4603,7 @@ public external interface EventListenerOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun EventListenerOptions(capture: Boolean? = false): EventListenerOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["capture"] = capture
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as EventListenerOptions
@@ -4621,7 +4621,7 @@ public external interface AddEventListenerOptions : EventListenerOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun AddEventListenerOptions(passive: Boolean? = false, once: Boolean? = false, capture: Boolean? = false): AddEventListenerOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["passive"] = passive
     o["once"] = once
     o["capture"] = capture
@@ -4751,7 +4751,7 @@ public external interface MutationObserverInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = undefined, characterData: Boolean? = undefined, subtree: Boolean? = false, attributeOldValue: Boolean? = undefined, characterDataOldValue: Boolean? = undefined, attributeFilter: Array<String>? = undefined): MutationObserverInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["childList"] = childList
     o["attributes"] = attributes
     o["characterData"] = characterData
@@ -4843,7 +4843,7 @@ public external interface GetRootNodeOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun GetRootNodeOptions(composed: Boolean? = false): GetRootNodeOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["composed"] = composed
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as GetRootNodeOptions
@@ -5092,7 +5092,7 @@ public external interface ElementCreationOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ElementCreationOptions(param_is: String? = undefined): ElementCreationOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["is"] = param_is
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ElementCreationOptions
@@ -5297,7 +5297,7 @@ public external interface ShadowRootInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ShadowRootInit(mode: ShadowRootMode?): ShadowRootInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["mode"] = mode
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ShadowRootInit
@@ -5681,7 +5681,7 @@ public external interface DOMPointInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun DOMPointInit(x: Double? = 0.0, y: Double? = 0.0, z: Double? = 0.0, w: Double? = 1.0): DOMPointInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["x"] = x
     o["y"] = y
     o["z"] = z
@@ -5732,7 +5732,7 @@ public external interface DOMRectInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double? = 0.0, height: Double? = 0.0): DOMRectInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["x"] = x
     o["y"] = y
     o["width"] = width
@@ -5863,7 +5863,7 @@ public external interface ScrollOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ScrollOptions(behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["behavior"] = behavior
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ScrollOptions
@@ -5884,7 +5884,7 @@ public external interface ScrollToOptions : ScrollOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ScrollToOptions(left: Double? = undefined, top: Double? = undefined, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollToOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["left"] = left
     o["top"] = top
     o["behavior"] = behavior
@@ -5932,7 +5932,7 @@ public external interface MediaQueryListEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaQueryListEventInit(media: String? = "", matches: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaQueryListEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["media"] = media
     o["matches"] = matches
     o["bubbles"] = bubbles
@@ -5975,7 +5975,7 @@ public external interface ScrollIntoViewOptions : ScrollOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ScrollIntoViewOptions(block: ScrollLogicalPosition? = ScrollLogicalPosition.CENTER, inline: ScrollLogicalPosition? = ScrollLogicalPosition.CENTER, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollIntoViewOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["block"] = block
     o["inline"] = inline
     o["behavior"] = behavior
@@ -5995,7 +5995,7 @@ public external interface BoxQuadOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: Dynamic? = undefined): BoxQuadOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["box"] = box
     o["relativeTo"] = relativeTo
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -6014,7 +6014,7 @@ public external interface ConvertCoordinateOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ConvertCoordinateOptions(fromBox: CSSBoxType? = CSSBoxType.BORDER, toBox: CSSBoxType? = CSSBoxType.BORDER): ConvertCoordinateOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["fromBox"] = fromBox
     o["toBox"] = toBox
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
