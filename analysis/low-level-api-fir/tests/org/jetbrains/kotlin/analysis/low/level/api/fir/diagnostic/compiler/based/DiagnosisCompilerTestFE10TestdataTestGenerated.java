@@ -14655,6 +14655,22 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/callableReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            public class CallableReferences {
+                @Test
+                public void testAllFilesPresentInCallableReferences() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/callableReferences"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("kt55931.kt")
+                public void testKt55931() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/callableReferences/kt55931.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes")
             @TestDataPath("$PROJECT_ROOT")
             public class CapturedTypes {
