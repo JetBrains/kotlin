@@ -21229,6 +21229,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("expectAndActualInSameModule.kt")
+            public void testExpectAndActualInSameModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectAndActualInSameModule.kt");
+            }
+
+            @Test
             @TestMetadata("expectDataObject.kt")
             public void testExpectDataObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");

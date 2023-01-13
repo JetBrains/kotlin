@@ -1,0 +1,14 @@
+package
+
+public actual val x: kotlin.String
+public actual fun foo(): kotlin.Unit
+
+public final actual class Foo {
+    public constructor Foo()
+    public actual final val memberProp: kotlin.Int = 10
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final actual fun memberFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
