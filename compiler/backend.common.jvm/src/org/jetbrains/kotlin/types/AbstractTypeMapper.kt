@@ -82,7 +82,7 @@ object AbstractTypeMapper {
             }
 
             if (type.isVArray()) {
-                return mapVArrayType(type, sw, context, mode)
+                return Type.getObjectType("kotlin/VArrayWrapper")
             }
 
             if (typeConstructor.isClassTypeConstructor()) {
@@ -148,13 +148,6 @@ object AbstractTypeMapper {
         context: TypeMappingContext<Writer>,
         mode: TypeMappingMode,
     ) = mapArrayOrVArrayType(type, sw, context, mode) { it }
-
-    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapVArrayType(
-        type: SimpleTypeMarker,
-        sw: Writer?,
-        context: TypeMappingContext<Writer>,
-        mode: TypeMappingMode,
-    ) = mapArrayOrVArrayType(type, sw, context, mode) { it.dontWrapInlineClassesMode().dontBoxPrimitivesMode() }
 
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayOrVArrayType(
         type: SimpleTypeMarker,

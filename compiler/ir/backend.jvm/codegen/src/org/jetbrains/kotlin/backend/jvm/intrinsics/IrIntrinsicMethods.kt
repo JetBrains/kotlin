@@ -45,6 +45,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private val intrinsicsMap = (
             listOf(
+                Key(FqName("kotlin.VArray"), null, "set", listOf(intFqn, FqName("T"))) to VArraySet,
+                Key(FqName("kotlin.VArray"), null, "get", listOf(intFqn)) to VArrayGet,
+                Key(FqName("kotlin.VArray"), null, "<init>", listOf(intFqn)) to NewArray,
+                Key(FqName("kotlin.VArray"), null, "<get-size>", emptyList()) to ArraySize,
+                Key(FqName("kotlin.VArray"), null, "iterator", emptyList()) to VArrayIterator,
                 Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
@@ -53,7 +58,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
                 Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
                 Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
-                Key(kotlinFqn, null, "vArrayOfNulls", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "vArrayOfNulls", listOf(intFqn)) to NewVArray,
                 Key(cloneableFqn, null, "clone", emptyList()) to Clone,
                 Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
                 Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
@@ -116,7 +121,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                         createKeyMapping(PrimitiveArrayIteratorNext, iteratorClass, "next")
                     } +
                     arrayMethods() +
-                    vArrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
@@ -167,9 +171,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private fun numberConversionMethods(): List<Pair<Key, IntrinsicMethod>> =
         PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
                 numberConversionMethods(irBuiltIns.numberClass)
-
-    private fun vArrayMethods() =
-        arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass, VArrayIterator)
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) ->

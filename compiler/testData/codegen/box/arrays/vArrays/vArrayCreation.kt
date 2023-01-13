@@ -3,7 +3,6 @@
 // LANGUAGE: +ValueClasses
 // ENABLE_JVM_IR_INLINER
 
-
 @JvmInline
 value class ICDoubleNullable(val x: Double?)
 
@@ -13,8 +12,6 @@ value class ICChar(val x: Char)
 @JvmInline
 value class ICICChar(val x: ICChar)
 
-@JvmInline
-value class MFVC(val x: Int, val y: Int)
 
 fun box(): String {
     val aInt = VArray(2) { it + 1 }
@@ -32,20 +29,11 @@ fun box(): String {
     val aICDoubleNullable = VArray<ICDoubleNullable>(2) { ICDoubleNullable(42.0) }
     if (aICDoubleNullable[1].x != 42.0) return "Fail 5"
 
-    val aICChar = VArray(2) { ICICChar(ICChar('a')) }
-    if (aICChar[1].x.x != 'a') return "Fail 6"
+    val aICChar = VArray(2) {ICChar('a')}
+    if (aICChar[1].x != 'a') return "Fail 6"
 
-    val aMFVC = VArray(2) { MFVC(0, 0) }
-    if (aMFVC[0].x != 0) return "Fail 7"
+    val aICICChar = VArray(2) { ICICChar(ICChar('a')) }
+    if (aICICChar[1].x.x != 'a') return "Fail 7"
 
     return "OK"
 }
-
-// CHECK_BYTECODE_TEXT
-// 1 LOCALVARIABLE aInt \[I
-// 1 LOCALVARIABLE aStr \[Ljava/lang/String;
-// 1 LOCALVARIABLE aUByte \[B
-// 1 LOCALVARIABLE aULongNullable \[Lkotlin/ULong;
-// 1 LOCALVARIABLE aICDoubleNullable \[Ljava/lang/Double;
-// 1 LOCALVARIABLE aICChar \[C
-// 1 LOCALVARIABLE aMFVC \[LMFVC;

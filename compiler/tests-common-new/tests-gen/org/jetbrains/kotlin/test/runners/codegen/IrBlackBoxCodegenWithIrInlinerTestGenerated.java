@@ -1525,6 +1525,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("debug.kt")
+            public void testDebug() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/debug.kt");
+            }
+
+            @Test
             @TestMetadata("multidimensionalVArray.kt")
             public void testMultidimensionalVArray() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/multidimensionalVArray.kt");
