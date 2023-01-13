@@ -89,6 +89,8 @@ public interface MessageRenderer {
 
     MessageRenderer GRADLE_STYLE = new GradleStyleMessageRenderer();
 
+    MessageRenderer XCODE_STYLE = new XcodeStyleMessageRenderer();
+
     String renderPreamble();
 
     String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location);
