@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
-internal interface InternalKotlinTarget : KotlinTarget {
+internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     val kotlinComponents: Set<KotlinTargetComponent>
     fun onPublicationCreated(publication: MavenPublication)
 }

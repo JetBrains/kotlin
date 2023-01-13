@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal class ExternalKotlinTargetImpl internal constructor(
     override val project: Project,
@@ -41,6 +43,8 @@ internal class ExternalKotlinTargetImpl internal constructor(
     }
 
     val kotlin = project.multiplatformExtension
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     override val preset: Nothing? = null
 

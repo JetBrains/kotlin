@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
@@ -32,6 +34,9 @@ internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 abstract class AbstractKotlinTarget(
     final override val project: Project
 ) : InternalKotlinTarget {
+
+    final override val extras: MutableExtras = mutableExtrasOf()
+
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
@@ -208,7 +213,7 @@ internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<
                 adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
                     val mavenScope = kotlinUsageContext.mavenScope
                     if (mavenScope != null) {
-                        val mavenScopeString = when(mavenScope) {
+                        val mavenScopeString = when (mavenScope) {
                             COMPILE -> "compile"
                             RUNTIME -> "runtime"
                         }
