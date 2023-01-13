@@ -1,0 +1,73 @@
+package lib;
+
+public abstract class Prop<T> {
+
+    public Prop() {
+        super();
+    }
+
+    public abstract int get(T key);
+
+    public abstract void set(T key, int value);
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Cl {
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String name;
+
+    public Cl(@org.jetbrains.annotations.NotNull()
+    java.lang.String name) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getName() {
+        return null;
+    }
+
+    public final void setName(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TestKt {
+
+    public TestKt() {
+        super();
+    }
+    @org.jetbrains.annotations.NotNull()
+    private static final lib.Prop<test.Cl> TEST = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final lib.Prop<test.Cl>[] TESTS_ARRAY = {};
+    @org.jetbrains.annotations.NotNull()
+    private static final java.util.List<lib.Prop<test.Cl>> TESTS_LIST = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final lib.Prop<test.Cl> getTEST() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final lib.Prop<test.Cl>[] getTESTS_ARRAY() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<lib.Prop<test.Cl>> getTESTS_LIST() {
+        return null;
+    }
+}

@@ -3,8 +3,11 @@ import kotlin.reflect.KProperty
 
 val f1 = 2
 
+val nothing: String? = null
+
 val intConst: dynamic = 30
 val arrayConst: Any = byteArrayOf(1,2)
+val doubleArrayConst = arrayOf(-1.0, 1.0 / 0.0, -1.0 / 0.0, 0.0 / 0.0)
 
 protected var f2 = 3
 

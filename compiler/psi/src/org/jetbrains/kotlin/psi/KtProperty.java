@@ -40,7 +40,9 @@ import java.util.List;
 import static org.jetbrains.kotlin.KtNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
 
-public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
+public class
+
+KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         implements KtVariableDeclaration, PsiModifiableCodeBlock {
 
     private static final Logger LOG = Logger.getInstance(KtProperty.class);
