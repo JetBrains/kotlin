@@ -85,7 +85,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
-            resolveIdeDependencies(":") { dependencies ->
+            resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
                     regularSourceDependency("included-build::included/commonMain")
