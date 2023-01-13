@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
@@ -59,6 +59,7 @@ private val Project.kotlinNativeCompilerJar: String
     else
         "$konanHome/konan/lib/kotlin-native.jar"
 
+
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
     private val settings: Settings,
@@ -69,6 +70,7 @@ internal abstract class KotlinNativeToolRunner(
         val konanVersion: CompilerVersion,
         val konanHome: String,
         val konanPropertiesFile: File,
+        val useXcodeMessageStyle: Boolean,
         val jvmArgs: List<String>,
         val classpath: FileCollection
     ) {
@@ -77,6 +79,7 @@ internal abstract class KotlinNativeToolRunner(
                 konanVersion = project.konanVersion,
                 konanHome = project.konanHome,
                 konanPropertiesFile = project.file("${project.konanHome}/konan/konan.properties"),
+                useXcodeMessageStyle = project.useXcodeMessageStyle,
                 jvmArgs = project.jvmArgs,
                 classpath = project.files(project.kotlinNativeCompilerJar, "${project.konanHome}/konan/lib/trove4j.jar")
             )
@@ -86,7 +89,8 @@ internal abstract class KotlinNativeToolRunner(
     final override val displayName get() = toolName
 
     final override val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
-    final override val daemonEntryPoint get() = "daemonMain"
+    final override val daemonEntryPoint
+        get() = if (!settings.useXcodeMessageStyle) "daemonMain" else "daemonMainWithXcodeRenderer"
 
     // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
     final override val execEnvironmentBlacklist: Set<String> by lazy {
@@ -102,9 +106,11 @@ internal abstract class KotlinNativeToolRunner(
         val konanHomeRequired = !settings.konanVersion.isAtLeast(1, 4, 0) ||
                 settings.konanVersion.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
 
+        val messageRenderer = if (settings.useXcodeMessageStyle) MessageRenderer.XCODE_STYLE else MessageRenderer.GRADLE_STYLE
+
         listOfNotNull(
             if (konanHomeRequired) "konan.home" to settings.konanHome else null,
-            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
+            MessageRenderer.PROPERTY_KEY to messageRenderer.name
         ).toMap()
     }
 

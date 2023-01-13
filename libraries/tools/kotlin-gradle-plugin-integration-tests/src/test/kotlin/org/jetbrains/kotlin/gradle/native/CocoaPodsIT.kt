@@ -875,6 +875,77 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+
+    @Test
+    fun testSyncFrameworkUseXcodeStyleErrorsWhenConfigurationFailed() {
+        with(project) {
+            gradleBuildScript().appendText(
+                """
+                kotlin {
+                    sourceSets["commonMain"].dependencies {
+                        implementation("com.example.unknown:dependency:0.0.1")
+                    }       
+                }
+                """.trimIndent()
+            )
+
+            build(
+                "syncFramework",
+                "-Pkotlin.native.cocoapods.platform=iphonesimulator",
+                "-Pkotlin.native.cocoapods.archs=x86_64",
+                "-Pkotlin.native.cocoapods.configuration=Debug"
+            ) {
+                assertFailed()
+                assertContains("error: Could not find com.example.unknown:dependency:0.0.1.")
+            }
+        }
+    }
+
+    @Test
+    fun testSyncFrameworkUseXcodeStyleErrorsWhenCompilationFailed() {
+        with(project) {
+            projectDir.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
+
+            build(
+                "syncFramework",
+                "-Pkotlin.native.cocoapods.platform=iphonesimulator",
+                "-Pkotlin.native.cocoapods.archs=x86_64",
+                "-Pkotlin.native.cocoapods.configuration=Debug",
+            ) {
+                assertFailed()
+                assertContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Expecting a top level declaration")
+                assertContains("error: Compilation finished with errors")
+            }
+        }
+    }
+
+    @Test
+    fun testOtherTasksUseGradleStyleErrorsWhenCompilationFailed() {
+        with(project) {
+            projectDir.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
+
+            build("linkPodDebugFrameworkIOS") {
+                assertFailed()
+                assertContains("e: file:///")
+                assertContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Expecting a top level declaration")
+                assertNotContains("error: Compilation finished with errors")
+            }
+        }
+    }
+
+    @Test
+    fun testOtherTasksUseXcodeStyleErrorsWhenCompilationFailedAndOptionEnabled() {
+        with(project) {
+            projectDir.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
+
+            build("linkPodDebugFrameworkIOS", "-Pkotlin.native.useXcodeMessageStyle=true") {
+                assertFailed()
+                assertContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Expecting a top level declaration")
+                assertContains("error: Compilation finished with errors")
+            }
+        }
+    }
+
     @Test
     fun testPodDependencyInUnitTests() =
         getProjectByName(cocoapodsTestsProjectName).testWithWrapper(":iosX64Test")

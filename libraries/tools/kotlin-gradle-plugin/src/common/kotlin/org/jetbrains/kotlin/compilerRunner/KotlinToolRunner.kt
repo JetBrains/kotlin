@@ -186,7 +186,8 @@ abstract class KotlinToolRunner(
 
         try {
             val mainClass = isolatedClassLoader.loadClass(mainClass)
-            val entryPoint = mainClass.methods.single { it.name == daemonEntryPoint }
+            val entryPoint = mainClass.methods
+                .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
 
             entryPoint.invoke(null, transformedArgs.toTypedArray())
         } catch (t: InvocationTargetException) {
