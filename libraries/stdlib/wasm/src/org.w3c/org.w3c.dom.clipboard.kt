@@ -22,7 +22,7 @@ public external interface ClipboardEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ClipboardEventInit(clipboardData: DataTransfer? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ClipboardEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["clipboardData"] = clipboardData
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -64,7 +64,7 @@ public external interface ClipboardPermissionDescriptor {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ClipboardPermissionDescriptor(allowWithoutGesture: Boolean? = false): ClipboardPermissionDescriptor {
-    val o = js("({})")
+    val o = newJsObject()
     o["allowWithoutGesture"] = allowWithoutGesture
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ClipboardPermissionDescriptor

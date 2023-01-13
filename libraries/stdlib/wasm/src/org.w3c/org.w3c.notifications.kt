@@ -103,7 +103,7 @@ public external interface NotificationOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: Dynamic? = undefined, timestamp: Number? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["dir"] = dir
     o["lang"] = lang
     o["body"] = body
@@ -136,7 +136,7 @@ public external interface NotificationAction {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction {
-    val o = js("({})")
+    val o = newJsObject()
     o["action"] = action
     o["title"] = title
     o["icon"] = icon
@@ -153,7 +153,7 @@ public external interface GetNotificationOptions {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions {
-    val o = js("({})")
+    val o = newJsObject()
     o["tag"] = tag
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as GetNotificationOptions
@@ -184,7 +184,7 @@ public external interface NotificationEventInit : ExtendableEventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun NotificationEventInit(notification: Notification?, action: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): NotificationEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["notification"] = notification
     o["action"] = action
     o["bubbles"] = bubbles

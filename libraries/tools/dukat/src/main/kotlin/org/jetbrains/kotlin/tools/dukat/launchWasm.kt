@@ -28,4 +28,5 @@ fun postProcessIdlBindings(source: String): String {
             Regex("( {4}return o as \\w+)"),
             "    @Suppress(\"UNCHECKED_CAST_TO_EXTERNAL_INTERFACE\")\n\$1"
         )
+        .replace("js(\"({})\")", "newJsObject()")
 }
