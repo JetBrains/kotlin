@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
@@ -35,25 +34,24 @@ class LLFirSessionProviderStorage(val project: Project) {
     fun getSessionProvider(
         useSiteKtModule: KtModule,
         configureSession: (LLFirSession.() -> Unit)? = null
-    ): LLFirSessionProvider = executeWithoutPCE {
-        when (useSiteKtModule) {
-            is KtSourceModule -> {
-                createSessionProviderForSourceSession(useSiteKtModule, configureSession)
-            }
-
-            is KtLibraryModule, is KtLibrarySourceModule -> {
-                createSessionProviderForLibraryOrLibrarySource(useSiteKtModule, configureSession)
-            }
-
-            is KtNotUnderContentRootModule -> {
-                val session = LLFirNonUnderContentRootSessionFactory.getInstance(project)
-                    .getNonUnderContentRootSession(useSiteKtModule)
-                LLFirSessionProvider(project, session, KtModuleToSessionMappingByMapImpl(mapOf(useSiteKtModule to session)))
-            }
-
-            else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
+    ): LLFirSessionProvider = when (useSiteKtModule) {
+        is KtSourceModule -> {
+            createSessionProviderForSourceSession(useSiteKtModule, configureSession)
         }
+
+        is KtLibraryModule, is KtLibrarySourceModule -> {
+            createSessionProviderForLibraryOrLibrarySource(useSiteKtModule, configureSession)
+        }
+
+        is KtNotUnderContentRootModule -> {
+            val session = LLFirNonUnderContentRootSessionFactory.getInstance(project)
+                .getNonUnderContentRootSession(useSiteKtModule)
+            LLFirSessionProvider(project, session, KtModuleToSessionMappingByMapImpl(mapOf(useSiteKtModule to session)))
+        }
+
+        else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
     }
+
 
     private fun createSessionProviderForSourceSession(
         useSiteKtModule: KtSourceModule,

@@ -6,23 +6,18 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.util.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
-
-internal inline fun <T> executeWithoutPCE(crossinline action: () -> T): T {
-    var result: T? = null
-    ProgressManager.getInstance().executeNonCancelableSection { result = action() }
-    @Suppress("UNCHECKED_CAST")
-    return result as T
-}
 
 internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
     while (true) {
