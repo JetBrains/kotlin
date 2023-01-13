@@ -234,7 +234,8 @@ internal object FirReferenceResolveHelper {
         val scope = lhs.typeRef.coneType.scope(
             session,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            FakeOverrideTypeCalculator.DoNothing
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredPhase = FirResolvePhase.STATUS
         ) ?: return emptyList()
         return buildList {
             scope.processFunctionsByName(OperatorNameConventions.EQUALS) { functionSymbol ->
