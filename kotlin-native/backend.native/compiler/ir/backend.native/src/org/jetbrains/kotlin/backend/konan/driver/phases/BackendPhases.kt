@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.lower
+import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiToIrOutput>(
@@ -19,6 +21,18 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrC
     SpecialBackendChecksTraversal(context, context.interopBuiltIns, input.symbols, input.irModule.irBuiltins).lower(input.irModule)
 }
 
+internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
+        "SpecialBackendChecks",
+        "Special backend checks",
+) { context, input ->
+    val moduleFragment = input.fir2irResult.irModuleFragment
+    SpecialBackendChecksTraversal(
+            context,
+            InteropBuiltIns(input.fir2irResult.pluginContext.moduleDescriptor.builtIns as KonanBuiltIns),
+            input.symbols,
+            moduleFragment.irBuiltins
+    ).lower(moduleFragment)
+}
 
 internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, IrModuleFragment>(
         name = "CopyDefaultValuesToActual",
@@ -29,4 +43,8 @@ internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<Pha
 
 internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(psiToIrOutput: PsiToIrOutput) {
     runPhase(SpecialBackendChecksPhase, psiToIrOutput)
+}
+
+internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
+    runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }

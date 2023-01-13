@@ -13,18 +13,23 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -40,13 +45,15 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
     override var symbols: KonanSymbols by Delegates.notNull()
 }
 
-internal class KonanSymbols(
+internal abstract class KonanSymbols(
         context: PhaseContext,
         descriptorsLookup: DescriptorsLookup,
         irBuiltIns: IrBuiltIns,
-        private val symbolTable: SymbolTable,
+        internal val symbolTable: SymbolTable,
         lazySymbolTable: ReferenceSymbolTable
 ): Symbols(irBuiltIns, symbolTable) {
+    internal abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
+    internal abstract fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol?
 
     val entryPoint = findMainEntryPoint(context, descriptorsLookup.builtIns)?.let { symbolTable.referenceSimpleFunction(it) }
 
@@ -82,7 +89,7 @@ internal class KonanSymbols(
             val symbol = if (fromClass in signedIntegerClasses && toClass in unsignedIntegerClasses) {
                 irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(name, "kotlin")[fromClass]!!
             } else {
-                irBuiltIns.findBuiltInClassMemberFunctions(fromClass, name).single()
+                fromClass.findMemberSimpleFunction(name)!!
             }
 
             (fromClass to toClass) to symbol
@@ -237,7 +244,7 @@ internal class KonanSymbols(
 
     val ieee754Equals = internalFunctions("ieee754Equals")
 
-    val equals = irBuiltIns.findBuiltInClassMemberFunctions(any, Name.identifier("equals")).single()
+    val equals = any.findMemberSimpleFunction(Name.identifier("equals"))!!
 
     val throwArithmeticException = internalFunction("ThrowArithmeticException")
 
@@ -294,14 +301,11 @@ internal class KonanSymbols(
     val copyInto = arrayToExtensionSymbolMap("copyInto")
     val copyOf = arrayToExtensionSymbolMap("copyOf") { it.valueParameters.isEmpty() }
 
-    val arrayGet = arrays.associateWith { irBuiltIns.findBuiltInClassMemberFunctions(it, Name.identifier("get")).single() }
+    val arrayGet = arrays.associateWith { it.findMemberSimpleFunction(Name.identifier("get"))!! }
 
-    val arraySet = arrays.associateWith { irBuiltIns.findBuiltInClassMemberFunctions(it, Name.identifier("set")).single() }
+    val arraySet = arrays.associateWith { it.findMemberSimpleFunction(Name.identifier("set"))!! }
 
-    val arraySize = arrays.associateWith { it.descriptor.unsubstitutedMemberScope
-                    .getContributedVariables(Name.identifier("size"), NoLookupLocation.FROM_BACKEND)
-                    .single().let { symbolTable.referenceSimpleFunction(it.getter!!) } }
-
+    val arraySize = arrays.associateWith { it.findMemberPropertyGetter(Name.identifier("size"))!! }
 
     val valuesForEnum = internalFunction("valuesForEnum")
 
@@ -317,7 +321,7 @@ internal class KonanSymbols(
     val initInstance = internalFunction("initInstance")
 
     val println = irBuiltIns.findFunctions(Name.identifier("println"), "kotlin", "io")
-            .single { it.descriptor.valueParameters.singleOrNull()?.type == (irBuiltIns as IrBuiltInsOverDescriptors).builtIns.stringType }
+            .single { it.descriptor.valueParameters.singleOrNull()?.type?.constructor?.declarationDescriptor == string.descriptor }
 
     override val getContinuation = internalFunction("getContinuation")
 
@@ -350,13 +354,9 @@ internal class KonanSymbols(
     val continuationImpl = internalCoroutinesClass("ContinuationImpl")
 
     val invokeSuspendFunction =
-            irBuiltIns.findBuiltInClassMemberFunctions(baseContinuationImpl, Name.identifier("invokeSuspend")).single()
+            baseContinuationImpl.findMemberSimpleFunction(Name.identifier("invokeSuspend"))!!
 
-    val completionGetter = symbolTable.referenceSimpleFunction(
-            baseContinuationImpl.descriptor.unsubstitutedMemberScope
-                    .getContributedVariables(Name.identifier("completion"), NoLookupLocation.FROM_BACKEND).single()
-                    .getter!!
-    )
+    val completionGetter = baseContinuationImpl.findMemberPropertyGetter(Name.identifier("completion"))!!
 
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
@@ -455,15 +455,51 @@ internal class KonanSymbols(
 
     override val setWithoutBoundCheckName: Name? = KonanNameConventions.setWithoutBoundCheck
 
-    private val testFunctionKindCache = TestProcessor.FunctionKind.values().associate {
-        val symbol = if (it.runtimeKindString.isEmpty())
-            null
-        else
-            symbolTable.referenceEnumEntry(testFunctionKind.descriptor.unsubstitutedMemberScope.getContributedClassifier(
-                    Name.identifier(it.runtimeKindString), NoLookupLocation.FROM_BACKEND
-            ) as ClassDescriptor)
-        it to symbol
+    private val testFunctionKindCache by lazy {
+        TestProcessor.FunctionKind.values().associateWith { kind ->
+            if (kind.runtimeKindString.isEmpty())
+                null
+            else
+                testFunctionKind.owner.declarations
+                        .filterIsInstance<IrEnumEntry>()
+                        .single { it.name == Name.identifier(kind.runtimeKindString) }
+                        .symbol
+        }
     }
 
     fun getTestFunctionKind(kind: TestProcessor.FunctionKind) = testFunctionKindCache[kind]!!
+}
+
+internal class KonanSymbolsOverDescriptors(
+        context: PhaseContext,
+        descriptorsLookup: DescriptorsLookup,
+        irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        lazySymbolTable: ReferenceSymbolTable
+) : KonanSymbols(context, descriptorsLookup, irBuiltIns, symbolTable, lazySymbolTable) {
+    override fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol? =
+            // inspired by: irBuiltIns.findBuiltInClassMemberFunctions(this, name).singleOrNull()
+            descriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                    .singleOrNull()
+                    ?.let { symbolTable.referenceSimpleFunction(it) }
+
+    override fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol? =
+            descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+                    .singleOrNull()
+                    ?.getter
+                    ?.let { symbolTable.referenceSimpleFunction(it) }
+}
+
+internal class KonanSymbolsOverFir(
+        context: PhaseContext,
+        descriptorsLookup: DescriptorsLookup,
+        irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        lazySymbolTable: ReferenceSymbolTable
+) : KonanSymbols(context, descriptorsLookup, irBuiltIns, symbolTable, lazySymbolTable) {
+    override fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol? =
+            owner.findDeclaration<IrSimpleFunction> { it.name == name }?.symbol
+
+    override fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol? =
+            owner.findDeclaration<IrProperty> { it.name == name }?.getter?.symbol
 }

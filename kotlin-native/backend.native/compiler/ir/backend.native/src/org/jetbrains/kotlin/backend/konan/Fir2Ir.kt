@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbolsOverFir
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -15,9 +17,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
-import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -82,6 +83,17 @@ internal fun PhaseContext.fir2Ir(
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
 
+    val symbols = createKonanSymbols(fir2irResult)
     // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
-    return Fir2IrOutput(input.session, input.scopeSession, input.firFiles, fir2irResult)
+    return Fir2IrOutput(input.session, input.scopeSession, input.firFiles, fir2irResult, symbols)
+}
+
+private fun PhaseContext.createKonanSymbols(
+        fir2irResult: Fir2IrResult,
+): KonanSymbolsOverFir {
+    val moduleDescriptor = fir2irResult.irModuleFragment.descriptor
+    val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), fir2irResult.pluginContext.irFactory)
+    val descriptorsLookup = DescriptorsLookup(moduleDescriptor.builtIns as KonanBuiltIns)
+
+    return KonanSymbolsOverFir(this, descriptorsLookup, fir2irResult.components.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 }
