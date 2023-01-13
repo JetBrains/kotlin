@@ -165,30 +165,10 @@ internal fun KotlinType.asPsiType(
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
-// There is no other known way found to make PSI types annotated for now.
-// It seems we need for platform changes to do it more convenient way (KTIJ-141).
-private val setPsiTypeAnnotationProvider: (PsiType, TypeAnnotationProvider) -> Unit by lazyPub {
-    val klass = PsiType::class.java
-    val providerField = try {
-        klass.getDeclaredField("myAnnotationProvider")
-            .also { it.isAccessible = true }
-    } catch (e: NoSuchFieldException) {
-        if (ApplicationManager.getApplication().isInternal) throw e
-        null
-    } catch (e: SecurityException) {
-        if (ApplicationManager.getApplication().isInternal) throw e
-        null
-    }
-
-    { psiType, provider ->
-        providerField?.set(psiType, provider)
-    }
-}
-
 private fun annotateByKotlinType(
     psiType: PsiType,
     kotlinType: KotlinType,
-    psiContext: PsiElement,
+    psiContext: PsiTypeElement,
 ): PsiType {
 
     fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
@@ -199,37 +179,7 @@ private fun annotateByKotlinType(
             }
         }
 
-    val annotationsIterator = kotlinType.getAnnotationsSequence().iterator()
-    if (!annotationsIterator.hasNext()) return psiType
-
-    if (psiType is PsiPrimitiveType) {
-        val annotation = annotationsIterator.next()
-        val provider = TypeAnnotationProvider.Static.create(annotation.toTypedArray())
-        return psiType.annotate(provider)
-    }
-
-    fun recursiveAnnotator(psiType: PsiType) {
-        if (!annotationsIterator.hasNext()) return
-        val typeAnnotations = annotationsIterator.next()
-
-        if (psiType is PsiPrimitiveType) return //Primitive type cannot be type parameter so we skip it
-
-        if (psiType is PsiClassType) {
-            for (parameterType in psiType.parameters) {
-                recursiveAnnotator(parameterType)
-            }
-        } else if (psiType is PsiArrayType) {
-            recursiveAnnotator(psiType.componentType)
-        }
-
-        if (typeAnnotations.isEmpty()) return
-
-        val provider = TypeAnnotationProvider.Static.create(typeAnnotations.toTypedArray())
-        setPsiTypeAnnotationProvider(psiType, provider)
-    }
-
-    recursiveAnnotator(psiType)
-    return psiType
+    return psiType.annotateByTypeAnnotationProvider(kotlinType.getAnnotationsSequence())
 }
 
 internal fun KtUltraLightSupport.mapType(

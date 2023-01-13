@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypeElement
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
@@ -36,13 +36,13 @@ internal class KtFe10PsiTypeProvider(
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
-    override fun asPsiType(
+    override fun asPsiTypeElement(
         type: KtType,
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         allowErrorTypes: Boolean
-    ): PsiType? {
+    ): PsiTypeElement? {
         val kotlinType = (type as KtFe10Type).fe10Type
 
         with(typeMapper.typeContext) {
@@ -51,7 +51,7 @@ internal class KtFe10PsiTypeProvider(
             }
         }
 
-        return asPsiType(simplifyType(kotlinType), useSitePosition, mode.toTypeMappingMode(type, isAnnotationMethod))
+        return asPsiTypeElement(simplifyType(kotlinType), useSitePosition, mode.toTypeMappingMode(type, isAnnotationMethod))
     }
 
     private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
@@ -82,7 +82,7 @@ internal class KtFe10PsiTypeProvider(
         return result
     }
 
-    private fun asPsiType(type: KotlinType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType? {
+    private fun asPsiTypeElement(type: KotlinType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiTypeElement? {
         if (type !is SimpleTypeMarker) return null
 
         val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
@@ -99,7 +99,6 @@ internal class KtFe10PsiTypeProvider(
         val typeInfo = TypeInfo.fromString(javaType, false)
         val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
-        val typeElement = ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
-        return typeElement.type
+        return ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
     }
 }

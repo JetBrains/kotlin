@@ -41,12 +41,14 @@ internal fun KtAnalysisSession.mapType(
     psiContext: PsiElement,
     mode: KtTypeMappingMode
 ): PsiClassType? {
-    val psiType = type.asPsiType(
+    val psiTypeElement = type.asPsiTypeElement(
         psiContext,
         allowErrorTypes = true,
         mode,
     )
-    return psiType as? PsiClassType
+    return (psiTypeElement?.type as? PsiClassType)?.let {
+        annotateByKtType(it, type, psiTypeElement) as? PsiClassType
+    }
 }
 
 

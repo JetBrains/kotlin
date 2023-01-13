@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
@@ -85,7 +82,10 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
-            receiver.type.asPsiType(this, allowErrorTypes = true)
+            val ktType = receiver.type
+            ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
+                annotateByKtType(it.type, ktType, it)
+            }
         } ?: nonExistentType()
     }
 

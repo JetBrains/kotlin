@@ -187,12 +187,14 @@ internal class SymbolLightSimpleMethod(
                 functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
             }
 
-            ktType.asPsiType(
+            ktType.asPsiTypeElement(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
                 KtTypeMappingMode.RETURN_TYPE,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
-            )
+            )?.let {
+                annotateByKtType(it.type, ktType, it)
+            }
         } ?: nonExistentType()
     }
 
