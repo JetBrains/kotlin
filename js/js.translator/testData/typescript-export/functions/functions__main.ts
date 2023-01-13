@@ -11,7 +11,8 @@ import varargWithOtherParameters = JS_TESTS.foo.varargWithOtherParameters;
 import varargWithComplexType = JS_TESTS.foo.varargWithComplexType;
 import genericWithConstraint = JS_TESTS.foo.genericWithConstraint;
 import genericWithMultipleConstraints = JS_TESTS.foo.genericWithMultipleConstraints;
-
+import formatList = JS_TESTS.foo.formatList;
+import createList = JS_TESTS.foo.createList;
 function assert(condition: boolean) {
     if (!condition) {
         throw "Assertion failed";
@@ -53,6 +54,8 @@ function box(): string {
     let result: number = 0;
     inlineFun(10, x => { result = x; });
     assert(result === 10);
+
+    assert(formatList(createList()) === "1, 2, 3")
 
     return "OK";
 }

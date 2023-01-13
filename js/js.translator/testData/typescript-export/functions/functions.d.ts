@@ -18,5 +18,7 @@ declare namespace JS_TESTS {
         function genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): T;
         function generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Nullable<E>;
         function inlineFun(x: number, callback: (p0: number) => void): void;
+        function formatList(value: any/* kotlin.collections.List<UnknownType *> */): string;
+        function createList(): any/* kotlin.collections.List<UnknownType *> */;
     }
 }
