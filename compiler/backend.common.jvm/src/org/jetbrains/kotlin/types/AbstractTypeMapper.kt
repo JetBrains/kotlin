@@ -82,7 +82,9 @@ object AbstractTypeMapper {
             }
 
             if (type.isVArray()) {
-                return Type.getObjectType("kotlin/VArrayWrapper")
+                val vArrayWrapperType = Type.getObjectType("kotlin/VArrayWrapper")
+                sw?.writeClass(vArrayWrapperType)
+                return vArrayWrapperType
             }
 
             if (typeConstructor.isClassTypeConstructor()) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -113,6 +114,7 @@ private fun isFinal(type: ConeSimpleKotlinType, session: FirSession): Boolean {
 }
 
 fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: CheckerContext): Boolean {
+    if ((subtype as? ConeClassLikeType)?.toSymbol(context.session)?.name == Name.identifier("VArray")) return false
     val typeContext = context.session.typeContext
 
     val isNonReifiedTypeParameter = subtype.isNonReifiedTypeParameter()

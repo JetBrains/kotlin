@@ -5,8 +5,9 @@
 
 fun box(): String {
 
-    val x = VArray<Int>(1) { 42 }
-    val y = x[0]
+    val x : Any = VArray<Int>(1) { 42 }
+    val y = x is VArray<Int>
+    return y.toString()
 
     return "OK1"
 }
