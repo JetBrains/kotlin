@@ -345,15 +345,12 @@ class KlibBasedMppIT : BaseGradleIT() {
     ) = with(testCase) {
         setupWorkingDir()
 
-        @Suppress("INVISIBLE_MEMBER")
-        val transformAllTaskName = KotlinMetadataTargetConfigurator.TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA
-
         val printingTaskName = "printItems${testBuildRunId++}"
         gradleBuildScript(subproject).appendText(
             """
         ${'\n'}
         tasks.register("$printingTaskName") {
-            dependsOn("$transformAllTaskName")
+            dependsOn("transformDependenciesMetadata")
             doLast {
                 println("###$printingTaskName" + $itemsExpression)
             }
